@@ -1535,6 +1535,21 @@
         重要性采样解决了"数据复用"问题：不用每次更新都重新采轨迹。但引入了新问题——如果新旧策略差距太大，概率比 $\frac{\pi_\theta}{\pi_{old}}$ 会变得非常大或非常小，导致估计不可靠。这正是 TRPO/PPO 要解决的。
     </div>
 
+    <h4>TRPO 训练流程</h4>
+    <div class="formula-box">
+        <div class="label">TRPO 单轮训练（每轮只更新一次策略）</div>
+        <p><strong>① 采数据：</strong>用当前策略 $\pi_{\theta_{old}}$ 跑一批轨迹，收集 $(s_t, a_t, r_t)$</p>
+        <p><strong>② 算 Advantage：</strong>用 Critic（或 MC 回报）计算每个 $(s_t,a_t)$ 的 $\hat{A}_t$</p>
+        <p><strong>③ 最大化代理目标 $L(\theta)$：</strong>在 KL 约束内，用共轭梯度 + 线搜索找到最优 $\theta_{new}$</p>
+        <p><strong>④ 更新策略：</strong>$\theta_{old} \leftarrow \theta_{new}$</p>
+        <p><strong>⑤ 丢弃旧数据，回到 ①</strong></p>
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$L(\theta)$ 的角色</span><strong>不是评估指标，而是优化目标</strong>——你最大化 $L(\theta)$ 就是在更新策略。它把"用旧数据改进策略"转化为一个标准最优化问题</div>
+            <div class="item"><span class="symbol">vs REINFORCE</span>REINFORCE 也是采数据 → 算梯度 → 更新，但每次只走一个小梯度步（学习率控制）。TRPO 则在信任域内"一步到位"找最优解</div>
+            <div class="item"><span class="symbol">vs PPO</span>PPO 同样最大化 $L(\theta)$，但用 clip 替代 KL 约束 → 可以对同一批数据跑多轮 mini-batch SGD（3-10 epochs），数据效率更高</div>
+        </div>
+    </div>
+
     <div class="formula-box highlight">
         <div class="label">TRPO 优化目标</div>
         $$\max_\theta \; \mathbb{E}_t\left[r_t(\theta) \cdot A_t\right] \quad \text{s.t.} \quad \mathbb{E}_t\left[D_{KL}(\pi_{\theta_{old}} \| \pi_\theta)\right] \leq \delta$$
