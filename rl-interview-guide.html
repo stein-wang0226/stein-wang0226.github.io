@@ -1518,6 +1518,14 @@
         <p>那么 $L(\theta)$ 在 $\theta = \theta_{old}$ 处的梯度恰好等于真实策略梯度 $\nabla_\theta J$。并且：</p>
         $$J(\theta) - J(\theta_{old}) \approx L(\theta)$$
         <p>（当 $\pi_\theta$ 接近 $\pi_{\theta_{old}}$ 时，$L(\theta)$ 是策略改进量 $J(\theta)-J(\theta_{old})$ 的一阶近似。）</p>
+
+        <p style="font-size:0.92em;color:#475569;margin-top:4px;">
+            <strong>为什么这个近似有用？</strong>我们的目标是最大化策略改进量 $J(\theta)-J(\theta_{old})$，但 $J(\theta)$ 需要新策略的状态分布 $d^{\pi_\theta}$（还没部署，算不了）。而 $L(\theta)$ 只用旧数据就能算 → 最大化 $L(\theta)$ 就等价于最大化策略改进量（在近似有效范围内）。
+        </p>
+        <p style="font-size:0.92em;color:#475569;margin-top:4px;">
+            <strong>一阶近似怎么来的？</strong>对 $L(\theta)$ 在 $\theta=\theta_{old}$ 处 Taylor 展开：$L(\theta_{old})=0$（因为概率比=1，而 $\mathbb{E}[A]=0$），且 $\nabla_\theta L\big|_{\theta_{old}} = \nabla_\theta J\big|_{\theta_{old}}$（前面 Step 4 证明的）。所以在 $\theta_{old}$ 附近：$J(\theta)-J(\theta_{old}) \approx \nabla_\theta J\big|_{\theta_{old}}^T(\theta-\theta_{old}) = \nabla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。即两者共享同一个起点（=0）和同一个梯度方向 → 局部行为一致。
+        </p>
+
         <p style="font-size:0.92em;color:#475569;margin-top:4px;">
             <strong>$J(\theta)$ 的单步形式：</strong>$J(\theta) = \mathbb{E}_{s\sim d^{\pi_\theta},\,a\sim\pi_\theta(\cdot|s)}[r(s,a)]$。注意 $J$ 里的状态分布是 $d^{\pi_\theta}$（新策略的），而 $L$ 里用的是 $d^{\pi_{old}}$（旧策略的）。近似 $L \approx J-J_{old}$ 成立的前提：$\pi_\theta \approx \pi_{old}$ 时 $d^{\pi_\theta} \approx d^{\pi_{old}}$。这也是 KL 约束的深层原因——不仅控制动作分布差异（IS 方差），还保证状态分布近似有效。
         </p>
