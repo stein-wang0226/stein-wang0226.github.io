@@ -1481,7 +1481,7 @@
     <p>不在参数空间限制步长，而在<strong>策略分布空间</strong>限制——新旧策略的 KL 散度不能超过 $\delta$。</p>
 
     <h4>前置：重要性采样（Importance Sampling）</h4>
-    <p>REINFORCE 每次更新后必须扔掉数据重新采样（on-policy），非常浪费。能不能用旧策略采的数据来评估新策略？</p>
+    <p>REINFORCE 每次更新后必须扔掉数据重新采样（on-policy），非常浪费。能不能用旧策略采的数据来计算新策略的梯度，从而优化新策略？</p>
 
     <div class="formula-box">
         <div class="label">重要性采样推导（逐步展开）</div>
