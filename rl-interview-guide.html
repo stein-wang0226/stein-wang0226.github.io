@@ -1489,6 +1489,9 @@
         <p><strong>Step 1：回顾策略梯度</strong></p>
         <p>我们已知策略梯度可以写成（用 Advantage 替代 $G_t$，因为减去 baseline 不改变期望）：</p>
         $$\nabla_\theta J = \mathbb{E}_{a \sim \pi_\theta}\left[\nabla_\theta\log\pi_\theta(a|s) \cdot A^\pi(s,a)\right]$$
+        <p style="font-size:0.92em;color:#475569;margin-top:6px;">
+            <strong>注：</strong>这里从 REINFORCE 的轨迹形式 $\mathbb{E}_\tau[\sum_t \nabla\log\pi \cdot G_t]$ 换成了单步形式 $\mathbb{E}_{s\sim d^\pi, a\sim\pi}[\cdot]$。两者等价——"对轨迹求期望再对时间步求和" = "直接对状态访问分布 $d^\pi(s)$ 下所有 $(s,a)$ 对求期望"。IS 用单步形式是因为只需校正单个动作的概率比 $\frac{\pi_\theta(a|s)}{\pi_{old}(a|s)}$，避免整条轨迹 $T$ 个比值连乘导致方差指数级爆炸。
+        </p>
 
         <p><strong>Step 2：重要性采样的通用公式</strong></p>
         <p>数学定理：如果想用分布 $q$ 的样本来估计分布 $p$ 下的期望，可以通过"概率比"修正：</p>
