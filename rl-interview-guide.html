@@ -1559,6 +1559,20 @@
         </div>
     </div>
 
+    <table>
+        <caption style="font-weight:700;margin-bottom:8px;">算法数据使用方式对比</caption>
+        <thead>
+            <tr><th>算法</th><th>数据采集</th><th>数据使用</th><th>IS 校正粒度</th><th>每批数据更新次数</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>REINFORCE</td><td>完整轨迹</td><td>整条轨迹算 $G_t$ → 一步梯度 → 丢弃</td><td>无（on-policy）</td><td>1 次</td></tr>
+            <tr><td>TRPO</td><td>完整轨迹</td><td>拆为独立 $(s_t,a_t,\hat{A}_t)$ → 构建 $L(\theta)$ → 约束优化</td><td>单步（一个概率比）</td><td>1 次（一步到位）</td></tr>
+            <tr><td>PPO</td><td>完整轨迹</td><td>同 TRPO 拆为独立样本 → mini-batch SGD</td><td>单步（clip 保护）</td><td>3-10 epochs</td></tr>
+            <tr><td>GRPO</td><td>同 prompt 多条输出</td><td>组内相对排名算 $\hat{A}_i$ → 类 PPO clip 优化</td><td>单步</td><td>多轮</td></tr>
+            <tr><td>DPO</td><td>偏好对 $(y_w, y_l)$</td><td>直接对偏好对做分类式训练（无需 RL 采样循环）</td><td>无（离线监督学习）</td><td>多轮</td></tr>
+        </tbody>
+    </table>
+
     <div class="formula-box highlight">
         <div class="label">TRPO 优化目标</div>
         $$\max_\theta \; \mathbb{E}_t\left[r_t(\theta) \cdot A_t\right] \quad \text{s.t.} \quad \mathbb{E}_t\left[D_{KL}(\pi_{\theta_{old}} \| \pi_\theta)\right] \leq \delta$$
