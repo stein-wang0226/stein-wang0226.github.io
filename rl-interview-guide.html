@@ -1718,7 +1718,7 @@
             <tr><th>估计方式</th><th>公式</th><th>偏差</th><th>方差</th><th>直觉</th></tr>
         </thead>
         <tbody>
-            <tr><td>MC 估计</td><td>$\hat{A}_t = G_t - V(s_t)$</td><td>无偏</td><td>高</td><td>用实际完整回报，但每条轨迹差异大</td></tr>
+            <tr><td>MC 估计</td><td>$\hat{A}_t = G_t - V(s_t)$<br><span style="font-size:0.9em;color:#94a3b8;">其中 $G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots$（从 t 到终点的完整真实回报）</span></td><td>无偏</td><td>高</td><td>用实际完整回报，但每条轨迹差异大</td></tr>
             <tr><td>TD 估计（1步）</td><td>$\hat{A}_t = r_t + \gamma V(s_{t+1}) - V(s_t)$</td><td>有偏</td><td>低</td><td>只看一步真实奖励，剩余靠 Critic 估计（Critic 不准→偏差）</td></tr>
             <tr><td>GAE（$\lambda$ 插值）</td><td>$\hat{A}_t = \sum_l (\gamma\lambda)^l \delta_{t+l}$</td><td>可调</td><td>可调</td><td>$\lambda=0$ → 纯 TD；$\lambda=1$ → 纯 MC；$\lambda=0.95$ → 实践最优折中</td></tr>
         </tbody>
