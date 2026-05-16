@@ -1833,17 +1833,22 @@
     </div>
 
     <h3>PPO 在 RLHF 中的特殊用法</h3>
+
+    <h4>RLHF 四模型架构</h4>
+    <p>RLHF 的 PPO 阶段需要 4 个模型协同工作：</p>
     <table>
-        <tr><th>概念</th><th>游戏场景</th><th>LLM 场景</th></tr>
-        <tr><td>状态 $s_t$</td><td>游戏画面</td><td>prompt + 已生成的 token 序列</td></tr>
-        <tr><td>动作 $a_t$</td><td>按键操作</td><td>下一个 token</td></tr>
-        <tr><td>轨迹 $\tau$</td><td>一局游戏</td><td>一次完整生成</td></tr>
-        <tr><td>奖励</td><td>每步环境反馈</td><td>末尾 RM 打分 + 每步 KL 惩罚</td></tr>
-        <tr><td>需要的模型</td><td>Actor + Critic（2个）</td><td>Actor + Critic + Reference + RM（4个）</td></tr>
+        <tr><th>模型</th><th>角色</th><th>是否可训练</th></tr>
+        <tr><td><strong>Actor $\pi_\theta$</strong></td><td>正在训练的策略模型——优化目标</td><td>是（主模型）</td></tr>
+        <tr><td><strong>Critic $V_\phi$</strong></td><td>价值网络——估计每个状态的价值</td><td>是</td></tr>
+        <tr><td><strong>Reference $\pi_{ref}$</strong></td><td>参考模型——SFT 阶段训好的模型，<strong>冻结不动</strong>，用来约束 Actor 别跑太远</td><td>否（冻结）</td></tr>
+        <tr><td><strong>Reward Model $r_{RM}$</strong></td><td>奖励模型——给生成结果打分</td><td>否（预先训练好）</td></tr>
     </table>
 
+    <h4>RLHF 中的 Reward 结构</h4>
+    <p>LLM 生成是序列决策问题：状态是"当前已生成的 token 序列"，动作是"下一个 token"。一次完整对话生成有 $T$ 步（比如生成 500 个 token），Reward 的设计非常特殊：</p>
+
     <div class="formula-box">
-        <div class="label">RLHF 中的 Reward 结构</div>
+        <div class="label">Reward 分两步</div>
         $$R_t = \begin{cases} -\beta \log\dfrac{\pi_\theta(a_t|s_t)}{\pi_{ref}(a_t|s_t)} & t < T \text{ （中间步：KL 惩罚）}\\[10pt] r_{RM}(x, y) - \beta \log\dfrac{\pi_\theta(a_T|s_T)}{\pi_{ref}(a_T|s_T)} & t = T \text{ （最后一步：RM 打分 + KL 惩罚）}\end{cases}$$
         <div class="formula-annotation">
             <div class="item"><span class="symbol">$-\beta\log\frac{\pi_\theta}{\pi_{ref}}$</span>KL 惩罚——偏离参考模型越远惩罚越大，防止 reward hacking</div>
