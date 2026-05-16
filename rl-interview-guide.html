@@ -1266,6 +1266,10 @@
         </div>
     </div>
 
+    <h4>实践中 $V(s)$ 从哪里来？——训练一个 Critic 网络</h4>
+    <p>上面的 $A_t = G_t - V(s_t)$ 叫<strong>MC 估计（REINFORCE + Baseline）</strong>——$G_t$ 来自真实轨迹，$V(s_t)$ 由一个价值网络 $V_\phi(s)$（Critic）估计。训练方式：$\min_\phi \mathbb{E}[(V_\phi(s_t) - G_t)^2]$（即最小化 MSE，最优解恰好是条件期望）。</p>
+    <p>所以从"有没有 Critic 网络"这个角度看，Step 2 和 Step 3（Actor-Critic）都有 Critic，核心区别不在于此——而在于 <strong>Actor 更新时用什么信号</strong>。这会在 Step 3 详细说明。</p>
+
     <h4>Advantage 的正式定义：$A(s,a) = Q(s,a) - V(s)$</h4>
     <p>上面的 $A_t = G_t - V(s_t)$ 其实是下面这个正式定义的<strong>采样估计</strong>：</p>
 
@@ -1711,14 +1715,15 @@
 
     <h3>GAE：Advantage 的实用计算方法</h3>
 
-    <p>理论上 $A^\pi(s,a) = Q(s,a) - V(s)$ 是精确值，实践中只能用采样数据来估计 $\hat{A}_t$。三种主要估计方式：</p>
+    <p>理论上 $A^\pi(s,a) = Q(s,a) - V(s)$ 是精确值，实践中只能用采样数据来估计 $\hat{A}_t$。下面对比四种方式——其中 **"MC + Baseline" 就是 Step 2 中使用的估计方式**，"纯 MC" 是 REINFORCE 原版（无 baseline，已不实用），TD 和 GAE 则是 Actor-Critic / PPO / GRPO 等现代方法的核心：</p>
 
     <table>
         <thead>
             <tr><th>估计方式</th><th>公式</th><th>偏差</th><th>方差</th><th>直觉</th></tr>
         </thead>
         <tbody>
-            <tr><td>MC 估计</td><td>$\hat{A}_t = G_t - V(s_t)$<br><span style="font-size:0.9em;color:#94a3b8;">其中 $G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots$（从 t 到终点的完整真实回报）</span></td><td>无偏</td><td>高</td><td>用实际完整回报，但每条轨迹差异大</td></tr>
+            <tr><td>纯 MC（REINFORCE 原版）</td><td>$\hat{A}_t = G_t$<br><span style="font-size:0.9em;color:#94a3b8;">其中 $G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots$（从 t 到终点的完整真实回报）</span></td><td>无偏</td><td>极高</td><td>不需要 Critic，直接用原始回报，但整条轨迹差异巨大</td></tr>
+            <tr><td>MC + Baseline</td><td>$\hat{A}_t = G_t - V(s_t)$</td><td>无偏</td><td>高</td><td>用实际完整回报减去 baseline 降噪，需要 Critic（或移动平均）估计 $V(s_t)$</td></tr>
             <tr><td>TD 估计（1步）</td><td>$\hat{A}_t = r_t + \gamma V(s_{t+1}) - V(s_t)$</td><td>有偏</td><td>低</td><td>只看一步真实奖励，剩余靠 Critic 估计（Critic 不准→偏差）</td></tr>
             <tr><td>GAE（$\lambda$ 插值）</td><td>$\hat{A}_t = \sum_l (\gamma\lambda)^l \delta_{t+l}$</td><td>可调</td><td>可调</td><td>$\lambda=0$ → 纯 TD；$\lambda=1$ → 纯 MC；$\lambda=0.95$ → 实践最优折中</td></tr>
         </tbody>
