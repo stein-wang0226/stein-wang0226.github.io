@@ -1833,7 +1833,7 @@
     </div>
 
     <h3>PPO 在 RLHF 中的应用</h3>
-    <p>PPO 是 RLHF 第三步（策略优化阶段）使用的核心算法。RLHF 的完整流程（包括四模型架构、RM 训练、Reward 结构设计）详见 <a href="#rlhf" style="color:var(--accent);font-weight:600;">第 7 节 RLHF 完整流程</a>。</p>
+    <p>PPO 是 RLHF 第三步（策略优化阶段）使用的核心算法。RLHF 使用 <strong>ORM（Outcome Reward Model，结果奖励模型）</strong>——只在整条回复生成完毕后打分，中间步骤只有 KL 惩罚。详见 <a href="#rlhf" style="color:var(--accent);font-weight:600;">第 7 节 RLHF 完整流程</a>。关于 ORM vs PRM（过程奖励模型）的区别也在那里。</p>
 </section>
 
 <!-- ==================== Section 5: GRPO ==================== -->
@@ -2202,6 +2202,21 @@
                 <div class="item"><span class="symbol">Reward Hacking</span>如果没有 KL 约束，模型会学会讨好 RM 的极端行为（如反复说"您说得对"），KL 强迫模型保持输出风格</div>
             </div>
         </div>
+
+        <h5>ORM vs PRM：两种 Reward 方案</h5>
+        <p>上面描述的 Reward 结构是 <strong>ORM（Outcome Reward Model，结果奖励模型）</strong>——RM 只在整条回复生成完毕后（$t=T$）打分，中间步骤只有 KL 惩罚。这是标准 RLHF 的做法。</p>
+        <p>还有一种方案叫 <strong>PRM（Process Reward Model，过程奖励模型）</strong>——中间步骤也给奖励，而不仅限于最后一步。</p>
+        <table>
+            <tr><th></th><th>ORM（结果奖励）</th><th>PRM（过程奖励）</th></tr>
+            <tr><td><strong>打分时机</strong></td><td>最后一步 $t=T$</td><td>每一步 $t=1\dots T$</td></tr>
+            <tr><td><strong>中间步 Reward</strong></td><td>仅 KL 惩罚</td><td>PRM 打分 + KL 惩罚</td></tr>
+            <tr><td><strong>最后步 Reward</strong></td><td>ORM 打分 + KL 惩罚</td><td>ORM/PRM 打分 + KL 惩罚</td></tr>
+            <tr><td><strong>适用场景</strong></td><td>通用对话、创意写作</td><td>数学推理、代码生成、多步任务</td></tr>
+            <tr><td><strong>训练数据</strong></td><td>整条回复的人类偏好排序</td><td>每步中间过程的人类标注（如推理步骤正确与否）</td></tr>
+            <tr><td><strong>典型用法</strong></td><td>标准 RLHF + PPO</td><td>RLVR（DeepSeek-R1 的 GRPO）</td></tr>
+        </table>
+        <p><strong>核心区别：</strong>ORM 看"结果好不好"，PRM 看"每一步推得对不对"。数学题中，ORM 只能判断最终答案对错，PRM 能在中间步骤就识别出"这一步推导错了"，给及时的负反馈。</p>
+        <p><strong>面试注意：</strong>RLHF 默认用 ORM；DeepSeek-R1 的 RLVR 本质是规则版 PRM——用程序验证每一步推理是否正确，不需要训练 RM。</p>
     </div>
 
     <div class="box-interview">
