@@ -1547,7 +1547,7 @@
     <div class="formula-box">
         <div class="label">TRPO 单轮训练（每轮只更新一次策略）</div>
         <p><strong>① 采数据：</strong>用当前策略 $\pi_{\theta_{old}}$ 跑一批轨迹，收集 $(s_t, a_t, r_t)$</p>
-        <p><strong>② 算 Advantage：</strong>用 GAE 计算每个 $(s_t,a_t)$ 的 $\hat{A}_t$（GAE 是 TD 估计与 MC 回报 $G_t$ 的加权插值，$\lambda$ 控制偏差-方差权衡，实践中 $\lambda=0.95$）</p>
+        <p><strong>② 算 Advantage：</strong>用 GAE 计算每个 $(s_t,a_t)$ 的 $\hat{A}_t$（GAE 是 TD 估计与 MC 回报 $G_t$ 的加权插值，$\lambda$ 控制偏差-方差权衡，实践中 $\lambda=0.95$）。其中 $V(s_t)$ 由 Critic 网络 $V_\phi(s)$ 估计——实践中几乎都用神经网络拟合，训练目标为 $\min_\phi\mathbb{E}[(V_\phi(s_t)-G_t)^2]$</p>
         <p><strong>③ 最大化代理目标 $L(\theta)$：</strong>在 KL 约束内，用共轭梯度 + 线搜索找到最优 $\theta_{new}$</p>
         <p><strong>④ 更新策略：</strong>$\theta_{old} \leftarrow \theta_{new}$</p>
         <p><strong>⑤ 丢弃旧数据，回到 ①</strong></p>
