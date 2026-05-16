@@ -932,7 +932,7 @@
 
 <!-- ==================== Section 3: PG to PPO ==================== -->
 <section id="pg-to-ppo">
-    <h2>3. 策略梯度到 PPO 演进</h2>
+    <h2>3. 策略梯度（Policy Gradient）到 PPO 演进</h2>
 
     <h3>演进路线图</h3>
     <div class="evolution">
@@ -960,7 +960,7 @@
     <p>每一步都解决上一步的核心缺陷。面试中讲清这条因果链比背公式更有价值。</p>
 
     <!-- REINFORCE -->
-    <h3>Step 1: REINFORCE</h3>
+    <h3>Step 1: REINFORCE（Williams, 1992 — 蒙特卡洛策略梯度）</h3>
 
     <h4>目标函数</h4>
     <p>整个 RL 要优化的东西——策略的<strong>期望总回报</strong>：</p>
@@ -1294,7 +1294,7 @@
     </div>
 
     <!-- Actor-Critic -->
-    <h3>Step 3: Actor-Critic</h3>
+    <h3>Step 3: Actor-Critic（演员-评论家方法）</h3>
 
     <h4>解决什么问题</h4>
     <p>$V(s_t)$ 是未知的，需要估计。</p>
@@ -1472,7 +1472,7 @@
     </div>
 
     <!-- TRPO -->
-    <h3>Step 4: TRPO</h3>
+    <h3>Step 4: TRPO（Trust Region Policy Optimization，信任域策略优化）</h3>
 
     <h4>解决什么问题</h4>
     <p>策略更新步长过大会崩溃。</p>
@@ -1559,7 +1559,7 @@
     </div>
 
     <!-- PPO teaser -->
-    <h3>Step 5: PPO — 用 Clip 替代 KL</h3>
+    <h3>Step 5: PPO（Proximal Policy Optimization，近端策略优化）— 用 Clip 替代 KL</h3>
 
     <div class="formula-box highlight">
         <div class="label">PPO-Clip 核心公式</div>
@@ -1594,7 +1594,7 @@
 
 <!-- ==================== Section 4: PPO Detail ==================== -->
 <section id="ppo-detail">
-    <h2>4. PPO 完全详解</h2>
+    <h2>4. PPO（Proximal Policy Optimization）完全详解</h2>
 
     <h3>Clip 机制逐情况分析</h3>
 
@@ -1800,7 +1800,7 @@
 
 <!-- ==================== Section 5: GRPO ==================== -->
 <section id="grpo">
-    <h2>5. GRPO 详解</h2>
+    <h2>5. GRPO（Group Relative Policy Optimization，组相对策略优化）详解</h2>
 
     <h3>动机：PPO 在 LLM 中的痛点</h3>
     <p>PPO 需要 Critic 网络估计 $V(s)$。在 LLM 场景中，Critic 和 Actor 一样大（几十亿参数），<strong>显存直接翻倍</strong>。GRPO 的贡献：用一个极简的方法替代 Critic。</p>
@@ -1901,7 +1901,7 @@
 
 <!-- ==================== Section 6: RLVR ==================== -->
 <section id="rlvr">
-    <h2>6. RLVR 范式详解</h2>
+    <h2>6. RLVR（Reinforcement Learning with Verifiable Rewards，可验证奖励强化学习）范式详解</h2>
 
     <h3>什么是 RLVR？</h3>
     <p><strong>RLVR = Reinforcement Learning with Verifiable Rewards</strong>，即"用可验证的奖励信号做强化学习"。它不是一个具体算法，而是一个<strong>训练范式</strong>——描述的是 reward 从哪来，而不是怎么优化。</p>
@@ -2095,7 +2095,7 @@
 
 <!-- ==================== Section 7: RLHF ==================== -->
 <section id="rlhf">
-    <h2>7. RLHF 完整流程</h2>
+    <h2>7. RLHF（Reinforcement Learning from Human Feedback，人类反馈强化学习）完整流程</h2>
 
     <div class="step-card">
         <div class="step-number">1</div>
@@ -2135,7 +2135,7 @@
 
 <!-- ==================== Section 7: DPO ==================== -->
 <section id="dpo">
-    <h2>8. DPO 公式推导</h2>
+    <h2>8. DPO（Direct Preference Optimization，直接偏好优化）公式推导</h2>
 
     <h3>核心洞察</h3>
     <p>DPO 证明了：<strong>不需要单独训练 Reward Model，偏好数据可以直接优化策略。</strong></p>
