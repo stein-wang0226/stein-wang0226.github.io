@@ -2200,6 +2200,7 @@
                 <div class="item"><span class="symbol">$\beta$</span>KL 强度系数。典型值 0.01~0.05，越大约束越紧</div>
                 <div class="item"><span class="symbol">直觉</span>整个过程像"走钢丝"——每步 KL 拉着你别偏离 SFT 风格太远，走到终点时 RM 给一个总评。优化的目标：在 KL 预算内，让 RM 打分尽可能高</div>
                 <div class="item"><span class="symbol">Reward Hacking</span>如果没有 KL 约束，模型会学会讨好 RM 的极端行为（如反复说"您说得对"），KL 强迫模型保持输出风格</div>
+                <div class="item"><span class="symbol">为什么叫"KL 惩罚"？</span>真正的 KL 散度公式是 $D_{KL}(\pi_\theta\|\pi_{ref}) = \sum_a \pi_\theta(a|s)\log\frac{\pi_\theta(a|s)}{\pi_{ref}(a|s)}$，需要对所有 token 求和。而这里的 $-\log\frac{\pi_\theta}{\pi_{ref}}$ 只算了当前 token——但它对 $\pi_\theta$ 的期望值恰好等于 $-D_{KL}$，是 KL 散度的<strong>无偏估计</strong>。实际训练每次只采样一个 token，用这一项做 reward，期望意义下和完整 KL 等价</div>
             </div>
         </div>
 
