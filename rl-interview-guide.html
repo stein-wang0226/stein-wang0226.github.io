@@ -1297,19 +1297,20 @@
     <h3>Step 3: Actor-Critic（演员-评论家方法）</h3>
 
     <h4>解决什么问题</h4>
-    <p>$V(s_t)$ 是未知的，需要估计。</p>
+    <p>Step 2（REINFORCE + Baseline）需要等整条轨迹跑完才能算 $G_t$，无法在线逐步更新。能不能每走一步就更新？</p>
 
     <h4>做法</h4>
-    <p>训练一个神经网络 $V_\phi(s)$（Critic）来近似真实的 $V(s)$。两个网络协同工作：</p>
+    <p>训练一个神经网络 $V_\phi(s)$（Critic）来近似真实的 $V(s)$。用 <strong>TD 残差</strong> $\delta_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t)$ 替代 $G_t - V(s_t)$ 作为 Advantage 估计——只需当前奖励和下一状态，无需等轨迹结束：</p>
 
     <div class="formula-box">
         <div class="label">Actor-Critic 双网络</div>
-        $$\text{Actor 更新: } \theta \leftarrow \theta + \alpha \cdot \nabla_\theta\log\pi_\theta(a_t|s_t) \cdot A_t$$
+        $$\text{Actor 更新: } \theta \leftarrow \theta + \alpha \cdot \nabla_\theta\log\pi_\theta(a_t|s_t) \cdot \delta_t$$
         $$\text{Critic 更新: } \phi \leftarrow \phi - \alpha_c \cdot \nabla_\phi(V_\phi(s_t) - G_t)^2$$
         <div class="formula-annotation">
-            <div class="item"><span class="symbol">Actor $\pi_\theta$</span>策略网络——决定做什么动作。$A_t > 0$ 时增大该动作概率，$A_t < 0$ 时减小</div>
+            <div class="item"><span class="symbol">$\delta_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t)$</span>TD 残差——"这一步实际收益 $r_t + \gamma V(s_{t+1})$ 比预期 $V(s_t)$ 好了多少"。是 $A(s_t,a_t)$ 的有偏但低方差估计</div>
+            <div class="item"><span class="symbol">Actor $\pi_\theta$</span>策略网络——决定做什么动作。$\delta_t > 0$ 时增大该动作概率，$\delta_t < 0$ 时减小</div>
             <div class="item"><span class="symbol">Critic $V_\phi$</span>价值网络——评估状态好坏。训练目标：预测值 $V_\phi(s)$ 逼近真实回报 $G_t$</div>
-            <div class="item"><span class="symbol">$A_t = G_t - V_\phi(s_t)$</span>Advantage 用 Critic 的输出来计算（替代未知的真实 $V$）</div>
+            <div class="item"><span class="symbol">vs Step 2</span>Step 2 用 $G_t - V(s_t)$（MC 估计，无偏高方差，需跑完轨迹）。Actor-Critic 用 $\delta_t$（TD 估计，有偏低方差，每步即可更新）</div>
             <div class="item"><span class="symbol">为什么 Critic 用 MSE？</span>$V(s)$ 的定义是 $\mathbb{E}[G_t|s]$，最小化 $(V_\phi - G_t)^2$ 的期望，解恰好就是条件期望（下方证明）</div>
         </div>
     </div>
