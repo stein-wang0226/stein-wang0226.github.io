@@ -1562,14 +1562,15 @@
     <table>
         <caption style="font-weight:700;margin-bottom:8px;">算法数据使用方式对比</caption>
         <thead>
-            <tr><th>算法</th><th>数据采集</th><th>数据使用</th><th>IS 校正粒度</th><th>每批数据更新次数</th></tr>
+            <tr><th>算法</th><th>年份</th><th>数据采集</th><th>数据使用</th><th>IS 校正粒度</th><th>每批更新</th><th>代表应用 &amp; 实用性</th></tr>
         </thead>
         <tbody>
-            <tr><td>REINFORCE</td><td>完整轨迹</td><td>整条轨迹算 $G_t$ → 一步梯度 → 丢弃</td><td>无（on-policy）</td><td>1 次</td></tr>
-            <tr><td>TRPO</td><td>完整轨迹</td><td>拆为独立 $(s_t,a_t,\hat{A}_t)$ → 构建 $L(\theta)$ → 约束优化</td><td>单步（一个概率比）</td><td>1 次（一步到位）</td></tr>
-            <tr><td>PPO</td><td>完整轨迹</td><td>同 TRPO 拆为独立样本 → mini-batch SGD</td><td>单步（clip 保护）</td><td>3-10 epochs</td></tr>
-            <tr><td>GRPO</td><td>同 prompt 多条输出</td><td>组内相对排名算 $\hat{A}_i$ → 类 PPO clip 优化</td><td>单步</td><td>多轮</td></tr>
-            <tr><td>DPO</td><td>偏好对 $(y_w, y_l)$</td><td>直接对偏好对做分类式训练（无需 RL 采样循环）</td><td>无（离线监督学习）</td><td>多轮</td></tr>
+            <tr><td>REINFORCE</td><td>1992</td><td>完整轨迹</td><td>整条轨迹算 $G_t$ → 一步梯度 → 丢弃</td><td>无（on-policy）</td><td>1 次</td><td>教学经典；实际很少直接使用（方差太大）</td></tr>
+            <tr><td>TRPO</td><td>2015</td><td>完整轨迹</td><td>拆为独立 $(s_t,a_t,\hat{A}_t)$ → 约束优化</td><td>单步（一个概率比）</td><td>1 次</td><td>理论里程碑；已被 PPO 取代，工业几乎不用</td></tr>
+            <tr><td>PPO</td><td>2017</td><td>完整轨迹</td><td>同 TRPO 拆为独立样本 → mini-batch SGD</td><td>单步（clip 保护）</td><td>3-10 epochs</td><td><strong>通用主力</strong>：ChatGPT/Claude RLHF、游戏 AI（OpenAI Five/Dota2）、机器人控制</td></tr>
+            <tr><td>GRPO</td><td>2024</td><td>同 prompt 多条输出</td><td>组内相对排名算 $\hat{A}_i$ → 类 PPO clip</td><td>单步</td><td>多轮</td><td><strong>LLM 推理主流</strong>：DeepSeek-R1、Qwen-2.5 系列；无需 Critic，适合大模型</td></tr>
+            <tr><td>DPO</td><td>2023</td><td>偏好对 $(y_w, y_l)$</td><td>直接分类式训练（无 RL 采样循环）</td><td>无（离线监督）</td><td>多轮</td><td><strong>轻量对齐</strong>：Llama-3、Zephyr、Mistral；资源有限时首选</td></tr>
+            <tr><td>RLHF(PPO)</td><td>2022</td><td>在线生成 + RM 打分</td><td>PPO 优化（需 4 模型：Actor/Critic/RM/Ref）</td><td>单步</td><td>多轮</td><td><strong>对话对齐</strong>：InstructGPT、ChatGPT、Claude 早期版本</td></tr>
         </tbody>
     </table>
 
