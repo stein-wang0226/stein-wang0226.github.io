@@ -1724,7 +1724,20 @@
 
     <h3>GAE：Advantage 的实用计算方法</h3>
 
-    <p>理论上 $A_t = G_t - V(s_t)$，但实践中需要在偏差和方差之间权衡。GAE 通过 $\lambda$ 参数平滑这个权衡：</p>
+    <p>理论上 $A^\pi(s,a) = Q(s,a) - V(s)$ 是精确值，实践中只能用采样数据来估计 $\hat{A}_t$。三种主要估计方式：</p>
+
+    <table>
+        <thead>
+            <tr><th>估计方式</th><th>公式</th><th>偏差</th><th>方差</th><th>直觉</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>MC 估计</td><td>$\hat{A}_t = G_t - V(s_t)$</td><td>无偏</td><td>高</td><td>用实际完整回报，但每条轨迹差异大</td></tr>
+            <tr><td>TD 估计（1步）</td><td>$\hat{A}_t = r_t + \gamma V(s_{t+1}) - V(s_t)$</td><td>有偏</td><td>低</td><td>只看一步真实奖励，剩余靠 Critic 估计（Critic 不准→偏差）</td></tr>
+            <tr><td>GAE（$\lambda$ 插值）</td><td>$\hat{A}_t = \sum_l (\gamma\lambda)^l \delta_{t+l}$</td><td>可调</td><td>可调</td><td>$\lambda=0$ → 纯 TD；$\lambda=1$ → 纯 MC；$\lambda=0.95$ → 实践最优折中</td></tr>
+        </tbody>
+    </table>
+
+    <p>GAE 通过 $\lambda$ 参数在这两个极端之间平滑权衡：</p>
 
     <div class="formula-box key">
         <div class="label">GAE 公式</div>
