@@ -1470,18 +1470,41 @@
     <p>REINFORCE 每次更新后必须扔掉数据重新采样（on-policy），非常浪费。能不能用旧策略采的数据来评估新策略？</p>
 
     <div class="formula-box">
-        <div class="label">重要性采样推导</div>
-        <p>从策略梯度出发：</p>
+        <div class="label">重要性采样推导（逐步展开）</div>
+
+        <p><strong>Step 1：回顾策略梯度</strong></p>
+        <p>我们已知策略梯度可以写成（用 Advantage 替代 $G_t$，因为减去 baseline 不改变期望）：</p>
         $$\nabla_\theta J = \mathbb{E}_{a \sim \pi_\theta}\left[\nabla_\theta\log\pi_\theta(a|s) \cdot A^\pi(s,a)\right]$$
-        <p>我们想用旧策略 $\pi_{\theta_{old}}$ 采的数据来估计这个期望。重要性采样公式：</p>
-        $$\mathbb{E}_{a \sim \pi_\theta}[f(a)] = \mathbb{E}_{a \sim \pi_{\theta_{old}}}\left[\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} \cdot f(a)\right]$$
-        <p>代入策略梯度，并利用 $\nabla_\theta\log\pi_\theta = \frac{\nabla_\theta\pi_\theta}{\pi_\theta}$，整理后得到：</p>
-        $$J(\theta) - J(\theta_{old}) \approx \mathbb{E}_{(s,a) \sim \pi_{\theta_{old}}}\left[\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} \cdot A^{\pi_{\theta_{old}}}(s,a)\right]$$
+
+        <p><strong>Step 2：重要性采样的通用公式</strong></p>
+        <p>数学定理：如果想用分布 $q$ 的样本来估计分布 $p$ 下的期望，可以通过"概率比"修正：</p>
+        $$\mathbb{E}_{x \sim p}[f(x)] = \mathbb{E}_{x \sim q}\left[\frac{p(x)}{q(x)} \cdot f(x)\right]$$
         <div class="formula-annotation">
-            <div class="item"><span class="symbol">$\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)}$</span>概率比——修正因子。数据是旧策略采的，新旧概率比用来"校正"分布差异</div>
-            <div class="item"><span class="symbol">$A^{\pi_{\theta_{old}}}$</span>在旧策略下计算的 advantage</div>
-            <div class="item"><span class="symbol">直觉</span>新策略比旧策略更喜欢做好动作（$A>0$时增大概率比）→ 目标增大 → 策略改进</div>
-            <div class="item"><span class="symbol">近似条件</span>$\pi_\theta$ 和 $\pi_{\theta_{old}}$ 不能差太远，否则重要性采样的方差会爆炸</div>
+            <div class="item"><span class="symbol">$p(x)$</span>目标分布——我们想算期望的那个分布（这里是新策略 $\pi_\theta$）</div>
+            <div class="item"><span class="symbol">$q(x)$</span>采样分布——我们实际用来采数据的分布（这里是旧策略 $\pi_{\theta_{old}}$）</div>
+            <div class="item"><span class="symbol">$f(x)$</span>任意函数——我们想计算其期望的那个量</div>
+            <div class="item"><span class="symbol">$\frac{p(x)}{q(x)}$</span>重要性权重——用来补偿"我从错误的分布采样"带来的偏差</div>
+            <div class="item"><span class="symbol">证明</span>$\mathbb{E}_{q}\left[\frac{p(x)}{q(x)}f(x)\right] = \int q(x)\cdot\frac{p(x)}{q(x)}\cdot f(x)\,dx = \int p(x)\cdot f(x)\,dx = \mathbb{E}_p[f(x)]$&thinsp;——$q$ 约分</div>
+        </div>
+
+        <p><strong>Step 3：代入我们的场景</strong></p>
+        <p>令 $p = \pi_\theta$（新策略），$q = \pi_{\theta_{old}}$（旧策略），$f(a) = \nabla_\theta\log\pi_\theta(a|s) \cdot A^\pi(s,a)$：</p>
+        $$\mathbb{E}_{a \sim \pi_\theta}[\underbrace{\nabla_\theta\log\pi_\theta \cdot A}_{f(a)}] = \mathbb{E}_{a \sim \pi_{\theta_{old}}}\left[\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} \cdot \nabla_\theta\log\pi_\theta(a|s) \cdot A(s,a)\right]$$
+
+        <p><strong>Step 4：化简 — 从梯度到目标函数</strong></p>
+        <p>利用 $\nabla_\theta\log\pi_\theta = \frac{\nabla_\theta\pi_\theta}{\pi_\theta}$，概率比 $\frac{\pi_\theta}{\pi_{\theta_{old}}}$ 乘以 $\frac{\nabla_\theta\pi_\theta}{\pi_\theta}$ 会变成 $\frac{\nabla_\theta\pi_\theta}{\pi_{\theta_{old}}}$。</p>
+        <p>更关键的观察：如果我们定义一个<strong>代理目标函数</strong>（surrogate objective）：</p>
+        $$L(\theta) = \mathbb{E}_{(s,a) \sim \pi_{\theta_{old}}}\left[\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} \cdot A^{\pi_{\theta_{old}}}(s,a)\right]$$
+        <p>那么 $L(\theta)$ 在 $\theta = \theta_{old}$ 处的梯度恰好等于真实策略梯度 $\nabla_\theta J$。并且：</p>
+        $$J(\theta) - J(\theta_{old}) \approx L(\theta)$$
+        <p>（当 $\pi_\theta$ 接近 $\pi_{\theta_{old}}$ 时，$L(\theta)$ 是策略改进量 $J(\theta)-J(\theta_{old})$ 的一阶近似。）</p>
+
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)}$</span>概率比（importance weight）——数据是旧策略采的，新旧概率比用来"校正"分布差异</div>
+            <div class="item"><span class="symbol">$A^{\pi_{\theta_{old}}}(s,a)$</span>在旧策略下计算的 advantage（用旧数据的 GAE 估计出来）</div>
+            <div class="item"><span class="symbol">$L(\theta)$</span>代理目标——最大化它就近似于最大化真实目标 $J(\theta)$，但只需要旧数据！</div>
+            <div class="item"><span class="symbol">直觉</span>新策略比旧策略更喜欢做好动作（$A>0$ 时增大概率比）→ $L$ 增大 → 策略改进</div>
+            <div class="item"><span class="symbol">近似条件</span>$\pi_\theta$ 和 $\pi_{\theta_{old}}$ 不能差太远，否则一阶近似不准 + 方差爆炸</div>
         </div>
     </div>
 
