@@ -1518,6 +1518,9 @@
         <p>那么 $L(\theta)$ 在 $\theta = \theta_{old}$ 处的梯度恰好等于真实策略梯度 $\nabla_\theta J$。并且：</p>
         $$J(\theta) - J(\theta_{old}) \approx L(\theta)$$
         <p>（当 $\pi_\theta$ 接近 $\pi_{\theta_{old}}$ 时，$L(\theta)$ 是策略改进量 $J(\theta)-J(\theta_{old})$ 的一阶近似。）</p>
+        <p style="font-size:0.92em;color:#475569;margin-top:4px;">
+            <strong>$J(\theta)$ 的单步形式：</strong>$J(\theta) = \mathbb{E}_{s\sim d^{\pi_\theta},\,a\sim\pi_\theta(\cdot|s)}[r(s,a)]$。注意 $J$ 里的状态分布是 $d^{\pi_\theta}$（新策略的），而 $L$ 里用的是 $d^{\pi_{old}}$（旧策略的）。近似 $L \approx J-J_{old}$ 成立的前提：$\pi_\theta \approx \pi_{old}$ 时 $d^{\pi_\theta} \approx d^{\pi_{old}}$。这也是 KL 约束的深层原因——不仅控制动作分布差异（IS 方差），还保证状态分布近似有效。
+        </p>
 
         <div class="formula-annotation">
             <div class="item"><span class="symbol">$\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)}$</span>概率比（importance weight）——数据是旧策略采的，新旧概率比用来"校正"分布差异</div>
