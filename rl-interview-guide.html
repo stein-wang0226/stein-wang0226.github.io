@@ -1252,6 +1252,20 @@
         不再是"扔到靶子上就加强"，而是"比你平时水平好就加强，比平时差就削弱"。一个得分 96 和一个得分 104 的动作，如果平均水平是 100，现在就能清楚区分：-4 vs +4。
     </div>
 
+    <h4>为什么减去 $V(s)$ 能大幅降低方差？</h4>
+    <p>核心原因：<strong>信噪比提升</strong>。$\mathbb{E}[A_t | s_t] = \mathbb{E}[G_t | s_t] - V(s_t) = 0$，即 Advantage 的条件期望为零。</p>
+    <div class="formula-box">
+        <div class="label">直觉理解：从"全正"到"有正有负"</div>
+        <p>假设某状态下，做任何动作回报都在 95~105 之间：</p>
+        <p><strong>不减 $V$（用 $G_t$）：</strong>所有动作都获得正向信号 → 所有概率都在增大 → 梯度方向混乱，模型无法区分好坏</p>
+        <p><strong>减去 $V(s)\approx100$：</strong>信号变为 -5 ~ +5 → 好动作正向强化，坏动作负向抑制 → 梯度方向清晰</p>
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">数学本质</span>$\text{Var}(G_t - V) = \text{Var}(G_t)$（减常数不改变方差），但梯度权重从 $[95, 105]$ 变成 $[-5, +5]$，相对差异从 $\frac{10}{100}=10\%$ 放大到 $\frac{10}{5}=200\%$</div>
+            <div class="item"><span class="symbol">类比</span>考了 98 分好吗？没有参照就无法判断。班均 60 → 优秀，班均 99 → 偏差。$V(s)$ 就是"班级平均分"</div>
+            <div class="item"><span class="symbol">面试要点</span>减去 baseline 不改变梯度的<strong>期望</strong>（Score Function Lemma 保证），但让权重以零为中心 → 梯度估计的方差更小 → 更少样本即可收敛</div>
+        </div>
+    </div>
+
     <h4>Advantage 的正式定义：$A(s,a) = Q(s,a) - V(s)$</h4>
     <p>上面的 $A_t = G_t - V(s_t)$ 其实是下面这个正式定义的<strong>采样估计</strong>：</p>
 
