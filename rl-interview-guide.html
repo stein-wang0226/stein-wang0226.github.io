@@ -2466,6 +2466,36 @@
         <h4>Q: 为什么 RLVR 能让模型涌现推理能力？</h4>
         <p>复杂题目直接猜答案几乎不可能得分，而"先思考、分步骤、验证中间结果"是唯一能稳定提升正确率的策略。RL 的探索机制自然会发现并强化这种模式。模型不是被教会推理的，而是在 reward 信号引导下自己发现"推理=高 reward"。</p>
     </div>
+
+    <div class="step-card">
+        <h4>Q: DPO 是 on-policy 还是 off-policy？</h4>
+        <p><strong>DPO 是 off-policy。</strong>它用固定偏好数据集（离线数据）训练，不需要在线采样。这和 RLHF/PPO/GRPO 的 on-policy 范式完全不同——DPO 的训练范式本质是监督学习，优化目标直接来自离线偏好对 $(x, y_w, y_l)$。优点是数据可复用、无需在线采样；劣势是分布偏移后效果可能下降。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>Q: Reference Model（参考模型）的作用是什么？</h4>
+        <p>Reference Model 是 SFT 模型的冻结副本，在 PPO 训练中用 KL 惩罚约束 Actor 不偏离太远。两个核心作用：(1) <strong>防止 Reward Hacking</strong>——没有 KL 约束时模型会学会讨好 RM 的极端行为（如反复说"您说得对"）；(2) <strong>防止遗忘</strong>——约束模型不要完全丢失 SFT 阶段学到的基本能力。RLHF 需要同时维护 4 个模型，Reference Model 是其中开销最小的（只需推理不需要梯度）。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>Q: DPO 的局限性是什么？</h4>
+        <p>(1) <strong>隐式 Reward 不可解释</strong>——DPO 消掉了 $Z(x)$，无法得到 reward 的绝对值，不能用于拒绝采样；(2) <strong>静态数据集限制</strong>——DPO 用离线数据训练，分布偏移后效果下降，不能像 RLHF 那样在线采样新数据；(3) <strong>奖励信号压缩</strong>——DPO 把连续 reward 压缩成二值偏好（好/差），丢失了 fine-grained 信息。这就是 GRPO 重新流行的原因之一——GRPO 保留了连续 reward 信号，同时省掉了 RM 和 Critic。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>Q: 为什么 GRPO 容易训飞（reward 突然掉下来）？</h4>
+        <p>GRPO 训练不稳定的常见原因：(1) <strong>组内 reward 方差过大</strong>——如果组内有的回答极好、有的极差，标准化后的 advantage 噪声大，梯度方向不稳定；(2) <strong>KL 系数 $\beta$ 太小</strong>——约束不够时策略容易走偏；(3) <strong>组大小 $G$ 太小</strong>——标准化分母接近零时 advantage 爆炸；(4) <strong>reward 稀疏</strong>——大部分回答都是 0 分，梯度信号弱。工程实践：用更大的 $G$（64+）、适当增大 $\beta$、reward smoothing、梯度裁剪。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>Q: 多目标 Reward 冲突怎么处理？</h4>
+        <p>实际任务中常需同时优化多个目标（如有用+无害+诚实），这些目标可能冲突。常见方案：(1) <strong>加权求和</strong>——$r = w_1 r_1 + w_2 r_2 + \dots$，简单但权重难调；(2) <strong>Pareto 优化</strong>——不追求单一最优，找 Pareto 前沿上的解；(3) <strong>分层 Reward</strong>——先满足安全底线（无害），再优化质量（有用）；(4) <strong>GDPO（Generalized DPO）</strong>——多偏好维度下直接优化策略。实践中加权求和最常用，但权重需要仔细调参。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>Q: PPO 训练不稳定的常见原因？</h4>
+        <p>(1) <strong>Critic 估计不准</strong>——value loss 权重太小或 learning rate 太大导致 Critic 不收敛，Advantage 计算错误；(2) <strong>Clip $\epsilon$ 太大</strong>——约束失效，策略更新过猛；(3) <strong>Batch size 太小</strong>——Advantage 估计方差大；(4) <strong>Learning rate 太大</strong>——策略更新后偏离 $\pi_{old}$ 太远，importance sampling 权重爆炸；(5) <strong>GAE $\lambda$ 不合适</strong>——$\lambda$ 太大引入高方差，太小引入高偏差。工程实践：先用小 learning rate + 大 batch + 适中 $\epsilon$（0.1-0.2），稳定后再调参。</p>
+    </div>
 </section>
 
 <footer>
