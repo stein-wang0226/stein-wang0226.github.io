@@ -1819,7 +1819,7 @@
       <text x="648" y="180" font-size="9" fill="#94a3b8" font-family="system-ui" writing-mode="tb">循环</text>
     </svg>
 
-    <h3>PPO 总损失函数</h3>
+    <h3>PPO 总目标函数</h3>
     <div class="formula-box">
         <div class="label">三项加权</div>
         $$L^{total} = \underbrace{L^{CLIP}}_{\text{策略更新}} - c_1 \cdot \underbrace{L^{VF}}_{\text{Critic 训练}} + c_2 \cdot \underbrace{S[\pi_\theta]}_{\text{熵奖励}}$$
@@ -1828,6 +1828,7 @@
             <div class="item"><span class="symbol">$L^{VF} = (V_\phi(s_t) - G_t)^2$</span>Critic 的均方误差损失——训练价值网络</div>
             <div class="item"><span class="symbol">$S[\pi_\theta] = -\sum_a \pi(a|s)\log\pi(a|s)$</span>策略的熵——鼓励探索，避免过早收敛到单一动作</div>
             <div class="item"><span class="symbol">$c_1, c_2$</span>平衡系数。$c_1 \approx 0.5$，$c_2 \approx 0.01$</div>
+            <div class="item"><span class="symbol">命名说明</span>论文称 $L^{total}$ 为"目标函数"（要<strong>最大化</strong>），但代码中通常写成 <code>loss = -L^{total}</code> 做最小化（优化框架默认行为）。标题写"总损失函数"是代码习惯的叫法</div>
         </div>
     </div>
 
@@ -1847,7 +1848,28 @@
         <div class="formula-annotation">
             <div class="item"><span class="symbol">$-\beta\log\frac{\pi_\theta}{\pi_{ref}}$</span>KL 惩罚——偏离参考模型越远惩罚越大，防止 reward hacking</div>
             <div class="item"><span class="symbol">$r_{RM}(x,y)$</span>Reward Model 给整条回答的打分——只在最后一步给出</div>
-            <div class="item"><span class="symbol">$\beta$</span>KL 强度。越大约束越紧，模型越保守</div>
+            <div class="item"><span class="symbol">$\beta$</span>KL 强度。越大约束越紧，模型越保守。详解见下方</div>
+        </div>
+    </div>
+
+    <h4>RLHF Reward 结构详解</h4>
+    <p>LLM 生成是序列决策问题：状态是"当前已生成的 token 序列"，动作是"下一个 token"。一次完整对话生成有 $T$ 步（比如生成 500 个 token），Reward 的设计非常特殊：</p>
+
+    <div class="formula-box">
+        <div class="label">Reward 分两步</div>
+        <p><strong>中间步（$t < T$）：只有 KL 惩罚</strong></p>
+        <p>$$R_t = -\beta \log\frac{\pi_\theta(a_t|s_t)}{\pi_{ref}(a_t|s_t)}$$</p>
+        <p>每一步只惩罚"新策略比参考策略更确定地选了某个 token"。如果 $\pi_\theta$ 对某个 token 的概率是 $\pi_{ref}$ 的 10 倍，$\log 10 \approx 2.3$，乘以 $-\beta$ 就是负的惩罚。这确保模型不会"走偏"——不会学出一些参考模型完全不会的奇怪输出。</p>
+
+        <p><strong>最后一步（$t = T$）：RM 打分 + KL 惩罚</strong></p>
+        <p>$$R_T = r_{RM}(x, y) - \beta \log\frac{\pi_\theta(a_T|s_T)}{\pi_{ref}(a_T|s_T)}$$</p>
+        <p>整条回答生成完毕后，Reward Model 给整体质量打分（比如 +5 = 好回答，-3 = 有害回答）。这是唯一一次"真正的奖励"，前面所有步骤都只有 KL 惩罚在"拖后腿"。</p>
+
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">直观理解</span>整个生成过程像"走钢丝"——每步都有 KL 惩罚拉着你不让你偏离参考模型太远，走到终点时 RM 给一个总评。策略优化的目标：在 KL 预算内，走到终点时 RM 打分最高</div>
+            <div class="item"><span class="symbol">KL 惩罚的直观形式</span>$\log\frac{\pi_\theta}{\pi_{ref}}$ ≈ 近似 KL 散度。当 $\pi_\theta = \pi_{ref}$ 时 = 0（无惩罚）；$\pi_\theta$ 越偏离 $\pi_{ref}$，惩罚越大</div>
+            <div class="item"><span class="symbol">为什么叫 Reward Hacking</span>如果没有 KL 惩罚，模型可能学会"讨好 RM"的极端行为（比如反复说"您说得对"），KL 约束强迫模型保持参考模型的输出风格</div>
+            <div class="item"><span class="symbol">$\beta$ 的典型值</span>RLHF 中 $\beta \approx 0.01\sim0.05$（约束较松，允许策略有探索空间）；DPO 中 $\beta$ 是超参数，控制 DPO 损失中隐式 KL 惩罚的强度</div>
         </div>
     </div>
 </section>
