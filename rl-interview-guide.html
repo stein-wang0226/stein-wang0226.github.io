@@ -1545,8 +1545,9 @@
         <p><strong>⑤ 丢弃旧数据，回到 ①</strong></p>
         <div class="formula-annotation">
             <div class="item"><span class="symbol">$L(\theta)$ 的角色</span><strong>不是评估指标，而是优化目标</strong>——你最大化 $L(\theta)$ 就是在更新策略。它把"用旧数据改进策略"转化为一个标准最优化问题</div>
-            <div class="item"><span class="symbol">vs REINFORCE</span>REINFORCE 也是采数据 → 算梯度 → 更新，但每次只走一个小梯度步（学习率控制）。TRPO 则在信任域内"一步到位"找最优解</div>
+            <div class="item"><span class="symbol">vs REINFORCE</span>REINFORCE 算一个梯度 → 走一小步（lr=0.001，人工调参）→ 数据即弃。TRPO 用共轭梯度算自然梯度方向（考虑参数空间曲率）+ 线搜索确定最大安全步长 → 信任域内一步到位，"榨干"这批数据的价值</div>
             <div class="item"><span class="symbol">vs PPO</span>PPO 同样最大化 $L(\theta)$，但用 clip 替代 KL 约束 → 可以对同一批数据跑多轮 mini-batch SGD（3-10 epochs），数据效率更高</div>
+            <div class="item"><span class="symbol">面试总结</span>REINFORCE = 小步慢走（方向对但步子小）；TRPO = 每批数据一步到位（方向+步长都最优，但只用一次）；PPO = 同一批数据反复多轮训练（clip 保证安全）</div>
         </div>
     </div>
 
