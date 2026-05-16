@@ -720,8 +720,8 @@
     <a href="#pg-to-ppo">3. PG → PPO 演进</a>
     <a href="#ppo-detail">4. PPO 详解</a>
     <a href="#grpo">5. GRPO 详解</a>
-    <a href="#rlvr">6. RLVR 范式</a>
-    <a href="#rlhf">7. RLHF 流程</a>
+    <a href="#rlhf">6. RLHF 流程</a>
+    <a href="#rlvr">7. RLVR 范式</a>
     <a href="#dpo">8. DPO 推导</a>
     <a href="#reward">9. Reward 设计</a>
     <a href="#comparison">10. 算法对比</a>
@@ -752,8 +752,8 @@
         <li><a href="#pg-to-ppo">策略梯度到 PPO 演进</a></li>
         <li><a href="#ppo-detail">PPO 完全详解</a></li>
         <li><a href="#grpo">GRPO 详解</a></li>
-        <li><a href="#rlvr">RLVR 范式详解</a></li>
         <li><a href="#rlhf">RLHF 完整流程</a></li>
+        <li><a href="#rlvr">RLVR 范式详解</a></li>
         <li><a href="#dpo">DPO 公式推导</a></li>
         <li><a href="#reward">Reward 设计方法论</a></li>
         <li><a href="#comparison">算法对比总结</a></li>
@@ -1833,7 +1833,7 @@
     </div>
 
     <h3>PPO 在 RLHF 中的应用</h3>
-    <p>PPO 是 RLHF 第三步（策略优化阶段）使用的核心算法。RLHF 使用 <strong>ORM（Outcome Reward Model，结果奖励模型）</strong>——只在整条回复生成完毕后打分，中间步骤只有 KL 惩罚。详见 <a href="#rlhf" style="color:var(--accent);font-weight:600;">第 7 节 RLHF 完整流程</a>。关于 ORM vs PRM（过程奖励模型）的区别也在那里。</p>
+    <p>PPO 是 RLHF 第三步（策略优化阶段）使用的核心算法。RLHF 使用 <strong>ORM（Outcome Reward Model，结果奖励模型）</strong>——只在整条回复生成完毕后打分，中间步骤只有 KL 惩罚。详见 <a href="#rlhf" style="color:var(--accent);font-weight:600;">第 6 节 RLHF 完整流程</a>。关于 ORM vs PRM（过程奖励模型）的区别也在那里。</p>
 </section>
 
 <!-- ==================== Section 5: GRPO ==================== -->
@@ -1937,9 +1937,105 @@
     </table>
 </section>
 
-<!-- ==================== Section 6: RLVR ==================== -->
+<!-- ==================== Section 6: RLHF ==================== -->
+<section id="rlhf">
+    <h2>6. RLHF（Reinforcement Learning from Human Feedback，人类反馈强化学习）完整流程</h2>
+
+    <div class="step-card">
+        <div class="step-number">1</div>
+        <h4 style="padding-top:8px">SFT（Supervised Fine-Tuning）</h4>
+        <p>用人工标注的高质量 (prompt, response) 对做监督微调 → 得到 $\pi_{SFT}$</p>
+        <p><strong>直觉：</strong>让模型先学会"说人话"，有基本的指令跟随能力。</p>
+    </div>
+
+    <div class="step-card">
+        <div class="step-number">2</div>
+        <h4 style="padding-top:8px">训练 Reward Model</h4>
+        <p>同一 prompt 生成多个回复 → 人类排序 → 训练打分器</p>
+
+        <h5>数据收集</h5>
+        <p>对每个 prompt $x$，用 SFT 模型生成 $K$ 个回复 $\{y_1, \dots, y_K\}$，人类标注者从中选出最好的 $y_w$（winner）和最差的 $y_l$（loser），形成偏好对 $(x, y_w, y_l)$。收集数千到数万对这样的数据。</p>
+
+        <h5>Bradley-Terry 模型推导</h5>
+        <p>人类偏好可以用概率模型刻画——给定两个回复 $y_w$ 和 $y_l$，人认为 $y_w$ 更好的概率：</p>
+        <div class="formula-box">
+            <div class="label">Bradley-Terry 偏好概率</div>
+            $$P(y_w \succ y_l \mid x) = \frac{\exp(r(x, y_w))}{\exp(r(x, y_w)) + \exp(r(x, y_l))} = \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr)$$
+            <div class="formula-annotation">
+                <div class="item"><span class="symbol">$\sigma(z) = \frac{1}{1+e^{-z}}$</span>sigmoid 函数——把任意实数映射到 (0, 1)</div>
+                <div class="item"><span class="symbol">$r(x, y_w) - r(x, y_l) > 0$</span>分数差为正 → $P > 0.5$，人更可能选 $y_w$</div>
+                <div class="item"><span class="symbol">$r(x, y_w) - r(x, y_l) \gg 0$</span>差越大 → $P \to 1$，人几乎一定选 $y_w$</div>
+                <div class="item"><span class="symbol">$r(x, y_w) - r(x, y_l) \approx 0$</span>差接近零 → $P \to 0.5$，两个回答差不多好</div>
+            </div>
+        </div>
+
+        <h5>从偏好概率到训练损失</h5>
+        <p>给定一个偏好对 $(x, y_w, y_l)$，我们希望 RM 预测的偏好概率尽可能接近 1（即人选 $y_w$ 这件事应该被 RM 高概率预测）。用<strong>负对数似然</strong>作为损失：</p>
+        <div class="formula-box">
+            <div class="label">RM 损失函数</div>
+            $$L_{RM} = -\mathbb{E}_{(x, y_w, y_l)}\left[\log P(y_w \succ y_l \mid x)\right] = -\mathbb{E}\left[\log \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr)\right]$$
+            <div class="formula-annotation">
+                <div class="item"><span class="symbol">直觉</span>最大化 $\log\sigma(\text{分数差})$ → 让好回答分数远高于差回答</div>
+                <div class="item"><span class="symbol">当 $r(y_w)-r(y_l) \to +\infty$</span>$\sigma \to 1$，$\log\sigma \to 0$，损失最小</div>
+                <div class="item"><span class="symbol">当 $r(y_w)-r(y_l) \to -\infty$</span>$\sigma \to 0$，$\log\sigma \to -\infty$，损失极大</div>
+                <div class="item"><span class="symbol">RM 的参数化</span>$r(x,y)$ 通常就是 SFT 模型加一个线性头（scalar output），从预训练好的语言模型初始化</div>
+            </div>
+        </div>
+        <p><strong>直觉：</strong>训练一个"裁判"，通过看大量人类偏好对学会了什么是"好回答"。</p>
+    </div>
+
+    <div class="step-card">
+        <div class="step-number">3</div>
+        <h4 style="padding-top:8px">PPO 优化策略</h4>
+        <p>用 RM 的打分作为奖励，PPO 优化 LLM 生成策略。加 KL 惩罚防止 reward hacking。</p>
+        <p>需要同时维护 4 个模型：Actor + Critic + Reference Model + Reward Model。</p>
+
+        <h5>PPO 阶段的 Reward 设计</h5>
+        <p>LLM 生成是序列决策问题——每一步选一个 token，生成 $T$ 步后得到完整回复。Reward 分为两部分：</p>
+        <div class="formula-box">
+            <div class="label">每步 Reward（含 KL 惩罚）</div>
+            $$R_t = \begin{cases} -\beta \log\dfrac{\pi_\theta(a_t|s_t)}{\pi_{ref}(a_t|s_t)} & t < T \text{（中间步：仅 KL 惩罚）}\\[10pt] r_{RM}(x, y) - \beta \log\dfrac{\pi_\theta(a_T|s_T)}{\pi_{ref}(a_T|s_T)} & t = T \text{（最后一步：RM 打分 + KL 惩罚）}\end{cases}$$
+            <div class="formula-annotation">
+                <div class="item"><span class="symbol">$\pi_\theta$</span>正在训练的 Actor 策略</div>
+                <div class="item"><span class="symbol">$\pi_{ref}$</span>参考模型 = SFT 模型，<strong>冻结不动</strong>，用作 KL 约束的锚</div>
+                <div class="item"><span class="symbol">$\log\frac{\pi_\theta}{\pi_{ref}}$</span>概率比值取 log——衡量 $\pi_\theta$ 偏离 $\pi_{ref}$ 的程度</div>
+                <div class="item"><span class="symbol">当 $\pi_\theta > \pi_{ref}$</span>比值 > 1，log > 0，$-\beta \log(\cdot)$ 是负奖励（惩罚），防止模型对某些 token"过度自信"</div>
+                <div class="item"><span class="symbol">当 $\pi_\theta < \pi_{ref}$</span>比值 < 1，log < 0，$-\beta \log(\cdot)$ 是正奖励，鼓励模型降低对某些 token 的偏好</div>
+                <div class="item"><span class="symbol">本质</span>不是"让输出不要太确定"，而是<strong>分布对齐</strong>——强迫 $\pi_\theta$ 的 token 概率分布形状接近 $\pi_{ref}$，防止"走偏"成参考模型完全不会的奇怪输出</div>
+                <div class="item"><span class="symbol">$r_{RM}(x, y)$</span>Reward Model 给整条回复的打分，只在最后一步 $t=T$ 时给出</div>
+                <div class="item"><span class="symbol">$\beta$</span>KL 强度系数。典型值 0.01~0.05，越大约束越紧</div>
+                <div class="item"><span class="symbol">直觉</span>整个过程像"走钢丝"——每步 KL 拉着你别偏离 SFT 风格太远，走到终点时 RM 给一个总评。优化的目标：在 KL 预算内，让 RM 打分尽可能高</div>
+                <div class="item"><span class="symbol">Reward Hacking</span>如果没有 KL 约束，模型会学会讨好 RM 的极端行为（如反复说"您说得对"），KL 强迫模型保持输出风格</div>
+                <div class="item"><span class="symbol">为什么叫"KL 惩罚"？</span>真正的 KL 散度公式是 $D_{KL}(\pi_\theta\|\pi_{ref}) = \sum_a \pi_\theta(a|s)\log\frac{\pi_\theta(a|s)}{\pi_{ref}(a|s)}$，需要对所有 token 求和。而这里的 $-\log\frac{\pi_\theta}{\pi_{ref}}$ 只算了当前 token——但它对 $\pi_\theta$ 的期望值恰好等于 $-D_{KL}$，是 KL 散度的<strong>无偏估计</strong>。实际训练每次只采样一个 token，用这一项做 reward，期望意义下和完整 KL 等价</div>
+            </div>
+        </div>
+
+        <h5>ORM vs PRM：两种 Reward 方案</h5>
+        <p>上面描述的 Reward 结构是 <strong>ORM（Outcome Reward Model，结果奖励模型）</strong>——RM 只在整条回复生成完毕后（$t=T$）打分，中间步骤只有 KL 惩罚。这是标准 RLHF 的做法。</p>
+        <p>还有一种方案叫 <strong>PRM（Process Reward Model，过程奖励模型）</strong>——中间步骤也给奖励，而不仅限于最后一步。</p>
+        <table>
+            <tr><th></th><th>ORM（结果奖励）</th><th>PRM（过程奖励）</th></tr>
+            <tr><td><strong>打分时机</strong></td><td>最后一步 $t=T$</td><td>每一步 $t=1\dots T$</td></tr>
+            <tr><td><strong>中间步 Reward</strong></td><td>仅 KL 惩罚</td><td>PRM 打分 + KL 惩罚</td></tr>
+            <tr><td><strong>最后步 Reward</strong></td><td>ORM 打分 + KL 惩罚</td><td>ORM/PRM 打分 + KL 惩罚</td></tr>
+            <tr><td><strong>适用场景</strong></td><td>通用对话、创意写作</td><td>数学推理、代码生成、多步任务</td></tr>
+            <tr><td><strong>训练数据</strong></td><td>整条回复的人类偏好排序</td><td>每步中间过程的人类标注（如推理步骤正确与否）</td></tr>
+            <tr><td><strong>典型用法</strong></td><td>标准 RLHF + PPO</td><td>RLVR（DeepSeek-R1 的 GRPO）</td></tr>
+        </table>
+        <p><strong>核心区别：</strong>ORM 看"结果好不好"，PRM 看"每一步推得对不对"。数学题中，ORM 只能判断最终答案对错，PRM 能在中间步骤就识别出"这一步推导错了"，给及时的负反馈。</p>
+        <p><strong>面试注意：</strong>RLHF 默认用 ORM；DeepSeek-R1 的 RLVR 本质是规则版 PRM——用程序验证每一步推理是否正确，不需要训练 RM。</p>
+    </div>
+
+    <div class="box-interview">
+        "RLHF 把人类偏好转化为优化信号来对齐 LLM。三步走：SFT 得基础策略，人类偏好排序训练 Reward Model，PPO 用 RM 打分做策略优化并加 KL 约束防止 reward hacking。近期趋势是用 DPO 简化流程或 GRPO 减少计算开销。"
+    </div>
+</section>
+
+<!-- ==================== Section 8: DPO ==================== -->
+
+<!-- ==================== Section 7: RLVR ==================== -->
 <section id="rlvr">
-    <h2>6. RLVR（Reinforcement Learning with Verifiable Rewards，可验证奖励强化学习）范式详解</h2>
+    <h2>7. RLVR（Reinforcement Learning with Verifiable Rewards，可验证奖励强化学习）范式详解</h2>
 
     <h3>什么是 RLVR？</h3>
     <p><strong>RLVR = Reinforcement Learning with Verifiable Rewards</strong>，即"用可验证的奖励信号做强化学习"。它不是一个具体算法，而是一个<strong>训练范式</strong>——描述的是 reward 从哪来，而不是怎么优化。</p>
@@ -2132,100 +2228,6 @@
 </section>
 
 <!-- ==================== Section 7: RLHF ==================== -->
-<section id="rlhf">
-    <h2>7. RLHF（Reinforcement Learning from Human Feedback，人类反馈强化学习）完整流程</h2>
-
-    <div class="step-card">
-        <div class="step-number">1</div>
-        <h4 style="padding-top:8px">SFT（Supervised Fine-Tuning）</h4>
-        <p>用人工标注的高质量 (prompt, response) 对做监督微调 → 得到 $\pi_{SFT}$</p>
-        <p><strong>直觉：</strong>让模型先学会"说人话"，有基本的指令跟随能力。</p>
-    </div>
-
-    <div class="step-card">
-        <div class="step-number">2</div>
-        <h4 style="padding-top:8px">训练 Reward Model</h4>
-        <p>同一 prompt 生成多个回复 → 人类排序 → 训练打分器</p>
-
-        <h5>数据收集</h5>
-        <p>对每个 prompt $x$，用 SFT 模型生成 $K$ 个回复 $\{y_1, \dots, y_K\}$，人类标注者从中选出最好的 $y_w$（winner）和最差的 $y_l$（loser），形成偏好对 $(x, y_w, y_l)$。收集数千到数万对这样的数据。</p>
-
-        <h5>Bradley-Terry 模型推导</h5>
-        <p>人类偏好可以用概率模型刻画——给定两个回复 $y_w$ 和 $y_l$，人认为 $y_w$ 更好的概率：</p>
-        <div class="formula-box">
-            <div class="label">Bradley-Terry 偏好概率</div>
-            $$P(y_w \succ y_l \mid x) = \frac{\exp(r(x, y_w))}{\exp(r(x, y_w)) + \exp(r(x, y_l))} = \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr)$$
-            <div class="formula-annotation">
-                <div class="item"><span class="symbol">$\sigma(z) = \frac{1}{1+e^{-z}}$</span>sigmoid 函数——把任意实数映射到 (0, 1)</div>
-                <div class="item"><span class="symbol">$r(x, y_w) - r(x, y_l) > 0$</span>分数差为正 → $P > 0.5$，人更可能选 $y_w$</div>
-                <div class="item"><span class="symbol">$r(x, y_w) - r(x, y_l) \gg 0$</span>差越大 → $P \to 1$，人几乎一定选 $y_w$</div>
-                <div class="item"><span class="symbol">$r(x, y_w) - r(x, y_l) \approx 0$</span>差接近零 → $P \to 0.5$，两个回答差不多好</div>
-            </div>
-        </div>
-
-        <h5>从偏好概率到训练损失</h5>
-        <p>给定一个偏好对 $(x, y_w, y_l)$，我们希望 RM 预测的偏好概率尽可能接近 1（即人选 $y_w$ 这件事应该被 RM 高概率预测）。用<strong>负对数似然</strong>作为损失：</p>
-        <div class="formula-box">
-            <div class="label">RM 损失函数</div>
-            $$L_{RM} = -\mathbb{E}_{(x, y_w, y_l)}\left[\log P(y_w \succ y_l \mid x)\right] = -\mathbb{E}\left[\log \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr)\right]$$
-            <div class="formula-annotation">
-                <div class="item"><span class="symbol">直觉</span>最大化 $\log\sigma(\text{分数差})$ → 让好回答分数远高于差回答</div>
-                <div class="item"><span class="symbol">当 $r(y_w)-r(y_l) \to +\infty$</span>$\sigma \to 1$，$\log\sigma \to 0$，损失最小</div>
-                <div class="item"><span class="symbol">当 $r(y_w)-r(y_l) \to -\infty$</span>$\sigma \to 0$，$\log\sigma \to -\infty$，损失极大</div>
-                <div class="item"><span class="symbol">RM 的参数化</span>$r(x,y)$ 通常就是 SFT 模型加一个线性头（scalar output），从预训练好的语言模型初始化</div>
-            </div>
-        </div>
-        <p><strong>直觉：</strong>训练一个"裁判"，通过看大量人类偏好对学会了什么是"好回答"。</p>
-    </div>
-
-    <div class="step-card">
-        <div class="step-number">3</div>
-        <h4 style="padding-top:8px">PPO 优化策略</h4>
-        <p>用 RM 的打分作为奖励，PPO 优化 LLM 生成策略。加 KL 惩罚防止 reward hacking。</p>
-        <p>需要同时维护 4 个模型：Actor + Critic + Reference Model + Reward Model。</p>
-
-        <h5>PPO 阶段的 Reward 设计</h5>
-        <p>LLM 生成是序列决策问题——每一步选一个 token，生成 $T$ 步后得到完整回复。Reward 分为两部分：</p>
-        <div class="formula-box">
-            <div class="label">每步 Reward（含 KL 惩罚）</div>
-            $$R_t = \begin{cases} -\beta \log\dfrac{\pi_\theta(a_t|s_t)}{\pi_{ref}(a_t|s_t)} & t < T \text{（中间步：仅 KL 惩罚）}\\[10pt] r_{RM}(x, y) - \beta \log\dfrac{\pi_\theta(a_T|s_T)}{\pi_{ref}(a_T|s_T)} & t = T \text{（最后一步：RM 打分 + KL 惩罚）}\end{cases}$$
-            <div class="formula-annotation">
-                <div class="item"><span class="symbol">$\pi_\theta$</span>正在训练的 Actor 策略</div>
-                <div class="item"><span class="symbol">$\pi_{ref}$</span>参考模型 = SFT 模型，<strong>冻结不动</strong>，用作 KL 约束的锚</div>
-                <div class="item"><span class="symbol">$\log\frac{\pi_\theta}{\pi_{ref}}$</span>概率比值取 log——衡量 $\pi_\theta$ 偏离 $\pi_{ref}$ 的程度</div>
-                <div class="item"><span class="symbol">当 $\pi_\theta > \pi_{ref}$</span>比值 > 1，log > 0，$-\beta \log(\cdot)$ 是负奖励（惩罚），防止模型对某些 token"过度自信"</div>
-                <div class="item"><span class="symbol">当 $\pi_\theta < \pi_{ref}$</span>比值 < 1，log < 0，$-\beta \log(\cdot)$ 是正奖励，鼓励模型降低对某些 token 的偏好</div>
-                <div class="item"><span class="symbol">本质</span>不是"让输出不要太确定"，而是<strong>分布对齐</strong>——强迫 $\pi_\theta$ 的 token 概率分布形状接近 $\pi_{ref}$，防止"走偏"成参考模型完全不会的奇怪输出</div>
-                <div class="item"><span class="symbol">$r_{RM}(x, y)$</span>Reward Model 给整条回复的打分，只在最后一步 $t=T$ 时给出</div>
-                <div class="item"><span class="symbol">$\beta$</span>KL 强度系数。典型值 0.01~0.05，越大约束越紧</div>
-                <div class="item"><span class="symbol">直觉</span>整个过程像"走钢丝"——每步 KL 拉着你别偏离 SFT 风格太远，走到终点时 RM 给一个总评。优化的目标：在 KL 预算内，让 RM 打分尽可能高</div>
-                <div class="item"><span class="symbol">Reward Hacking</span>如果没有 KL 约束，模型会学会讨好 RM 的极端行为（如反复说"您说得对"），KL 强迫模型保持输出风格</div>
-                <div class="item"><span class="symbol">为什么叫"KL 惩罚"？</span>真正的 KL 散度公式是 $D_{KL}(\pi_\theta\|\pi_{ref}) = \sum_a \pi_\theta(a|s)\log\frac{\pi_\theta(a|s)}{\pi_{ref}(a|s)}$，需要对所有 token 求和。而这里的 $-\log\frac{\pi_\theta}{\pi_{ref}}$ 只算了当前 token——但它对 $\pi_\theta$ 的期望值恰好等于 $-D_{KL}$，是 KL 散度的<strong>无偏估计</strong>。实际训练每次只采样一个 token，用这一项做 reward，期望意义下和完整 KL 等价</div>
-            </div>
-        </div>
-
-        <h5>ORM vs PRM：两种 Reward 方案</h5>
-        <p>上面描述的 Reward 结构是 <strong>ORM（Outcome Reward Model，结果奖励模型）</strong>——RM 只在整条回复生成完毕后（$t=T$）打分，中间步骤只有 KL 惩罚。这是标准 RLHF 的做法。</p>
-        <p>还有一种方案叫 <strong>PRM（Process Reward Model，过程奖励模型）</strong>——中间步骤也给奖励，而不仅限于最后一步。</p>
-        <table>
-            <tr><th></th><th>ORM（结果奖励）</th><th>PRM（过程奖励）</th></tr>
-            <tr><td><strong>打分时机</strong></td><td>最后一步 $t=T$</td><td>每一步 $t=1\dots T$</td></tr>
-            <tr><td><strong>中间步 Reward</strong></td><td>仅 KL 惩罚</td><td>PRM 打分 + KL 惩罚</td></tr>
-            <tr><td><strong>最后步 Reward</strong></td><td>ORM 打分 + KL 惩罚</td><td>ORM/PRM 打分 + KL 惩罚</td></tr>
-            <tr><td><strong>适用场景</strong></td><td>通用对话、创意写作</td><td>数学推理、代码生成、多步任务</td></tr>
-            <tr><td><strong>训练数据</strong></td><td>整条回复的人类偏好排序</td><td>每步中间过程的人类标注（如推理步骤正确与否）</td></tr>
-            <tr><td><strong>典型用法</strong></td><td>标准 RLHF + PPO</td><td>RLVR（DeepSeek-R1 的 GRPO）</td></tr>
-        </table>
-        <p><strong>核心区别：</strong>ORM 看"结果好不好"，PRM 看"每一步推得对不对"。数学题中，ORM 只能判断最终答案对错，PRM 能在中间步骤就识别出"这一步推导错了"，给及时的负反馈。</p>
-        <p><strong>面试注意：</strong>RLHF 默认用 ORM；DeepSeek-R1 的 RLVR 本质是规则版 PRM——用程序验证每一步推理是否正确，不需要训练 RM。</p>
-    </div>
-
-    <div class="box-interview">
-        "RLHF 把人类偏好转化为优化信号来对齐 LLM。三步走：SFT 得基础策略，人类偏好排序训练 Reward Model，PPO 用 RM 打分做策略优化并加 KL 约束防止 reward hacking。近期趋势是用 DPO 简化流程或 GRPO 减少计算开销。"
-    </div>
-</section>
-
-<!-- ==================== Section 7: DPO ==================== -->
 <section id="dpo">
     <h2>8. DPO（Direct Preference Optimization，直接偏好优化）公式推导</h2>
 
