@@ -1420,8 +1420,8 @@
       <!-- Compute Advantage box -->
       <rect x="40" y="262" width="260" height="80" rx="14" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.5" filter="url(#ds2)"/>
       <text x="170" y="292" text-anchor="middle" font-size="13" font-weight="800" fill="#5b21b6" font-family="system-ui,sans-serif">计算 Advantage</text>
-      <text x="170" y="314" text-anchor="middle" font-size="12" fill="#6d28d9" font-family="'Times New Roman',serif" font-style="italic">Aₜ = Gₜ − V<tspan font-size="8.5" baseline-shift="sub">φ</tspan>(sₜ)</text>
-      <text x="170" y="332" text-anchor="middle" font-size="10.5" fill="#7c3aed" font-family="system-ui,sans-serif">"这个动作比平均水平好了多少"</text>
+      <text x="170" y="314" text-anchor="middle" font-size="12" fill="#6d28d9" font-family="'Times New Roman',serif" font-style="italic">δₜ = rₜ + γV<tspan font-size="8.5" baseline-shift="sub">φ</tspan>(sₜ₊₁) − V<tspan font-size="8.5" baseline-shift="sub">φ</tspan>(sₜ)</text>
+      <text x="170" y="332" text-anchor="middle" font-size="10.5" fill="#7c3aed" font-family="system-ui,sans-serif">"这一步比预期好了多少"(TD残差)</text>
 
       <!-- Arrow: Critic → Advantage (provide V_φ) -->
       <line x1="395" y1="302" x2="305" y2="302" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr2o)"/>
@@ -1439,9 +1439,9 @@
       <circle cx="66" cy="414" r="12" fill="url(#gActor)"/>
       <text x="66" y="418" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="system-ui">A</text>
       <text x="86" y="418" font-size="12" font-weight="700" fill="#1e40af" font-family="system-ui,sans-serif">Actor 更新</text>
-      <text x="56" y="440" font-size="11" fill="#1e293b" font-family="'Times New Roman',serif" font-style="italic">θ ← θ + α · ∇log π<tspan font-size="8" baseline-shift="sub">θ</tspan>(a|s) · Aₜ</text>
-      <text x="56" y="460" font-size="10" fill="#475569" font-family="system-ui,sans-serif">Aₜ &gt; 0：增大该动作概率</text>
-      <text x="56" y="474" font-size="10" fill="#475569" font-family="system-ui,sans-serif">Aₜ &lt; 0：减小该动作概率</text>
+      <text x="56" y="440" font-size="11" fill="#1e293b" font-family="'Times New Roman',serif" font-style="italic">θ ← θ + α · ∇log π<tspan font-size="8" baseline-shift="sub">θ</tspan>(a|s) · δₜ</text>
+      <text x="56" y="460" font-size="10" fill="#475569" font-family="system-ui,sans-serif">δₜ &gt; 0：增大该动作概率</text>
+      <text x="56" y="474" font-size="10" fill="#475569" font-family="system-ui,sans-serif">δₜ &lt; 0：减小该动作概率</text>
 
       <!-- Critic Update -->
       <rect x="400" y="392" width="260" height="92" rx="14" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" filter="url(#ds2)"/>
