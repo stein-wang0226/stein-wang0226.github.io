@@ -1512,8 +1512,8 @@
         $$\mathbb{E}_{a \sim \pi_\theta}[\underbrace{\nabla_\theta\log\pi_\theta \cdot A}_{f(a)}] = \mathbb{E}_{a \sim \pi_{\theta_{old}}}\left[\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} \cdot \nabla_\theta\log\pi_\theta(a|s) \cdot A(s,a)\right]$$
 
         <p><strong>Step 4：化简 — 从梯度到目标函数</strong></p>
-        <p>利用 $\nabla_\theta\log\pi_\theta = \frac{\nabla_\theta\pi_\theta}{\pi_\theta}$，概率比 $\frac{\pi_\theta}{\pi_{\theta_{old}}}$ 乘以 $\frac{\nabla_\theta\pi_\theta}{\pi_\theta}$ 会变成 $\frac{\nabla_\theta\pi_\theta}{\pi_{\theta_{old}}}$。</p>
-        <p>更关键的观察：如果我们定义一个<strong>代理目标函数</strong>（surrogate objective）：</p>
+        <p>利用 $\nabla_\theta\log\pi_\theta = \frac{\nabla_\theta\pi_\theta}{\pi_\theta}$，概率比 $\frac{\pi_\theta}{\pi_{\theta_{old}}}$ 乘以 $\frac{\nabla_\theta\pi_\theta}{\pi_\theta}$ → $\pi_\theta$ 约分 → 剩下 $\frac{\nabla_\theta\pi_\theta}{\pi_{\theta_{old}}}$。</p>
+        <p>注意到 $\pi_{\theta_{old}}$ 是常数（不依赖 $\theta$），所以 $\frac{\nabla_\theta\pi_\theta}{\pi_{\theta_{old}}} = \nabla_\theta\left[\frac{\pi_\theta}{\pi_{\theta_{old}}}\right]$——这恰好是"概率比"对 $\theta$ 的导数！由此<strong>反推</strong>：什么函数的梯度长这样？答案就是代理目标函数：</p>
         $$L(\theta) = \mathbb{E}_{(s,a) \sim \pi_{\theta_{old}}}\left[\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} \cdot A^{\pi_{\theta_{old}}}(s,a)\right]$$
         <p>那么 $L(\theta)$ 在 $\theta = \theta_{old}$ 处的梯度恰好等于真实策略梯度 $\nabla_\theta J$。并且：</p>
         $$J(\theta) - J(\theta_{old}) \approx L(\theta)$$
