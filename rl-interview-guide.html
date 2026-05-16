@@ -1563,6 +1563,7 @@
         <div class="label">TRPO 优化目标</div>
         $$\max_\theta \; \mathbb{E}_t\left[r_t(\theta) \cdot A_t\right] \quad \text{s.t.} \quad \mathbb{E}_t\left[D_{KL}(\pi_{\theta_{old}} \| \pi_\theta)\right] \leq \delta$$
         <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\mathbb{E}_t[\cdot]$</span>实践简写，等价于 $\mathbb{E}_{(s,a)\sim\pi_{\theta_{old}}}[\cdot]$——对这批旧策略采来的数据中所有时间步取平均</div>
             <div class="item"><span class="symbol">$r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$</span>概率比。$r=1$：没变化。$r=2$：新策略对该动作概率翻倍。$r=0.5$：减半</div>
             <div class="item"><span class="symbol">$r_t(\theta)\cdot A_t$</span>好动作($A>0$)→ 想增大 $r$（提高概率）；坏动作($A<0$)→ 想减小 $r$</div>
             <div class="item"><span class="symbol">$D_{KL} \leq \delta$</span>硬约束：新旧策略的分布"距离"不超过 $\delta$（通常 0.01）</div>
