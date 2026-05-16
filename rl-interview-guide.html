@@ -1252,6 +1252,33 @@
         不再是"扔到靶子上就加强"，而是"比你平时水平好就加强，比平时差就削弱"。一个得分 96 和一个得分 104 的动作，如果平均水平是 100，现在就能清楚区分：-4 vs +4。
     </div>
 
+    <h4>Advantage 的正式定义：$A(s,a) = Q(s,a) - V(s)$</h4>
+    <p>上面的 $A_t = G_t - V(s_t)$ 其实是下面这个正式定义的<strong>采样估计</strong>：</p>
+
+    <div class="formula-box highlight">
+        <div class="label">Advantage 正式定义</div>
+        $$A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s)$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$Q^\pi(s,a)$</span>在状态 $s$ 执行动作 $a$，之后按策略 $\pi$ 走的<strong>期望</strong>总回报：$Q^\pi(s,a) = \mathbb{E}_\pi[G_t \mid s_t=s, a_t=a]$</div>
+            <div class="item"><span class="symbol">$V^\pi(s)$</span>在状态 $s$ 按策略 $\pi$ 走的<strong>期望</strong>总回报（对所有动作取平均）：$V^\pi(s) = \mathbb{E}_\pi[G_t \mid s_t=s]$</div>
+            <div class="item"><span class="symbol">$A^\pi(s,a)$</span>两者之差——"做了动作 $a$ 之后，比不指定动作（让策略随机选）平均能多拿多少"</div>
+        </div>
+    </div>
+
+    <p><strong>$G_t$ 和 $Q(s,a)$ 的关系：</strong></p>
+    <div class="formula-box">
+        $$G_t \;\text{是}\; Q^\pi(s_t, a_t) \;\text{的一次采样}$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$Q(s_t, a_t)$</span>是<strong>期望值</strong>（对未来所有可能路径取平均）——需要无数条轨迹才能精确算出</div>
+            <div class="item"><span class="symbol">$G_t$</span>是<strong>单次采样值</strong>（这一次实际走出的那条轨迹的回报）——有噪声但无偏</div>
+            <div class="item"><span class="symbol">因此</span>$A_t = G_t - V(s_t)$ 就是 $A(s_t, a_t) = Q(s_t,a_t) - V(s_t)$ 的蒙特卡洛估计</div>
+        </div>
+    </div>
+
+    <div class="box-warning">
+        后续 TRPO、PPO 公式中出现的 $A^{\pi_{\theta_{old}}}(s,a)$ 和这里的 $A_t$ 是<strong>同一个东西</strong>，只是写法不同：前者是正式的函数记号（强调"用旧策略估计"），后者是单步采样值。面试时不要把它们当作不同的概念。
+    </div>
+
     <!-- Actor-Critic -->
     <h3>Step 3: Actor-Critic</h3>
 
