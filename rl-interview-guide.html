@@ -2192,7 +2192,10 @@
             <div class="formula-annotation">
                 <div class="item"><span class="symbol">$\pi_\theta$</span>正在训练的 Actor 策略</div>
                 <div class="item"><span class="symbol">$\pi_{ref}$</span>参考模型 = SFT 模型，<strong>冻结不动</strong>，用作 KL 约束的锚</div>
-                <div class="item"><span class="symbol">$-\beta\log\frac{\pi_\theta}{\pi_{ref}}$</span>KL 惩罚——$\pi_\theta$ 越偏离 $\pi_{ref}$ 惩罚越大，防止模型学出奇怪输出</div>
+                <div class="item"><span class="symbol">$\log\frac{\pi_\theta}{\pi_{ref}}$</span>概率比值取 log——衡量 $\pi_\theta$ 偏离 $\pi_{ref}$ 的程度</div>
+                <div class="item"><span class="symbol">当 $\pi_\theta > \pi_{ref}$</span>比值 > 1，log > 0，$-\beta \log(\cdot)$ 是负奖励（惩罚），防止模型对某些 token"过度自信"</div>
+                <div class="item"><span class="symbol">当 $\pi_\theta < \pi_{ref}$</span>比值 < 1，log < 0，$-\beta \log(\cdot)$ 是正奖励，鼓励模型降低对某些 token 的偏好</div>
+                <div class="item"><span class="symbol">本质</span>不是"让输出不要太确定"，而是<strong>分布对齐</strong>——强迫 $\pi_\theta$ 的 token 概率分布形状接近 $\pi_{ref}$，防止"走偏"成参考模型完全不会的奇怪输出</div>
                 <div class="item"><span class="symbol">$r_{RM}(x, y)$</span>Reward Model 给整条回复的打分，只在最后一步 $t=T$ 时给出</div>
                 <div class="item"><span class="symbol">$\beta$</span>KL 强度系数。典型值 0.01~0.05，越大约束越紧</div>
                 <div class="item"><span class="symbol">直觉</span>整个过程像"走钢丝"——每步 KL 拉着你别偏离 SFT 风格太远，走到终点时 RM 给一个总评。优化的目标：在 KL 预算内，让 RM 打分尽可能高</div>
