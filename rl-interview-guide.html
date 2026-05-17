@@ -2383,6 +2383,11 @@
         </div>
     </div>
 
+    <h3>为什么一个损失同时完成"打分+优化"？</h3>
+    <div class="box-insight">
+        <strong>核心洞察：π* 和 r(x,y) 有解析关系。</strong>Step 1-2 证明了最优策略 π* 和最优 reward 之间存在确定公式：$r(x,y) = \beta\log\frac{\pi^*(y|x)}{\pi_{ref}(y|x)} + \text{常数}$。反过来，如果 π_θ 逼近 π*，那用 π_θ 代进去算出的"隐式 reward"就逼近最优 reward。所以 DPO 的逻辑链是：最小化损失 → π_θ → π* → 隐式 reward → 最优 reward。跳过了"先训练 RM 再训练策略"两步，一步到位。
+    </div>
+
     <h3>梯度的直觉</h3>
     <div class="formula-box">
         <div class="label">DPO 梯度</div>
