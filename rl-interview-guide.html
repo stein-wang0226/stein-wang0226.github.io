@@ -1990,8 +1990,10 @@
 
     <div class="step-card">
         <div class="step-number">3</div>
-        <h4 style="padding-top:8px">PPO 优化策略</h4>
-        <p>用 RM 的打分作为奖励，PPO 优化 LLM 生成策略。加 KL 惩罚防止 reward hacking。</p>
+        <h4 style="padding-top:8px">PPO / GRPO 优化策略</h4>
+        <p>用 RM 的打分作为奖励，用策略梯度算法优化 LLM 生成策略。加 KL 惩罚防止 reward hacking。</p>
+        <p><strong>PPO</strong>（InstructGPT / ChatGPT 的标准做法）：需要 Actor + Critic + Reference Model + Reward Model 四个模型。稳定成熟，是 RLHF 的经典方案。</p>
+        <p><strong>GRPO</strong>（DeepSeek-R1 的做法）：去掉 Critic，用组内平均 reward 作为 baseline。省显存、实现简单，是当前主流趋势。</p>
         <p>需要同时维护 4 个模型：Actor + Critic + Reference Model + Reward Model。</p>
 
         <h5>PPO 阶段的 Reward 设计</h5>
