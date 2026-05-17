@@ -1939,7 +1939,7 @@
     <h4>两种 KL 形式的区别</h4>
     <p>当前文档中出现了两种 KL 惩罚公式，它们来自不同的论文，用在不同的场景：</p>
     <table>
-        <tr><th></th><th><strong>-β log(π_θ/π_ref)</strong></th><th><strong>ratio - log(ratio) - 1</strong></th></tr>
+        <tr><th></th><th><strong>$-\beta\log(\pi_\theta/\pi_{ref})$</strong></th><th><strong>$\text{ratio} - \log(\text{ratio}) - 1$</strong></th></tr>
         <tr><td><strong>来源</strong></td><td>InstructGPT / 标准 RLHF</td><td>GRPO / DeepSeek-R1</td></tr>
         <tr><td><strong>数学含义</strong></td><td>KL 散度的一阶近似（只取 log 项）</td><td>KL 散度的二阶近似，更准确</td></tr>
         <tr><td><strong>当 π_θ ≈ π_ref</strong></td><td>log(ratio) 是 KL 的一阶 Taylor 展开主导项</td><td>ratio - log(ratio) - 1 始终 ≥ 0，ratio=1 时 = 0</td></tr>
