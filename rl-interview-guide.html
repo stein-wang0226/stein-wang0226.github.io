@@ -1993,7 +1993,7 @@
         <p>人类偏好可以用概率模型刻画——给定两个回复 $y_w$ 和 $y_l$，人认为 $y_w$ 更好的概率：</p>
         <div class="formula-box">
             <div class="label">Bradley-Terry 偏好概率</div>
-            $$P(y_w \succ y_l \mid x) = \frac{\exp(r(x, y_w))}{\exp(r(x, y_w)) + \exp(r(x, y_l))} = \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr)$$
+            $$P(y_w \succ y_l \mid x) = \frac{e^{r(x, y_w)}}{e^{r(x, y_w)} + e^{r(x, y_l)}} = \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr)$$
             <div class="formula-annotation">
                 <div class="item"><span class="symbol">$r(x, y)$</span><strong>Reward 函数</strong>——给 prompt $x$ 和回复 $y$ 打一个标量分数，越高表示质量越好。这里 $r(\cdot)$ 就是正在训练的 Reward Model 的输出</div>
                 <div class="item"><span class="symbol">$r(x, y_w)$</span>Reward Model 给 winner 回复的打分</div>
@@ -2323,7 +2323,7 @@
             <p>整理：</p>
             $$\log\frac{\pi(y|x)}{\pi_{ref}(y|x)} = \frac{1}{\beta}r(x,y) - 1 - \frac{\lambda}{\beta}$$
             <p>取指数：</p>
-            $$\frac{\pi(y|x)}{\pi_{ref}(y|x)} = \exp\left(\frac{1}{\beta}r(x,y) - 1 - \frac{\lambda}{\beta}\right)$$
+            $$\frac{\pi(y|x)}{\pi_{ref}(y|x)} = e^{\frac{1}{\beta}r(x,y) - 1 - \frac{\lambda}{\beta}}$$
             <div class="formula-annotation">
                 <div class="item"><span class="symbol">$-1-\frac{\lambda}{\beta}$</span>是与 $y$ 无关的常数，后面会被归一化吸收</div>
             </div>
@@ -2334,10 +2334,10 @@
         <div class="step-number">4</div>
         <h4 style="padding-top:8px">代入归一化约束，得到最优解</h4>
         <div class="formula-box">
-            $$\pi^*(y|x) = \pi_{ref}(y|x) \cdot \exp\left(\frac{1}{\beta}r(x,y)\right) \cdot \underbrace{\exp\left(-1-\frac{\lambda}{\beta}\right)}_{1/Z(x)}$$
-            $$\pi^*(y|x) = \frac{1}{Z(x)} \pi_{ref}(y|x) \cdot \exp\left(\frac{1}{\beta}r(x,y)\right)$$
+            $$\pi^*(y|x) = \pi_{ref}(y|x) \cdot e^{\frac{1}{\beta}r(x,y)} \cdot \underbrace{e^{-1-\frac{\lambda}{\beta}}}_{1/Z(x)}$$
+            $$\pi^*(y|x) = \frac{1}{Z(x)} \pi_{ref}(y|x) \cdot e^{\frac{1}{\beta}r(x,y)}$$
             <div class="formula-annotation">
-                <div class="item"><span class="symbol">$Z(x)$</span>归一化常数，由 $\sum_y\pi^*(y|x)=1$ 确定：$Z(x)=\sum_y\pi_{ref}(y|x)\exp(\frac{1}{\beta}r(x,y))$</div>
+                <div class="item"><span class="symbol">$Z(x)$</span>归一化常数，由 $\sum_y\pi^*(y|x)=1$ 确定：$Z(x)=\sum_y\pi_{ref}(y|x)\,e^{\frac{1}{\beta}r(x,y)}$</div>
                 <div class="item"><span class="symbol">直觉</span>参考模型概率 × reward 指数加权——reward 越高，概率放大越多</div>
             </div>
         </div>
