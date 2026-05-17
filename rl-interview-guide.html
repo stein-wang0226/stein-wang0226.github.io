@@ -2393,6 +2393,7 @@
         <div class="label">DPO 梯度</div>
         $$\nabla_\theta L \propto -\beta\;\underbrace{\sigma(\hat{r}_l - \hat{r}_w)}_{\text{自适应权重}}\;\left[\underbrace{\nabla_\theta\log\pi_\theta(y_w|x)}_{\text{增大好回答概率}} - \underbrace{\nabla_\theta\log\pi_\theta(y_l|x)}_{\text{减小坏回答概率}}\right]$$
         <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\propto$</span>省略了期望 $\mathbb{E}_{(x,y_w,y_l)}$ 和常数因子——梯度下降只关心方向，不关心全局缩放</div>
             <div class="item"><span class="symbol">$\sigma(\hat{r}_l - \hat{r}_w)$</span>当模型还搞错排序（给坏回答更高隐式奖励）时 → 接近 1 → 梯度大，用力纠正</div>
             <div class="item"><span class="symbol">当模型学对了时</span>$\hat{r}_w > \hat{r}_l$ → $\sigma$ 接近 0 → 梯度小，几乎不更新</div>
             <div class="item"><span class="symbol">作用</span>自适应加权——该学的地方用力学，已学会的不浪费</div>
@@ -2498,19 +2499,35 @@
 
     <div class="step-card">
         <h4>Q: On-policy vs Off-policy？</h4>
-        <p><strong>On-policy：</strong>用当前策略采的数据更新当前策略，数据用完即丢。代表：PPO、A2C。</p>
-        <p><strong>Off-policy：</strong>可以用历史数据更新，数据可复用。代表：DQN、SAC。</p>
+        <p><strong>On-policy：</strong>用当前策略 π_θ 采的数据更新 π_θ，数据用完即丢。下一轮必须重新采样。代表：PPO、A2C、REINFORCE、GRPO。</p>
+        <p><strong>Off-policy：</strong>可以用历史数据（旧策略采的）更新当前策略，数据存 Replay Buffer 反复用。代表：DQN、SAC、DDPG。</p>
         <p><strong>PPO 的特殊性：</strong>严格 on-policy，但一批数据做多 epoch 更新（3-10 次），是折中方案。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>Q: DQN（Deep Q-Network）是什么？</h4>
+        <p><strong>核心：</strong>用神经网络近似 Q 函数 $Q(s,a)$，通过学习"每个状态下每个动作值多少分"来间接学策略。选动作时取 $a^* = \arg\max_a Q(s,a)$。</p>
+        <p><strong>三大技巧：</strong></p>
+        <p>(1) <strong>Experience Replay（经验回放）：</strong>把 (s,a,r,s') 存进 buffer，随机采样打破时间相关性；(2) <strong>Target Network（目标网络）：</strong>用冻结的旧网络算目标值，避免"追自己的尾巴"导致震荡；(3) <strong>ε-greedy：</strong>以 ε 概率随机选动作保证探索，ε 随训练递减。</p>
+        <p><strong>适用场景：</strong>离散动作空间（Atari 游戏）。LLM 不用 DQN 因为词表太大（几万 token），argmax Q 不现实。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>Q: SAC（Soft Actor-Critic）是什么？</h4>
+        <p><strong>核心：</strong>Off-policy Actor-Critic + 最大熵优化。不仅最大化奖励，还最大化策略的熵（随机性），鼓励探索。</p>
+        <p><strong>优化目标：</strong>$\max_\pi \mathbb{E}[\sum_t r_t + \alpha\mathcal{H}(\pi(\cdot|s_t))]$，其中 $\mathcal{H}$ 是策略熵，α 是温度系数。</p>
+        <p><strong>特点：</strong>数据效率高（off-policy + replay buffer）、策略鲁棒（熵正则防止过拟合单一动作）、适合连续动作空间。</p>
+        <p><strong>适用场景：</strong>机器人控制、自动驾驶等连续动作任务。LLM 不用 SAC 因为 token 是离散的，且熵最大化在语言生成中意义不明确。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>Q: 为什么 LLM 对齐用 on-policy 不用 off-policy？</h4>
+        <p>(1) <strong>分布偏移问题：</strong>LLM 词表巨大（32K-100K+），重要性采样在超高维离散空间上方差爆炸；(2) <strong>语义敏感性：</strong>旧策略生成的文本对新策略可能完全不适用（风格/分布变了）；(3) <strong>在线采样成本低：</strong>LLM 推理快，重新采样比存海量历史数据更划算。所以 PPO/DPO/GRPO 都是 on-policy 或接近 on-policy。</p>
     </div>
 
     <div class="step-card">
         <h4>Q: 为什么 PPO 比 TRPO 好用？</h4>
         <p>TRPO 需要 Fisher 矩阵 + 共轭梯度 + line search（二阶）。PPO 只用 Adam（一阶），实现简单 10 倍，效果相当。</p>
-    </div>
-
-    <div class="step-card">
-        <h4>Q: DQN 的三个关键技巧？</h4>
-        <p><strong>Experience Replay：</strong>打破数据时间相关性。<strong>Target Network：</strong>稳定目标，避免追自己的尾巴。<strong>ε-greedy：</strong>平衡探索与利用。</p>
     </div>
 
     <div class="step-card">
