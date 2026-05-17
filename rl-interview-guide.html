@@ -1890,6 +1890,24 @@
         </div>
     </div>
 
+    <h4>Clip 和 KL 惩罚的区别与配合</h4>
+    <p>GRPO 同时使用了 clip 和 KL 惩罚——两者解决的是<strong>不同的问题</strong>：</p>
+    <table>
+        <tr><th></th><th>Clip 截断</th><th>KL 惩罚</th></tr>
+        <tr><td><strong>约束对象</strong></td><td>$\pi_\theta$ vs $\pi_{\theta_{old}}$（相邻迭代）</td><td>$\pi_\theta$ vs $\pi_{ref}$（当前策略 vs SFT 参考模型）</td></tr>
+        <tr><td><strong>作用</strong></td><td>防止"这一次更新比上一次走太远"（局部稳定）</td><td>防止模型完全忘记 SFT 学到的基本能力（全局锚定）</td></tr>
+        <tr><td><strong>比喻</strong></td><td>步子别迈太大</td><td>别忘了回家的路</td></tr>
+    </table>
+    <div class="box-warning">
+        <strong>为什么两者缺一不可？</strong><br>
+        只有 clip 没有 KL → 每次只走一小步（clip 满足），但累积几十步后已经完全偏离 SFT 风格，reward hacking。<br>
+        只有 KL 没有 clip → 单步更新过猛，重要性采样权重爆炸，训练崩溃。
+    </div>
+
+    <div class="box-interview">
+        <strong>面试常见误区：</strong>"PPO 用 clip，GRPO 用 KL"——这是错的。<strong>RLHF 语境下的 PPO 和 GRPO 都同时使用 clip + KL</strong>。区别只在 PPO 有 Critic 算 advantage，GRPO 用组内均值替代 Critic。标准 PPO（用于游戏/机器人）不需要 KL 因为没有参考模型；但 LLM 对齐场景中，两者都需要 KL 来锚定 SFT 模型。
+    </div>
+
     <div class="box-analogy">
         <strong>考试类比：</strong>同一道题让模型答 64 遍，有的答对有的答错。答对的属于"好回答"（$\hat{A}>0$），答错的属于"差回答"（$\hat{A}<0$）。然后用 PPO 的方式加强好回答、削弱差回答。全程不需要另一个模型来评估"这道题有多难"——组内平均分本身就是 baseline。
     </div>
