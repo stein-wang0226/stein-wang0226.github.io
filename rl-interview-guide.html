@@ -1936,6 +1936,20 @@
         </div>
     </div>
 
+    <h4>两种 KL 形式的区别</h4>
+    <p>当前文档中出现了两种 KL 惩罚公式，它们来自不同的论文，用在不同的场景：</p>
+    <table>
+        <tr><th></th><th><strong>-β log(π_θ/π_ref)</strong></th><th><strong>ratio - log(ratio) - 1</strong></th></tr>
+        <tr><td><strong>来源</strong></td><td>InstructGPT / 标准 RLHF</td><td>GRPO / DeepSeek-R1</td></tr>
+        <tr><td><strong>数学含义</strong></td><td>KL 散度的一阶近似（只取 log 项）</td><td>KL 散度的二阶近似，更准确</td></tr>
+        <tr><td><strong>当 π_θ ≈ π_ref</strong></td><td>log(ratio) 是 KL 的一阶 Taylor 展开主导项</td><td>ratio - log(ratio) - 1 始终 ≥ 0，ratio=1 时 = 0</td></tr>
+        <tr><td><strong>类比</strong></td><td>用一阶导数近似函数变化（简单够用）</td><td>用二阶 Taylor 展开近似（更精确）</td></tr>
+        <tr><td><strong>使用位置</strong></td><td>PPO 的 reward 中（通过梯度传播实现 KL 约束）</td><td>GRPO 的损失函数中（显式 KL 项）</td></tr>
+    </table>
+    <div class="box-insight">
+        <strong>本质联系：</strong>两种形式都是对 $D_{KL}(\pi_\theta\|\pi_{ref})$ 的近似。当策略变化不大时（π_θ ≈ π_ref），两者效果相近。GRPO 用二阶近似是因为它没有 Critic 网络做精细的优势估计，需要更严格的 KL 约束来防止策略走偏。
+    </div>
+
     <h3>GRPO vs PPO 对比</h3>
     <table>
         <tr><th>维度</th><th>PPO</th><th>GRPO</th></tr>
