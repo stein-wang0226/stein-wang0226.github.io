@@ -2272,13 +2272,60 @@
         </div>
     </div>
 
-    <p>这个优化问题有<strong>闭合形式的最优解</strong>（KKT 条件求解）：</p>
-    <div class="formula-box">
-        $$\pi^*(y|x) = \frac{1}{Z(x)} \pi_{ref}(y|x) \cdot \exp\left(\frac{1}{\beta}r(x,y)\right)$$
-        <div class="formula-annotation">
-            <div class="item"><span class="symbol">$\pi_{ref}(y|x) \cdot \exp(\frac{r}{\beta})$</span>参考模型概率 × reward 指数加权——reward 高的回答概率被放大</div>
-            <div class="item"><span class="symbol">$Z(x) = \sum_y \pi_{ref}(y|x)\exp(\frac{r(x,y)}{\beta})$</span>归一化常数——确保所有 $y$ 的概率加起来 = 1</div>
-            <div class="item"><span class="symbol">$\beta$ 的作用</span>$\beta$ 小 → $\exp(\frac{r}{\beta})$ 倍数大 → 高 reward 回答被极大放大 → 策略激进。$\beta$ 大 → 接近 $\pi_{ref}$ → 保守</div>
+    <h4>闭合形式最优解的推导</h4>
+    <p>当前 HTML 直接给出了最优解，下面展开完整的 4 步推导：</p>
+
+    <div class="step-card">
+        <div class="step-number">1</div>
+        <h4 style="padding-top:8px">展开 KL 散度</h4>
+        <p>KL 散度的定义：</p>
+        <div class="formula-box">
+            $$D_{KL}[\pi(y|x)\|\pi_{ref}(y|x)] = \sum_y \pi(y|x) \log\frac{\pi(y|x)}{\pi_{ref}(y|x)}$$
+            <div class="formula-annotation">
+                <div class="item"><span class="symbol">展开目标</span>$\max_\pi \sum_y \pi(y|x)r(x,y) - \beta\sum_y \pi(y|x)\log\frac{\pi(y|x)}{\pi_{ref}(y|x)}$</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="step-number">2</div>
+        <h4 style="padding-top:8px">Lagrange 乘子法（加约束 $\sum_y\pi(y|x)=1$）</h4>
+        <div class="formula-box">
+            $$\mathcal{L} = \sum_y \pi(y|x)r(x,y) - \beta\sum_y \pi(y|x)\log\frac{\pi(y|x)}{\pi_{ref}(y|x)} + \lambda\left(1 - \sum_y \pi(y|x)\right)$$
+            <div class="formula-annotation">
+                <div class="item"><span class="symbol">第一项</span>期望奖励</div>
+                <div class="item"><span class="symbol">第二项</span>KL 惩罚</div>
+                <div class="item"><span class="symbol">第三项</span>概率归一化约束（$\lambda$ 为 Lagrange 乘子）</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="step-number">3</div>
+        <h4 style="padding-top:8px">对 $\pi(y|x)$ 求导，令导数 = 0</h4>
+        <p>利用 $\frac{d}{dx}(x\log x) = 1+\log x$：</p>
+        <div class="formula-box">
+            $$\frac{\partial\mathcal{L}}{\partial\pi(y|x)} = r(x,y) - \beta\left(1 + \log\frac{\pi(y|x)}{\pi_{ref}(y|x)}\right) - \lambda = 0$$
+            <p>整理：</p>
+            $$\log\frac{\pi(y|x)}{\pi_{ref}(y|x)} = \frac{1}{\beta}r(x,y) - 1 - \frac{\lambda}{\beta}$$
+            <p>取指数：</p>
+            $$\frac{\pi(y|x)}{\pi_{ref}(y|x)} = \exp\left(\frac{1}{\beta}r(x,y) - 1 - \frac{\lambda}{\beta}\right)$$
+            <div class="formula-annotation">
+                <div class="item"><span class="symbol">$-1-\frac{\lambda}{\beta}$</span>是与 $y$ 无关的常数，后面会被归一化吸收</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="step-number">4</div>
+        <h4 style="padding-top:8px">代入归一化约束，得到最优解</h4>
+        <div class="formula-box">
+            $$\pi^*(y|x) = \pi_{ref}(y|x) \cdot \exp\left(\frac{1}{\beta}r(x,y)\right) \cdot \underbrace{\exp\left(-1-\frac{\lambda}{\beta}\right)}_{1/Z(x)}$$
+            $$\pi^*(y|x) = \frac{1}{Z(x)} \pi_{ref}(y|x) \cdot \exp\left(\frac{1}{\beta}r(x,y)\right)$$
+            <div class="formula-annotation">
+                <div class="item"><span class="symbol">$Z(x)$</span>归一化常数，由 $\sum_y\pi^*(y|x)=1$ 确定：$Z(x)=\sum_y\pi_{ref}(y|x)\exp(\frac{1}{\beta}r(x,y))$</div>
+                <div class="item"><span class="symbol">直觉</span>参考模型概率 × reward 指数加权——reward 越高，概率放大越多</div>
+            </div>
         </div>
     </div>
 
