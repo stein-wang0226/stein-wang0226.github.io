@@ -1315,6 +1315,7 @@
             <div class="item"><span class="symbol">Actor $\pi_\theta$</span>策略网络——决定做什么动作。$\delta_t > 0$ 时增大该动作概率，$\delta_t < 0$ 时减小</div>
             <div class="item"><span class="symbol">Critic $V_\phi$</span>价值网络——评估状态好坏。训练目标：预测值 $V_\phi(s)$ 逼近真实回报 $G_t$</div>
             <div class="item"><span class="symbol">vs Step 2</span>Step 2 用 $G_t - V(s_t)$（MC 估计，无偏高方差，需跑完轨迹）。Actor-Critic 用 $\delta_t$（TD 估计，有偏低方差，每步即可更新）</div>
+            <div class="item"><span class="symbol">实践中</span>基础 Actor-Critic 用 TD 残差，但现代方法（PPO/TRPO/A2C）通常用 <strong>GAE</strong>（$\lambda=0.95$），在 TD 和 MC 之间插值，兼顾低偏差和低方差</div>
             <div class="item"><span class="symbol">核心概念：Bootstrapping</span>$V_\phi(s_{t+1})$ 被当作"未来回报的替代品"直接参与信号计算（自举），而非像 Step 2 老老实实等真实 $G_t$ 出来。代价：若 $V_\phi$ 不准，信号就是错的（偏差来源）；收益：不用等轨迹结束即可更新。<strong>用了 bootstrapping = Actor-Critic；没用 = REINFORCE + Baseline</strong></div>
             <div class="item"><span class="symbol">为什么 Critic 用 MSE？</span>$V(s)$ 的定义是 $\mathbb{E}[G_t|s]$，最小化 $(V_\phi - G_t)^2$ 的期望，解恰好就是条件期望（下方证明）</div>
         </div>
