@@ -1962,6 +1962,9 @@
             <div class="label">Bradley-Terry 偏好概率</div>
             $$P(y_w \succ y_l \mid x) = \frac{\exp(r(x, y_w))}{\exp(r(x, y_w)) + \exp(r(x, y_l))} = \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr)$$
             <div class="formula-annotation">
+                <div class="item"><span class="symbol">$r(x, y)$</span><strong>Reward 函数</strong>——给 prompt $x$ 和回复 $y$ 打一个标量分数，越高表示质量越好。这里 $r(\cdot)$ 就是正在训练的 Reward Model 的输出</div>
+                <div class="item"><span class="symbol">$r(x, y_w)$</span>Reward Model 给 winner 回复的打分</div>
+                <div class="item"><span class="symbol">$r(x, y_l)$</span>Reward Model 给 loser 回复的打分</div>
                 <div class="item"><span class="symbol">$\sigma(z) = \frac{1}{1+e^{-z}}$</span>sigmoid 函数——把任意实数映射到 (0, 1)</div>
                 <div class="item"><span class="symbol">$r(x, y_w) - r(x, y_l) > 0$</span>分数差为正 → $P > 0.5$，人更可能选 $y_w$</div>
                 <div class="item"><span class="symbol">$r(x, y_w) - r(x, y_l) \gg 0$</span>差越大 → $P \to 1$，人几乎一定选 $y_w$</div>
@@ -1975,6 +1978,7 @@
             <div class="label">RM 损失函数</div>
             $$L_{RM} = -\mathbb{E}_{(x, y_w, y_l)}\left[\log P(y_w \succ y_l \mid x)\right] = -\mathbb{E}\left[\log \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr)\right]$$
             <div class="formula-annotation">
+                <div class="item"><span class="symbol">$r(x, y)$</span>Reward 函数——Reward Model 给 prompt+回复 打的标量分数</div>
                 <div class="item"><span class="symbol">直觉</span>最大化 $\log\sigma(\text{分数差})$ → 让好回答分数远高于差回答</div>
                 <div class="item"><span class="symbol">当 $r(y_w)-r(y_l) \to +\infty$</span>$\sigma \to 1$，$\log\sigma \to 0$，损失最小</div>
                 <div class="item"><span class="symbol">当 $r(y_w)-r(y_l) \to -\infty$</span>$\sigma \to 0$，$\log\sigma \to -\infty$，损失极大</div>
