@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer Decoder — 训练与推理全流程</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  });"></script>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --muted: #64748b;
+    --accent: #3b82f6;
+    --accent2: #8b5cf6;
+    --border: #e2e8f0;
+    --code-bg: #f1f5f9;
+    --highlight: #eff6ff;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2.5rem 2rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    border-radius: 16px;
+    color: white;
+  }
+  header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  header p { font-size: 1.05rem; opacity: 0.9; }
+
+  .part { margin-bottom: 2.5rem; }
+  .part-title {
+    font-size: 1.5rem; font-weight: 700; color: var(--accent);
+    margin-bottom: 1.2rem; padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--accent);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .part-title .icon { font-size: 1.3rem; }
+
+  .notation {
+    background: var(--highlight); border: 1px solid #bfdbfe;
+    border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;
+  }
+  .notation h3 { font-size: 1rem; color: var(--accent); margin-bottom: 0.6rem; }
+  .notation ul {
+    list-style: none;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.3rem 1.5rem;
+  }
+  .notation li { font-size: 0.95rem; padding: 0.15rem 0; }
+
+  .step {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.3rem 1.5rem; margin-bottom: 1rem;
+    transition: box-shadow 0.2s;
+  }
+  .step:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .step-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.7rem; }
+  .step-num {
+    background: var(--accent); color: white;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700; flex-shrink: 0;
+  }
+  .step-num.purple { background: var(--accent2); }
+  .step h3 { font-size: 1.1rem; font-weight: 600; }
+
+  .substep {
+    margin-top: 0.8rem; padding-left: 0.8rem;
+    border-left: 3px solid var(--border);
+  }
+  .substep h4 {
+    font-size: 0.95rem; font-weight: 600;
+    color: var(--accent2); margin-bottom: 0.3rem;
+  }
+  .formula {
+    background: var(--code-bg); border-radius: 8px;
+    padding: 0.6rem 1rem; margin: 0.5rem 0;
+    overflow-x: auto; font-size: 1rem; text-align: center;
+  }
+  /* 维度推导链：用箭头串联的维度变化 */
+  .dim-chain {
+    background: #fefce8; border: 1px solid #fde68a; border-radius: 8px;
+    padding: 0.5rem 1rem; margin: 0.4rem 0;
+    overflow-x: auto; font-size: 0.92rem; text-align: center;
+    color: #92400e;
+  }
+  .param-note {
+    font-size: 0.88rem; color: var(--muted);
+    margin-top: 0.2rem; padding-left: 0.2rem;
+  }
+  .note {
+    font-size: 0.9rem; color: var(--muted); margin-top: 0.3rem;
+  }
+  /* 关键洞察高亮 */
+  .insight {
+    background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px;
+    padding: 0.5rem 1rem; margin: 0.5rem 0;
+    font-size: 0.92rem; color: #991b1b;
+  }
+
+  .flow {
+    background: linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%);
+    border: 1px solid #c7d2fe; border-radius: 12px;
+    padding: 1.3rem 1.5rem; margin: 1rem 0;
+    text-align: center; font-size: 1rem;
+    overflow-x: auto; white-space: nowrap;
+  }
+
+  .compare-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    margin: 1rem 0; border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .compare-table th {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white; padding: 0.8rem 1rem; font-weight: 600; text-align: left;
+  }
+  .compare-table td {
+    padding: 0.7rem 1rem; border-top: 1px solid var(--border); vertical-align: top;
+  }
+  .compare-table tr:nth-child(even) td { background: var(--highlight); }
+
+  .summary {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #fbbf24; border-radius: 12px;
+    padding: 1.5rem; margin-top: 2rem;
+    font-size: 1.05rem; font-weight: 500; line-height: 1.9; text-align: center;
+  }
+  .summary strong { color: #92400e; }
+
+  .divider {
+    border: none; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.5rem; }
+    header { padding: 1.5rem 1rem; }
+    header h1 { font-size: 1.5rem; }
+    .step { padding: 1rem; }
+    .notation ul { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Transformer Decoder 全流程</h1>
+  <p>训练（并行）与推理（自回归 + KV Cache）的数据流与张量维度</p>
+</header>
+
+<!-- ==================== 一、训练 ==================== -->
+<section class="part">
+  <h2 class="part-title"><span class="icon">🎓</span> 一、训练时（并行输入整段序列）</h2>
+
+  <div class="notation">
+    <h3>记号约定</h3>
+    <ul>
+      <li>$B$ — batch size</li>
+      <li>$L$ — 序列长度</li>
+      <li>$d_{\text{model}}$ — 隐藏维度</li>
+      <li>$h$ — head 数</li>
+      <li>$d_h = d_{\text{model}} / h$ — 每头维度</li>
+      <li>$V$ — 词表大小</li>
+      <li>$d_{\text{ff}}$ — MLP 中间维度（通常 $4d_{\text{model}}$）</li>
+      <li>$T$ — 推理时已生成的 token 数</li>
+    </ul>
+  </div>
+
+  <!-- Step 1: 输入与嵌入 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <h3>输入与嵌入</h3>
+    </div>
+    <p>输入 token ids：</p>
+    <div class="formula">$\text{input\_ids} \in \mathbb{Z}^{B \times L}$</div>
+    <p>经过嵌入矩阵 $W_e \in \mathbb{R}^{V \times d_{\text{model}}}$（查表操作）：</p>
+    <div class="formula">$X_0 = W_e[\text{input\_ids}] \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
+    <div class="dim-chain">维度：$(B, L)$ 整数索引 $\xrightarrow{\text{lookup } W_e}$ $(B, L, d_{\text{model}})$ 浮点张量</div>
+    <p class="note">老式绝对位置编码：$X_0 = W_e[\text{input\_ids}] + PE$；现代 LLM 常用 RoPE，此处通常<strong>不直接加 PE</strong>。</p>
+  </div>
+
+  <!-- Step 2: 一个 Decoder Block -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <h3>一个 Decoder Block（以第 $i$ 层为例）</h3>
+    </div>
+    <p>设本层输入 $X \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</p>
+
+    <!-- (1) Q/K/V 投影 -->
+    <div class="substep">
+      <h4>(1) Q/K/V 线性投影</h4>
+      <p>通过三组可学习的参数矩阵做线性变换：</p>
+      <div class="formula">
+        $Q = X\, W_Q, \quad K = X\, W_K, \quad V = X\, W_V$
+      </div>
+      <p class="param-note">$W_Q, W_K, W_V \in \mathbb{R}^{d_{\text{model}} \times (h \cdot d_h)}$ 为本层可学习参数（因 $h \cdot d_h = d_{\text{model}}$，实际就是 $d_{\text{model}} \times d_{\text{model}}$ 的方阵）</p>
+      <div class="dim-chain">
+        矩阵乘法维度：$\underbrace{(B, L, d_{\text{model}})}_{X} \times \underbrace{(d_{\text{model}}, h \cdot d_h)}_{W_Q} = \underbrace{(B, L, h \cdot d_h)}_{Q}$
+      </div>
+      <p>reshape 为多头形式，再 transpose 把 head 维提前：</p>
+      <div class="dim-chain">
+        $(B, L, h \cdot d_h) \xrightarrow{\text{reshape}}  (B, L, h, d_h) \xrightarrow{\text{transpose}}  (B, h, L, d_h)$
+      </div>
+      <div class="formula">$Q, K, V \in \mathbb{R}^{B \times h \times L \times d_h}$</div>
+    </div>
+
+    <!-- (2) RoPE -->
+    <div class="substep">
+      <h4>(2) 位置编码（RoPE）</h4>
+      <p>对 $Q, K$ 的每个位置 $\text{pos} = 0, 1, \ldots, L{-}1$ 施加旋转矩阵（逐元素，不改变维度）：</p>
+      <div class="formula">$Q_r = \text{RoPE}(Q), \quad K_r = \text{RoPE}(K) \quad \in \mathbb{R}^{B \times h \times L \times d_h}$</div>
+      <p class="note">RoPE 不改变 shape，只改变数值；$V$ 不做位置编码。</p>
+    </div>
+
+    <!-- (3) Attention Score -->
+    <div class="substep">
+      <h4>(3) 注意力分数</h4>
+      <p>$Q_r$ 与 $K_r^\top$ 做矩阵乘法（在最后两维上）：</p>
+      <div class="formula">$S = \dfrac{Q_r\, K_r^\top}{\sqrt{d_h}}$</div>
+      <div class="dim-chain">
+        $\underbrace{(B, h, L, d_h)}_{Q_r} \times \underbrace{(B, h, d_h, L)}_{K_r^\top} = \underbrace{(B, h, L, L)}_{S}$
+      </div>
+      <p>$S$ 的含义：每个 head 上，$L$ 个 query 位置对 $L$ 个 key 位置的原始注意力分数。</p>
+      <p>加 causal mask（上三角置 $-\infty$）后 softmax：</p>
+      <div class="formula">$A = \text{softmax}(\text{mask}(S)) \in \mathbb{R}^{B \times h \times L \times L}$</div>
+    </div>
+
+    <!-- (4) 加权求和 -->
+    <div class="substep">
+      <h4>(4) 加权求和</h4>
+      <div class="formula">$O_{\text{head}} = A\, V$</div>
+      <div class="dim-chain">
+        $\underbrace{(B, h, L, L)}_{A} \times \underbrace{(B, h, L, d_h)}_{V} = \underbrace{(B, h, L, d_h)}_{O_{\text{head}}}$
+      </div>
+      <p class="note">每个 query 位置得到 $d_h$ 维的加权上下文向量。</p>
+    </div>
+
+    <!-- (5) 多头拼接 + 输出投影 -->
+    <div class="substep">
+      <h4>(5) 多头拼接 + 输出投影</h4>
+      <p>将 $h$ 个 head 沿最后一维拼接：</p>
+      <div class="dim-chain">
+        $(B, h, L, d_h) \xrightarrow{\text{transpose}} (B, L, h, d_h) \xrightarrow{\text{reshape}} (B, L, h \cdot d_h)$
+      </div>
+      <p>经过输出投影矩阵 $W_O \in \mathbb{R}^{(h \cdot d_h) \times d_{\text{model}}}$：</p>
+      <div class="formula">$O_{\text{attn}} = O_{\text{concat}}\, W_O$</div>
+      <div class="dim-chain">
+        $\underbrace{(B, L, h \cdot d_h)}_{O_{\text{concat}}} \times \underbrace{(h \cdot d_h, d_{\text{model}})}_{W_O} = \underbrace{(B, L, d_{\text{model}})}_{O_{\text{attn}}}$
+      </div>
+    </div>
+
+    <!-- (6) 残差 + MLP -->
+    <div class="substep">
+      <h4>(6) 残差 + LayerNorm + MLP</h4>
+      <p>残差连接 + LayerNorm：</p>
+      <div class="formula">$X_{\text{mid}} = \text{LayerNorm}(X + O_{\text{attn}}) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
+      <p>MLP 两层线性变换 + 激活：</p>
+      <div class="formula">$\text{MLP}(x) = \sigma(x\, W_1 + b_1)\, W_2 + b_2$</div>
+      <div class="dim-chain">
+        $\underbrace{(B, L, d_{\text{model}})}_{x} \times \underbrace{(d_{\text{model}}, d_{\text{ff}})}_{W_1} = (B, L, d_{\text{ff}}) \xrightarrow{\sigma} (B, L, d_{\text{ff}}) \times \underbrace{(d_{\text{ff}}, d_{\text{model}})}_{W_2} = (B, L, d_{\text{model}})$
+      </div>
+      <p>最终输出（残差 + LayerNorm）：</p>
+      <div class="formula">$X' = \text{LayerNorm}(X_{\text{mid}} + \text{MLP}(X_{\text{mid}})) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <h3>重复 $N$ 个 Decoder Block</h3>
+    </div>
+    <div class="formula">$X_0 \to X_1 \to X_2 \to \cdots \to X_N$</div>
+    <p>每层的输入和输出 shape 恒为 $(B, L, d_{\text{model}})$，不变。</p>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <h3>最终输出 logits</h3>
+    </div>
+    <p>最后一层输出 $H \in \mathbb{R}^{B \times L \times d_{\text{model}}}$，经过 LM Head：</p>
+    <div class="formula">$Z = H\, W_{\text{lm}}$</div>
+    <div class="dim-chain">
+      $\underbrace{(B, L, d_{\text{model}})}_{H} \times \underbrace{(d_{\text{model}}, V)}_{W_{\text{lm}}} = \underbrace{(B, L, V)}_{Z}$
+    </div>
+    <p class="note">很多模型中 $W_{\text{lm}} = W_e^\top$（weight tying），无额外参数。</p>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <h3>Loss</h3>
+    </div>
+    <p>labels $\in \mathbb{Z}^{B \times L}$，对每个位置做词表大小 $V$ 的分类：</p>
+    <div class="formula">$\mathcal{L} = \text{CrossEntropy}(Z_{[:, :-1, :]},\ \text{labels}_{[:, 1:]})$</div>
+    <p class="note">实际上是用位置 $t$ 的预测 $Z_t \in \mathbb{R}^V$ 去预测位置 $t{+}1$ 的 token。</p>
+  </div>
+
+  <div class="flow">
+    $\text{input\_ids}\ (B,L) \;\xrightarrow{W_e}\; X_0\ (B,L,d) \;\xrightarrow{N \times \text{Block}}\; H\ (B,L,d) \;\xrightarrow{W_{\text{lm}}}\; Z\ (B,L,V) \;\to\; \text{CE loss}$
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ==================== 二、推理 ==================== -->
+<section class="part">
+  <h2 class="part-title"><span class="icon">🚀</span> 二、推理时（自回归 + KV Cache）</h2>
+
+  <div class="notation">
+    <h3>推理专用记号</h3>
+    <ul>
+      <li>$t$ — 当前解码步的位置索引（从 0 开始）</li>
+      <li>$T$ — cache 中已有的 token 数（即位置 $0$ 到 $T{-}1$ 的 K/V 已缓存）</li>
+      <li>下标 $_t$ — "当前这一个 token" 的量（序列维 = 1）</li>
+      <li>下标 $_{\text{all}}$ — "历史 cache + 当前 token" 拼接后的量（序列维 = $T{+}1$）</li>
+      <li>下标 $_{\text{cache}}$ — "仅历史缓存" 的量（序列维 = $T$）</li>
+    </ul>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num purple">1</div>
+      <h3>当前输入</h3>
+    </div>
+    <p>当前步只输入<strong>最新一个 token</strong>（不是整段序列）：</p>
+    <div class="formula">$\text{input\_id}_t \in \mathbb{Z}^{B \times 1}$</div>
+    <p>经过嵌入矩阵 $W_e$（同训练时的同一个矩阵）：</p>
+    <div class="formula">$X_t^{(0)} = W_e[\text{input\_id}_t] \in \mathbb{R}^{B \times 1 \times d_{\text{model}}}$</div>
+    <div class="dim-chain">注意序列维 = $\mathbf{1}$（只有一个 token），而训练时序列维 = $L$</div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num purple">2</div>
+      <h3>一个 Decoder Block（以第 $i$ 层为例）</h3>
+    </div>
+    <p>设本层输入 $X_t \in \mathbb{R}^{B \times \mathbf{1} \times d_{\text{model}}}$（只有当前 1 个 token）</p>
+
+    <!-- (1) 当前 token 的 Q/K/V -->
+    <div class="substep">
+      <h4>(1) 当前 token 的 Q/K/V 投影</h4>
+      <p>使用与训练时<strong>完全相同</strong>的参数矩阵 $W_Q, W_K, W_V$：</p>
+      <div class="formula">
+        $Q_t = X_t\, W_Q, \quad K_t = X_t\, W_K, \quad V_t = X_t\, W_V$
+      </div>
+      <div class="dim-chain">
+        $\underbrace{(B, \mathbf{1}, d_{\text{model}})}_{X_t} \times \underbrace{(d_{\text{model}}, h \cdot d_h)}_{W_Q} = \underbrace{(B, \mathbf{1}, h \cdot d_h)}_{Q_t}$
+      </div>
+      <p>reshape + transpose 为多头形式：</p>
+      <div class="dim-chain">
+        $(B, \mathbf{1}, h \cdot d_h) \xrightarrow{\text{reshape}} (B, \mathbf{1}, h, d_h) \xrightarrow{\text{transpose}} (B, h, \mathbf{1}, d_h)$
+      </div>
+      <div class="formula">$Q_t, K_t, V_t \in \mathbb{R}^{B \times h \times \mathbf{1} \times d_h}$</div>
+      <div class="insight">
+        关键：序列维度 = <strong>1</strong>，因为只投影了当前这一个 token。训练时这里是 $L$。
+      </div>
+    </div>
+
+    <!-- (2) RoPE -->
+    <div class="substep">
+      <h4>(2) RoPE</h4>
+      <p>对当前<strong>位置 $t$</strong>（不是位置 0！）施加旋转位置编码：</p>
+      <div class="formula">$Q_t \leftarrow \text{RoPE}(Q_t,\ \text{pos}{=}t), \quad K_t \leftarrow \text{RoPE}(K_t,\ \text{pos}{=}t)$</div>
+      <div class="dim-chain">shape 不变：$(B, h, \mathbf{1}, d_h)$</div>
+      <p class="note">历史 cache 里的 $K$ 在之前各步已经各自 RoPE 过了（pos=0, 1, ..., T-1），无需重做。</p>
+    </div>
+
+    <!-- (3) 与历史 Cache 拼接 -->
+    <div class="substep">
+      <h4>(3) 与历史 KV Cache 拼接</h4>
+      <p>本层在之前的 $T$ 个解码步中已缓存了所有历史 token 的 $K$ 和 $V$：</p>
+      <div class="formula">$K_{\text{cache}}, V_{\text{cache}} \in \mathbb{R}^{B \times h \times T \times d_h}$</div>
+      <p class="note">$T$ 个历史位置（pos 0 到 $T{-}1$）的 Key/Value，每个都是之前那一步投影 + RoPE 后存下来的。</p>
+      <p>沿序列维（dim=2）拼接当前 token 的 $K_t, V_t$：</p>
+      <div class="formula">
+        $K_{\text{all}} = \text{cat}(K_{\text{cache}},\, K_t)$, $\quad V_{\text{all}} = \text{cat}(V_{\text{cache}},\, V_t)$
+      </div>
+      <div class="dim-chain">
+        $\underbrace{(B, h, T, d_h)}_{K_{\text{cache}}} \oplus \underbrace{(B, h, \mathbf{1}, d_h)}_{K_t} = \underbrace{(B, h, \mathbf{T{+}1}, d_h)}_{K_{\text{all}}}$
+      </div>
+      <div class="insight">
+        $Q_t$ 序列维仍是 <strong>1</strong>（只有当前 query）；$K_{\text{all}}, V_{\text{all}}$ 序列维是 <strong>$T{+}1$</strong>（全部上下文）。这种不对称是 KV cache 的核心。
+      </div>
+    </div>
+
+    <!-- (4) 当前一步 Attention -->
+    <div class="substep">
+      <h4>(4) 当前一步 Attention</h4>
+      <p><strong>注意力分数</strong>——当前 1 个 query 对全部 $T{+}1$ 个 key 打分：</p>
+      <div class="formula">$S_t = \dfrac{Q_t\, K_{\text{all}}^\top}{\sqrt{d_h}}$</div>
+      <div class="dim-chain">
+        $\underbrace{(B, h, \mathbf{1}, d_h)}_{Q_t} \times \underbrace{(B, h, d_h, \mathbf{T{+}1})}_{K_{\text{all}}^\top} = \underbrace{(B, h, \mathbf{1}, \mathbf{T{+}1})}_{S_t}$
+      </div>
+      <p class="note">对比训练时：$S \in \mathbb{R}^{B \times h \times L \times L}$（$L$ 个 query $\times$ $L$ 个 key）。推理时只有 $1 \times (T{+}1)$。</p>
+
+      <p><strong>softmax</strong>：</p>
+      <div class="formula">$A_t = \text{softmax}(S_t) \in \mathbb{R}^{B \times h \times \mathbf{1} \times (T{+}1)}$</div>
+      <p class="note">推理无需 causal mask（当前 token 本来就只能看到自己和之前的 token）。</p>
+
+      <p><strong>加权求和</strong>——用注意力权重对全部 $T{+}1$ 个 value 加权：</p>
+      <div class="formula">$O_t^{\text{head}} = A_t\, V_{\text{all}}$</div>
+      <div class="dim-chain">
+        $\underbrace{(B, h, \mathbf{1}, T{+}1)}_{A_t} \times \underbrace{(B, h, T{+}1, d_h)}_{V_{\text{all}}} = \underbrace{(B, h, \mathbf{1}, d_h)}_{O_t^{\text{head}}}$
+      </div>
+      <div class="insight">
+        输出序列维仍是 <strong>1</strong>——一个 query 得到一个 $d_h$ 维的上下文向量，但它融合了全部 $T{+}1$ 个位置的信息。
+      </div>
+    </div>
+
+    <!-- (5) concat + 输出投影 + MLP -->
+    <div class="substep">
+      <h4>(5) 多头拼接 + 输出投影</h4>
+      <div class="dim-chain">
+        $(B, h, \mathbf{1}, d_h) \xrightarrow{\text{transpose}} (B, \mathbf{1}, h, d_h) \xrightarrow{\text{reshape}} (B, \mathbf{1}, h \cdot d_h)$
+      </div>
+      <div class="formula">$O_{t,\text{attn}} = O_{t,\text{concat}}\, W_O$</div>
+      <div class="dim-chain">
+        $\underbrace{(B, \mathbf{1}, h \cdot d_h)}_{O_{t,\text{concat}}} \times \underbrace{(h \cdot d_h, d_{\text{model}})}_{W_O} = \underbrace{(B, \mathbf{1}, d_{\text{model}})}_{O_{t,\text{attn}}}$
+      </div>
+    </div>
+
+    <!-- (6) 残差 + MLP -->
+    <div class="substep">
+      <h4>(6) 残差 + LayerNorm + MLP</h4>
+      <div class="formula">$X_{t,\text{mid}} = \text{LayerNorm}(X_t + O_{t,\text{attn}}) \in \mathbb{R}^{B \times \mathbf{1} \times d_{\text{model}}}$</div>
+      <div class="dim-chain">
+        MLP：$(B, \mathbf{1}, d_{\text{model}}) \xrightarrow{W_1} (B, \mathbf{1}, d_{\text{ff}}) \xrightarrow{\sigma} (B, \mathbf{1}, d_{\text{ff}}) \xrightarrow{W_2} (B, \mathbf{1}, d_{\text{model}})$
+      </div>
+      <div class="formula">$X_t' = \text{LayerNorm}(X_{t,\text{mid}} + \text{MLP}(X_{t,\text{mid}})) \in \mathbb{R}^{B \times \mathbf{1} \times d_{\text{model}}}$</div>
+      <p class="note">同时更新本层 cache：$K_{\text{cache}} \leftarrow K_{\text{all}}$，$V_{\text{cache}} \leftarrow V_{\text{all}}$（序列维从 $T$ 增长到 $T{+}1$）。</p>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num purple">3</div>
+      <h3>重复 $N$ 个 Decoder Block</h3>
+    </div>
+    <div class="formula">$X_t^{(0)} \to X_t^{(1)} \to \cdots \to X_t^{(N)}$</div>
+    <p>每层的输入和输出 shape 恒为 $(B, \mathbf{1}, d_{\text{model}})$。</p>
+    <p class="note">每层独立维护自己的 KV cache，共 $N$ 层，每层的 cache shape 为 $(B, h, T{+}1, d_h)$。</p>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num purple">4</div>
+      <h3>输出 logits</h3>
+    </div>
+    <p>最终 hidden state $H_t \in \mathbb{R}^{B \times \mathbf{1} \times d_{\text{model}}}$，经过 LM Head：</p>
+    <div class="formula">$Z_t = H_t\, W_{\text{lm}}$</div>
+    <div class="dim-chain">
+      $\underbrace{(B, \mathbf{1}, d_{\text{model}})}_{H_t} \times \underbrace{(d_{\text{model}}, V)}_{W_{\text{lm}}} = \underbrace{(B, \mathbf{1}, V)}_{Z_t}$
+    </div>
+    <p>取 $Z_t$ 的最后一维（$V$ 维向量）做 softmax，采样 / argmax 得到下一个 token id：</p>
+    <div class="formula">$\text{next\_token} = \text{sample}(\text{softmax}(Z_t)) \in \mathbb{Z}^{B \times 1}$</div>
+    <p class="note">这个 next_token 就成为下一步的 $\text{input\_id}_{t+1}$，如此循环直到生成 EOS。</p>
+  </div>
+
+  <div class="flow">
+    $\text{input\_id}_t\ (B,\mathbf{1}) \;\xrightarrow{W_e}\; X_t\ (B,\mathbf{1},d) \;\xrightarrow{N \times \text{Block} + \text{KV cache}}\; H_t\ (B,\mathbf{1},d) \;\xrightarrow{W_{\text{lm}}}\; Z_t\ (B,\mathbf{1},V) \;\to\; \text{next token}$
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ==================== 三、对比 ==================== -->
+<section class="part">
+  <h2 class="part-title"><span class="icon">⚖️</span> 三、训练 vs 推理：核心区别</h2>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>训练</th>
+        <th>推理（第 $t$ 步）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>输入</strong></td>
+        <td>整段序列 $(B, L)$</td>
+        <td>单个 token $(B, 1)$</td>
+      </tr>
+      <tr>
+        <td><strong>Embedding 输出</strong></td>
+        <td>$(B, L, d_{\text{model}})$</td>
+        <td>$(B, \mathbf{1}, d_{\text{model}})$</td>
+      </tr>
+      <tr>
+        <td><strong>投影公式</strong></td>
+        <td>$Q = X W_Q$</td>
+        <td>$Q_t = X_t W_Q$（同一个 $W_Q$）</td>
+      </tr>
+      <tr>
+        <td><strong>$Q$ shape</strong></td>
+        <td>$(B, h, L, d_h)$<br><small>L 个 query</small></td>
+        <td>$(B, h, \mathbf{1}, d_h)$<br><small>1 个 query</small></td>
+      </tr>
+      <tr>
+        <td><strong>$K, V$ shape</strong></td>
+        <td>$(B, h, L, d_h)$<br><small>当前投影得到</small></td>
+        <td>$K_t, V_t$: $(B, h, \mathbf{1}, d_h)$ 当前投影<br>$K_{\text{all}}, V_{\text{all}}$: $(B, h, \mathbf{T{+}1}, d_h)$ 拼接 cache 后</td>
+      </tr>
+      <tr>
+        <td><strong>Attn Score</strong></td>
+        <td>$(B, h, L, L)$<br><small>$L$ query $\times$ $L$ key</small></td>
+        <td>$(B, h, \mathbf{1}, \mathbf{T{+}1})$<br><small>1 query $\times$ $(T{+}1)$ key</small></td>
+      </tr>
+      <tr>
+        <td><strong>Attn 输出</strong></td>
+        <td>$(B, h, L, d_h)$</td>
+        <td>$(B, h, \mathbf{1}, d_h)$</td>
+      </tr>
+      <tr>
+        <td><strong>KV Cache</strong></td>
+        <td>不需要</td>
+        <td>每层维护 $(B, h, T, d_h)$，每步追加 1 行</td>
+      </tr>
+      <tr>
+        <td><strong>最终 logits</strong></td>
+        <td>$(B, L, V)$</td>
+        <td>$(B, \mathbf{1}, V)$</td>
+      </tr>
+      <tr>
+        <td><strong>参数矩阵</strong></td>
+        <td colspan="2" style="text-align:center">$W_e, W_Q, W_K, W_V, W_O, W_1, W_2, W_{\text{lm}}$ 完全共享，推理不引入新参数</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider">
+
+<!-- ==================== 四、参数总览 ==================== -->
+<section class="part">
+  <h2 class="part-title"><span class="icon">📦</span> 四、全部可学习参数一览（每层）</h2>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>参数</th>
+        <th>维度</th>
+        <th>作用位置</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>$W_e$</td>
+        <td>$V \times d_{\text{model}}$</td>
+        <td>Token 嵌入（查表）</td>
+      </tr>
+      <tr>
+        <td>$W_Q^{(i)}$</td>
+        <td>$d_{\text{model}} \times (h \cdot d_h)$</td>
+        <td>第 $i$ 层 — 将隐状态投影为 Query</td>
+      </tr>
+      <tr>
+        <td>$W_K^{(i)}$</td>
+        <td>$d_{\text{model}} \times (h \cdot d_h)$</td>
+        <td>第 $i$ 层 — 将隐状态投影为 Key</td>
+      </tr>
+      <tr>
+        <td>$W_V^{(i)}$</td>
+        <td>$d_{\text{model}} \times (h \cdot d_h)$</td>
+        <td>第 $i$ 层 — 将隐状态投影为 Value</td>
+      </tr>
+      <tr>
+        <td>$W_O^{(i)}$</td>
+        <td>$(h \cdot d_h) \times d_{\text{model}}$</td>
+        <td>第 $i$ 层 — 多头拼接后投影回 $d_{\text{model}}$</td>
+      </tr>
+      <tr>
+        <td>$W_1^{(i)}$</td>
+        <td>$d_{\text{model}} \times d_{\text{ff}}$</td>
+        <td>第 $i$ 层 MLP — 升维到 $d_{\text{ff}}$</td>
+      </tr>
+      <tr>
+        <td>$W_2^{(i)}$</td>
+        <td>$d_{\text{ff}} \times d_{\text{model}}$</td>
+        <td>第 $i$ 层 MLP — 降维回 $d_{\text{model}}$</td>
+      </tr>
+      <tr>
+        <td>$\gamma^{(i)}, \beta^{(i)}$</td>
+        <td>$d_{\text{model}}$ 各两组</td>
+        <td>第 $i$ 层 LayerNorm 缩放与偏移</td>
+      </tr>
+      <tr>
+        <td>$W_{\text{lm}}$</td>
+        <td>$d_{\text{model}} \times V$</td>
+        <td>LM Head（常与 $W_e^\top$ 共享）</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note" style="margin-top:0.5rem">共 $N$ 层。单层注意力参数 = $4 d_{\text{model}}^2$（$W_Q + W_K + W_V + W_O$），单层 MLP 参数 = $2 \cdot d_{\text{model}} \cdot d_{\text{ff}} \approx 8 d_{\text{model}}^2$，总参数量约 $12 N d_{\text{model}}^2 + V \cdot d_{\text{model}}$。</p>
+</section>
+
+<!-- ==================== 总结 ==================== -->
+<div class="summary">
+  <strong>训练时</strong>：$Q{=}XW_Q$ 一次算出 $L$ 个 query，attention score 为 $(L \times L)$，输出 $(B, L, V)$<br>
+  <strong>推理时</strong>：$Q_t{=}X_t W_Q$ 只算 <strong>1</strong> 个 query，$K_{\text{all}}{=}\text{cat}(K_{\text{cache}}, K_t)$ 拼出 $T{+}1$ 个 key，<br>
+  attention score 为 $(1 \times (T{+}1))$，输出 $(B, 1, V)$，历史 KV 不重算
+</div>
+
+</div>
+</body>
+</html>
