@@ -266,7 +266,7 @@
       <h4>(5) 多头拼接 + 输出投影</h4>
       <p>将 $h$ 个 head 沿最后一维拼接：</p>
       <div class="dim-chain">
-        $(B, h, L, d_h) \xrightarrow{\text{transpose}} (B, L, h, d_h) \xrightarrow{\text{reshape}} (B, L, h \cdot d_h)$
+        $(B, h, L, d_h) \xrightarrow{\text{transpose}} (B, L, h, d_h) \xrightarrow{\text{reshape}} (B, L,\, h \cdot d_h)$
       </div>
       <p>经过输出投影矩阵 $W_O \in \mathbb{R}^{(h \cdot d_h) \times d_{\text{model}}}$：</p>
       <div class="formula">$O_{\text{attn}} = O_{\text{concat}}\, W_O$</div>
@@ -443,7 +443,7 @@
     <div class="substep">
       <h4>(5) 多头拼接 + 输出投影</h4>
       <div class="dim-chain">
-        $(B, h, \mathbf{1}, d_h) \xrightarrow{\text{transpose}} (B, \mathbf{1}, h, d_h) \xrightarrow{\text{reshape}} (B, \mathbf{1}, h \cdot d_h)$
+        $(B, h, \mathbf{1}, d_h) \xrightarrow{\text{transpose}} (B, \mathbf{1}, h, d_h) \xrightarrow{\text{reshape}} (B, \mathbf{1},\, h \cdot d_h)$
       </div>
       <div class="formula">$O_{t,\text{attn}} = O_{t,\text{concat}}\, W_O$</div>
       <div class="dim-chain">
