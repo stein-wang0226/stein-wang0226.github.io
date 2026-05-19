@@ -235,7 +235,11 @@
       <h4>(2) 位置编码（RoPE）</h4>
       <p>对 $Q, K$ 的每个位置 $\text{pos} = 0, 1, \ldots, L{-}1$ 施加旋转矩阵（逐元素，不改变维度）：</p>
       <div class="formula">$Q_r = \text{RoPE}(Q), \quad K_r = \text{RoPE}(K) \quad \in \mathbb{R}^{B \times h \times L \times d_h}$</div>
-      <p class="note">RoPE 不改变 shape，只改变数值；$V$ 不做位置编码。</p>
+      <p><strong>RoPE 核心公式</strong>——将每两个维度视为 2D 向量，按位置做旋转：</p>
+      <div class="formula">
+        $\begin{pmatrix} q_{2i}^{(t)} \\ q_{2i+1}^{(t)} \end{pmatrix} = \begin{pmatrix} \cos(t\theta_i) & -\sin(t\theta_i) \\ \sin(t\theta_i) & \cos(t\theta_i) \end{pmatrix} \begin{pmatrix} q_{2i} \\ q_{2i+1} \end{pmatrix}, \quad \theta_i = 10000^{-2i/d_h}$
+      </div>
+      <p class="note">关键性质：$Q_t^\top K_{t+\Delta} = (R_\theta^t q)^\top (R_\theta^{t+\Delta} k) = q^\top R_\theta^\Delta k$，内积只依赖<strong>相对位置差</strong> $\Delta$，与绝对位置无关。$V$ 不做位置编码。</p>
     </div>
 
     <!-- (3) Attention Score -->
@@ -277,16 +281,22 @@
 
     <!-- (6) 残差 + MLP -->
     <div class="substep">
-      <h4>(6) 残差 + LayerNorm + MLP</h4>
-      <p>残差连接 + LayerNorm：</p>
-      <div class="formula">$X_{\text{mid}} = \text{LayerNorm}(X + O_{\text{attn}}) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
-      <p>MLP 两层线性变换 + 激活：</p>
-      <div class="formula">$\text{MLP}(x) = \sigma(x\, W_1 + b_1)\, W_2 + b_2$</div>
+      <h4>(6) 残差 + RMSNorm + MLP（SwiGLU）</h4>
+      <p><strong>RMSNorm</strong>（现代 LLM 取代 LayerNorm）—— 只保留缩放，去掉减均值：</p>
+      <div class="formula">$\text{RMSNorm}(x) = \dfrac{x}{\sqrt{\frac{1}{d}\sum_{i=1}^{d} x_i^2 + \varepsilon}} \odot \gamma$</div>
+      <p class="note">$\gamma \in \mathbb{R}^d$ 为可学习缩放参数；$\varepsilon = 10^{-6}$ 防止除零。比 LayerNorm 少一次均值计算，更快且效果相当。</p>
+      <p>残差连接 + RMSNorm：</p>
+      <div class="formula">$X_{\text{mid}} = \text{RMSNorm}(X + O_{\text{attn}}) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
+
+      <p><strong>SwiGLU</strong>（LLaMA 等现代模型的激活方案）—— 用门控机制替代单一激活：</p>
+      <div class="formula">$\text{SwiGLU}(x) = \bigl(\text{SiLU}(x W_g)\bigr) \odot (x W_u) \cdot W_d$</div>
+      <p class="param-note">$W_g, W_u \in \mathbb{R}^{d_{\text{model}} \times d_{\text{ff}}}$ 为门控/升维矩阵，$W_d \in \mathbb{R}^{d_{\text{ff}} \times d_{\text{model}}}$ 为降维矩阵；$\text{SiLU}(z) = z \cdot \sigma(z)$ 为 Sigmoid-Linear Unit</p>
       <div class="dim-chain">
-        $\underbrace{(B, L, d_{\text{model}})}_{x} \times \underbrace{(d_{\text{model}}, d_{\text{ff}})}_{W_1} = (B, L, d_{\text{ff}}) \xrightarrow{\sigma} (B, L, d_{\text{ff}}) \times \underbrace{(d_{\text{ff}}, d_{\text{model}})}_{W_2} = (B, L, d_{\text{model}})$
+        $\underbrace{(B, L, d_{\text{model}})}_{x} \xrightarrow{W_g,\,W_u} \underbrace{(B, L, d_{\text{ff}})}_{\text{gate},\,\text{up}} \xrightarrow{\text{SiLU} \odot} (B, L, d_{\text{ff}}) \xrightarrow{W_d} \underbrace{(B, L, d_{\text{model}})}_{\text{output}}$
       </div>
-      <p>最终输出（残差 + LayerNorm）：</p>
-      <div class="formula">$X' = \text{LayerNorm}(X_{\text{mid}} + \text{MLP}(X_{\text{mid}})) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
+      <p class="note">对比传统 MLP $\sigma(x W_1) W_2$：SwiGLU 用两个投影 $W_g, W_u$ 替代一个，参数量略多但表达能力更强。</p>
+      <p>最终输出（残差 + RMSNorm）：</p>
+      <div class="formula">$X' = \text{RMSNorm}(X_{\text{mid}} + \text{SwiGLU}(X_{\text{mid}})) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
     </div>
   </div>
 
@@ -399,10 +409,14 @@
 
     <!-- (3) 与历史 Cache 拼接 -->
     <div class="substep">
-      <h4>(3) 与历史 KV Cache 拼接</h4>
-      <p>本层在之前的 $T$ 个解码步中已缓存了所有历史 token 的 $K$ 和 $V$：</p>
-      <div class="formula">$K_{\text{cache}}, V_{\text{cache}} \in \mathbb{R}^{B \times h \times T \times d_h}$</div>
-      <p class="note">$T$ 个历史位置（pos 0 到 $T{-}1$）的 Key/Value，每个都是之前那一步投影 + RoPE 后存下来的。</p>
+      <h4>(3) KV Cache 原理与拼接</h4>
+
+      <p><strong>为什么需要 KV Cache？</strong></p>
+      <p>如果不用 cache，每生成一个 token 都要重新算全部 $T{+}1$ 个历史位置的 $K, V$，计算量随序列长度平方增长。KV Cache 的核心思想：<strong>历史位置的 $K, V$ 已经算过，存起来复用</strong>。</p>
+
+      <div class="formula">$K_{\text{cache}}^{(t)} = \big[\, K^{(0)}, K^{(1)}, \ldots, K^{(t-1)} \,\big] \in \mathbb{R}^{B \times h \times t \times d_h}$</div>
+      <p class="note">第 $t$ 步时，cache 中存放了位置 $0$ 到 $t{-}1$ 共 $t$ 个 token 的 Key（每步做完 RoPE 后立即存入）。</p>
+
       <p>沿序列维（dim=2）拼接当前 token 的 $K_t, V_t$：</p>
       <div class="formula">
         $K_{\text{all}} = \text{cat}(K_{\text{cache}},\, K_t)$, $\quad V_{\text{all}} = \text{cat}(V_{\text{cache}},\, V_t)$
@@ -413,6 +427,13 @@
       <div class="insight">
         $Q_t$ 序列维仍是 <strong>1</strong>（只有当前 query）；$K_{\text{all}}, V_{\text{all}}$ 序列维是 <strong>$T{+}1$</strong>（全部上下文）。这种不对称是 KV cache 的核心。
       </div>
+
+      <p><strong>计算量对比（增量 vs 全量）：</strong></p>
+      <div class="dim-chain">
+        不用 cache：每步 $O((T{+}1)^2 \cdot d_h)$（全部 token 两两打分）<br>
+        用 cache：每步 $O(1 \cdot (T{+}1) \cdot d_h)$（1 个 query $\times$ $T{+}1$ 个 key）
+      </div>
+      <p class="note">从 $O(T^2)$ 降到 $O(T)$，生成长文本时加速显著。代价是显存中要存 $2 \cdot N \cdot B \cdot h \cdot T \cdot d_h$ 个 float16 值（$N$ 层，$K$ 和 $V$ 各一份）。</p>
     </div>
 
     <!-- (4) 当前一步 Attention -->
