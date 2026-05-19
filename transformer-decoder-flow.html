@@ -774,70 +774,77 @@
     </div>
   </div>
 
-  <!-- Code 4: QKV Projection -->
+  <!-- Code 4: MultiHeadSelfAttention -->
   <div class="code-section">
     <div class="code-header">
-      <span class="title">④ Q/K/V 投影 + 多头分割</span>
-      <span class="ref">对应：训练 Step 2(1) $Q = X W_Q,\; K = X W_K,\; V = X W_V$</span>
+      <span class="title">④ MultiHeadSelfAttention（QKV + RoPE + KV Cache + Attention）</span>
+      <span class="ref">对应：训练/推理 Step 2(1)-(5)</span>
     </div>
     <div class="code-body">
-<span class="cmt"># 训练时: x = [B, L, d_model]；推理时: x = [B, 1, d_model]</span>
-<span class="var">B</span>, <span class="var">T</span>, <span class="var">C</span> = x.shape
+<span class="kw">class</span> <span class="cls">MultiHeadSelfAttention</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, dim, n_heads):
+        self.n_heads = n_heads
+        self.head_dim = dim // n_heads
+        <span class="cmt"># 三组参数矩阵（训练/推理共享）</span>
+        self.q_proj = nn.Linear(dim, dim, bias=<span class="kw">False</span>)
+        self.k_proj = nn.Linear(dim, dim, bias=<span class="kw">False</span>)
+        self.v_proj = nn.Linear(dim, dim, bias=<span class="kw">False</span>)
+        self.o_proj = nn.Linear(dim, dim, bias=<span class="kw">False</span>)
 
-<span class="cmt"># 三组参数矩阵（与训练/推理完全共享）</span>
-<span class="var">q</span> = self.q_proj(x)   <span class="cmt"># [B,T,C] × [C,C] → [B,T,C]</span>
-<span class="var">k</span> = self.k_proj(x)
-<span class="var">v</span> = self.v_proj(x)
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x, attention_mask=None, past_kv=None, use_cache=<span class="kw">False</span>):
+        B, T, C = x.shape
 
-<span class="cmt"># reshape + transpose → [B, H, T, D]</span>
-q = q.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
-k = k.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
-v = v.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
-    </div>
-    <div class="code-map">
-      <strong>维度链：</strong><code>[B, T, d_model]</code> $\xrightarrow{W_Q}$ <code>[B, T, d_model]</code> $\xrightarrow{\text{view}}$ <code>[B, T, h, d_h]</code> $\xrightarrow{\text{transpose}}$ <code>[B, h, T, d_h]$。关键区别：<strong>训练</strong> $T = L$（整段序列），<strong>推理</strong> $T = 1$（单 token）。
-    </div>
-  </div>
+        <span class="cmt"># 1. QKV 投影: [B,T,C] × [C,C] → [B,T,C]</span>
+        q = self.q_proj(x)
+        k = self.k_proj(x)
+        v = self.v_proj(x)
 
-  <!-- Code 5: Attention + Cache -->
-  <div class="code-section">
-    <div class="code-header">
-      <span class="title">⑤ 注意力计算 + KV Cache 拼接</span>
-      <span class="ref">对应：训练 Step 2(3)-(4) 与 推理 Step 2(3)-(4)</span>
-    </div>
-    <div class="code-body">
-<span class="cmt"># --- 4. 拼接 KV Cache（仅推理时）---</span>
-<span class="kw">if</span> past_kv <span class="kw">is not None</span>:
-    past_k, past_v = past_kv
-    k = torch.cat([past_k, k], dim=<span class="num">2</span>)   <span class="cmt"># [B,H,T+1,D]</span>
-    v = torch.cat([past_v, v], dim=<span class="num">2</span>)
+        <span class="cmt"># 2. reshape + transpose → [B, H, T, D]</span>
+        q = q.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
+        k = k.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
+        v = v.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
 
-<span class="cmt"># --- 5. 注意力分数（训练/推理同一套公式）---</span>
-<span class="cmt"># q: [B,H,T,D]  ×  k.transpose(-2,-1): [B,H,D,S]</span>
-<span class="cmt"># → scores: [B,H,T,S]</span>
-scores = torch.matmul(q, k.transpose(-<span class="num">2</span>, -<span class="num">1</span>)) / math.sqrt(self.head_dim)
+        <span class="cmt"># 3. RoPE（推理时 offset 使 pos 从 t 开始）</span>
+        past_len = <span class="num">0</span> <span class="kw">if</span> past_kv <span class="kw">is None</span> <span class="kw">else</span> past_kv[<span class="num">0</span>].shape[<span class="num">2</span>]
+        cos, sin = build_rope_cache(self.head_dim, T, offset=past_len)
+        q = apply_rope(q, cos, sin)
+        k = apply_rope(k, cos, sin)
 
-<span class="cmt"># --- 6. Causal Mask（仅训练时需要）---</span>
-<span class="kw">if</span> attention_mask <span class="kw">is not None</span>:
-    scores = scores.masked_fill(~attention_mask, <span class="kw">float</span>(<span class="str">"-inf"</span>))
+        <span class="cmt"># 4. 拼接 KV Cache（仅推理时）</span>
+        <span class="kw">if</span> past_kv <span class="kw">is not None</span>:
+            past_k, past_v = past_kv
+            k = torch.cat([past_k, k], dim=<span class="num">2</span>)   <span class="cmt"># [B,H,T+1,D]</span>
+            v = torch.cat([past_v, v], dim=<span class="num">2</span>)
+        present_kv = (k, v) <span class="kw">if</span> use_cache <span class="kw">else None</span>
 
-<span class="cmt"># --- 7. Softmax ---</span>
-attn = F.softmax(scores, dim=-<span class="num">1</span>)  <span class="cmt"># [B,H,T,S]</span>
+        <span class="cmt"># 5. Attention 分数: [B,H,T,D] × [B,H,D,S] → [B,H,T,S]</span>
+        scores = torch.matmul(q, k.transpose(-<span class="num">2</span>, -<span class="num">1</span>)) / math.sqrt(self.head_dim)
 
-<span class="cmt"># --- 8. 加权求和 ---</span>
-out = torch.matmul(attn, v)        <span class="cmt"># [B,H,T,D]</span>
+        <span class="cmt"># 6. Causal Mask（仅训练时需要）</span>
+        <span class="kw">if</span> attention_mask <span class="kw">is not None</span>:
+            scores = scores.masked_fill(~attention_mask, <span class="kw">float</span>(<span class="str">"-inf"</span>))
+
+        <span class="cmt"># 7. Softmax + 8. 加权求和</span>
+        attn = F.softmax(scores, dim=-<span class="num">1</span>)
+        out = torch.matmul(attn, v)            <span class="cmt"># [B,H,T,D]</span>
+
+        <span class="cmt"># 9. merge heads + 10. 输出投影</span>
+        out = out.transpose(<span class="num">1</span>, <span class="num">2</span>).contiguous().view(B, T, C)
+        out = self.o_proj(out)                 <span class="cmt"># [B,T,C]</span>
+
+        <span class="kw">return</span> out, present_kv
     </div>
     <div class="code-map">
       <strong>训练 vs 推理维度对比：</strong><br>
-      训练：$q\ [B,h,L,d_h] \times k^\top\ [B,h,d_h,L] \to$ scores <code>[B,h,L,L]</code>，需 mask<br>
-      推理：$q_t\ [B,h,1,d_h] \times k_{\text{all}}^\top\ [B,h,d_h,T{+}1] \to$ scores <code>[B,h,1,T{+}1]</code>，无需 mask
+      训练：$T = L$（整段），$q\ [B,h,L,d_h] \times k^\top\ [B,h,d_h,L] \to$ scores <code>[B,h,L,L]</code>，需 causal mask<br>
+      推理：$T = 1$（单 token），$q_t\ [B,h,1,d_h] \times k_{\text{all}}^\top\ [B,h,d_h,T{+}1] \to$ scores <code>[B,h,1,T{+}1]</code>，无需 mask
     </div>
   </div>
 
   <!-- Code 6: Transformer Block -->
   <div class="code-section">
     <div class="code-header">
-      <span class="title">⑥ 一个完整的 Decoder Block</span>
+      <span class="title">⑤ 一个完整的 Decoder Block</span>
       <span class="ref">对应：训练 Step 2(6) 残差 + MLP 全流程</span>
     </div>
     <div class="code-body">
@@ -868,7 +875,7 @@ out = torch.matmul(attn, v)        <span class="cmt"># [B,H,T,D]</span>
   <!-- Code 7: Full Model -->
   <div class="code-section">
     <div class="code-header">
-      <span class="title">⑦ 完整模型 + 训练/推理示例</span>
+      <span class="title">⑥ 完整模型 TinyTransformer</span>
       <span class="ref">对应：训练 Step 3-5 与 推理 Step 3-4</span>
     </div>
     <div class="code-body">
@@ -906,7 +913,7 @@ out = torch.matmul(attn, v)        <span class="cmt"># [B,H,T,D]</span>
   <!-- Code 8: 训练与推理调用方式对比 -->
   <div class="code-section">
     <div class="code-header">
-      <span class="title">⑧ 训练 vs 推理：调用方式对照</span>
+      <span class="title">⑦ 训练 vs 推理：调用方式对照</span>
       <span class="ref">综合对应前文所有步骤</span>
     </div>
     <div class="code-body">
