@@ -931,32 +931,89 @@
     </div>
   </div>
 
-  <!-- Code 8: 训练与推理调用方式对比 -->
+  <!-- Code 7: 训练流程 -->
   <div class="code-section">
     <div class="code-header">
-      <span class="title">⑦ 训练 vs 推理：调用方式对照</span>
-      <span class="ref">综合对应前文所有步骤</span>
+      <span class="title">⑦ 完整训练流程（Forward + Loss + Backward + Update）</span>
+      <span class="ref">对应：训练 Step 1-5 全流程</span>
     </div>
     <div class="code-body">
-<span class="cmt"># ========== 训练模式：一次前传整段序列 ==========</span>
-B, L = <span class="num">2</span>, <span class="num">6</span>
-input_ids = torch.randint(<span class="num">0</span>, vocab_size, (B, L))      <span class="cmt"># [B,L]</span>
-causal_mask = torch.tril(torch.ones(L, L))            <span class="cmt"># [L,L]</span>
+<span class="cmt"># ============ 1. 初始化 ============</span>
+model = TinyTransformer(
+    vocab_size=<span class="num">32000</span>, dim=<span class="num">4096</span>, n_heads=<span class="num">32</span>,
+    mlp_dim=<span class="num">11008</span>, n_layers=<span class="num">32</span>,
+).cuda()
 
-logits, _ = model(input_ids, attention_mask=causal_mask, use_cache=<span class="kw">False</span>)
-<span class="cmt"># logits: [B, L, V]  →  交叉熵 loss: CE(logits[:, :-1], labels[:, 1:])</span>
+optimizer = torch.optim.AdamW(model.parameters(), lr=<span class="num">3e-4</span>, weight_decay=<span class="num">0.1</span>)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=<span class="num">100000</span>)
 
-<span class="cmt"># ========== 推理模式：逐步自回归生成 ==========</span>
-past_kvs = <span class="kw">None</span>
-<span class="kw">for</span> step <span class="kw">in</span> range(num_steps):
-    step_input = new_token[<span class="kw">None</span>, <span class="kw">None</span>]               <span class="cmt"># [B,1]</span>
-    logits, past_kvs = model(step_input, use_cache=<span class="kw">True</span>)
-    <span class="cmt"># logits: [B, 1, V]  →  softmax → sample → next_token</span>
-    new_token = torch.argmax(logits, dim=-<span class="num">1</span>)
-    past_kvs  <span class="cmt"># 逐层 cache: [(B,H,T+1,D), (B,H,T+1,D)] 持续膨胀</span>
+<span class="cmt"># ============ 2. 训练循环 ============</span>
+<span class="kw">for</span> epoch <span class="kw">in</span> range(num_epochs):
+    <span class="kw">for</span> batch <span class="kw">in</span> dataloader:
+        input_ids = batch[<span class="str">"input_ids"</span>].cuda()       <span class="cmt"># [B, L]</span>
+        labels    = batch[<span class="str">"labels"</span>].cuda()          <span class="cmt"># [B, L]（= input_ids 左移1位）</span>
+
+        <span class="cmt"># --- Forward ---</span>
+        causal_mask = torch.tril(torch.ones(L, L, device=<span class="str">"cuda"</span>))  <span class="cmt"># [L,L]</span>
+        logits, _ = model(input_ids, attention_mask=causal_mask, use_cache=<span class="kw">False</span>)
+        <span class="cmt"># logits: [B, L, V]</span>
+
+        <span class="cmt"># --- Loss: 用 t 位置预测 t+1 位置的 token ---</span>
+        loss = F.cross_entropy(
+            logits[:, :-<span class="num">1</span>].reshape(-<span class="num">1</span>, vocab_size),   <span class="cmt"># [B*(L-1), V]</span>
+            labels[:, <span class="num">1</span>:].reshape(-<span class="num">1</span>),                <span class="cmt"># [B*(L-1)]</span>
+        )
+
+        <span class="cmt"># --- Backward ---</span>
+        optimizer.zero_grad()
+        loss.backward()                                <span class="cmt"># 反向传播，填充 .grad</span>
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="num">1.0</span>)
+
+        <span class="cmt"># --- Update ---</span>
+        optimizer.step()                               <span class="cmt"># AdamW 更新参数</span>
+        scheduler.step()
     </div>
     <div class="code-map">
-      <strong>核心差异一行总结：</strong><code>use_cache=False</code> 时 $T=L$ 全量并行计算；<code>use_cache=True</code> 时 $T=1$ 单步计算 + cache 拼接。同一个模型，同一套参数，只改变输入长度和 cache 传递。
+      <strong>训练全流程拆解：</strong><br>
+      <code>Embedding → N×(Attn+MLP) → LM Head</code> → logits <code>[B,L,V]</code> → <code>CrossEntropy</code> → <code>backward()</code> → <code>AdamW.step()</code><br>
+      关键细节：labels 是 input_ids 左移 1 位（位置 $t$ 预测位置 $t{+}1$），<code>logits[:, :-1]</code> 去掉最后一个位置（没有下一个 token 可预测）。
+    </div>
+  </div>
+
+  <!-- Code 8: 推理流程 -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title">⑧ 推理生成流程（自回归 + KV Cache）</span>
+      <span class="ref">对应：推理 Step 1-4 全流程</span>
+    </div>
+    <div class="code-body">
+<span class="cmt"># ============ 推理模式：逐步自回归生成 ============</span>
+model.eval()
+past_kvs = <span class="kw">None</span>
+generated = [bos_token_id]                         <span class="cmt"># 以 BOS 开头</span>
+
+<span class="kw">for</span> step <span class="kw">in</span> range(max_new_tokens):
+    step_input = torch.tensor([generated[-<span class="num">1</span>]]).cuda()  <span class="cmt"># [1,1] 当前 token</span>
+
+    logits, past_kvs = model(
+        step_input[<span class="kw">None</span>, :],                           <span class="cmt"># [B=1, T=1]</span>
+        past_kvs=past_kvs, use_cache=<span class="kw">True</span>
+    )
+    <span class="cmt"># logits: [1, 1, V]</span>
+
+    next_token = torch.argmax(logits[:, -<span class="num">1</span>], dim=-<span class="num">1</span>).item()
+    generated.append(next_token)
+
+    <span class="kw">if</span> next_token == eos_token_id:
+        <span class="kw">break</span>
+
+    <span class="cmt"># past_kvs 逐层膨胀: 每层 (B,H,S,D)，S 从 1 增长到 T</span>
+    <span class="cmt"># 总显存: 2 × N_layers × B × H × T × D × 2 bytes (fp16)</span>
+    </div>
+    <div class="code-map">
+      <strong>推理全流程拆解：</strong><br>
+      <code>Embed 1 token → N×(Attn+KV Cache+MLP) → LM Head</code> → logits <code>[B,1,V]</code> → <code>argmax/sample</code> → 新 token → 循环<br>
+      每步只算 1 个 token，历史 $K,V$ 从 cache 读取不重算。生成 $T$ 个 token 的总计算量 = $O(T^2 \cdot d \cdot h)$，比无 cache 的 $O(T^3 \cdot d \cdot h)$ 快一个数量级。
     </div>
   </div>
 
