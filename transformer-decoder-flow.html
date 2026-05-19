@@ -636,5 +636,302 @@
 </div>
 
 </div>
+
+<hr class="divider">
+
+<!-- ==================== 五、代码实现 ==================== -->
+<section class="part" id="code">
+  <h2 class="part-title"><span class="icon">💻</span> 五、全套 PyTorch 实现（与公式一一对应）</h2>
+  <p class="note" style="margin-bottom:1rem">以下代码为自包含的纯 PyTorch 实现，可直接运行。每个代码块均标注了对应的前文公式编号。</p>
+
+  <style>
+    .code-section {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden;
+    }
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 1.2rem;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: white;
+    }
+    .code-header .title {
+      font-weight: 600; font-size: 0.95rem;
+    }
+    .code-header .ref {
+      font-size: 0.78rem; opacity: 0.8;
+      background: rgba(255,255,255,0.12);
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .code-body {
+      padding: 1.2rem; overflow-x: auto;
+      background: #0f172a; color: #e2e8f0;
+      font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+      font-size: 0.85rem; line-height: 1.65;
+      tab-size: 4;
+    }
+    .code-body .cmt { color: #64748b; }
+    .code-body .kw { color: #c084fc; }
+    .code-body .fn { color: #34d399; }
+    .code-body .var { color: #fbbf24; }
+    .code-body .str { color: #34d399; }
+    .code-body .num { color: #f97316; }
+    .code-body .cls { color: #67e8f9; }
+    .code-body .op { color: #f472b6; }
+    .code-body .imp { color: #e2e8f0; }
+    .code-body .doc { color: #94a3b8; font-style: italic; }
+    .code-map {
+      padding: 0.8rem 1.2rem; background: var(--highlight);
+      border-top: 1px solid #bfdbfe; font-size: 0.88rem;
+    }
+    .code-map code {
+      background: #e2e8f0; padding: 1px 5px; border-radius: 3px;
+      font-size: 0.85rem;
+    }
+  </style>
+
+  <!-- Code 1: RMSNorm -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title">① RMSNorm（归一化）</span>
+      <span class="ref">对应：训练 Step 2(6) $\text{LayerNorm}(X + O_{\text{attn}})$</span>
+    </div>
+    <div class="code-body">
+<span class="kw">class</span> <span class="cls">RMSNorm</span>(nn.Module):
+    <span class="cmt"># 公式: y = x / sqrt(mean(x²) + ε) * weight</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, dim, eps=<span class="num">1e-6</span>):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        <span class="cmt"># x: [B, T, C]  →  rms: [B, T, 1]</span>
+        rms = torch.rsqrt(x.pow(<span class="num">2</span>).mean(dim=<span class="num">-1</span>, keepdim=<span class="kw">True</span>) + self.eps)
+        <span class="kw">return</span> x * rms * self.weight
+    </div>
+    <div class="code-map">
+      <strong>维度映射：</strong>输入 <code>[B, T, C]</code>（即前文 $(B, L, d_{\text{model}})$）→ <code>rms</code> 沿最后一维求均值 → <code>[B, T, 1]</code>，逐元素乘回原张量。比 LayerNorm 少了减去均值的步骤，更高效。
+    </div>
+  </div>
+
+  <!-- Code 2: SwiGLU -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title"> SwiGLU（MLP 激活）</span>
+      <span class="ref">对应：训练 Step 2(6) $\text{MLP}(x) = \sigma(x W_1 + b_1) W_2 + b_2$</span>
+    </div>
+    <div class="code-body">
+<span class="kw">class</span> <span class="cls">SwiGLU</span>(nn.Module):
+    <span class="doc">"""SwiGLU(x) = SiLU(gate_proj(x)) * up_proj(x)"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, dim, hidden_dim):
+        self.gate_proj = nn.Linear(dim, hidden_dim, bias=<span class="kw">False</span>)  <span class="cmt"># 公式中 W₁</span>
+        self.up_proj   = nn.Linear(dim, hidden_dim, bias=<span class="kw">False</span>)
+        self.down_proj = nn.Linear(hidden_dim, dim, bias=<span class="kw">False</span>) <span class="cmt"># 公式中 W₂</span>
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        gate = self.gate_proj(x)   <span class="cmt"># [B,T,C] → [B,T,d_ff]</span>
+        up   = self.up_proj(x)     <span class="cmt"># [B,T,C] → [B,T,d_ff]</span>
+        x    = F.silu(gate) * up   <span class="cmt"># SiLU(gate) × up，逐元素</span>
+        x    = self.down_proj(x)   <span class="cmt"># [B,T,d_ff] → [B,T,C]</span>
+        <span class="kw">return</span> x
+    </div>
+    <div class="code-map">
+      <strong>维度映射：</strong><code>[B, T, d_model]</code> $\xrightarrow{W_1}$ <code>[B, T, d_ff]</code> $\xrightarrow{\sigma}$ <code>[B, T, d_ff]</code> $\xrightarrow{W_2}$ <code>[B, T, d_model]</code>，与前文 MLP 维度链完全一致。现代 LLM（LLaMA 等）用 SwiGLU 替代 ReLU/GeLU。
+    </div>
+  </div>
+
+  <!-- Code 3: RoPE -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title"> RoPE 旋转位置编码</span>
+      <span class="ref">对应：训练 Step 2(2) $Q_r = \text{RoPE}(Q)$</span>
+    </div>
+    <div class="code-body">
+<span class="kw">def</span> <span class="fn">build_rope_cache</span>(head_dim, seq_len, theta=<span class="num">10000.0</span>, offset=<span class="num">0</span>, device=<span class="kw">None</span>):
+    <span class="cmt"># freq: [D/2]  |  pos: [T]  |  angle: [T, D/2]</span>
+    freq = <span class="num">1.0</span> / (theta ** (torch.arange(<span class="num">0</span>, head_dim, <span class="num">2</span>).float() / head_dim))
+    pos  = torch.arange(offset, offset + seq_len).float()
+    angle = torch.outer(pos, freq)
+    cos = angle.cos()[<span class="kw">None</span>, <span class="kw">None</span>, :, :]  <span class="cmt"># [1, 1, T, D/2]</span>
+    sin = angle.sin()[<span class="kw">None</span>, <span class="kw">None</span>, :, :]
+    <span class="kw">return</span> cos, sin
+
+<span class="kw">def</span> <span class="fn">apply_rope</span>(x, cos, sin):
+    <span class="cmt"># x: [B,H,T,D]  |  cos,sin: [1,1,T,D/2]</span>
+    xe = x[..., <span class="num">0</span>::<span class="num">2</span>]   <span class="cmt"># 偶数维 [B,H,T,D/2]</span>
+    xo = x[..., <span class="num">1</span>::<span class="num">2</span>]   <span class="cmt"># 奇数维 [B,H,T,D/2]</span>
+    out_even = xe * cos - xo * sin   <span class="cmt"># 2D 旋转矩阵的第一行</span>
+    out_odd  = xe * sin + xo * cos   <span class="cmt"># 2D 旋转矩阵的第二行</span>
+    out = torch.empty_like(x)
+    out[..., <span class="num">0</span>::<span class="num">2</span>] = out_even
+    out[..., <span class="num">1</span>::<span class="num">2</span>] = out_odd
+    <span class="kw">return</span> out
+    </div>
+    <div class="code-map">
+      <strong>对应公式：</strong>旋转矩阵 $R(\theta_t) = \begin{pmatrix}\cos\theta_t & -\sin\theta_t \\ \sin\theta_t & \cos\theta_t\end{pmatrix}$，每两个维度一组做 2D 旋转。<code>offset</code> 参数使推理时当前位置从 $t$ 开始（不是从 0），对应前文"推理 Step 2(2)"的 RoPE(pos=$t$)。
+    </div>
+  </div>
+
+  <!-- Code 4: QKV Projection -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title">④ Q/K/V 投影 + 多头分割</span>
+      <span class="ref">对应：训练 Step 2(1) $Q = X W_Q,\; K = X W_K,\; V = X W_V$</span>
+    </div>
+    <div class="code-body">
+<span class="cmt"># 训练时: x = [B, L, d_model]；推理时: x = [B, 1, d_model]</span>
+<span class="var">B</span>, <span class="var">T</span>, <span class="var">C</span> = x.shape
+
+<span class="cmt"># 三组参数矩阵（与训练/推理完全共享）</span>
+<span class="var">q</span> = self.q_proj(x)   <span class="cmt"># [B,T,C] × [C,C] → [B,T,C]</span>
+<span class="var">k</span> = self.k_proj(x)
+<span class="var">v</span> = self.v_proj(x)
+
+<span class="cmt"># reshape + transpose → [B, H, T, D]</span>
+q = q.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
+k = k.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
+v = v.view(B, T, self.n_heads, self.head_dim).transpose(<span class="num">1</span>, <span class="num">2</span>)
+    </div>
+    <div class="code-map">
+      <strong>维度链：</strong><code>[B, T, d_model]</code> $\xrightarrow{W_Q}$ <code>[B, T, d_model]</code> $\xrightarrow{\text{view}}$ <code>[B, T, h, d_h]</code> $\xrightarrow{\text{transpose}}$ <code>[B, h, T, d_h]$。关键区别：<strong>训练</strong> $T = L$（整段序列），<strong>推理</strong> $T = 1$（单 token）。
+    </div>
+  </div>
+
+  <!-- Code 5: Attention + Cache -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title">⑤ 注意力计算 + KV Cache 拼接</span>
+      <span class="ref">对应：训练 Step 2(3)-(4) 与 推理 Step 2(3)-(4)</span>
+    </div>
+    <div class="code-body">
+<span class="cmt"># --- 4. 拼接 KV Cache（仅推理时）---</span>
+<span class="kw">if</span> past_kv <span class="kw">is not None</span>:
+    past_k, past_v = past_kv
+    k = torch.cat([past_k, k], dim=<span class="num">2</span>)   <span class="cmt"># [B,H,T+1,D]</span>
+    v = torch.cat([past_v, v], dim=<span class="num">2</span>)
+
+<span class="cmt"># --- 5. 注意力分数（训练/推理同一套公式）---</span>
+<span class="cmt"># q: [B,H,T,D]  ×  k.transpose(-2,-1): [B,H,D,S]</span>
+<span class="cmt"># → scores: [B,H,T,S]</span>
+scores = torch.matmul(q, k.transpose(-<span class="num">2</span>, -<span class="num">1</span>)) / math.sqrt(self.head_dim)
+
+<span class="cmt"># --- 6. Causal Mask（仅训练时需要）---</span>
+<span class="kw">if</span> attention_mask <span class="kw">is not None</span>:
+    scores = scores.masked_fill(~attention_mask, <span class="kw">float</span>(<span class="str">"-inf"</span>))
+
+<span class="cmt"># --- 7. Softmax ---</span>
+attn = F.softmax(scores, dim=-<span class="num">1</span>)  <span class="cmt"># [B,H,T,S]</span>
+
+<span class="cmt"># --- 8. 加权求和 ---</span>
+out = torch.matmul(attn, v)        <span class="cmt"># [B,H,T,D]</span>
+    </div>
+    <div class="code-map">
+      <strong>训练 vs 推理维度对比：</strong><br>
+      训练：$q\ [B,h,L,d_h] \times k^\top\ [B,h,d_h,L] \to$ scores <code>[B,h,L,L]</code>，需 mask<br>
+      推理：$q_t\ [B,h,1,d_h] \times k_{\text{all}}^\top\ [B,h,d_h,T{+}1] \to$ scores <code>[B,h,1,T{+}1]</code>，无需 mask
+    </div>
+  </div>
+
+  <!-- Code 6: Transformer Block -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title">⑥ 一个完整的 Decoder Block</span>
+      <span class="ref">对应：训练 Step 2(6) 残差 + MLP 全流程</span>
+    </div>
+    <div class="code-body">
+<span class="kw">class</span> <span class="cls">TransformerBlock</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, dim, n_heads, mlp_hidden_dim):
+        self.attn_norm = RMSNorm(dim)
+        self.attn      = MultiHeadSelfAttention(dim, n_heads)
+        self.ffn_norm  = RMSNorm(dim)
+        self.ffn       = SwiGLU(dim, mlp_hidden_dim)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x, attention_mask=None, past_kv=None, use_cache=<span class="kw">False</span>):
+        <span class="cmt"># Pre-Norm 风格：先归一化，再 attention</span>
+        h = self.attn_norm(x)
+        attn_out, present_kv = self.attn(h, attention_mask, past_kv, use_cache)
+        x = x + attn_out                     <span class="cmt"># 残差连接</span>
+
+        <span class="cmt"># Pre-Norm：先归一化，再 MLP</span>
+        h = self.ffn_norm(x)
+        x = x + self.ffn(h)                  <span class="cmt"># 残差连接</span>
+
+        <span class="kw">return</span> x, present_kv
+    </div>
+    <div class="code-map">
+      <strong>对应公式链：</strong><code>LayerNorm(x) → Attn → x + attn_out → LayerNorm → MLP → x + mlp_out</code>，与前文训练 Step 2(6) 的 $X_{\text{mid}} = \text{LayerNorm}(X + O_{\text{attn}})$ 完全一致。<code>use_cache=True</code> 时返回 $(K_{\text{all}}, V_{\text{all}})$ 供下一步使用。
+    </div>
+  </div>
+
+  <!-- Code 7: Full Model -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title">⑦ 完整模型 + 训练/推理示例</span>
+      <span class="ref">对应：训练 Step 3-5 与 推理 Step 3-4</span>
+    </div>
+    <div class="code-body">
+<span class="kw">class</span> <span class="cls">TinyTransformer</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vocab_size, dim, n_heads, mlp_dim, n_layers):
+        self.embed  = nn.Embedding(vocab_size, dim)      <span class="cmt"># W_e</span>
+        self.layers = nn.ModuleList([                    <span class="cmt"># N 层</span>
+            TransformerBlock(dim, n_heads, mlp_dim) <span class="kw">for</span> _ <span class="kw">in</span> range(n_layers)
+        ])
+        self.norm   = RMSNorm(dim)
+        self.lm_head = nn.Linear(dim, vocab_size, bias=<span class="kw">False</span>) <span class="cmt"># W_lm</span>
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, input_ids, attention_mask=None, past_kvs=None, use_cache=<span class="kw">False</span>):
+        x = self.embed(input_ids)          <span class="cmt"># [B,T,V] → [B,T,C]  ← Step 1</span>
+        new_kvs = []
+        <span class="kw">for</span> layer, past_kv <span class="kw">in</span> zip(self.layers, past_kvs):
+            x, present_kv = layer(x, attention_mask, past_kv, use_cache)  <span class="cmt"># Step 2×N</span>
+            new_kvs.append(present_kv)
+        x = self.norm(x)
+        logits = self.lm_head(x)           <span class="cmt"># [B,T,C] → [B,T,V]  ← Step 4</span>
+        <span class="kw">return</span> logits, new_kvs <span class="kw">if</span> use_cache <span class="kw">else</span> <span class="kw">None</span>
+    </div>
+    <div class="code-map">
+      <strong>使用示例对比：</strong><br>
+      <code># 训练：整段序列 + causal mask</code><br>
+      <code>logits, _ = model(input_ids, attention_mask=causal_mask, use_cache=False)</code><br>
+      <code># logits: [B, L, V]  ← 对应训练 Step 4</code><br><br>
+      <code># 推理：逐 token + KV cache</code><br>
+      <code>for step in range(4):</code><br>
+      <code>&nbsp;&nbsp;&nbsp;&nbsp;logits, past_kvs = model(step_input, use_cache=True)</code><br>
+      <code># logits: [B, 1, V]  ← 对应推理 Step 4</code>
+    </div>
+  </div>
+
+  <!-- Code 8: 训练与推理调用方式对比 -->
+  <div class="code-section">
+    <div class="code-header">
+      <span class="title">⑧ 训练 vs 推理：调用方式对照</span>
+      <span class="ref">综合对应前文所有步骤</span>
+    </div>
+    <div class="code-body">
+<span class="cmt"># ========== 训练模式：一次前传整段序列 ==========</span>
+B, L = <span class="num">2</span>, <span class="num">6</span>
+input_ids = torch.randint(<span class="num">0</span>, vocab_size, (B, L))      <span class="cmt"># [B,L]</span>
+causal_mask = torch.tril(torch.ones(L, L))            <span class="cmt"># [L,L]</span>
+
+logits, _ = model(input_ids, attention_mask=causal_mask, use_cache=<span class="kw">False</span>)
+<span class="cmt"># logits: [B, L, V]  →  交叉熵 loss: CE(logits[:, :-1], labels[:, 1:])</span>
+
+<span class="cmt"># ========== 推理模式：逐步自回归生成 ==========</span>
+past_kvs = <span class="kw">None</span>
+<span class="kw">for</span> step <span class="kw">in</span> range(num_steps):
+    step_input = new_token[<span class="kw">None</span>, <span class="kw">None</span>]               <span class="cmt"># [B,1]</span>
+    logits, past_kvs = model(step_input, use_cache=<span class="kw">True</span>)
+    <span class="cmt"># logits: [B, 1, V]  →  softmax → sample → next_token</span>
+    new_token = torch.argmax(logits, dim=-<span class="num">1</span>)
+    past_kvs  <span class="cmt"># 逐层 cache: [(B,H,T+1,D), (B,H,T+1,D)] 持续膨胀</span>
+    </div>
+    <div class="code-map">
+      <strong>核心差异一行总结：</strong><code>use_cache=False</code> 时 $T=L$ 全量并行计算；<code>use_cache=True</code> 时 $T=1$ 单步计算 + cache 拼接。同一个模型，同一套参数，只改变输入长度和 cache 传递。
+    </div>
+  </div>
+
+</section>
+
+</div>
 </body>
 </html>
