@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04: 训练与微调 - LLM面试笔记</title>
+    <link rel="stylesheet" href="assets/katex.min.css">
+    <link rel="stylesheet" href="assets/monokai-sublime.min.css">
+    <script defer src="assets/katex.min.js"></script>
+    <script defer src="assets/auto-render.min.js"></script>
+    <script src="assets/highlight.min.js"></script>
+    <script src="assets/python.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <h1>LLM & Multimodal 面试复习笔记</h1>
+    <nav class="nav-links">
+        <a href="index.html">目录</a>
+        <a href="01-transformer.html">01</a>
+        <a href="02-pretrained-models.html">02</a>
+        <a href="03-llm-architecture.html">03</a>
+        <a href="04-training.html" class="active">04</a>
+        <a href="05-multimodal.html">05</a>
+        <a href="06-practice.html">06</a>
+    </nav>
+</header>
+
+<button class="sidebar-toggle" id="sidebarToggle">&#9776;</button>
+
+<aside class="sidebar" id="sidebar">
+    <div class="toc-title">本章目录</div>
+    <a href="#sec1">1. 三阶段训练流程</a>
+    <a href="#sec2">2. 预训练 (Pretrain)</a>
+    <a href="#sec2-1" class="sub">2.1 数据与目标</a>
+    <a href="#sec2-2" class="sub">2.2 训练技巧</a>
+    <a href="#sec3">3. SFT (监督微调)</a>
+    <a href="#sec3-1" class="sub">3.1 数据格式</a>
+    <a href="#sec3-2" class="sub">3.2 Loss Mask</a>
+    <a href="#sec4">4. PEFT 总览</a>
+    <a href="#sec4-1" class="sub">4.1 方法对比</a>
+    <a href="#sec5">5. LoRA 详解</a>
+    <a href="#sec5-1" class="sub">5.1 原理与公式</a>
+    <a href="#sec5-2" class="sub">5.2 QLoRA</a>
+    <a href="#sec5-3" class="sub">5.3 AdaLoRA</a>
+    <a href="#sec6">6. RLHF / DPO / GRPO</a>
+    <a href="#sec6-1" class="sub">6.1 RLHF (PPO)</a>
+    <a href="#sec6-2" class="sub">6.2 DPO</a>
+    <a href="#sec6-3" class="sub">6.3 GRPO</a>
+    <a href="#sec7">7. DeepSpeed ZeRO</a>
+    <a href="#interview">面试要点总结</a>
+</aside>
+
+<main class="main">
+    <h1>04: 训练与微调</h1>
+    <blockquote>
+        核心主题：Pretrain、SFT、LoRA/QLoRA、RLHF/DPO/GRPO、分布式训练<br>
+        来源：Happy-LLM 第四/六章 + Base-LLM 第十一/十二章
+    </blockquote>
+
+    <!-- Section 1 -->
+    <h2 id="sec1">1. 三阶段训练流程</h2>
+    <table>
+        <thead><tr><th>阶段</th><th>目标</th><th>数据</th><th>方法</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Pretrain</strong></td><td>学习世界知识</td><td>万亿级无标注文本</td><td>CLM 自回归</td></tr>
+            <tr><td><strong>SFT</strong></td><td>学习指令遵循</td><td>10万级指令-回复对</td><td>监督微调</td></tr>
+            <tr><td><strong>RLHF/DPO</strong></td><td>对齐人类偏好</td><td>偏好对 (chosen/rejected)</td><td>强化学习/直接偏好优化</td></tr>
+        </tbody>
+    </table>
+    <div class="info-box key">
+        <h4>直觉理解</h4>
+        <ul>
+            <li><strong>Pretrain</strong>：学会"说话"（语言能力 + 世界知识）</li>
+            <li><strong>SFT</strong>：学会"听话"（按指令格式输出）</li>
+            <li><strong>RLHF</strong>：学会"说好话"（有用、真实、无害）</li>
+        </ul>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 id="sec2">2. 预训练 (Pretrain)</h2>
+
+    <h3 id="sec2-1">2.1 数据与目标</h3>
+    <div class="math-block">
+        $$\mathcal{L}_{CLM} = -\frac{1}{T}\sum_{t=1}^{T} \log P_\theta(x_t | x_{&lt;t})$$
+    </div>
+    <p><strong>数据处理</strong>：Tokenize &rarr; 拼接所有文本 &rarr; 切分为固定长度块（如 2048/4096 tokens）</p>
+    <p><strong>数据规模</strong>：</p>
+    <ul>
+        <li>GPT-3: 300B tokens, LLaMA-2: 2T tokens, LLaMA-3: 15T tokens</li>
+        <li>Chinchilla 最优：$D = 20N$</li>
+    </ul>
+
+    <h3 id="sec2-2">2.2 关键训练技巧</h3>
+    <table>
+        <thead><tr><th>技巧</th><th>作用</th></tr></thead>
+        <tbody>
+            <tr><td>Cosine LR Schedule + Warmup</td><td>稳定训练初期，后期平滑衰减</td></tr>
+            <tr><td>Gradient Accumulation</td><td>模拟大 batch（accumulate K steps = batch × K）</td></tr>
+            <tr><td>Mixed Precision (BF16)</td><td>节省显存，加速计算（前向 BF16，梯度 FP32）</td></tr>
+            <tr><td>Gradient Checkpointing</td><td>用计算换显存（~30% 慢，~60% 省显存）</td></tr>
+            <tr><td>Flash Attention</td><td>减少 HBM 读写，IO-aware 分块计算</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 3 -->
+    <h2 id="sec3">3. SFT (Supervised Fine-Tuning)</h2>
+
+    <h3 id="sec3-1">3.1 数据格式（Qwen/ChatML 风格）</h3>
+    <pre><code>&lt;|im_start|&gt;system
+You are a helpful assistant.&lt;|im_end|&gt;
+&lt;|im_start|&gt;user
+{用户问题}&lt;|im_end|&gt;
+&lt;|im_start|&gt;assistant
+{模型回答}&lt;|im_end|&gt;</code></pre>
+
+    <h3 id="sec3-2">3.2 Loss Mask</h3>
+    <div class="info-box key">
+        <h4>核心区别：SFT vs Pretrain</h4>
+        <p>SFT 只在 assistant 回复部分计算 loss，system/user 部分用 <code>ignore_index=-100</code> 屏蔽。</p>
+        <p>多轮对话最佳实践：同时预测所有 assistant turns（而非只预测最后一轮）。</p>
+    </div>
+    <pre><code class="language-python"># Loss mask: only compute on assistant tokens
+labels = input_ids.clone()
+# Mask everything except assistant responses
+labels[~assistant_mask] = -100  # IGNORE_TOKEN_ID
+loss = F.cross_entropy(logits, labels, ignore_index=-100)</code></pre>
+
+    <!-- Section 4 -->
+    <h2 id="sec4">4. PEFT 参数高效微调总览</h2>
+
+    <h3 id="sec4-1">4.1 方法对比</h3>
+    <table>
+        <thead><tr><th>方法</th><th>机制</th><th>额外推理延迟</th><th>适用规模</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Adapter</strong></td><td>串行插入瓶颈层 (down&rarr;up+residual)</td><td>有（串行）</td><td>全规模</td></tr>
+            <tr><td><strong>Prefix Tuning</strong></td><td>每层加可学习 prefix K/V</td><td>有</td><td>全规模</td></tr>
+            <tr><td><strong>Prompt Tuning</strong></td><td>仅输入层加 soft tokens</td><td>极小</td><td>10B+ 才有效</td></tr>
+            <tr><td><strong>P-Tuning v2</strong></td><td>每层加 deep prompts</td><td>有</td><td>全规模</td></tr>
+            <tr><td><strong>LoRA</strong></td><td>并行低秩矩阵分解</td><td><strong>无</strong>（可合并）</td><td>全规模</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 5 -->
+    <h2 id="sec5">5. LoRA 详解</h2>
+
+    <h3 id="sec5-1">5.1 原理与公式</h3>
+    <div class="info-box key">
+        <h4>核心假设</h4>
+        <p>微调时的权重更新 $\Delta W$ 具有低内在秩（intrinsic rank）。</p>
+    </div>
+    <div class="math-block">
+        $$h = W_0 x + \Delta W \cdot x = W_0 x + \frac{\alpha}{r}(BA)x$$
+        $$B \in \mathbb{R}^{d \times r}, \quad A \in \mathbb{R}^{r \times k}, \quad r \ll \min(d, k)$$
+    </div>
+    <p><strong>初始化</strong>：$A$ ~ Gaussian, $B$ = 0 &rarr; 初始 $\Delta W = 0$（从预训练起点开始）</p>
+    <p><strong>关键超参</strong>：</p>
+    <table>
+        <thead><tr><th>超参</th><th>含义</th><th>典型值</th></tr></thead>
+        <tbody>
+            <tr><td><code>r</code></td><td>秩（可训练参数量 $\propto r$）</td><td>4, 8, 16</td></tr>
+            <tr><td><code>lora_alpha</code></td><td>缩放因子（实际缩放 = alpha/r）</td><td>16, 32</td></tr>
+            <tr><td><code>target_modules</code></td><td>应用到哪些层</td><td>["q_proj", "v_proj"] 或全部</td></tr>
+            <tr><td><code>lora_dropout</code></td><td>正则化</td><td>0.05, 0.1</td></tr>
+        </tbody>
+    </table>
+    <p><strong>可训练参数量</strong>：$\Theta = 2 \times L_{target} \times d \times r$（通常 <1% 总参数）</p>
+
+    <div class="info-box key">
+        <h4>LoRA 核心优势</h4>
+        <ol>
+            <li><strong>零推理延迟</strong>：部署时合并 $W' = W_0 + \frac{\alpha}{r} BA$</li>
+            <li><strong>高效</strong>：冻结参数无需梯度/优化器状态</li>
+            <li><strong>模块化</strong>：不同任务换不同 LoRA adapter</li>
+            <li><strong>可组合</strong>：与量化等其他技术正交</li>
+        </ol>
+    </div>
+
+    <h3 id="sec5-2">5.2 QLoRA</h3>
+    <p><strong>核心创新</strong>：Base model 量化为 4-bit NF4，LoRA adapter 保持 BF16。</p>
+    <div class="math-block">
+        $$Y^{BF16} = X^{BF16} \cdot \text{Dequant}(W^{NF4}) + X^{BF16} \cdot B^{BF16} \cdot A^{BF16}$$
+    </div>
+    <ul>
+        <li><strong>NF4</strong>（Normal Float 4）：信息论最优的4位量化（针对正态分布权重）</li>
+        <li><strong>Double Quantization</strong>：量化参数本身也量化，进一步压缩</li>
+        <li><strong>Paged Optimizers</strong>：CPU offload 优化器状态</li>
+        <li>效果：65B 模型可在单张 48GB GPU 上微调</li>
+    </ul>
+
+    <h3 id="sec5-3">5.3 AdaLoRA</h3>
+    <p>动态分配 LoRA rank：重要层高 rank，不重要层低 rank。</p>
+    <div class="math-block">
+        $$\Delta W = P \Lambda Q \quad (\text{SVD-like parametrization})$$
+        $$I(w) = |w \cdot \nabla_w \mathcal{L}| \quad (\text{importance score})$$
+    </div>
+
+    <!-- Section 6 -->
+    <h2 id="sec6">6. 偏好对齐</h2>
+
+    <h3 id="sec6-1">6.1 RLHF (PPO)</h3>
+    <p><strong>四个模型</strong>：</p>
+    <ol>
+        <li><strong>Actor</strong>（SFT初始化，更新）：生成回复的策略模型</li>
+        <li><strong>Ref Model</strong>（SFT初始化，冻结）：KL 约束的参考</li>
+        <li><strong>Reward Model</strong>（冻结）：评分模型</li>
+        <li><strong>Critic</strong>（RM初始化，更新）：估计 value function</li>
+    </ol>
+
+    <p><strong>Reward Model 训练</strong>（Bradley-Terry）：</p>
+    <div class="math-block">
+        $$\mathcal{L}_{RM} = -\mathbb{E}\left[\log\sigma\left(r_\theta(x, y_w) - r_\theta(x, y_l)\right)\right]$$
+    </div>
+
+    <p><strong>PPO 目标</strong>：</p>
+    <div class="math-block">
+        $$L^{CLIP} = \mathbb{E}_t\left[\min\left(r_t\hat{A}_t, \text{clip}(r_t, 1\!-\!\epsilon, 1\!+\!\epsilon)\hat{A}_t\right)\right]$$
+        <p>$r_t = \pi_\theta(a_t|s_t) / \pi_{old}(a_t|s_t)$，KL 惩罚防止过度偏离：</p>
+        $$\text{obj} = \mathbb{E}\left[r_\theta(x,y) - \beta \text{KL}(\pi_\theta || \pi_{ref})\right]$$
+    </div>
+
+    <h3 id="sec6-2">6.2 DPO (Direct Preference Optimization)</h3>
+    <div class="info-box key">
+        <h4>DPO 核心思想</h4>
+        <p>跳过显式 Reward Model，直接从偏好数据优化策略。将 RL 问题转化为分类问题。</p>
+    </div>
+    <div class="math-block">
+        $$\mathcal{L}_{DPO} = -\mathbb{E}\left[\log\sigma\left(\beta\log\frac{\pi_\theta(y_w|x)}{\pi_{ref}(y_w|x)} - \beta\log\frac{\pi_\theta(y_l|x)}{\pi_{ref}(y_l|x)}\right)\right]$$
+    </div>
+    <p><strong>隐式奖励</strong>：$\hat{r}(x,y) = \beta\log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}$</p>
+    <table>
+        <thead><tr><th>对比</th><th>RLHF (PPO)</th><th>DPO</th></tr></thead>
+        <tbody>
+            <tr><td>模型数量</td><td>4</td><td>2（Actor + Ref）</td></tr>
+            <tr><td>Reward Model</td><td>需要显式训练</td><td>隐式</td></tr>
+            <tr><td>在线采样</td><td>需要</td><td>不需要（离线数据）</td></tr>
+            <tr><td>训练稳定性</td><td>较难调</td><td>简单（类似 SFT）</td></tr>
+            <tr><td>效果上限</td><td>更高（在线探索）</td><td>受限于离线数据分布</td></tr>
+        </tbody>
+    </table>
+
+    <h3 id="sec6-3">6.3 GRPO (Group Relative Policy Optimization)</h3>
+    <p><strong>DeepSeek 提出</strong>：去掉 Critic，用组内相对排名作为 advantage。</p>
+    <div class="math-block">
+        $$A_i = \frac{r_i - \text{mean}(\{r_1, \ldots, r_G\})}{\text{std}(\{r_1, \ldots, r_G\})}$$
+    </div>
+    <p>对每个 prompt 采样 $G$ 个回复，用 verifier（如规则/代码执行）评分，组内标准化作为 advantage。</p>
+    <p><strong>优势</strong>：省 Critic 模型（节省显存），特别适合有 verifier 的数学/代码场景。</p>
+
+    <!-- Section 7 -->
+    <h2 id="sec7">7. DeepSpeed ZeRO 分布式训练</h2>
+    <table>
+        <thead><tr><th>ZeRO Stage</th><th>分片内容</th><th>单卡显存</th><th>通信量</th></tr></thead>
+        <tbody>
+            <tr><td>ZeRO-1</td><td>Optimizer States</td><td>$4\Phi + 12\Phi/N$</td><td>低</td></tr>
+            <tr><td>ZeRO-2</td><td>+ Gradients</td><td>$2\Phi + (2+12)\Phi/N$</td><td>中</td></tr>
+            <tr><td>ZeRO-3</td><td>+ Parameters</td><td>$(2+2+12)\Phi/N$</td><td>高</td></tr>
+        </tbody>
+    </table>
+    <p>$\Phi$ = 模型参数量，$N$ = GPU 数量</p>
+    <div class="info-box key">
+        <h4>实践建议</h4>
+        <ul>
+            <li><strong>SFT</strong>：ZeRO-2（显存/通信平衡最优）</li>
+            <li><strong>超大模型预训练</strong>：ZeRO-3 + Tensor Parallelism</li>
+            <li><strong>LoRA 微调</strong>：ZeRO-2 甚至单卡即可</li>
+        </ul>
+    </div>
+
+    <!-- Interview -->
+    <h2 id="interview">面试要点总结</h2>
+    <div class="info-box interview">
+        <h4>高频面试题</h4>
+        <ol>
+            <li><strong>LoRA 为什么有效？</strong> 微调更新矩阵具有低内在秩；且只需学习"预训练未强调但下游关键"的特征</li>
+            <li><strong>LoRA rank 怎么选？</strong> 简单任务 r=4-8，复杂任务 r=16-64；多层 low-r > 单层 high-r</li>
+            <li><strong>LoRA 不适合什么场景？</strong> 知识注入（CPT/Pretrain）；需要全面改变模型行为的场景</li>
+            <li><strong>RLHF 为何需要4个模型？</strong> Ref 防遗忘 pretrain 能力，Reward 提供信号，Critic 估计 baseline 减方差</li>
+            <li><strong>DPO vs RLHF？</strong> DPO 更简单稳定，但缺少在线探索；RLHF 效果上限更高但难训</li>
+            <li><strong>GRPO 的创新？</strong> 去 Critic（省显存），用组内相对排名替代 value baseline</li>
+            <li><strong>Reward Hacking？</strong> 模型学会钻 RM 漏洞（如冗长但空洞的回答得高分），需 KL 约束</li>
+            <li><strong>SFT 和 Pretrain 的 Loss 区别？</strong> SFT 仅在 assistant tokens 上计算 loss (loss mask)</li>
+            <li><strong>Gradient Checkpointing 原理？</strong> 不存前向中间结果，反向时重算，省 ~60% 显存代价 ~30% 时间</li>
+        </ol>
+    </div>
+
+    <nav class="page-nav">
+        <a href="03-llm-architecture.html">&larr; 03 大模型架构</a>
+        <a href="05-multimodal.html">05 多模态大模型 &rarr;</a>
+    </nav>
+</main>
+
+<script>
+    hljs.highlightAll();
+    var sidebar = document.getElementById('sidebar');
+    var toggle = document.getElementById('sidebarToggle');
+    if (toggle) toggle.addEventListener('click', function() { sidebar.classList.toggle('open'); });
+    if (sidebar) sidebar.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() { if (window.innerWidth <= 1024) sidebar.classList.remove('open'); });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [{left: "$$", right: "$$", display: true},{left: "$", right: "$", display: false}],
+            throwOnError: false
+        });
+    });
+</script>
+</body>
+</html>

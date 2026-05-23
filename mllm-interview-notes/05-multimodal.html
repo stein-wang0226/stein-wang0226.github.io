@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05: 多模态大模型 - LLM面试笔记</title>
+    <link rel="stylesheet" href="assets/katex.min.css">
+    <link rel="stylesheet" href="assets/monokai-sublime.min.css">
+    <script defer src="assets/katex.min.js"></script>
+    <script defer src="assets/auto-render.min.js"></script>
+    <script src="assets/highlight.min.js"></script>
+    <script src="assets/python.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <h1>LLM & Multimodal 面试复习笔记</h1>
+    <nav class="nav-links">
+        <a href="index.html">目录</a>
+        <a href="01-transformer.html">01</a>
+        <a href="02-pretrained-models.html">02</a>
+        <a href="03-llm-architecture.html">03</a>
+        <a href="04-training.html">04</a>
+        <a href="05-multimodal.html" class="active">05</a>
+        <a href="06-practice.html">06</a>
+    </nav>
+</header>
+
+<button class="sidebar-toggle" id="sidebarToggle">&#9776;</button>
+
+<aside class="sidebar" id="sidebar">
+    <div class="toc-title">本章目录</div>
+    <a href="#sec1">1. 多模态概述与挑战</a>
+    <a href="#sec1-1" class="sub">1.1 五大核心挑战</a>
+    <a href="#sec1-2" class="sub">1.2 架构演进四阶段</a>
+    <a href="#sec1-3" class="sub">1.3 代表性模型时间线</a>
+    <a href="#sec2">2. ViT (Vision Transformer)</a>
+    <a href="#sec2-1" class="sub">2.1 Patch Embedding</a>
+    <a href="#sec2-2" class="sub">2.2 架构与特性</a>
+    <a href="#sec3">3. CLIP 与对比学习</a>
+    <a href="#sec3-1" class="sub">3.1 对比学习框架</a>
+    <a href="#sec3-2" class="sub">3.2 Zero-shot 分类</a>
+    <a href="#sec3-3" class="sub">3.3 CLIP 变体与改进</a>
+    <a href="#sec3-4" class="sub">3.4 CLIP 的局限</a>
+    <a href="#sec4">4. 视觉编码器选型</a>
+    <a href="#sec5">5. 模态桥接 (Modality Bridging)</a>
+    <a href="#sec5-1" class="sub">5.1 五种桥接方法对比</a>
+    <a href="#sec5-2" class="sub">5.2 BLIP-2: Q-Former</a>
+    <a href="#sec5-3" class="sub">5.3 LLaVA 系列</a>
+    <a href="#sec5-4" class="sub">5.4 Flamingo: 过渡架构</a>
+    <a href="#sec5-5" class="sub">5.5 InstructBLIP</a>
+    <a href="#sec6">6. 高分辨率处理</a>
+    <a href="#sec7">7. 训练策略</a>
+    <a href="#sec7-1" class="sub">7.1 两/三阶段训练</a>
+    <a href="#sec7-2" class="sub">7.2 数据工程</a>
+    <a href="#sec7-3" class="sub">7.3 视觉编码器冻结 vs 解冻</a>
+    <a href="#sec8">8. 理解与生成统一</a>
+    <a href="#sec8-1" class="sub">8.1 离散 Token 路线</a>
+    <a href="#sec8-2" class="sub">8.2 双解码器路线</a>
+    <a href="#sec8-3" class="sub">8.3 原生统一架构</a>
+    <a href="#sec9">9. 视频理解</a>
+    <a href="#sec10">10. 多模态幻觉</a>
+    <a href="#sec11">11. 多模态 MoE</a>
+    <a href="#sec12">12. 评估体系</a>
+    <a href="#sec13">13. 架构对比总结</a>
+    <a href="#interview">面试要点总结</a>
+</aside>
+
+<main class="main">
+    <h1>05: 多模态大模型</h1>
+    <blockquote>
+        核心主题：经典架构演进 + 现代主流范式 + 面试高频考点<br>
+        来源：Base-LLM 第六部分 + Happy-LLM + 多模态面试准备手册
+    </blockquote>
+
+    <!-- Section 1 -->
+    <h2 id="sec1">1. 多模态概述与挑战</h2>
+    <p><strong>多模态</strong>：系统处理 2+ 种异构模态（文本/图像/音频/视频），并显式建模其语义关联关系。</p>
+    <p><strong>关键区分</strong>："多模态" ≠ 多数据源（需异构 + 互补 + 显式对齐/融合）；多模态 ≠ 多任务学习（前者是信息来源维度，后者是目标函数维度）。</p>
+
+    <h3 id="sec1-1">1.1 五大核心挑战</h3>
+    <table>
+        <thead><tr><th>挑战</th><th>描述</th><th>代表方法</th></tr></thead>
+        <tbody>
+            <tr><td><strong>表示</strong> (Representation)</td><td>异构数据映射到统一空间</td><td>CLIP 共享嵌入空间</td></tr>
+            <tr><td><strong>对齐</strong> (Alignment)</td><td>跨模态对应关系</td><td>对比学习 (InfoNCE)</td></tr>
+            <tr><td><strong>融合</strong> (Fusion)</td><td>整合多模态信息推理</td><td>Cross-Attention, Q-Former</td></tr>
+            <tr><td><strong>转换</strong> (Translation)</td><td>跨模态生成（一对多歧义）</td><td>Image Captioning, TTS</td></tr>
+            <tr><td><strong>协同学习</strong> (Co-learning)</td><td>跨模态知识迁移</td><td>Zero-shot, 知识蒸馏</td></tr>
+        </tbody>
+    </table>
+
+    <h3 id="sec1-2">1.2 多模态 LLM 架构演进四阶段</h3>
+    <div class="roadmap">
+        <pre><code>阶段1: 连接式 (Connection)              阶段2: 过渡式 (Transition)
+BLIP-2, LLaVA, InstructBLIP           Flamingo, Idefics
+[冻结ViT + 投影层/适配器 + 冻结LLM]     [冻结LLM + 内部注入视觉注意力层]
+  |                                       |
+  +-- 优点: 训练便宜, 模块化替换           +-- 优点: few-shot ICL, 更深融合
+  +-- 缺点: 浅层融合, 视觉细节丢失         +-- 缺点: 仍需预训练ViT, Gate调参
+  +-- 核心: 让LLM自行处理视觉信息          +-- 核心: 在LLM内部做视觉-语言交互
+  +-- 关键洞察: 高质量数据 > 复杂桥接       +-- 关键洞察: 渐进注入保护语言能力
+        |                                       |
+        v                                       v
+阶段3: 原生统一 (Native)               阶段4: 端到端全能 (End-to-End Omni)
+Chameleon, Janus                       GPT-4o, Qwen3-Omni, MiniCPM-o
+[统一词表 + 单网络 + 自回归NTP]          [实时多模态交互 + 全模态I/O]
+  |                                       |
+  +-- 优点: 深度跨模态推理                  +-- 优点: 实时交互, 全模态统一
+  +-- 缺点: 需海量数据(10T+), 训练不稳定    +-- 缺点: 工程极复杂, 资源需求极高
+  +-- 核心: 图像也是token, 一切皆NTP        +-- 核心: Thinker-Talker分离, 双工交互
+  +-- 关键洞察: 理解≠生成, 图像生成是瓶颈   +-- 关键洞察: 模态间对齐需端到端学习</code></pre>
+    </div>
+
+    <h3 id="sec1-3">1.3 代表性模型时间线</h3>
+    <table>
+        <thead><tr><th>时期</th><th>模型</th><th>核心贡献</th></tr></thead>
+        <tbody>
+            <tr><td>2021</td><td>CLIP (OpenAI)</td><td>对比学习对齐图文，零样本迁移</td></tr>
+            <tr><td>2022</td><td>Flamingo (DeepMind)</td><td>少样本多模态 ICL，Gated X-Attn</td></tr>
+            <tr><td>2023.01</td><td>BLIP-2 (Salesforce)</td><td>Q-Former 桥接冻结模块，参数高效</td></tr>
+            <tr><td>2023.04</td><td>LLaVA (UW-Madison)</td><td>极简线性投影 + 视觉指令微调</td></tr>
+            <tr><td>2023.06</td><td>InstructBLIP</td><td>指令感知的视觉特征提取</td></tr>
+            <tr><td>2023.10</td><td>LLaVA-1.5</td><td>MLP 投影 + 高分辨率 + 强数据配方</td></tr>
+            <tr><td>2023.12</td><td>Qwen-VL (阿里)</td><td>多任务多分辨率，Grounding 能力</td></tr>
+            <tr><td>2024.02</td><td>InternVL 1.5 (上海AI Lab)</td><td>大视觉编码器 + 动态分辨率</td></tr>
+            <tr><td>2024.05</td><td>LLaVA-NeXT / OneVision</td><td>统一图像/视频/多图理解</td></tr>
+            <tr><td>2024.09</td><td>Qwen2-VL</td><td>Naive Dynamic Resolution + 视频流式</td></tr>
+            <tr><td>2024.12</td><td>InternVL 2.5</td><td>超大规模 + MoE + 开源 SOTA</td></tr>
+            <tr><td>2025</td><td>Qwen3-Omni / GPT-4o</td><td>全模态输入输出统一</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 2 -->
+    <h2 id="sec2">2. ViT (Vision Transformer)</h2>
+
+    <h3 id="sec2-1">2.1 Patch Embedding</h3>
+    <p>核心思想：<strong>将图像切成 patch，当作 token 喂给标准 Transformer</strong>。</p>
+    <div class="math-block">
+        $$N = \frac{H \times W}{P^2} \quad (\text{patch数量})$$
+        $$z_0 = [x_{class};\; x_p^1 E;\; x_p^2 E;\; \ldots;\; x_p^N E] + E_{pos}$$
+    </div>
+    <ul>
+        <li>典型配置：$224 \times 224$ 图像，$P=16$ &rarr; $N = 196$ patches</li>
+        <li><code>[CLS]</code> token 用于分类：$y = \text{LN}(z_L^0)$</li>
+        <li>位置编码：可学习的 1D 位置向量（2D 插值实现分辨率迁移）</li>
+        <li>Patch 投影实现：$\text{Conv2d}(3, d_{model}, \text{kernel\_size}=P, \text{stride}=P)$，即一个步长为 patch 大小的卷积</li>
+    </ul>
+
+    <h3 id="sec2-2">2.2 架构特性</h3>
+    <table>
+        <thead><tr><th>特性</th><th>ViT</th><th>CNN</th></tr></thead>
+        <tbody>
+            <tr><td>归纳偏置</td><td>极少（无局部性/平移等变性假设）</td><td>强（卷积核 = 局部连接 + 权值共享）</td></tr>
+            <tr><td>第一层感受野</td><td>全局（Self-Attention）</td><td>局部（kernel size）</td></tr>
+            <tr><td>数据需求</td><td>大（需大规模预训练，如 JFT-300M / ImageNet-21K）</td><td>中等</td></tr>
+            <tr><td>扩展性</td><td>极佳（scaling law）</td><td>有天花板</td></tr>
+            <tr><td>复杂度</td><td>$O(N^2)$ where $N = (H \times W) / P^2$</td><td>$O(H \times W \times k^2)$</td></tr>
+        </tbody>
+    </table>
+    <div class="info-box key">
+        <h4>ViT 的核心贡献</h4>
+        <p>证明了 Transformer 是 CV + NLP 统一的通用计算原语。ViT 的成功是后续一切多模态 Transformer 的基础——图像 patch 和文本 token 本质上都是序列元素，可以用同一架构处理。</p>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 id="sec3">3. CLIP 与对比学习</h2>
+
+    <h3 id="sec3-1">3.1 对比学习框架</h3>
+    <div class="info-box key">
+        <h4>CLIP 架构</h4>
+        <p><strong>双塔模型</strong>：Image Encoder (ViT/ResNet) + Text Encoder (GPT-2 style)</p>
+        <p>两个 encoder 输出经线性投影 + L2 归一化后，在共享空间中做对比学习。</p>
+    </div>
+
+    <p><strong>训练目标</strong>：在 $N \times N$ 的相似度矩阵上做对称交叉熵（InfoNCE）：</p>
+    <div class="math-block">
+        $$\mathcal{L} = -\frac{1}{2N}\sum_{i=1}^N\left[\log\frac{e^{s_{ii}/\tau}}{\sum_j e^{s_{ij}/\tau}} + \log\frac{e^{s_{ii}/\tau}}{\sum_j e^{s_{ji}/\tau}}\right]$$
+        <p>$s_{ij} = \text{cos\_sim}(v_i, t_j)$，$\tau$ 为可学习温度参数（初始 $\log(1/0.07)$）</p>
+    </div>
+    <ul>
+        <li>训练数据：400M 图文对（WebImageText）</li>
+        <li>Text Encoder 用 [EOS] token（非 [CLS]）作为句子表示</li>
+        <li>Batch size = 32768（提供充足负样本，这是 CLIP 成功的关键）</li>
+    </ul>
+
+    <h3 id="sec3-2">3.2 Zero-shot 分类</h3>
+    <pre><code>1. 对所有类别生成文本: "A photo of a {class_name}."
+2. 用 Text Encoder 编码所有类别文本 -> T_1, T_2, ..., T_K
+3. 用 Image Encoder 编码测试图像 -> V
+4. 计算 cos_sim(V, T_k) for all k
+5. softmax(相似度/τ) -> argmax 即为预测类别</code></pre>
+    <p>无需微调，无需特定类别训练数据，仅靠 prompt template 即可分类。</p>
+
+    <h3 id="sec3-3">3.3 CLIP 变体与改进</h3>
+    <table>
+        <thead><tr><th>模型</th><th>核心改进</th><th>意义</th></tr></thead>
+        <tbody>
+            <tr><td><strong>SigLIP</strong></td><td>Sigmoid Loss 替代 Softmax Loss</td><td>无需全局负样本，可用更小 batch</td></tr>
+            <tr><td><strong>EVA-CLIP</strong></td><td>高效大 ViT 训练策略</td><td>训练稳定性更好，更快收敛</td></tr>
+            <tr><td><strong>OpenCLIP</strong></td><td>开源复现 + DataComp 数据工程</td><td>社区可用，持续改进</td></tr>
+        </tbody>
+    </table>
+    <div class="info-box key">
+        <h4>SigLIP 的核心改进</h4>
+        <p>CLIP 的 Softmax InfoNCE 需要全局负样本（依赖大 batch），SigLIP 改为 Sigmoid 二分类 Loss：每个图文对独立计算 $-\log\sigma(s_{ij}/\tau \cdot y_{ij})$，$y_{ij}=1$ 为正，$-1$ 为负。</p>
+        <p>好处：不依赖 batch 内负样本数量，可用更小 batch 达到同等效果。</p>
+    </div>
+
+    <h3 id="sec3-4">3.4 CLIP 的局限</h3>
+    <div class="info-box warning">
+        <h4>CLIP 五大局限（面试高频）</h4>
+        <ol>
+            <li><strong>组合性理解弱</strong>：难区分"红杯在蓝盘上" vs "蓝杯在红盘上"（属性绑定失败）</li>
+            <li><strong>空间关系差</strong>：对物体相对位置关系理解弱</li>
+            <li><strong>计数能力有限</strong>：难以精确数出图像中物体数量</li>
+            <li><strong>Bag-of-Words 倾向</strong>：对词序不敏感（"dog bites man" ≈ "man bites dog"）</li>
+            <li><strong>无生成能力</strong>：是判别模型，不能生成图像或文本</li>
+        </ol>
+        <p>这些正是多模态 LLM 要解决的问题——LLM 的语言生成能力 + CLIP 的视觉表示 = VLM。</p>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 id="sec4">4. 视觉编码器选型</h2>
+    <table>
+        <thead><tr><th>编码器</th><th>特点</th><th>适用场景</th><th>代表模型</th></tr></thead>
+        <tbody>
+            <tr><td><strong>CLIP ViT</strong></td><td>对比学习预训练，图文语义对齐好</td><td>语义理解为主</td><td>LLaVA, MiniGPT-4</td></tr>
+            <tr><td><strong>SigLIP</strong></td><td>Sigmoid Loss，训练更高效</td><td>高效训练</td><td>PaLI, Idefics2</td></tr>
+            <tr><td><strong>DINOv2</strong></td><td>自监督，空间细粒度强</td><td>检测/分割/Grounding</td><td>Cambrian-1 混合编码</td></tr>
+            <tr><td><strong>InternViT-6B</strong></td><td>超大 ViT，持续训练</td><td>追求极致性能</td><td>InternVL 系列</td></tr>
+            <tr><td><strong>EVA-CLIP</strong></td><td>高效大规模 ViT 训练</td><td>通用 backbone</td><td>多模型通用</td></tr>
+        </tbody>
+    </table>
+    <div class="info-box interview">
+        <h4>面试：视觉编码器如何选？</h4>
+        <p><strong>CLIP ViT</strong>：天然图文对齐，适合语义理解（多数 MLLM 的默认选择）。</p>
+        <p><strong>DINOv2</strong>：自监督训练，空间细粒度强（适合检测/分割/Grounding），但缺语言对齐。</p>
+        <p><strong>混合编码器</strong>：Cambrian-1 证明 CLIP + DINOv2 混合可取长补短（语义 + 空间）。</p>
+        <p><strong>超大 ViT</strong>：InternVL 用 6B ViT 追求极致性能，但训练/推理成本高。</p>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 id="sec5">5. 模态桥接 (Modality Bridging)</h2>
+
+    <h3 id="sec5-1">5.1 五种桥接方法对比</h3>
+    <table>
+        <thead><tr><th>方法</th><th>机制</th><th>视觉Token数</th><th>代表模型</th><th>优劣</th></tr></thead>
+        <tbody>
+            <tr><td><strong>线性/MLP 投影</strong></td><td>简单映射视觉特征到 LLM 空间</td><td>576+ (全量)</td><td>LLaVA, LLaVA-1.5</td><td>简单高效，但Token多</td></tr>
+            <tr><td><strong>Q-Former</strong></td><td>可学习 Query 通过 Cross-Attn 聚合</td><td>32 (压缩)</td><td>BLIP-2, InstructBLIP</td><td>信息瓶颈，细节丢失</td></tr>
+            <tr><td><strong>Perceiver Resampler</strong></td><td>Latent queries + Cross-Attn</td><td>64 (固定)</td><td>Flamingo, Idefics</td><td>变长→固定，但压缩</td></tr>
+            <tr><td><strong>Gated Cross-Attention</strong></td><td>LLM 内部插入视觉注意力层</td><td>64</td><td>Flamingo</td><td>深度融合，但需调Gate</td></tr>
+            <tr><td><strong>Spatial Pooling</strong></td><td>空间下采样减少 Token 数</td><td>可变 (压缩后)</td><td>LLaVA-NeXT, Cambrian</td><td>保留空间结构，灵活</td></tr>
+        </tbody>
+    </table>
+
+    <h3 id="sec5-2">5.2 BLIP-2: Q-Former</h3>
+    <div class="info-box key">
+        <h4>核心设计：轻量信息瓶颈</h4>
+        <p>Q-Former (188M params) 作为冻结 Vision Encoder 和冻结 LLM 之间的桥梁。</p>
+        <p>32 个可学习 Query Vectors 通过 Cross-Attention 从视觉特征中提取最相关信息。</p>
+    </div>
+    <p><strong>结构</strong>：两个子模块共享 Self-Attention 层：</p>
+    <ul>
+        <li><strong>Image Transformer</strong>：有 Cross-Attention 到 vision encoder output</li>
+        <li><strong>Text Transformer</strong>：处理文本（类似 BERT）</li>
+    </ul>
+
+    <p><strong>两阶段预训练</strong>：</p>
+    <table>
+        <thead><tr><th>阶段</th><th>冻结</th><th>训练</th><th>目标</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Stage 1</strong>: VL Representation</td><td>Image Encoder</td><td>Q-Former</td><td>ITC + ITM + ITG</td></tr>
+            <tr><td><strong>Stage 2</strong>: VL Generation</td><td>Image Encoder + LLM</td><td>FC Layer</td><td>LLM 生成（Q-Former输出作soft visual prompts）</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Stage 1 的三个目标</strong>：</p>
+    <ul>
+        <li><strong>ITC</strong> (Image-Text Contrastive)：单模态 mask，对齐图文表示</li>
+        <li><strong>ITM</strong> (Image-Text Matching)：双向 mask，二分类匹配</li>
+        <li><strong>ITG</strong> (Image-grounded Text Generation)：因果 mask，生成文本描述</li>
+    </ul>
+    <p><strong>效果</strong>：比 Flamingo-80B 少 54 倍可训练参数，VQAv2 zero-shot +8.7 points。</p>
+    <div class="info-box warning">
+        <h4>Q-Former 的局限</h4>
+        <ul>
+            <li><strong>信息瓶颈</strong>：32 个 Query 压缩全图信息，高分辨率细节丢失</li>
+            <li><strong>OCR/细粒度任务弱</strong>：压缩后难以保留字符级细节</li>
+            <li><strong>与 LLaVA 的对比</strong>：LLaVA 保留全量视觉 Token 让 LLM 自行选择，反而效果更好</li>
+        </ul>
+    </div>
+
+    <h3 id="sec5-3">5.3 LLaVA 系列</h3>
+
+    <h4>LLaVA v1 (2023.04)</h4>
+    <div class="info-box key">
+        <h4>LLaVA = CLIP ViT-L/14 + Linear Projection + Vicuna LLM</h4>
+        <p>最简单的连接方式：一个线性层将视觉特征投影到 LLM 的文本空间。</p>
+    </div>
+    <pre><code>Image -> CLIP ViT -> [N visual tokens] -> Linear W -> LLM input space
+                                                         |
+Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response</code></pre>
+
+    <p><strong>两阶段训练</strong>：</p>
+    <table>
+        <thead><tr><th>阶段</th><th>冻结</th><th>训练</th><th>数据</th></tr></thead>
+        <tbody>
+            <tr><td>Feature Alignment</td><td>ViT + LLM</td><td>Linear W only</td><td>595K 图文对</td></tr>
+            <tr><td>Visual Instruction Tuning</td><td>ViT</td><td>W + LLM</td><td>158K 指令数据</td></tr>
+        </tbody>
+    </table>
+
+    <h4>LLaVA-1.5 (2023.10) — 关键改进</h4>
+    <table>
+        <thead><tr><th>维度</th><th>LLaVA v1</th><th>LLaVA-1.5</th><th>效果</th></tr></thead>
+        <tbody>
+            <tr><td>投影层</td><td>Linear (1层)</td><td>MLP (2层 + GELU)</td><td>更强非线性映射能力</td></tr>
+            <tr><td>分辨率</td><td>224px</td><td>336px</td><td>OCR/细粒度大幅提升</td></tr>
+            <tr><td>数据</td><td>158K</td><td>~1.2M (混入学术VQA)</td><td>多能力均衡</td></tr>
+            <tr><td>LLM</td><td>Vicuna-13B</td><td>Vicuna-13B / Mistral-7B</td><td>更强基座</td></tr>
+        </tbody>
+    </table>
+    <div class="info-box key">
+        <h4>LLaVA 的核心启示</h4>
+        <p><strong>简单架构 + 高质量数据 + 正确训练策略 > 复杂架构</strong>。</p>
+        <p>LLaVA-1.5 仅用 ~1.2M 数据就超越了使用数十M数据的更复杂模型。证明数据质量 > 数量。</p>
+        <p>为什么两层 MLP 比线性投影好？单层线性映射表达力有限，两层 MLP 可学习更复杂的非线性视觉→语言映射。配合高分辨率 + 更丰富数据带来显著提升。</p>
+    </div>
+
+    <h3 id="sec5-4">5.4 Flamingo: 过渡架构</h3>
+    <p><strong>三大创新</strong>：</p>
+    <ol>
+        <li><strong>Perceiver Resampler</strong>：固定可学习 latent queries + Cross-Attention &rarr; 将变长视觉输入压缩为固定 64 个 visual tokens</li>
+        <li><strong>Gated XATTN-DENSE</strong>：在冻结 LLM 层之间注入 Cross-Attention；tanh gate 初始化为 0</li>
+        <li><strong>Masked Cross-Attention</strong>：每个文本 token 只关注其紧邻的前一张图片（非所有图片）</li>
+    </ol>
+    <div class="info-box key">
+        <h4>Tanh Gate 设计精妙之处</h4>
+        <p>Gate = $\tanh(\alpha)$，$\alpha$ 初始化为 0 意味着：</p>
+        <ul>
+            <li>训练开始时 gate = 0，Cross-Attention 输出被完全屏蔽</li>
+            <li>模型等价于纯文本 LLM（保护预训练语言能力）</li>
+            <li>随着训练进行，$\alpha$ 逐渐增大，视觉信息渐进"渗入"</li>
+        </ul>
+        <p>这实现了从纯语言到多模态的平滑过渡，避免了随机初始化的 Cross-Attention 破坏预训练能力。</p>
+    </div>
+    <p><strong>训练数据</strong>：M3W (43M 网页)，交错的图文序列，天然支持 few-shot ICL。</p>
+
+    <h3 id="sec5-5">5.5 InstructBLIP</h3>
+    <p>BLIP-2 的指令感知改进：Q-Former 提取视觉特征时 <strong>也接收文本指令作为输入</strong>，使得提取的视觉信息与当前问题相关（而非提取通用视觉表示）。</p>
+    <p>例如：问"图中有几只猫"时，Q-Former 会有倾向地提取与猫相关的视觉特征。</p>
+
+    <!-- Section 6 -->
+    <h2 id="sec6">6. 高分辨率处理</h2>
+    <div class="info-box key">
+        <h4>为什么需要高分辨率？</h4>
+        <p>224/336px 对 OCR、小物体识别严重不足。字符级细节在低分辨率下模糊不清。</p>
+    </div>
+    <table>
+        <thead><tr><th>方法</th><th>原理</th><th>代表模型</th><th>优缺点</th></tr></thead>
+        <tbody>
+            <tr><td><strong>图像切片 (Tiling)</strong></td><td>高分辨率图切成多个子图分别编码再拼接 Token</td><td>LLaVA-NeXT, InternVL</td><td>保留细节，但Token数暴增</td></tr>
+            <tr><td><strong>动态分辨率</strong></td><td>根据图像宽高比决定切分方式</td><td>Qwen2-VL (Naive Dynamic Resolution)</td><td>灵活适配不同比例</td></tr>
+            <tr><td><strong>Spatial Pooling</strong></td><td>空间下采样减少 Token 数</td><td>LLaVA-NeXT, Cambrian</td><td>平衡细节与效率</td></tr>
+        </tbody>
+    </table>
+    <p><strong>代价</strong>：高分辨率切片可达 2000+ 视觉 Token，增加 Prefill 计算和 KV Cache 带宽压力。通常通过 Spatial Pooling / Token Merging 缓解。</p>
+
+    <!-- Section 7 -->
+    <h2 id="sec7">7. 训练策略</h2>
+
+    <h3 id="sec7-1">7.1 两/三阶段训练</h3>
+    <table>
+        <thead><tr><th>阶段</th><th>目标</th><th>冻结</th><th>训练</th><th>数据</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Stage 1: 预训练对齐</strong></td><td>学视觉→语言空间映射</td><td>ViT + LLM</td><td>投影层 only</td><td>大规模图文对 (CC3M/12M, LAION)</td></tr>
+            <tr><td><strong>Stage 2: 指令微调</strong></td><td>学习遵循多模态指令</td><td>ViT (可选解冻)</td><td>投影层 + LLM</td><td>高质量指令数据 (150K-1.2M)</td></tr>
+            <tr><td><strong>Stage 3 (可选)</strong></td><td>高质量对齐 / 偏好对齐</td><td>-</td><td>全模型 / LoRA</td><td>偏好数据 / 精选数据</td></tr>
+        </tbody>
+    </table>
+    <div class="info-box key">
+        <h4>核心原则</h4>
+        <ul>
+            <li>Stage 1 学习映射，Stage 2 学习指令遵循——不要跳过 Stage 1</li>
+            <li>Stage 2 中混入纯文本对话数据防止语言能力退化</li>
+            <li>数据质量 > 数量（LLaVA-1.5 用 1.2M 超越数十M数据的模型）</li>
+        </ul>
+    </div>
+
+    <h3 id="sec7-2">7.2 数据工程</h3>
+    <table>
+        <thead><tr><th>数据类型</th><th>来源</th><th>作用</th></tr></thead>
+        <tbody>
+            <tr><td><strong>预训练对齐数据</strong></td><td>LAION, CC3M/12M, DataComp</td><td>学视觉-语言映射</td></tr>
+            <tr><td><strong>指令微调数据</strong></td><td>LLaVA-Instruct, ShareGPT4V, ALLaVA</td><td>学多模态指令遵循</td></tr>
+            <tr><td><strong>纯文本对话</strong></td><td>ShareGPT, OpenOrca</td><td>防语言能力退化</td></tr>
+            <tr><td><strong>多任务混合</strong></td><td>VQA + OCR + Grounding + Chart + 推理</td><td>均衡多能力</td></tr>
+        </tbody>
+    </table>
+    <p><strong>数据合成</strong>：用 GPT-4V 生成高质量标注（LLaVA 核心创新：符号化描述 + GPT-4 = 不需要 GPT-4V "看到"图片）。</p>
+    <p><strong>数据配比</strong>：不同任务数据的混合比例对模型能力影响巨大，需大量消融实验。</p>
+
+    <h3 id="sec7-3">7.3 视觉编码器冻结 vs 解冻</h3>
+    <table>
+        <thead><tr><th>策略</th><th>优点</th><th>缺点</th><th>何时用</th></tr></thead>
+        <tbody>
+            <tr><td><strong>冻结 ViT</strong></td><td>保留强视觉表示，训练稳定，成本低</td><td>无法适配下游特定任务</td><td>默认选择</td></tr>
+            <tr><td><strong>解冻 ViT</strong></td><td>可适配下游（OCR/细粒度提升明显）</td><td>灾难性遗忘风险，训练不稳定</td><td>OCR/细粒度任务需要时</td></tr>
+        </tbody>
+    </table>
+    <p><strong>解冻 ViT 注意事项</strong>：需小学习率（通常比 LLM 小 10x），可能导致对齐漂移。</p>
+
+    <!-- Section 8 -->
+    <h2 id="sec8">8. 理解与生成统一</h2>
+    <div class="info-box key">
+        <h4>核心矛盾</h4>
+        <p><strong>理解</strong>需要高层语义压缩（"这是一只猫"），<strong>生成</strong>需要低层像素细节（每个像素值）。</p>
+        <p>一个表示很难同时做好两者——这是理解-生成统一的核心挑战。</p>
+    </div>
+
+    <h3 id="sec8-1">8.1 离散 Token 路线 (Autoregressive NTP)</h3>
+    <p>用 VQ-VAE/VQ-GAN 将图像编码为离散 Token，与文本统一为 next-token prediction。</p>
+    <ul>
+        <li><strong>代表模型</strong>：Emu3, Chameleon</li>
+        <li><strong>Chameleon</strong>：统一词表 65,536 tokens（8,192 image codebook + text tokens）</li>
+        <li>图像 Tokenizer：$512 \times 512$ &rarr; 1024 离散 image tokens</li>
+        <li>混合序列：image + text tokens 直接拼接，单个 Transformer 处理</li>
+        <li>所有任务 = 自回归 next-token prediction</li>
+    </ul>
+    <p><strong>挑战</strong>：Codebook 限制重建质量；图像生成任务导致训练不稳定（需 QK-Norm + Z-loss + Norm Reordering）。</p>
+
+    <h3 id="sec8-2">8.2 双解码器路线</h3>
+    <p>理解用连续特征 + LLM，生成用扩散模型。两个解码器共享部分参数或表示。</p>
+    <ul>
+        <li><strong>代表模型</strong>：Janus, SEED-X</li>
+        <li>理解路径：ViT 特征 &rarr; LLM &rarr; 理解输出</li>
+        <li>生成路径：LLM 输出 &rarr; 扩散模型 Decoder &rarr; 生成图像</li>
+    </ul>
+    <p><strong>挑战</strong>：模型复杂、训练成本高、两路对齐困难。</p>
+
+    <h3 id="sec8-3">8.3 原生统一架构</h3>
+
+    <h4>GPT-4o</h4>
+    <p><strong>全模态原生</strong>：单一网络端到端处理 text + vision + audio</p>
+    <ul>
+        <li>替代之前的级联方案（ASR &rarr; LLM &rarr; TTS）为统一模型</li>
+        <li>语音响应延迟低至 232ms</li>
+        <li>支持实时语音中断和情感表达</li>
+    </ul>
+
+    <h4>Qwen3-Omni</h4>
+    <p><strong>Thinker-Talker 双 MoE 架构</strong>：</p>
+    <ul>
+        <li><strong>AuT</strong>（Audio Transformer）：650M params, 20M hours 音频训练</li>
+        <li><strong>Thinker</strong>：30B-A3B MoE（推理引擎）</li>
+        <li><strong>Talker</strong>：3B-A0.3B MoE（语音生成，接收 Thinker 的表示）</li>
+        <li>端到端延迟：音频 234ms，视频 547ms</li>
+    </ul>
+
+    <h4>MiniCPM-o 4.5 (全双工 + 边缘部署)</h4>
+    <ul>
+        <li>全双工：同时听 + 想 + 说</li>
+        <li>使用 <code>[silent]</code> 占位 token 维持流式节奏</li>
+        <li>9B 总参数，Int4 量化后 11GB 显存可跑</li>
+    </ul>
+
+    <!-- Section 9 -->
+    <h2 id="sec9">9. 视频理解</h2>
+    <div class="info-box key">
+        <h4>核心挑战：Token 爆炸</h4>
+        <p>1分钟视频 @1fps &asymp; 60帧 &times; 576 tokens/帧 = 34K tokens，远超 LLM 常见上下文长度。</p>
+    </div>
+    <table>
+        <thead><tr><th>方案</th><th>原理</th><th>代表模型</th></tr></thead>
+        <tbody>
+            <tr><td><strong>均匀/关键帧采样</strong></td><td>稀疏采帧减少Token数</td><td>Video-LLaVA, VideoChat</td></tr>
+            <tr><td><strong>帧级池化</strong></td><td>每帧 Spatial Pooling 减少Token后送入LLM</td><td>LLaVA-Video</td></tr>
+            <tr><td><strong>SlowFast 双速</strong></td><td>低帧率全局 + 高帧率局部</td><td>SlowFast 思路</td></tr>
+            <tr><td><strong>统一帧序列</strong></td><td>视频视为动态分辨率帧序列统一处理</td><td>Qwen2-VL</td></tr>
+            <tr><td><strong>分层建模</strong></td><td>clip级 &rarr; frame级 &rarr; event级</td><td>长视频理解</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 10 -->
+    <h2 id="sec10">10. 多模态幻觉</h2>
+    <p><strong>定义</strong>：模型生成与图像不一致的描述（Object Hallucination 最典型——描述图中不存在的物体）。</p>
+
+    <h3>成因</h3>
+    <ol>
+        <li><strong>语言先验过强</strong>：LLM 按统计规律编造不存在物体（如"草地上的羊"虽图中无羊）</li>
+        <li><strong>视觉注入不足</strong>：视觉信息未充分影响生成</li>
+        <li><strong>训练数据偏见</strong>：常见物体过度代表</li>
+        <li><strong>位置偏差</strong>：倾向关注图像中心/前方位置</li>
+    </ol>
+
+    <h3>评估</h3>
+    <table>
+        <thead><tr><th>评估集</th><th>方法</th></tr></thead>
+        <tbody>
+            <tr><td><strong>POPE</strong></td><td>二分类：物体是否存在（Polling-based）</td></tr>
+            <tr><td><strong>CHAIR</strong></td><td>幻觉比例：生成描述中不存在的物体占比</td></tr>
+            <tr><td><strong>MMHal-Bench</strong></td><td>多维度幻觉评估</td></tr>
+        </tbody>
+    </table>
+
+    <h3>缓解方法</h3>
+    <table>
+        <thead><tr><th>方法</th><th>原理</th></tr></thead>
+        <tbody>
+            <tr><td><strong>RLHF-V</strong></td><td>偏好对齐：偏好与图像一致的回答</td></tr>
+            <tr><td><strong>VCD (Contrastive Decoding)</strong></td><td>对比有/无图像时的输出差异，削弱语言先验</td></tr>
+            <tr><td><strong>OPERA</strong></td><td>惩罚注意力过度集中的模式</td></tr>
+            <tr><td><strong>视觉特征增强</strong></td><td>增强视觉信号注入强度</td></tr>
+            <tr><td><strong>数据去偏</strong></td><td>减少训练数据中的共现偏差</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 11 -->
+    <h2 id="sec11">11. 多模态 MoE</h2>
+    <div class="info-box interview">
+        <h4>MoE 在多模态中的特殊考量</h4>
+        <ol>
+            <li><strong>路由策略</strong>：视觉/文本 Token 是否路由到不同 Expert？</li>
+            <li><strong>负载均衡</strong>：跨模态 Token 分布差异大，需跨模态负载均衡</li>
+            <li><strong>模态特化</strong>：Expert 可能自发分化为"视觉专家"/"语言专家"</li>
+        </ol>
+        <p><strong>实例</strong>：DeepSeek-VL2、InternVL 2.5 MoE 变体。</p>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 id="sec12">12. 评估体系</h2>
+    <table>
+        <thead><tr><th>层次</th><th>评估集</th><th>评估能力</th></tr></thead>
+        <tbody>
+            <tr><td>基础感知</td><td>MME, MMBench, SEED-Bench</td><td>视觉理解基础</td></tr>
+            <tr><td>推理</td><td>MathVista, ScienceQA</td><td>数学/科学推理</td></tr>
+            <tr><td>OCR/文档</td><td>OCRBench, TextVQA, DocVQA, ChartQA</td><td>文字/文档理解</td></tr>
+            <tr><td>幻觉</td><td>POPE, CHAIR, MMHal-Bench</td><td>真实性</td></tr>
+            <tr><td>真实场景</td><td>RealWorldQA</td><td>开放域理解</td></tr>
+            <tr><td>综合排名</td><td>OpenCompass, LMSYS Vision Arena</td><td>综合能力</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 13 -->
+    <h2 id="sec13">13. 架构对比总结</h2>
+    <table>
+        <thead><tr><th>模型</th><th>类型</th><th>视觉编码器</th><th>桥接方式</th><th>训练成本</th><th>跨模态深度</th><th>细粒度能力</th></tr></thead>
+        <tbody>
+            <tr><td>BLIP-2</td><td>连接式</td><td>冻结 ViT</td><td>Q-Former (32Q)</td><td>低</td><td>浅</td><td>弱(压缩)</td></tr>
+            <tr><td>InstructBLIP</td><td>连接式</td><td>冻结 ViT</td><td>指令感知 Q-Former</td><td>低</td><td>浅</td><td>中</td></tr>
+            <tr><td>LLaVA</td><td>连接式</td><td>冻结 CLIP</td><td>Linear</td><td>极低</td><td>浅</td><td>弱(低分辨率)</td></tr>
+            <tr><td>LLaVA-1.5</td><td>连接式</td><td>冻结 CLIP</td><td>MLP + 高分辨率</td><td>低</td><td>浅</td><td>强</td></tr>
+            <tr><td>Flamingo</td><td>过渡式</td><td>冻结 NFNet</td><td>Perceiver + Gated XATTN</td><td>中</td><td>中</td><td>中</td></tr>
+            <tr><td>InternVL 2.5</td><td>连接式(强)</td><td>InternViT-6B</td><td>MLP + 动态分辨率 + MoE</td><td>高</td><td>中深</td><td>极强</td></tr>
+            <tr><td>Chameleon</td><td>原生统一</td><td>Image Tokenizer</td><td>统一词表 NTP</td><td>极高</td><td>深</td><td>中</td></tr>
+            <tr><td>GPT-4o</td><td>原生统一</td><td>内置</td><td>端到端</td><td>极高</td><td>深</td><td>极强</td></tr>
+            <tr><td>Qwen3-Omni</td><td>端到端</td><td>AuT + ViT</td><td>Thinker-Talker MoE</td><td>极高</td><td>深</td><td>强</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Interview -->
+    <h2 id="interview">面试要点总结</h2>
+    <div class="info-box interview">
+        <h4>高频面试题（15题）</h4>
+        <ol>
+            <li><strong>ViT 的核心贡献？</strong> 证明了 Transformer 是 CV+NLP 统一的通用计算原语，无需 CNN 归纳偏置</li>
+            <li><strong>CLIP 训练为什么需要大 batch？</strong> InfoNCE 依赖充足负样本。原始 batch=32768。SigLIP 用 Sigmoid Loss 减少依赖</li>
+            <li><strong>CLIP 的五大局限？</strong> 组合性弱、空间差、计数弱、BoW倾向、无生成能力</li>
+            <li><strong>CLIP 用在哪些下游模型？</strong> Stable Diffusion（文本条件编码器）、LLaVA（视觉编码器）、DALL-E（评估）</li>
+            <li><strong>BLIP-2 的 Q-Former 为什么用 32 个 query？</strong> 信息瓶颈设计：强迫模型只提取最相关的视觉信息给 LLM。但这也导致高分辨率细节丢失</li>
+            <li><strong>LLaVA vs BLIP-2 架构核心区别？</strong> BLIP-2 用 Q-Former 压缩到 32 Token，LLaVA 保留全量 576+ Token 让 LLM 自行选择。LLaVA 的成功表明：让 LLM 自行处理视觉信息 + 高质量数据 > 精心设计的压缩桥接</li>
+            <li><strong>为什么 LLaVA-1.5 用两层 MLP 替代线性投影？</strong> 单层线性映射表达力有限，两层 MLP 能学习更复杂的非线性视觉→语言映射。配合 336px + 更丰富数据带来显著提升</li>
+            <li><strong>Flamingo 的 tanh gate 为什么初始化为0？</strong> 保证训练初期 cross-attn 输出被屏蔽，模型等价于原始 LLM。避免随机初始化的 cross-attention 破坏预训练语言能力，实现从语言到多模态的平滑过渡</li>
+            <li><strong>视觉编码器选型：CLIP ViT vs DINOv2 vs SigLIP？</strong> CLIP ViT：天然图文对齐，适合语义理解；DINOv2：自监督，空间细粒度强，但缺语言对齐；SigLIP：性能接近CLIP但更高效；Cambrian-1 证明混合编码器取长补短</li>
+            <li><strong>连接式 vs 原生统一的本质区别？</strong> 连接式=冻结单模态编码器+适配器（浅融合，训练便宜）；原生=统一词表单网络（深度跨模态推理，需海量数据）</li>
+            <li><strong>理解-生成统一的核心矛盾？</strong> 理解要语义压缩 vs 生成要像素细节。离散Token路线(Chameleon)受codebook限制，双解码器路线(Janus)复杂度高</li>
+            <li><strong>视频理解的核心挑战？</strong> Token爆炸（1min@1fps=34K tokens）。方案：稀疏采帧、帧级池化、SlowFast双速、动态分辨率帧序列</li>
+            <li><strong>多模态幻觉成因和缓解？</strong> 成因：语言先验过强/视觉注入不足/数据偏见。缓解：RLHF-V、VCD对比解码、OPERA、数据去偏</li>
+            <li><strong>高分辨率为什么重要？</strong> OCR/细粒度任务需要字符级细节。方案：Tiling切片、动态分辨率(Qwen2-VL)、Spatial Pooling压缩</li>
+            <li><strong>MoE 在多模态中的特殊考量？</strong> 路由策略(视觉/文本Token是否路由到不同Expert)、跨模态负载均衡、Expert可能自发分化为模态特化专家</li>
+        </ol>
+    </div>
+
+    <nav class="page-nav">
+        <a href="04-training.html">&larr; 04 训练与微调</a>
+        <a href="06-practice.html">06 工程实践 &rarr;</a>
+    </nav>
+</main>
+
+<script>
+    hljs.highlightAll();
+    var sidebar = document.getElementById('sidebar');
+    var toggle = document.getElementById('sidebarToggle');
+    if (toggle) toggle.addEventListener('click', function() { sidebar.classList.toggle('open'); });
+    if (sidebar) sidebar.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() { if (window.innerWidth <= 1024) sidebar.classList.remove('open'); });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [{left: "$$", right: "$$", display: true},{left: "$", right: "$", display: false}],
+            throwOnError: false
+        });
+    });
+</script>
+</body>
+</html>

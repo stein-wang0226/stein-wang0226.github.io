@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM & Multimodal 面试复习笔记</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/katex.min.css">
+    <script defer src="assets/katex.min.js"></script>
+    <script defer src="assets/auto-render.min.js"></script>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <h1>LLM & Multimodal 面试复习笔记</h1>
+</header>
+
+<!-- Main Content -->
+<div class="main" style="margin-left: 0; max-width: 1100px; margin-left: auto; margin-right: auto;">
+
+    <!-- Info -->
+    <section style="text-align: center; margin-bottom: 48px;">
+        <h1>LLM & Multimodal 面试复习笔记</h1>
+        <p style="font-size: 1.1rem; color: var(--text-light);">
+            综合整理自 Happy-LLM + Base-LLM (Datawhale)
+        </p>
+        <p style="color: var(--text-light);">
+            覆盖：Transformer | 预训练模型 | LLM架构 | 训练微调 | 多模态 | 工程实践
+        </p>
+    </section>
+
+    <!-- Chapter Grid -->
+    <h2>章节目录</h2>
+    <div class="chapter-grid">
+        <div class="chapter-card">
+            <h3>01 Transformer 与注意力机制</h3>
+            <p>Self-Attention、Multi-Head Attention、位置编码(Sinusoidal/RoPE)、Encoder-Decoder 架构</p>
+            <a href="01-transformer.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>02 预训练语言模型</h3>
+            <p>BERT (MLM/NSP)、GPT 系列演进、T5 Text-to-Text、LLaMA 家族对比</p>
+            <a href="02-pretrained-models.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>03 大模型架构详解</h3>
+            <p>LLaMA2 实现细节、GQA、SwiGLU、MoE 稀疏专家、解码策略</p>
+            <a href="03-llm-architecture.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>04 训练与微调</h3>
+            <p>预训练流程、SFT、LoRA/QLoRA、RLHF/DPO/GRPO、DeepSpeed ZeRO</p>
+            <a href="04-training.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>05 多模态大模型 <span class="badge hot">重点</span></h3>
+            <p>ViT、CLIP、BLIP-2、LLaVA、Flamingo、Chameleon、GPT-4o、Qwen-Omni</p>
+            <a href="05-multimodal.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>06 工程实践</h3>
+            <p>模型量化、推理加速、FastAPI部署、Docker容器化、分布式训练</p>
+            <a href="06-practice.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>07 强化学习面试速查 <span class="badge hot">新增</span></h3>
+            <p>Policy Gradient→PPO演进、GRPO、RLHF全流程、DPO推导、算法对比</p>
+            <a href="rl-interview-guide.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>08 VLM 算法知识与面经 <span class="badge hot">新增</span></h3>
+            <p>Visual Encoder、架构设计、对齐训练、分辨率策略、MoE、2025-2026最新进展</p>
+            <a href="vlm-knowledge-interview.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>09 高频面试八股题集 <span class="badge hot">新增</span></h3>
+            <p>Transformer/LLM架构/训练微调/RLHF对齐/多模态/推理优化 30道高频题含详解</p>
+            <a href="09-interview-qa.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>10 推理优化与系统设计 <span class="badge hot">新增</span></h3>
+            <p>KV Cache、PagedAttention、Flash Attention、量化、Speculative Decoding、系统设计题</p>
+            <a href="10-inference-system.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>11 Agent & RAG 专题 <span class="badge hot">新增</span></h3>
+            <p>RAG全流程、Chunking、Hybrid Search、ReAct、Multi-Agent、A2A、框架选型</p>
+            <a href="11-agent-rag.html">阅读笔记 &rarr;</a>
+        </div>
+        <div class="chapter-card">
+            <h3>12 训练Infra与分布式系统 <span class="badge hot">新增</span></h3>
+            <p>DDP/FSDP/ZeRO/TP/PP/3D并行、LoRA/QLoRA、Flash Attention 1-3、混合精度</p>
+            <a href="12-training-infra.html">阅读笔记 &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Technology Evolution Roadmap -->
+    <h2>技术演进路线图</h2>
+    <div class="roadmap">
+        <pre><code>Transformer 架构 (01)
+    |
+    +---> Encoder-only: BERT + 下游任务 (02)
+    |
+    +---> Decoder-only: GPT 系列 (02)
+    |
+    +---> Encoder-Decoder: T5 (02)
+    |
+    v
+LLM 架构: LLaMA2 / MoE / GQA / RoPE (03)
+    |
+    +---> 预训练 (Scaling Law: C = 6ND)
+    |
+    +---> SFT (指令微调)
+    |         |
+    |         +---> LoRA / QLoRA (参数高效)
+    |
+    +---> RLHF / DPO / GRPO (对齐) (04)
+    |
+    v
+多模态扩展 (05)
+    |
+    +---> 连接式: BLIP-2 (Q-Former) / LLaVA (Linear Proj)
+    |
+    +---> 过渡式: Flamingo (Perceiver + Gated XATTN)
+    |
+    +---> 原生统一: Chameleon (Image Tokenizer) / GPT-4o
+    |
+    +---> 端到端: Qwen3-Omni / MiniCPM-o
+    |
+    v
+工程落地: 量化 + 部署 + 加速 (06)</code></pre>
+    </div>
+
+    <!-- Core Formula Quick-Reference -->
+    <h2>核心公式速查</h2>
+    <table>
+        <thead>
+            <tr><th>名称</th><th>公式</th><th>出处</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Scaled Dot-Product Attention</td>
+                <td>$$\text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$</td>
+                <td>01</td>
+            </tr>
+            <tr>
+                <td>RoPE (旋转位置编码)</td>
+                <td>$$q_m' = q_m e^{im\theta}, \quad k_n' = k_n e^{in\theta}$$</td>
+                <td>01/03</td>
+            </tr>
+            <tr>
+                <td>RMSNorm</td>
+                <td>$$\text{RMSNorm}(x) = \frac{x}{\sqrt{\frac{1}{n}\sum x_i^2 + \epsilon}} \cdot \gamma$$</td>
+                <td>03</td>
+            </tr>
+            <tr>
+                <td>LoRA</td>
+                <td>$$h = W_0 x + \frac{\alpha}{r}(BA)x, \quad B \in \mathbb{R}^{d \times r}, A \in \mathbb{R}^{r \times k}$$</td>
+                <td>04</td>
+            </tr>
+            <tr>
+                <td>DPO Loss</td>
+                <td>$$\mathcal{L} = -\log\sigma\!\left(\beta\log\frac{\pi_\theta(y_w|x)}{\pi_{ref}(y_w|x)} - \beta\log\frac{\pi_\theta(y_l|x)}{\pi_{ref}(y_l|x)}\right)$$</td>
+                <td>04</td>
+            </tr>
+            <tr>
+                <td>CLIP Contrastive</td>
+                <td>$$\mathcal{L} = -\frac{1}{N}\sum_i\left[\log\frac{e^{s_{ii}/\tau}}{\sum_j e^{s_{ij}/\tau}}\right]$$</td>
+                <td>05</td>
+            </tr>
+            <tr>
+                <td>Scaling Law</td>
+                <td>$$C \approx 6ND \quad (\text{compute} = 6 \times \text{params} \times \text{tokens})$$</td>
+                <td>04</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Interview Quick Table -->
+    <h2>面试高频考点速览</h2>
+    <table>
+        <thead>
+            <tr><th>问题</th><th>核心答案</th><th>页面</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>为什么除以 $\sqrt{d_k}$？</td><td>防止点积过大导致 softmax 饱和、梯度消失</td><td>01</td></tr>
+            <tr><td>BERT vs GPT？</td><td>Encoder双向 vs Decoder单向；MLM vs CLM</td><td>02</td></tr>
+            <tr><td>为什么 Decoder-Only 胜出？</td><td>CLM 随规模涌现 few-shot 能力，扩展性更好</td><td>02</td></tr>
+            <tr><td>RoPE 优势？</td><td>相对位置编码、长度外推、无需额外参数</td><td>03</td></tr>
+            <tr><td>GQA 作用？</td><td>共享 KV heads 减少 KV-cache 显存占用</td><td>03</td></tr>
+            <tr><td>LoRA 为什么有效？</td><td>微调更新矩阵具有低内在秩</td><td>04</td></tr>
+            <tr><td>RLHF 为何需要4个模型？</td><td>Actor+Ref+Reward+Critic，防止遗忘</td><td>04</td></tr>
+            <tr><td>CLIP 如何做 zero-shot？</td><td>文本模板 "A photo of {label}" 做相似度匹配</td><td>05</td></tr>
+            <tr><td>LLaVA vs BLIP-2？</td><td>简单线性投影 vs Q-Former信息瓶颈</td><td>05</td></tr>
+            <tr><td>原生统一 vs 连接式？</td><td>统一词表单网络 vs 冻结编码器+适配器</td><td>05</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Footer -->
+    <footer class="page-nav" style="justify-content: center; flex-direction: column; align-items: center; gap: 12px;">
+        <p style="color: var(--text-light); font-size: 0.9rem;">
+            点击上方章节卡片进入各章详细笔记 | 每章笔记包含侧边栏目录导航
+        </p>
+        <p style="color: var(--text-light); font-size: 0.85rem;">
+            开始学习 &rarr; <a href="01-transformer.html" style="color: var(--primary);">01 Transformer 与注意力机制</a>
+        </p>
+    </footer>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ],
+            throwOnError: false
+        });
+    });
+</script>
+</body>
+</html>

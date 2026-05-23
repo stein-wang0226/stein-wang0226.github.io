@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02: 预训练语言模型 - LLM面试笔记</title>
+    <link rel="stylesheet" href="assets/katex.min.css">
+    <link rel="stylesheet" href="assets/monokai-sublime.min.css">
+    <script defer src="assets/katex.min.js"></script>
+    <script defer src="assets/auto-render.min.js"></script>
+    <script src="assets/highlight.min.js"></script>
+    <script src="assets/python.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <h1>LLM & Multimodal 面试复习笔记</h1>
+    <nav class="nav-links">
+        <a href="index.html">目录</a>
+        <a href="01-transformer.html">01</a>
+        <a href="02-pretrained-models.html" class="active">02</a>
+        <a href="03-llm-architecture.html">03</a>
+        <a href="04-training.html">04</a>
+        <a href="05-multimodal.html">05</a>
+        <a href="06-practice.html">06</a>
+    </nav>
+</header>
+
+<button class="sidebar-toggle" id="sidebarToggle">&#9776;</button>
+
+<aside class="sidebar" id="sidebar">
+    <div class="toc-title">本章目录</div>
+    <a href="#sec1">1. 预训练范式概述</a>
+    <a href="#sec2">2. BERT</a>
+    <a href="#sec2-1" class="sub">2.1 MLM 与 NSP</a>
+    <a href="#sec2-2" class="sub">2.2 架构细节</a>
+    <a href="#sec2-3" class="sub">2.3 BERT 变体</a>
+    <a href="#sec3">3. GPT 系列</a>
+    <a href="#sec3-1" class="sub">3.1 GPT-1/2/3 演进</a>
+    <a href="#sec3-2" class="sub">3.2 Scaling Law</a>
+    <a href="#sec4">4. T5: Text-to-Text</a>
+    <a href="#sec5">5. LLaMA 家族</a>
+    <a href="#sec6">6. 三种架构对比</a>
+    <a href="#interview">面试要点总结</a>
+</aside>
+
+<main class="main">
+    <h1>02: 预训练语言模型</h1>
+    <blockquote>
+        核心主题：BERT、GPT、T5、LLaMA 的设计哲学与技术细节<br>
+        来源：Happy-LLM 第三章 + Base-LLM 第五章
+    </blockquote>
+
+    <!-- Section 1 -->
+    <h2 id="sec1">1. 预训练范式概述</h2>
+    <p>预训练语言模型的核心思路：<strong>在大规模无标注语料上学习通用语言表示，再在下游任务上微调</strong>。</p>
+    <table>
+        <thead><tr><th>架构</th><th>代表模型</th><th>预训练任务</th><th>适用场景</th></tr></thead>
+        <tbody>
+            <tr><td>Encoder-Only</td><td>BERT, RoBERTa</td><td>MLM (双向)</td><td>NLU: 分类、NER、QA</td></tr>
+            <tr><td>Decoder-Only</td><td>GPT, LLaMA</td><td>CLM (单向)</td><td>NLG: 生成、对话、推理</td></tr>
+            <tr><td>Encoder-Decoder</td><td>T5, BART</td><td>Span Corruption</td><td>翻译、摘要、结构化生成</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 2 -->
+    <h2 id="sec2">2. BERT (Bidirectional Encoder Representations from Transformers)</h2>
+
+    <h3 id="sec2-1">2.1 预训练任务</h3>
+    <h4>MLM (Masked Language Modeling)</h4>
+    <ul>
+        <li>随机选取 15% 的 token</li>
+        <li>其中 80% 替换为 <code>[MASK]</code>、10% 替换为随机词、10% 保持不变</li>
+        <li>目标：预测被遮盖的原始 token</li>
+    </ul>
+    <div class="math-block">
+        $$\mathcal{L}_{MLM} = -\sum_{i \in \text{masked}} \log P(x_i | x_{\backslash i})$$
+    </div>
+
+    <h4>NSP (Next Sentence Prediction)</h4>
+    <ul>
+        <li>二分类：句子B是否是句子A的下一句</li>
+        <li>50% 正例 + 50% 随机负例</li>
+        <li>后来被证明效果有限（RoBERTa 移除了 NSP）</li>
+    </ul>
+
+    <h3 id="sec2-2">2.2 架构细节</h3>
+    <table>
+        <thead><tr><th>参数</th><th>BERT-Base</th><th>BERT-Large</th></tr></thead>
+        <tbody>
+            <tr><td>Layers</td><td>12</td><td>24</td></tr>
+            <tr><td>Hidden Size</td><td>768</td><td>1024</td></tr>
+            <tr><td>Attention Heads</td><td>12</td><td>16</td></tr>
+            <tr><td>Parameters</td><td>110M</td><td>340M</td></tr>
+            <tr><td>Vocab Size</td><td colspan="2">30,522 (WordPiece)</td></tr>
+            <tr><td>Max Seq Length</td><td colspan="2">512</td></tr>
+            <tr><td>Activation</td><td colspan="2">GELU</td></tr>
+        </tbody>
+    </table>
+    <p><strong>GELU</strong>: $\text{GELU}(x) = 0.5x(1 + \tanh(\sqrt{2/\pi}(x + 0.044715x^3)))$</p>
+    <p><strong>输入表示</strong> = Token Embedding + Segment Embedding + Position Embedding</p>
+
+    <h3 id="sec2-3">2.3 BERT 变体</h3>
+    <table>
+        <thead><tr><th>模型</th><th>改进点</th></tr></thead>
+        <tbody>
+            <tr><td><strong>RoBERTa</strong></td><td>去 NSP + 动态 Masking + 更大 batch + 更多数据</td></tr>
+            <tr><td><strong>ALBERT</strong></td><td>嵌入分解 ($V \times E + E \times H$) + 跨层参数共享</td></tr>
+            <tr><td><strong>DeBERTa</strong></td><td>解耦注意力（内容 + 位置分开计算）</td></tr>
+            <tr><td><strong>SpanBERT</strong></td><td>连续 span masking + SBO 目标</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 3 -->
+    <h2 id="sec3">3. GPT 系列</h2>
+
+    <h3 id="sec3-1">3.1 GPT-1/2/3 演进</h3>
+    <table>
+        <thead><tr><th>模型</th><th>Layers</th><th>Hidden</th><th>Heads</th><th>Params</th><th>Data</th><th>关键创新</th></tr></thead>
+        <tbody>
+            <tr><td>GPT-1</td><td>12</td><td>768</td><td>12</td><td>0.12B</td><td>5GB</td><td>Pretrain+Finetune 范式</td></tr>
+            <tr><td>GPT-2</td><td>48</td><td>1600</td><td>25</td><td>1.5B</td><td>40GB</td><td>Zero-shot; Pre-Norm</td></tr>
+            <tr><td>GPT-3</td><td>96</td><td>12288</td><td>96</td><td>175B</td><td>570GB</td><td>Few-shot / ICL; 稀疏注意力</td></tr>
+        </tbody>
+    </table>
+
+    <div class="info-box key">
+        <h4>GPT 核心训练目标 (CLM)</h4>
+        $$\mathcal{L}_{CLM} = -\sum_{t=1}^{T} \log P(x_t | x_1, \ldots, x_{t-1})$$
+        <p>自回归分解：只关注左侧上下文，天然适合生成任务。</p>
+    </div>
+
+    <h3 id="sec3-2">3.2 Scaling Law</h3>
+    <div class="math-block">
+        $$C \approx 6ND$$
+        <p>其中 $C$ = 计算量(FLOPs), $N$ = 模型参数量, $D$ = 训练数据量(tokens)</p>
+    </div>
+    <p><strong>Chinchilla 最优配比</strong>：$D = 20N$（数据量应为参数量的20倍）</p>
+    <ul>
+        <li>GPT-3 (175B): 300B tokens &rarr; 数据不足</li>
+        <li>Chinchilla (70B): 1.4T tokens &rarr; 性能更优</li>
+        <li>LLaMA-2 (70B): 2T tokens &rarr; 超过 Chinchilla 比例</li>
+    </ul>
+
+    <!-- Section 4 -->
+    <h2 id="sec4">4. T5: Text-to-Text Transfer Transformer</h2>
+    <p><strong>核心思想</strong>：将所有 NLP 任务统一为 "text-to-text" 格式：</p>
+    <pre><code>输入: "translate English to German: That is good."
+输出: "Das ist gut."
+
+输入: "summarize: [长文本]"
+输出: "[摘要]"</code></pre>
+    <ul>
+        <li>架构：标准 Encoder-Decoder</li>
+        <li>预训练：Span Corruption（随机 mask 连续 span，用哨兵 token 替换）</li>
+        <li>数据：C4 (750GB)</li>
+        <li>归一化：RMSNorm（比 LayerNorm 少一次减均值操作）</li>
+    </ul>
+
+    <!-- Section 5 -->
+    <h2 id="sec5">5. LLaMA 家族</h2>
+    <table>
+        <thead><tr><th>版本</th><th>规模</th><th>训练数据</th><th>上下文</th><th>关键技术</th></tr></thead>
+        <tbody>
+            <tr><td>LLaMA-1 (2023.02)</td><td>7B-65B</td><td>1T tokens</td><td>2K</td><td>RoPE, SwiGLU, Pre-Norm</td></tr>
+            <tr><td>LLaMA-2 (2023.07)</td><td>7B-70B</td><td>2T tokens</td><td>4K</td><td>+ GQA (70B)</td></tr>
+            <tr><td>LLaMA-3 (2024.04)</td><td>8B/70B</td><td>15T tokens</td><td>8K &rarr; 128K</td><td>128K vocab, GQA全系</td></tr>
+        </tbody>
+    </table>
+    <div class="info-box key">
+        <h4>LLaMA 的技术选择</h4>
+        <ul>
+            <li><strong>位置编码</strong>：RoPE（相对位置，长度外推）</li>
+            <li><strong>归一化</strong>：RMSNorm + Pre-Norm</li>
+            <li><strong>激活函数</strong>：SwiGLU（门控机制，优于 ReLU/GELU）</li>
+            <li><strong>注意力</strong>：GQA（减少 KV-cache 内存）</li>
+        </ul>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 id="sec6">6. 三种架构对比</h2>
+    <table>
+        <thead><tr><th>维度</th><th>Encoder-Only (BERT)</th><th>Decoder-Only (GPT/LLaMA)</th><th>Encoder-Decoder (T5)</th></tr></thead>
+        <tbody>
+            <tr><td>注意力</td><td>双向</td><td>单向 (causal)</td><td>Enc双向 + Dec单向+交叉</td></tr>
+            <tr><td>预训练</td><td>MLM</td><td>CLM</td><td>Span Corruption</td></tr>
+            <tr><td>下游使用</td><td>+分类头微调</td><td>Zero/Few-shot 或 SFT</td><td>Text-to-Text</td></tr>
+            <tr><td>生成能力</td><td>弱</td><td>强</td><td>中等</td></tr>
+            <tr><td>涌现能力</td><td>无</td><td>强（规模效应）</td><td>弱</td></tr>
+            <tr><td>代表规模</td><td>~1B</td><td>7B-1000B+</td><td>~11B</td></tr>
+        </tbody>
+    </table>
+
+    <div class="info-box interview">
+        <h4>为什么 Decoder-Only 最终胜出？</h4>
+        <ol>
+            <li><strong>Scaling</strong>：CLM 随规模增长涌现 ICL、CoT 等能力，Encoder 模型无此现象</li>
+            <li><strong>统一性</strong>：所有任务都可表述为"续写"，无需任务特定头</li>
+            <li><strong>数据效率</strong>：每个 token 都提供训练信号（vs MLM 仅 15%）</li>
+            <li><strong>生成对齐</strong>：训练和推理都是自回归，无 train-test mismatch</li>
+        </ol>
+    </div>
+
+    <!-- Interview Summary -->
+    <h2 id="interview">面试要点总结</h2>
+    <div class="info-box interview">
+        <h4>高频面试题</h4>
+        <ol>
+            <li><strong>BERT 的 MLM 有什么问题？</strong> 训练有 [MASK]，推理没有 &rarr; pretrain-finetune mismatch。10% random + 10% unchanged 是缓解手段。</li>
+            <li><strong>RoBERTa 改了什么？</strong> 去 NSP + 动态 masking + 更大 batch(8K) + 更多数据(160GB)</li>
+            <li><strong>GPT-3 的 In-Context Learning 是什么？</strong> 无需梯度更新，通过 prompt 中的示例学会任务</li>
+            <li><strong>Chinchilla Scaling Law？</strong> 最优计算分配：tokens = 20 × params</li>
+            <li><strong>LLaMA 为什么用 RMSNorm？</strong> 省去均值计算，训练更快，效果相当</li>
+            <li><strong>为什么 CLM 比 MLM 扩展性好？</strong> 每个 token 都是训练信号，且自回归与生成推理一致</li>
+        </ol>
+    </div>
+
+    <nav class="page-nav">
+        <a href="01-transformer.html">&larr; 01 Transformer</a>
+        <a href="03-llm-architecture.html">03 大模型架构 &rarr;</a>
+    </nav>
+</main>
+
+<script>
+    hljs.highlightAll();
+    var sidebar = document.getElementById('sidebar');
+    var toggle = document.getElementById('sidebarToggle');
+    if (toggle) toggle.addEventListener('click', function() { sidebar.classList.toggle('open'); });
+    if (sidebar) sidebar.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() { if (window.innerWidth <= 1024) sidebar.classList.remove('open'); });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [{left: "$$", right: "$$", display: true},{left: "$", right: "$", display: false}],
+            throwOnError: false
+        });
+    });
+</script>
+</body>
+</html>

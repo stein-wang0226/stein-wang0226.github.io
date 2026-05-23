@@ -452,50 +452,6 @@
             border-color: var(--primary);
         }
 
-        /* Answer blocks */
-        .q-answer {
-            display: none;
-            margin: 4px 0 12px 40px;
-            padding: 14px 18px;
-            background: linear-gradient(135deg, #f0f9ff, #f8fafc);
-            border: 1px solid #bfdbfe;
-            border-radius: 8px;
-            font-size: 14px;
-            line-height: 1.8;
-            color: var(--gray-700);
-        }
-        .q-answer.show { display: block; }
-        .q-answer strong { color: var(--primary-dark); }
-        .q-answer ul, .q-answer ol { margin: 6px 0 6px 18px; }
-        .q-answer li { margin-bottom: 3px; }
-        .q-answer code {
-            background: #e0e7ff;
-            padding: 1px 5px;
-            border-radius: 3px;
-            font-size: 12.5px;
-        }
-        .q-answer .formula {
-            background: #fefce8;
-            padding: 8px 12px;
-            border-left: 3px solid var(--accent);
-            border-radius: 4px;
-            margin: 8px 0;
-        }
-        .q-toggle {
-            display: inline-block;
-            margin-left: 40px;
-            margin-top: 2px;
-            padding: 2px 10px;
-            font-size: 11.5px;
-            color: var(--primary);
-            background: var(--primary-light);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-        .q-toggle:hover { background: var(--primary); color: white; }
-
         /* Responsive */
         @media (max-width: 900px) {
             .layout { grid-template-columns: 1fr; }
@@ -580,16 +536,10 @@
                 <div class="subgroup-label">1.1 Transformer 与 Attention</div>
                 <ol class="q-list">
                     <li class="q-item"><span class="q-num">1</span><div class="q-text">详细介绍 Self-Attention 机制：本质是什么？数学计算步骤？时间/空间复杂度？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span><span class="q-tag alibaba">阿里</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>本质：</strong>Self-Attention 是对序列做可微分的软检索和信息聚合。每个 token 用 Query 检索所有 Key，得到权重后对 Value 加权求和。<br><br><strong>计算步骤：</strong><ol><li>线性投影：$Q=XW_Q$, $K=XW_K$, $V=XW_V$</li><li>计算注意力分数：$S = QK^T / \sqrt{d_k}$</li><li>Softmax 归一化：$P = \text{softmax}(S)$（加 causal mask 则先 mask）</li><li>加权求和：$O = PV$</li></ol><strong>复杂度：</strong>时间 $O(n^2 d)$，空间 $O(n^2 + nd)$。瓶颈在于 $n^2$ 的注意力矩阵存储和计算。</div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">Attention 计算 Softmax 之前为什么要除以 $\sqrt{d_k}$？不除会怎样？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>原因：</strong>假设 Q 和 K 各维独立且方差≈1，则点积 $QK^T$ 的方差 = $d_k$。维度越大，点积值越大。<br><br><strong>因果链：</strong>点积过大 → Softmax 输入值过大 → 输出趋近 one-hot → 梯度进入饱和区 → 训练不稳定。<br><br><strong>除以 $\sqrt{d_k}$ 后：</strong>点积方差回归约 1，Softmax 在梯度充分的区域工作。不是"越小越好"，而是恢复合理量级。</div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">为什么要用 Multi-Head Attention？切多头的作用是什么？多头之间参数共享吗？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag tencent">腾讯</span></span></div></li>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">介绍 QKV 计算。如果在 Encoder 中去掉 K，变成 QQV 会有什么问题？<span class="q-tags"><span class="q-tag hard">🧠</span><span class="q-tag bytedance">字节</span></span></div></li>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">MHA / MQA / GQA / MLA 四种 Attention 的区别是什么？KV Cache 怎么变化？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag deepseek">DS</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>MHA</strong>：每个 head 独立 QKV，KV Cache = $2 \times n_{heads} \times d_{head} \times seq$</li><li><strong>MQA</strong>：所有 head 共享一组 KV，Cache 减为 $1/n_{heads}$，但表达力损失</li><li><strong>GQA</strong>：将 heads 分组（如 8 组），组内共享 KV → 平衡效率和表达力（LLaMA-2 70B）</li><li><strong>MLA (DeepSeek)</strong>：用低秩投影将 KV 压缩到 latent space，只缓存压缩向量 → Cache 极小</li></ul><strong>演进动力：</strong>MHA Cache 太大 → MQA 表达力损失 → GQA 折中 → MLA 用压缩替代共享。</div>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">Transformer 为什么能替代 RNN？核心优势？又有什么劣势？</div></li>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">详细介绍 Encoder-Only / Decoder-Only / Encoder-Decoder 三种架构及擅长任务。<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">Transformer 是 Encoder-Decoder，GPT 是 Decoder-only，为什么会演变成这种形式？生成式任务为什么要舍弃 Encoder？<span class="q-tags"><span class="q-tag alibaba">阿里</span></span></div></li>
@@ -598,8 +548,6 @@
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">如何降低 Transformer 的计算复杂度？常见稀疏注意力变体有哪些（Longformer、BigBird、Sliding Window）？</div></li>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">分析 Transformer 训练过程中的显存占用和计算复杂度。<span class="q-tags"><span class="q-tag huawei">华为</span></span></div></li>
                     <li class="q-item"><span class="q-num">13</span><div class="q-text">FlashAttention 解决了什么问题？核心思想是什么？v1/v2/v3 区别？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>解决的问题：</strong>标准 Attention 的 $N \times N$ 中间矩阵需写入 HBM，是 memory-bound 瓶颈。<br><br><strong>核心思想：</strong>IO-aware 分块计算。利用 SRAM（快 10× 但小 1000×）做 Tiling，避免存完整注意力矩阵。关键技术：Online Softmax（维护 running max/sum 实现分块 softmax）+ 反向时重算。<br><br><strong>版本区别：</strong><ul><li><strong>v1</strong>：Tiling + Online Softmax + 不存中间矩阵</li><li><strong>v2</strong>：减少非 matmul 操作 + 序列维度并行 + 优化 warp 分工 → 加速约 2×</li><li><strong>v3</strong>：H100 专属：Warp Specialization + TMA + FP8 + Pingpong Scheduling</li></ul><strong>关键：</strong>计算复杂度不变（$O(N^2d)$），改变的是 IO 复杂度。</div>
                     <li class="q-item"><span class="q-num">14</span><div class="q-text">Transformer 的 FFN 为什么逐渐演变成 MoE 层？MoE 怎么训练？<span class="q-tags"><span class="q-tag deepseek">DS</span></span></div></li>
                     <li class="q-item"><span class="q-num">15</span><div class="q-text">MoE 的负载均衡（Load Balance）怎么做？Aux Loss / 偏置项 b 怎么更新？<span class="q-tags"><span class="q-tag hard">🧠</span><span class="q-tag deepseek">DS</span></span></div></li>
                 </ol>
@@ -608,19 +556,11 @@
                 <div class="subgroup-label">1.2 位置编码 & 归一化</div>
                 <ol class="q-list" start="16">
                     <li class="q-item"><span class="q-num">16</span><div class="q-text">介绍 Transformer 的位置编码（PE）有哪几种实现？绝对 PE / 相对 PE / RoPE / ALiBi 区别？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>四类位置编码：</strong><ul><li><strong>绝对 PE（Sinusoidal/Learned）</strong>：直接加到 embedding，位置信息固定或可学习。缺点：不支持外推</li><li><strong>相对 PE（Shaw / T5 bias）</strong>：编码 token 之间的相对距离，加在 attention score 上</li><li><strong>RoPE</strong>：旋转位置编码，将位置编码为旋转角度，作用于 Q/K 向量。支持外推、无需额外参数</li><li><strong>ALiBi</strong>：直接在 attention score 上减去距离偏置 $m \cdot |i-j|$，简单高效，天然外推</li></ul><strong>现代 LLM 主流选 RoPE</strong>（LLaMA/Qwen/Mistral）：相对位置信息、天然支持长度外推（配合 NTK/YaRN）、计算高效。</div>
                     <li class="q-item"><span class="q-num">17</span><div class="q-text">详细介绍 RoPE。为什么 RoPE 能做长度外推？相比绝对 PE 的优劣势？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span><span class="q-tag deepseek">DS</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>原理：</strong>对 Q/K 向量的每对相邻维度应用旋转变换 $q'_m = q_m e^{im\theta}$，其中 $\theta_i = 10000^{-2i/d}$。<br><br><strong>关键性质：</strong>$\langle q'_m, k'_n \rangle$ 只依赖相对位置 $m-n$（旋转差），不依赖绝对位置。<br><br><strong>为什么能外推：</strong>位置信息编码为连续旋转角度，超出训练长度时旋转角度自然延伸（配合频率缩放如 NTK-Aware 可进一步增强）。<br><br><strong>vs 绝对 PE：</strong><ul><li>优：相对位置、可外推、无额外参数、兼容 KV Cache</li><li>劣：实现稍复杂（需分组旋转）、需专门的外推策略</li></ul></div>
                     <li class="q-item"><span class="q-num">18</span><div class="q-text">RoPE 的旋转矩阵推导一下？为什么是分组旋转？</div></li>
                     <li class="q-item"><span class="q-num">19</span><div class="q-text">长度外推有哪些方案？NTK-Aware / YaRN / LongRoPE 各自原理？</div></li>
                     <li class="q-item"><span class="q-num">20</span><div class="q-text">LayerNorm 和 BatchNorm 的区别？为什么 LLM 都用 LN 而不用 BN？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>区别：</strong><ul><li><strong>BN</strong>：沿 batch 维度归一化（同一特征维度跨样本），依赖 batch 统计</li><li><strong>LN</strong>：沿特征维度归一化（同一样本跨特征），每条样本独立</li></ul><strong>LLM 不用 BN 的原因：</strong><ol><li>变长序列：batch 内不同位置的统计意义不同，BN 统计不稳定</li><li>自回归推理时 batch=1，BN 无法正常工作</li><li>BN 依赖 running mean/var，分布式训练时跨 GPU 同步成本高</li></ol></div>
                     <li class="q-item"><span class="q-num">21</span><div class="q-text">RMSNorm 是什么？相比 LayerNorm 有什么优势？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>RMSNorm：</strong>去掉 LayerNorm 中的均值中心化，只做缩放：$$\text{RMSNorm}(x) = \frac{x}{\sqrt{\frac{1}{n}\sum x_i^2 + \epsilon}} \cdot \gamma$$<br><strong>优势：</strong><ul><li>省去计算均值和减均值的操作 → 减少约 5-10% 计算量</li><li>实验表明 re-centering（减均值）对 LLM 性能影响极小，缩放是核心</li><li>所有主流 LLM（LLaMA/Qwen/Mistral）均采用 RMSNorm + Pre-Norm</li></ul></div>
                     <li class="q-item"><span class="q-num">22</span><div class="q-text">Pre-Norm 和 Post-Norm 区别？为什么现代 LLM 都用 Pre-Norm？训练稳定性差异？</div></li>
                     <li class="q-item"><span class="q-num">23</span><div class="q-text">DeepNorm 解决了什么问题？</div></li>
                 </ol>
@@ -628,15 +568,9 @@
                 <div class="subgroup-label">1.3 激活函数 & 主流架构</div>
                 <ol class="q-list" start="24">
                     <li class="q-item"><span class="q-num">24</span><div class="q-text">LLM 常用激活函数有哪些（ReLU / GeLU / SiLU / SwiGLU / GeGLU）？为什么选 SwiGLU？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>演进：</strong>ReLU → GeLU（BERT时代）→ SiLU/Swish → SwiGLU（LLaMA/现代LLM）<br><br><strong>SwiGLU</strong> = Swish × Gate：$\text{SwiGLU}(x) = \text{Swish}(xW_1) \otimes (xW_2)$<br><br><strong>为什么选 SwiGLU：</strong><ul><li>门控机制让网络自适应选择信息通过，表达力更强</li><li>PaLM 论文实验证明 SwiGLU 在相同参数量下 loss 更低</li><li>平滑非零梯度（vs ReLU 的 dead neuron 问题）</li></ul><strong>注意：</strong>SwiGLU 有两个权重矩阵 $W_1, W_2$，参数量增加 50%，通常通过缩小 FFN hidden dim（如 $\frac{2}{3} \times 4d$ ）来补偿。</div>
                     <li class="q-item"><span class="q-num">25</span><div class="q-text">SwiGLU 的公式是什么？相比 ReLU 优势在哪？参数量怎么算？</div></li>
                     <li class="q-item"><span class="q-num">26</span><div class="q-text">主流开源 LLM 架构（LLaMA / Qwen / Mistral / DeepSeek）的核心区别是什么？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><table style="width:100%;font-size:13px;"><tr><th>模型</th><th>Attention</th><th>PE</th><th>Norm</th><th>FFN</th><th>特色</th></tr><tr><td>LLaMA-2</td><td>GQA</td><td>RoPE</td><td>RMSNorm</td><td>SwiGLU</td><td>开源标杆</td></tr><tr><td>Qwen2.5</td><td>GQA</td><td>RoPE</td><td>RMSNorm</td><td>SwiGLU</td><td>中文强，长上下文</td></tr><tr><td>Mistral</td><td>GQA+SWA</td><td>RoPE</td><td>RMSNorm</td><td>SwiGLU</td><td>Sliding Window Attn</td></tr><tr><td>DeepSeek-V3</td><td>MLA</td><td>RoPE</td><td>RMSNorm</td><td>MoE</td><td>MLA + Aux-Loss-Free MoE</td></tr></table><strong>核心差异：</strong>Attention（GQA vs MLA）、FFN（Dense vs MoE）、长度处理策略。</div>
                     <li class="q-item"><span class="q-num">27</span><div class="q-text">DeepSeek V3 / R1 的架构创新点是什么？MLA、MoE 改进、Multi-Token Prediction 各自原理？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag deepseek">DS</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>MLA (Multi-head Latent Attention)：</strong>用低秩压缩将 KV 投影到低维 latent 向量 $c_{KV} = W_{DKV} \cdot [K;V]$，KV Cache 只存压缩后的向量 → 缓存量减少到 GQA 的 ~1/10。<br><br><strong>MoE 改进：</strong><ul><li>Auxiliary-Loss-Free Load Balancing：用动态偏置 $b_i$ 替代 aux loss 做负载均衡</li><li>256 experts, top-8 激活 → 激活参数仅 37B（总 671B）</li></ul><strong>Multi-Token Prediction (MTP)：</strong>同时预测下 k 个 token（如 k=2），增强表示学习 + 可用于 speculative decoding 加速。<br><br><strong>R1 = V3 架构 + RL：</strong>用 GRPO 在数学/代码任务上做 RL，涌现出 chain-of-thought 推理能力。</div>
                     <li class="q-item"><span class="q-num">28</span><div class="q-text">Qwen3 相比 Qwen2.5 做了哪些改进？</div></li>
                     <li class="q-item"><span class="q-num">29</span><div class="q-text">Mistral / Mixtral 8x7B 的核心创新是什么？SlidingWindowAttention 怎么工作？</div></li>
                     <li class="q-item"><span class="q-num">30</span><div class="q-text">Mamba / SSM 模型相对 Transformer 优势是什么？什么场景下能替代 Transformer？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
@@ -645,13 +579,9 @@
                 <div class="subgroup-label">1.4 Tokenizer & 采样</div>
                 <ol class="q-list" start="31">
                     <li class="q-item"><span class="q-num">31</span><div class="q-text">Tokenizer 有哪些实现方式？BPE / WordPiece / SentencePiece / Unigram 区别？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>BPE</strong>：贪心合并最高频字节对，自底向上。GPT/LLaMA 使用</li><li><strong>WordPiece</strong>：类似 BPE 但用似然增益选合并对。BERT 使用</li><li><strong>Unigram</strong>：从大词表出发，逐步剪枝低概率子词。T5/XLNet 使用</li><li><strong>SentencePiece</strong>：语言无关的分词框架（不依赖空格预分词），可选 BPE 或 Unigram 算法</li></ul><strong>现代 LLM 主流：</strong>SentencePiece + BPE（如 LLaMA tokenizer，vocab 32K-128K），直接在字节级别操作，避免 UNK。</div>
                     <li class="q-item"><span class="q-num">32</span><div class="q-text">手撕 BPE 算法的训练过程。<span class="q-tags"><span class="q-tag code">💻</span><span class="q-tag bytedance">字节</span></span></div></li>
                     <li class="q-item"><span class="q-num">33</span><div class="q-text">Embedding 是怎么做的？从 Token ID 到 Embedding 的具体过程？</div></li>
                     <li class="q-item"><span class="q-num">34</span><div class="q-text">控制 LLM 生成多样性的参数有哪些？Temperature / Top-K / Top-P / Repetition Penalty 各自原理？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>Temperature (τ)</strong>：$p_i = \text{softmax}(z_i / \tau)$。τ↑ 分布更均匀（多样）、τ↓ 更尖锐（确定）</li><li><strong>Top-K</strong>：只保留概率最高的 K 个 token 重新归一化采样</li><li><strong>Top-P (Nucleus)</strong>：保留累计概率达到 P 的最小 token 集合 → 动态截断</li><li><strong>Repetition Penalty</strong>：对已出现 token 的 logit 除以惩罚因子，减少重复</li></ul><strong>实践组合：</strong>Temperature=0.7 + Top-P=0.9 是常见 default，兼顾质量和多样性。</div>
                     <li class="q-item"><span class="q-num">35</span><div class="q-text">Top-K 和 Top-P 的区别？哪种更稳？为什么实践常用 Top-P=0.9？</div></li>
                     <li class="q-item"><span class="q-num">36</span><div class="q-text">Greedy Search / Beam Search / Sampling 的优缺点？什么场景下用哪种？</div></li>
                     <li class="q-item"><span class="q-num">37</span><div class="q-text">Speculative Decoding（投机解码）是什么？怎么加速推理？</div></li>
@@ -661,15 +591,9 @@
                 <div class="subgroup-label">1.5 训练流程 & 微调</div>
                 <ol class="q-list" start="39">
                     <li class="q-item"><span class="q-num">39</span><div class="q-text">详细描述从 txt 文本到 SFT 训练的全流程（Tokenize → Forward → Loss → 参数更新）。<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>完整流程：</strong><ol><li><strong>数据处理</strong>：文本 → Tokenizer 编码为 token_ids → 拼接 prompt+response → 构造 labels（prompt 部分 mask 为 -100）</li><li><strong>Forward</strong>：token_ids → Embedding → N × (RMSNorm → Attention → RMSNorm → FFN) → LM Head → logits</li><li><strong>Loss</strong>：Shift right（logits[:-1] vs labels[1:]）→ CrossEntropy（只对 response 部分有效 token 计算）</li><li><strong>Backward</strong>：loss.backward() 计算梯度 → gradient clipping</li><li><strong>Update</strong>：AdamW optimizer.step() 更新参数 → lr_scheduler.step()</li></ol><strong>关键细节：</strong>SFT 的 loss 只算 response 部分（loss mask），不让模型在 prompt 上浪费梯度。</div>
                     <li class="q-item"><span class="q-num">40</span><div class="q-text">Pretrain / SFT / RLHF 三个阶段的目标和区别是什么？为什么需要三个阶段？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>Pretrain</strong>：在海量文本上做 Next Token Prediction → 学会世界知识和语言能力（"知道什么"）</li><li><strong>SFT</strong>：在指令数据上微调 → 学会遵循格式回答（"知道怎么说"）</li><li><strong>RLHF</strong>：用人类偏好信号优化 → 学会哪种回答更好（"知道什么更好"）</li></ul><strong>为什么需要三阶段：</strong><ol><li>Pretrain 只学预测下一个词，不会主动"回答问题"</li><li>SFT 学会了回答格式，但不知道哪种回答更受偏好（多条合理答案中选最优）</li><li>RLHF 用奖励信号引导策略往"更好"方向优化，解决 SFT 学不到的偏好排序</li></ol></div>
                     <li class="q-item"><span class="q-num">41</span><div class="q-text">Pretrain 和 SFT 在优化目标上的本质区别？为什么 SFT 后还要 RL？</div></li>
                     <li class="q-item"><span class="q-num">42</span><div class="q-text">SFT 的 Loss 是什么？对 Prompt 部分要不要算 Loss？为什么？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>Loss：</strong>标准 CrossEntropy，但只对 response tokens 计算：$$\mathcal{L} = -\frac{1}{|y|}\sum_{t \in \text{response}} \log p(y_t | y_{<t}, x)$$<br><strong>Prompt 不算 Loss：</strong><ul><li>Prompt 是输入条件（已知），不是模型需要学习生成的目标</li><li>对 prompt 算 loss 会让模型"记忆"prompt 内容，浪费容量且可能过拟合</li><li>实现方式：labels 中 prompt 位置设为 -100（PyTorch CE 自动忽略）</li></ul></div>
                     <li class="q-item"><span class="q-num">43</span><div class="q-text">SFT 样本数据怎么构造？多样性怎么保证？指令模板有哪些常见格式（Alpaca、ShareGPT、ChatML）？</div></li>
                     <li class="q-item"><span class="q-num">44</span><div class="q-text">手写 SFT Loss 代码，注意 Shift Right 和 Loss Mask。<span class="q-tags"><span class="q-tag code">💻</span><span class="q-tag bytedance">字节</span></span></div></li>
                     <li class="q-item"><span class="q-num">45</span><div class="q-text">为什么 Pretrain 用所有 token 算 loss，而 SFT 只对 response 部分算？</div></li>
@@ -678,8 +602,6 @@
                 <div class="subgroup-label">1.6 LoRA / PEFT</div>
                 <ol class="q-list" start="46">
                     <li class="q-item"><span class="q-num">46</span><div class="q-text">介绍 LoRA 的核心原理。秩 r 怎么选？r 取大取小的影响？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>核心思想：</strong>微调时权重更新 $\Delta W$ 具有低内在秩 → 用低秩分解 $\Delta W = BA$（$B \in \mathbb{R}^{d \times r}$, $A \in \mathbb{R}^{r \times k}$, $r \ll d$）近似。<br><br><strong>推理时：</strong>$h = (W_0 + \frac{\alpha}{r}BA)x$，可以合并权重零开销。<br><br><strong>r 的选择：</strong><ul><li>r=4~16：常见选择，适合大多数任务</li><li>r 太小：表达力不足，复杂任务效果差</li><li>r 太大：接近全参微调，失去参数效率优势</li><li>经验：简单任务（分类）r=4；复杂任务（代码/推理）r=32~64</li></ul><strong>α 作用：</strong>缩放因子，控制 LoRA 更新的幅度。α/r 保持恒定时，改变 r 不影响学习率适配。</div>
                     <li class="q-item"><span class="q-num">47</span><div class="q-text">LoRA 公式推导：$W' = W + \frac{\alpha}{r} BA$，alpha 起什么作用？</div></li>
                     <li class="q-item"><span class="q-num">48</span><div class="q-text">LoRA 通常加在哪些层？为什么不加在 LayerNorm 之后？为什么主要加在 Attention 的 Q、V 上？</div></li>
                     <li class="q-item"><span class="q-num">49</span><div class="q-text">QLoRA 是怎么降低显存的？NF4 量化为什么有效？Double Quantization 是什么？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
@@ -692,8 +614,6 @@
                 <div class="subgroup-label">1.7 训练优化 & Scaling Law</div>
                 <ol class="q-list" start="54">
                     <li class="q-item"><span class="q-num">54</span><div class="q-text">Scaling Law 揭示了什么关系？Chinchilla 和 GPT 系列的训练 token / 参数比有什么不同？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>核心发现：</strong>模型性能（loss）关于参数量 N、数据量 D、计算量 C 呈幂律关系。$C \approx 6ND$。<br><br><strong>Kaplan (OpenAI) Scaling Law：</strong>优先扩参数量，数据量增长慢 → GPT-3 (175B, 300B tokens)<br><strong>Chinchilla Scaling Law：</strong>N 和 D 应等比例扩展（最优比≈1:20）→ 70B 模型应训 1.4T tokens<br><br><strong>实践影响：</strong><ul><li>Chinchilla 后 LLaMA 等改为"小模型 + 大数据"（7B + 2T tokens）</li><li>最新趋势（DeepSeek/Qwen）甚至 over-train：远超 Chinchilla 最优比</li></ul></div>
                     <li class="q-item"><span class="q-num">55</span><div class="q-text">Test-time Compute Scaling Law 是什么？OpenAI o1 / DeepSeek R1 揭示了什么？<span class="q-tags"><span class="q-tag deepseek">DS</span></span></div></li>
                     <li class="q-item"><span class="q-num">56</span><div class="q-text">Adam / AdamW / Lion / Muon 这些优化器各自优缺点？为什么 LLM 训练常用 AdamW？</div></li>
                     <li class="q-item"><span class="q-num">57</span><div class="q-text">LLM 训练为什么用 Cosine 学习率？Warmup 起什么作用？</div></li>
@@ -709,8 +629,6 @@
                 <ol class="q-list" start="64">
                     <li class="q-item"><span class="q-num">64</span><div class="q-text">什么是"涌现能力"？通常在什么参数规模出现？最近有论文质疑 emergence 是评估问题，怎么看？</div></li>
                     <li class="q-item"><span class="q-num">65</span><div class="q-text">大模型幻觉是什么？分为哪几类（事实幻觉 / 上下文幻觉）？怎么缓解？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>定义：</strong>模型生成的内容与事实不符或与给定上下文矛盾。<br><br><strong>分类：</strong><ul><li><strong>事实幻觉</strong>：编造不存在的事实（如虚构论文、错误数据）</li><li><strong>上下文幻觉</strong>：回答与用户给定的上下文矛盾</li><li><strong>逻辑幻觉</strong>：推理链条中出现逻辑跳跃或错误</li></ul><strong>缓解方法：</strong><ol><li>RAG：用检索提供事实依据</li><li>CoT + Self-consistency：多条推理路径投票</li><li>RLHF 对齐："不知道就说不知道"</li><li>高质量数据：减少训练数据中的错误信息</li><li>Decoding 约束：Factual Nucleus Sampling</li></ol></div>
                     <li class="q-item"><span class="q-num">66</span><div class="q-text">CoT（Chain of Thought）为什么有效？为什么小模型用 CoT 反而效果差？</div></li>
                     <li class="q-item"><span class="q-num">67</span><div class="q-text">In-Context Learning 的机制是什么？为什么 few-shot 比 zero-shot 强？</div></li>
                     <li class="q-item"><span class="q-num">68</span><div class="q-text">Constitutional AI 是什么？Anthropic 的 RLAIF 方案如何工作？</div></li>
@@ -728,11 +646,7 @@
                 <div class="subgroup-label">2.1 RLHF 流程基础</div>
                 <ol class="q-list">
                     <li class="q-item"><span class="q-num">1</span><div class="q-text">详细阐述经典 RLHF 流程的三个阶段。每阶段输入/输出/目标分别是什么？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span><span class="q-tag alibaba">阿里</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>三阶段：</strong><ol><li><strong>SFT</strong>：输入=指令数据，输出=SFT模型，目标=让模型学会遵循指令格式回答</li><li><strong>RM 训练</strong>：输入=偏好对比数据(chosen/rejected)，输出=Reward Model，目标=学会评估回答质量（$\mathcal{L} = -\log\sigma(r_w - r_l)$）</li><li><strong>PPO 优化</strong>：输入=prompts+RM信号，输出=对齐后模型，目标=$\max E[R(y)] - \beta \cdot KL[\pi_\theta || \pi_{ref}]$</li></ol><strong>核心：</strong>SFT 学格式 → RM 学评估 → PPO 在约束下最大化奖励。</div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">为什么 SFT 之后还要做 RLHF？SFT 本身为什么不够实现对齐？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>SFT 的局限：</strong><ul><li>SFT 只学"模仿"标注答案，不学"判断好坏" → 遇到模糊场景无法做偏好选择</li><li>SFT 学的是 MLE（最大似然），所有 token 平等 → 无法表达"这个回答整体更好"</li><li>SFT 数据通常只有"好答案"，没有"对比信号" → 模型不知道边界在哪</li></ul><strong>RLHF 补充了：</strong>从"模仿"升级到"优化"，通过 reward signal 学习"哪些行为更受偏好"，而非仅仅复制训练数据。</div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">RLHF 和传统 SFT 相比解决了哪些核心问题？<span class="q-tags"><span class="q-tag tencent">腾讯</span></span></div></li>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">为什么偏好对齐不能直接用偏好数据做 SFT，必须用 RL？<span class="q-tags"><span class="q-tag hard">🧠</span><span class="q-tag bytedance">字节</span></span></div></li>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">RLHF 流程复杂且不稳定，主要的不稳定因素有哪些？怎么诊断？</div></li>
@@ -742,12 +656,8 @@
                 <div class="subgroup-label">2.2 Reward Model 训练</div>
                 <ol class="q-list" start="7">
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">RM 训练为什么用成对比较数据而不让人直接打绝对分数？优劣对比？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>用成对比较的原因：</strong><ul><li>人类更擅长相对判断（"A比B好"）而非绝对评分（"A=7.3分"）</li><li>绝对分数的标注者间一致性极低（不同人的7分含义不同）</li><li>成对比较天然消除了个人 scale bias</li></ul><strong>优劣对比：</strong><table style="width:100%;font-size:13px;"><tr><th></th><th>成对比较</th><th>绝对打分</th></tr><tr><td>标注一致性</td><td>高（80%+）</td><td>低（60%~）</td></tr><tr><td>数据效率</td><td>低（每对只产一个偏好）</td><td>高（每条直接得分）</td></tr><tr><td>建模复杂度</td><td>Bradley-Terry，简洁</td><td>需处理 calibration</td></tr><tr><td>适用规模</td><td>O(n²) 对比组合</td><td>O(n) 直接标注</td></tr></table></div>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">Bradley-Terry 模型的公式是什么？为什么能用它建模偏好概率？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag meituan">美团</span></span></div></li>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">RM 的损失函数怎么推导？为什么是 $-\log\sigma(r_w - r_l)$？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>推导：</strong>基于 Bradley-Terry 模型：$$P(y_w \succ y_l) = \sigma(r(y_w) - r(y_l))$$即 chosen 胜出概率 = sigmoid(分数差)。<br><br>对所有偏好对做 MLE：$$\mathcal{L}_{RM} = -\mathbb{E}[\log \sigma(r_w - r_l)]$$<br><strong>直觉：</strong>最大化 chosen 和 rejected 的分数差 → chosen 得分越高于 rejected，loss 越小。<br><br><strong>为什么用差值而非绝对分：</strong>偏好本质是相对排序，绝对分数无意义；差值形式天然归一化，避免 reward scale 问题。</div>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">RM 的架构通常如何选择？要不要从 SFT 模型初始化？为什么？</div></li>
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">RM 训练完后怎么评估好坏？常见指标？<span class="q-tags"><span class="q-tag alibaba">阿里</span></span></div></li>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">RM 给出的 reward 容易出现 OOD 问题，怎么缓解？</div></li>
@@ -757,14 +667,8 @@
                 <div class="subgroup-label">2.3 PPO 在 RLHF 中</div>
                 <ol class="q-list" start="14">
                     <li class="q-item"><span class="q-num">14</span><div class="q-text">RLHF-PPO 训练时需要几个模型？分别是什么作用？显存占用大概多少？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span><span class="q-tag tencent">腾讯</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>四个模型：</strong><ol><li><strong>Actor (Policy)</strong>：生成回答的策略模型，是优化目标</li><li><strong>Reference Model</strong>：冻结的 SFT 副本，计算 KL 惩罚防止策略跑飞</li><li><strong>Reward Model</strong>：打分器，评估回答质量</li><li><strong>Critic (Value Model)</strong>：估计状态价值 V(s)，计算 Advantage 降低方差</li></ol><strong>显存（7B BF16）：</strong>4 × 14GB ≈ 56GB（纯参数），加激活和优化器需 4-8 张 A100-80G。<br><strong>这也是 DPO 的动力：</strong>只需 Actor + Ref 两个模型，显存减半。</div>
                     <li class="q-item"><span class="q-num">15</span><div class="q-text">为什么选 PPO 而不是更简单的 REINFORCE 或 TRPO？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>vs REINFORCE</strong>：REINFORCE 方差极大（单轨迹估计）、样本效率低（on-policy 用完即弃）。PPO 用 Advantage + 多 epoch 复用数据 → 效率高</li><li><strong>vs TRPO</strong>：TRPO 需计算二阶导（Fisher 信息矩阵）+ 约束优化 → 实现复杂、不适合大模型。PPO 用 clip 近似 trust region → 一阶梯度即可，简单高效</li></ul><strong>PPO 的核心优势：</strong>实现简单（只改一行 clip）、训练稳定、适合分布式并行 → 成为 RLHF 标准算法。</div>
                     <li class="q-item"><span class="q-num">16</span><div class="q-text">为什么要用 Reference Model？解决了什么问题？KL 惩罚到底惩罚什么？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>Reference Model = 冻结的 SFT 模型副本</strong><br><br><strong>解决的问题：</strong>防止策略模型为了追求高 reward 而偏离太远（reward hacking / mode collapse）。<br><br><strong>KL 惩罚的含义：</strong>$$\text{Reward}_{total} = R_{RM}(y) - \beta \cdot KL[\pi_\theta(y|x) || \pi_{ref}(y|x)]$$惩罚的是：当前策略对每个 token 的生成概率分布与 SFT 模型的偏离程度。<br><br><strong>token-level KL：</strong>$KL_t = \log\frac{\pi_\theta(y_t|y_{<t})}{\pi_{ref}(y_t|y_{<t})}$，每个 token 的 KL 作为负 reward 加到该步。<br><br><strong>β 过大</strong>：模型几乎不更新 → 学不到新能力<br><strong>β 过小</strong>：模型跑飞 → reward hacking</div>
                     <li class="q-item"><span class="q-num">17</span><div class="q-text">PPO 中的 KL 散度有几种估计方法？K1 / K2 / K3 估计的区别？<span class="q-tags"><span class="q-tag hard">🧠</span><span class="q-tag deepseek">DS</span></span></div></li>
                     <li class="q-item"><span class="q-num">18</span><div class="q-text">PPO 训练时 KL 系数 β 太大/太小分别会出什么问题？怎么动态调整？</div></li>
                     <li class="q-item"><span class="q-num">19</span><div class="q-text">PPO 的 Reward 怎么算？token-level 的 reward 和最后一步的 RM 分数怎么结合？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
@@ -777,8 +681,6 @@
                 <div class="subgroup-label">2.4 Reward Hacking & 对齐风险</div>
                 <ol class="q-list" start="24">
                     <li class="q-item"><span class="q-num">24</span><div class="q-text">什么是 Reward Hacking？举一个 LLM 场景下的具体例子。怎么缓解？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>定义：</strong>策略模型利用 RM 的漏洞获取高分，但实际输出质量未提升。<br><br><strong>LLM 中的典型例子：</strong><ul><li>模型发现"越长越高分" → 生成冗长废话（Length Hacking）</li><li>模型发现"堆叠关键词/重复结论" → RM 打高分但用户体验差</li><li>模型发现特定格式（markdown/列表）得高分 → 所有回答都用相同格式</li></ul><strong>缓解方法：</strong><ol><li>KL 惩罚限制策略偏移</li><li>Length normalization（奖励除以长度）</li><li>多 RM 集成投票</li><li>定期更新 RM（对抗性训练）</li><li>Reward model ensemble / constraint reward</li></ol></div>
                     <li class="q-item"><span class="q-num">25</span><div class="q-text">什么是 Reward Collapse / Length Bias？为什么 PPO 出来的模型答案越来越长？怎么处理？</div></li>
                     <li class="q-item"><span class="q-num">26</span><div class="q-text">多目标 Reward 冲突（有用性 vs 无害性 vs 简洁性）怎么处理？加权 / 多 RM 投票？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
                     <li class="q-item"><span class="q-num">27</span><div class="q-text">如何解决 Credit Assignment（信用分配）问题？token-level vs sequence-level 奖励差异？<span class="q-tags"><span class="q-tag alibaba">阿里</span></span></div></li>
@@ -789,19 +691,11 @@
                 <div class="subgroup-label">2.5 DPO 及变体</div>
                 <ol class="q-list" start="30">
                     <li class="q-item"><span class="q-num">30</span><div class="q-text">DPO 的核心思想？相比 RLHF-PPO 优势？为什么不需要 RM？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span><span class="q-tag alibaba">阿里</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>核心思想：</strong>将 RLHF 的 reward maximization 问题转化为分类问题 — 直接用偏好数据优化策略，跳过 RM 训练和 PPO。<br><br><strong>数学洞察：</strong>RLHF 的 KL 约束优化有闭式解 $\pi^*(y|x) \propto \pi_{ref}(y|x) \cdot e^{r(y)/\beta}$，反解得隐式 reward：$r(y) = \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}$，代入 Bradley-Terry 得 DPO Loss。<br><br><strong>vs PPO 优势：</strong><ul><li>只需 2 个模型（Policy + Ref），PPO 需 4 个 → 显存减半</li><li>无需 RM 训练和奖励推理 → 流程简单</li><li>训练更稳定（无 RL 探索噪声）</li></ul><strong>为什么不需要 RM：</strong>Policy 本身隐式充当了 RM（通过 log-ratio 表达偏好）。</div>
                     <li class="q-item"><span class="q-num">31</span><div class="q-text">DPO 损失函数完整推导：从 RLHF 闭式解 → Bradley-Terry → DPO Loss。<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag hard">🧠</span><span class="q-tag meituan">美团</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>推导三步：</strong><br><br><strong>Step 1 - RLHF 闭式解：</strong>$$\pi^*(y|x) = \frac{1}{Z(x)} \pi_{ref}(y|x) \exp\left(\frac{r(y,x)}{\beta}\right)$$<br><strong>Step 2 - 反解 reward：</strong>$$r(y,x) = \beta \log\frac{\pi^*(y|x)}{\pi_{ref}(y|x)} + \beta \log Z(x)$$<br><strong>Step 3 - 代入 Bradley-Terry：</strong>$$P(y_w \succ y_l) = \sigma(r_w - r_l) = \sigma\left(\beta \log\frac{\pi_\theta(y_w|x)}{\pi_{ref}(y_w|x)} - \beta \log\frac{\pi_\theta(y_l|x)}{\pi_{ref}(y_l|x)}\right)$$<br>Z(x) 在差值中消掉。<br><br><strong>最终 DPO Loss：</strong>$$\mathcal{L}_{DPO} = -\mathbb{E}\left[\log\sigma\left(\beta \log\frac{\pi_\theta(y_w|x)}{\pi_{ref}(y_w|x)} - \beta \log\frac{\pi_\theta(y_l|x)}{\pi_{ref}(y_l|x)}\right)\right]$$</div>
                     <li class="q-item"><span class="q-num">32</span><div class="q-text">DPO 损失中的 β 起什么作用？为什么 β 是 KL 散度的反比？</div></li>
                     <li class="q-item"><span class="q-num">33</span><div class="q-text">DPO 是 on-policy 还是 off-policy？为什么？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>DPO 本质是 off-policy：</strong>训练数据（chosen/rejected pair）是由其他模型（如 SFT 模型/人类）生成的，不是当前策略 $\pi_\theta$ 实时采样的。<br><br><strong>问题：</strong>随着 $\pi_\theta$ 更新，训练数据越来越 off-policy → 梯度估计偏差增大，性能受限。<br><br><strong>解决方案：</strong><ul><li>Iterative DPO / Online DPO：每轮用当前策略重新采样生成 pair</li><li>RLHF-PPO 天然是 on-policy（每 step 用当前策略 rollout）</li></ul></div>
                     <li class="q-item"><span class="q-num">34</span><div class="q-text">DPO 的局限性是什么？为什么 chosen 和 rejected 概率一起下降？怎么解决？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
                     <li class="q-item"><span class="q-num">35</span><div class="q-text">IPO / KTO / SimPO / ORPO / cDPO 这些 DPO 变体分别改进了什么？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>IPO</strong>：避免 DPO 的 overfitting to point estimate，用 squared hinge loss 替代 log-sigmoid</li><li><strong>KTO</strong>：不需要 pair 数据！只需单条样本 + good/bad 标签 → 数据获取门槛大降</li><li><strong>SimPO</strong>：去掉 Reference Model，用 length-normalized log-probability 作为隐式 reward + margin 目标</li><li><strong>ORPO</strong>：将偏好优化融入 SFT 阶段（SFT + preference penalty 一步到位）</li><li><strong>cDPO</strong>：对 noisy labels 做 conservative 处理（假设一定比例标注错误）</li></ul><strong>趋势：</strong>DPO 变体越来越轻量（去 Ref Model / 去 pair / 去 RL），但 on-policy 方法（PPO/GRPO）在推理任务上仍更强。</div>
                     <li class="q-item"><span class="q-num">36</span><div class="q-text">SimPO 不用 Reference Model 怎么实现？length normalize 起什么作用？</div></li>
                     <li class="q-item"><span class="q-num">37</span><div class="q-text">KTO 相比 DPO 的核心改进？为什么只需要单条样本+标签？</div></li>
                     <li class="q-item"><span class="q-num">38</span><div class="q-text">手写 DPO Loss 代码。<span class="q-tags"><span class="q-tag code">💻</span><span class="q-tag bytedance">字节</span></span></div></li>
@@ -832,12 +726,8 @@
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">Bellman 方程的物理含义？为什么 V 满足这个递归？</div></li>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">为什么 Policy Gradient 公式里要用 $\log\pi$ 而不是 $\pi$？Log-derivative trick 推导一下。<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">REINFORCE 算法原理？为什么方差大？怎么降方差？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>原理：</strong>策略梯度定理的蒙特卡洛估计：$$\nabla J = \mathbb{E}_{\tau \sim \pi}\left[\sum_t \nabla\log\pi(a_t|s_t) \cdot G_t\right]$$采样完整轨迹 → 用累积回报 $G_t$ 作为权重更新策略。<br><br><strong>为什么方差大：</strong>$G_t$ 是单条轨迹的累积回报，随机性来源多（环境随机 + 策略随机 + 多步累积），单样本估计噪声极大。<br><br><strong>降方差方法：</strong><ul><li><strong>引入 Baseline $b(s)$</strong>：$\nabla J = E[\nabla\log\pi \cdot (G_t - b)]$，b 不引入偏差但降方差</li><li><strong>Advantage Actor-Critic</strong>：用 $A_t = Q - V$ 替代 $G_t$</li><li><strong>GAE</strong>：多步 TD 误差加权平均</li></ul></div>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">Baseline 为什么能降方差且不引入偏差？证明一下。<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">Actor-Critic 的核心思想？为什么需要 Critic？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>核心思想：</strong>分离策略（Actor）和价值估计（Critic）：<ul><li><strong>Actor</strong>：策略网络 $\pi_\theta$，决定做什么动作</li><li><strong>Critic</strong>：价值网络 $V_\phi(s)$，评估当前状态的好坏</li></ul><strong>为什么需要 Critic：</strong><ol><li>REINFORCE 必须等整条轨迹结束才能更新（MC 方差大）</li><li>Critic 提供即时的价值估计 → 可以每步更新（TD 方差小）</li><li>Advantage = $r + \gamma V(s') - V(s)$ → 低方差的策略梯度信号</li></ol><strong>Trade-off：</strong>引入 Critic 降低了方差，但如果 Critic 不准会引入偏差 → 需要同时训练好 Critic。</div>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">Critic 损失为什么用 MSE？从数学上能不能证明 MSE 最优？</div></li>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">A2C、A3C、SAC 各自特点？什么场景用？</div></li>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">DQN 的核心思想？为什么需要 Target Network 和 Replay Buffer？</div></li>
@@ -849,13 +739,9 @@
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">TRPO 中的 Importance Sampling 公式推导一下。为什么能从 on-policy 变 off-policy？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
                     <li class="q-item"><span class="q-num">13</span><div class="q-text">TRPO 和 PPO 的区别？PPO 怎么简化了 TRPO？</div></li>
                     <li class="q-item"><span class="q-num">14</span><div class="q-text">PPO Clip 机制完整解释。$\text{clip}(r_t, 1-\epsilon, 1+\epsilon)$ 中为什么外面还要 min？画出 A&gt;0 和 A&lt;0 两种情况的图。<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>PPO-Clip 目标函数：</strong>$$L^{CLIP} = \mathbb{E}\left[\min\left(r_t A_t,\; \text{clip}(r_t, 1-\epsilon, 1+\epsilon) \cdot A_t\right)\right]$$其中 $r_t = \frac{\pi_\theta(a_t|s_t)}{\pi_{old}(a_t|s_t)}$<br><br><strong>为什么要 min：</strong>取 min 是悲观估计，防止策略更新幅度过大：<ul><li><strong>A > 0</strong>（好动作）：r 越大越好，但 clip 限制 r ≤ 1+ε → 不会过度加强</li><li><strong>A < 0</strong>（差动作）：r 越小越好，但 clip 限制 r ≥ 1-ε → 不会过度惩罚</li></ul><strong>直觉：</strong>min 确保只在 trust region 内优化，超出区域的"好消息"被截断（不贪心），但"坏消息"保留（保守）。<br><br><strong>ε 常取 0.2</strong>，即策略每步最多变化 20%。</div>
                     <li class="q-item"><span class="q-num">15</span><div class="q-text">Clip 机制可以限制分布差异，还有哪些方法可以做到（KL 惩罚、Early Stopping、Adaptive KL）？<span class="q-tags"><span class="q-tag tencent">腾讯</span></span></div></li>
                     <li class="q-item"><span class="q-num">16</span><div class="q-text">PPO 的 epoch 数取多少合适？epoch 太多会怎样？</div></li>
                     <li class="q-item"><span class="q-num">17</span><div class="q-text">GAE 是什么？为什么需要它？λ 取大取小的影响？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>GAE (Generalized Advantage Estimation)：</strong>$$\hat{A}_t^{GAE} = \sum_{l=0}^{\infty} (\gamma\lambda)^l \delta_{t+l}, \quad \delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)$$<br><strong>为什么需要：</strong>Advantage 估计面临 bias-variance tradeoff：<ul><li>TD(0)：低方差但有偏（依赖 V 的准确性）</li><li>MC：无偏但高方差（用整条轨迹）</li></ul><strong>λ 的作用：</strong><ul><li><strong>λ → 0</strong>：退化为 TD(0)，低方差高偏差</li><li><strong>λ → 1</strong>：退化为 MC，高方差低偏差</li><li><strong>λ = 0.95</strong>：常用值，兼顾两者</li></ul><strong>直觉：</strong>GAE = 对不同步长的 TD 误差做指数衰减加权平均。</div>
                     <li class="q-item"><span class="q-num">18</span><div class="q-text">推导 GAE 公式。GAE 是 MC 和 TD 的什么样的折中？</div></li>
                     <li class="q-item"><span class="q-num">19</span><div class="q-text">PPO 的总目标函数包括哪几项？(Surrogate + Value + Entropy)？</div></li>
                     <li class="q-item"><span class="q-num">20</span><div class="q-text">PPO 用 value baseline 和 GAE 的根本原因是降方差，能不能从信噪比角度分析？</div></li>
@@ -865,20 +751,14 @@
                 <div class="subgroup-label">3.3 GRPO / DAPO / GSPO</div>
                 <ol class="q-list" start="22">
                     <li class="q-item"><span class="q-num">22</span><div class="q-text">GRPO 是什么？它相比 PPO 主要改进了什么？为什么不需要 Critic？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag deepseek">DS</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>GRPO (Group Relative Policy Optimization)：</strong>DeepSeek 提出，是 PPO 的简化版本。<br><br><strong>核心改进：</strong>去掉 Critic 模型，用 group 内 reward 的均值和标准差做归一化替代 Advantage：$$\hat{A}_i = \frac{r_i - \text{mean}(\{r_1,...,r_G\})}{\text{std}(\{r_1,...,r_G\})}$$<br><strong>为什么不需要 Critic：</strong><ul><li>对同一 prompt 采样 G 条回答 → 组内 reward 比较已包含"好坏信息"</li><li>mean(rewards) 天然充当 baseline（数学上等价于 REINFORCE with baseline）</li><li>省掉 Critic 模型 → 训练资源减半、流程简化</li></ul><strong>Loss：</strong>$$\mathcal{L} = -\frac{1}{G}\sum_{i=1}^{G} \min(r_i \hat{A}_i, \text{clip}(r_i) \hat{A}_i) + \beta \cdot KL$$<br><strong>适用场景：</strong>数学/代码等有明确 verifiable reward 的任务（DeepSeek-R1）。</div>
                     <li class="q-item"><span class="q-num">23</span><div class="q-text">GRPO 怎么用 group mean 当 baseline？数学上等价于什么？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
                     <li class="q-item"><span class="q-num">24</span><div class="q-text">GRPO 的 KL 散度怎么加？为什么是 ratio - log(ratio) - 1 形式（K3 估计）？<span class="q-tags"><span class="q-tag deepseek">DS</span></span></div></li>
                     <li class="q-item"><span class="q-num">25</span><div class="q-text">为什么 GRPO 容易"训飞"（reward 突然掉）？常见原因和解法？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">26</span><div class="q-text">DeepSeek-R1 用 GRPO 训练的核心创新是什么？冷启动数据起什么作用？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag deepseek">DS</span></span></div></li>
                     <li class="q-item"><span class="q-num">27</span><div class="q-text">DAPO 是什么？相比 GRPO 改进了哪 4 个 trick？(Clip-Higher / Dynamic Sampling / Token-Level Loss / Overlong Reward Shaping)<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>DAPO (Decoupled Clip and Dynamic sAmpling Policy Optimization)：</strong>字节提出，解决 GRPO 训练中 entropy collapse 问题。<br><br><strong>四个 trick：</strong><ol><li><strong>Clip-Higher（解耦 clip）</strong>：上界 $\epsilon_{high}=0.28$ > 下界 $\epsilon_{low}=0.2$ → 鼓励探索好动作，限制坏动作</li><li><strong>Dynamic Sampling</strong>：跳过 reward 全 0 或全 1 的 group（无学习信号）→ 提高有效梯度利用率</li><li><strong>Token-Level Loss</strong>：loss 按 token 数归一化（而非按 sample 数）→ 避免长回答主导梯度</li><li><strong>Overlong Reward Shaping</strong>：超长回答给 soft 负 reward（而非硬截断）→ 平滑惩罚</li></ol><strong>核心收益：</strong>解决 GRPO 中 entropy 迅速坍缩 → 模型保持探索性 → 训练更持久有效。</div>
                     <li class="q-item"><span class="q-num">28</span><div class="q-text">为什么 DAPO 要做 Clip-Higher？怎么解决 entropy 坍缩问题？</div></li>
                     <li class="q-item"><span class="q-num">29</span><div class="q-text">GSPO 的核心思想？sequence-level clip 解决了 token-level clip 什么问题？<span class="q-tags"><span class="q-tag alibaba">阿里</span></span></div></li>
                     <li class="q-item"><span class="q-num">30</span><div class="q-text">PPO / GRPO / DAPO / GSPO 演进路线图：每一步解决了上一步的什么问题？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>演进路线：</strong><ol><li><strong>PPO</strong>：经典 on-policy RL，需 4 个模型（Actor/Ref/RM/Critic），训练复杂且资源消耗大</li><li><strong>GRPO</strong> 解决 → 去掉 Critic（用 group reward baseline 替代），2 模型即可，适合 verifiable reward 场景</li><li><strong>DAPO</strong> 解决 → GRPO 的 entropy collapse（Clip-Higher 鼓励探索 + Dynamic Sampling 过滤无效 batch）</li><li><strong>GSPO</strong> 解决 → token-level clip 导致长序列梯度不一致（改为 sequence-level clip，整条序列的 ratio 做 clip）</li></ol><strong>总趋势：</strong>更少模型、更稳定训练、更强探索能力、更适合 LLM 长序列生成场景。</div>
                     <li class="q-item"><span class="q-num">31</span><div class="q-text">手写 GRPO Loss 代码。<span class="q-tags"><span class="q-tag code">💻</span></span></div></li>
                 </ol>
 
@@ -910,19 +790,13 @@
                 <div class="subgroup-label">4.1 Agentic RL 概念基础</div>
                 <ol class="q-list">
                     <li class="q-item"><span class="q-num">1</span><div class="q-text">什么是 Agentic RL？它和经典 RLHF 的本质区别是什么？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span><span class="q-tag moonshot">Moonshot</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>Agentic RL：</strong>让 LLM Agent 通过强化学习在多轮、多工具、长程任务中学会自主决策。<br><br><strong>vs 经典 RLHF 的区别：</strong><table style="width:100%;font-size:13px;"><tr><th>维度</th><th>经典 RLHF</th><th>Agentic RL</th></tr><tr><td>轨迹</td><td>单轮 prompt→response</td><td>多轮 think→act→observe→...</td></tr><tr><td>动作空间</td><td>text tokens</td><td>tokens + tool calls + args</td></tr><tr><td>Reward</td><td>RM 主观打分</td><td>可验证结果（测试通过/答案正确）</td></tr><tr><td>环境</td><td>静态（无反馈）</td><td>动态（工具返回/环境变化）</td></tr><tr><td>挑战</td><td>reward hacking</td><td>+ 长程信用分配 + 稀疏 reward + 工具异常</td></tr></table></div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">Agentic RL 的核心特征：多轮、工具调用、长程、可验证反馈 — 分别带来什么挑战？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>多轮</strong>：credit assignment 困难 — 哪一轮的决策导致了最终成功/失败？</li><li><strong>工具调用</strong>：action space 爆炸 — 选哪个工具 × 什么参数 × 何时调用</li><li><strong>长程</strong>：reward 稀疏 + 显存爆炸 — rollout 几千 token 才得到一个 reward 信号</li><li><strong>可验证反馈</strong>：reward 设计受限 — 只有特定任务能自动验证（数学/代码），通用任务缺乏 ground truth</li></ul></div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">Agent SFT 和 Agent RL 各自适用场景？为什么 SFT 后还要 RL？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">RLHF / RLVR / Agentic RL 三者关系？怎么演进过来的？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">Agentic RL 的 MDP 怎么建模？action space 是什么？(token / tool call / function args)</div></li>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">为什么经典 RLHF 不适合 Agent 训练？(单步 reward / 短轨迹 / 静态环境)</div></li>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">什么是 Verifiable Reward？哪些 Agent 任务可以构造 verifiable reward？</div></li>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">DeepSeek-R1 的 RL 训练流程是什么？冷启动 + R1-Zero + 蒸馏的三阶段？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag deepseek">DS</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>三阶段流程：</strong><ol><li><strong>R1-Zero</strong>：直接从 base model 出发，用 GRPO + verifiable reward（数学正确性）做 RL → 涌现出 CoT 推理能力（aha moment）</li><li><strong>冷启动 SFT</strong>：用 R1-Zero 生成的高质量 CoT 数据做 SFT → 稳定格式和可读性</li><li><strong>正式 RL + 蒸馏</strong>：在 SFT 模型上继续 GRPO 训练 → 然后蒸馏到小模型（1.5B~70B）</li></ol><strong>关键创新：</strong><ul><li>证明纯 RL（无 SFT）就能涌现推理能力</li><li>Reward 极简：只用"答案对不对"（math_verify / code_test）</li><li>Format Reward 保证输出结构化（&lt;think&gt;...&lt;answer&gt;...）</li></ul></div>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">R1-Zero 为什么能 work？为什么不需要 SFT 冷启动？aha moment 是什么？</div></li>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">Kimi K1.5 的 RL 方案和 DeepSeek-R1 有什么不同？Long Context CoT 怎么处理？<span class="q-tags"><span class="q-tag moonshot">Moonshot</span></span></div></li>
                 </ol>
@@ -1001,16 +875,10 @@
                 <div class="subgroup-label">5.1 多模态基础概念</div>
                 <ol class="q-list">
                     <li class="q-item"><span class="q-num">1</span><div class="q-text">多模态大模型一般有哪几个组件？各自作用？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span><span class="q-tag alibaba">阿里</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>三大组件：</strong><ol><li><strong>Visual Encoder（视觉编码器）</strong>：提取图像特征。常用 ViT（CLIP-ViT / SigLIP / InternViT）→ 输出 patch 级 visual tokens</li><li><strong>Connector/Projector（连接层）</strong>：对齐视觉和语言空间。方案：Linear / MLP / Q-Former / Perceiver Resampler / Pixel Shuffle</li><li><strong>LLM Backbone（语言模型）</strong>：理解和生成文本。接收 visual tokens + text tokens，做统一的自回归生成</li></ol><strong>训练范式：</strong>Stage 1 只训 Connector（对齐）→ Stage 2 训 Connector + LLM（指令微调）→ 可选 Stage 3 RLHF 对齐。</div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">多模态大模型的核心挑战是什么？怎么实现视觉和语言的对齐和融合？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>核心挑战：</strong><ul><li><strong>模态鸿沟</strong>：视觉和语言的表示空间差异巨大</li><li><strong>信息粒度</strong>：图像信息密度远高于文本（一张图 = 数百 visual tokens）</li><li><strong>训练数据</strong>：高质量图文配对数据稀缺</li></ul><strong>对齐方案演进：</strong><ol><li><strong>CLIP 对比学习</strong>：图文特征拉近 → 共享 embedding space</li><li><strong>连接层投影</strong>：Linear/MLP 将 visual tokens 映射到 LLM 的 word embedding 空间（LLaVA）</li><li><strong>交叉注意力</strong>：用 Q-Former/Cross-Attn 让语言模型主动 query 视觉特征（BLIP-2/Flamingo）</li><li><strong>原生统一</strong>：图像离散化为 token 与文本共享词表（Chameleon/Emu3）</li></ol></div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">视觉和文本的对齐任务怎么做？常见对齐范式有几类？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">主流 VLM 架构范式：共享编码器 vs 跨模态注意力融合 vs LLM-as-decoder 各自优劣？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">VLM 训练分几个阶段？(预训练对齐 → 视觉指令微调 → RLHF)<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>典型三阶段：</strong><ol><li><strong>Stage 1 - Pretrain Alignment</strong>：大规模图文对数据（如 LAION）→ 只训练 Connector → 让 visual tokens 对齐到 LLM 的表示空间</li><li><strong>Stage 2 - Visual Instruction Tuning</strong>：高质量多模态指令数据 → 训练 Connector + LLM（可选 ViT）→ 学会基于图像回答问题、描述、推理</li><li><strong>Stage 3 - RLHF/DPO（可选）</strong>：偏好数据对齐 → 减少幻觉、提升安全性和有用性</li></ol><strong>每阶段冻结策略不同：</strong>Stage 1 冻结 ViT+LLM；Stage 2 通常解冻 LLM（有时也解冻 ViT）。</div>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">什么是视觉指令微调（Visual Instruction Tuning）？为什么是 VLM 具备对话能力的关键？</div></li>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">VLM 的"幻觉"和纯文本 LLM 的幻觉有什么不同？(物体幻觉 / 属性幻觉 / 关系幻觉)<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">怎么缓解 VLM 幻觉？(POPE 评估 / RLHF-V / DPO 对齐 / 高质量数据)</div></li>
@@ -1019,8 +887,6 @@
                 <div class="subgroup-label">5.2 CLIP & 对比学习</div>
                 <ol class="q-list" start="9">
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">CLIP 的训练流程？对比学习的 loss 是什么？为什么用 InfoNCE？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>训练流程：</strong><ol><li>输入 batch of (image, text) pairs</li><li>Image Encoder (ViT) → 图像特征 $I_i$；Text Encoder (Transformer) → 文本特征 $T_i$</li><li>计算 batch 内所有 (I, T) 对的余弦相似度矩阵 $S_{ij} = I_i^T T_j / \tau$</li><li>对角线是正样本（匹配对），其余为负样本</li></ol><strong>InfoNCE Loss：</strong>$$\mathcal{L} = -\frac{1}{2N}\sum_i\left[\log\frac{e^{S_{ii}/\tau}}{\sum_j e^{S_{ij}/\tau}} + \log\frac{e^{S_{ii}/\tau}}{\sum_j e^{S_{ji}/\tau}}\right]$$<br><strong>对称结构：</strong>image→text 和 text→image 两个方向都优化。<br><br><strong>为什么 InfoNCE：</strong>互信息的下界估计，batch 越大负样本越多 → 对比学习越有效（CLIP 用 32K batch size）。</div>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">CLIP 的文本编码器和图像编码器是什么？训练时 batch 内每张图片有多少负样本？</div></li>
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">CLIP 的 temperature 参数起什么作用？为什么是 learnable？</div></li>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">CLIP 在 zero-shot 分类上为什么效果好？</div></li>
@@ -1033,8 +899,6 @@
                 <div class="subgroup-label">5.3 ViT & 视觉编码器</div>
                 <ol class="q-list" start="17">
                     <li class="q-item"><span class="q-num">17</span><div class="q-text">ViT 的结构？Patch Embedding 怎么做？CLS Token 起什么作用？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>ViT 结构：</strong>将图像切成固定大小的 patch → 线性投影为 embedding → 加位置编码 → 送入标准 Transformer Encoder。<br><br><strong>Patch Embedding：</strong>图像 $H \times W \times 3$ 切成 $N = \frac{H \times W}{P^2}$ 个 patch（如 P=14）→ 每个 patch 展平后通过线性层映射到 D 维（等价于 stride=P 的卷积）。<br><br><strong>CLS Token：</strong>可学习的特殊 token，拼在 patch 序列最前面。经过 Transformer 后，CLS token 聚合了全局信息 → 用于分类/对齐。<br><br><strong>在 VLM 中：</strong>通常不用 CLS，直接取所有 patch token 作为 visual tokens 送入 LLM。</div>
                     <li class="q-item"><span class="q-num">18</span><div class="q-text">ViT 和 CNN 区别是什么？ViT 的归纳偏置弱，会带来什么问题？</div></li>
                     <li class="q-item"><span class="q-num">19</span><div class="q-text">ViT 的位置编码怎么做？为什么后期 VLM 都改用 2D RoPE？</div></li>
                     <li class="q-item"><span class="q-num">20</span><div class="q-text">DINO / DINOv2 / MAE 这些自监督视觉模型怎么训练？和 CLIP 对比学习有什么区别？</div></li>
@@ -1046,8 +910,6 @@
                 <div class="subgroup-label">5.4 LLaVA 系列</div>
                 <ol class="q-list" start="24">
                     <li class="q-item"><span class="q-num">24</span><div class="q-text">LLaVA-1.0 / 1.5 / NeXT / OneVision 演进路线？每代核心改进？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>LLaVA-1.0</strong>：单层 Linear connector + ViT-L/14 + Vicuna → 证明简单投影就能对齐</li><li><strong>LLaVA-1.5</strong>：MLP connector（两层+GELU）+ CLIP-ViT-L@336 + 更多数据 → 效果大幅提升</li><li><strong>LLaVA-NeXT</strong>：AnyRes 高分辨率（动态切图 + 全局缩略图）+ 更强 LLM backbone → 支持任意分辨率</li><li><strong>LLaVA-OneVision</strong>：统一图像/多图/视频三种模态 + 大规模指令数据 → 单模型多任务</li></ul><strong>核心趋势：</strong>Connector 更强 → 分辨率更高 → 模态更多 → 数据更好。</div>
                     <li class="q-item"><span class="q-num">25</span><div class="q-text">LLaVA 的 connector 从单层 Linear 升级到两层 MLP，为什么？</div></li>
                     <li class="q-item"><span class="q-num">26</span><div class="q-text">LLaVA 的训练阶段：Pretrain（只训 connector）+ SFT（连 LLM 一起训）— 为什么这么分？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">27</span><div class="q-text">LLaVA-NeXT 怎么处理高分辨率？AnyRes 切图策略原理？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
@@ -1059,8 +921,6 @@
                 <div class="subgroup-label">5.5 Qwen-VL 系列</div>
                 <ol class="q-list" start="31">
                     <li class="q-item"><span class="q-num">31</span><div class="q-text">Qwen-VL / Qwen2-VL / Qwen2.5-VL / Qwen3-VL 的演进核心？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag alibaba">阿里</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>Qwen-VL</strong>：Cross-Attention 投影层 + 三阶段训练 + grounding 能力</li><li><strong>Qwen2-VL</strong>：Naive Dynamic Resolution（直接处理任意分辨率）+ M-RoPE（3D 位置编码）+ 去掉固定切图</li><li><strong>Qwen2.5-VL</strong>：Window Attention + MRoPE 优化 + 长视频支持（1小时+）+ Agent 能力增强</li><li><strong>Qwen3-VL（Qwen-Omni）</strong>：端到端全模态（图/文/音/视频）统一生成 + thinking mode</li></ul><strong>核心趋势：</strong>从固定分辨率 → 动态分辨率 → 全模态统一，同时 grounding 和 agent 能力持续增强。</div>
                     <li class="q-item"><span class="q-num">32</span><div class="q-text">Qwen2-VL 的 Naive Dynamic Resolution 怎么工作？相比 LLaVA 的 AnyRes 优势？<span class="q-tags"><span class="q-tag hard">🧠</span><span class="q-tag alibaba">阿里</span></span></div></li>
                     <li class="q-item"><span class="q-num">33</span><div class="q-text">M-RoPE（Multimodal RoPE）解决了什么问题？三维 RoPE 怎么编码时间 + 空间？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">34</span><div class="q-text">Qwen-VL 的 Cross-Attention 投影层和 LLaVA 的 MLP 投影层有什么取舍？</div></li>
@@ -1079,8 +939,6 @@
                 <div class="subgroup-label">5.7 高分辨率 & 长视频</div>
                 <ol class="q-list" start="41">
                     <li class="q-item"><span class="q-num">41</span><div class="q-text">VLM 处理高分辨率图像的几种主流方案？AnyRes / Native Dynamic / Tiling 对比？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>AnyRes（LLaVA-NeXT）</strong>：将图像切成多个固定分辨率子图 + 一张全局缩略图 → 分别过 ViT → 拼接 tokens。优：兼容固定分辨率 ViT；劣：切图粒度固定</li><li><strong>Naive Dynamic Resolution（Qwen2-VL）</strong>：ViT 直接处理任意分辨率 → 出来多少 patch tokens 就多少。优：无预设切图，信息无损；劣：需重新训练 ViT</li><li><strong>Pixel Shuffle / Token Merging</strong>：在 connector 阶段压缩 visual tokens（如 4 tokens → 1 token）→ 减少 LLM 输入长度</li></ul><strong>核心权衡：</strong>高分辨率 → 更多 visual tokens → 更强细节理解，但推理成本线性增长。需在"看得清"和"算得快"间平衡。</div>
                     <li class="q-item"><span class="q-num">42</span><div class="q-text">高分辨率会带来什么计算挑战？(visual token 爆炸 / KV cache 显存)<span class="q-tags"><span class="q-tag bytedance">字节</span></span></div></li>
                     <li class="q-item"><span class="q-num">43</span><div class="q-text">Visual Token Compression 有哪些方案？(Q-Former / Pixel Shuffle / Token Merging / Perceiver)</div></li>
                     <li class="q-item"><span class="q-num">44</span><div class="q-text">视频 VLM 的核心难点？多少帧合适？怎么 sample？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
@@ -1138,11 +996,7 @@
                 <div class="subgroup-label">6.1 Agent 基础</div>
                 <ol class="q-list">
                     <li class="q-item"><span class="q-num">1</span><div class="q-text">如何定义一个基于 LLM 的 Agent？由哪些核心组件构成？(LLM Brain / Memory / Planning / Tool Use)<span class="q-tags"><span class="q-tag high-freq">🔥必背</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>定义：</strong>LLM Agent = 以大语言模型为核心推理引擎，能自主感知环境、制定计划、使用工具、完成任务的智能系统。<br><br><strong>四大组件：</strong><ol><li><strong>LLM Brain（推理核心）</strong>：理解指令、推理决策、生成行动</li><li><strong>Memory（记忆系统）</strong>：短期（对话历史/working memory）+ 长期（向量数据库/知识库）</li><li><strong>Planning（规划能力）</strong>：任务分解、子目标设定（CoT/ToT/ReAct）</li><li><strong>Tool Use（工具使用）</strong>：调用 API/搜索/代码执行/数据库查询</li></ol><strong>工作循环：</strong>感知输入 → 思考推理 → 制定计划 → 执行动作 → 观察结果 → 反思调整 → 循环...</div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">详细解释 ReAct 框架。Thought → Action → Observation 循环怎么工作？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>ReAct = Reasoning + Acting 交替执行</strong><br><br><strong>循环流程：</strong><ol><li><strong>Thought</strong>：LLM 思考当前状态和下一步该做什么（自然语言推理）</li><li><strong>Action</strong>：执行具体操作（调用工具/搜索/代码执行）</li><li><strong>Observation</strong>：获取外部环境反馈（工具返回结果）</li><li>重复直到任务完成或达到最大步数</li></ol><strong>vs 纯 CoT：</strong>CoT 只思考不行动 → 无法获取外部信息；ReAct 能实时获取环境反馈纠正推理。<br><strong>vs 纯 Action：</strong>没有显式推理 → 决策不透明且容易出错。</div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">ReAct 和 Plan-and-Execute / Reflexion 各自适用场景？</div></li>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">Agent 的 Planning 能力有哪些实现方式？(CoT / ToT / GoT / LLM+PDDL)</div></li>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">什么是 Agent 的 self-reflection？Reflexion 论文的核心机制？</div></li>
@@ -1216,8 +1070,6 @@
                 <div class="subgroup-label">7.1 RAG 基础</div>
                 <ol class="q-list">
                     <li class="q-item"><span class="q-num">1</span><div class="q-text">RAG 的工作原理？完整流程？相比微调 LLM 主要优势？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>完整流程：</strong><ol><li><strong>索引构建</strong>：文档 → Chunking → Embedding → 存入向量数据库</li><li><strong>检索</strong>：用户 query → Embedding → 向量相似度搜索 → 召回 top-K 文档片段</li><li><strong>增强生成</strong>：将召回文档作为 context 注入 prompt → LLM 基于上下文生成答案</li></ol><strong>vs 微调的优势：</strong><ul><li>无需重训模型 → 知识可实时更新</li><li>可溯源 → 回答可追溯到原始文档</li><li>减少幻觉 → 有事实依据约束生成</li><li>领域适应快 → 换文档库即换领域</li></ul><strong>局限：</strong>受限于检索质量、chunk 粒度、context 长度。</div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">RAG 与传统"检索 + 模型生成"的本质区别？</div></li>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">标准 RAG 的最大瓶颈是什么？(检索质量 / chunk 切分 / context noise)<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">把 RAG 做成 Agent（Agentic RAG）有什么好处？</div></li>
@@ -1227,8 +1079,6 @@
                 <div class="subgroup-label">7.2 切块 & Embedding</div>
                 <ol class="q-list" start="6">
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">Chunk 切分策略怎么选？大小、重叠、语义切分（semantic chunking）？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>切分维度：</strong><ul><li><strong>大小</strong>：通常 256-1024 tokens。太小则缺乏上下文；太大则噪声多、检索精度低</li><li><strong>重叠</strong>：相邻 chunk 重叠 50-200 tokens → 避免切断完整语义</li><li><strong>分隔符优先级</strong>：段落 > 句子 > 固定长度 → 保持语义完整</li></ul><strong>高级方案：</strong><ul><li><strong>Semantic Chunking</strong>：用 embedding 相似度判断语义断点（相邻句 embedding 相似度骤降处切分）</li><li><strong>Agentic Chunking</strong>：用 LLM 判断每段是否自包含</li><li><strong>层次切分</strong>：小 chunk 用于检索精度 + 大 chunk 用于上下文完整性（parent-child）</li></ul></div>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">怎么选 Embedding 模型？评估指标？(MTEB / C-MTEB)<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">BGE / E5 / GTE / Conan-Embedding 各自特点？</div></li>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">Embedding 模型和 Rerank 模型用法上有什么区别？</div></li>
@@ -1277,14 +1127,8 @@
                 <div class="subgroup-label">8.1 KV Cache & 推理优化</div>
                 <ol class="q-list">
                     <li class="q-item"><span class="q-num">1</span><div class="q-text">KV Cache 是什么？为什么能极大提升推理速度？显存占用怎么算？<span class="q-tags"><span class="q-tag high-freq">🔥必背</span><span class="q-tag bytedance">字节</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>KV Cache：</strong>自回归生成时，缓存已计算过的所有 token 的 Key 和 Value 向量，避免每生成一个新 token 都重新计算全序列的 KV。<br><br><strong>为什么快：</strong>生成第 t 个 token 时，只需计算当前 token 的 Q，与 cache 中的 K 做 attention → 从 O(t²) 降为 O(t)。<br><br><strong>显存公式：</strong>$$\text{KV Cache} = 2 \times n_{layers} \times n_{kv\_heads} \times d_{head} \times seq\_len \times batch \times \text{bytes}$$<br>例：LLaMA-2 7B（32层, 32 heads, d=128）BF16, seq=4096, batch=1：$$2 \times 32 \times 32 \times 128 \times 4096 \times 2B = 2GB$$<br><strong>问题：</strong>长序列下 KV Cache 显存线性增长 → PagedAttention / MQA / GQA / MLA 都是为了压缩 KV Cache。</div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">MQA / GQA / MLA 怎么压缩 KV Cache？分别压缩多少？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag deepseek">DS</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>MHA</strong>（基线）：每个 head 独立 KV → Cache = $2 \times L \times H \times d \times S$</li><li><strong>MQA</strong>：所有 head 共享 1 组 KV → Cache 压缩为 $1/H$（如 H=32 则减到 1/32）</li><li><strong>GQA</strong>：H 个 head 分成 G 组，每组共享 1 组 KV → 压缩为 $G/H$（如 8/32 = 1/4）</li><li><strong>MLA (DeepSeek)</strong>：KV 经低秩投影压缩到 latent（如 512 维）→ 只缓存压缩向量，压缩比可达 ~1/10</li></ul><strong>精度 vs 效率：</strong>MQA 压缩极端但表达力损失；GQA 是实用折中（LLaMA-2 70B）；MLA 用计算换存储（推理时需反投影）。</div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">vLLM 的 PagedAttention 解决了什么问题？类比操作系统什么概念？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>解决的问题：</strong>传统 KV Cache 需为每个请求预分配最大长度的连续显存 → 严重的内存碎片和浪费（实测浪费 60-80%）。<br><br><strong>类比：</strong>操作系统的虚拟内存 + 分页（Paging）。<ul><li>KV Cache 不再需要连续物理显存</li><li>将 KV Cache 分成固定大小的 Block（如 16 tokens 一块）</li><li>用 Block Table（类似页表）映射逻辑位置到物理显存块</li><li>按需分配、用完释放 → 显存利用率接近 100%</li></ul><strong>附加好处：</strong>支持 prefix sharing（共享 system prompt 的 KV block）、beam search 的 copy-on-write。</div>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">Continuous Batching（动态批处理）相比静态 batch 优势？</div></li>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">Prefix Caching / RadixAttention 怎么工作？什么场景适合？</div></li>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">Chunked Prefill 是什么？为什么能提升吞吐？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
@@ -1296,8 +1140,6 @@
                 <div class="subgroup-label">8.2 量化 & 压缩</div>
                 <ol class="q-list" start="10">
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">LLM 常见量化方案：INT8 / INT4 / FP8 / NF4 区别？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><ul><li><strong>INT8</strong>：8位整数量化。精度损失小，速度提升~2×。LLM.int8() 方案对 outlier 做混合精度</li><li><strong>INT4</strong>：4位整数量化。精度损失明显 → 需要 GPTQ/AWQ 等校准算法补偿</li><li><strong>FP8 (E4M3/E5M2)</strong>：8位浮点，H100+ 硬件原生支持。兼顾动态范围和精度 → 用于训练+推理</li><li><strong>NF4 (Normal Float 4)</strong>：QLoRA 提出。假设权重近似正态分布 → 4bit 量化点按正态分位数分配 → 信息论最优</li></ul><strong>选择指南：</strong><ul><li>推理部署：INT4 (GPTQ/AWQ) 最常用，内存减 75%</li><li>训练：BF16 主流，FP8 新趋势</li><li>微调：QLoRA 用 NF4 量化 base model + LoRA 适配器</li></ul></div>
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">GPTQ / AWQ / SmoothQuant / GGUF 各自原理？什么场景用？</div></li>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">权重量化和激活量化区别？为什么激活量化更难？</div></li>
                     <li class="q-item"><span class="q-num">13</span><div class="q-text">QAT（量化感知训练）和 PTQ（训后量化）区别？精度损失对比？</div></li>
@@ -1310,8 +1152,6 @@
                 <div class="subgroup-label">8.3 训练并行 & 显存</div>
                 <ol class="q-list" start="18">
                     <li class="q-item"><span class="q-num">18</span><div class="q-text">详细分析 LLM 训练显存占用：模型参数 / 梯度 / 优化器状态 / 激活 各占多少？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag huawei">华为</span></span></div></li>
-                    <button class="q-toggle">查看答案 ▼</button>
-                    <div class="q-answer"><strong>混合精度 (BF16) + Adam 训练，参数量 Φ：</strong><ul><li><strong>模型参数</strong>：2Φ bytes（BF16 存储）</li><li><strong>梯度</strong>：2Φ bytes（BF16）</li><li><strong>优化器状态</strong>：12Φ bytes（Adam: FP32 参数副本 4Φ + FP32 momentum 4Φ + FP32 variance 4Φ）</li><li><strong>合计（不含激活）</strong>：≈ 16Φ bytes</li></ul><strong>激活值：</strong>与 batch_size × seq_len × hidden_dim × layers 相关，通常占 20-60% 总显存。<br><br><strong>7B 模型示例：</strong>16 × 7B = 112GB（纯参数+梯度+优化器）→ 加激活需 ~160-200GB → 至少 2-3 张 A100-80G。<br><br><strong>省显存方法：</strong>ZeRO 分片、Gradient Checkpointing、Flash Attention、Offload。</div>
                     <li class="q-item"><span class="q-num">19</span><div class="q-text">7B 模型 BF16 训练大概要多少显存？为什么？怎么省？<span class="q-tags"><span class="q-tag bytedance">字节</span></span></div></li>
                     <li class="q-item"><span class="q-num">20</span><div class="q-text">怎么对激活值的显存占用做控制？Gradient Checkpointing 怎么用？</div></li>
                     <li class="q-item"><span class="q-num">21</span><div class="q-text">DP / TP / PP / SP / EP 五种并行的区别？千亿模型怎么组合？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
@@ -1590,15 +1430,6 @@
             backToTop.classList.toggle('visible', scrolled > 400);
         });
         backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-        // Toggle answers
-        document.querySelectorAll('.q-toggle').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const answer = btn.nextElementSibling;
-                answer.classList.toggle('show');
-                btn.textContent = answer.classList.contains('show') ? '收起答案 ▲' : '查看答案 ▼';
-            });
-        });
 
         // Sidebar scroll-spy
         const sections = document.querySelectorAll('section[id]');

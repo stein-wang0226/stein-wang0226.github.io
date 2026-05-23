@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12 训练基础设施与分布式系统 - LLM面试笔记</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/katex.min.css">
+    <script defer src="assets/katex.min.js"></script>
+    <script defer src="assets/auto-render.min.js"></script>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <h1>LLM & Multimodal 面试复习笔记</h1>
+    <nav class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="09-interview-qa.html">高频面试</a>
+        <a href="10-inference-system.html">推理系统</a>
+        <a href="11-agent-rag.html">Agent/RAG</a>
+        <a href="12-training-infra.html" class="active">训练Infra</a>
+    </nav>
+</header>
+
+<!-- Sidebar -->
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+<aside class="sidebar">
+    <div class="toc-title">目录导航</div>
+    <a href="#sec1">1. 训练显存分析</a>
+    <a href="#sec1-1" class="sub">1.1 显存组成</a>
+    <a href="#sec1-2" class="sub">1.2 计算公式</a>
+    <a href="#sec2">2. 数据并行 (DDP)</a>
+    <a href="#sec2-1" class="sub">2.1 原理</a>
+    <a href="#sec2-2" class="sub">2.2 通信机制</a>
+    <a href="#sec3">3. DeepSpeed ZeRO</a>
+    <a href="#sec3-1" class="sub">3.1 ZeRO Stage 1/2/3</a>
+    <a href="#sec3-2" class="sub">3.2 ZeRO-Offload</a>
+    <a href="#sec3-3" class="sub">3.3 ZeRO-Infinity</a>
+    <a href="#sec4">4. FSDP</a>
+    <a href="#sec4-1" class="sub">4.1 原理与对比</a>
+    <a href="#sec4-2" class="sub">4.2 Sharding策略</a>
+    <a href="#sec5">5. 张量并行 (TP)</a>
+    <a href="#sec5-1" class="sub">5.1 Megatron-LM</a>
+    <a href="#sec5-2" class="sub">5.2 列切/行切</a>
+    <a href="#sec6">6. 流水线并行 (PP)</a>
+    <a href="#sec6-1" class="sub">6.1 GPipe/1F1B</a>
+    <a href="#sec6-2" class="sub">6.2 Bubble率</a>
+    <a href="#sec7">7. 3D并行与混合策略</a>
+    <a href="#sec8">8. LoRA 系列</a>
+    <a href="#sec8-1" class="sub">8.1 LoRA 原理</a>
+    <a href="#sec8-2" class="sub">8.2 QLoRA</a>
+    <a href="#sec8-3" class="sub">8.3 DoRA/rsLoRA</a>
+    <a href="#sec9">9. Flash Attention</a>
+    <a href="#sec9-1" class="sub">9.1 FA1 原理</a>
+    <a href="#sec9-2" class="sub">9.2 FA2 优化</a>
+    <a href="#sec9-3" class="sub">9.3 FA3</a>
+    <a href="#sec10">10. 混合精度训练</a>
+    <a href="#sec10-1" class="sub">10.1 FP16/BF16</a>
+    <a href="#sec10-2" class="sub">10.2 Loss Scaling</a>
+    <a href="#sec11">11. 梯度累积与梯度裁剪</a>
+    <a href="#sec12">12. 面试真题集</a>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+    <h1>12 训练基础设施与分布式系统</h1>
+    <p style="color: var(--text-light);">系统性覆盖大模型训练 Infra 核心原理：显存分析、并行策略、参数高效微调、Attention优化、精度策略</p>
+
+    <!-- Section 1 -->
+    <h2 id="sec1">1. 训练显存分析</h2>
+
+    <h3 id="sec1-1">1.1 显存组成</h3>
+    <p>训练大模型时，GPU 显存主要被以下四部分占据：</p>
+
+    <table>
+        <thead><tr><th>类别</th><th>内容</th><th>典型比例</th></tr></thead>
+        <tbody>
+            <tr><td><strong>模型参数 (Parameters)</strong></td><td>权重矩阵 W</td><td>占比约 1/4（混合精度下）</td></tr>
+            <tr><td><strong>梯度 (Gradients)</strong></td><td>反向传播的梯度</td><td>与参数等大</td></tr>
+            <tr><td><strong>优化器状态 (Optimizer States)</strong></td><td>Adam: m (一阶动量) + v (二阶动量) + master weights</td><td>参数量的 2~3 倍</td></tr>
+            <tr><td><strong>激活值 (Activations)</strong></td><td>前向传播中间结果，留给反向用</td><td>随 batch size 和 seq_len 增长</td></tr>
+        </tbody>
+    </table>
+
+    <h3 id="sec1-2">1.2 计算公式</h3>
+    <div class="info-box formula">
+        <h4>Adam + 混合精度训练的显存估算</h4>
+        <p>设模型参数量为 $\Phi$（单位：参数数）：</p>
+        <ul>
+            <li>FP16 参数：$2\Phi$ 字节</li>
+            <li>FP16 梯度：$2\Phi$ 字节</li>
+            <li>FP32 master weights：$4\Phi$ 字节</li>
+            <li>FP32 一阶动量 m：$4\Phi$ 字节</li>
+            <li>FP32 二阶动量 v：$4\Phi$ 字节</li>
+        </ul>
+        <p><strong>总计：$16\Phi$ 字节（不含激活值）</strong></p>
+        <p>例如 7B 模型：$16 \times 7 \times 10^9 = 112$ GB（仅优化器+参数+梯度）</p>
+    </div>
+
+    <div class="info-box key">
+        <h4>激活值显存</h4>
+        <p>激活值显存与 batch_size $\times$ seq_len $\times$ hidden_size $\times$ num_layers 成正比。常用优化手段：</p>
+        <ul>
+            <li><strong>Gradient Checkpointing (激活重计算)</strong>：用时间换空间，只保留部分 checkpoint 层的激活值，其余反向时重算</li>
+            <li><strong>Selective Activation Recomputation</strong>：只重算 Attention 部分（占比大但计算相对便宜）</li>
+        </ul>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 id="sec2">2. 数据并行 (DDP)</h2>
+
+    <h3 id="sec2-1">2.1 原理</h3>
+    <p><strong>DistributedDataParallel (DDP)</strong> 是 PyTorch 最基础的多卡并行方式：</p>
+    <ul>
+        <li>每张卡持有完整模型副本</li>
+        <li>数据按 batch 维度切分给不同卡</li>
+        <li>各卡独立前向+反向</li>
+        <li>反向结束时，通过 AllReduce 同步梯度</li>
+        <li>各卡用同步后的梯度更新参数，保持一致</li>
+    </ul>
+
+    <div class="info-box why">
+        <h4>DDP vs DataParallel (DP)</h4>
+        <ul>
+            <li><strong>DP</strong>：单进程多线程，存在 GIL 瓶颈，GPU0 负载不均衡（汇聚梯度）</li>
+            <li><strong>DDP</strong>：多进程，每卡一个进程，通信用 NCCL，无 GIL 问题，负载均衡</li>
+        </ul>
+        <p>工业界几乎不再使用 DP，DDP 是数据并行的标准做法。</p>
+    </div>
+
+    <h3 id="sec2-2">2.2 通信机制</h3>
+    <p>DDP 的关键通信操作是 <strong>AllReduce</strong>：</p>
+    <ul>
+        <li><strong>Ring AllReduce</strong>：将 N 张卡组成环，分 2(N-1) 步完成，通信量与卡数无关，仅与数据量相关</li>
+        <li>通信量：$2 \times \frac{(N-1)}{N} \times \text{data\_size}$，近似 $2 \times \text{data\_size}$</li>
+    </ul>
+
+    <div class="info-box key">
+        <h4>Gradient Bucketing</h4>
+        <p>DDP 不是等所有梯度算完再通信，而是将参数分桶 (bucket)，一桶算完就开始 AllReduce，实现<strong>计算与通信重叠</strong>。</p>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 id="sec3">3. DeepSpeed ZeRO</h2>
+    <p>ZeRO (Zero Redundancy Optimizer) 的核心思想：在数据并行的基础上，将模型状态<strong>分片 (partition)</strong> 到各卡，消除冗余。</p>
+
+    <h3 id="sec3-1">3.1 ZeRO Stage 1 / 2 / 3</h3>
+
+    <table>
+        <thead><tr><th>Stage</th><th>切分内容</th><th>显存节省</th><th>通信量</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Stage 1</strong></td>
+                <td>优化器状态 (OS)</td>
+                <td>从 $16\Phi$ 降至 $4\Phi + \frac{12\Phi}{N}$</td>
+                <td>同 DDP</td>
+            </tr>
+            <tr>
+                <td><strong>Stage 2</strong></td>
+                <td>优化器状态 + 梯度 (OS+G)</td>
+                <td>从 $16\Phi$ 降至 $2\Phi + \frac{14\Phi}{N}$</td>
+                <td>同 DDP</td>
+            </tr>
+            <tr>
+                <td><strong>Stage 3</strong></td>
+                <td>优化器状态 + 梯度 + 参数 (OS+G+P)</td>
+                <td>从 $16\Phi$ 降至 $\frac{16\Phi}{N}$</td>
+                <td>约 1.5× DDP</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="info-box formula">
+        <h4>ZeRO 各 Stage 详解</h4>
+        <p><strong>Stage 1：</strong>每张卡只存 $1/N$ 的优化器状态。更新时各卡只更新自己分片对应的参数，再 AllGather 同步完整参数。</p>
+        <p><strong>Stage 2：</strong>在 Stage 1 基础上，梯度也分片。每个参数的梯度只在"负责该参数的卡"上做 Reduce（用 ReduceScatter 代替 AllReduce），减少显存中的梯度副本。</p>
+        <p><strong>Stage 3：</strong>连参数本身也分片。前向和反向需要某层参数时，通过 AllGather 临时收集，用完释放。代价是<strong>通信量增加约 50%</strong>（多了前向时的 AllGather）。</p>
+    </div>
+
+    <div class="info-box interview">
+        <h4>面试关键点</h4>
+        <ul>
+            <li>Stage 1/2 通信量与 DDP 相同（都是 $2\Phi$ 数据量），但显存显著降低</li>
+            <li>Stage 3 能线性扩展到任意大模型，但通信开销增加</li>
+            <li>实际使用中 Stage 2 是性价比最高的选择（大多数场景够用且无额外通信）</li>
+        </ul>
+    </div>
+
+    <h3 id="sec3-2">3.2 ZeRO-Offload</h3>
+    <p>将部分计算和存储卸载到 CPU/NVMe：</p>
+    <ul>
+        <li><strong>CPU Offload</strong>：优化器状态和梯度放 CPU 内存，GPU 只保留前向/反向必需的参数和激活</li>
+        <li>参数更新在 CPU 上完成（Adam step），更新后传回 GPU</li>
+        <li>适合单卡/少卡训练大模型（如单 A100 训 13B）</li>
+    </ul>
+
+    <h3 id="sec3-3">3.3 ZeRO-Infinity</h3>
+    <p>ZeRO-Infinity 在 Offload 基础上进一步利用 NVMe SSD：</p>
+    <ul>
+        <li>所有模型状态都可以 offload 到 NVMe</li>
+        <li>通过 prefetch 和 overlap 隐藏 I/O 延迟</li>
+        <li>理论上支持训练万亿参数模型（单节点）</li>
+    </ul>
+
+    <div class="info-box warning">
+        <h4>Offload 的代价</h4>
+        <p>CPU offload 会引入 PCIe 传输延迟和 CPU 计算瓶颈，<strong>吞吐量通常下降 30-50%</strong>。适合"能训起来"比"训得快"更重要的场景。</p>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 id="sec4">4. FSDP (Fully Sharded Data Parallel)</h2>
+
+    <h3 id="sec4-1">4.1 原理与对比</h3>
+    <p>FSDP 是 PyTorch 原生实现的类 ZeRO Stage 3 方案：</p>
+    <ul>
+        <li>将模型参数、梯度、优化器状态全部分片到各卡</li>
+        <li>前向时 AllGather 收集当前层参数，反向时 ReduceScatter 分发梯度</li>
+        <li>原生集成在 PyTorch 中，无需额外框架</li>
+    </ul>
+
+    <table>
+        <thead><tr><th>维度</th><th>DeepSpeed ZeRO-3</th><th>FSDP</th></tr></thead>
+        <tbody>
+            <tr><td>生态</td><td>独立库，配置文件驱动</td><td>PyTorch 原生，API 驱动</td></tr>
+            <tr><td>分片粒度</td><td>参数级</td><td>Module 级 (FlatParameter)</td></tr>
+            <tr><td>混合精度</td><td>自带 FP16/BF16 支持</td><td>与 torch.amp 集成</td></tr>
+            <tr><td>Offload</td><td>CPU + NVMe</td><td>CPU（NVMe 有限支持）</td></tr>
+            <tr><td>调试友好度</td><td>配置较多</td><td>更贴近 PyTorch 风格</td></tr>
+            <tr><td>适用场景</td><td>超大规模、极致优化</td><td>中大规模、快速上手</td></tr>
+        </tbody>
+    </table>
+
+    <h3 id="sec4-2">4.2 Sharding 策略</h3>
+    <p>FSDP 提供三种 sharding 策略：</p>
+    <ul>
+        <li><strong>FULL_SHARD</strong>：等价于 ZeRO-3，参数+梯度+优化器全分片</li>
+        <li><strong>SHARD_GRAD_OP</strong>：等价于 ZeRO-2，仅分片梯度和优化器状态</li>
+        <li><strong>NO_SHARD</strong>：等价于 DDP，不分片</li>
+    </ul>
+
+    <div class="info-box key">
+        <h4>FSDP Hybrid Sharding</h4>
+        <p>在多机场景下，可以节点内 FULL_SHARD + 节点间 NO_SHARD（或反之），减少跨机通信。这等价于 ZeRO++ 的 hpZ (hierarchical partitioning)。</p>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 id="sec5">5. 张量并行 (Tensor Parallelism)</h2>
+
+    <h3 id="sec5-1">5.1 Megatron-LM 实现</h3>
+    <p>张量并行 (TP) 的核心思想：将单个矩阵运算切分到多张卡上并行计算，是<strong>模型内并行 (intra-layer parallelism)</strong>。</p>
+
+    <p>Megatron-LM 是 NVIDIA 实现 TP 的经典框架，核心设计：</p>
+    <ul>
+        <li>将 Transformer 每层的 MLP 和 Attention 的权重矩阵切分</li>
+        <li>利用矩阵乘法的可拆分性，分配到不同 GPU</li>
+        <li>每层只需 2 次 AllReduce（前向 1 次 + 反向 1 次）</li>
+    </ul>
+
+    <h3 id="sec5-2">5.2 列切分 (Column Parallel) 与行切分 (Row Parallel)</h3>
+
+    <div class="info-box formula">
+        <h4>MLP 层的张量并行</h4>
+        <p>标准 MLP：$Y = \text{GeLU}(XA) \cdot B$</p>
+        <p><strong>第一个线性层（Column Parallel）：</strong></p>
+        <p>将 $A$ 按列切分为 $[A_1, A_2]$，每张卡计算 $Y_i = \text{GeLU}(XA_i)$</p>
+        <p>无需通信，因为 GeLU 是逐元素操作</p>
+        <p><strong>第二个线性层（Row Parallel）：</strong></p>
+        <p>将 $B$ 按行切分，每张卡计算部分结果，最后 AllReduce 求和</p>
+        <p>$$Y = [Y_1, Y_2] \begin{bmatrix} B_1 \\ B_2 \end{bmatrix} = Y_1 B_1 + Y_2 B_2$$</p>
+    </div>
+
+    <div class="info-box formula">
+        <h4>Self-Attention 的张量并行</h4>
+        <p>QKV 投影矩阵按 head 维度切分：</p>
+        <ul>
+            <li>卡 $i$ 负责 head $i$ 的 $W_Q^i, W_K^i, W_V^i$</li>
+            <li>各卡独立计算 Attention</li>
+            <li>输出投影 $W_O$ 用 Row Parallel，AllReduce 聚合</li>
+        </ul>
+        <p>总通信：每个 Transformer 层前向 2 次 AllReduce，反向 2 次 AllReduce。</p>
+    </div>
+
+    <div class="info-box warning">
+        <h4>TP 的限制</h4>
+        <ul>
+            <li>要求卡间高带宽（通常限制在单机 NVLink 内）</li>
+            <li>TP degree 通常 ≤ 8（一台机器的 GPU 数）</li>
+            <li>通信频率高：每层都要通信，对延迟敏感</li>
+        </ul>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 id="sec6">6. 流水线并行 (Pipeline Parallelism)</h2>
+
+    <h3 id="sec6-1">6.1 GPipe 与 1F1B</h3>
+    <p>流水线并行 (PP) 将模型按<strong>层</strong>切分到不同卡上：</p>
+
+    <table>
+        <thead><tr><th>方案</th><th>调度方式</th><th>特点</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Naive PP</strong></td>
+                <td>串行执行全部前向再全部反向</td>
+                <td>bubble 极大，几乎无用</td>
+            </tr>
+            <tr>
+                <td><strong>GPipe</strong></td>
+                <td>将 mini-batch 切为 micro-batches，连续注入流水线</td>
+                <td>减少 bubble，但需存所有 micro-batch 的激活</td>
+            </tr>
+            <tr>
+                <td><strong>1F1B (Interleaved)</strong></td>
+                <td>一个 micro-batch 前向完立刻反向</td>
+                <td>峰值显存更低，bubble 不变</td>
+            </tr>
+            <tr>
+                <td><strong>Interleaved 1F1B</strong></td>
+                <td>每卡分配多个不连续的层块</td>
+                <td>Bubble 缩小为原来的 $1/v$（v 为 chunks 数）</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 id="sec6-2">6.2 Bubble 率分析</h3>
+    <div class="info-box formula">
+        <h4>Pipeline Bubble</h4>
+        <p>设 $p$ 为 pipeline stages 数，$m$ 为 micro-batches 数：</p>
+        <p>$$\text{Bubble ratio} = \frac{p - 1}{m + p - 1}$$</p>
+        <p>要使 bubble 率 &lt; 5%，需要 $m \geq 20p$（经验值约 $m \geq 4p$ 时 bubble &lt; 20%）</p>
+        <p>这意味着 <strong>PP 需要较大的 global batch size</strong>，否则 bubble 开销太大。</p>
+    </div>
+
+    <div class="info-box key">
+        <h4>PP 的通信特点</h4>
+        <p>PP 只需在相邻 stage 之间传递激活值（点对点通信），通信量远小于 TP。因此 PP 适合<strong>跨机</strong>场景（带宽要求低），而 TP 适合<strong>机内</strong>（带宽要求高）。</p>
+    </div>
+
+    <!-- Section 7 -->
+    <h2 id="sec7">7. 3D 并行与混合策略</h2>
+    <p>大规模训练（如 GPT-3 175B, LLaMA-70B）通常组合多种并行：</p>
+
+    <div class="info-box formula">
+        <h4>3D 并行 = DP × TP × PP</h4>
+        <p>总 GPU 数 = $N_{DP} \times N_{TP} \times N_{PP}$</p>
+        <p>典型配置（以 128 GPUs 训 70B 为例）：</p>
+        <ul>
+            <li>TP = 8（机内 8 卡 NVLink）</li>
+            <li>PP = 4（4 个 stage 跨 4 台机器）</li>
+            <li>DP = 4（4 路数据并行）</li>
+            <li>Global Batch Size = DP × micro_batch × grad_accum_steps</li>
+        </ul>
+    </div>
+
+    <table>
+        <thead><tr><th>并行方式</th><th>切什么</th><th>通信模式</th><th>适合场景</th></tr></thead>
+        <tbody>
+            <tr><td>DP / ZeRO</td><td>数据（batch维）</td><td>AllReduce / ReduceScatter</td><td>任意规模，基础必选</td></tr>
+            <tr><td>TP</td><td>权重矩阵（hidden维）</td><td>AllReduce（高频）</td><td>机内 NVLink</td></tr>
+            <tr><td>PP</td><td>层（layer维）</td><td>P2P Send/Recv（低频）</td><td>跨机</td></tr>
+            <tr><td>SP (Sequence Parallel)</td><td>序列（seq维）</td><td>AllGather / ReduceScatter</td><td>长序列训练</td></tr>
+        </tbody>
+    </table>
+
+    <div class="info-box key">
+        <h4>Sequence Parallelism (SP)</h4>
+        <p>Megatron-LM v3 引入的 SP：在 TP 的基础上，对 LayerNorm 和 Dropout 等非 TP 区域也沿序列维度切分，进一步节省激活值显存。SP 不增加额外通信，只是将 AllReduce 拆成 AllGather + ReduceScatter。</p>
+    </div>
+
+    <!-- Section 8 -->
+    <h2 id="sec8">8. LoRA 系列 (参数高效微调)</h2>
+
+    <h3 id="sec8-1">8.1 LoRA 原理</h3>
+    <div class="info-box formula">
+        <h4>核心公式</h4>
+        <p>$$h = W_0 x + \Delta W x = W_0 x + \frac{\alpha}{r} B A x$$</p>
+        <p>其中：</p>
+        <ul>
+            <li>$W_0 \in \mathbb{R}^{d \times k}$：冻结的预训练权重</li>
+            <li>$B \in \mathbb{R}^{d \times r}$：初始化为零</li>
+            <li>$A \in \mathbb{R}^{r \times k}$：随机高斯初始化</li>
+            <li>$r \ll \min(d, k)$：低秩维度（通常 4~64）</li>
+            <li>$\alpha$：缩放因子</li>
+        </ul>
+    </div>
+
+    <p><strong>为什么 LoRA 有效？</strong></p>
+    <ul>
+        <li>Aghajanyan et al. 2020 发现：微调时的权重更新矩阵 $\Delta W$ 具有<strong>低内在维度 (low intrinsic dimensionality)</strong></li>
+        <li>全量微调 7B 模型需要 14GB+ 梯度空间，LoRA 只需训 $r \times (d + k)$ 参数</li>
+        <li>训练完毕后 $W_0 + BA$ 可合并，<strong>推理无额外延迟</strong></li>
+    </ul>
+
+    <div class="info-box key">
+        <h4>LoRA 关键设计选择</h4>
+        <table>
+            <thead><tr><th>选项</th><th>建议</th><th>原因</th></tr></thead>
+            <tbody>
+                <tr><td>应用层</td><td>Q, K, V, O + MLP (gate, up, down)</td><td>论文验证同时加更多层效果更好</td></tr>
+                <tr><td>rank r</td><td>8~64</td><td>太小表达力不够，太大接近全量微调</td></tr>
+                <tr><td>alpha</td><td>通常 = r 或 2r</td><td>实际学习率 ∝ alpha/r</td></tr>
+                <tr><td>B 初始化</td><td>零矩阵</td><td>保证训练初期 ΔW=0，不破坏预训练</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 id="sec8-2">8.2 QLoRA</h3>
+    <p>QLoRA 的核心贡献：在<strong>4-bit 量化</strong>的冻结基座上做 LoRA 微调。</p>
+
+    <div class="info-box formula">
+        <h4>QLoRA 三大技术</h4>
+        <ol>
+            <li><strong>4-bit NormalFloat (NF4)</strong>：信息论最优的 4-bit 量化格式，假设权重近似正态分布</li>
+            <li><strong>Double Quantization</strong>：对量化常数（scale factor）再做一次量化，节省约 0.37 bit/param</li>
+            <li><strong>Paged Optimizers</strong>：利用 NVIDIA 统一内存，在 GPU 显存不足时自动 offload 到 CPU</li>
+        </ol>
+    </div>
+
+    <p><strong>效果：</strong>单张 A100-48GB 即可微调 65B 模型（QLoRA 论文实验），全量微调需要 &gt;780GB。</p>
+
+    <div class="info-box interview">
+        <h4>面试要点：QLoRA 前向过程</h4>
+        <p>$$h = \text{Dequantize}(W_{\text{NF4}}) \cdot x + \frac{\alpha}{r} B A x$$</p>
+        <p>反向传播时只更新 B 和 A 的梯度，$W_{\text{NF4}}$ 始终冻结且以 4-bit 存储。</p>
+    </div>
+
+    <h3 id="sec8-3">8.3 DoRA 与 rsLoRA</h3>
+    <p><strong>DoRA (Weight-Decomposed Low-Rank Adaptation)：</strong></p>
+    <ul>
+        <li>将权重分解为幅度 (magnitude) 和方向 (direction) 两部分</li>
+        <li>LoRA 只更新方向部分，单独学习幅度</li>
+        <li>更接近全量微调的更新模式</li>
+    </ul>
+
+    <p><strong>rsLoRA (Rank-Stabilized LoRA)：</strong></p>
+    <ul>
+        <li>将缩放因子从 $\alpha/r$ 改为 $\alpha/\sqrt{r}$</li>
+        <li>使得不同 rank 下的有效学习率更稳定</li>
+        <li>允许使用更大的 rank 而不需要重新调学习率</li>
+    </ul>
+
+    <!-- Section 9 -->
+    <h2 id="sec9">9. Flash Attention</h2>
+
+    <h3 id="sec9-1">9.1 Flash Attention v1：IO-Aware 算法</h3>
+    <p><strong>核心问题：</strong>标准 Attention 需要将 $N \times N$ 的注意力矩阵写入 HBM，显存 $O(N^2)$，且 HBM 读写是瓶颈。</p>
+
+    <div class="info-box formula">
+        <h4>GPU 内存层次</h4>
+        <table>
+            <thead><tr><th>存储</th><th>容量</th><th>带宽</th></tr></thead>
+            <tbody>
+                <tr><td>SRAM (on-chip)</td><td>~20 MB (A100)</td><td>~19 TB/s</td></tr>
+                <tr><td>HBM (显存)</td><td>40/80 GB</td><td>~2 TB/s</td></tr>
+            </tbody>
+        </table>
+        <p>SRAM 比 HBM 快约 10×，但容量小 1000×。Flash Attention 的目标：<strong>尽量在 SRAM 中完成 Attention 计算</strong>。</p>
+    </div>
+
+    <p><strong>Flash Attention v1 的核心技术：</strong></p>
+    <ol>
+        <li><strong>Tiling（分块计算）：</strong>将 Q, K, V 切成小块，逐块加载到 SRAM 中计算</li>
+        <li><strong>Online Softmax：</strong>在分块计算时，维护 running max 和 running sum，无需完整行的 logits
+            <ul>
+                <li>计算 $m_{\text{new}} = \max(m_{\text{old}}, \max(\text{current\_block}))$</li>
+                <li>用 correction factor $e^{m_{\text{old}} - m_{\text{new}}}$ 修正之前的累积值</li>
+            </ul>
+        </li>
+        <li><strong>不存中间矩阵：</strong>$S = QK^T$ 和 $P = \text{softmax}(S)$ 都不写入 HBM</li>
+        <li><strong>反向传播时重算：</strong>不保存 $P$，反向时从 Q, K, V 和输出 O 重算（用保存的 $m, \ell$ 辅助）</li>
+    </ol>
+
+    <div class="info-box key">
+        <h4>FA1 复杂度对比</h4>
+        <table>
+            <thead><tr><th></th><th>标准 Attention</th><th>Flash Attention</th></tr></thead>
+            <tbody>
+                <tr><td>计算量 (FLOPs)</td><td>$O(N^2 d)$</td><td>$O(N^2 d)$（相同）</td></tr>
+                <tr><td>HBM 访问量</td><td>$O(N^2 + Nd)$</td><td>$O(N^2 d / M)$（$M$ = SRAM 大小）</td></tr>
+                <tr><td>额外显存</td><td>$O(N^2)$</td><td>$O(N)$（只存 m, ℓ）</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 id="sec9-2">9.2 Flash Attention v2</h3>
+    <p>在 v1 基础上的关键优化：</p>
+    <ol>
+        <li><strong>减少非矩阵乘法 FLOPs：</strong>
+            <ul>
+                <li>v1 在内循环中做 rescaling，v2 把 rescaling 移到外循环末尾</li>
+                <li>减少了约 50% 的非 matmul 操作（non-matmul FLOPs 在 GPU 上效率很低）</li>
+            </ul>
+        </li>
+        <li><strong>优化并行度：</strong>
+            <ul>
+                <li>v1 在 batch × heads 维度并行；v2 额外在序列维度并行</li>
+                <li>长序列时 GPU 利用率更高</li>
+            </ul>
+        </li>
+        <li><strong>优化 warp 分工：</strong>
+            <ul>
+                <li>v1：4 个 warp 各算部分 K/V，需要 shared memory 同步</li>
+                <li>v2：4 个 warp 分 Q 的不同行，各自独立计算，无需同步</li>
+            </ul>
+        </li>
+    </ol>
+
+    <div class="info-box key">
+        <h4>FA2 实际加速效果</h4>
+        <p>相比 FA1 加速约 2×，达到 A100 理论峰值 FLOPS 的 50-73%。已成为所有主流 LLM 训练/推理框架的默认 Attention 实现。</p>
+    </div>
+
+    <h3 id="sec9-3">9.3 Flash Attention v3</h3>
+    <p>针对 Hopper 架构 (H100) 的进一步优化：</p>
+    <ul>
+        <li><strong>Warp specialization：</strong>将 warp 分为 producer（负责数据搬运）和 consumer（负责计算），异步执行</li>
+        <li><strong>利用 TMA (Tensor Memory Accelerator)：</strong>硬件加速的异步数据加载</li>
+        <li><strong>FP8 支持：</strong>利用 H100 的 FP8 Tensor Core，在精度可接受时进一步加速</li>
+        <li><strong>Pingpong scheduling：</strong>减少 shared memory 上的 bank conflict</li>
+    </ul>
+
+    <!-- Section 10 -->
+    <h2 id="sec10">10. 混合精度训练</h2>
+
+    <h3 id="sec10-1">10.1 FP16 与 BF16</h3>
+
+    <table>
+        <thead><tr><th>格式</th><th>符号位</th><th>指数位</th><th>尾数位</th><th>范围</th><th>精度</th></tr></thead>
+        <tbody>
+            <tr><td>FP32</td><td>1</td><td>8</td><td>23</td><td>大</td><td>高</td></tr>
+            <tr><td>FP16</td><td>1</td><td>5</td><td>10</td><td>小（±65504）</td><td>中</td></tr>
+            <tr><td>BF16</td><td>1</td><td>8</td><td>7</td><td>同 FP32</td><td>低</td></tr>
+            <tr><td>FP8 (E4M3)</td><td>1</td><td>4</td><td>3</td><td>较小</td><td>很低</td></tr>
+            <tr><td>FP8 (E5M2)</td><td>1</td><td>5</td><td>2</td><td>较大</td><td>极低</td></tr>
+        </tbody>
+    </table>
+
+    <div class="info-box why">
+        <h4>为什么 BF16 成为 LLM 训练的主流？</h4>
+        <ul>
+            <li>BF16 指数位与 FP32 相同（8位），<strong>不会溢出</strong></li>
+            <li>FP16 指数位只有 5 位，梯度值容易 overflow/underflow</li>
+            <li>BF16 无需 loss scaling，训练更稳定</li>
+            <li>代价：尾数精度低（7 bit vs FP16 的 10 bit），累积误差略大</li>
+            <li>从 A100 起 NVIDIA GPU 均原生支持 BF16 Tensor Core</li>
+        </ul>
+    </div>
+
+    <h3 id="sec10-2">10.2 Loss Scaling</h3>
+    <p>FP16 训练时梯度容易 underflow（太小的值变成 0），Loss Scaling 的做法：</p>
+    <ol>
+        <li>前向计算 loss 后，乘以一个大的 scale factor（如 1024 或动态值）</li>
+        <li>反向传播时梯度也被 scale 放大</li>
+        <li>更新前将梯度除以 scale factor 恢复</li>
+        <li><strong>Dynamic Loss Scaling</strong>：自动调整 scale，遇到 NaN/Inf 时减小，一段时间没问题就增大</li>
+    </ol>
+
+    <!-- Section 11 -->
+    <h2 id="sec11">11. 梯度累积与梯度裁剪</h2>
+
+    <div class="info-box formula">
+        <h4>梯度累积 (Gradient Accumulation)</h4>
+        <p>等效 batch_size = micro_batch_size × grad_accum_steps × num_gpus</p>
+        <p>每个 micro-batch 只做前向+反向（累加梯度），不更新参数。累积 K 步后才做一次 optimizer.step()。</p>
+        <p><strong>作用：</strong>在显存不够用大 batch 时，模拟大 batch 训练效果。</p>
+    </div>
+
+    <div class="info-box formula">
+        <h4>梯度裁剪 (Gradient Clipping)</h4>
+        <p>$$g \leftarrow g \cdot \frac{\text{max\_norm}}{\max(\|g\|, \text{max\_norm})}$$</p>
+        <p>当梯度范数超过阈值时，等比缩小所有梯度。</p>
+        <p><strong>作用：</strong>防止梯度爆炸导致训练不稳定（loss spike）。大模型训练中通常设置 max_norm=1.0。</p>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 id="sec12">12. 面试真题集</h2>
+
+    <details>
+        <summary><strong>Q1：DDP 和 DeepSpeed ZeRO 有什么区别？什么时候用哪个？</strong>
+            <span class="badge hot">高频</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>核心区别：</strong></p>
+            <ul>
+                <li>DDP：每卡存完整模型状态（参数+梯度+优化器），通过 AllReduce 同步梯度</li>
+                <li>ZeRO：将模型状态分片，消除冗余存储，按 Stage 1/2/3 逐步切分</li>
+            </ul>
+            <p><strong>选择策略：</strong></p>
+            <ul>
+                <li>模型能放进单卡 → DDP（最简单高效）</li>
+                <li>模型放不进单卡但放得进单卡除去激活 → ZeRO Stage 2</li>
+                <li>模型完全放不进单卡 → ZeRO Stage 3 或 TP+PP</li>
+            </ul>
+            <p><strong>通信开销：</strong>Stage 1/2 和 DDP 相同，Stage 3 多约 50%。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q2：ZeRO Stage 3 和 FSDP 的区别？选哪个？</strong>
+            <span class="badge star">经典</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>相似：</strong>原理基本一致，都是参数+梯度+优化器全分片。</p>
+            <p><strong>差异：</strong></p>
+            <ul>
+                <li>FSDP 是 PyTorch 原生，API 更 Pythonic，和 torch.compile / torch.amp 集成好</li>
+                <li>DeepSpeed 功能更丰富（NVMe offload、ZeRO-Infinity、更多调优选项）</li>
+                <li>FSDP 以 FlatParameter 为单位，DeepSpeed 以参数为单位</li>
+            </ul>
+            <p><strong>选择：</strong>纯 PyTorch 生态选 FSDP；需要极致优化或 offload 选 DeepSpeed。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q3：TP 和 PP 的区别是什么？为什么 TP 要放机内？</strong>
+            <span class="badge hot">高频</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>TP (Tensor Parallelism)：</strong></p>
+            <ul>
+                <li>切的是权重矩阵（层内切分）</li>
+                <li>每层都有 AllReduce 通信，频率极高</li>
+                <li>对延迟敏感，必须高带宽互联 → 放机内 NVLink（~600 GB/s）</li>
+            </ul>
+            <p><strong>PP (Pipeline Parallelism)：</strong></p>
+            <ul>
+                <li>切的是层（层间切分）</li>
+                <li>只在 stage 边界做点对点通信，频率低</li>
+                <li>对带宽要求低 → 可以跨机（InfiniBand ~100-400 Gb/s）</li>
+            </ul>
+            <p><strong>关键总结：</strong>TP 通信频率高+数据量大→要高带宽低延迟；PP 通信频率低+只传激活→可容忍跨机延迟。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q4：Flash Attention 为什么能加速？它改变了计算复杂度吗？</strong>
+            <span class="badge hot">高频</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>不改变计算复杂度</strong>（仍然是 $O(N^2d)$ FLOPs），改变的是 <strong>IO 复杂度</strong>。</p>
+            <p><strong>核心思路：</strong></p>
+            <ul>
+                <li>标准实现：Q, K → 算 $N\times N$ 矩阵 → 写入 HBM → 读回做 softmax → 写入 HBM → 读回乘 V</li>
+                <li>Flash Attention：分块加载到 SRAM → 在 SRAM 中完成 QK+softmax+乘V → 只写最终输出到 HBM</li>
+            </ul>
+            <p><strong>加速来源：</strong></p>
+            <ol>
+                <li>减少 HBM 读写次数（IO-aware）</li>
+                <li>避免存储 $N\times N$ 中间矩阵</li>
+                <li>用 online softmax 实现分块处理</li>
+            </ol>
+            <p><strong>一句话：</strong>Flash Attention 是 IO 优化而非算法优化，它让 Attention 从 memory-bound 变得更接近 compute-bound。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q5：LoRA 为什么有效？rank 怎么选？为什么 B 初始化为零？</strong>
+            <span class="badge hot">高频</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>为什么有效：</strong></p>
+            <ul>
+                <li>微调时的权重变化 $\Delta W$ 具有低内在维度</li>
+                <li>用低秩矩阵 $BA$ 近似 $\Delta W$ 就够了</li>
+                <li>类比：预训练学了"通用能力"，微调只需在少量"方向"上调整</li>
+            </ul>
+            <p><strong>rank 选择：</strong></p>
+            <ul>
+                <li>简单任务（单领域 QA）：r=8 通常够</li>
+                <li>复杂任务（多任务/代码生成）：r=32~64</li>
+                <li>过大的 rank 收益递减，且接近全量微调</li>
+            </ul>
+            <p><strong>B 初始化为零：</strong></p>
+            <ul>
+                <li>保证训练开始时 $\Delta W = BA = 0$</li>
+                <li>不破坏预训练学到的表示</li>
+                <li>从预训练权重出发渐进微调</li>
+            </ul>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q6：QLoRA 相比 LoRA 做了什么？4-bit 量化精度够吗？</strong>
+            <span class="badge star">经典</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>QLoRA 三大技术贡献：</strong></p>
+            <ol>
+                <li><strong>NF4 量化：</strong>针对正态分布权重设计的 4-bit 格式，信息论最优</li>
+                <li><strong>Double Quantization：</strong>对量化参数（scale）再量化，额外节省 0.37 bit/param</li>
+                <li><strong>Paged Optimizers：</strong>利用 CUDA 统一内存自动 CPU offload</li>
+            </ol>
+            <p><strong>精度够吗：</strong></p>
+            <ul>
+                <li>QLoRA 论文证明：16-bit LoRA ≈ QLoRA 效果，差距 &lt; 1%</li>
+                <li>因为梯度信号通过 LoRA 的 B、A 矩阵传播（这两个是全精度的），量化基座只参与前向</li>
+                <li>但要注意：推理时如果继续用 4-bit，可能在某些精细任务上有损</li>
+            </ul>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q7：为什么 BF16 比 FP16 更适合大模型训练？</strong>
+            <span class="badge star">经典</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>根本原因：动态范围。</strong></p>
+            <ul>
+                <li>FP16 只有 5 位指数 → 范围 ≈ $6\times10^{-8}$ 到 $65504$</li>
+                <li>BF16 有 8 位指数 → 范围与 FP32 相同</li>
+                <li>大模型训练中梯度值域很广，FP16 容易 overflow（梯度爆炸）或 underflow（梯度消失）</li>
+            </ul>
+            <p><strong>实际影响：</strong></p>
+            <ul>
+                <li>FP16 需要 loss scaling 来避免 underflow，增加复杂性</li>
+                <li>BF16 无需 loss scaling，训练代码更简单</li>
+                <li>BF16 精度略低（7 bit 尾数 vs 10 bit），但对 LLM 训练影响很小</li>
+            </ul>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q8：梯度累积和增大 batch size 有什么区别？完全等价吗？</strong></summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>数学上近似等价</strong>，但有细微差别：</p>
+            <ul>
+                <li><strong>等价部分：</strong>梯度的期望相同，最终参数更新方向一致</li>
+                <li><strong>不等价部分：</strong>
+                    <ul>
+                        <li>BatchNorm 统计量不同（每个 micro-batch 独立算 BN，但 LLM 用 LayerNorm 无此问题）</li>
+                        <li>学习率调度：累积 K 步才更新一次，等效 step 数变为 1/K</li>
+                        <li>梯度裁剪时机：如果对每个 micro-batch 单独裁剪 vs 累积后裁剪，行为不同</li>
+                    </ul>
+                </li>
+            </ul>
+            <p><strong>最佳实践：</strong>累积后再做梯度裁剪（即对完整梯度做 clip），lr scheduler 按实际更新步数（而非前向步数）计算。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q9：训练 70B 模型需要多少卡？怎么配置并行策略？</strong>
+            <span class="badge hot">系统设计</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>显存估算（70B, BF16 + Adam）：</strong></p>
+            <ul>
+                <li>参数：$70\text{B} \times 2 = 140$ GB</li>
+                <li>梯度：$140$ GB</li>
+                <li>优化器状态（FP32 master + m + v）：$70\text{B} \times 12 = 840$ GB</li>
+                <li>总计：约 1120 GB + 激活值</li>
+            </ul>
+            <p><strong>典型配置（128× A100-80GB）：</strong></p>
+            <ul>
+                <li>TP = 8（单机 8 卡，NVLink 互联）</li>
+                <li>PP = 4（4 个 pipeline stage，跨 4 机）</li>
+                <li>DP = 4（4 路数据并行 + ZeRO Stage 1）</li>
+                <li>Sequence Length = 4096, Micro-batch = 1~2, Grad Accum = 8~16</li>
+            </ul>
+            <p><strong>优化清单：</strong></p>
+            <ol>
+                <li>Flash Attention 2（节省激活值显存 + 加速）</li>
+                <li>Gradient Checkpointing（重算部分激活）</li>
+                <li>BF16 混合精度</li>
+                <li>Overlapped communication（通信计算重叠）</li>
+            </ol>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q10：Gradient Checkpointing 的原理？空间和时间的 trade-off？</strong></summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>原理：</strong></p>
+            <ul>
+                <li>正常训练：前向保存所有层的激活值 → 反向时直接用</li>
+                <li>Checkpointing：只保存某些层（checkpoint 层）的激活值 → 反向到非 checkpoint 层时从最近的 checkpoint 重算</li>
+            </ul>
+            <p><strong>Trade-off：</strong></p>
+            <ul>
+                <li>空间：激活值显存从 $O(L)$ 降到 $O(\sqrt{L})$（$L$ 为层数，均匀选 checkpoint）</li>
+                <li>时间：额外增加约 33% 的前向计算（重算一次）</li>
+            </ul>
+            <p><strong>实践：</strong>几乎所有大模型训练都开启 checkpointing。Selective checkpointing（只重算 Attention 不重算 MLP）可以在空间和时间之间找到更好的平衡。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q11：Ring AllReduce 的原理？为什么通信量与卡数无关？</strong></summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>Ring AllReduce 分两个阶段：</strong></p>
+            <ol>
+                <li><strong>Reduce-Scatter：</strong>N-1 轮，每轮每卡发 $D/N$ 数据给下一卡并做聚合，最终每卡持有 $1/N$ 完整结果</li>
+                <li><strong>All-Gather：</strong>N-1 轮，每轮每卡发 $D/N$ 数据给下一卡，最终每卡持有完整结果</li>
+            </ol>
+            <p><strong>总通信量：</strong>每卡收发 $2 \times \frac{N-1}{N} \times D \approx 2D$ 数据。</p>
+            <p><strong>为什么与卡数无关：</strong>虽然轮数增加了（N-1 轮），但每轮传输量减小了（$D/N$），总量恒定。瓶颈在于<strong>带宽</strong>而非<strong>延迟</strong>（大数据量时延迟占比很小）。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q12：Megatron-LM 的 Sequence Parallelism 是什么？和 TP 是什么关系？</strong></summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>问题背景：</strong></p>
+            <ul>
+                <li>TP 切分了 Attention 和 MLP 的权重矩阵</li>
+                <li>但 LayerNorm、Dropout 等操作不在 TP 范围内，每卡仍需存完整激活</li>
+            </ul>
+            <p><strong>SP 的做法：</strong></p>
+            <ul>
+                <li>在非 TP 区域（LN、Dropout），将激活值沿序列维度切分</li>
+                <li>TP 区域前做 AllGather 收集完整输入，TP 区域后做 ReduceScatter 分发</li>
+                <li>本质上把 TP 区域的 AllReduce 拆成 AllGather + ReduceScatter，总通信量不变</li>
+            </ul>
+            <p><strong>收益：</strong>非 TP 区域的激活值显存减少为 $1/N_{TP}$，无额外通信开销。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q13：训练中遇到 loss spike 怎么处理？</strong>
+            <span class="badge hot">实战</span>
+        </summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>常见原因：</strong></p>
+            <ul>
+                <li>数据问题：某 batch 数据异常（超长文本、乱码、重复）</li>
+                <li>学习率问题：warmup 不够 / lr 过大</li>
+                <li>梯度爆炸：某层梯度异常放大</li>
+                <li>数值问题：FP16 overflow、BF16 精度丢失积累</li>
+            </ul>
+            <p><strong>排查步骤：</strong></p>
+            <ol>
+                <li>检查 gradient norm 是否暴增</li>
+                <li>检查当前 batch 数据是否异常</li>
+                <li>检查 loss scale（FP16 场景）</li>
+                <li>观察是否可自恢复（偶发 vs 持续）</li>
+            </ol>
+            <p><strong>处理策略：</strong></p>
+            <ul>
+                <li>偶发 spike 且自恢复 → 不处理或跳过该 batch</li>
+                <li>持续不恢复 → 回滚到上一个 checkpoint，调低 lr 或增大 grad clip</li>
+                <li>预防：更严格的数据清洗、gradient clipping = 1.0、z-loss 正则</li>
+            </ul>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q14：LoRA 和全量微调的效果差距大吗？什么时候必须全量微调？</strong></summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>效果对比：</strong></p>
+            <ul>
+                <li>大多数下游任务：LoRA 效果接近全量微调（差距 &lt; 1-2%）</li>
+                <li>特别是当基座模型足够强且任务简单时</li>
+            </ul>
+            <p><strong>必须全量微调的场景：</strong></p>
+            <ul>
+                <li>持续预训练（Continual Pre-training）：需要大量新知识注入</li>
+                <li>跨语言/跨领域大幅迁移</li>
+                <li>对齐训练的 SFT 阶段（工业界通常全量）</li>
+                <li>LoRA 无法达到目标效果且已尝试增大 rank</li>
+            </ul>
+            <p><strong>工业界实践：</strong>SFT 阶段倾向全量微调；后续的偏好学习 (DPO/RLHF) 阶段常用 LoRA 以节省资源。</p>
+        </div>
+    </details>
+
+    <details>
+        <summary><strong>Q15：如何计算训练的 token 吞吐量？MFU 是什么？</strong></summary>
+        <div class="info-box key" style="margin-top: 12px;">
+            <p><strong>Token 吞吐量：</strong></p>
+            <p>$$\text{Throughput} = \frac{\text{global\_batch\_size} \times \text{seq\_len}}{\text{step\_time}}$$</p>
+            <p><strong>MFU (Model FLOPs Utilization)：</strong></p>
+            <p>$$\text{MFU} = \frac{\text{实际 FLOPs/s}}{\text{硬件理论峰值 FLOPs/s}}$$</p>
+            <p>其中每个 token 的 FLOPs ≈ $6 \times \text{params}$（前向 2×params, 反向 4×params）</p>
+            <p><strong>工业标准：</strong></p>
+            <ul>
+                <li>MFU 40-55%：正常水平</li>
+                <li>MFU &gt; 55%：优秀</li>
+                <li>MFU &lt; 30%：存在严重瓶颈（通信/IO/bubble）</li>
+            </ul>
+            <p><strong>典型数据（LLaMA-65B on 2048× A100）：</strong>MFU ~43%，约 380 tokens/s/GPU</p>
+        </div>
+    </details>
+
+    <!-- Page Navigation -->
+    <div class="page-nav">
+        <a href="11-agent-rag.html">&larr; 11 Agent & RAG</a>
+        <a href="index.html">回到首页 &rarr;</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ],
+            throwOnError: false
+        });
+    });
+
+    // Sidebar active state
+    const sections = document.querySelectorAll('h2[id], h3[id]');
+    const navLinks = document.querySelectorAll('.sidebar a');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 100) {
+                current = section.getAttribute('id');
+            }
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>
