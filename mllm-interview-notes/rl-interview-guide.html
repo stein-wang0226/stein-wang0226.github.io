@@ -725,7 +725,9 @@
     <a href="#dpo">8. DPO 推导</a>
     <a href="#reward">9. Reward 设计</a>
     <a href="#comparison">10. 算法对比</a>
-    <a href="#faq">11. 面试问答</a>
+    <a href="#classic-rl">11. 经典 RL 算法</a>
+    <a href="#harness">12. Training Harness</a>
+    <a href="#faq">13. 面试问答</a>
 </nav>
 
 <div class="container">
@@ -757,6 +759,8 @@
         <li><a href="#dpo">DPO 公式推导</a></li>
         <li><a href="#reward">Reward 设计方法论</a></li>
         <li><a href="#comparison">算法对比总结</a></li>
+        <li><a href="#classic-rl">经典 RL 算法详解（DQN / DDPG / TD3 / SAC）</a></li>
+        <li><a href="#harness">RL Training Harness（训练基础设施）</a></li>
         <li><a href="#faq">高频面试问答</a></li>
     </ol>
 </nav>
@@ -2493,9 +2497,303 @@
     </div>
 </section>
 
-<!-- ==================== Section 10: FAQ ==================== -->
+<!-- ==================== Section 10.5: Classic RL Algorithms ==================== -->
+<section id="classic-rl">
+    <h2>11. 经典 RL 算法详解（DQN / DDPG / TD3 / SAC）</h2>
+    <p>前面章节聚焦 Policy Gradient 系列（适合 LLM 对齐），这里补齐 <strong>Value-based</strong> 和 <strong>Off-policy Actor-Critic</strong> 算法族，面试中经常作为"RL 基本功"考察。</p>
+
+    <div class="box-insight">
+        <strong>算法族谱：</strong>Value-based（DQN）→ 确定性策略（DDPG）→ 修正高估（TD3）→ 最大熵（SAC）。演进主线是：<strong>从离散动作 → 连续动作 → 更稳定 → 更好探索</strong>。
+    </div>
+
+    <!-- DQN -->
+    <h3>DQN — Deep Q-Network (Mnih et al., 2015)</h3>
+
+    <h4>核心思想</h4>
+    <p>用神经网络近似动作价值函数 $Q(s,a;\theta)$，选动作时取 $a^* = \arg\max_a Q(s,a)$。本质是把 Q-learning 的 Q-table 换成深度网络。</p>
+
+    <div class="formula-box key">
+        <div class="label">DQN TD Target</div>
+        $$y_t = r_t + \gamma \max_{a'} Q_{\theta^-}(s_{t+1}, a')$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$Q_{\theta^-}$</span>Target Network（冻结的旧网络），定期从主网络 $\theta$ 同步</div>
+            <div class="item"><span class="symbol">$\max_{a'}$</span>取所有动作的最大 Q 值——这正是 DQN 只适合<strong>离散动作空间</strong>的原因</div>
+        </div>
+    </div>
+
+    <div class="formula-box">
+        <div class="label">DQN Loss</div>
+        $$\mathcal{L}(\theta) = \mathbb{E}_{(s,a,r,s') \sim \mathcal{D}}\left[(y_t - Q_\theta(s,a))^2\right]$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\mathcal{D}$</span>Experience Replay Buffer — 存储历史 transition，随机采样打破时间相关性</div>
+        </div>
+    </div>
+
+    <h4>三大关键技巧</h4>
+    <div class="step-card">
+        <p><strong>(1) Experience Replay：</strong>把 $(s, a, r, s')$ 存入 buffer，训练时随机采样 mini-batch。两个好处：打破样本间时间相关性（i.i.d. 化）+ 数据复用（off-policy 优势）。</p>
+        <p><strong>(2) Target Network：</strong>冻结的旧网络 $Q_{\theta^-}$ 计算 TD target，每隔 C 步从主网络硬同步 $\theta^- \leftarrow \theta$。防止"追自己的尾巴"（目标和预测同步变化 → 震荡不收敛）。</p>
+        <p><strong>(3) ε-greedy 探索：</strong>以 ε 概率随机选动作，1-ε 概率选 $\arg\max Q$。ε 从 1.0 线性衰减到 0.01 → 从纯探索渐变为纯利用。</p>
+    </div>
+
+    <h4>DQN 变体演进</h4>
+    <table>
+        <tr><th>变体</th><th>解决的问题</th><th>核心改动</th></tr>
+        <tr><td><strong>Double DQN</strong></td><td>Q 值过高估计</td><td>选动作用主网络，评估用 target 网络：$y = r + \gamma Q_{\theta^-}(s', \arg\max_{a'} Q_\theta(s', a'))$</td></tr>
+        <tr><td><strong>Dueling DQN</strong></td><td>区分状态好坏 vs 动作好坏</td><td>把 Q 拆成 $Q = V(s) + A(s,a)$，分流网络结构</td></tr>
+        <tr><td><strong>Prioritized Replay</strong></td><td>重要样本被忽略</td><td>按 TD error 大小优先采样，加权修正偏差</td></tr>
+        <tr><td><strong>Rainbow</strong></td><td>单个 trick 不够强</td><td>6 种改进全部叠加（Double + Dueling + PER + Noisy + C51 + n-step）</td></tr>
+    </table>
+
+    <div class="box-interview">
+        <strong>面试高频追问：</strong>"为什么 LLM 不用 DQN？" 答：DQN 需要 $\arg\max_a Q(s,a)$ 遍历所有动作。LLM 的动作空间 = 词表大小（32K-100K+ tokens），无法逐个算 Q 值再取 max。而 Policy Gradient 直接输出动作概率分布，天然适合超大离散空间。
+    </div>
+
+    <!-- DDPG -->
+    <h3>DDPG — Deep Deterministic Policy Gradient (Lillicrap et al., 2016)</h3>
+
+    <h4>核心思想</h4>
+    <p>把 DQN 扩展到<strong>连续动作空间</strong>。用确定性策略 $\mu_\theta(s)$ 直接输出动作值（而非概率分布），结合 off-policy Actor-Critic 框架。</p>
+
+    <div class="formula-box key">
+        <div class="label">确定性策略梯度（DPG 定理）</div>
+        $$\nabla_\theta J = \mathbb{E}_{s \sim \mathcal{D}}\left[\nabla_a Q_\phi(s, a)\big|_{a=\mu_\theta(s)} \cdot \nabla_\theta \mu_\theta(s)\right]$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\mu_\theta(s)$</span>Actor 网络——输入状态，输出确定性动作（一个实数向量）</div>
+            <div class="item"><span class="symbol">$Q_\phi(s,a)$</span>Critic 网络——评估 (s, a) 对的 Q 值</div>
+            <div class="item"><span class="symbol">链式法则</span>Actor 的梯度通过 Critic 的 $\nabla_a Q$ 传播 → Actor 朝"让 Q 更大的方向"更新</div>
+        </div>
+    </div>
+
+    <div class="formula-box">
+        <div class="label">Critic Loss（同 DQN）</div>
+        $$\mathcal{L}(\phi) = \mathbb{E}\left[(r + \gamma Q_{\phi^-}(s', \mu_{\theta^-}(s')) - Q_\phi(s, a))^2\right]$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\phi^-$, $\theta^-$</span>Target networks，用 soft update：$\theta^- \leftarrow \tau\theta + (1-\tau)\theta^-$，$\tau$ 通常 0.005</div>
+        </div>
+    </div>
+
+    <h4>关键设计</h4>
+    <div class="step-card">
+        <p><strong>Replay Buffer：</strong>和 DQN 一样存储 $(s,a,r,s')$，off-policy 复用历史数据。</p>
+        <p><strong>Soft Target Update：</strong>$\theta^- \leftarrow \tau\theta + (1-\tau)\theta^-$，每步缓慢更新（而非 DQN 的周期硬拷贝），更平滑。</p>
+        <p><strong>探索噪声：</strong>动作 $a = \mu_\theta(s) + \mathcal{N}$，通常用 Ornstein-Uhlenbeck 过程或简单高斯噪声。确定性策略本身无探索能力，必须加噪声。</p>
+    </div>
+
+    <div class="box-interview">
+        <strong>DDPG 的局限：</strong>Q 函数容易高估（overestimation）→ 策略学到"骗 Critic"的动作 → 训练崩溃。对超参（lr、噪声、网络结构）极度敏感。这正是 TD3 和 SAC 要解决的问题。
+    </div>
+
+    <!-- TD3 -->
+    <h3>TD3 — Twin Delayed DDPG (Fujimoto et al., 2018)</h3>
+
+    <h4>核心思想</h4>
+    <p>针对 DDPG 的 Q 值高估和训练不稳定，提出三个精巧修复。</p>
+
+    <h4>三大改进</h4>
+    <div class="step-card">
+        <p><strong>(1) Twin Q-networks（双 Q 网络）：</strong>训练两个独立的 Critic $Q_{\phi_1}$、$Q_{\phi_2}$，TD target 取 min：</p>
+    </div>
+
+    <div class="formula-box key">
+        <div class="label">TD3 Target（Clipped Double-Q）</div>
+        $$y = r + \gamma \min(Q_{\phi_1^-}(s', \tilde{a}'), \; Q_{\phi_2^-}(s', \tilde{a}'))$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\min$</span>取两个 Critic 的较小值 → 系统性地压低高估</div>
+            <div class="item"><span class="symbol">$\tilde{a}'$</span>target policy 加 clipped 噪声（Target Policy Smoothing）</div>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <p><strong>(2) Delayed Policy Update（延迟策略更新）：</strong>Critic 每步都更新，但 Actor 每隔 $d$ 步才更新一次（通常 $d=2$）。让 Critic 先收敛到合理的 Q 估计，Actor 再跟进 → 避免"Critic 不准时 Actor 乱走"。</p>
+        <p><strong>(3) Target Policy Smoothing：</strong>$$\tilde{a}' = \mu_{\theta^-}(s') + \text{clip}(\epsilon, -c, c), \quad \epsilon \sim \mathcal{N}(0, \sigma)$$给 target action 加 clipped 噪声 → 防止 Critic 对某些动作给出 sharp peak → 相当于正则化 Q 函数。</p>
+    </div>
+
+    <div class="box-insight">
+        <strong>TD3 vs DDPG 总结：</strong>TD3 = DDPG + 三个防高估 trick。代码改动很小但效果提升显著。TD3 在连续控制任务上几乎全面优于 DDPG。
+    </div>
+
+    <!-- SAC -->
+    <h3>SAC — Soft Actor-Critic (Haarnoja et al., 2018)</h3>
+
+    <h4>核心思想</h4>
+    <p><strong>最大熵强化学习</strong>——不仅最大化累积奖励，还最大化策略的熵（随机性），鼓励探索。</p>
+
+    <div class="formula-box key">
+        <div class="label">SAC 目标函数（最大熵 RL）</div>
+        $$J(\pi) = \sum_t \mathbb{E}\left[r(s_t, a_t) + \alpha \mathcal{H}(\pi(\cdot|s_t))\right]$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\mathcal{H}(\pi) = -\mathbb{E}[\log\pi(a|s)]$</span>策略的熵——越大表示策略越"随机"</div>
+            <div class="item"><span class="symbol">$\alpha$</span>温度系数——控制 reward 和 entropy 的权衡。SAC v2 自动调节 α</div>
+            <div class="item"><span class="symbol">直觉</span>让策略"在能拿到差不多 reward 的所有动作中尽量随机" → 保持探索</div>
+        </div>
+    </div>
+
+    <div class="formula-box">
+        <div class="label">Soft Bellman 方程</div>
+        $$Q(s,a) = r + \gamma \mathbb{E}_{s'}\left[V(s')\right], \quad V(s) = \mathbb{E}_{a \sim \pi}\left[Q(s,a) - \alpha\log\pi(a|s)\right]$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">Soft V</span>V 函数包含了熵项 → "好状态"不仅 reward 高，还保持了行动自由度</div>
+        </div>
+    </div>
+
+    <h4>关键设计</h4>
+    <div class="step-card">
+        <p><strong>随机策略：</strong>Actor 输出高斯分布 $\pi_\theta(a|s) = \mathcal{N}(\mu_\theta(s), \sigma_\theta(s))$，采样动作 $a = \tanh(\mu + \sigma \cdot \epsilon)$。vs DDPG 的确定性策略 → SAC 天然带探索噪声。</p>
+        <p><strong>Twin Q（同 TD3）：</strong>训练两个 Critic，取 min 防高估。</p>
+        <p><strong>自动温度调节（SAC v2）：</strong>将 α 也作为可学习参数，约束 $\mathbb{E}[-\log\pi] \geq \mathcal{H}_{target}$。不需要手动调 α → 自适应平衡探索与利用。</p>
+        <p><strong>Off-policy + Replay Buffer：</strong>和 DDPG/TD3 一样，数据效率远高于 on-policy 方法。</p>
+    </div>
+
+    <h4>SAC 为什么是 Off-policy 标杆</h4>
+    <div class="box-insight">
+        <ul style="margin:0;padding-left:20px;">
+            <li><strong>探索强</strong>：最大熵目标天然鼓励探索，无需手工设计噪声</li>
+            <li><strong>鲁棒</strong>：对超参不敏感（自动调 α），比 DDPG/TD3 更难崩</li>
+            <li><strong>数据效率高</strong>：off-policy + replay buffer → 样本可复用</li>
+            <li><strong>理论优美</strong>：最大熵框架统一了探索和利用</li>
+        </ul>
+    </div>
+
+    <!-- Summary Comparison -->
+    <h3>四算法对比总结</h3>
+    <table>
+        <tr><th>算法</th><th>年份</th><th>动作空间</th><th>Policy</th><th>On/Off</th><th>核心创新</th><th>适用场景</th></tr>
+        <tr><td><strong>DQN</strong></td><td>2015</td><td>离散</td><td>隐式 (argmax Q)</td><td>Off</td><td>Replay + Target Net</td><td>Atari 游戏</td></tr>
+        <tr><td><strong>DDPG</strong></td><td>2016</td><td>连续</td><td>确定性</td><td>Off</td><td>DPG 定理 + Soft Update</td><td>机器人控制</td></tr>
+        <tr><td><strong>TD3</strong></td><td>2018</td><td>连续</td><td>确定性</td><td>Off</td><td>Twin Q + Delayed Update</td><td>连续控制</td></tr>
+        <tr><td><strong>SAC</strong></td><td>2018</td><td>连续</td><td>随机</td><td>Off</td><td>最大熵 + 自动 α</td><td>机器人/自动驾驶</td></tr>
+    </table>
+
+    <h3>为什么 LLM 对齐用 PPO/GRPO 而不是这些？</h3>
+    <div class="box-interview">
+        <ul style="margin:0;padding-left:20px;">
+            <li><strong>动作空间不匹配</strong>：DQN 需 argmax 遍历动作（词表太大不可行）；DDPG/TD3/SAC 面向连续动作空间（token 是离散的）</li>
+            <li><strong>分布偏移严重</strong>：Off-policy 在 LLM 超高维离散空间中 importance sampling 方差爆炸</li>
+            <li><strong>On-policy 采样成本可接受</strong>：LLM 推理快（vLLM 加速），重新 rollout 比维护巨大 replay buffer 更实际</li>
+            <li><strong>KL 约束是核心需求</strong>：LLM 对齐需要锚定 reference model，PPO/GRPO 天然支持 KL penalty，off-policy 方法不自然</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>唯一例外：</strong>ILQL / Offline RL for LLM 等工作尝试用 off-policy 方法做 LLM 对齐，但效果普遍不如 PPO/DPO/GRPO。</p>
+    </div>
+</section>
+
+<!-- ==================== Section 12: RL Training Harness ==================== -->
+<section id="harness">
+    <h2>12. RL Training Harness（训练基础设施）</h2>
+
+    <div class="box-insight">
+        <strong>为什么需要专门的 RL Harness？</strong>
+        <p>RL 训练不同于 SFT：需要 rollout（在线推理生成）→ reward 计算 → policy update 三者协调。Agentic RL 更需要环境交互、sandbox 调度、多轮 trajectory 管理。一个好的 Harness 解决三件事：(1) rollout 吞吐量 (2) 训练与推理的资源编排 (3) 环境/sandbox 管理。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>12.1 RL 训练全流程 Pipeline</h4>
+        <div class="formula-box">
+            <strong>标准 On-policy RL 训练循环：</strong><br>
+            <code>for step in 1..N:</code><br>
+            <code>&nbsp;&nbsp;1. Rollout: π_θ 生成 G 条 response（vLLM 加速）</code><br>
+            <code>&nbsp;&nbsp;2. Reward: RM(response) 或 verifier(response) 打分</code><br>
+            <code>&nbsp;&nbsp;3. Advantage: 计算 Â（GRPO: group 归一化 / PPO: GAE）</code><br>
+            <code>&nbsp;&nbsp;4. Update: PPO/GRPO clip 目标 → 多轮 mini-batch SGD</code><br>
+            <code>&nbsp;&nbsp;5. Sync: 更新后的权重 → rollout worker</code>
+        </div>
+        <p><strong>Agentic RL 额外步骤：</strong>在 Step 1 中插入环境交互循环 — 模型 action → sandbox 执行 → observation 回传 → 模型继续生成 → 直到任务完成或达到 max_turns。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>12.2 Rollout 加速</h4>
+        <table>
+            <tr><th>技术</th><th>原理</th><th>加速比</th></tr>
+            <tr><td><strong>vLLM Continuous Batching</strong></td><td>动态合并不等长请求 → 避免 padding 浪费 → PagedAttention 管理 KV Cache</td><td>5-10×</td></tr>
+            <tr><td><strong>Prefix Caching</strong></td><td>同一 prompt 的 G 条采样共享 KV Cache 前缀（RadixAttention）</td><td>G 条共享 → 近 G× prompt 部分</td></tr>
+            <tr><td><strong>Tensor Parallel Rollout</strong></td><td>大模型跨卡分片推理 → 单条 latency 降低</td><td>线性于 TP 数</td></tr>
+            <tr><td><strong>Speculative Decoding</strong></td><td>小模型 draft + 大模型 verify → 降低 latency</td><td>2-3× latency</td></tr>
+        </table>
+    </div>
+
+    <div class="step-card">
+        <h4>12.3 Sync vs Async 架构</h4>
+        <table>
+            <tr><th></th><th>同步 (Sync)</th><th>异步 (Async)</th></tr>
+            <tr><td><strong>流程</strong></td><td>rollout 完 → train → 再 rollout</td><td>rollout 持续跑，train 从队列取数据</td></tr>
+            <tr><td><strong>GPU 利用率</strong></td><td>~50%（交替空闲）</td><td>~90%+</td></tr>
+            <tr><td><strong>数据新鲜度</strong></td><td>100% on-policy</td><td>略 off-policy（延迟 1-2 步）</td></tr>
+            <tr><td><strong>收敛性</strong></td><td>稳定</td><td>需容忍轻微 off-policy 或 IS 修正</td></tr>
+            <tr><td><strong>适用</strong></td><td>小规模/研究验证</td><td>大规模生产训练</td></tr>
+        </table>
+        <p><strong>VERL 方案：</strong>同一组 GPU 在 rollout 阶段切换为 vLLM 引擎（推理模式），在 train 阶段切换为 FSDP（训练模式）→ 不需要额外 GPU，但要处理引擎切换开销。</p>
+        <p><strong>OpenRLHF 方案：</strong>Ray Actor 分离部署 — rollout worker (vLLM) 和 train worker (DeepSpeed) 各占独立 GPU 组 → 通过 Ray Object Store 传数据。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>12.4 框架对比</h4>
+        <table>
+            <tr><th>框架</th><th>后端</th><th>Rollout</th><th>特色</th><th>适用</th></tr>
+            <tr><td><strong>OpenRLHF</strong></td><td>Ray + DeepSpeed</td><td>vLLM (Ray Actor)</td><td>算法全面，70B+ 可用</td><td>大规模生产</td></tr>
+            <tr><td><strong>VERL</strong></td><td>FSDP / Megatron</td><td>vLLM (同卡切换)</td><td>资源弹性，原生 multi-turn</td><td>Agentic RL</td></tr>
+            <tr><td><strong>TRL</strong></td><td>HuggingFace</td><td>原生 generate</td><td>上手快，生态好</td><td>研究/小模型</td></tr>
+            <tr><td><strong>NeMo-Aligner</strong></td><td>Megatron</td><td>内置</td><td>原生 TP/PP</td><td>NVIDIA 生态</td></tr>
+        </table>
+    </div>
+
+    <div class="step-card">
+        <h4>12.5 Sandbox 与环境管理（Agentic RL 核心）</h4>
+        <p><strong>为什么需要 Sandbox：</strong>Agent RL 中模型生成的 action 需要在真实环境中执行（运行代码/调 API/浏览网页），但要：安全隔离 + 可重置 + 高并行。</p>
+        <table>
+            <tr><th>方案</th><th>实现</th><th>特点</th></tr>
+            <tr><td><strong>Docker 容器池</strong></td><td>预启动 N 个容器，按需分配给 rollout</td><td>隔离好、标准化、SWE-bench 方案</td></tr>
+            <tr><td><strong>gVisor / Firecracker</strong></td><td>轻量虚拟化，微秒级启动</td><td>更安全、更快、适合大规模并行</td></tr>
+            <tr><td><strong>E2B / Modal</strong></td><td>云端 sandbox 服务</td><td>无需自建，按需付费</td></tr>
+            <tr><td><strong>模拟环境</strong></td><td>工具调用用 mock 或 LLM 模拟</td><td>快但不真实，适合预训练阶段</td></tr>
+        </table>
+        <p><strong>关键工程挑战：</strong></p>
+        <ul style="margin-top:6px;font-size:14px;">
+            <li><strong>并行度</strong>：G=16 × batch_size=64 = 1024 个 sandbox 同时运行</li>
+            <li><strong>状态管理</strong>：多轮任务需要 sandbox 持久化状态（文件系统/数据库）</li>
+            <li><strong>超时处理</strong>：工具执行可能 hang → 需要超时 kill + fallback</li>
+            <li><strong>Cost</strong>：sandbox 计算开销可能超过 rollout 本身 → 需要智能调度和 early termination</li>
+        </ul>
+    </div>
+
+    <div class="step-card">
+        <h4>12.6 权重同步与资源编排</h4>
+        <p><strong>核心矛盾：</strong>Rollout 需要最新权重做推理（on-policy 保证），但 train 阶段权重在持续更新 → 如何高效同步？</p>
+        <ul style="font-size:14px;">
+            <li><strong>全量广播</strong>：train 完毕 → 把完整权重发给所有 rollout worker。简单但带宽大（70B 模型 = ~140GB）</li>
+            <li><strong>增量同步</strong>：只传 LoRA delta / 更新过的层 → 减少传输量</li>
+            <li><strong>同卡切换（VERL）</strong>：同一 GPU 在 train/rollout 间切换 → 无需传输，但要处理显存腾挪（offload/reload）</li>
+        </ul>
+        <p><strong>VERL 的 FSDP ↔ vLLM 切换：</strong></p>
+        <ol style="font-size:14px;">
+            <li>Train 阶段：FSDP 分片存储权重 → 每卡只存 1/N 参数</li>
+            <li>切换到 Rollout：all-gather 合并完整权重 → 加载到 vLLM 引擎</li>
+            <li>Rollout 完成：释放 vLLM 引擎显存 → 恢复 FSDP 分片</li>
+        </ol>
+    </div>
+
+    <div class="box-interview">
+        <h4>Harness 高频面试问答</h4>
+        <p><strong>Q: RL 训练的 rollout 和 train 为什么不能简单并行？有什么数据一致性问题？</strong></p>
+        <p>A: On-policy RL 要求 rollout 用的策略 = train 更新的策略。如果 async 做，rollout 数据是用旧策略 $\pi_{old}$ 生成的，但 train 时策略已更新为 $\pi_{new}$ → 数据 off-policy。解决：(1) 用 importance sampling ratio $\frac{\pi_{new}}{\pi_{old}}$ 修正（PPO clip 天然做了这件事）；(2) 控制 staleness（rollout 最多落后 1-2 个 train step）。</p>
+
+        <p><strong>Q: 为什么 Agentic RL 比标准 RLHF 对 Harness 要求更高？</strong></p>
+        <p>A: 三个维度：(1) <strong>Trajectory 长度不定</strong> — 标准 RLHF 输出 fixed max_len，Agent 可能 3 轮完成也可能 30 轮 → 需要动态 padding/packing；(2) <strong>环境交互阻塞</strong> — 每轮 action 后要等环境返回 → rollout latency 不可控（API timeout / 代码执行慢）；(3) <strong>状态管理</strong> — 多轮需要 sandbox 持久状态 → 普通 stateless rollout 不够。</p>
+
+        <p><strong>Q: VERL 的"同卡切换"和 OpenRLHF 的"分卡分离"各自优劣？</strong></p>
+        <p>A: <strong>VERL 同卡切换</strong>：优势 = 不需要额外 GPU（一组卡既做 train 又做 rollout）；劣势 = 串行（不能同时 train+rollout）+ 切换有开销（all-gather + vLLM reload）。<strong>OpenRLHF 分卡</strong>：优势 = train 和 rollout 真正并行 → 利用率高；劣势 = 需要 2× GPU 资源，且跨节点传权重带宽高。</p>
+
+        <p><strong>Q: Prefix Caching 在 GRPO 中为什么特别有效？</strong></p>
+        <p>A: GRPO 对每个 prompt 采样 G=8-64 条 response → 这 G 条共享同一个 prompt 的 KV Cache 前缀。用 RadixAttention 缓存后，prompt 部分只需计算一次 → 总 compute ≈ 1 次 prompt + G 次 decode（而非 G 次 prompt + G 次 decode），节省 ~(G-1)/G 的 prefill 计算。</p>
+
+        <p><strong>Q: 如何设计 Agent RL 的训练 harness 来处理不等长 trajectory？</strong></p>
+        <p>A: (1) <strong>Dynamic batching</strong>：不按固定 batch 分，而是按 token 总数分 micro-batch → 避免短 trajectory 浪费 padding；(2) <strong>Packing</strong>：多条短 trajectory 拼接成一条长序列（加 attention mask 隔离）；(3) <strong>Async completion</strong>：先完成的 trajectory 先进入 reward 计算，不等最慢的 → 管道式处理减少等待。</p>
+    </div>
+
+</section>
+
+<!-- ==================== Section 13: FAQ ==================== -->
 <section id="faq">
-    <h2>11. 高频面试问答</h2>
+    <h2>13. 高频面试问答</h2>
 
     <div class="step-card">
         <h4>Q: On-policy vs Off-policy？</h4>

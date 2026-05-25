@@ -726,7 +726,8 @@
     <a href="#reward">9. Reward 设计</a>
     <a href="#comparison">10. 算法对比</a>
     <a href="#classic-rl">11. 经典 RL 算法</a>
-    <a href="#faq">12. 面试问答</a>
+    <a href="#harness">12. Training Harness</a>
+    <a href="#faq">13. 面试问答</a>
 </nav>
 
 <div class="container">
@@ -759,6 +760,7 @@
         <li><a href="#reward">Reward 设计方法论</a></li>
         <li><a href="#comparison">算法对比总结</a></li>
         <li><a href="#classic-rl">经典 RL 算法详解（DQN / DDPG / TD3 / SAC）</a></li>
+        <li><a href="#harness">RL Training Harness（训练基础设施）</a></li>
         <li><a href="#faq">高频面试问答</a></li>
     </ol>
 </nav>
@@ -2675,9 +2677,123 @@
     </div>
 </section>
 
-<!-- ==================== Section 11: FAQ ==================== -->
+<!-- ==================== Section 12: RL Training Harness ==================== -->
+<section id="harness">
+    <h2>12. RL Training Harness（训练基础设施）</h2>
+
+    <div class="box-insight">
+        <strong>为什么需要专门的 RL Harness？</strong>
+        <p>RL 训练不同于 SFT：需要 rollout（在线推理生成）→ reward 计算 → policy update 三者协调。Agentic RL 更需要环境交互、sandbox 调度、多轮 trajectory 管理。一个好的 Harness 解决三件事：(1) rollout 吞吐量 (2) 训练与推理的资源编排 (3) 环境/sandbox 管理。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>12.1 RL 训练全流程 Pipeline</h4>
+        <div class="formula-box">
+            <strong>标准 On-policy RL 训练循环：</strong><br>
+            <code>for step in 1..N:</code><br>
+            <code>&nbsp;&nbsp;1. Rollout: π_θ 生成 G 条 response（vLLM 加速）</code><br>
+            <code>&nbsp;&nbsp;2. Reward: RM(response) 或 verifier(response) 打分</code><br>
+            <code>&nbsp;&nbsp;3. Advantage: 计算 Â（GRPO: group 归一化 / PPO: GAE）</code><br>
+            <code>&nbsp;&nbsp;4. Update: PPO/GRPO clip 目标 → 多轮 mini-batch SGD</code><br>
+            <code>&nbsp;&nbsp;5. Sync: 更新后的权重 → rollout worker</code>
+        </div>
+        <p><strong>Agentic RL 额外步骤：</strong>在 Step 1 中插入环境交互循环 — 模型 action → sandbox 执行 → observation 回传 → 模型继续生成 → 直到任务完成或达到 max_turns。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>12.2 Rollout 加速</h4>
+        <table>
+            <tr><th>技术</th><th>原理</th><th>加速比</th></tr>
+            <tr><td><strong>vLLM Continuous Batching</strong></td><td>动态合并不等长请求 → 避免 padding 浪费 → PagedAttention 管理 KV Cache</td><td>5-10×</td></tr>
+            <tr><td><strong>Prefix Caching</strong></td><td>同一 prompt 的 G 条采样共享 KV Cache 前缀（RadixAttention）</td><td>G 条共享 → 近 G× prompt 部分</td></tr>
+            <tr><td><strong>Tensor Parallel Rollout</strong></td><td>大模型跨卡分片推理 → 单条 latency 降低</td><td>线性于 TP 数</td></tr>
+            <tr><td><strong>Speculative Decoding</strong></td><td>小模型 draft + 大模型 verify → 降低 latency</td><td>2-3× latency</td></tr>
+        </table>
+    </div>
+
+    <div class="step-card">
+        <h4>12.3 Sync vs Async 架构</h4>
+        <table>
+            <tr><th></th><th>同步 (Sync)</th><th>异步 (Async)</th></tr>
+            <tr><td><strong>流程</strong></td><td>rollout 完 → train → 再 rollout</td><td>rollout 持续跑，train 从队列取数据</td></tr>
+            <tr><td><strong>GPU 利用率</strong></td><td>~50%（交替空闲）</td><td>~90%+</td></tr>
+            <tr><td><strong>数据新鲜度</strong></td><td>100% on-policy</td><td>略 off-policy（延迟 1-2 步）</td></tr>
+            <tr><td><strong>收敛性</strong></td><td>稳定</td><td>需容忍轻微 off-policy 或 IS 修正</td></tr>
+            <tr><td><strong>适用</strong></td><td>小规模/研究验证</td><td>大规模生产训练</td></tr>
+        </table>
+        <p><strong>VERL 方案：</strong>同一组 GPU 在 rollout 阶段切换为 vLLM 引擎（推理模式），在 train 阶段切换为 FSDP（训练模式）→ 不需要额外 GPU，但要处理引擎切换开销。</p>
+        <p><strong>OpenRLHF 方案：</strong>Ray Actor 分离部署 — rollout worker (vLLM) 和 train worker (DeepSpeed) 各占独立 GPU 组 → 通过 Ray Object Store 传数据。</p>
+    </div>
+
+    <div class="step-card">
+        <h4>12.4 框架对比</h4>
+        <table>
+            <tr><th>框架</th><th>后端</th><th>Rollout</th><th>特色</th><th>适用</th></tr>
+            <tr><td><strong>OpenRLHF</strong></td><td>Ray + DeepSpeed</td><td>vLLM (Ray Actor)</td><td>算法全面，70B+ 可用</td><td>大规模生产</td></tr>
+            <tr><td><strong>VERL</strong></td><td>FSDP / Megatron</td><td>vLLM (同卡切换)</td><td>资源弹性，原生 multi-turn</td><td>Agentic RL</td></tr>
+            <tr><td><strong>TRL</strong></td><td>HuggingFace</td><td>原生 generate</td><td>上手快，生态好</td><td>研究/小模型</td></tr>
+            <tr><td><strong>NeMo-Aligner</strong></td><td>Megatron</td><td>内置</td><td>原生 TP/PP</td><td>NVIDIA 生态</td></tr>
+        </table>
+    </div>
+
+    <div class="step-card">
+        <h4>12.5 Sandbox 与环境管理（Agentic RL 核心）</h4>
+        <p><strong>为什么需要 Sandbox：</strong>Agent RL 中模型生成的 action 需要在真实环境中执行（运行代码/调 API/浏览网页），但要：安全隔离 + 可重置 + 高并行。</p>
+        <table>
+            <tr><th>方案</th><th>实现</th><th>特点</th></tr>
+            <tr><td><strong>Docker 容器池</strong></td><td>预启动 N 个容器，按需分配给 rollout</td><td>隔离好、标准化、SWE-bench 方案</td></tr>
+            <tr><td><strong>gVisor / Firecracker</strong></td><td>轻量虚拟化，微秒级启动</td><td>更安全、更快、适合大规模并行</td></tr>
+            <tr><td><strong>E2B / Modal</strong></td><td>云端 sandbox 服务</td><td>无需自建，按需付费</td></tr>
+            <tr><td><strong>模拟环境</strong></td><td>工具调用用 mock 或 LLM 模拟</td><td>快但不真实，适合预训练阶段</td></tr>
+        </table>
+        <p><strong>关键工程挑战：</strong></p>
+        <ul style="margin-top:6px;font-size:14px;">
+            <li><strong>并行度</strong>：G=16 × batch_size=64 = 1024 个 sandbox 同时运行</li>
+            <li><strong>状态管理</strong>：多轮任务需要 sandbox 持久化状态（文件系统/数据库）</li>
+            <li><strong>超时处理</strong>：工具执行可能 hang → 需要超时 kill + fallback</li>
+            <li><strong>Cost</strong>：sandbox 计算开销可能超过 rollout 本身 → 需要智能调度和 early termination</li>
+        </ul>
+    </div>
+
+    <div class="step-card">
+        <h4>12.6 权重同步与资源编排</h4>
+        <p><strong>核心矛盾：</strong>Rollout 需要最新权重做推理（on-policy 保证），但 train 阶段权重在持续更新 → 如何高效同步？</p>
+        <ul style="font-size:14px;">
+            <li><strong>全量广播</strong>：train 完毕 → 把完整权重发给所有 rollout worker。简单但带宽大（70B 模型 = ~140GB）</li>
+            <li><strong>增量同步</strong>：只传 LoRA delta / 更新过的层 → 减少传输量</li>
+            <li><strong>同卡切换（VERL）</strong>：同一 GPU 在 train/rollout 间切换 → 无需传输，但要处理显存腾挪（offload/reload）</li>
+        </ul>
+        <p><strong>VERL 的 FSDP ↔ vLLM 切换：</strong></p>
+        <ol style="font-size:14px;">
+            <li>Train 阶段：FSDP 分片存储权重 → 每卡只存 1/N 参数</li>
+            <li>切换到 Rollout：all-gather 合并完整权重 → 加载到 vLLM 引擎</li>
+            <li>Rollout 完成：释放 vLLM 引擎显存 → 恢复 FSDP 分片</li>
+        </ol>
+    </div>
+
+    <div class="box-interview">
+        <h4>Harness 高频面试问答</h4>
+        <p><strong>Q: RL 训练的 rollout 和 train 为什么不能简单并行？有什么数据一致性问题？</strong></p>
+        <p>A: On-policy RL 要求 rollout 用的策略 = train 更新的策略。如果 async 做，rollout 数据是用旧策略 $\pi_{old}$ 生成的，但 train 时策略已更新为 $\pi_{new}$ → 数据 off-policy。解决：(1) 用 importance sampling ratio $\frac{\pi_{new}}{\pi_{old}}$ 修正（PPO clip 天然做了这件事）；(2) 控制 staleness（rollout 最多落后 1-2 个 train step）。</p>
+
+        <p><strong>Q: 为什么 Agentic RL 比标准 RLHF 对 Harness 要求更高？</strong></p>
+        <p>A: 三个维度：(1) <strong>Trajectory 长度不定</strong> — 标准 RLHF 输出 fixed max_len，Agent 可能 3 轮完成也可能 30 轮 → 需要动态 padding/packing；(2) <strong>环境交互阻塞</strong> — 每轮 action 后要等环境返回 → rollout latency 不可控（API timeout / 代码执行慢）；(3) <strong>状态管理</strong> — 多轮需要 sandbox 持久状态 → 普通 stateless rollout 不够。</p>
+
+        <p><strong>Q: VERL 的"同卡切换"和 OpenRLHF 的"分卡分离"各自优劣？</strong></p>
+        <p>A: <strong>VERL 同卡切换</strong>：优势 = 不需要额外 GPU（一组卡既做 train 又做 rollout）；劣势 = 串行（不能同时 train+rollout）+ 切换有开销（all-gather + vLLM reload）。<strong>OpenRLHF 分卡</strong>：优势 = train 和 rollout 真正并行 → 利用率高；劣势 = 需要 2× GPU 资源，且跨节点传权重带宽高。</p>
+
+        <p><strong>Q: Prefix Caching 在 GRPO 中为什么特别有效？</strong></p>
+        <p>A: GRPO 对每个 prompt 采样 G=8-64 条 response → 这 G 条共享同一个 prompt 的 KV Cache 前缀。用 RadixAttention 缓存后，prompt 部分只需计算一次 → 总 compute ≈ 1 次 prompt + G 次 decode（而非 G 次 prompt + G 次 decode），节省 ~(G-1)/G 的 prefill 计算。</p>
+
+        <p><strong>Q: 如何设计 Agent RL 的训练 harness 来处理不等长 trajectory？</strong></p>
+        <p>A: (1) <strong>Dynamic batching</strong>：不按固定 batch 分，而是按 token 总数分 micro-batch → 避免短 trajectory 浪费 padding；(2) <strong>Packing</strong>：多条短 trajectory 拼接成一条长序列（加 attention mask 隔离）；(3) <strong>Async completion</strong>：先完成的 trajectory 先进入 reward 计算，不等最慢的 → 管道式处理减少等待。</p>
+    </div>
+
+</section>
+
+<!-- ==================== Section 13: FAQ ==================== -->
 <section id="faq">
-    <h2>12. 高频面试问答</h2>
+    <h2>13. 高频面试问答</h2>
 
     <div class="step-card">
         <h4>Q: On-policy vs Off-policy？</h4>
