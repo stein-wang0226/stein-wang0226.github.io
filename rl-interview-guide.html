@@ -760,7 +760,7 @@
     <h2>📑 目录</h2>
     <ol>
         <li><a href="#symbols">符号系统完全手册</a></li>
-        <li><a href="#core-concepts">核心概念与公式</a></li>
+        <li><a href="#core-concepts">核心概念与公式（含 On/Off-Policy 分类）</a></li>
         <li><a href="#pg-to-ppo">策略梯度到 PPO 演进</a></li>
         <li><a href="#ppo-detail">PPO 完全详解</a></li>
         <li><a href="#grpo">GRPO 详解</a></li>
@@ -941,6 +941,140 @@
 
     <div class="box-insight">
         Bellman 方程说的是：<strong>当前价值 = 即时奖励 + 未来价值的折扣期望</strong>。这是一个递归定义——一个状态的好坏取决于下一个状态的好坏，像多米诺骨牌一样一环扣一环。
+    </div>
+
+    <h3>On-Policy vs Off-Policy 分类</h3>
+
+    <p>RL 算法按<strong>数据采集策略</strong>与<strong>学习策略</strong>的关系，分为 On-Policy 和 Off-Policy 两大类。这是面试中最常见的分类问题之一。</p>
+
+    <div class="formula-box">
+        <div class="label">核心区别</div>
+        $$\text{On-Policy: } \pi_{\text{behavior}} = \pi_{\text{target}}$$
+        $$\text{Off-Policy: } \pi_{\text{behavior}} \neq \pi_{\text{target}}$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\pi_{\text{behavior}}$</span>行为策略——用来与环境交互、采集数据的策略</div>
+            <div class="item"><span class="symbol">$\pi_{\text{target}}$</span>目标策略——我们真正想要优化和学习的策略</div>
+        </div>
+    </div>
+
+    <div class="box-analogy">
+        <strong>On-Policy</strong> 像自己亲自下棋来提升棋力——每一盘棋都是自己下的，下完立刻复盘，数据不能给别人用；<strong>Off-Policy</strong> 像看别人（甚至是不同水平的人）下棋的棋谱来学习——不需要自己亲自下，可以反复研究同一盘棋局。
+    </div>
+
+    <table>
+        <tr>
+            <th>维度</th>
+            <th>On-Policy（同策略）</th>
+            <th>Off-Policy（异策略）</th>
+        </tr>
+        <tr>
+            <td><strong>定义</strong></td>
+            <td>用当前策略 $\pi_\theta$ 采集数据，更新的也是 $\pi_\theta$</td>
+            <td>用行为策略 $\mu$ 采集数据，更新目标策略 $\pi_\theta$</td>
+        </tr>
+        <tr>
+            <td><strong>数据使用</strong></td>
+            <td>数据只能用一次，策略更新后必须重新采集</td>
+            <td>数据可存入 Replay Buffer 反复使用</td>
+        </tr>
+        <tr>
+            <td><strong>样本效率</strong></td>
+            <td>低——每次更新都要重新采样</td>
+            <td>高——历史数据可复用</td>
+        </tr>
+        <tr>
+            <td><strong>训练稳定性</strong></td>
+            <td>高——数据分布与策略一致，梯度无偏</td>
+            <td>较低——数据分布偏移需要额外校正</td>
+        </tr>
+        <tr>
+            <td><strong>探索能力</strong></td>
+            <td>受限于当前策略的探索能力</td>
+            <td>可使用任意探索策略，更灵活</td>
+        </tr>
+        <tr>
+            <td><strong>关键技术</strong></td>
+            <td>GAE、Advantage 估计</td>
+            <td>Replay Buffer、Importance Sampling、Target Network</td>
+        </tr>
+        <tr>
+            <td><strong>典型算法</strong></td>
+            <td>REINFORCE、A2C/A3C、TRPO、PPO、GRPO</td>
+            <td>DQN、DDPG、TD3、SAC</td>
+        </tr>
+        <tr>
+            <td><strong>适用场景</strong></td>
+            <td>LLM 对齐（RLHF/RLVR）、连续控制</td>
+            <td>游戏 AI、机器人控制、离线 RL</td>
+        </tr>
+    </table>
+
+    <div class="box-insight">
+        <strong>面试关键点</strong>：PPO 虽然使用了 Importance Sampling（概率比 $r_t(\theta) = \frac{\pi_\theta(a|s)}{\pi_{\theta_{\text{old}}}(a|s)}$），但它仍然是 <strong>On-Policy</strong> 算法——$\pi_{\theta_{\text{old}}}$ 只是上一轮的自身策略，数据用几个 epoch 后就丢弃，不存入长期 Replay Buffer。这是面试中常见的辨析题。
+    </div>
+
+    <h4>算法分类速查</h4>
+    <table>
+        <tr>
+            <th>分类</th>
+            <th>算法</th>
+            <th>动作空间</th>
+            <th>核心特点</th>
+        </tr>
+        <tr>
+            <td rowspan="5" style="background: rgba(16, 185, 129, 0.1); font-weight: 700; text-align: center;">On-Policy</td>
+            <td>REINFORCE</td>
+            <td>离散 / 连续</td>
+            <td>蒙特卡洛策略梯度，方差大</td>
+        </tr>
+        <tr>
+            <td>A2C / A3C</td>
+            <td>离散 / 连续</td>
+            <td>Actor-Critic，引入 Baseline 降低方差</td>
+        </tr>
+        <tr>
+            <td>TRPO</td>
+            <td>连续为主</td>
+            <td>KL 约束信任域优化，二阶方法</td>
+        </tr>
+        <tr>
+            <td>PPO</td>
+            <td>离散 / 连续</td>
+            <td>Clip 代替 KL，一阶优化，RLHF 主流</td>
+        </tr>
+        <tr>
+            <td>GRPO</td>
+            <td>离散（文本）</td>
+            <td>无 Critic，组内相对排序，DeepSeek 提出</td>
+        </tr>
+        <tr>
+            <td rowspan="4" style="background: rgba(239, 68, 68, 0.1); font-weight: 700; text-align: center;">Off-Policy</td>
+            <td>DQN</td>
+            <td>离散</td>
+            <td>Q 值网络 + Replay Buffer + Target Network</td>
+        </tr>
+        <tr>
+            <td>DDPG</td>
+            <td>连续</td>
+            <td>确定性策略 + 连续动作空间 DQN 推广</td>
+        </tr>
+        <tr>
+            <td>TD3</td>
+            <td>连续</td>
+            <td>双 Q 网络 + 延迟更新 + 目标策略平滑</td>
+        </tr>
+        <tr>
+            <td>SAC</td>
+            <td>连续</td>
+            <td>最大熵框架，自动温度调节，探索-利用平衡</td>
+        </tr>
+    </table>
+
+    <div class="box-insight">
+        <strong>LLM 领域为什么几乎都用 On-Policy？</strong><br/>
+        ① 语言生成是<strong>超高维离散空间</strong>（词表 $|V| \sim 10^5$），Off-Policy 的 Replay Buffer 中旧策略的文本分布与当前策略差异巨大，Importance Sampling 校正方差爆炸；<br/>
+        ② RLHF/RLVR 依赖 Reward Model 评估<strong>完整文本</strong>，需要当前策略的 on-policy 样本才能给出有意义的反馈；<br/>
+        ③ PPO/GRPO 的 clip 机制已足够控制更新幅度，无需 Replay Buffer 提升样本效率。
     </div>
 </section>
 
