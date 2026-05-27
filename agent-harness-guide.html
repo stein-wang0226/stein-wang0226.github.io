@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Harness 深度解析 — 架构设计、原理与工程实践</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface2: #334155;
+            --border: #475569;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --accent: #38bdf8;
+            --accent2: #818cf8;
+            --accent3: #34d399;
+            --accent4: #fb923c;
+            --accent5: #f472b6;
+            --danger: #ef4444;
+            --code-bg: #0d1117;
+            --gradient1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient2: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            --gradient3: linear-gradient(135deg, #34d399 0%, #38bdf8 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 50%, rgba(129, 140, 248, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 80%, rgba(52, 211, 153, 0.05) 0%, transparent 50%);
+            animation: heroGlow 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroGlow {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-5%, 3%) rotate(5deg); }
+        }
+
+        .hero-content { position: relative; z-index: 1; max-width: 900px; }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            background: var(--gradient2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .badge {
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid;
+        }
+        .badge-blue { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.3); color: var(--accent); }
+        .badge-purple { background: rgba(129,140,248,0.1); border-color: rgba(129,140,248,0.3); color: var(--accent2); }
+        .badge-green { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); color: var(--accent3); }
+        .badge-orange { background: rgba(251,146,60,0.1); border-color: rgba(251,146,60,0.3); color: var(--accent4); }
+        .badge-pink { background: rgba(244,114,182,0.1); border-color: rgba(244,114,182,0.3); color: var(--accent5); }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+        .scroll-hint::after { content: ' ↓'; }
+        @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+        /* Navigation */
+        .toc-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 0;
+            overflow-x: auto;
+        }
+
+        .toc-nav ul {
+            display: flex;
+            gap: 0.25rem;
+            list-style: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            white-space: nowrap;
+        }
+
+        .toc-nav a {
+            display: block;
+            padding: 0.4rem 0.9rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .toc-nav a:hover { color: var(--accent); background: rgba(56,189,248,0.1); }
+
+        /* Main */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            padding: 5rem 0 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        h2 .num {
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .section-desc {
+            color: var(--text-dim);
+            font-size: 1.05rem;
+            margin-bottom: 2.5rem;
+            max-width: 800px;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 2.5rem 0 1rem;
+            color: var(--accent);
+        }
+
+        h4 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--accent3);
+        }
+
+        p { margin-bottom: 1rem; }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .code-header {
+            background: var(--surface);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-block pre {
+            padding: 1.25rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .code-block code {
+            color: var(--text);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, monospace;
+        }
+
+        .inline-code {
+            background: rgba(56,189,248,0.1);
+            color: var(--accent);
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+
+        /* Tables */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead { background: var(--surface2); }
+
+        th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(71,85,105,0.4);
+        }
+
+        tbody tr:hover { background: rgba(56,189,248,0.03); }
+
+        /* Architecture Diagram */
+        .arch-diagram {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .arch-diagram pre {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            color: var(--accent);
+        }
+
+        /* Highlight boxes */
+        .highlight-box {
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+        .highlight-blue { background: rgba(56,189,248,0.08); border-color: var(--accent); }
+        .highlight-green { background: rgba(52,211,153,0.08); border-color: var(--accent3); }
+        .highlight-orange { background: rgba(251,146,60,0.08); border-color: var(--accent4); }
+        .highlight-purple { background: rgba(129,140,248,0.08); border-color: var(--accent2); }
+        .highlight-red { background: rgba(239,68,68,0.08); border-color: var(--danger); }
+
+        .highlight-box .hl-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Flow diagram */
+        .flow {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .flow-step {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .flow-arrow { color: var(--accent); font-weight: 700; }
+
+        /* Layer visualization */
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 2rem 0;
+        }
+
+        .layer {
+            padding: 1.5rem 2rem;
+            border: 1px solid;
+            position: relative;
+        }
+
+        .layer:first-child { border-radius: 12px 12px 0 0; }
+        .layer:last-child { border-radius: 0 0 12px 12px; }
+
+        .layer-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .layer-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .layer-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .l4 { background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.3); }
+        .l4 .layer-label { color: var(--accent); }
+        .l3 { background: rgba(129,140,248,0.08); border-color: rgba(129,140,248,0.3); }
+        .l3 .layer-label { color: var(--accent2); }
+        .l2 { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.3); }
+        .l2 .layer-label { color: var(--accent3); }
+        .l1 { background: rgba(251,146,60,0.08); border-color: rgba(251,146,60,0.3); }
+        .l1 .layer-label { color: var(--accent4); }
+
+        /* Comparison Grid */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .compare-grid { grid-template-columns: 1fr; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
+
+        .vs-box {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .vs-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid;
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li { margin-bottom: 0.4rem; }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .tag-new { background: rgba(52,211,153,0.2); color: var(--accent3); }
+        .tag-key { background: rgba(56,189,248,0.2); color: var(--accent); }
+        .tag-warn { background: rgba(251,146,60,0.2); color: var(--accent4); }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            margin: 2rem 0;
+            padding-left: 2rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gradient2);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.35rem;
+            top: 0.5rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--bg);
+        }
+        .timeline-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 0.25rem;
+        }
+        .timeline-meta {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footnotes / Sources */
+        .sources {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+        }
+        .sources h4 { color: var(--text-dim); margin-top: 0; }
+        .sources a { color: var(--accent); text-decoration: none; }
+        .sources a:hover { text-decoration: underline; }
+        .sources li { font-size: 0.88rem; margin-bottom: 0.3rem; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Emoji accent */
+        .emoji { font-style: normal; }
+
+        /* Pill */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.8rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            margin: 0.2rem;
+        }
+
+        .strong-accent { color: var(--accent); font-weight: 600; }
+        .strong-green { color: var(--accent3); font-weight: 600; }
+        .strong-purple { color: var(--accent2); font-weight: 600; }
+        .strong-orange { color: var(--accent4); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Agent Harness</h1>
+        <p class="subtitle">
+            LLM Agent 训练基础设施的架构设计、核心原理与工程实践全景解析
+        </p>
+        <div class="hero-badges">
+            <span class="badge badge-blue">Architecture Design</span>
+            <span class="badge badge-purple">Agentic RL</span>
+            <span class="badge badge-green">Async Rollout</span>
+            <span class="badge badge-orange">Tool Sandbox</span>
+            <span class="badge badge-pink">Reward Engineering</span>
+        </div>
+        <p style="color: var(--text-dim); font-size: 0.9rem;">
+            基于 VERL / ROLL / RAGEN / Agent-R1 / VerlTool 等前沿框架，结合 ProtAgent 实战经验
+        </p>
+    </div>
+    <span class="scroll-hint">向下滚动探索</span>
+</section>
+
+<!-- ==================== NAV ==================== -->
+<nav class="toc-nav">
+    <ul>
+        <li><a href="#what">概念辨析</a></li>
+        <li><a href="#arch">四层架构</a></li>
+        <li><a href="#rollout">异步 Rollout</a></li>
+        <li><a href="#tools">工具编排</a></li>
+        <li><a href="#sandbox">Sandbox</a></li>
+        <li><a href="#reward">Reward 工程</a></li>
+        <li><a href="#grpo">GRPO 算法</a></li>
+        <li><a href="#mapping">Token Mapping</a></li>
+        <li><a href="#frameworks">框架对比</a></li>
+        <li><a href="#pipeline">训练 Pipeline</a></li>
+        <li><a href="#failures">失败模式</a></li>
+        <li><a href="#production">生产化</a></li>
+        <li><a href="#frontier">前沿进展</a></li>
+        <li><a href="#case">案例: ProtAgent</a></li>
+        <li><a href="#lab">实验课</a></li>
+        <li><a href="#refs">参考资源</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+<!-- ==================== 1. 概念辨析 ==================== -->
+<section id="what">
+    <h2><span class="num badge-blue">01</span> 什么是 Agent Harness</h2>
+    <p class="section-desc">Agent Harness 是 LLM Agent 训练过程中管理交互循环、环境沙箱、轨迹收集和 Reward 计算的<strong>训练层基础设施</strong>，区别于面向应用层的 Agent Framework。</p>
+
+    <div class="compare-grid">
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent);">Agent Harness（训练层）</div>
+            <ul>
+                <li>管理 RL 训练中的 Agent-Environment 交互循环</li>
+                <li>隔离工具执行环境（Sandbox）</li>
+                <li>收集轨迹 + 计算 Reward</li>
+                <li>同步策略权重到推理引擎</li>
+                <li><strong>目标用户：RL 训练工程师</strong></li>
+            </ul>
+            <p style="font-size:0.85rem; color:var(--text-dim);">代表：VERL、ROLL、RAGEN、Agent-R1</p>
+        </div>
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent2);">Agent Framework（应用层）</div>
+            <ul>
+                <li>快速搭建 Agent 应用</li>
+                <li>定义 Prompt、管理对话历史</li>
+                <li>接入外部工具和 API</li>
+                <li>编排多 Agent 协作</li>
+                <li><strong>目标用户：应用开发者</strong></li>
+            </ul>
+            <p style="font-size:0.85rem; color:var(--text-dim);">代表：LangChain、AutoGen、CrewAI、Coze</p>
+        </div>
+    </div>
+
+    <div class="highlight-box highlight-blue">
+        <div class="hl-title">类比理解</div>
+        <p>LangChain 相当于 PyTorch 的 <span class="inline-code">nn.Module</span>（定义模型结构），Harness 相当于 PyTorch 的 <span class="inline-code">Trainer</span>（管理训练循环）。二者是上下游关系，不是竞争关系。</p>
+    </div>
+
+    <h3>Harness 的五大核心组件</h3>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title"><div class="card-icon" style="background:rgba(56,189,248,0.2);color:var(--accent);">1</div> AgentLoop / Orchestrator</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">管理多轮交互循环：LLM 生成 Action → 解析 → 路由到工具 → 拿回 Observation → 拼入上下文 → 下一轮推理</p>
+        </div>
+        <div class="card">
+            <div class="card-title"><div class="card-icon" style="background:rgba(129,140,248,0.2);color:var(--accent2);">2</div> Sandbox Manager</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">创建/销毁/监控隔离执行环境，确保工具调用不会影响宿主系统或其他轨迹</p>
+        </div>
+        <div class="card">
+            <div class="card-title"><div class="card-icon" style="background:rgba(52,211,153,0.2);color:var(--accent3);">3</div> Trajectory Buffer</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">收集和缓存完整的 Agent 交互轨迹（Thought + Action + Observation 序列），供训练使用</p>
+        </div>
+        <div class="card">
+            <div class="card-title"><div class="card-icon" style="background:rgba(251,146,60,0.2);color:var(--accent4);">4</div> Reward Calculator</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">对轨迹进行多维度打分：Step Reward（逐步即时反馈）+ Episode Reward（终局目标导向）</p>
+        </div>
+        <div class="card">
+            <div class="card-title"><div class="card-icon" style="background:rgba(244,114,182,0.2);color:var(--accent5);">5</div> Sync Manager</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">管理训练端与推理端之间的策略权重同步（NCCL broadcast），确保 Rollout 使用最新策略</p>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== 2. 四层架构 ==================== -->
+<section id="arch">
+    <h2><span class="num badge-purple">02</span> 四层架构设计</h2>
+    <p class="section-desc">一个完整的 Agent Harness 从底层到顶层分为四层，各层通过标准化接口解耦，支持独立演进和替换。</p>
+
+    <div class="layer-stack">
+        <div class="layer l4">
+            <div class="layer-label">Layer 4 — Training Framework</div>
+            <div class="layer-title">策略更新 + 权重同步</div>
+            <div class="layer-desc">
+                FSDP2 / Megatron 做分布式训练 · GRPO Loss 计算 + 梯度回传 · 训练完成后 broadcast 新权重到推理端<br>
+                <span class="pill">FSDP2</span><span class="pill">Megatron-LM</span><span class="pill">GRPO</span><span class="pill">PPO</span>
+            </div>
+        </div>
+        <div class="layer l3">
+            <div class="layer-label">Layer 3 — Rollout Engine</div>
+            <div class="layer-title">轨迹收集 + 异步调度</div>
+            <div class="layer-desc">
+                AgentLoop 编排多轮交互 · Dynamic Batching 合并推理请求 · 多条轨迹并行 rollout（G=8）<br>
+                <span class="pill">AsyncRolloutEngine</span><span class="pill">Ray Actor</span><span class="pill">Continuous Batching</span>
+            </div>
+        </div>
+        <div class="layer l2">
+            <div class="layer-label">Layer 2 — Environment Layer</div>
+            <div class="layer-title">隔离执行 + 工具编排</div>
+            <div class="layer-desc">
+                ToolRegistry 注册 schema · ToolExecutor 参数校验 + 调用 + 格式化 · SandboxPool 容器池管理<br>
+                <span class="pill">Tool Registry</span><span class="pill">Executor</span><span class="pill">Docker/K8s</span>
+            </div>
+        </div>
+        <div class="layer l1">
+            <div class="layer-label">Layer 1 — Inference Engine</div>
+            <div class="layer-title">Token 生成 + KV Cache</div>
+            <div class="layer-desc">
+                vLLM / SGLang 高效推理 · PagedAttention 管理长序列 KV Cache · Prefix Caching 共享前缀<br>
+                <span class="pill">vLLM</span><span class="pill">SGLang</span><span class="pill">PagedAttention</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>层间接口设计</h3>
+    <div class="code-block">
+        <div class="code-header"><span>Python · 统一推理接口（Layer 1）</span></div>
+        <pre><code>class InferenceBackend(Protocol):
+    """后端可切换：vLLM / SGLang / TensorRT-LLM"""
+    def generate(self, prompts: list[str], stop_tokens: list[str]) -> list[str]: ...
+    def get_logprobs(self, prompts: list[str], completions: list[str]) -> list[float]: ...
+    def update_weights(self, state_dict: dict) -> None: ...</code></pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header"><span>Python · 统一环境接口（Layer 2 — GEM 协议）</span></div>
+        <pre><code>class AgentEnv:
+    """reset/step/close — 与 Gym 同构的 Agent 环境接口"""
+    def reset(self, seed=None):
+        # 加载任务样本 → skill 路由 → 构造 system prompt
+        return messages_list, {"tools": schema, "sample_id": id}
+
+    def step(self, action: str):
+        # 解析 action → 执行工具 → 终止判断 → 计算 reward
+        return observation, reward, terminated, truncated, info</code></pre>
+    </div>
+
+    <div class="highlight-box highlight-green">
+        <div class="hl-title">设计哲学</div>
+        <p><strong>内部可以任意复杂（各自演进），对外必须接口统一（可组合）。</strong>每一层只关心自己的职责，通过标准化的接口与上下游通信。新增工具不需要改推理引擎，切换推理后端不需要改训练框架。</p>
+    </div>
+</section>
+
+<!-- ==================== 3. 异步 Rollout ==================== -->
+<section id="rollout">
+    <h2><span class="num badge-green">03</span> 异步 Rollout 引擎</h2>
+    <p class="section-desc">Agent 训练中最核心的工程挑战：工具调用期间 GPU 不能空等。异步 Rollout 是提升 GPU 利用率的关键。</p>
+
+    <h3>为什么需要异步？</h3>
+    <p>GRPO 对每个 prompt 采 G=8 条轨迹，每条轨迹平均 5 轮工具调用，一个 batch 32 个 prompt = <strong>1280 次工具调用</strong>。同步执行时工具 latency 累积到分钟级，GPU 几乎全在等待。</p>
+
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title" style="color:var(--danger);">同步方案</div>
+            <p style="font-size:0.9rem;">所有轨迹等最慢的那条完成。GPU 利用率 ~50%。简单但严重浪费计算资源。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent3);">异步方案</div>
+            <p style="font-size:0.9rem;">轨迹 A 等工具返回时，GPU 处理轨迹 B/C/D 的推理。GPU 利用率 >85%。</p>
+        </div>
+    </div>
+
+    <h3>三种异步模式</h3>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title" style="color:var(--accent);">Pattern A: 进程内异步</div>
+            <div class="arch-diagram" style="padding:1rem;">
+                <pre style="font-size:0.78rem;">[GPU: vLLM Server]
+       ↕ (gRPC)
+[CPU: AsyncRolloutEngine]
+    ├── InferenceWorker (batch requests)
+    └── ToolWorker (concurrent calls)
+         └── SandboxPool (process-level)</pre>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-dim);">适合单机 8 卡场景。延迟低，实现简单。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent2);">Pattern B: 分布式 Actor</div>
+            <div class="arch-diagram" style="padding:1rem;">
+                <pre style="font-size:0.78rem;">[Ray Cluster]
+├── InferenceActors (4 GPUs)
+├── RolloutActors (CPU, agent loops)
+├── ToolActors (CPU + Docker)
+└── TrainerActors (4 GPUs, FSDP2)</pre>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-dim);">每层独立 scale。GPU/CPU 不互相争抢。适合大规模训练。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent3);">Pattern C: Server-Based</div>
+            <div class="arch-diagram" style="padding:1rem;">
+                <pre style="font-size:0.78rem;">[Inference Server] ←HTTP→ [Rollout Controller]
+     (SGLang)              (orchestrator)
+                                ↕ HTTP
+                          [Tool Server]
+                          (Docker + K8s)</pre>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-dim);">推理后端完全解耦，可独立扩容和替换。</p>
+        </div>
+    </div>
+
+    <h3>异步数据流</h3>
+    <div class="code-block">
+        <div class="code-header"><span>Python · AsyncRolloutEngine 核心逻辑</span></div>
+        <pre><code>class AsyncRolloutEngine:
+    async def collect_batch(self, prompts, group_size=8):
+        # 每个 prompt 展开 group_size 条轨迹
+        for prompt in prompts:
+            for _ in range(group_size):
+                traj = Trajectory(prompt=prompt)
+                await self.pending_inference.put(traj)
+        # 双 worker 并行：推理 + 工具执行
+        await asyncio.gather(
+            self._inference_worker(),
+            self._tool_worker()
+        )
+
+    async def _inference_worker(self):
+        """批量合并推理请求，最大化 GPU throughput"""
+        while self.active_trajectories:
+            batch = self._collect_batch(max_size=32)
+            responses = self.inference.generate(
+                [t.current_prompt for t in batch],
+                stop_tokens=["Observation:"]
+            )
+            for traj, resp in zip(batch, responses):
+                action = parse_action(resp)
+                if action is None or traj.is_terminal():
+                    traj.finalize()
+                else:
+                    traj.add_step(resp, action)
+                    await self.pending_tool.put(traj)
+
+    async def _tool_worker(self):
+        """并发执行工具调用，完成后送回推理队列"""
+        while self.active_trajectories:
+            traj = await self.pending_tool.get()
+            observation = await self.env.execute(traj.last_action)
+            traj.add_observation(observation)
+            await self.pending_inference.put(traj)</code></pre>
+    </div>
+
+    <div class="highlight-box highlight-orange">
+        <div class="hl-title">ROLL Flash 加速</div>
+        <p>ROLL Flash（<a href="https://arxiv.org/abs/2510.11345" style="color:var(--accent);">arXiv:2510.11345</a>）通过环境级异步并行 rollout + 异步训练，进一步加速 Agentic Training。RollPacker（<a href="https://arxiv.org/abs/2509.21009" style="color:var(--accent);">arXiv:2509.21009</a>）解决长尾轨迹拖垮整个 batch 的问题。</p>
+    </div>
+</section>
+
+<!-- ==================== 4. 工具编排 ==================== -->
+<section id="tools">
+    <h2><span class="num badge-orange">04</span> 工具编排系统</h2>
+    <p class="section-desc">Registry + Executor 两层抽象是 Agent 工具系统的核心设计模式，实现"热插拔"：新增工具无需改任何已有代码。</p>
+
+    <h3>BaseTool 抽象</h3>
+    <div class="code-block">
+        <div class="code-header"><span>Python · 统一工具接口</span></div>
+        <pre><code>class BaseTool:
+    def get_schema(self) -> dict:      # JSON Schema 给 LLM 理解工具能力
+    def validate(self, params) -> bool: # 参数校验（constrained decoding 兜底）
+    def execute(self, params) -> str:   # 实际执行（API / CLI / Python 各自实现）
+    def format_output(self, raw) -> str: # 结果标准化（截断 + 提取关键字段）</code></pre>
+    </div>
+
+    <h3>三种工具 Runtime</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Runtime</th><th>实现方式</th><th>隔离级别</th><th>适用场景</th><th>示例</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="strong-accent">native_backend</span></td>
+                    <td>subprocess</td>
+                    <td>进程级</td>
+                    <td>CLI 工具、GPU 密集计算</td>
+                    <td>mmseqs2, SignalP6, tmbed</td>
+                </tr>
+                <tr>
+                    <td><span class="strong-green">heuristic</span></td>
+                    <td>in-process Python</td>
+                    <td>无隔离</td>
+                    <td>轻量计算、规则匹配</td>
+                    <td>seq_props, go_term</td>
+                </tr>
+                <tr>
+                    <td><span class="strong-purple">api_backend</span></td>
+                    <td>HTTP 请求</td>
+                    <td>网络隔离</td>
+                    <td>外部 REST API</td>
+                    <td>UniProt, STRING-DB</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>热插拔机制</h3>
+    <p>新增一个工具只需 <strong>三步</strong>，不改任何已有代码：</p>
+    <div class="flow">
+        <div class="flow-step">1. 写 JSON Schema 定义参数规范</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">2. 实现 execute(params) → result</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">3. 注册到 Registry 配置文件</div>
+    </div>
+    <p>注册后，system prompt 自动包含新工具的描述和参数规范。模型无需重训即可尝试调用。</p>
+
+    <h3>工具 Scale 到 100+ 的解决方案</h3>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title"><span class="tag tag-key">L1</span> 任务级路由</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">根据用户意图先分类，只暴露相关工具子集（5-10 个）。<br><em>效果：首轮工具选择准确率 65% → 90%</em></p>
+        </div>
+        <div class="card">
+            <div class="card-title"><span class="tag tag-key">L2</span> 两阶段检索</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">Embedding 相似度 retrieve top-10 → Agent 在 top-10 中精细选择。类似 RAG 的 retrieve-then-read。</p>
+        </div>
+        <div class="card">
+            <div class="card-title"><span class="tag tag-key">L3</span> 描述压缩 + Lazy Loading</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">每个工具一行摘要，选定后再展开完整 Schema。100 个工具的 token 开销从 5000+ 降到 ~1000。</p>
+        </div>
+    </div>
+
+    <h3>容错机制</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>失败类型</th><th>处理方式</th><th>Agent 行为</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>超时</td><td>返回 <span class="inline-code">TIMEOUT</span> observation</td><td>学会切换到更轻量的替代工具</td></tr>
+                <tr><td>参数错误</td><td>返回 <span class="inline-code">INVALID_PARAMS</span> + schema 提示</td><td>学会修正参数后重试</td></tr>
+                <tr><td>API 异常</td><td>返回 <span class="inline-code">ERROR: {msg}</span></td><td>学会换工具或直接给答案</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ==================== 5. Sandbox ==================== -->
+<section id="sandbox">
+    <h2><span class="num badge-pink">05</span> Sandbox 沙箱设计</h2>
+    <p class="section-desc">Sandbox 提供工具执行的隔离环境，确保训练过程中的工具调用安全、可控、互不影响。</p>
+
+    <h3>两阶段隔离策略</h3>
+    <div class="compare-grid">
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent3);">Stage 1: 进程内隔离</div>
+            <ul>
+                <li>轻量查询类工具 → in-process 执行</li>
+                <li>CLI 工具 → subprocess + timeout</li>
+                <li>训练代码零改动</li>
+                <li><em>适合：科研/验证阶段</em></li>
+            </ul>
+        </div>
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent4);">Stage 2: 容器隔离</div>
+            <ul>
+                <li>危险操作 → Docker/K8s 远程沙箱</li>
+                <li>GPU 密集工具 → 远程 GPU 容器</li>
+                <li>GEM 接口不变，只改 env_type 配置</li>
+                <li><em>适合：生产/电商/高安全场景</em></li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Sandbox Pool 资源管理</h3>
+    <div class="code-block">
+        <div class="code-header"><span>Python · SandboxPool 核心设计</span></div>
+        <pre><code>class SandboxPool:
+    """预创建 N 个 sandbox 实例，按需分配/回收"""
+    def __init__(self, pool_size=16, image='agent-tools:v1'):
+        self.available = asyncio.Queue()
+        for _ in range(pool_size):
+            sb = Sandbox(image=image, timeout=90)
+            self.available.put_nowait(sb)
+
+    async def acquire(self) -> Sandbox:
+        return await asyncio.wait_for(
+            self.available.get(), timeout=30
+        )
+
+    async def release(self, sandbox: Sandbox):
+        await sandbox.reset()      # 清理状态
+        self.available.put_nowait(sandbox)</code></pre>
+    </div>
+
+    <h3>电商场景的 Sandbox 安全需求</h3>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title" style="color:var(--danger);">数据隔离</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">Agent 训练时不能接触真实用户数据（GDPR/隐私合规），只能访问脱敏数据或合成数据。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent4);">操作幂等性</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">训练时调用"下单 API"不能真产生订单。需要 Mock API 模拟真实响应但不产生副作用。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent2);">权限分级</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">"查看商品" 低风险 → "修改价格" 高风险 → "发起退款" 极高风险。高风险操作需要 confirm/rollback 机制。</p>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== 6. Reward Engineering ==================== -->
+<section id="reward">
+    <h2><span class="num badge-blue">06</span> Reward 工程</h2>
+    <p class="section-desc">Agent 的 Reward 设计是 RL 训练成功的关键。两层 Reward 体系：Step 行为约束 + Episode 目标导向。</p>
+
+    <h3>两层 Reward 架构</h3>
+    <div class="compare-grid">
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent3);">Layer 1: Step Reward（逐步即时反馈）</div>
+            <div class="code-block" style="margin:0.5rem 0;">
+                <pre><code>+0.10  正确工具首次调用（在 skill 白名单中）
+-0.30  任意历史重复调用（any-prev 全历史去重）
++0.15  首次使用新工具 diversity bonus
+-0.20  格式错误（tool_call JSON 解析失败）</code></pre>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-dim);">每个 Action-Observation 对独立评分，归因精确。</p>
+        </div>
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent);">Layer 2: Episode Reward（终局叠加）</div>
+            <div class="code-block" style="margin:0.5rem 0;">
+                <pre><code>R_episode =
+  2.0 × token_overlap(answer, gold)
++ 1.0 × tool_recall(实际 ∩ 预期工具集)
++ 0.5 × reasoning_quality
++ 0.3 × efficiency([3,6] 得满分)
+× min(1, len/200)  ← answer-length scaling
++ 0.3 × gated_bonus(长度≥50 且 工具≥1)
+- 1.5 × truncation_penalty</code></pre>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-dim);">轨迹结束时叠加，目标导向。</p>
+        </div>
+    </div>
+
+    <h3>防 Reward Hacking 五重机制</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>机制</th><th>应对的 Hacking 行为</th><th>实现</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>any-prev 全历史去重</strong></td><td>模型学会"隔步重复"绕过相邻检测</td><td>-0.30 惩罚</td></tr>
+                <tr><td><strong>diversity bonus</strong></td><td>只用一个工具的 hacking</td><td>+0.15 首次使用新工具</td></tr>
+                <tr><td><strong>answer-length scaling</strong></td><td>空 answer 但工具调用正确</td><td>min(1, len/200) 线性缩放</td></tr>
+                <tr><td><strong>gated bonus 门控</strong></td><td>只调工具不给答案</td><td>必须调工具且写答案才给 +0.3</td></tr>
+                <tr><td><strong>KL 约束</strong></td><td>格式漂移 / 输出风格崩溃</td><td>β=0.03 KL penalty</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>稀疏 Reward 的应对策略</h3>
+    <div class="highlight-box highlight-purple">
+        <div class="hl-title">问题：电商场景大部分对话不产生购买，reward 极度稀疏</div>
+        <ol>
+            <li><strong>Reward Shaping</strong>：分解成中间信号 — "点击推荐商品" +0.1 → "加入购物车" +0.3 → "完成支付" +1.0</li>
+            <li><strong>Process + Outcome 混合</strong>：每步工具调用合理性（process）+ 最终转化率（outcome）</li>
+            <li><strong>SFT warm-start</strong>：先收集好轨迹做 SFT，让 Agent 有 ~20%+ 初始成功率，再用 GRPO 强化</li>
+            <li><strong>Reward Model 替代</strong>：训练 RM 预测"这段对话最终是否转化"作为 dense signal</li>
+        </ol>
+    </div>
+</section>
+
+<!-- ==================== 7. GRPO ==================== -->
+<section id="grpo">
+    <h2><span class="num badge-purple">07</span> GRPO 算法详解</h2>
+    <p class="section-desc">Group Relative Policy Optimization — 用组内相对比较替代 Critic Network 的策略优化算法，是 Agent RL 的主流选择。</p>
+
+    <h3>GRPO vs PPO</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>维度</th><th>PPO</th><th>GRPO</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Critic</strong></td><td>需要 V(s)（7B = 14GB 额外显存）</td><td>不需要 — 节省 ~50% 显存</td></tr>
+                <tr><td><strong>Advantage</strong></td><td>GAE(λ) 依赖 V(s) 精度</td><td>Group 内归一化排名</td></tr>
+                <tr><td><strong>数据效率</strong></td><td>1 prompt → 1 信号</td><td>1 prompt → G=8 信号</td></tr>
+                <tr><td><strong>LLM 适配</strong></td><td>state 是变长文本 → V(s) 很难训准</td><td>无需建模 state value</td></tr>
+                <tr><td><strong>推理预算</strong></td><td>rollout 1 次/prompt</td><td>rollout G 次（用推理换 Critic）</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>GRPO Loss 完整公式</h3>
+    <div class="code-block">
+        <div class="code-header"><span>数学公式 · Step-level GRPO</span></div>
+        <pre><code># Step 1: 按步归一化（同一步位置 G 条轨迹互比）
+A_{i,t} = (r_{i,t} - μ_t) / (σ_t + 1e-8)
+
+# Step 2: Generation Mask
+mask_t[k] = 1  if token k ∈ {Thought, Action}    # LLM 生成
+mask_t[k] = 0  if token k ∈ {Observation, System} # 环境/系统
+
+# Step 3: Clipped Policy Ratio
+ratio = π_θ(token|ctx) / π_ref(token|ctx)
+clipped = clip(ratio, 1-ε, 1+ε)
+
+# Step 4: Final Loss
+L = -(1/N) Σᵢ Σ_t Σ_k [mask · min(ratio·A_{i,t}, clipped·A_{i,t})]
+    + β · D_KL(π_θ ∥ π_ref)</code></pre>
+    </div>
+
+    <h3>三个 Mask 的工程意义</h3>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title" style="color:var(--accent);">generation_mask</div>
+            <p style="font-size:0.9rem;">区分 LLM 生成 vs 环境返回 → 只对模型行为计算梯度。Observation token 全 mask。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent3);">clip</div>
+            <p style="font-size:0.9rem;">限制策略更新步长 → 防止单次大更新导致策略崩溃。ε=0.2 是标准设置。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent2);">KL penalty</div>
+            <p style="font-size:0.9rem;">全局锚定 → 保证模型不偏离基础语言能力。β=0.01~0.03。</p>
+        </div>
+    </div>
+
+    <div class="highlight-box highlight-blue">
+        <div class="hl-title">为什么按步归一化？</div>
+        <p>不同步的 reward 分布不同（第 1 步信息少 → reward 低，最后步有 answer → reward 高）。混合归一化会让早期步永远负 advantage，模型永远不学"怎么开头"。</p>
+    </div>
+
+    <h3>Dr. GRPO: 消除长度偏差</h3>
+    <p>论文 <a href="https://arxiv.org/abs/2503.20783" style="color:var(--accent);">arXiv:2503.20783</a> 发现 GRPO 存在<strong>优化偏差会人为膨胀响应长度</strong>（尤其对错误输出）。Dr. GRPO 通过无偏优化变体提升 token 效率，7B 模型在 AIME 2024 上达到 43.3%。</p>
+</section>
+
+<!-- ==================== 8. Token Mapping ==================== -->
+<section id="mapping">
+    <h2><span class="num badge-green">08</span> Token-Text 映射问题</h2>
+    <p class="section-desc">Agent Harness 最难的工程问题之一 —— 如何在多轮交互中精确区分哪些 token 是模型生成的、哪些是环境注入的。</p>
+
+    <h3>问题本质</h3>
+    <p>多轮交互的完整 sequence 中：</p>
+    <ul>
+        <li><strong>LLM 生成的</strong>：Thought + Action → <span class="tag tag-key">需要计算 loss</span></li>
+        <li><strong>环境注入的</strong>：Observation（工具返回值）→ <span class="tag tag-warn">不能计算 loss</span></li>
+    </ul>
+    <p>如果把 Observation 的 token 也纳入 loss，等于在"奖励环境的输出"，没有意义且浪费梯度信号。</p>
+
+    <h3>解决方案：Generation Mask</h3>
+    <div class="code-block">
+        <div class="code-header"><span>Token Mapping 示意</span></div>
+        <pre><code>Token:  [Thought: 我需要查询...] [Action: {"tool":"search"...}] [Observation: 找到3条结果...] [Thought: 根据结果...]
+Mask:   [1  1  1  1  1  1  1 ]  [1  1  1  1  1  1  1  1  ] [0  0  0  0  0  0  0  0 ]  [1  1  1  1  1 ]
+                                                              ↑ 环境返回，不计入 loss
+
+Loss = -Σ(generation_mask × log_prob × advantage) / Σ(generation_mask)</code></pre>
+    </div>
+
+    <h3>Agent-R1 的 Step-Level MDP 方案</h3>
+    <p>Agent-R1（<a href="https://arxiv.org/abs/2511.14460" style="color:var(--accent);">arXiv:2511.14460</a>）提出更彻底的解决方案：<strong>Step-level MDP</strong>——每个交互步是独立的 RL transition（obs → action → step → next_obs），避免 Token → Text → Token 的不可逆转换（retokenization drift）。上下文可以在步间被截断/摘要/重写，而非仅仅追加。</p>
+</section>
+
+<!-- ==================== 9. 框架对比 ==================== -->
+<section id="frameworks">
+    <h2><span class="num badge-orange">09</span> 主流 Harness 框架对比</h2>
+    <p class="section-desc">2024-2026 年涌现了多个 Agentic RL 训练框架，各有设计哲学和适用场景。</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>框架</th>
+                    <th>组织</th>
+                    <th>核心设计</th>
+                    <th>训练范式</th>
+                    <th>推理后端</th>
+                    <th>亮点</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong class="strong-accent">VERL</strong></td>
+                    <td>ByteDance Seed</td>
+                    <td>3D-HybridEngine + Hybrid Controller</td>
+                    <td>GRPO, PPO, DAPO</td>
+                    <td>vLLM, SGLang</td>
+                    <td>大规模（671B）、灵活 RL dataflow</td>
+                </tr>
+                <tr>
+                    <td><strong class="strong-green">ROLL</strong></td>
+                    <td>Alibaba</td>
+                    <td>Multi-role Ray + AgenticPipeline</td>
+                    <td>StarPO, GiGPO, GRPO</td>
+                    <td>vLLM, SGLang, Megatron</td>
+                    <td>10+ 算法、ROLL Flash 异步加速</td>
+                </tr>
+                <tr>
+                    <td><strong class="strong-purple">RAGEN</strong></td>
+                    <td>Northwestern U.</td>
+                    <td>StarPO 统一框架</td>
+                    <td>StarPO (PPO/GRPO)</td>
+                    <td>vLLM</td>
+                    <td>SNR-Adaptive Filtering、Echo Trap 诊断</td>
+                </tr>
+                <tr>
+                    <td><strong class="strong-orange">Agent-R1</strong></td>
+                    <td>Independent</td>
+                    <td>Step-level MDP</td>
+                    <td>StepPO, GRPO, RLOO</td>
+                    <td>vLLM</td>
+                    <td>解决 retokenization drift</td>
+                </tr>
+                <tr>
+                    <td><strong style="color:var(--accent5);">VerlTool</strong></td>
+                    <td>TIGER-AI-Lab</td>
+                    <td>Tool-as-Environment</td>
+                    <td>GRPO (基于 VERL)</td>
+                    <td>vLLM</td>
+                    <td>轨迹级异步 rollout 2x 加速</td>
+                </tr>
+                <tr>
+                    <td><strong>TRL</strong></td>
+                    <td>HuggingFace</td>
+                    <td>单卡简单实现</td>
+                    <td>PPO, DPO, GRPO</td>
+                    <td>HF Transformers</td>
+                    <td>入门快、教学友好</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>ROLL vs VERL：编排理念对比</h3>
+    <div class="compare-grid">
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent3);">ROLL（Collocated Pattern）</div>
+            <p>vLLM 和训练<strong>共用 GPU</strong>，通过时分复用减少跨节点通信。<br>适合中等规模（7B-30B）+ 单集群。</p>
+        </div>
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent);">VERL（Server-Based Pattern）</div>
+            <p>Inference Server 和 Trainer <strong>分开成两个 Actor Group</strong>，通过 HTTP 通信。<br>适合大规模（70B+）+ 多集群。</p>
+        </div>
+    </div>
+
+    <h3>ROLL 与 Ray 的层次关系</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>层级</th><th>框架</th><th>职责</th><th>类比</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>L1 业务逻辑层</td>
+                    <td><strong>ROLL AgenticPipeline</strong></td>
+                    <td>定义训练流程、角色生命周期、权重同步</td>
+                    <td>管弦乐团的乐谱</td>
+                </tr>
+                <tr>
+                    <td>L2 分布式调度层</td>
+                    <td><strong>Ray</strong></td>
+                    <td>创建 worker 进程、分配 GPU、跨节点通信</td>
+                    <td>场地管理</td>
+                </tr>
+                <tr>
+                    <td>L3 单卡训练/推理层</td>
+                    <td><strong>FSDP2 + vLLM</strong></td>
+                    <td>模型分片、显存管理、推理加速</td>
+                    <td>演员的表演</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ==================== 10. Pipeline ==================== -->
+<section id="pipeline">
+    <h2><span class="num badge-pink">10</span> Agent Post-Training Pipeline</h2>
+    <p class="section-desc">完整的 Agent 训练 pipeline 分为四个阶段：SFT 冷启动 → RL 强化 → Self-Play Bootstrap → DPO 偏好微调。</p>
+
+    <h3>四阶段训练流水线</h3>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-title">Stage 1: SFT 冷启动</div>
+            <div class="timeline-meta">目标：学会 ReAct 格式 + 工具调用 syntax + 任务理解</div>
+            <p>Teacher Rollout（如 DeepSeek-V3.2）生成高质量轨迹 → Evaluator 多维打分 → 筛选进入 SFT 训练。<br>
+            <strong>关键</strong>：Observation Mask（工具返回不计 loss），把格式正确率提到 ~85%。</p>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-title">Stage 2: RL 强化（GRPO）</div>
+            <div class="timeline-meta">目标：优化决策质量（选什么工具、何时停止、答案质量）</div>
+            <p>Step-level GRPO + clip + KL 双约束。在 SFT 模型基础上进一步优化工具选择和推理能力。<br>
+            <strong>前提</strong>：Base model 必须有 ~20%+ 的 zero-shot 成功率，否则 GRPO 无法学习。</p>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-title">Stage 3: Rejection Sampling + Iterative SFT（可选）</div>
+            <div class="timeline-meta">目标：Self-Play Bootstrap 数据增广</div>
+            <p>RL 训后模型 rollout → reward 打分 → 选 top-k → 再 SFT。比纯 RL 更稳定，适合数据有限时增广。</p>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-title">Stage 4: DPO 偏好微调（可选）</div>
+            <div class="timeline-meta">目标：主观维度精细调优</div>
+            <p>好轨迹 vs 差轨迹做偏好对。适合推荐话术等主观性强的维度。<br>
+            <strong>最优方案</strong>：GRPO + DPO 混合 — 操作类用 GRPO（rule-based），对话类用 DPO（人类偏好）。</p>
+        </div>
+    </div>
+
+    <h3>完整数据流示意</h3>
+    <div class="flow">
+        <div class="flow-step">种子问题集</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Skill 路由</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Teacher Rollout</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Evaluator 打分</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">质量筛选</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">SFT</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">GRPO</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">最终模型</div>
+    </div>
+</section>
+
+<!-- ==================== 11. 失败模式 ==================== -->
+<section id="failures">
+    <h2><span class="num badge-blue">11</span> 常见失败模式与对策</h2>
+    <p class="section-desc">Agent RL 训练中的典型问题和防御方案。</p>
+
+    <h3>训练阶段的三段危机</h3>
+    <div class="card-grid">
+        <div class="card" style="border-left: 3px solid var(--accent4);">
+            <div class="card-title" style="color:var(--accent4);">前期 (0-200 step): Reward Hacking</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">模型学会"模板攻击"——每次先调某个工具搜索 → 直接复制结果。reward 高但实质是 shortcut。</p>
+            <p style="font-size:0.85rem;"><strong>Fix</strong>：工具多样性 reward + any-prev 重复惩罚</p>
+        </div>
+        <div class="card" style="border-left: 3px solid var(--accent2);">
+            <div class="card-title" style="color:var(--accent2);">中期 (500-800 step): KL 漂移</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">输出风格渐变——Action 前加无意义 padding，格式飘移，偏离基础语言能力。</p>
+            <p style="font-size:0.85rem;"><strong>Fix</strong>：KL β 从 0.01 → 0.03 + 格式 reward 子项</p>
+        </div>
+        <div class="card" style="border-left: 3px solid var(--accent3);">
+            <div class="card-title" style="color:var(--accent3);">后期 (800+ step): 方差坍缩</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">G=8 条轨迹 reward 几乎相同，advantage ≈ 0，梯度为 0，训练停滞。</p>
+            <p style="font-size:0.85rem;"><strong>Fix</strong>：temperature 0.7 → 0.9 + curriculum + prompt filtering</p>
+        </div>
+    </div>
+
+    <h3>生产环境失败模式</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>失败模式</th><th>描述</th><th>防御</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>环境静默升级</strong></td>
+                    <td>工具 API 版本变了但没通知 Agent</td>
+                    <td>Pin 版本 + 回归测试</td>
+                </tr>
+                <tr>
+                    <td><strong>目标漂移</strong></td>
+                    <td>长对话中 Agent 被中间结果带偏</td>
+                    <td>周期性检查当前行动与原始 goal 的相关性</td>
+                </tr>
+                <tr>
+                    <td><strong>Compounding Errors</strong></td>
+                    <td>每步小误差累积，10 步后完全偏离</td>
+                    <td>设 MAX_STEPS + Verification Loop</td>
+                </tr>
+                <tr>
+                    <td><strong>Dead Loops</strong></td>
+                    <td>重复调用同一工具但不改变策略</td>
+                    <td>连续 3 次相同 action → 强制切换</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>RAGEN 的 Echo Trap 现象</h3>
+    <div class="highlight-box highlight-red">
+        <div class="hl-title">Echo Trap（回声陷阱）</div>
+        <p>模型过拟合到局部 reward pattern → reward 方差坍缩 → 梯度尖峰 → 训练崩溃。RAGEN-2 引入 <strong>SNR-Adaptive Filtering</strong>（基于 reward 方差的信噪比自适应过滤），只用 reward 方差最大的 top-p% 轨迹训练，缓解回声陷阱。</p>
+    </div>
+</section>
+
+<!-- ==================== 12. 生产化 ==================== -->
+<section id="production">
+    <h2><span class="num badge-purple">12</span> Agent 生产化关键问题</h2>
+    <p class="section-desc">从 Demo 到生产的三大 Gap 和解决方案。</p>
+
+    <div class="card-grid">
+        <div class="card" style="border-top: 3px solid var(--danger);">
+            <div class="card-title">可靠性 Gap</div>
+            <p style="font-size:0.9rem;">Demo 80%+ 成功率看似不错。每天 10 万请求 × 1% 失败 = 1000 个失败 case。</p>
+            <p style="font-size:0.85rem;color:var(--accent3);"><strong>解决</strong>：Guardrails + Fallback + 人工兜底 + 审计日志</p>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--accent4);">
+            <div class="card-title">延迟 Gap</div>
+            <p style="font-size:0.9rem;">用户期望 2-3 秒。多轮工具调用的累积延迟可能 30 秒+。</p>
+            <p style="font-size:0.85rem;color:var(--accent3);"><strong>解决</strong>：并行工具调用 + 缓存 + 流式输出 + 小模型 Router</p>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--accent2);">
+            <div class="card-title">成本 Gap</div>
+            <p style="font-size:0.9rem;">10 万请求 × 5 轮 = 50 万次 LLM 调用，成本爆炸。</p>
+            <p style="font-size:0.85rem;color:var(--accent3);"><strong>解决</strong>：SFT 蒸馏 + Router 用小模型 + 缓存常见 pattern</p>
+        </div>
+    </div>
+
+    <h3>三层 Guardrails 设计</h3>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title" style="color:var(--accent);">Input Guardrails</div>
+            <ul style="font-size:0.88rem;">
+                <li>敏感词检测</li>
+                <li>Prompt Injection 检测</li>
+                <li>用户鉴权</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent2);">Output Guardrails</div>
+            <ul style="font-size:0.88rem;">
+                <li>格式校验（JSON 结构完整？）</li>
+                <li>内容安全（有害内容？）</li>
+                <li>幻觉检测（信息是否编造？）</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent3);">Tool Guardrails</div>
+            <ul style="font-size:0.88rem;">
+                <li>权限检查</li>
+                <li>参数范围限制</li>
+                <li>频率限制</li>
+                <li>沙箱隔离</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>可观测性三层</h3>
+    <ol>
+        <li><strong>Trace</strong>：完整的 Thought→Action→Observation 链路，每步带时间戳和 token 统计</li>
+        <li><strong>Metrics</strong>：成功率、平均轮数、延迟、工具调用分布、Reward 分布</li>
+        <li><strong>Alerts</strong>：连续 N 条轨迹失败 / 某工具错误率突增 / 延迟突然升高</li>
+    </ol>
+</section>
+
+<!-- ==================== 13. 前沿进展 ==================== -->
+<section id="frontier">
+    <h2><span class="num badge-green">13</span> 前沿进展（2024-2026）</h2>
+    <p class="section-desc">Agentic RL 四大流派 + Agent Reasoning + 关键论文速查。</p>
+
+    <h3>Agentic RL 四大流派</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>流派</th><th>代表</th><th>核心思路</th><th>适用场景</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Trajectory GRPO</strong></td>
+                    <td>DeepSeek-R1, DAPO</td>
+                    <td>单轮生成，outcome reward，组内比较</td>
+                    <td>数学推理 / 代码生成</td>
+                </tr>
+                <tr>
+                    <td><strong>Multi-Turn GRPO</strong></td>
+                    <td>RAGEN/StarPO, ProtAgent</td>
+                    <td>多轮交互，step/episode reward，环境反馈</td>
+                    <td>Agent 工具调用</td>
+                </tr>
+                <tr>
+                    <td><strong>Process Reward RL</strong></td>
+                    <td>VERL-Tool, TORL</td>
+                    <td>每步工具成功率作中间 reward</td>
+                    <td>工具密集型任务</td>
+                </tr>
+                <tr>
+                    <td><strong>Self-Play Bootstrap</strong></td>
+                    <td>Agent-R1, OpenClaw-RL</td>
+                    <td>RL 训后模型生成新数据 → 再训</td>
+                    <td>数据稀缺场景</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Agent Reasoning vs LLM Reasoning</h3>
+    <div class="compare-grid">
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent2);">LLM Reasoning (R1-style)</div>
+            <ul>
+                <li>固定观测空间 (problem statement)</li>
+                <li>纯文本 token 行动</li>
+                <li>内省式（自我推理）</li>
+                <li>最终结果做 reward</li>
+            </ul>
+        </div>
+        <div class="vs-box">
+            <div class="vs-title" style="border-color: var(--accent3);">Agent Reasoning</div>
+            <ul>
+                <li>动态观测空间（每步新 observation）</li>
+                <li>文本 + 结构化工具调用</li>
+                <li>交互式（和环境交互获取信息）</li>
+                <li>每步环境反馈做 reward</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="highlight-box highlight-blue">
+        <div class="hl-title">关键洞察</div>
+        <p>论文 <a href="https://arxiv.org/abs/2504.13837" style="color:var(--accent);">arXiv:2504.13837</a> 指出：当前 RLVR（单轮 + 可验证 reward）<strong>并不能激发根本性的新推理能力</strong>——它只是锐化已有能力（pass@1 提升，但 pass@k 被 base model 上界限制）。<strong>多轮 agent-environment 交互</strong>是解锁真正新推理的必要下一范式。</p>
+    </div>
+
+    <h3>关键论文速查</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>论文</th><th>年份</th><th>核心贡献</th><th>链接</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>DeepSeek-R1</td><td>2025.01</td><td>纯 RL 训练涌现推理能力</td><td><a href="https://arxiv.org/abs/2501.12948" style="color:var(--accent);">2501.12948</a></td></tr>
+                <tr><td>DeepSeekMath (GRPO)</td><td>2024.02</td><td>GRPO 算法提出</td><td><a href="https://arxiv.org/abs/2402.03300" style="color:var(--accent);">2402.03300</a></td></tr>
+                <tr><td>VERL</td><td>2024.09</td><td>大规模 RL 训练框架</td><td><a href="https://arxiv.org/abs/2409.19256" style="color:var(--accent);">2409.19256</a></td></tr>
+                <tr><td>RAGEN / StarPO</td><td>2025.04</td><td>统一 Agent RL 框架 + Echo Trap</td><td><a href="https://arxiv.org/abs/2504.20073" style="color:var(--accent);">2504.20073</a></td></tr>
+                <tr><td>ROLL</td><td>2025.06</td><td>多角色 Ray + AgenticPipeline</td><td><a href="https://arxiv.org/abs/2506.06122" style="color:var(--accent);">2506.06122</a></td></tr>
+                <tr><td>Agent-R1</td><td>2025.11</td><td>Step-level MDP 解决 retokenization</td><td><a href="https://arxiv.org/abs/2511.14460" style="color:var(--accent);">2511.14460</a></td></tr>
+                <tr><td>VerlTool</td><td>2025.09</td><td>Tool-as-Environment + 异步 rollout</td><td><a href="https://arxiv.org/abs/2509.01055" style="color:var(--accent);">2509.01055</a></td></tr>
+                <tr><td>Dr. GRPO</td><td>2025.03</td><td>GRPO 长度偏差修正</td><td><a href="https://arxiv.org/abs/2503.20783" style="color:var(--accent);">2503.20783</a></td></tr>
+                <tr><td>PRIME</td><td>2025.02</td><td>隐式过程奖励 (无需 PRM)</td><td><a href="https://arxiv.org/abs/2502.01456" style="color:var(--accent);">2502.01456</a></td></tr>
+                <tr><td>ReSearch</td><td>2025.03</td><td>RL 学习推理+搜索交织</td><td><a href="https://arxiv.org/abs/2503.19470" style="color:var(--accent);">2503.19470</a></td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ==================== 14. ProtAgent 案例 ==================== -->
+<section id="case">
+    <h2><span class="num badge-orange">14</span> 实战案例：ProtAgent</h2>
+    <p class="section-desc">基于 Qwen2.5-7B 的蛋白质功能理解 Agent，端到端打通 Teacher Rollout → SFT → GRPO 训练闭环，在 5 类蛋白任务上取得 7B 开源 SOTA。</p>
+
+    <h3>系统架构</h3>
+    <div class="arch-diagram">
+        <pre>┌────────────────── ProtAgent System Architecture ──────────────────┐
+│                                                                    │
+│  L1 Training Framework        ROLL AgenticPipeline + FSDP2        │
+│  ─────────────────────        ─────────────────────────────        │
+│  角色编排 / 权重同步 / 数据流    训练端: FSDP2 (8×A100, 7B 全参)    │
+│                                                                    │
+│  L2 Rollout Engine            vLLM Server (async, PagedAttention) │
+│  ─────────────────            ───────────────────────────────      │
+│  batch 采样 / KV Cache / G=8   异步多轨迹并行, GPU 利用率 >85%     │
+│                                                                    │
+│  L3 Tool Environment          12 异构生信工具 + 进程级 Sandbox     │
+│  ────────────────────         ─────────────────────────────        │
+│  BaseTool 抽象 / timeout 60s   API(REST) + CLI + Python 三类统一   │
+│                                                                    │
+└────────────────────────────────────────────────────────────────────┘</pre>
+    </div>
+
+    <h3>关键数据</h3>
+    <div class="card-grid">
+        <div class="card"><div class="card-title" style="color:var(--accent);">780 → 7800</div><p style="font-size:0.9rem;">780 条种子题 × ~10 条 Teacher Rollout 轨迹</p></div>
+        <div class="card"><div class="card-title" style="color:var(--accent3);">81% 通过率</div><p style="font-size:0.9rem;">两层筛选（7 项 Evaluator + Task Audit）6310 条进入 SFT</p></div>
+        <div class="card"><div class="card-title" style="color:var(--accent2);">+10pp F1</div><p style="font-size:0.9rem;">Step-level GRPO 最终在 OOD benchmark 上 F1 领先 ≥ 10pp</p></div>
+        <div class="card"><div class="card-title" style="color:var(--accent4);">12 → 1 接口</div><p style="font-size:0.9rem;">12 个异构工具通过 BaseTool 抽象统一为一个接口</p></div>
+    </div>
+
+    <h3>YAML Skill 路由</h3>
+    <div class="code-block">
+        <div class="code-header"><span>YAML · 任务级工具路由（低代码配置驱动）</span></div>
+        <pre><code>skill_name: enzyme_catalysis
+available_tools: [CLEAN, mmseqs2, UniProt_API]
+max_rounds: 8
+answer_format:
+  required_fields: ["ec_number", "substrate", "product"]
+audit_rules:
+  - field: "ec_number"
+    pattern: "^\\d+\\.\\d+\\.\\d+\\.\\d+$"
+reward_weights:
+  tool_accuracy: 0.3
+  answer_f1: 0.4
+  reasoning_quality: 0.3</code></pre>
+    </div>
+    <p>新增任务类型只需加 YAML，不改代码。Git 版本控制每次 skill 调整，研究人员和工程同学职责解耦。</p>
+</section>
+
+<!-- ==================== 15. 实验课示例 ==================== -->
+<section id="lab">
+    <h2><span class="num badge-pink">15</span> 课程实验：智能体个体模拟</h2>
+    <p class="section-desc">本节展示 Agent 实验课的典型任务结构，以"智能体个体模拟"为例，涵盖 Memory 系统、角色模拟训练和评估。</p>
+
+    <h3>实验概览</h3>
+    <p>本实验围绕基于大语言模型的个体模拟展开，包含 <strong>角色记忆构建 → Memory-Augmented Agent → SFT/DPO 训练 → 综合评测</strong> 四个递进任务。</p>
+
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title" style="color:var(--accent);">Task 0: Memory 核心代码</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">实现轻量级角色记忆检索模块：综合 semantic_similarity（cosine）、lexical_overlap（词重叠）、importance（重要性打分），三维加权 top-k 检索。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent2);">Task 1: Memory-Augmented Agent</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">构建 Memory-Augmented Role-Playing Agent，根据用户问题检索相关记忆，以角色身份回答。对比：只问题 / Persona+问题 / Persona+Memory+问题 三种配置。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent3);">Task 2: 训练角色模型</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">构造 SFT/DPO 训练数据，训练不依赖外部 Memory 的角色化模型。方案 A: instruction-response 从对话提取；方案 B: chosen/rejected 偏好对构造。</p>
+        </div>
+        <div class="card">
+            <div class="card-title" style="color:var(--accent4);">Task 3-4: 结合 + 挑战</div>
+            <p style="font-size:0.9rem;color:var(--text-dim);">将训练模型 + Memory 系统结合，对比 4 种配置（Base/SFT × ±Memory）。挑战任务：同时保持角色模拟 + 通用指令能力。</p>
+        </div>
+    </div>
+
+    <h3>Memory 检索公式</h3>
+    <div class="code-block">
+        <div class="code-header"><span>Memory Retrieval · 三维加权评分</span></div>
+        <pre><code>score = α × semantic_similarity   # cosine(query_emb, memory_emb), α=0.65
+      + β × lexical_overlap        # |query_words ∩ memory_words| / |query_words|, β=0.25
+      + γ × importance             # 预设的记忆重要性分数, γ=0.10</code></pre>
+    </div>
+
+    <h3>四维评估体系（LLM-as-Judge）</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>评估维度</th><th>描述</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Memorisation</strong></td><td>回答是否正确使用角色背景、经历、关系和历史记忆</td></tr>
+                <tr><td><strong>Values</strong></td><td>回答是否符合角色的价值观、偏好和行为倾向</td></tr>
+                <tr><td><strong>Personality</strong></td><td>回答是否保持角色的性格特征、语气和说话风格</td></tr>
+                <tr><td><strong>Hallucination</strong></td><td>回答是否避免与角色设定或已知记忆相矛盾的内容</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="highlight-box highlight-green">
+        <div class="hl-title">实验与 Agent Harness 的关联</div>
+        <p>这个实验展示了 Agent 系统的核心组件：<strong>Memory 检索模块</strong>（对应 Harness 的 Context Management）、<strong>角色 Persona 注入</strong>（对应 System Prompt 编排）、<strong>SFT/DPO 训练</strong>（对应 Post-Training Pipeline 的 Stage 1/4）、<strong>LLM-as-Judge 评估</strong>（对应 Evaluator 多维打分）。它是从"应用侧"理解 Agent 训练全链路的入口。</p>
+    </div>
+</section>
+
+<!-- ==================== 16. 参考资源 ==================== -->
+<section id="refs">
+    <h2><span class="num badge-blue">16</span> 参考资源</h2>
+
+    <div class="sources">
+        <h4>开源框架</h4>
+        <ul>
+            <li><a href="https://github.com/verl-project/verl">VERL</a> — ByteDance Seed 大规模 RL 训练框架 (arXiv:2409.19256)</li>
+            <li><a href="https://github.com/alibaba/ROLL">ROLL</a> — Alibaba 多角色 Ray + AgenticPipeline (arXiv:2506.06122)</li>
+            <li><a href="https://github.com/alibaba/ROCK">ROCK</a> — Alibaba Sandbox 基础设施</li>
+            <li><a href="https://github.com/RAGEN-AI/RAGEN">RAGEN</a> — StarPO 统一 Agent RL 框架 (arXiv:2504.20073)</li>
+            <li><a href="https://github.com/AgentR1/Agent-R1">Agent-R1 / Claw-R1</a> — Step-level MDP (arXiv:2511.14460)</li>
+            <li><a href="https://github.com/TIGER-AI-Lab/verl-tool">VerlTool</a> — Tool-as-Environment (arXiv:2509.01055)</li>
+            <li><a href="https://github.com/AMAP-ML/Tree-GRPO">Tree-GRPO</a> — Alibaba 树搜索 Agent RL (ICLR 2026)</li>
+            <li><a href="https://github.com/NousResearch/atropos">Atropos</a> — NousResearch RL 环境框架</li>
+        </ul>
+    </div>
+
+    <div class="sources">
+        <h4>核心论文</h4>
+        <ul>
+            <li><a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1</a> — 纯 RL 训练涌现推理（2025.01）</li>
+            <li><a href="https://arxiv.org/abs/2402.03300">DeepSeekMath / GRPO</a> — GRPO 算法提出（2024.02）</li>
+            <li><a href="https://arxiv.org/abs/2503.20783">Dr. GRPO</a> — GRPO 长度偏差修正（2025.03）</li>
+            <li><a href="https://arxiv.org/abs/2502.01456">PRIME</a> — 隐式过程奖励（2025.02）</li>
+            <li><a href="https://arxiv.org/abs/2503.19470">ReSearch</a> — RL 学习推理+搜索交织（2025.03）</li>
+            <li><a href="https://arxiv.org/abs/2504.13837">RLVR Limits</a> — 当前 RLVR 不激发新推理（2025.04）</li>
+            <li><a href="https://arxiv.org/abs/2412.14135">Reproduce o1 Roadmap</a> — Reward Design 四大支柱（2024.12）</li>
+        </ul>
+    </div>
+
+    <div class="sources">
+        <h4>参考文档</h4>
+        <ul>
+            <li>面试准备 — 字节电商 Agent (ProtAgent 项目经验总结)</li>
+            <li>实验课五：智能体个体模拟 (Memory-Augmented Agent 实验)</li>
+        </ul>
+    </div>
+</section>
+
+</div><!-- .container -->
+
+<footer>
+    <p>Agent Harness 深度解析 · 架构设计、原理与工程实践</p>
+    <p style="margin-top:0.5rem;">基于 VERL / ROLL / RAGEN / Agent-R1 / VerlTool 等前沿框架 · 结合 ProtAgent 实战经验</p>
+    <p style="margin-top:0.5rem;font-size:0.8rem;">2026.05</p>
+</footer>
+
+</body>
+</html>
