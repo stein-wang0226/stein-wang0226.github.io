@@ -50,20 +50,27 @@
     <a href="#sec5-3" class="sub">5.3 LLaVA 系列</a>
     <a href="#sec5-4" class="sub">5.4 Flamingo: 过渡架构</a>
     <a href="#sec5-5" class="sub">5.5 InstructBLIP</a>
-    <a href="#sec6">6. 高分辨率处理</a>
-    <a href="#sec7">7. 训练策略</a>
-    <a href="#sec7-1" class="sub">7.1 两/三阶段训练</a>
-    <a href="#sec7-2" class="sub">7.2 数据工程</a>
-    <a href="#sec7-3" class="sub">7.3 视觉编码器冻结 vs 解冻</a>
-    <a href="#sec8">8. 理解与生成统一</a>
-    <a href="#sec8-1" class="sub">8.1 离散 Token 路线</a>
-    <a href="#sec8-2" class="sub">8.2 双解码器路线</a>
-    <a href="#sec8-3" class="sub">8.3 原生统一架构</a>
-    <a href="#sec9">9. 视频理解</a>
-    <a href="#sec10">10. 多模态幻觉</a>
-    <a href="#sec11">11. 多模态 MoE</a>
-    <a href="#sec12">12. 评估体系</a>
-    <a href="#sec13">13. 架构对比总结</a>
+    <a href="#sec6">6. 主流 MLLM 深度解析</a>
+    <a href="#sec6-1" class="sub">6.1 Qwen-VL 系列</a>
+    <a href="#sec6-2" class="sub">6.2 InternVL 系列</a>
+    <a href="#sec6-3" class="sub">6.3 DeepSeek-VL2</a>
+    <a href="#sec6-4" class="sub">6.4 CogVLM / GLM-4V</a>
+    <a href="#sec6-5" class="sub">6.5 MiniCPM-V 系列</a>
+    <a href="#sec6-6" class="sub">6.6 模型选型决策</a>
+    <a href="#sec7">7. 高分辨率处理</a>
+    <a href="#sec8">8. 训练策略</a>
+    <a href="#sec8-1" class="sub">8.1 两/三阶段训练</a>
+    <a href="#sec8-2" class="sub">8.2 数据工程</a>
+    <a href="#sec8-3" class="sub">8.3 视觉编码器冻结 vs 解冻</a>
+    <a href="#sec9">9. 理解与生成统一</a>
+    <a href="#sec9-1" class="sub">9.1 离散 Token 路线</a>
+    <a href="#sec9-2" class="sub">9.2 双解码器路线</a>
+    <a href="#sec9-3" class="sub">9.3 原生统一架构</a>
+    <a href="#sec10">10. 视频理解</a>
+    <a href="#sec11">11. 多模态幻觉</a>
+    <a href="#sec12">12. 多模态 MoE</a>
+    <a href="#sec13">13. 评估体系</a>
+    <a href="#sec14">14. 架构对比总结</a>
     <a href="#interview">面试要点总结</a>
 </aside>
 
@@ -169,56 +176,133 @@ Chameleon, Janus                       GPT-4o, Qwen3-Omni, MiniCPM-o
 
     <h3 id="sec3-1">3.1 对比学习框架</h3>
     <div class="info-box key">
-        <h4>CLIP 架构</h4>
-        <p><strong>双塔模型</strong>：Image Encoder (ViT/ResNet) + Text Encoder (GPT-2 style)</p>
-        <p>两个 encoder 输出经线性投影 + L2 归一化后，在共享空间中做对比学习。</p>
+        <h4>CLIP 架构（OpenAI, 2021）</h4>
+        <p><strong>双塔模型</strong>：Image Encoder (ViT-L/14 或 ResNet-50×64) + Text Encoder (12-layer Transformer, 63M params, GPT-2 style)</p>
+        <p>两个 encoder 输出经<strong>线性投影 + L2 归一化</strong>后，在共享 $d=512$ 维空间中做对比学习。</p>
     </div>
+
+    <p><strong>完整架构流程</strong>：</p>
+    <pre><code>Image Encoder (ViT-L/14):
+  Image (224×224) → 16×16 patches → 196 patch tokens + [CLS]
+  → 12-layer Transformer (d=1024, heads=16)
+  → [CLS] output → Linear(1024, 512) → L2 Norm → image embedding v_i
+
+Text Encoder (GPT-2 style, modified):
+  Text → BPE Tokenize (vocab=49152) → max 76 tokens
+  → 12-layer Transformer (d=512, heads=8, causal mask)
+  → [EOS] token output → Linear(512, 512) → L2 Norm → text embedding t_j
+
+对比学习:
+  相似度矩阵 S[i,j] = cos_sim(v_i, t_j) × exp(τ)   [τ 可学习, 初始 log(1/0.07)]
+  Loss = symmetric cross-entropy on S</code></pre>
 
     <p><strong>训练目标</strong>：在 $N \times N$ 的相似度矩阵上做对称交叉熵（InfoNCE）：</p>
     <div class="math-block">
         $$\mathcal{L} = -\frac{1}{2N}\sum_{i=1}^N\left[\log\frac{e^{s_{ii}/\tau}}{\sum_j e^{s_{ij}/\tau}} + \log\frac{e^{s_{ii}/\tau}}{\sum_j e^{s_{ji}/\tau}}\right]$$
-        <p>$s_{ij} = \text{cos\_sim}(v_i, t_j)$，$\tau$ 为可学习温度参数（初始 $\log(1/0.07)$）</p>
+        <p>$s_{ij} = \text{cos\_sim}(v_i, t_j)$，$\tau$ 为可学习温度参数（初始 $\log(1/0.07) \approx 2.66$）</p>
     </div>
+
+    <p><strong>训练关键细节</strong>：</p>
     <ul>
-        <li>训练数据：400M 图文对（WebImageText）</li>
-        <li>Text Encoder 用 [EOS] token（非 [CLS]）作为句子表示</li>
-        <li>Batch size = 32768（提供充足负样本，这是 CLIP 成功的关键）</li>
+        <li><strong>数据</strong>：400M 图文对（WebImageText，网络爬取 + 清洗），不公开</li>
+        <li><strong>Text Encoder</strong> 用 [EOS] token（非 [CLS]）作为句子表示——因为 causal mask 下 [EOS] 能"看到"所有前文</li>
+        <li><strong>Batch size = 32768</strong>：每个正样本对有 32767 个负样本，提供充足对比信号（这是 CLIP 成功的关键）</li>
+        <li><strong>温度参数 $\tau$</strong>：可学习标量，控制 softmax 分布锐度。初始值使 logit ≈ 14.3，训练后收敛到约 100（分布更尖锐）</li>
+        <li><strong>训练硬件</strong>：256 块 V100，训练 12 天（ViT-L/14@336px 版本需 18 天）</li>
     </ul>
 
-    <h3 id="sec3-2">3.2 Zero-shot 分类</h3>
-    <pre><code>1. 对所有类别生成文本: "A photo of a {class_name}."
+    <div class="info-box interview">
+        <h4>面试深入：为什么 CLIP 用对比学习而不用生成式目标？</h4>
+        <ul>
+            <li><strong>效率</strong>：生成式方法（如 image captioning）需要为每张图生成完整文本描述，计算量大且收敛慢</li>
+            <li><strong>CLIP 论文实验</strong>：对比学习比相同计算量的生成式目标（预测 caption）效率高 4×（相同 FLOP 下 zero-shot 准确率高 4 倍）</li>
+            <li><strong>原因</strong>：对比学习只需判断"配不配对"（O(1) per pair），生成需要逐 token 预测完整文本（O(T) per image）</li>
+            <li><strong>代价</strong>：对比学习无法生成文本/图像——这正是 CLIP 的局限</li>
+        </ul>
+    </div>
+
+    <h3 id="sec3-2">3.2 Zero-shot 分类与下游应用</h3>
+    <pre><code>Zero-shot Classification:
+1. 对所有类别生成文本: "A photo of a {class_name}."
 2. 用 Text Encoder 编码所有类别文本 -> T_1, T_2, ..., T_K
 3. 用 Image Encoder 编码测试图像 -> V
 4. 计算 cos_sim(V, T_k) for all k
-5. softmax(相似度/τ) -> argmax 即为预测类别</code></pre>
-    <p>无需微调，无需特定类别训练数据，仅靠 prompt template 即可分类。</p>
+5. softmax(相似度 × exp(τ)) -> argmax 即为预测类别
+
+Prompt Engineering (提升 zero-shot):
+  基础: "A photo of a {class}."
+  增强: "A photo of a {class}, a type of pet."  (加领域上下文)
+  集成: 对 80 个 prompt 模板取平均 → +3.5% 提升</code></pre>
+    <p><strong>CLIP 的下游应用生态</strong>：</p>
+    <table>
+        <thead><tr><th>应用</th><th>如何使用 CLIP</th><th>代表模型</th></tr></thead>
+        <tbody>
+            <tr><td><strong>VLM 视觉编码器</strong></td><td>冻结 Image Encoder 提供视觉特征</td><td>LLaVA, MiniGPT-4, InstructBLIP</td></tr>
+            <tr><td><strong>文生图条件编码</strong></td><td>Text Encoder 编码 prompt → cross-attn 条件</td><td>Stable Diffusion, DALL·E 2</td></tr>
+            <tr><td><strong>图像检索</strong></td><td>图文嵌入在同一空间 → 跨模态最近邻搜索</td><td>多种检索系统</td></tr>
+            <tr><td><strong>图像生成评估</strong></td><td>CLIPScore = cos_sim(生成图, prompt)</td><td>FID + CLIPScore 标配</td></tr>
+            <tr><td><strong>开放词汇检测</strong></td><td>region embedding 与类别文本匹配</td><td>OWL-ViT, Grounding DINO</td></tr>
+        </tbody>
+    </table>
 
     <h3 id="sec3-3">3.3 CLIP 变体与改进</h3>
     <table>
-        <thead><tr><th>模型</th><th>核心改进</th><th>意义</th></tr></thead>
+        <thead><tr><th>模型</th><th>核心改进</th><th>技术细节</th><th>意义</th></tr></thead>
         <tbody>
-            <tr><td><strong>SigLIP</strong></td><td>Sigmoid Loss 替代 Softmax Loss</td><td>无需全局负样本，可用更小 batch</td></tr>
-            <tr><td><strong>EVA-CLIP</strong></td><td>高效大 ViT 训练策略</td><td>训练稳定性更好，更快收敛</td></tr>
-            <tr><td><strong>OpenCLIP</strong></td><td>开源复现 + DataComp 数据工程</td><td>社区可用，持续改进</td></tr>
+            <tr><td><strong>SigLIP</strong> (Google, 2023)</td><td>Sigmoid Loss 替代 Softmax</td><td>每对独立计算二分类 loss，无需全局负样本</td><td>小 batch 也能训练好；被 PaLI/Idefics2 采用</td></tr>
+            <tr><td><strong>EVA-CLIP</strong> (BAAI, 2023)</td><td>高效大 ViT 训练策略</td><td>MIM 预训练 → CLIP 微调；用 EVA 的 1B ViT</td><td>训练稳定，更快收敛</td></tr>
+            <tr><td><strong>OpenCLIP</strong> (LAION)</td><td>开源复现 + DataComp</td><td>用 LAION-2B/5B 开源数据训练；DataComp 找最优数据配方</td><td>社区可用，持续改进</td></tr>
+            <tr><td><strong>MetaCLIP</strong> (Meta, 2023)</td><td>数据策展算法</td><td>公开 CLIP 数据筛选算法，用 CommonCrawl 复现</td><td>证明数据质量 > 数量</td></tr>
+            <tr><td><strong>DFN</strong></td><td>用小 CLIP 过滤训练数据</td><td>先训 small CLIP → 过滤 noisy pairs → 训 large CLIP</td><td>自举式数据清洗</td></tr>
         </tbody>
     </table>
+
     <div class="info-box key">
-        <h4>SigLIP 的核心改进</h4>
-        <p>CLIP 的 Softmax InfoNCE 需要全局负样本（依赖大 batch），SigLIP 改为 Sigmoid 二分类 Loss：每个图文对独立计算 $-\log\sigma(s_{ij}/\tau \cdot y_{ij})$，$y_{ij}=1$ 为正，$-1$ 为负。</p>
-        <p>好处：不依赖 batch 内负样本数量，可用更小 batch 达到同等效果。</p>
+        <h4>SigLIP 深度解析</h4>
+        <p><strong>问题</strong>：CLIP 的 Softmax InfoNCE 需要全局负样本（依赖大 batch = 32768），分布式训练时需要跨 GPU all-gather 所有 embedding。</p>
+        <p><strong>SigLIP 方案</strong>：改为 Sigmoid 二分类 Loss：</p>
+        <div class="math-block">
+            $$\mathcal{L}_{SigLIP} = -\frac{1}{N}\sum_{i,j} \log\sigma\left(z_{ij} \cdot (s_{ij} \cdot \tau + b)\right)$$
+            <p>$z_{ij} = +1$ 若 $(i,j)$ 为正对，$-1$ 为负对；$\tau, b$ 为可学习参数</p>
+        </div>
+        <ul>
+            <li><strong>本质区别</strong>：Softmax = "从 N 个中选最像的"（需全局比较）；Sigmoid = "这对像不像"（独立判断）</li>
+            <li><strong>实际效果</strong>：batch=4096 的 SigLIP ≈ batch=32768 的 CLIP</li>
+            <li><strong>工程好处</strong>：无需跨 GPU all-gather，通信量大幅减少，更适合大规模分布式训练</li>
+        </ul>
+    </div>
+
+    <div class="info-box key">
+        <h4>EVA-CLIP：为什么 MIM 预训练有帮助？</h4>
+        <ul>
+            <li><strong>MIM (Masked Image Modeling)</strong>：类似 BERT，遮住图像 patch 让 ViT 重建。学到的是<strong>视觉结构先验</strong>（纹理、形状、空间关系）</li>
+            <li><strong>CLIP 微调</strong>：在 MIM 基础上做对比学习，学习<strong>语义对齐</strong></li>
+            <li><strong>两步好处</strong>：MIM 提供稳定初始化 → CLIP 训练更稳定、收敛更快。尤其对超大 ViT (1B+) 效果显著</li>
+            <li><strong>EVA-02 ViT-E</strong>：4.4B 参数 ViT，用此策略训练，成为 InternVL 等模型的骨干选择</li>
+        </ul>
     </div>
 
     <h3 id="sec3-4">3.4 CLIP 的局限</h3>
     <div class="info-box warning">
         <h4>CLIP 五大局限（面试高频）</h4>
         <ol>
-            <li><strong>组合性理解弱</strong>：难区分"红杯在蓝盘上" vs "蓝杯在红盘上"（属性绑定失败）</li>
-            <li><strong>空间关系差</strong>：对物体相对位置关系理解弱</li>
-            <li><strong>计数能力有限</strong>：难以精确数出图像中物体数量</li>
-            <li><strong>Bag-of-Words 倾向</strong>：对词序不敏感（"dog bites man" ≈ "man bites dog"）</li>
-            <li><strong>无生成能力</strong>：是判别模型，不能生成图像或文本</li>
+            <li><strong>组合性理解弱</strong>：难区分"红杯在蓝盘上" vs "蓝杯在红盘上"（属性绑定失败）。根因：对比学习将整张图/整段文本压缩为单个向量，丢失了结构化关系</li>
+            <li><strong>空间关系差</strong>：对物体相对位置关系理解弱。[CLS] 聚合了全局信息但忽略局部空间关系</li>
+            <li><strong>计数能力有限</strong>：难以精确数出图像中物体数量。全局表示无法编码精确数量信息</li>
+            <li><strong>Bag-of-Words 倾向</strong>：对词序不敏感（"dog bites man" ≈ "man bites dog"）。Text Encoder 虽有 causal mask，但对比目标只看最终 [EOS] 向量相似度</li>
+            <li><strong>无生成能力</strong>：是判别模型，不能生成图像或文本。对比学习只学习匹配，不学习条件生成分布</li>
         </ol>
         <p>这些正是多模态 LLM 要解决的问题——LLM 的语言生成能力 + CLIP 的视觉表示 = VLM。</p>
+    </div>
+
+    <div class="info-box interview">
+        <h4>面试：CLIP 为什么在 VLM 中作为视觉编码器而非直接使用？</h4>
+        <ul>
+            <li><strong>CLIP 提供的</strong>：高质量视觉-语义对齐特征，零样本泛化能力</li>
+            <li><strong>CLIP 缺失的</strong>：生成能力、细粒度理解、多轮推理</li>
+            <li><strong>VLM 的做法</strong>：冻结 CLIP ViT → 提取视觉 token → 投影到 LLM 空间 → LLM 负责理解和生成</li>
+            <li><strong>为什么不直接用 CLIP 做 VQA？</strong> CLIP 只能算 image-text 相似度（选择题），无法自由回答开放式问题</li>
+        </ul>
     </div>
 
     <!-- Section 4 -->
@@ -352,8 +436,241 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
     <p>BLIP-2 的指令感知改进：Q-Former 提取视觉特征时 <strong>也接收文本指令作为输入</strong>，使得提取的视觉信息与当前问题相关（而非提取通用视觉表示）。</p>
     <p>例如：问"图中有几只猫"时，Q-Former 会有倾向地提取与猫相关的视觉特征。</p>
 
-    <!-- Section 6 -->
-    <h2 id="sec6">6. 高分辨率处理</h2>
+    <!-- Section 6: 主流 MLLM 深度解析 -->
+    <h2 id="sec6">6. 主流 MLLM 架构深度解析</h2>
+    <p>本节对当前最具代表性的 MLLM 系列做<strong>架构级</strong>深度拆解，覆盖设计动机、关键技术细节和工程取舍。</p>
+
+    <h3 id="sec6-1">6.1 Qwen-VL 系列</h3>
+
+    <h4>Qwen-VL (2023.12)</h4>
+    <div class="info-box key">
+        <h4>核心设计：多任务多分辨率 + Grounding</h4>
+        <p>Qwen-VL 是首个在单一模型内同时支持<strong>多粒度理解 + 定位（Grounding）+ OCR</strong>的开源 MLLM。</p>
+    </div>
+    <p><strong>架构</strong>：</p>
+    <pre><code>Image (448×448) → ViT-G/14 (1.9B, OpenCLIP) → 256 visual tokens
+    → Position-aware Cross-Attention Adapter (256→256 queries)
+    → Qwen-7B LLM → Response
+
+特殊 Token 设计:
+  &lt;img&gt; ... &lt;/img&gt;      图像边界标记
+  &lt;ref&gt; ... &lt;/ref&gt;      引用文本区域
+  &lt;box&gt; (x1,y1),(x2,y2) &lt;/box&gt;  归一化坐标 (0-1000 整数)</code></pre>
+    <p><strong>关键创新</strong>：</p>
+    <ul>
+        <li><strong>Bounding Box Token</strong>：将定位任务转化为文本生成——模型直接输出坐标文本，无需额外检测头</li>
+        <li><strong>多分辨率输入</strong>：Stage 1 用 224px，Stage 2 提升到 448px，渐进提高视觉分辨率</li>
+        <li><strong>三阶段训练</strong>：(1) 大规模图文预训练 (1.4B pairs) → (2) 多任务混合微调 (含 Grounding/OCR/VQA) → (3) 对话式指令微调</li>
+        <li><strong>Position-aware Adapter</strong>：类 Q-Former 的 Cross-Attention，但加入 2D 绝对位置编码保留空间信息</li>
+    </ul>
+
+    <h4>Qwen2-VL (2024.09) — 架构级跃升</h4>
+    <div class="info-box key">
+        <h4>三大核心创新</h4>
+        <ol>
+            <li><strong>Naive Dynamic Resolution</strong>：彻底抛弃固定分辨率 / 预设切片网格</li>
+            <li><strong>Multimodal RoPE (M-RoPE)</strong>：统一处理文本位置、图像 2D 空间、视频时间维度</li>
+            <li><strong>视频原生流式理解</strong>：视频 = 动态分辨率帧序列，支持 20min+ 视频</li>
+        </ol>
+    </div>
+
+    <p><strong>Naive Dynamic Resolution 详解</strong>：</p>
+    <pre><code>传统方案 (LLaVA-NeXT/InternVL):
+  输入图像 → 匹配最佳切分网格 (如 2×3) → 每个子图独立编码 → 拼接
+  问题: 预设网格有限，宽高比匹配不精确
+
+Qwen2-VL Naive Dynamic Resolution:
+  输入图像 (任意 H×W)
+  → ViT 直接处理任意大小 (去掉固定位置编码)
+  → 输出 (H/14) × (W/14) 个 patch tokens
+  → 2×2 Spatial Merge (每 4 个相邻 token 合并为 1 个)
+  → 最终 Token 数 = H×W / (14×14×4)
+
+示例: 1344×768 图像 → 96×55 patches → merge 后 ≈ 1320 tokens
+      672×384 图像 → 48×27 patches → merge 后 ≈ 324 tokens</code></pre>
+
+    <p><strong>M-RoPE (Multimodal Rotary Position Embedding)</strong>：</p>
+    <div class="math-block">
+        $$\text{RoPE}_{text}: \quad (t, t, t) \quad \text{三维 ID 相同，等价于 1D RoPE}$$
+        $$\text{RoPE}_{image}: \quad (t, h, w) \quad \text{时间维固定，空间维编码 2D 位置}$$
+        $$\text{RoPE}_{video}: \quad (t, h, w) \quad \text{时间维递增，空间维编码帧内位置}$$
+    </div>
+    <p>将 RoPE 的维度分为三组 $(d/3, d/3, d/3)$，分别编码 temporal / height / width。对文本 token 三组 ID 相同，退化为标准 1D RoPE。对图像 token 时间维固定、空间维编码行列位置。对视频 token 时间维随帧递增。</p>
+
+    <p><strong>ViT 架构改进</strong>：</p>
+    <ul>
+        <li>去掉绝对位置编码 → 用 2D-RoPE 替代 → 天然支持任意分辨率</li>
+        <li>ViT 参数量：675M (Qwen2-VL-7B) / 675M (72B 共享同一 ViT)</li>
+        <li>Window Attention in ViT（降低超高分辨率时的计算开销）</li>
+    </ul>
+
+    <div class="info-box interview">
+        <h4>面试：Qwen2-VL vs LLaVA-NeXT 高分辨率方案对比</h4>
+        <table>
+            <thead><tr><th>维度</th><th>LLaVA-NeXT (Tiling)</th><th>Qwen2-VL (Naive DR)</th></tr></thead>
+            <tbody>
+                <tr><td>分辨率适配</td><td>预设切分网格匹配</td><td>任意分辨率直接处理</td></tr>
+                <tr><td>位置编码</td><td>每个子图独立编码，子图间无空间关系</td><td>M-RoPE 统一编码全局位置</td></tr>
+                <tr><td>Token 数控制</td><td>子图数 × 每图 Token</td><td>Spatial Merge 2×2 压缩</td></tr>
+                <tr><td>视频扩展</td><td>需额外设计帧级处理</td><td>天然支持（增加时间维）</td></tr>
+                <tr><td>实现复杂度</td><td>低（标准 ViT 不动）</td><td>中（需改 ViT 位置编码）</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 id="sec6-2">6.2 InternVL 系列</h3>
+
+    <h4>设计哲学：大视觉编码器 + 渐进对齐</h4>
+    <div class="info-box key">
+        <h4>核心论点</h4>
+        <p>InternVL 系列的核心主张：<strong>视觉编码器的能力上限决定了 MLLM 的能力上限</strong>。因此投入大量参数到 ViT 端（6B params），而不是仅仅依赖更大的 LLM。</p>
+    </div>
+
+    <h4>InternVL 1.5 (2024.02)</h4>
+    <pre><code>架构:
+  InternViT-6B (自研, 持续训练)
+  → Dynamic High-Resolution: 图像切分为 1-12 个 448×448 子图
+  → 每个子图 → 1024 tokens → PixelShuffle 4× 压缩 → 256 tokens/子图
+  → MLP Projector → InternLM2-Chat (20B / 76B)
+
+PixelShuffle Token 压缩:
+  输入: (H, W, C) 的 token grid
+  → reshape 为 (H/2, W/2, 4C)  [空间降 4 倍，通道扩 4 倍]
+  → Linear(4C → C) 映射回原始维度
+  → 效果: 每 4 个空间相邻 token 合并为 1 个，保留空间信息</code></pre>
+    <p><strong>关键设计</strong>：</p>
+    <ul>
+        <li><strong>Thumbnail + Tiles</strong>：始终包含一张全图缩略图（提供全局语义）+ 多张裁切子图（提供局部细节）</li>
+        <li><strong>InternViT-6B 持续训练</strong>：在 CLIP 预训练基础上，用更高质量数据持续训练 ViT，避免从头训练</li>
+        <li><strong>动态子图数量</strong>：根据图像分辨率和宽高比，自动选择 1-12 个子图（小图 1 个，大图最多 12 个）</li>
+    </ul>
+
+    <h4>InternVL 2.0 / 2.5 (2024.07-12)</h4>
+    <table>
+        <thead><tr><th>版本</th><th>LLM 骨干</th><th>关键改进</th><th>SOTA 成绩</th></tr></thead>
+        <tbody>
+            <tr><td>InternVL 2.0</td><td>InternLM2 / Nous-Hermes-2 / Yi-1.5</td><td>多 LLM 骨干、更强 MLP Projector</td><td>OCRBench #1, MMBench top-3</td></tr>
+            <tr><td>InternVL 2.5</td><td>InternLM2.5 (7B-78B)</td><td>MoE 变体 + 超长图文交错</td><td>多项开源 SOTA</td></tr>
+        </tbody>
+    </table>
+    <div class="info-box interview">
+        <h4>面试：为什么 InternVL 用 6B 的超大 ViT？</h4>
+        <ul>
+            <li><strong>视觉瓶颈假说</strong>：多数 MLLM 用冻结 CLIP ViT-L (300M)，视觉特征上限低。即使 LLM 有 70B，看到的视觉信息质量取决于 300M ViT 的能力</li>
+            <li><strong>Scaling 视觉端</strong>：InternViT-6B 比标准 ViT-L 参数多 20x，能提取更丰富的视觉细节</li>
+            <li><strong>代价</strong>：推理时视觉编码阶段显著变慢，不适合延迟敏感场景</li>
+            <li><strong>折中方案</strong>：InternVL 2.5 提供 1B/2B/4B/8B 多尺寸 ViT 适配不同需求</li>
+        </ul>
+    </div>
+
+    <h3 id="sec6-3">6.3 DeepSeek-VL2 (2024.12)</h3>
+    <div class="info-box key">
+        <h4>核心创新：MoE + Dynamic Tiling + 混合视觉编码</h4>
+        <p>首个将 MoE 架构深度集成到 MLLM 的开源模型，实现参数效率与多模态能力的平衡。</p>
+    </div>
+    <pre><code>架构:
+  SigLIP-SO (400M, 384px) — 语义视觉编码
+  + SAM-B (86M) — 高分辨率细节编码（OCR/小物体）
+  → Dynamic Tiling (最多 9 tiles × 384px)
+  → 每 tile → 576 tokens → 2×2 Spatial Merge → 144 tokens
+  → MLP Projector
+  → DeepSeek-MoE LLM (16B total, 2.4B activated)
+
+MoE 路由策略:
+  - 视觉和文本 Token 共享同一组 Expert
+  - 路由器自动学习模态分配（无强制分流）
+  - 实验发现: 部分 Expert 确实自发分化为"视觉特化"</code></pre>
+    <p><strong>混合视觉编码器的动机</strong>：</p>
+    <ul>
+        <li><strong>SigLIP</strong>：擅长语义级理解（物体识别、场景描述），但 384px 分辨率对小文字 OCR 不够</li>
+        <li><strong>SAM-B</strong>：Segment Anything 的 backbone，擅长高分辨率空间细节（边缘、纹理、小字符）</li>
+        <li><strong>互补逻辑</strong>：SigLIP 提供"是什么"，SAM-B 提供"在哪里 + 长什么样"</li>
+    </ul>
+
+    <h3 id="sec6-4">6.4 CogVLM / GLM-4V</h3>
+    <div class="info-box key">
+        <h4>核心创新：Visual Expert — 在 LLM 内部为视觉 Token 设专属通路</h4>
+        <p>不同于 LLaVA 的"投影后混入"方案，CogVLM 为 LLM 每层新增一套 <strong>视觉专属 QKV + FFN</strong>（Visual Expert），让视觉 Token 和文本 Token 在同一层用不同参数处理。</p>
+    </div>
+    <pre><code>标准 LLaVA 方案:
+  Visual tokens + Text tokens → 共享 Attention + 共享 FFN
+
+CogVLM Visual Expert 方案:
+  每个 Transformer Layer:
+    Text tokens  → Text QKV (原始预训练权重, 冻结)  → Text FFN (冻结)
+    Visual tokens → Visual QKV (新增, 可训练)      → Visual FFN (新增, 可训练)
+    Cross-modal: Attention 中 text 和 visual tokens 互相可见
+
+参数量:
+  原始 LLM: ~7B (冻结)
+  Visual Expert: ~6B (新增, 每层一套)
+  总计: ~17B (但推理时全量都参与)</code></pre>
+    <p><strong>为什么 Visual Expert 优于纯投影？</strong></p>
+    <ul>
+        <li><strong>深度融合</strong>：视觉信息在每一层都有专属变换，而非仅在输入层做一次投影</li>
+        <li><strong>保护语言能力</strong>：文本通路权重冻结不动，避免多模态训练损害语言能力</li>
+        <li><strong>等价于模态分流</strong>：类似 Mixture-of-Modality-Experts 思想，但用硬编码路由而非学习路由</li>
+    </ul>
+    <div class="info-box warning">
+        <h4>Visual Expert 的代价</h4>
+        <ul>
+            <li><strong>参数量翻倍</strong>：每层新增 QKV + FFN ≈ 额外一倍 LLM 参数</li>
+            <li><strong>推理开销大</strong>：所有层都需要额外计算视觉通路</li>
+            <li><strong>趋势</strong>：后续主流方案更倾向 Qwen2-VL / InternVL 的投影 + 高分辨率路线（更轻量），CogVLM 路线没有被广泛跟随</li>
+        </ul>
+    </div>
+
+    <h3 id="sec6-5">6.5 MiniCPM-V 系列 (面壁智能)</h3>
+    <p><strong>定位</strong>：端侧高效部署的 MLLM，追求<strong>极致参数效率</strong>。</p>
+    <table>
+        <thead><tr><th>版本</th><th>参数量</th><th>核心创新</th><th>特色</th></tr></thead>
+        <tbody>
+            <tr><td>MiniCPM-V 2.0</td><td>2.4B</td><td>Cross-Attention 视觉注入</td><td>首个手机可跑的 VLM</td></tr>
+            <tr><td>MiniCPM-V 2.5</td><td>8B</td><td>Adaptive Visual Encoding + 高分辨率</td><td>OCR 能力媲美商业模型</td></tr>
+            <tr><td>MiniCPM-V 2.6</td><td>8B</td><td>统一图像/视频/多图</td><td>实时视频理解</td></tr>
+            <tr><td>MiniCPM-o 4.5</td><td>9B</td><td>全双工 Omni (音视频文)</td><td>端侧全模态，Int4 量化 11GB</td></tr>
+        </tbody>
+    </table>
+    <p><strong>Adaptive Visual Encoding 策略</strong>：</p>
+    <ul>
+        <li>根据图像复杂度动态决定视觉 Token 数量（简单图用少 Token，复杂图用多 Token）</li>
+        <li>Token 预算由模型自适应分配，无需人工设定切分网格</li>
+        <li>结果：8B 模型在 OCRBench/DocVQA 上达到 InternVL-76B 级别</li>
+    </ul>
+
+    <h3 id="sec6-6">6.6 模型选型决策树</h3>
+    <div class="info-box interview">
+        <h4>实际选型指南</h4>
+        <pre><code>你的需求是什么？
+├── 学术研究 / Benchmark SOTA
+│   ├── 开源 → InternVL 2.5 (78B) / Qwen2-VL (72B)
+│   └── 闭源对标 → GPT-4o / Gemini Pro
+├── 工业落地（服务端）
+│   ├── 通用多任务 → Qwen2-VL-7B (平衡性能与成本)
+│   ├── 强 OCR/文档 → InternVL 2.5 + 大 ViT
+│   └── 多模态 Agent → Qwen2-VL (工具调用能力强)
+├── 端侧部署
+│   ├── 手机/IoT → MiniCPM-V 2.6 (8B, Int4=4GB)
+│   └── 全双工交互 → MiniCPM-o 4.5
+└── 定制化开发
+    ├── 需要深度融合视觉 → CogVLM 路线
+    ├── 需要 MoE 效率 → DeepSeek-VL2
+    └── 快速原型 → LLaVA-NeXT (最简架构)</code></pre>
+    </div>
+
+    <table>
+        <thead><tr><th>模型</th><th>视觉编码器</th><th>桥接</th><th>LLM</th><th>高分辨率方案</th><th>核心优势</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Qwen2-VL-7B</strong></td><td>ViT-675M</td><td>Spatial Merge</td><td>Qwen2-7B</td><td>Naive Dynamic Resolution</td><td>任意分辨率、视频原生</td></tr>
+            <tr><td><strong>InternVL 2.5</strong></td><td>InternViT-6B</td><td>MLP + PixelShuffle</td><td>InternLM2.5</td><td>Dynamic Tiling (1-12)</td><td>超强 OCR、大 ViT</td></tr>
+            <tr><td><strong>DeepSeek-VL2</strong></td><td>SigLIP + SAM-B</td><td>MLP</td><td>DeepSeek-MoE</td><td>Dynamic Tiling (1-9)</td><td>MoE 效率、混合编码</td></tr>
+            <tr><td><strong>CogVLM2</strong></td><td>EVA-CLIP</td><td>Visual Expert</td><td>Llama3</td><td>Tiling</td><td>深度融合、不损语言</td></tr>
+            <tr><td><strong>MiniCPM-V 2.6</strong></td><td>SigLIP</td><td>Adaptive Encoding</td><td>Qwen2-7B</td><td>自适应 Token 预算</td><td>端侧效率、实时视频</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Section 7 (原 Section 6) -->
+    <h2 id="sec7">7. 高分辨率处理</h2>
     <div class="info-box key">
         <h4>为什么需要高分辨率？</h4>
         <p>224/336px 对 OCR、小物体识别严重不足。字符级细节在低分辨率下模糊不清。</p>
@@ -368,10 +685,10 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
     </table>
     <p><strong>代价</strong>：高分辨率切片可达 2000+ 视觉 Token，增加 Prefill 计算和 KV Cache 带宽压力。通常通过 Spatial Pooling / Token Merging 缓解。</p>
 
-    <!-- Section 7 -->
-    <h2 id="sec7">7. 训练策略</h2>
+    <!-- Section 8 -->
+    <h2 id="sec8">8. 训练策略</h2>
 
-    <h3 id="sec7-1">7.1 两/三阶段训练</h3>
+    <h3 id="sec8-1">8.1 两/三阶段训练</h3>
     <table>
         <thead><tr><th>阶段</th><th>目标</th><th>冻结</th><th>训练</th><th>数据</th></tr></thead>
         <tbody>
@@ -389,7 +706,7 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
         </ul>
     </div>
 
-    <h3 id="sec7-2">7.2 数据工程</h3>
+    <h3 id="sec8-2">8.2 数据工程</h3>
     <table>
         <thead><tr><th>数据类型</th><th>来源</th><th>作用</th></tr></thead>
         <tbody>
@@ -402,7 +719,7 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
     <p><strong>数据合成</strong>：用 GPT-4V 生成高质量标注（LLaVA 核心创新：符号化描述 + GPT-4 = 不需要 GPT-4V "看到"图片）。</p>
     <p><strong>数据配比</strong>：不同任务数据的混合比例对模型能力影响巨大，需大量消融实验。</p>
 
-    <h3 id="sec7-3">7.3 视觉编码器冻结 vs 解冻</h3>
+    <h3 id="sec8-3">8.3 视觉编码器冻结 vs 解冻</h3>
     <table>
         <thead><tr><th>策略</th><th>优点</th><th>缺点</th><th>何时用</th></tr></thead>
         <tbody>
@@ -412,15 +729,15 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
     </table>
     <p><strong>解冻 ViT 注意事项</strong>：需小学习率（通常比 LLM 小 10x），可能导致对齐漂移。</p>
 
-    <!-- Section 8 -->
-    <h2 id="sec8">8. 理解与生成统一</h2>
+    <!-- Section 9 -->
+    <h2 id="sec9">9. 理解与生成统一</h2>
     <div class="info-box key">
         <h4>核心矛盾</h4>
         <p><strong>理解</strong>需要高层语义压缩（"这是一只猫"），<strong>生成</strong>需要低层像素细节（每个像素值）。</p>
         <p>一个表示很难同时做好两者——这是理解-生成统一的核心挑战。</p>
     </div>
 
-    <h3 id="sec8-1">8.1 离散 Token 路线 (Autoregressive NTP)</h3>
+    <h3 id="sec9-1">9.1 离散 Token 路线 (Autoregressive NTP)</h3>
     <p>用 VQ-VAE/VQ-GAN 将图像编码为离散 Token，与文本统一为 next-token prediction。</p>
     <ul>
         <li><strong>代表模型</strong>：Emu3, Chameleon</li>
@@ -431,7 +748,7 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
     </ul>
     <p><strong>挑战</strong>：Codebook 限制重建质量；图像生成任务导致训练不稳定（需 QK-Norm + Z-loss + Norm Reordering）。</p>
 
-    <h3 id="sec8-2">8.2 双解码器路线</h3>
+    <h3 id="sec9-2">9.2 双解码器路线</h3>
     <p>理解用连续特征 + LLM，生成用扩散模型。两个解码器共享部分参数或表示。</p>
     <ul>
         <li><strong>代表模型</strong>：Janus, SEED-X</li>
@@ -440,7 +757,7 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
     </ul>
     <p><strong>挑战</strong>：模型复杂、训练成本高、两路对齐困难。</p>
 
-    <h3 id="sec8-3">8.3 原生统一架构</h3>
+    <h3 id="sec9-3">9.3 原生统一架构</h3>
 
     <h4>GPT-4o</h4>
     <p><strong>全模态原生</strong>：单一网络端到端处理 text + vision + audio</p>
@@ -466,8 +783,8 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
         <li>9B 总参数，Int4 量化后 11GB 显存可跑</li>
     </ul>
 
-    <!-- Section 9 -->
-    <h2 id="sec9">9. 视频理解</h2>
+    <!-- Section 10 -->
+    <h2 id="sec10">10. 视频理解</h2>
     <div class="info-box key">
         <h4>核心挑战：Token 爆炸</h4>
         <p>1分钟视频 @1fps &asymp; 60帧 &times; 576 tokens/帧 = 34K tokens，远超 LLM 常见上下文长度。</p>
@@ -483,8 +800,8 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
         </tbody>
     </table>
 
-    <!-- Section 10 -->
-    <h2 id="sec10">10. 多模态幻觉</h2>
+    <!-- Section 11 -->
+    <h2 id="sec11">11. 多模态幻觉</h2>
     <p><strong>定义</strong>：模型生成与图像不一致的描述（Object Hallucination 最典型——描述图中不存在的物体）。</p>
 
     <h3>成因</h3>
@@ -517,8 +834,8 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
         </tbody>
     </table>
 
-    <!-- Section 11 -->
-    <h2 id="sec11">11. 多模态 MoE</h2>
+    <!-- Section 12 -->
+    <h2 id="sec12">12. 多模态 MoE</h2>
     <div class="info-box interview">
         <h4>MoE 在多模态中的特殊考量</h4>
         <ol>
@@ -529,8 +846,8 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
         <p><strong>实例</strong>：DeepSeek-VL2、InternVL 2.5 MoE 变体。</p>
     </div>
 
-    <!-- Section 12 -->
-    <h2 id="sec12">12. 评估体系</h2>
+    <!-- Section 13 -->
+    <h2 id="sec13">13. 评估体系</h2>
     <table>
         <thead><tr><th>层次</th><th>评估集</th><th>评估能力</th></tr></thead>
         <tbody>
@@ -543,8 +860,8 @@ Text  -> Tokenize -> [text tokens] ------------------> Concat -> LLM -> Response
         </tbody>
     </table>
 
-    <!-- Section 13 -->
-    <h2 id="sec13">13. 架构对比总结</h2>
+    <!-- Section 14 -->
+    <h2 id="sec14">14. 架构对比总结</h2>
     <table>
         <thead><tr><th>模型</th><th>类型</th><th>视觉编码器</th><th>桥接方式</th><th>训练成本</th><th>跨模态深度</th><th>细粒度能力</th></tr></thead>
         <tbody>

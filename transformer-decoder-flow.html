@@ -253,6 +253,17 @@
       <p>$S$ 的含义：每个 head 上，$L$ 个 query 位置对 $L$ 个 key 位置的原始注意力分数。</p>
       <p>加 causal mask（上三角置 $-\infty$）后 softmax：</p>
       <div class="formula">$A = \text{softmax}(\text{mask}(S)) \in \mathbb{R}^{B \times h \times L \times L}$</div>
+
+      <p style="margin-top:0.6rem"><strong>Causal mask 形状</strong>（以 $L=5$ 为例）：</p>
+      <div class="dim-chain" style="font-family:'SF Mono','Fira Code',monospace; text-align:left; line-height:1.7">
+        <span style="color:#92400e">　 　 k₀　 k₁　 k₂　 k₃　 k₄</span><br>
+        <span style="color:#92400e">q₀　 ✓　 ·　 ·　 ·　 ·</span><br>
+        <span style="color:#92400e">q₁　 ✓　 ✓　 ·　 ·　 ·</span><br>
+        <span style="color:#92400e">q₂　 ✓　 ✓　 ✓　 ·　 ·</span><br>
+        <span style="color:#92400e">q₃　 ✓　 ✓　 ✓　 ✓　 ·</span><br>
+        <span style="color:#92400e">q₄　 ✓　 ✓　 ✓　 ✓　 ✓</span>
+      </div>
+      <p class="note">下三角（含对角线）保留原 score，上三角置 $-\infty$，softmax 后变 0——确保位置 $t$ 只能看到位置 $\le t$ 的 token。</p>
     </div>
 
     <!-- (4) 加权求和 -->
@@ -281,12 +292,15 @@
 
     <!-- (6) 残差 + MLP -->
     <div class="substep">
-      <h4>(6) 残差 + RMSNorm + MLP（SwiGLU）</h4>
+      <h4>(6) Pre-Norm 残差结构 + SwiGLU MLP</h4>
+
       <p><strong>RMSNorm</strong>（现代 LLM 取代 LayerNorm）—— 只保留缩放，去掉减均值：</p>
       <div class="formula">$\text{RMSNorm}(x) = \dfrac{x}{\sqrt{\frac{1}{d}\sum_{i=1}^{d} x_i^2 + \varepsilon}} \odot \gamma$</div>
       <p class="note">$\gamma \in \mathbb{R}^d$ 为可学习缩放参数；$\varepsilon = 10^{-6}$ 防止除零。比 LayerNorm 少一次均值计算，更快且效果相当。</p>
-      <p>残差连接 + RMSNorm：</p>
-      <div class="formula">$X_{\text{mid}} = \text{RMSNorm}(X + O_{\text{attn}}) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
+
+      <p><strong>Pre-Norm 残差</strong>（现代 LLM 标准结构，与原始 Transformer 的 Post-Norm 不同）：</p>
+      <div class="formula">$X_{\text{mid}} = X + \text{Attention}\bigl(\text{RMSNorm}(X)\bigr)$</div>
+      <p class="note">注：上文 Step 2(1)-(5) 中的 $X$ 实际是 $\text{RMSNorm}(X_{\text{原始}})$，为简化记号没有显式写出。Pre-Norm 让深层网络梯度更稳定，无需 warm-up。</p>
 
       <p><strong>SwiGLU</strong>（LLaMA 等现代模型的激活方案）—— 用门控机制替代单一激活：</p>
       <div class="formula">$\text{SwiGLU}(x) = \bigl(\text{SiLU}(x W_g)\bigr) \odot (x W_u) \cdot W_d$</div>
@@ -295,8 +309,13 @@
         $\underbrace{(B, L, d_{\text{model}})}_{x} \xrightarrow{W_g,\,W_u} \underbrace{(B, L, d_{\text{ff}})}_{\text{gate},\,\text{up}} \xrightarrow{\text{SiLU} \odot} (B, L, d_{\text{ff}}) \xrightarrow{W_d} \underbrace{(B, L, d_{\text{model}})}_{\text{output}}$
       </div>
       <p class="note">对比传统 MLP $\sigma(x W_1) W_2$：SwiGLU 用两个投影 $W_g, W_u$ 替代一个，参数量略多但表达能力更强。</p>
-      <p>最终输出（残差 + RMSNorm）：</p>
-      <div class="formula">$X' = \text{RMSNorm}(X_{\text{mid}} + \text{SwiGLU}(X_{\text{mid}})) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
+
+      <p>第二个 Pre-Norm 残差（套在 SwiGLU 上）：</p>
+      <div class="formula">$X' = X_{\text{mid}} + \text{SwiGLU}\bigl(\text{RMSNorm}(X_{\text{mid}})\bigr) \in \mathbb{R}^{B \times L \times d_{\text{model}}}$</div>
+
+      <div class="insight">
+        <strong>Pre-Norm vs Post-Norm</strong>：原始 Transformer 论文是 $X' = \text{Norm}(X + \text{Sublayer}(X))$（Norm 在残差之后）；现代 LLM 全部用 $X' = X + \text{Sublayer}(\text{Norm}(X))$（Norm 在子层之前）。后者训练更稳。
+      </div>
     </div>
   </div>
 
@@ -349,19 +368,50 @@
   <div class="notation">
     <h3>推理专用记号</h3>
     <ul>
-      <li>$t$ — 当前解码步的位置索引（从 0 开始）</li>
-      <li>$T$ — cache 中已有的 token 数（即位置 $0$ 到 $T{-}1$ 的 K/V 已缓存）</li>
+      <li>$L_p$ — prompt 长度（用户输入的 token 数）</li>
+      <li>$t$ — 当前解码步的位置索引（从 $L_p$ 开始）</li>
+      <li>$T$ — cache 中已有的 token 数（位置 $0 \ldots T{-}1$ 的 K/V 已缓存）</li>
       <li>下标 $_t$ — "当前这一个 token" 的量（序列维 = 1）</li>
       <li>下标 $_{\text{all}}$ — "历史 cache + 当前 token" 拼接后的量（序列维 = $T{+}1$）</li>
       <li>下标 $_{\text{cache}}$ — "仅历史缓存" 的量（序列维 = $T$）</li>
     </ul>
   </div>
 
+  <div class="insight" style="margin-bottom:1rem">
+    <strong>推理分两个阶段</strong>：
+    <strong>① Prefill</strong>（处理 prompt，一次性并行，下方 Step 0）
+    →
+    <strong>② Decode</strong>（逐 token 自回归，下方 Step 1-4，每步一个 token）。
+    两阶段用同一份模型参数，差异只在输入长度和是否带 cache。
+  </div>
+
+  <!-- Step 0: Prefill -->
+  <div class="step" style="border-left: 4px solid var(--accent2)">
+    <div class="step-header">
+      <div class="step-num purple">0</div>
+      <h3>Prefill 阶段：预填充 prompt 到 KV Cache</h3>
+    </div>
+    <p>用户给定 prompt：</p>
+    <div class="formula">$\text{prompt\_ids} \in \mathbb{Z}^{B \times L_p}$</div>
+    <p>这一步<strong>不是逐 token</strong>，而是把整段 prompt 一次性送进模型——shape 完全等同训练：</p>
+    <div class="dim-chain">
+      $(B, L_p) \xrightarrow{W_e} (B, L_p, d_{\text{model}}) \xrightarrow{N \times \text{Block (causal mask)}} (B, L_p, d_{\text{model}}) \xrightarrow{W_{\text{lm}}} (B, L_p, V)$
+    </div>
+    <p>Prefill 阶段每层算出的 K/V 全部<strong>存入 cache</strong>：</p>
+    <div class="formula">$K_{\text{cache}}^{(i)},\, V_{\text{cache}}^{(i)} \in \mathbb{R}^{B \times h \times L_p \times d_h}, \quad i = 1, \ldots, N$</div>
+    <p>从 $(B, L_p, V)$ 的 logits 中只取最后一个位置：</p>
+    <div class="formula">$Z_{[:, -1, :]} \in \mathbb{R}^{B \times V} \;\xrightarrow{\text{sample}}\; \text{token}_{L_p}$</div>
+    <p class="note">这就是模型生成的<strong>第一个新 token</strong>。Prefill 完成后 $T = L_p$，进入 Decode 阶段。</p>
+    <div class="insight">
+      <strong>Prefill 是计算密集型</strong>（一次 $L_p \times L_p$ 注意力），<strong>Decode 是显存带宽密集型</strong>（每步只算 $1 \times (T{+}1)$，但要从 HBM 读全部 KV cache）——这是工业部署中两阶段独立优化的根本原因。
+    </div>
+  </div>
+
   <!-- Step 1 -->
   <div class="step">
     <div class="step-header">
       <div class="step-num purple">1</div>
-      <h3>当前输入</h3>
+      <h3>Decode 阶段：当前输入</h3>
     </div>
     <p>当前步只输入<strong>最新一个 token</strong>（不是整段序列）：</p>
     <div class="formula">$\text{input\_id}_t \in \mathbb{Z}^{B \times 1}$</div>
@@ -474,12 +524,12 @@
 
     <!-- (6) 残差 + MLP -->
     <div class="substep">
-      <h4>(6) 残差 + LayerNorm + MLP</h4>
-      <div class="formula">$X_{t,\text{mid}} = \text{LayerNorm}(X_t + O_{t,\text{attn}}) \in \mathbb{R}^{B \times \mathbf{1} \times d_{\text{model}}}$</div>
+      <h4>(6) Pre-Norm 残差 + SwiGLU（与训练完全一致，仅序列维 = 1）</h4>
+      <div class="formula">$X_{t,\text{mid}} = X_t + \text{Attention}\bigl(\text{RMSNorm}(X_t)\bigr)$</div>
       <div class="dim-chain">
-        MLP：$(B, \mathbf{1}, d_{\text{model}}) \xrightarrow{W_1} (B, \mathbf{1}, d_{\text{ff}}) \xrightarrow{\sigma} (B, \mathbf{1}, d_{\text{ff}}) \xrightarrow{W_2} (B, \mathbf{1}, d_{\text{model}})$
+        SwiGLU：$(B, \mathbf{1}, d_{\text{model}}) \xrightarrow{W_g,W_u} (B, \mathbf{1}, d_{\text{ff}}) \xrightarrow{\text{SiLU}\odot} (B, \mathbf{1}, d_{\text{ff}}) \xrightarrow{W_d} (B, \mathbf{1}, d_{\text{model}})$
       </div>
-      <div class="formula">$X_t' = \text{LayerNorm}(X_{t,\text{mid}} + \text{MLP}(X_{t,\text{mid}})) \in \mathbb{R}^{B \times \mathbf{1} \times d_{\text{model}}}$</div>
+      <div class="formula">$X_t' = X_{t,\text{mid}} + \text{SwiGLU}\bigl(\text{RMSNorm}(X_{t,\text{mid}})\bigr) \in \mathbb{R}^{B \times \mathbf{1} \times d_{\text{model}}}$</div>
       <p class="note">同时更新本层 cache：$K_{\text{cache}} \leftarrow K_{\text{all}}$，$V_{\text{cache}} \leftarrow V_{\text{all}}$（序列维从 $T$ 增长到 $T{+}1$）。</p>
     </div>
   </div>
@@ -499,20 +549,98 @@
   <div class="step">
     <div class="step-header">
       <div class="step-num purple">4</div>
-      <h3>输出 logits</h3>
+      <h3>输出 logits + 采样策略</h3>
     </div>
     <p>最终 hidden state $H_t \in \mathbb{R}^{B \times \mathbf{1} \times d_{\text{model}}}$，经过 LM Head：</p>
     <div class="formula">$Z_t = H_t\, W_{\text{lm}}$</div>
     <div class="dim-chain">
       $\underbrace{(B, \mathbf{1}, d_{\text{model}})}_{H_t} \times \underbrace{(d_{\text{model}}, V)}_{W_{\text{lm}}} = \underbrace{(B, \mathbf{1}, V)}_{Z_t}$
     </div>
-    <p>取 $Z_t$ 的最后一维（$V$ 维向量）做 softmax，采样 / argmax 得到下一个 token id：</p>
-    <div class="formula">$\text{next\_token} = \text{sample}(\text{softmax}(Z_t)) \in \mathbb{Z}^{B \times 1}$</div>
-    <p class="note">这个 next_token 就成为下一步的 $\text{input\_id}_{t+1}$，如此循环直到生成 EOS。</p>
+
+    <p>挤掉序列维得到 $z = Z_t[:, 0, :] \in \mathbb{R}^{B \times V}$，通过下面的流水线产出 next_token：</p>
+
+    <div class="dim-chain" style="text-align:left">
+      <strong>① Temperature</strong>：$z' = z / \tau$<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#92400e">$\tau \to 0$ 等价 argmax（确定性）；$\tau = 1$ 原始分布；$\tau \to \infty$ 趋近均匀分布</span><br>
+      <strong>② Top-k</strong>：保留 $z'$ 中最大的 $k$ 个，其余置 $-\infty$<br>
+      <strong>③ Top-p（nucleus）</strong>：累积概率最先达到 $p$ 的最小集合，其余置 $-\infty$<br>
+      <strong>④ Repetition penalty</strong>：已出现 token 的 logit 除以 $\rho > 1$（降低重复）<br>
+      <strong>⑤ Softmax + 采样</strong>：$\text{next\_token} = \text{multinomial}(\text{softmax}(z'), 1)$
+    </div>
+
+    <p class="note">这个 next_token 就成为下一步的 $\text{input\_id}_{t+1}$，如此循环直到生成 EOS 或达到最大长度。</p>
+  </div>
+
+  <!-- Step 5: GQA/MQA 变体 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num purple">5</div>
+      <h3>变体：GQA / MQA —— 压缩 KV Cache 的关键</h3>
+    </div>
+    <p>标准 MHA 中 $h_q = h_{kv} = h$（Q/K/V head 数相同）。<strong>Grouped-Query Attention</strong> 让 K/V head 数远小于 Q head 数：</p>
+
+    <div class="formula">$h_q = h, \quad h_{kv} \ll h, \quad \text{每 } h/h_{kv} \text{ 个 Q head 共享一组 K/V head}$</div>
+
+    <table class="compare-table">
+      <thead>
+        <tr><th>项目</th><th>MHA（标准）</th><th>GQA</th><th>MQA（极端）</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>$W_K, W_V$ 形状</strong></td>
+          <td>$d_{\text{model}} \times h \cdot d_h$</td>
+          <td>$d_{\text{model}} \times h_{kv} \cdot d_h$</td>
+          <td>$d_{\text{model}} \times d_h$</td>
+        </tr>
+        <tr>
+          <td><strong>K/V cache shape</strong></td>
+          <td>$(B, h, T, d_h)$</td>
+          <td>$(B, h_{kv}, T, d_h)$</td>
+          <td>$(B, 1, T, d_h)$</td>
+        </tr>
+        <tr>
+          <td><strong>Cache 显存倍数</strong></td>
+          <td>1×</td>
+          <td>$h_{kv}/h$ × （如 8/64 = 1/8）</td>
+          <td>$1/h$ × （如 1/64）</td>
+        </tr>
+        <tr>
+          <td><strong>注意力计算前</strong></td>
+          <td>—</td>
+          <td colspan="2">把 K/V 沿 head 维 repeat $h/h_{kv}$ 倍后再算（数学等价于 broadcast）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="note">实例：LLaMA 3 70B 用 GQA-8（$h_q=64, h_{kv}=8$），KV cache 缩 8×；DeepSeek-V2 进一步用 MLA（Multi-head Latent Attention）压缩到 $\sim$1/16。这是长上下文部署的关键瓶颈优化。</p>
+  </div>
+
+  <!-- Step 6: KV cache 显存核算 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num purple">6</div>
+      <h3>KV Cache 显存核算（部署关键指标）</h3>
+    </div>
+    <div class="formula">$\text{KV mem (bytes)} = 2 \cdot N \cdot B \cdot h_{kv} \cdot T \cdot d_h \cdot s$</div>
+    <p class="param-note">系数 2 因为 K 和 V 各一份；$s$ = 每元素字节数（fp16/bf16 = 2，fp8 = 1，int4 = 0.5）。</p>
+
+    <p><strong>实例 1（LLaMA 3 8B，MHA）</strong>：$N{=}32, h{=}32, d_h{=}128, B{=}1, T{=}8192, s{=}2$</p>
+    <div class="dim-chain">
+      $2 \times 32 \times 1 \times 32 \times 8192 \times 128 \times 2 = \mathbf{4.3\ \text{GB}}$
+    </div>
+
+    <p><strong>实例 2（LLaMA 3 70B，GQA-8）</strong>：$N{=}80, h_{kv}{=}8, d_h{=}128, B{=}1, T{=}8192, s{=}2$</p>
+    <div class="dim-chain">
+      $2 \times 80 \times 1 \times 8 \times 8192 \times 128 \times 2 = \mathbf{2.7\ \text{GB}}$
+    </div>
+
+    <div class="insight">
+      KV cache 与 $T$ <strong>线性增长</strong>，且不分 batch 共享——这是长上下文（128k）和高并发推理的首要显存瓶颈，PageAttention/vLLM 等系统正是为它而生。
+    </div>
   </div>
 
   <div class="flow">
-    $\text{input\_id}_t\ (B,\mathbf{1}) \;\xrightarrow{W_e}\; X_t\ (B,\mathbf{1},d) \;\xrightarrow{N \times \text{Block} + \text{KV cache}}\; H_t\ (B,\mathbf{1},d) \;\xrightarrow{W_{\text{lm}}}\; Z_t\ (B,\mathbf{1},V) \;\to\; \text{next token}$
+    $\text{prompt}\ (B, L_p) \xrightarrow{\text{Prefill}} \text{cache}\ (T{=}L_p) + \text{token}_{L_p} \xrightarrow{\text{Decode loop}} \text{token}_{L_p+1}, \text{token}_{L_p+2}, \ldots$
   </div>
 </section>
 
@@ -656,8 +784,6 @@
   attention score 为 $(1 \times (T{+}1))$，输出 $(B, 1, V)$，历史 KV 不重算
 </div>
 
-</div>
-
 <hr class="divider">
 
 <!-- ==================== 五、代码实现 ==================== -->
@@ -667,7 +793,6 @@
 
   <style>
     .code-section {
-      max-width: 700px; margin-left: auto; margin-right: auto;
       background: var(--card); border: 1px solid var(--border);
       border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden;
     }
@@ -717,7 +842,7 @@
   <div class="code-section">
     <div class="code-header">
       <span class="title">① RMSNorm（归一化）</span>
-      <span class="ref">对应：训练 Step 2(6) $\text{LayerNorm}(X + O_{\text{attn}})$</span>
+      <span class="ref">对应：训练 Step 2(6) $\text{RMSNorm}(\cdot)$</span>
     </div>
     <div class="code-body">
 <span class="kw">class</span> <span class="cls">RMSNorm</span>(nn.Module):
@@ -740,7 +865,7 @@
   <!-- Code 2: SwiGLU -->
   <div class="code-section">
     <div class="code-header">
-      <span class="title"> SwiGLU（MLP 激活）</span>
+      <span class="title">② SwiGLU（MLP 激活）</span>
       <span class="ref">对应：训练 Step 2(6) $\text{MLP}(x) = \sigma(x W_1 + b_1) W_2 + b_2$</span>
     </div>
     <div class="code-body">
@@ -766,7 +891,7 @@
   <!-- Code 3: RoPE -->
   <div class="code-section">
     <div class="code-header">
-      <span class="title"> RoPE 旋转位置编码</span>
+      <span class="title">③ RoPE 旋转位置编码</span>
       <span class="ref">对应：训练 Step 2(2) $Q_r = \text{RoPE}(Q)$</span>
     </div>
     <div class="code-body">

@@ -2536,6 +2536,65 @@
         <p><strong>(3) ε-greedy 探索：</strong>以 ε 概率随机选动作，1-ε 概率选 $\arg\max Q$。ε 从 1.0 线性衰减到 0.01 → 从纯探索渐变为纯利用。</p>
     </div>
 
+    <h4>DQN 完整训练流程（面试白板六步法）</h4>
+    <div class="step-card" style="background: linear-gradient(135deg, var(--primary-light) 0%, #f0f4ff 100%); border-left: 4px solid var(--primary); padding: 24px 28px;">
+
+        <p style="margin-bottom:16px;"><strong style="color:var(--primary);">Step 1 · 初始化</strong></p>
+        <ul style="margin:0 0 18px 20px; line-height:2.2;">
+            <li>初始化<strong>在线 Q 网络</strong> $Q_\theta$（参数 $\theta$，随机初始化）</li>
+            <li>初始化<strong>目标网络</strong> $Q_{\theta^-}$，权重硬拷贝：$\theta^- \leftarrow \theta$</li>
+            <li>初始化 <strong>Replay Buffer</strong> $\mathcal{D}$（容量 $N$，通常 $10^5 \sim 10^6$）</li>
+        </ul>
+
+        <p style="margin-bottom:16px;"><strong style="color:var(--primary);">Step 2 · 与环境交互（$\epsilon$-greedy 采集）</strong></p>
+        <div style="margin-left:20px; margin-bottom:18px;">
+            <p>在状态 $s$ 下，按 $\epsilon$-greedy 选动作：</p>
+            $$a = \begin{cases} \text{随机动作} & \text{以概率 } \epsilon \;\text{（探索）} \\ \arg\max_a Q_\theta(s, a) & \text{以概率 } 1-\epsilon \;\text{（利用）} \end{cases}$$
+            <p>执行动作 $a$，环境返回奖励 $r$ 和下一状态 $s'$，以及终止标志 $d$。</p>
+            <p>把 transition 存入 buffer：$\mathcal{D} \leftarrow \mathcal{D} \cup \{(s, a, r, s', d)\}$</p>
+        </div>
+
+        <p style="margin-bottom:16px;"><strong style="color:var(--primary);">Step 3 · 采样训练 mini-batch</strong></p>
+        <div style="margin-left:20px; margin-bottom:18px;">
+            <p>从 $\mathcal{D}$ 中<strong>均匀随机采样</strong>一批 $B$ 个 transition：</p>
+            $$\{(s_i, a_i, r_i, s'_i, d_i)\}_{i=1}^{B}$$
+            <p style="color:var(--gray-600); font-size:0.92em;">随机采样打破时间相关性 → 满足 SGD 的 i.i.d. 假设。</p>
+        </div>
+
+        <p style="margin-bottom:16px;"><strong style="color:var(--primary);">Step 4 · 计算 TD Target（用目标网络）</strong></p>
+        <div style="margin-left:20px; margin-bottom:18px;">
+            $$y_i = r_i + \gamma \,(1 - d_i)\, \max_{a'} Q_{\theta^-}(s'_i, a')$$
+            <p style="color:var(--gray-600); font-size:0.92em;">$d_i=1$ 终止时 $y_i = r_i$（无未来奖励）；$d_i=0$ 未终止时加上折扣未来价值。</p>
+            <p style="color:var(--gray-600); font-size:0.92em;">用<strong>冻结的</strong>目标网络 $Q_{\theta^-}$ 而非在线网络 → 避免"追自己尾巴"的不稳定性。</p>
+        </div>
+
+        <p style="margin-bottom:16px;"><strong style="color:var(--primary);">Step 5 · 更新在线网络（梯度下降）</strong></p>
+        <div style="margin-left:20px; margin-bottom:18px;">
+            <p>最小化 TD 误差的均方损失：</p>
+            $$\mathcal{L}(\theta) = \frac{1}{B}\sum_{i=1}^{B}\left(y_i - Q_\theta(s_i, a_i)\right)^2$$
+            <p>$$\theta \leftarrow \theta - \eta \,\nabla_\theta \mathcal{L}(\theta)$$</p>
+            <p style="color:var(--gray-600); font-size:0.92em;">注意：$y_i$ 视为常数（detach），不对目标网络反传梯度。</p>
+        </div>
+
+        <p style="margin-bottom:16px;"><strong style="color:var(--primary);">Step 6 · 定期同步目标网络</strong></p>
+        <div style="margin-left:20px; margin-bottom:4px;">
+            <p>每隔 $C$ 步<strong>硬同步</strong>（DQN 原版）：</p>
+            $$\theta^- \leftarrow \theta \qquad \text{(every } C \text{ steps)}$$
+            <p>或每步<strong>软更新</strong>（DDPG/TD3 风格）：</p>
+            $$\theta^- \leftarrow \tau\,\theta + (1-\tau)\,\theta^- \qquad \tau \approx 0.005$$
+        </div>
+    </div>
+
+    <div class="box-insight" style="margin-top:20px;">
+        <strong>DQN 三个核心记忆点：</strong>
+        <table style="margin-top:8px;">
+            <tr><th style="width:30%;">核心组件</th><th>作用</th><th>解决什么问题</th></tr>
+            <tr><td><strong>Q-learning + 神经网络</strong></td><td>用网络近似 $Q(s,a)$，选 $\arg\max_a Q$ 动作</td><td>从 Q-table 到函数逼近，处理高维状态</td></tr>
+            <tr><td><strong>Experience Replay</strong></td><td>存历史 transition，随机采样训练</td><td>打破时间相关性 + 数据复用</td></tr>
+            <tr><td><strong>Target Network</strong></td><td>冻结旧网络算 TD target</td><td>训练稳定性（防 moving target）</td></tr>
+        </table>
+    </div>
+
     <h4>DQN 变体演进</h4>
     <table>
         <tr><th>变体</th><th>解决的问题</th><th>核心改动</th></tr>
