@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扩散语言模型全景概述与四大流派 - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html" class="active">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s1"><span class="num">01</span> 扩散语言模型全景概述与四大流派</h2>
+
+<h3>1.1 为什么需要扩散语言模型？</h3>
+<p>自回归 (AR) 语言模型（GPT、LLaMA 等）是当前的主流范式，但存在<strong>三个结构性局限</strong>：</p>
+
+<table>
+  <tr><th>AR 的局限</th><th>具体表现</th><th>DLM 如何解决</th></tr>
+  <tr>
+    <td><strong>串行瓶颈</strong></td>
+    <td>生成 $N$ 个 token 需要 $N$ 次前向推理，吞吐量受限于单步延迟。GPU 算力大量闲置（memory-bandwidth bound）</td>
+    <td>扩散模型可<strong>并行生成</strong>整个序列或块，一次前向产生多个 token，充分利用 GPU 并行性</td>
+  </tr>
+  <tr>
+    <td><strong>单向生成偏置</strong></td>
+    <td>严格的左到右生成导致<strong>方向性偏差</strong>：学会了"A 是 B 的作者"却无法推断"B 的作者是谁"（Reversal Curse）</td>
+    <td>扩散模型使用<strong>双向注意力</strong>，对所有位置同时建模，无方向性偏置</td>
+  </tr>
+  <tr>
+    <td><strong>缺乏全局规划</strong></td>
+    <td>每步只看已生成的前缀，无法"先想好整体结构再填细节"。长文本中容易出现结构不连贯</td>
+    <td>扩散模型的迭代去噪过程天然支持<strong>"粗到细"的全局规划</strong>——先确定整体结构，再逐步细化 token</td>
+  </tr>
+</table>
+
+<p><strong>但 DLM 也有明确劣势</strong>：Token 效率低于 AR（达到同等质量需要更多计算）、缺乏成熟的 KV cache 机制、Chain-of-Thought 推理能力弱、RL 对齐（RLHF/GRPO）因 ELBO bias 而困难。因此当前的共识是：<strong>DLM 不是要取代 AR，而是在特定场景（高吞吐、并行生成、投机解码）提供互补优势</strong>。</p>
+
+<h3>1.2 四大流派概览</h3>
+
+<p>根据底层建模空间和生成策略的不同，当前 DLM 可分为<strong>四大流派</strong>：</p>
+
+<div class="arch-row">
+  <div class="arch-box">
+    <div class="icon">🎭</div>
+    <div class="name">离散空间扩散</div>
+    <div class="desc">在 token 词汇表上做状态转移<br>D3PM → MDLM → LLaDA → Seed</div>
+  </div>
+  <div class="arch-box">
+    <div class="icon">🧱</div>
+    <div class="name">块扩散 / 半自回归</div>
+    <div class="desc">宏观 AR + 微观块内并行扩散<br>DFlash / Nemotron / TiDAR</div>
+  </div>
+  <div class="arch-box">
+    <div class="icon">🌊</div>
+    <div class="name">连续隐空间扩散</div>
+    <div class="desc">映射到连续向量空间做 flow<br>COLA / CADD / ELF / CCDD</div>
+  </div>
+  <div class="arch-box">
+    <div class="icon">📐</div>
+    <div class="name">预测范式</div>
+    <div class="desc">ε / x₀ / v / f 预测目标选择<br>决定梯度稳定性与生成质量</div>
+  </div>
+</div>
+
+<h3>1.3 四大流派的关系与演化</h3>
+
+<div class="card purple">
+  <div class="card-title">技术路线演化脉络（2020—2026）</div>
+  
+  <h4>阶段一：理论奠基（2020—2022）</h4>
+  <ul>
+    <li><strong>连续扩散</strong>：DDPM (2020) → Score-based SDE (2021) → Flow Matching (2022) 建立了连续空间扩散的完整理论</li>
+    <li><strong>离散扩散</strong>：D3PM (2021) 首次将扩散推广到离散状态空间，探索了 uniform/absorbing/distance 三种转移矩阵</li>
+    <li><strong>文本扩散</strong>：Diffusion-LM (2022) 首次将连续扩散应用于文本生成，开创了可控文本生成路线</li>
+  </ul>
+  
+  <h4>阶段二：路线分化（2023—2024）</h4>
+  <ul>
+    <li><strong>离散路线胜出</strong>：MDLM (2024) 将离散扩散简化为加权 MLM，证明吸收态（mask）是文本的最优转移矩阵</li>
+    <li><strong>块扩散诞生</strong>：SSD-LM (2023) 提出半自回归框架，BD3LM (2024) 建立 AR↔Diffusion 精确插值理论</li>
+    <li><strong>第四范式</strong>：SEDD (2024) 开辟比率估计路线，证明离散扩散不必走 mask prediction</li>
+  </ul>
+  
+  <h4>阶段三：规模化验证（2025—2026）</h4>
+  <ul>
+    <li><strong>大规模 DLM</strong>：LLaDA 8B → 100B MoE、Dream 7B、Seed Diffusion，证明 DLM 可以 scale 到 LLM 级别</li>
+    <li><strong>投机解码爆发</strong>：DFlash (6x)、Nemotron（三模态统一）、Trajectory-Level SD (7-14x)，DLM 找到了最务实的落地路径</li>
+    <li><strong>连续路线复兴</strong>：ELF、COLA、LangFlow、Plaid 证明连续 Flow Matching 在语言建模中可行</li>
+    <li><strong>RL 训练突破</strong>：SPG、GDSD 开始解决 ELBO bias 问题，让 dLLM 也能做 RL 对齐</li>
+    <li><strong>商业落地</strong>：Mercury 2 成为首个商用 dLLM，Google 发布 Gemini Diffusion</li>
+  </ul>
+</div>
+
+<h3>1.4 阅读路线建议</h3>
+
+<div class="card cyan">
+  <div class="card-title">根据你的背景选择阅读路线</div>
+  
+  <p><strong>🎓 零基础入门</strong>（推荐顺序）：</p>
+  <ol>
+    <li><a href="s00a_ddpm.html">基础A（DDPM）</a> → 理解扩散模型的数学基础</li>
+    <li><a href="s00b_flow_sde.html">基础B（ODE/SDE/FM）</a> → 理解连续时间框架</li>
+    <li><a href="s02_discrete.html">02 离散扩散</a> → D3PM → MDLM → LLaDA 的演进</li>
+    <li><a href="s05_paradigms.html">05 预测范式</a> → 统一理解所有预测目标</li>
+    <li>其余章节按兴趣选读</li>
+  </ol>
+  
+  <p><strong>🔧 工程落地导向</strong>（关注实用性）：</p>
+  <ol>
+    <li><a href="s07_speculative.html">07 投机解码</a> → DFlash 是当前最务实的落地方案</li>
+    <li><a href="s03_block.html">03 块扩散</a> → 块扩散的训练与部署</li>
+    <li><a href="s09_commercial.html">09 商业落地</a> → 各大厂的实践</li>
+    <li><a href="s06_scaling.html">06 Scaling Laws</a> → 训练配方与数据效率</li>
+  </ol>
+  
+  <p><strong>📐 理论研究导向</strong>（深入数学）：</p>
+  <ol>
+    <li><a href="s00a_ddpm.html">基础A</a> + <a href="s00b_flow_sde.html">基础B</a> → 完整理论基础</li>
+    <li><a href="s05_paradigms.html">05 预测范式</a> → 六大范式的统一框架</li>
+    <li><a href="s08_elbo_rl.html">08 ELBO/RL</a> → ELBO 问题与 RL 训练的前沿</li>
+    <li><a href="s04_continuous.html">04 连续扩散</a> → Flow Matching 在语言中的应用</li>
+  </ol>
+</div>
+
+<div class="insight">
+  <div class="insight-title">核心判断</div>
+  <p><strong>DLM 的当前定位</strong>：不是取代 AR，而是在三个方向提供互补价值——(1) <strong>投机解码加速器</strong>（DFlash/Nemotron，为 AR 模型提速 4-14x）；(2) <strong>高吞吐生成</strong>（Mercury 2，1196 tok/s，占据 AR 无法触及的速度区间）；(3) <strong>数据高效训练</strong>（Super Data Learners，数据受限场景下优于 AR）。复杂推理任务仍是 AR 的领地，但 SPG/GDSD 正在缩小 RL 差距。</p>
+</div>
+
+<!-- ==================== Section 2 ==================== -->
+<div class="page-nav"><a href="index.html">&larr; 首页</a><a href="s02_discrete.html">离散空间扩散 (Discrete Diffusion) &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

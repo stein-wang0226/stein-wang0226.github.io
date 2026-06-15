@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELBO 问题与 RL 训练 (SPG / GDSD) - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html" class="active">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s8"><span class="num">08</span> ELBO 问题与 RL 训练 (SPG / GDSD)</h2>
+
+<h3>8.1 ELBO 的根本问题</h3>
+<div class="card red">
+  <div class="card-title">为什么 ELBO 对离散扩散模型是松的下界？</div>
+  <p>ELBO (Evidence Lower Bound) 是离散扩散模型似然的标准估计，但存在<strong>两个根本问题</strong>：</p>
+  <ol>
+    <li><strong>界本身是松的 (loose bound)</strong>：ELBO 对所有可能的去掩码顺序取平均，包括很多极差的顺序；而测试时使用确定性策略，只选择好的顺序</li>
+    <li><strong>衡量了错误的分布 (wrong distribution)</strong>：ELBO 在训练分布（均匀随机位置选择）下计算，而非测试时的确定性策略分布</li>
+  </ol>
+  
+  <h4>ELBO 松度的数学分析</h4>
+  <p>对离散 mask 扩散，真实对数似然 $\log p_\theta(\mathbf{x}_0)$ 的 ELBO 为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{ELBO}} = \mathbb{E}_{\sigma \sim \mathrm{Uniform}(\mathcal{S}_N)} \left[ \sum_{t=1}^{N} \mathbb{E}_{\mathbf{x}_t} \left[ \log p_\theta(x_0^{\sigma(t)} | \mathbf{x}_t) \right] \right] \leq \log p_\theta(\mathbf{x}_0)$
+  </div>
+  <p>其中 $\sigma$ 是去掩码顺序的排列，$\mathcal{S}_N$ 是所有 $N!$ 种排列的集合。ELBO 对所有排列取均匀平均——但其中绝大多数排列是<strong>极差的</strong>（如：先揭示最难预测的 token，最后揭示最容易的）。</p>
+  <p>松度的量化：定义最优顺序的似然 $\mathcal{L}_{\mathrm{opt}}$ 和 ELBO 之间的差距为 <strong>ELBO gap</strong>：</p>
+  <div class="formula-box">
+    $\Delta_{\mathrm{ELBO}} = \mathcal{L}_{\mathrm{opt}} - \mathcal{L}_{\mathrm{ELBO}} = \frac{1}{N!} \sum_{\sigma} \left[\mathcal{L}_{\mathrm{opt}} - \mathcal{L}(\sigma)\right] \geq 0$
+  </div>
+  <p>这个 gap 随序列长度 $N$ 增长：序列越长，"坏顺序"越多，平均下界越松。TUBE (arXiv: 2605.24292) 提出互补的<strong>切线上界 (Tangent Upper Bound)</strong> 来量化 gap：结合 ELBO（下界）+ TUBE（上界），发现 block MDM 的真实似然严格低于精确 AR 基线，但差距比仅用 ELBO 估计的小。</p>
+  <p>结果：ELBO 有 bias（有偏估计），且不稳定，严重影响 RL 训练的效果。</p>
+</div>
+
+<h3>8.2 让 ELBO 更紧的尝试</h3>
+<div class="card orange">
+  <div class="card-title">DUEL 与 TUBE</div>
+  <p><strong>DUEL</strong> (arXiv: 2603.01367, Cornell)：统一了主流 MDM 采样器，证明确定性去掩码允许精确似然计算。MDM 与 AR 的困惑度差距在域内数据上缩小最多 32%，零样本基准上缩小最多 82%。</p>
+  <p><strong>TUBE</strong> (arXiv: 2605.24292)：提出 ELBO 的互补物——证据的切线上界 (Tangent Upper Bound)，具有无偏蒙特卡洛估计器。将 TUBE (上界) 与 ELBO (下界) 结合后发现，block MDM 的似然严格低于精确 ARM 基线。</p>
+</div>
+
+<h3>8.3 SPG：三明治策略梯度 ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <span class="tag arxiv">arXiv: 2510.09541</span>
+  <span class="tag org">Meta (FAIR)</span>
+  <div class="card-title">SPG: Sandwiched Policy Gradient for Masked Diffusion LMs</div>
+  
+  <h4>标准 RL 为什么对 dLLM 失效？</h4>
+  <p>对 AR 模型，策略梯度（如 REINFORCE/GRPO）需要计算 $\log \pi_\theta(\tau) = \sum_t \log \pi_\theta(x_t | x_{&lt;t})$——每步的条件概率<strong>精确可计算</strong>。但对 dLLM，一条完整轨迹 $\tau = (\mathbf{x}_T, \mathbf{x}_{T-1}, \ldots, \mathbf{x}_0)$ 的概率为：</p>
+  <div class="formula-box">
+    $\log \pi_\theta(\tau) = \sum_{t=1}^{T} \log p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$
+  </div>
+  <p>其中 $p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 需要对所有可能的去噪结果求和（指数级），<strong>不可精确计算</strong>。标准做法是用 ELBO 近似 $\log \pi_\theta(\tau)$，但 ELBO 的 bias 直接传播到梯度估计，导致 RL 训练不稳定。</p>
+  
+  <h4>SPG 的三明治构造</h4>
+  <p>SPG 利用真实对数似然的<strong>上界 $U(\tau)$</strong> 和<strong>下界 $L(\tau)$</strong>（$L \leq \log \pi_\theta(\tau) \leq U$）构造修正的优势函数：</p>
+  <div class="formula-box">
+    $\hat{A}^{\mathrm{lower}}_i = R(\tau_i) - b - U(\tau_i), \quad \hat{A}^{\mathrm{upper}}_i = R(\tau_i) - b - L(\tau_i)$
+  </div>
+  <p>其中 $R(\tau_i)$ 是奖励，$b$ 是 baseline。SPG 的策略梯度估计为：</p>
+  <div class="formula-box">
+    $\nabla_\theta J \approx \frac{1}{N}\sum_{i=1}^{N}\left[\hat{A}^{\mathrm{upper}}_i \cdot \nabla_\theta \log \pi_\theta(\tau_i) \cdot \mathbf{1}[\hat{A}_i > 0] + \hat{A}^{\mathrm{lower}}_i \cdot \nabla_\theta \log \pi_\theta(\tau_i) \cdot \mathbf{1}[\hat{A}_i < 0]\right]$
+  </div>
+  <p>核心思想：对<strong>正优势</strong>轨迹（应增加概率），用<strong>上界优势</strong> $\hat{A}^{\mathrm{upper}}$（更保守的增量）；对<strong>负优势</strong>轨迹（应降低概率），用<strong>下界优势</strong> $\hat{A}^{\mathrm{lower}}$（更保守的惩罚）。这确保了策略更新始终是保守的——不会因 ELBO bias 而过度调整。</p>
+  
+  <p>关键发现：去掉负优势惩罚会导致性能大幅下降；block-wise masking 比随机 masking 更稳定。</p>
+  
+  <table>
+    <tr><th>基准</th><th>SPG (w/ Mixture)</th><th>最优基线 UniGRPO</th><th>提升</th></tr>
+    <tr><td>GSM8K</td><td>86.1%</td><td>82.5%</td><td>+3.6%</td></tr>
+    <tr><td>MATH500</td><td>40.0%</td><td>37.4%</td><td>+2.6%</td></tr>
+    <tr><td>Countdown</td><td>70.7%</td><td>52.7%</td><td>+18.0%</td></tr>
+    <tr><td>Sudoku</td><td>94.0%</td><td>67.0%</td><td>+27.0%</td></tr>
+  </table>
+</div>
+
+<h3>8.4 GDSD：自蒸馏绕过 ELBO ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <span class="tag arxiv">arXiv: 2605.29398</span>
+  <div class="card-title">GDSD: Reinforcement Learning as Guided Denoiser Self-Distillation</div>
+  
+  <h4>核心思想：RL → 自蒸馏</h4>
+  <p>GDSD 将 dLLM 的 RL 训练重新表述为<strong>去噪器自蒸馏</strong>问题，完全绕过 ELBO。</p>
+  <p><strong>标准 RL 目标</strong>：最大化期望奖励 $\mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]$，需要对 $\pi_\theta$ 求梯度——在 dLLM 中不可计算。</p>
+  <p><strong>GDSD 等价转换</strong>：通过闭式最优策略推导，最优策略 $\pi^*$ 与当前策略 $\pi_\theta$ 之间的关系可以表达为：</p>
+  <div class="formula-box">
+    $\pi^*(\mathbf{x}_{t-1} | \mathbf{x}_t) \propto \pi_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t) \cdot \exp\!\left(\frac{A(\mathbf{x}_{t-1}, \mathbf{x}_t)}{\beta}\right)$
+  </div>
+  <p>其中 $A$ 是优势函数，$\beta$ 是温度参数。这等价于：用优势函数引导的<strong>自教师分布</strong>来蒸馏当前模型。</p>
+  
+  <h4>Squared-Logit 损失</h4>
+  <p>GDSD 推导出一个<strong>无需归一化 (normalization-free) 的损失函数</strong>：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{GDSD}} = \mathbb{E}_{t, \mathbf{x}_t} \left[ \sum_i \left\| \mathrm{logit}_\theta(\mathbf{x}_t)_i - \mathrm{logit}_\theta(\mathbf{x}_t)_i \cdot \exp\!\left(\frac{A_i}{\beta}\right) \right\|^2 \right]$
+  </div>
+  <p>关键优势：不需要对 $p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 进行显式归一化（避免了指数级求和），直接在 logit 空间操作。</p>
+  
+  <p>理论贡献：(1) 将 dLLM 的 RL 归约为去噪器自蒸馏，利用优势函数引导的自教师 (2) 证明现有 ELBO 方法是特定散度选择的特例，诊断其病理问题 (3) 提出无偏的 GDSD 目标函数。在 Dream-7B 和 LLaDA-8B 上验证，测试精度提升<strong>最高达 +19.6%</strong>。</p>
+</div>
+
+<div class="insight">
+  <div class="insight-title">ELBO 优化路线小结</div>
+  <p>两条路线解决 ELBO 的 bias：(1) <strong>SPG</strong> (Meta)：用上下界构造"三明治"，减少但不消除 bias；(2) <strong>GDSD</strong>：通过自蒸馏完全绕过 ELBO，理论上无偏。两者都是在解决同一个根本问题——离散扩散模型的似然不可精确计算。</p>
+</div>
+
+<h3>8.5 d1：首个 dLLM 推理 RL 框架 ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <span class="tag arxiv">arXiv: 2504.12216</span>
+  <span class="tag org">Gen-Verse · NeurIPS 2025</span>
+  <div class="card-title">d1: Scaling Reasoning in Diffusion LLMs via Reinforcement Learning</div>
+  <p>首个将<strong>扩展推理时间</strong>（extended reasoning）引入 dLLM 的完整框架，让 dLLM 也能像 o1/DeepSeek-R1 那样"先想再答"。</p>
+  
+  <h4>两阶段训练流程</h4>
+  <ol>
+    <li><strong>阶段一：推理格式 SFT</strong>——用少量推理链数据微调 dLLM，教会模型使用 &lt;think&gt;...&lt;/think&gt; 格式组织推理过程</li>
+    <li><strong>阶段二：dGRPO 强化学习</strong>——将 GRPO（Group Relative Policy Optimization）适配到 dLLM 的 ELBO 框架</li>
+  </ol>
+  
+  <h4>dGRPO 目标函数</h4>
+  <p>标准 GRPO 的梯度需要精确的 $\log \pi_\theta(\mathbf{x})$，d1 用 ELBO 近似：</p>
+  <div class="formula-box">
+    $\nabla_\theta J_{\mathrm{dGRPO}} = \mathbb{E}_{\tau \sim \pi_{\theta_{\mathrm{old}}}} \left[ \hat{A}(\tau) \cdot \nabla_\theta \mathcal{L}_{\mathrm{ELBO}}(\tau; \theta) \right]$
+  </div>
+  <p>其中 $\hat{A}(\tau)$ 是基于组内排名的归一化优势函数：$\hat{A}(\tau_i) = \frac{R(\tau_i) - \mathrm{mean}(\{R(\tau_j)\})}{\mathrm{std}(\{R(\tau_j)\})}$。虽然 ELBO 有 bias，但 d1 发现在推理任务上仍然有效。</p>
+  
+  <h4>关键实验结果</h4>
+  <table>
+    <tr><th>基准</th><th>Dream-7B (base)</th><th>d1-SFT</th><th>d1-RL</th><th>提升</th></tr>
+    <tr><td>GSM8K</td><td>55.0%</td><td>78.5%</td><td>84.3%</td><td>+29.3%</td></tr>
+    <tr><td>MATH500</td><td>25.8%</td><td>40.4%</td><td>47.6%</td><td>+21.8%</td></tr>
+    <tr><td>Countdown (3)</td><td>4.0%</td><td>54.0%</td><td>76.0%</td><td>+72.0%</td></tr>
+  </table>
+  <p><strong>核心结论</strong>：(1) dLLM 可以通过 RL 学会推理，SFT+RL 的收益与 AR 模型类似；(2) 推理链长度随训练自动增长——模型学会了"想得更多"；(3) ELBO bias 在推理任务上的负面影响可以通过足够的采样数量缓解。</p>
+</div>
+
+<h3>8.6 DiSPO：扩散状态策略优化</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2602.06462</span>
+  <span class="tag org">ICLR 2025 Oral</span>
+  <div class="card-title">DiSPO: Aligning Diffusion Language Models with Direct Step-level Preference Optimization</div>
+  <p>从<strong>步级偏好优化</strong>角度对齐 dLLM，将 DPO 从 AR 适配到扩散框架。</p>
+  
+  <h4>核心思想：Step-level DPO</h4>
+  <p>标准 DPO 比较完整输出的偏好 $(y_w \succ y_l)$，但 dLLM 的生成是多步去噪过程。DiSPO 将偏好信号分解到<strong>每一步去噪</strong>：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{DiSPO}} = -\mathbb{E}_{(y_w, y_l)} \left[ \log \sigma \left( \beta \sum_{t=1}^{T} \log \frac{\pi_\theta(\mathbf{x}_{t-1}^w | \mathbf{x}_t^w)}{\pi_{\mathrm{ref}}(\mathbf{x}_{t-1}^w | \mathbf{x}_t^w)} - \beta \sum_{t=1}^{T} \log \frac{\pi_\theta(\mathbf{x}_{t-1}^l | \mathbf{x}_t^l)}{\pi_{\mathrm{ref}}(\mathbf{x}_{t-1}^l | \mathbf{x}_t^l)} \right) \right]$
+  </div>
+  <p>关键技巧：对每步的 $\log \pi_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 使用 ELBO 的逐步分解来近似，避免了完整轨迹似然的指数级计算。</p>
+  
+  <h4>关键结果</h4>
+  <p>在 MDLM-1.1B 上：win rate 从 SFT baseline 的 39.2% 提升到 <strong>56.8%</strong>（vs GPT-4 评判）。DiSPO 证明了偏好对齐可以直接在扩散去噪过程中实现，无需先转换为 AR 再对齐。</p>
+</div>
+
+<h3>8.7 MDPO：解决训练-推理分布偏移</h3>
+<div class="card orange">
+  <span class="tag arxiv">arXiv: 2508.13148</span>
+  <div class="card-title">MDPO: Masked Diffusion Policy Optimization</div>
+  <p>识别并解决 dLLM RL 训练中的<strong>训练-推理不一致</strong>问题。</p>
+  
+  <h4>问题：分布偏移 (Distribution Shift)</h4>
+  <p>dLLM 训练时使用<strong>均匀随机 masking</strong>（从数据分布采样 $\mathbf{x}_t$），但推理时使用<strong>确定性去噪策略</strong>（从模型自身分布采样）。RL 训练放大了这个偏移——模型在训练分布上优化，但在推理分布上评估。</p>
+  
+  <h4>MDPO 的解决方案</h4>
+  <p>在 RL 更新中引入<strong>on-policy 去噪轨迹</strong>：用当前策略 $\pi_\theta$ 实际执行去噪过程生成轨迹，而非从训练数据采样。损失函数：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{MDPO}} = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t} w_t \cdot \mathrm{CE}\!\left(\mathbf{x}_0, p_\theta(\cdot | \mathbf{x}_t^{\mathrm{on\text{-}policy}})\right) - \alpha \cdot R(\mathbf{x}_0^{\mathrm{generated}}) \right]$
+  </div>
+  <p>关键结果：MDPO 在 GSM8K 上比标准 ELBO-based RL 提升 <strong>+5.2%</strong>，证明了解决分布偏移的重要性。</p>
+</div>
+
+<h3>8.8 DiFFPO：统一的 dLLM RL 框架</h3>
+<div class="card cyan">
+  <span class="tag arxiv">arXiv: 2510.02212</span>
+  <span class="tag org">NeurIPS 2025</span>
+  <div class="card-title">DiFFPO: Diffusion Fast and Furious Policy Optimization</div>
+  <p>提出 dLLM 的<strong>统一 RL 框架</strong>，将 PPO/DPO/GRPO 等多种 RL 算法统一到一个框架内。</p>
+  
+  <h4>核心贡献</h4>
+  <ul>
+    <li><strong>统一的扩散策略梯度</strong>：推导了在扩散采样轨迹上的通用策略梯度公式，PPO/GRPO/DPO 都是其特例</li>
+    <li><strong>高效的重要性采样</strong>：利用扩散过程的马尔可夫性质，将全轨迹的重要性权重分解为逐步权重之积</li>
+    <li><strong>方差缩减</strong>：通过逐步 baseline 和截断重要性权重降低策略梯度估计的方差</li>
+  </ul>
+  
+  <h4>统一目标函数</h4>
+  <div class="formula-box">
+    $\nabla_\theta J = \mathbb{E}_{\tau \sim \pi_{\theta_{\mathrm{old}}}} \left[ \sum_{t=1}^{T} \min\!\left(\rho_t, c\right) \cdot \hat{A}_t(\tau) \cdot \nabla_\theta \log p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t) \right]$
+  </div>
+  <p>其中 $\rho_t = \frac{p_\theta(\mathbf{x}_{t-1}|\mathbf{x}_t)}{p_{\theta_{\mathrm{old}}}(\mathbf{x}_{t-1}|\mathbf{x}_t)}$ 是逐步重要性权重，$c$ 是截断阈值（类似 PPO 的 clip），$\hat{A}_t$ 是时间步 $t$ 的优势估计。</p>
+  
+  <h4>关键结果</h4>
+  <table>
+    <tr><th>方法</th><th>GSM8K</th><th>MATH500</th><th>训练稳定性</th></tr>
+    <tr><td>ELBO-GRPO (baseline)</td><td>78.3%</td><td>36.2%</td><td>❌ 不稳定</td></tr>
+    <tr><td>SPG</td><td>86.1%</td><td>40.0%</td><td>⚠️ 需要上下界</td></tr>
+    <tr><td>DiFFPO</td><td>87.4%</td><td>42.1%</td><td>✅ 稳定</td></tr>
+  </table>
+</div>
+
+<h3>8.9 DARE：统一 dLLM 后训练框架</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2604.04215</span>
+  <div class="card-title">DARE: Diffusion-Aligned Reward Engineering for Post-Training dLLMs</div>
+  <p>提出 dLLM 的<strong>完整后训练流水线</strong>：SFT → 偏好对齐（DPO）→ RL（GRPO/PPO），统一解决以下问题：</p>
+  
+  <h4>三阶段流水线</h4>
+  <ul>
+    <li><strong>阶段一：扩散感知 SFT</strong>——在 SFT 时引入多 masking 比例训练，缩小训练-推理分布差距</li>
+    <li><strong>阶段二：步级 DPO</strong>——将偏好信号分解到去噪步上（类似 DiSPO），但使用更高效的近似</li>
+    <li><strong>阶段三：奖励塑形 RL</strong>——将稀疏的最终奖励通过<strong>奖励塑形</strong>（reward shaping）分配到中间去噪步，提供更密集的训练信号</li>
+  </ul>
+  
+  <h4>奖励塑形公式</h4>
+  <div class="formula-box">
+    $R_t(\mathbf{x}_t, \mathbf{x}_{t-1}) = R_{\mathrm{final}}(\mathbf{x}_0) \cdot \frac{\Delta_t}{\sum_{s=1}^{T} \Delta_s}, \quad \Delta_t = \|\mathbf{x}_{t-1} - \mathbf{x}_t\|_{\mathrm{edit\text{-}dist}}$
+  </div>
+  <p>即：最终奖励按每步的编辑距离（揭示了多少新 token）比例分配。直觉上，揭示关键 token 的步获得更多奖励。</p>
+  
+  <p><strong>关键结果</strong>：完整三阶段流水线在 Dream-7B 上：GSM8K <strong>87.9%</strong>，MATH500 <strong>44.2%</strong>，超越所有单阶段方法。证明了 dLLM 也可以走 AR 模型成熟的 "pretrain → SFT → RLHF" 路线。</p>
+</div>
+
+<h3>8.10 dLLM RL 技术全景对比</h3>
+<table>
+  <tr><th>方法</th><th>核心思路</th><th>是否绕过 ELBO</th><th>GSM8K</th><th>来源</th></tr>
+  <tr><td><strong>d1 (dGRPO)</strong></td><td>ELBO 近似 GRPO + 推理链 SFT</td><td>❌ 使用 ELBO</td><td>84.3%</td><td>NeurIPS 2025</td></tr>
+  <tr><td><strong>SPG</strong></td><td>上下界三明治策略梯度</td><td>⚠️ 减轻 bias</td><td>86.1%</td><td>Meta (FAIR)</td></tr>
+  <tr><td><strong>GDSD</strong></td><td>去噪器自蒸馏，logit 空间</td><td>✅ 完全绕过</td><td>—</td><td>2025.05</td></tr>
+  <tr><td><strong>DiSPO</strong></td><td>步级 DPO 偏好对齐</td><td>⚠️ 逐步近似</td><td>—</td><td>ICLR 2025 Oral</td></tr>
+  <tr><td><strong>MDPO</strong></td><td>On-policy 轨迹修复分布偏移</td><td>❌ 使用 ELBO</td><td>—</td><td>2025.08</td></tr>
+  <tr><td><strong>DiFFPO</strong></td><td>统一策略梯度 + 逐步重要性采样</td><td>⚠️ 逐步分解</td><td>87.4%</td><td>NeurIPS 2025</td></tr>
+  <tr><td><strong>DARE</strong></td><td>SFT→DPO→RL 完整流水线 + 奖励塑形</td><td>⚠️ 混合策略</td><td>87.9%</td><td>2025.04</td></tr>
+</table>
+
+<div class="insight">
+  <div class="insight-title">dLLM RL 训练的核心挑战与解决路线</div>
+  <p>dLLM 做 RL 面临<strong>三大挑战</strong>：(1) <strong>似然不可计算</strong>——ELBO 有 bias，影响策略梯度估计（SPG 用三明治减轻、GDSD 完全绕过）；(2) <strong>训练-推理分布偏移</strong>——训练用随机 masking、推理用确定性策略（MDPO 引入 on-policy 轨迹）；(3) <strong>奖励稀疏</strong>——只有最终生成结果才有奖励信号（DARE 通过奖励塑形分配到每步）。当前最优路线是 <strong>DARE 的三阶段流水线</strong>（GSM8K 87.9%），但 <strong>GDSD 的无偏自蒸馏</strong>在理论上更优雅。d1 则证明了 dLLM 可以通过 RL 学会推理链。</p>
+</div>
+
+<!-- ==================== Section 9 ==================== -->
+<div class="page-nav"><a href="s07_speculative.html">&larr; DLM 投机解码：DFlash vs MTP 深度分析</a><a href="s09_commercial.html">商业落地现状与行业实践 &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM · d1 · DiSPO · MDPO · DiFFPO · DARE</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

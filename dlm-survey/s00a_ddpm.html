@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDPM：从变分推断到噪声预测</title>
+<style>
+:root {
+    --bg: #fafafa;
+    --fg: #1a1a2e;
+    --card-bg: #ffffff;
+    --border: #e0e0e0;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --quote-bg: #f0f4ff;
+    --quote-border: #3b82f6;
+    --code-bg: #f3f4f6;
+    --boxed-bg: #f8f9ff;
+    --boxed-border: #6366f1;
+    --table-header: #eef2ff;
+    --table-stripe: #f9fafb;
+    --transition-bg: #fffbeb;
+    --transition-border: #f59e0b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.8;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+/* ---- Headings ---- */
+h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+}
+
+h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 48px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--fg);
+}
+
+h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 32px 0 12px 0;
+    color: var(--fg);
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 24px 0 8px 0;
+    color: #374151;
+}
+
+/* ---- Paragraphs & Inline ---- */
+p {
+    margin: 0 0 16px 0;
+}
+
+strong { font-weight: 600; }
+
+/* ---- Blockquotes (transition paragraphs & notes) ---- */
+blockquote {
+    margin: 20px 0;
+    padding: 16px 20px;
+    background: var(--quote-bg);
+    border-left: 4px solid var(--quote-border);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+blockquote p:last-child { margin-bottom: 0; }
+
+/* Transition blockquotes (between major sections) get warm styling */
+blockquote.transition {
+    background: var(--transition-bg);
+    border-left-color: var(--transition-border);
+}
+
+/* ---- Lists ---- */
+ul, ol {
+    margin: 0 0 16px 0;
+    padding-left: 24px;
+}
+
+li {
+    margin-bottom: 6px;
+}
+
+li strong { color: var(--accent); }
+
+/* ---- Tables ---- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 0.92rem;
+}
+
+th {
+    background: var(--table-header);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+}
+
+td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+}
+
+tr:nth-child(even) td {
+    background: var(--table-stripe);
+}
+
+/* ---- Code Blocks ---- */
+pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin: 16px 0 24px;
+}
+
+code {
+    font-family: "SF Mono", "Fira Code", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+}
+
+p code, li code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+/* ---- Math Display ---- */
+.math-display {
+    margin: 20px 0;
+    padding: 16px 20px;
+    background: var(--boxed-bg);
+    border-radius: 8px;
+    overflow-x: auto;
+    text-align: center;
+}
+
+.math-display.boxed {
+    border: 2px solid var(--boxed-border);
+    background: #f0f0ff;
+}
+
+/* ---- Horizontal Rules ---- */
+hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 40px 0;
+}
+
+/* ---- Document Header ---- */
+.doc-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.doc-header h1 {
+    font-size: 1.85rem;
+    margin-bottom: 12px;
+}
+
+.doc-subtitle {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+/* ---- Section Nav ---- */
+.toc {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0 40px;
+}
+
+.toc-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.toc ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc li {
+    margin-bottom: 4px;
+}
+
+.toc a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.92rem;
+}
+
+.toc a:hover {
+    text-decoration: underline;
+}
+
+.toc .toc-sub {
+    padding-left: 20px;
+}
+
+/* ---- Roadmap ---- */
+.roadmap {
+    background: linear-gradient(135deg, #eef2ff 0%, #f0f4ff 100%);
+    border: 1px solid #c7d2fe;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+    .container { padding: 20px 16px 60px; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.2rem; }
+    table { font-size: 0.82rem; }
+    th, td { padding: 8px 10px; }
+}
+
+/* ---- Print ---- */
+@media print {
+    body { background: white; }
+    .container { max-width: 100%; padding: 0; }
+    blockquote { break-inside: avoid; }
+    pre { break-inside: avoid; }
+}
+</style>
+
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']],
+        tags: 'ams',
+        macros: {
+            bm: ['\boldsymbol{#1}', 1]
+        }
+    },
+    svg: {
+        fontCache: 'global'
+    },
+    options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoreHtmlClass: 'tex2jax_ignore'
+    }
+};
+</script>
+<script>
+// MathJax SVG renderer — no external fonts needed, works with file:// protocol
+(function() {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js';
+    s.async = true;
+    s.onload = function() {
+        document.querySelectorAll('.math-loading').forEach(function(el) { el.style.display = 'none'; });
+    };
+    s.onerror = function() {
+        // Fallback: try alternate CDN
+        var s2 = document.createElement('script');
+        s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js';
+        s2.async = true;
+        document.head.appendChild(s2);
+    };
+    document.head.appendChild(s);
+})();
+</script>
+<style>
+.math-loading {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+.math-loading::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d1d5db;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    margin-left: 8px;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+</head>
+<body>
+<nav style="background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 24px; font-size: 0.88rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif; position: sticky; top: 0; z-index: 100;">
+  <a href="index.html" style="font-weight:700;color:#2563eb;text-decoration:none;">调研首页</a>
+  <span style="color:#ccc; margin: 0 8px;">|</span>
+  <a href="s00a_ddpm.html" style="font-weight:600;color:#2563eb;text-decoration:none;">基础A</a>
+  <span style="color:#ccc; margin: 0 8px;">|</span>
+  <a href="s00b_flow_sde.html" style="color:#6b7280;text-decoration:none;">基础B</a>
+  <span style="color:#ccc; margin: 0 8px;">|</span>
+  <a href="s01_overview.html" style="color:#6b7280;text-decoration:none;">01</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s02_discrete.html" style="color:#6b7280;text-decoration:none;">02</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s03_block.html" style="color:#6b7280;text-decoration:none;">03</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s04_continuous.html" style="color:#6b7280;text-decoration:none;">04</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s05_paradigms.html" style="color:#6b7280;text-decoration:none;">05</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s06_scaling.html" style="color:#6b7280;text-decoration:none;">06</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s07_speculative.html" style="color:#6b7280;text-decoration:none;">07</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s08_elbo_rl.html" style="color:#6b7280;text-decoration:none;">08</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s09_commercial.html" style="color:#6b7280;text-decoration:none;">09</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s10_comparison.html" style="color:#6b7280;text-decoration:none;">10</a>
+</nav>
+<div class="container">
+
+<div class="doc-header">
+<h1>DDPM：从变分推断到噪声预测</h1>
+<div class="doc-subtitle">理论基础 · 第一章</div>
+</div>
+
+<div class="math-loading">正在加载数学公式渲染引擎</div>
+
+<div class="toc"><div class="toc-title">目录</div><ul><li><a href="#step1">第一步：概率模型定义</a></li><li><a href="#step2">第二步：优化目标与 ELBO</a></li><li><a href="#step3">第三步：KL 拆解</a></li><li><a href="#step4">第四步：后验解析</a></li><li><a href="#step5">第五步：损失化简</a></li><li><a href="#appendix">附录：算法伪代码</a></li></ul></div>
+
+
+<blockquote>
+<p><strong>导读</strong>：本文从 DDPM 的概率模型定义出发，经过五步严格推导，最终得到训练用的极简噪声预测损失函数 $L_{simple}$。推导路径为：</p>
+<div class="math-display">
+$$\text{前向/逆向过程} \xrightarrow{\text{定义模型}} \text{ELBO} \xrightarrow{\text{构造下界}} \text{KL 拆解} \xrightarrow{\text{分解为三项}} \text{后验解析} \xrightarrow{\text{求闭式解}} \text{损失化简}$$
+</div>
+<p>每一步的结论都是下一步的前提，建议按顺序阅读。</p>
+</blockquote>
+<hr />
+<h3 id="step1">第一步：概率模型定义</h3>
+<p><strong>1. 前向过程 (Forward Process)</strong></p>
+<p>前向过程被定义为一个固定参数的马尔可夫链，通过超参数 $\beta_t \in (0, 1)$ 控制每一步的噪声方差。令 $\alpha_t = 1 - \beta_t$。</p>
+<p>单步状态转移概率定义为：</p>
+<div class="math-display">
+$$q(\mathbf{x}_t | \mathbf{x}_{t-1}) := \mathcal{N}(\mathbf{x}_t; \sqrt{\alpha_t}\mathbf{x}_{t-1}, \beta_t\mathbf{I})$$
+</div>
+<p>利用重参数化技巧，单步更新可写为：$\mathbf{x}_t = \sqrt{\alpha_t}\mathbf{x}_{t-1} + \sqrt{\beta_t}\boldsymbol{\epsilon}_{t-1}$。</p>
+<p>令 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$，通过递推和独立高斯变量方差的线性可加性，可推导出任意时间步 $t$ 条件下 $\mathbf{x}_t$ 的边缘分布：</p>
+<div class="math-display">
+$$q(\mathbf{x}_t | \mathbf{x}_0) = \mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alpha}_t}\mathbf{x}_0, (1 - \bar{\alpha}_t)\mathbf{I})$$
+</div>
+<p>等价表达式：$\mathbf{x}_t = \sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}$，其中 $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$。</p>
+<p><strong>2. 逆向过程 (Reverse Process)</strong></p>
+<p>逆向过程的目标是学习一个参数化模型 $p_\theta$，用于拟合真实的数据反向转移概率。逆向过程同样被定义为马尔可夫链，起点为标准高斯噪声 $p(\mathbf{x}_T) = \mathcal{N}(\mathbf{x}_T; \mathbf{0}, \mathbf{I})$：</p>
+<div class="math-display">
+$$p_\theta(\mathbf{x}_{0:T}) := p(\mathbf{x}_T) \prod_{t=1}^T p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$$
+</div>
+<p>由于假设当 $\beta_t$ 足够小且 $T$ 足够大时，逆向分布也近似为高斯分布，故定义：</p>
+<div class="math-display">
+$$p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t) := \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \Sigma_\theta(\mathbf{x}_t, t))$$
+</div>
+<p><strong>逆向分布的直觉理解：Score Function 视角</strong></p>
+<p>在 DDPM 的严格数学假设下（$\beta_t$ 极小且 $T$ 充分大），逆向分布 $q(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 可证明为一个多维高斯分布 $\mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_q, \Sigma_q)$，其形状完全由方差与均值两个统计量决定：</p>
+<ul>
+<li><strong>方差 $\Sigma_q$</strong>：刻画回推过程中的不确定性。由于步长极小，该不确定性被严格限制在一个以当前点为中心的微小球形区域内。</li>
+<li><strong>均值 $\boldsymbol{\mu}_q$</strong>：高斯分布的几何中心，即概率密度取最大值的点。</li>
+</ul>
+<p>根据 Tweedie 公式与得分函数（Score Function）理论，均值可近似表示为：</p>
+<div class="math-display">
+$$\boldsymbol{\mu}_q \approx \mathbf{x}_t + c \cdot \nabla_{\mathbf{x}_t} \log p_t(\mathbf{x}_t)$$
+</div>
+<p>其中 $\nabla_{\mathbf{x}_t} \log p_t(\mathbf{x}_t)$ 为当前噪声尺度下数据分布的对数概率梯度，其方向指向概率密度增长最快的区域，即更接近真实数据流形的方向。因此，逆向分布的均值位于当前观测点 $\mathbf{x}_t$ 沿梯度方向的一个微小偏移处。</p>
+<p>参数化模型 $p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 的设计目标即在于：令网络输出的均值 $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$ 逼近上述真实逆向分布的均值 $\boldsymbol{\mu}_q$，从而在采样过程中逐步将样本引导至真实数据分布的高概率区域。</p>
+<hr />
+<blockquote>
+<p><strong>从模型定义到训练目标</strong>：第一步完整定义了前向加噪过程 $q$ 和逆向去噪过程 $p_\theta$。但此时 $p_\theta$ 中的网络参数 $\theta$ 尚未确定——我们需要一个优化目标来训练它。自然的想法是最大化模型对真实数据的似然，但由于隐变量的存在，直接优化似然是不可行的。第二步将展示如何通过构造变分下界来绕过这一困难。</p>
+</blockquote>
+<h3 id="step2"><strong>第二步：优化目标与证据下界 (ELBO)</strong></h3>
+<p>模型训练的最终目标是最大化真实数据的边际对数似然 $\log p_\theta(\mathbf{x}_0)$：</p>
+<div class="math-display">
+$$\log p_\theta(\mathbf{x}_0) = \log \int p_\theta(\mathbf{x}_{0:T}) d\mathbf{x}_{1:T}$$
+</div>
+<p>该积分涉及对所有隐变量 $\mathbf{x}_{1:T}$ 的高维积分，在连续高维空间中是不可解的。为构造可计算的下界，引入一个辅助分布 $q(\mathbf{x}_{1:T} | \mathbf{x}_0)$（恰好是前向过程），利用重要性采样（Importance Sampling）技巧将积分改写为期望：</p>
+<div class="math-display">
+$$\log p_\theta(\mathbf{x}_0) = \log \int \frac{p_\theta(\mathbf{x}_{0:T})}{q(\mathbf{x}_{1:T} | \mathbf{x}_0)} q(\mathbf{x}_{1:T} | \mathbf{x}_0) d\mathbf{x}_{1:T} = \log \mathbb{E}_{q(\mathbf{x}_{1:T} | \mathbf{x}_0)} \left[ \frac{p_\theta(\mathbf{x}_{0:T})}{q(\mathbf{x}_{1:T} | \mathbf{x}_0)} \right]$$
+</div>
+<p>由于 $\log$ 是凹函数，根据 Jensen 不等式 $\log \mathbb{E}[X] \ge \mathbb{E}[\log X]$，可以将对数移入期望内部，得到一个下界：</p>
+<div class="math-display">
+$$\log p_\theta(\mathbf{x}_0) \ge \mathbb{E}_{q(\mathbf{x}_{1:T} | \mathbf{x}_0)} \left[ \log \frac{p_\theta(\mathbf{x}_{0:T})}{q(\mathbf{x}_{1:T} | \mathbf{x}_0)} \right] = -L_{VLB}$$
+</div>
+<p>因此，最大化 $\log p_\theta(\mathbf{x}_0)$ 的下界等价于最小化变分下界损失 $L_{VLB}$。</p>
+<hr />
+<blockquote>
+<p><strong>从 ELBO 到可计算损失</strong>：第二步得到了 $L_{VLB}$ 的表达式，但它仍然是一个包含联合概率 $p_\theta(\mathbf{x}_{0:T})$ 和条件概率 $q(\mathbf{x}_{1:T}|\mathbf{x}_0)$ 的整体。要使其可计算，需要利用马尔可夫性将其拆解为逐项的 KL 散度。第三步的任务就是完成这一拆解。</p>
+</blockquote>
+<h3 id="step3"><strong>第三步：$L_{VLB}$ 的数学拆解</strong></h3>
+<p>将 $L_{VLB}$ 取负号并展开。首先，利用马尔可夫性将联合概率 $p_\theta(\mathbf{x}_{0:T})$ 和前向条件概率 $q(\mathbf{x}_{1:T}|\mathbf{x}_0)$ 分别展开为各时间步的乘积：</p>
+<div class="math-display">
+$$p_\theta(\mathbf{x}_{0:T}) = p(\mathbf{x}_T) \prod_{t=1}^T p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t), \qquad q(\mathbf{x}_{1:T} | \mathbf{x}_0) = \prod_{t=1}^T q(\mathbf{x}_t | \mathbf{x}_{t-1})$$
+</div>
+<p>代入 $L_{VLB}$ 的定义并取负号，得：</p>
+<div class="math-display">
+$$L_{VLB} = \mathbb{E}_q \left[ -\log p(\mathbf{x}_T) - \sum_{t=1}^T \log \frac{p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)}{q(\mathbf{x}_t | \mathbf{x}_{t-1})} \right]$$
+</div>
+<p>接下来的关键步骤是利用贝叶斯定理改写分母中的前向条件概率。由马尔可夫性，$q(\mathbf{x}_t | \mathbf{x}_{t-1}) = q(\mathbf{x}_t | \mathbf{x}_{t-1}, \mathbf{x}_0)$，对其应用贝叶斯公式：</p>
+<div class="math-display">
+$$q(\mathbf{x}_t | \mathbf{x}_{t-1}) = \frac{q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) q(\mathbf{x}_t | \mathbf{x}_0)}{q(\mathbf{x}_{t-1} | \mathbf{x}_0)}$$
+</div>
+<p>将其代入求和项的乘积中：</p>
+<div class="math-display">
+$$\prod_{t=1}^T \frac{1}{q(\mathbf{x}_t | \mathbf{x}_{t-1})} = \prod_{t=1}^T \frac{q(\mathbf{x}_{t-1} | \mathbf{x}_0)}{q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) q(\mathbf{x}_t | \mathbf{x}_0)}$$
+</div>
+<p>该乘积具有裂变相消（Telescoping product）结构。将其逐项展开可清晰看到消去过程：</p>
+<div class="math-display">
+$$\prod_{t=1}^T \frac{q(\mathbf{x}_{t-1} | \mathbf{x}_0)}{q(\mathbf{x}_t | \mathbf{x}_0)} = \frac{q(\mathbf{x}_0 | \mathbf{x}_0)}{q(\mathbf{x}_1 | \mathbf{x}_0)} \cdot \frac{q(\mathbf{x}_1 | \mathbf{x}_0)}{q(\mathbf{x}_2 | \mathbf{x}_0)} \cdots \frac{q(\mathbf{x}_{T-1} | \mathbf{x}_0)}{q(\mathbf{x}_T | \mathbf{x}_0)} = \frac{q(\mathbf{x}_0 | \mathbf{x}_0)}{q(\mathbf{x}_T | \mathbf{x}_0)}$$
+</div>
+<p>由于 $q(\mathbf{x}_0 | \mathbf{x}_0) = 1$（已知 $\mathbf{x}_0$ 时 $\mathbf{x}_0$ 的条件分布退化为确定性分布），最终得到：</p>
+<div class="math-display">
+$$\prod_{t=1}^T \frac{1}{q(\mathbf{x}_t | \mathbf{x}_{t-1})} = \frac{1}{q(\mathbf{x}_T | \mathbf{x}_0)} \prod_{t=1}^T \frac{1}{q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0)}$$
+</div>
+<p>将其代回 $L_{VLB}$，重新组织各项并写为 KL 散度（Kullback-Leibler Divergence）形式，最终将 $L_{VLB}$ 严格拆解为三项：</p>
+<div class="math-display">
+$$L_{VLB} = \underbrace{D_{KL}(q(\mathbf{x}_T | \mathbf{x}_0) \parallel p(\mathbf{x}_T))}_{L_T} + \sum_{t=2}^T \underbrace{D_{KL}(q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) \parallel p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t))}_{L_{t-1}} \underbrace{- \log p_\theta(\mathbf{x}_0 | \mathbf{x}_1)}_{L_0}$$
+</div>
+<ul>
+<li><strong>$L_T$</strong>（先验匹配项）：衡量前向过程终态 $q(\mathbf{x}_T|\mathbf{x}_0)$ 与标准高斯先验 $p(\mathbf{x}_T)$ 的差异。由于 $q$ 的过程固定且不含可训练参数 $\theta$，该项在优化中视为常数。</li>
+<li><strong>$L_{t-1}$</strong>（逐步去噪项）：核心损失项，衡量真实后验 $q(\mathbf{x}_{t-1}|\mathbf{x}_t,\mathbf{x}_0)$ 与模型预测 $p_\theta(\mathbf{x}_{t-1}|\mathbf{x}_t)$ 的 KL 散度。</li>
+<li><strong>$L_0$</strong>（重建项）：最后一步从 $\mathbf{x}_1$ 恢复 $\mathbf{x}_0$ 的负对数似然。</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>从 KL 散度到解析计算</strong>：第三步将 $L_{VLB}$ 拆解为逐项 KL 散度，但其中 $L_{t-1}$ 的真实后验分布 $q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0)$ 尚未给出解析表达式。第四步将利用第一步的前向闭式解，推导出该后验的精确高斯参数。</p>
+</blockquote>
+<h3 id="step4"><strong>第四步：真实后验分布 $q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0)$ 的解析推导</strong></h3>
+<p>为了计算 $L_{t-1}$ 中的 KL 散度，需要确定真实后验分布 $q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0)$ 的具体解析式。</p>
+<p>无条件逆向分布 $q(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 没有闭式解，其难点在于分母边缘分布 $q(\mathbf{x}_t) = \int q(\mathbf{x}_t | \mathbf{x}_0) q(\mathbf{x}_0) d\mathbf{x}_0$ 需要对所有可能的 $\mathbf{x}_0$ 积分，不可解。为此，我们在条件中引入真实数据 $\mathbf{x}_0$，再次使用贝叶斯定理展开：</p>
+<div class="math-display">
+$$q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) = \frac{q(\mathbf{x}_t | \mathbf{x}_{t-1}, \mathbf{x}_0) q(\mathbf{x}_{t-1} | \mathbf{x}_0)}{q(\mathbf{x}_t | \mathbf{x}_0)}$$
+</div>
+<p>其中三个因子均为已知高斯分布：</p>
+<ol>
+<li>由马尔可夫性，$q(\mathbf{x}_t | \mathbf{x}_{t-1}, \mathbf{x}_0) = q(\mathbf{x}_t | \mathbf{x}_{t-1})$，是第一步定义的前向单步转移。</li>
+<li>$q(\mathbf{x}_{t-1} | \mathbf{x}_0)$ 是第一步推导的前向闭式解。</li>
+<li>分母 $q(\mathbf{x}_t | \mathbf{x}_0)$ 同样是前向闭式解。</li>
+</ol>
+<p>由于分母 $q(\mathbf{x}_t | \mathbf{x}_0)$ 对于 $\mathbf{x}_{t-1}$ 而言是常数，因此：</p>
+<div class="math-display">
+$$q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) \propto q(\mathbf{x}_t | \mathbf{x}_{t-1}) q(\mathbf{x}_{t-1} | \mathbf{x}_0)$$
+</div>
+<p>代入第一步推导出的两个高斯分布的概率密度函数（忽略常数项），提取指数部分：</p>
+<div class="math-display">
+$$q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) \propto \exp \left( -\frac{1}{2} \left[ \frac{(\mathbf{x}_t - \sqrt{\alpha_t}\mathbf{x}_{t-1})^2}{\beta_t} + \frac{(\mathbf{x}_{t-1} - \sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0)^2}{1 - \bar{\alpha}_{t-1}} \right] \right)$$
+</div>
+<p>对指数中关于 $\mathbf{x}_{t-1}$ 的项进行展开和合并。令指数部分（忽略 $-\frac{1}{2}$ 因子）为：</p>
+<div class="math-display">
+$$-\left[ \frac{\mathbf{x}_{t-1}^2 - 2\sqrt{\alpha_t}\mathbf{x}_t\mathbf{x}_{t-1}}{\beta_t} + \frac{\mathbf{x}_{t-1}^2 - 2\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0\mathbf{x}_{t-1}}{1 - \bar{\alpha}_{t-1}} \right]$$
+</div>
+<p>按 $\mathbf{x}_{t-1}$ 的幂次合并同类项：</p>
+<div class="math-display">
+$$-\left[ \left(\frac{1}{\beta_t} + \frac{1}{1 - \bar{\alpha}_{t-1}}\right)\mathbf{x}_{t-1}^2 - 2\left(\frac{\sqrt{\alpha_t}\mathbf{x}_t}{\beta_t} + \frac{\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0}{1 - \bar{\alpha}_{t-1}}\right)\mathbf{x}_{t-1} \right]$$
+</div>
+<p>这是一个关于 $\mathbf{x}_{t-1}$ 的二次型 $-(A\mathbf{x}_{t-1}^2 - 2B\mathbf{x}_{t-1})$，通过配方 $-A(\mathbf{x}_{t-1} - B/A)^2$ 可知该分布为高斯分布 $\mathcal{N}(\mathbf{x}_{t-1}; \tilde{\boldsymbol{\mu}}_t, \tilde{\beta}_t\mathbf{I})$，其中：</p>
+<div class="math-display">
+$$\frac{1}{\tilde{\beta}_t} = \frac{1}{\beta_t} + \frac{1}{1 - \bar{\alpha}_{t-1}} = \frac{1 - \bar{\alpha}_{t-1} + \beta_t}{\beta_t(1 - \bar{\alpha}_{t-1})}$$
+</div>
+<p>注意到 $1 - \bar{\alpha}_{t-1} + \beta_t = 1 - \bar{\alpha}_{t-1} + (1-\alpha_t) = 1 - \bar{\alpha}_{t-1}\alpha_t = 1 - \bar{\alpha}_t$，因此：</p>
+<div class="math-display">
+$$\tilde{\beta}_t = \frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t}\beta_t$$
+</div>
+<div class="math-display">
+$$\tilde{\boldsymbol{\mu}}_t(\mathbf{x}_t, \mathbf{x}_0) = \frac{B}{A} = \frac{\frac{\sqrt{\alpha_t}}{\beta_t}\mathbf{x}_t + \frac{\sqrt{\bar{\alpha}_{t-1}}}{1-\bar{\alpha}_{t-1}}\mathbf{x}_0}{\frac{1}{\beta_t} + \frac{1}{1-\bar{\alpha}_{t-1}}} = \frac{\sqrt{\alpha_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} \mathbf{x}_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1 - \bar{\alpha}_t} \mathbf{x}_0$$
+</div>
+<p>为了将均值表达式中的 $\mathbf{x}_0$ 消除（因为推理时 $\mathbf{x}_0$ 未知），利用前向过程的边缘分布等式 $\mathbf{x}_t = \sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}$，将 $\mathbf{x}_0$ 表达为 $\mathbf{x}_t$ 和 $\boldsymbol{\epsilon}$ 的函数：$\mathbf{x}_0 = \frac{1}{\sqrt{\bar{\alpha}_t}}(\mathbf{x}_t - \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon})$。代入上述均值公式并化简，可得只含有 $\mathbf{x}_t$ 和 $\boldsymbol{\epsilon}$ 的均值表达式：</p>
+<div class="math-display">
+$$\tilde{\boldsymbol{\mu}}_t = \frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon} \right)$$
+</div>
+<hr />
+<blockquote>
+<p><strong>从后验分布到可训练损失</strong>：第四步得到了真实后验分布的精确高斯参数——方差 $\tilde{\beta}_t$ 和均值 $\tilde{\boldsymbol{\mu}}_t$。第五步将把这些参数代入第三步的 $L_{t-1}$ 中，将 KL 散度化简为均方误差，最终得到可直接用于梯度下降的损失函数。</p>
+</blockquote>
+<h3 id="step5"><strong>第五步：损失函数的等价化简</strong></h3>
+<p>现在考查第三步中拆出的核心损失项 $L_{t-1} = D_{KL}(q(\mathbf{x}_{t-1}|\mathbf{x}_t,\mathbf{x}_0) \parallel p_\theta(\mathbf{x}_{t-1}|\mathbf{x}_t))$，其中两个分布均为高斯分布：</p>
+<div class="math-display">
+$$L_{t-1} = D_{KL}\left(\mathcal{N}(\tilde{\boldsymbol{\mu}}_t, \tilde{\beta}_t\mathbf{I}) \parallel \mathcal{N}(\boldsymbol{\mu}_\theta, \Sigma_\theta)\right)$$
+</div>
+<p>DDPM 假定模型预测的方差 $\Sigma_\theta = \sigma_t^2\mathbf{I}$ 为固定常数（不依赖 $\theta$）。对于两个等方差的多维高斯分布，KL 散度有一个重要性质——不含 $\theta$ 的项（方差比、对数项、维度项）均为常数，仅均值差的二次项依赖 $\theta$：</p>
+<div class="math-display">
+$$D_{KL}(\mathcal{N}(\mu_1, \sigma^2 I) \parallel \mathcal{N}(\mu_2, \sigma^2 I)) = \frac{\|\mu_1 - \mu_2\|^2}{2\sigma^2}$$
+</div>
+<p>因此，最小化 KL 散度等价于最小化均值的均方误差（MSE）：</p>
+<div class="math-display">
+$$L_{t-1} = \mathbb{E}_q \left[ \frac{1}{2\sigma_t^2} \| \tilde{\boldsymbol{\mu}}_t - \boldsymbol{\mu}_\theta(\mathbf{x}_t, t) \|^2 \right]$$
+</div>
+<p>根据第四步得出的 $\tilde{\boldsymbol{\mu}}_t$ 结构，我们让网络的输出均值 $\boldsymbol{\mu}_\theta$ 采用相同的参数化形式，将预测目标从均值转移到噪声 $\boldsymbol{\epsilon}$ 上：</p>
+<div class="math-display">
+$$\boldsymbol{\mu}_\theta(\mathbf{x}_t, t) = \frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right)$$
+</div>
+<p>将 $\tilde{\boldsymbol{\mu}}_t$ 与 $\boldsymbol{\mu}_\theta$ 的表达式代入 $L_{t-1}$，两者仅噪声项不同（$\boldsymbol{\epsilon}$ vs $\boldsymbol{\epsilon}_\theta$），常数与 $\mathbf{x}_t$ 项完全抵消：</p>
+<div class="math-display">
+$$\tilde{\boldsymbol{\mu}}_t - \boldsymbol{\mu}_\theta = \frac{1}{\sqrt{\alpha_t}} \cdot \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} (\boldsymbol{\epsilon}_\theta - \boldsymbol{\epsilon})$$
+</div>
+<div class="math-display">
+$$L_{t-1} = \mathbb{E}_{\mathbf{x}_0, \boldsymbol{\epsilon}} \left[ \frac{\beta_t^2}{2\sigma_t^2 \alpha_t (1 - \bar{\alpha}_t)} \| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \|^2 \right]$$
+</div>
+<p>前置系数 $\frac{\beta_t^2}{2\sigma_t^2 \alpha_t (1 - \bar{\alpha}_t)}$ 随时间步 $t$ 变化。为提升经验训练稳定性，文献（Ho et al., 2020）发现去除该加权系数后模型表现反而更好，由此得到对所有时间步 $t \sim \mathcal{U}(1, T)$ 均匀采样的极简目标函数：</p>
+<div class="math-display">
+$$L_{simple}(\theta) = \mathbb{E}_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left[ \| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \|^2 \right]$$
+</div>
+<p>至此，推导完成。模型只需通过均方误差损失，学习利用网络 $\boldsymbol{\epsilon}_\theta$ 预测在时间步 $t$ 加入到图像 $\mathbf{x}_0$ 中的标准高斯噪声 $\boldsymbol{\epsilon}$。</p>
+<hr />
+<h3 id="appendix"><strong>附录：算法伪代码</strong></h3>
+<p><strong>算法 1：训练过程 (Training)</strong></p>
+<p>训练过程的核心是通过蒙特卡洛采样（Monte Carlo Sampling）来近似优化期望损失函数 $L_{simple}$，使神经网络学习在高维空间中预测附加噪声。</p>
+<pre><code>1: repeat
+2:     x_0 ~ q(x_0)
+3:     t ~ Uniform({1, ..., T})
+4:     ε ~ N(0, I)
+5:     Take gradient descent step on:
+           ∇_θ || ε - ε_θ( √(ᾱ_t)*x_0 + √(1 - ᾱ_t)*ε, t ) ||^2
+6: until converged</code></pre>
+<p><strong>原理解析：</strong></p>
+<ul>
+<li><strong>第 2 行</strong>：从真实数据分布 $q(\mathbf{x}_0)$ 中抽取一个批次（Batch）的无噪声原始数据 $\mathbf{x}_0$。</li>
+<li><strong>第 3 行</strong>：从离散的均匀分布中随机抽取时间步 $t$。这在数学上是对损失函数中 $\mathbb{E}_{t \sim \mathcal{U}(1,T)}$ 的无偏估计。它打破了马尔可夫链的序列依赖，使得模型可以对不同噪声尺度的数据进行并行训练。</li>
+<li><strong>第 4 行</strong>：从标准高斯分布中采样噪声张量 $\boldsymbol{\epsilon}$，其维度与 $\mathbf{x}_0$ 完全一致。此为优化的目标值（Ground Truth）。</li>
+<li><strong>第 5 行（前向计算）</strong>：利用前向过程的边缘分布闭式解 $\mathbf{x}_t = \sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}$，直接计算出时间步 $t$ 的受噪图像 $\mathbf{x}_t$。</li>
+<li><strong>第 5 行（反向传播）</strong>：将 $\mathbf{x}_t$ 和时间步编码 $t$ 输入神经网络 $\boldsymbol{\epsilon}_\theta$。计算网络输出值与真实噪声 $\boldsymbol{\epsilon}$ 之间的 L2 范数（MSE 损失）。计算损失关于网络参数 $\theta$ 的梯度，并使用优化器（如 Adam）更新参数。</li>
+</ul>
+<p><strong>算法 2：推理/采样过程 (Sampling)</strong></p>
+<p>推理过程本质上是一个离散时间步下的祖先采样（Ancestral Sampling）过程，等价于退火朗之万动力学的数值求解。</p>
+<pre><code>1: x_T ~ N(0, I)
+2: for t = T, ..., 1 do
+3:     z ~ N(0, I) if t &gt; 1, else z = 0
+4:     x_{t-1} = (1 / √(α_t)) * ( x_t - β_t / √(1 - ᾱ_t) * ε_θ(x_t, t) ) + σ_t * z
+5: end for
+6: return x_0</code></pre>
+<blockquote>
+<p><strong>注</strong>：伪代码第 4 行中的 $\beta_t$ 即 $1 - \alpha_t$，与第四步的均值公式 $\tilde{\boldsymbol{\mu}}_t = \frac{1}{\sqrt{\alpha_t}}\left(\mathbf{x}_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\boldsymbol{\epsilon}_\theta\right)$ 完全一致。</p>
+</blockquote>
+<p><strong>原理解析：</strong></p>
+<ul>
+<li><strong>第 1 行</strong>：初始化状态。从平稳先验分布 $\mathcal{N}(\mathbf{0}, \mathbf{I})$ 中抽取初始随机张量 $\mathbf{x}_T$。</li>
+<li><strong>第 2 行</strong>：执行严格的逆序遍历。由于后验概率 $q(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 的推导严格依赖于马尔可夫性，推理时必须逐时间步计算，无法像训练时那样跳跃。</li>
+<li><strong>第 3 行</strong>：生成方差项的随机扰动因子 $\mathbf{z}$。当 $t = 1$（最后一步）时，为了确保最终输出落在确定的数据流形上而非分布的散布点，方差项被截断设为 $\mathbf{0}$。</li>
+<li><strong>第 4 行（均值估计）</strong>：括号内的部分 $\frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right)$ 是网络估算出的真实后验分布均值 $\tilde{\boldsymbol{\mu}}_t$。这代表了梯度上升的方向，将样本推向高概率密度区域。</li>
+<li><strong>第 4 行（方差注入）</strong>：尾部的 $+\sigma_t \mathbf{z}$ 是随机微分方程中的布朗运动项。$\sigma_t$ 的取值在 DDPM 论文中通常设为 $\sqrt{\tilde{\beta}_t}$ 或 $\sqrt{\beta_t}$。这一项通过注入计算好的方差，维持采样轨迹在状态空间中的遍历性，防止过早收敛至局部确定的均值节点。</li>
+<li><strong>第 6 行</strong>：历经 $T$ 步迭代，输出最终映射回目标数据分布 $p_{data}$ 的样本 $\mathbf{x}_0$。</li>
+</ul>
+
+
+<hr />
+<div style="display: flex; justify-content: space-between; margin-top: 40px; padding: 16px 0; border-top: 1px solid var(--border);">
+  <a href="index.html" style="color: var(--accent); text-decoration: none; font-size: 0.95rem;">&larr; 调研首页</a>
+  <a href="s00b_flow_sde.html" style="color: var(--accent); text-decoration: none; font-size: 0.95rem;">基础 B：连续时间 ODE/SDE/Flow Matching &rarr;</a>
+</div>
+
+</div>
+</body>
+</html>

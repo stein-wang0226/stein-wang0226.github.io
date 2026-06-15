@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扩散语言模型前沿调研：目录</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  // Fallback: if primary CDN fails, try alternate
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div id="math-loading">
+  <div class="spinner"></div>
+  正在加载数学公式渲染...
+</div>
+
+<div class="hero">
+  <h1>扩散语言模型前沿调研</h1>
+  <p class="subtitle">从 D3PM 到 LLaDA：离散/连续/块扩散/预测范式四大路线全景、Scaling Laws、投机解码、ELBO/RL 训练与商业落地深度解析</p>
+  <p class="meta">涵盖 50+ 篇核心论文 &middot; 2020&ndash;2025</p>
+</div>
+
+<div class="container">
+
+  <h2 class="section-title"><span class="num">目录</span> 基础理论 + 十大章节</h2>
+
+  <div class="index-grid">
+
+    <a class="index-card" href="s00a_ddpm.html" style="border-left: 4px solid var(--yellow);">
+      <span class="num" style="background: var(--yellow); color: var(--bg);">基础 A</span>
+      <h3>DDPM：从变分推断到噪声预测</h3>
+      <p>前向/逆向过程 &rarr; ELBO &rarr; KL 裂项拆解 &rarr; 后验解析 &rarr; $L_{\text{simple}}$，五步严格推导 DDPM 噪声预测损失。</p>
+      <div class="paper-count">前置理论</div>
+    </a>
+
+    <a class="index-card" href="s00b_flow_sde.html" style="border-left: 4px solid var(--yellow);">
+      <span class="num" style="background: var(--yellow); color: var(--bg);">基础 B</span>
+      <h3>连续时间：ODE、SDE 与 Flow Matching</h3>
+      <p>ODE 连续性方程 &rarr; SDE Fokker-Planck &rarr; 概率流 ODE &rarr; 条件/边际损失等价 &rarr; DDPM≡Score≡Flow 统一。</p>
+      <div class="paper-count">前置理论</div>
+    </a>
+
+    <a class="index-card" href="s01_overview.html">
+      <span class="num">01</span>
+      <h3>全景概述与四大流派</h3>
+      <p>离散 / 连续 / 块扩散 / 预测范式四大路线总览，梳理扩散语言模型的完整发展脉络与核心范式差异。</p>
+      <div class="paper-count">50+ 论文覆盖</div>
+    </a>
+
+    <a class="index-card" href="s02_discrete.html">
+      <span class="num">02</span>
+      <h3>离散空间扩散</h3>
+      <p>D3PM &rarr; MDLM &rarr; LLaDA &rarr; Dream &rarr; SEDD &rarr; Seed Diffusion，从早期马尔可夫链到现代大规模离散扩散的完整演进。</p>
+      <div class="paper-count">8 核心论文</div>
+    </a>
+
+    <a class="index-card" href="s03_block.html">
+      <span class="num">03</span>
+      <h3>块扩散与半自回归</h3>
+      <p>BD3LM &rarr; SDAR &rarr; DFlash &rarr; Nemotron &rarr; TiDAR &rarr; Fast-dLLM，块级并行采样与半自回归解码加速方案。</p>
+      <div class="paper-count">7 核心论文</div>
+    </a>
+
+    <a class="index-card" href="s04_continuous.html">
+      <span class="num">04</span>
+      <h3>连续隐空间扩散</h3>
+      <p>Diffusion-LM &rarr; COLA &rarr; CADD &rarr; ELF &rarr; LangFlow &rarr; Plaid，在连续嵌入空间上进行扩散生成与流形学习。</p>
+      <div class="paper-count">6 核心论文</div>
+    </a>
+
+    <a class="index-card" href="s05_paradigms.html">
+      <span class="num">05</span>
+      <h3>预测范式大一统</h3>
+      <p>&epsilon; / x&#x2080; / v / ratio / discrete FM 六种预测目标全面对比，统一框架下的理论分析与实验验证。</p>
+      <div class="paper-count">6 核心论文</div>
+    </a>
+
+    <a class="index-card" href="s06_scaling.html">
+      <span class="num">06</span>
+      <h3>Scaling Laws</h3>
+      <p>噪声类型依赖 scaling law、AR vs DLM 对比，揭示扩散语言模型在模型规模与数据规模下的性能规律。</p>
+      <div class="paper-count">4 核心论文</div>
+    </a>
+
+    <a class="index-card" href="s07_speculative.html">
+      <span class="num">07</span>
+      <h3>投机解码与推理加速</h3>
+      <p>DFlash vs MTP、S2D2、SimSD、Trajectory-Level SD，扩散模型作为投机解码器的最新进展与加速比分析。</p>
+      <div class="paper-count">5 核心论文</div>
+    </a>
+
+    <a class="index-card" href="s08_elbo_rl.html">
+      <span class="num">08</span>
+      <h3>ELBO 与 RL 训练</h3>
+      <p>SPG、GDSD、DUEL、TUBE，变分下界优化与强化学习在扩散语言模型训练中的前沿方法。</p>
+      <div class="paper-count">4 核心论文</div>
+    </a>
+
+    <a class="index-card" href="s09_commercial.html">
+      <span class="num">09</span>
+      <h3>商业落地与行业实践</h3>
+      <p>Google / NVIDIA / 字节 / 阿里 / Apple / Mercury 布局，大厂在扩散语言模型上的工程实践与产品化探索。</p>
+      <div class="paper-count">6 核心论文</div>
+    </a>
+
+    <a class="index-card" href="s10_comparison.html">
+      <span class="num">10</span>
+      <h3>综合对比与未来方向</h3>
+      <p>全景对比表 + 四大未来方向，涵盖理论基础、架构设计、训练效率、应用场景的系统性展望。</p>
+      <div class="paper-count">综合性总结</div>
+    </a>
+
+  </div>
+
+  <footer style="text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text2); font-size: 0.85em;">
+    <p>扩散语言模型前沿调研 &middot; 涵盖 50+ 篇核心论文 &middot; 2020&ndash;2025</p>
+  </footer>
+
+</div>
+</body>
+</html>

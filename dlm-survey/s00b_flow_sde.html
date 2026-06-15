@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>连续时间生成模型：ODE、SDE 与 Flow Matching</title>
+<style>
+:root {
+    --bg: #fafafa;
+    --fg: #1a1a2e;
+    --card-bg: #ffffff;
+    --border: #e0e0e0;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --quote-bg: #f0f4ff;
+    --quote-border: #3b82f6;
+    --code-bg: #f3f4f6;
+    --boxed-bg: #f8f9ff;
+    --boxed-border: #6366f1;
+    --table-header: #eef2ff;
+    --table-stripe: #f9fafb;
+    --transition-bg: #fffbeb;
+    --transition-border: #f59e0b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.8;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+/* ---- Headings ---- */
+h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+}
+
+h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 48px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--fg);
+}
+
+h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 32px 0 12px 0;
+    color: var(--fg);
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 24px 0 8px 0;
+    color: #374151;
+}
+
+/* ---- Paragraphs & Inline ---- */
+p {
+    margin: 0 0 16px 0;
+}
+
+strong { font-weight: 600; }
+
+/* ---- Blockquotes (transition paragraphs & notes) ---- */
+blockquote {
+    margin: 20px 0;
+    padding: 16px 20px;
+    background: var(--quote-bg);
+    border-left: 4px solid var(--quote-border);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+blockquote p:last-child { margin-bottom: 0; }
+
+/* Transition blockquotes (between major sections) get warm styling */
+blockquote.transition {
+    background: var(--transition-bg);
+    border-left-color: var(--transition-border);
+}
+
+/* ---- Lists ---- */
+ul, ol {
+    margin: 0 0 16px 0;
+    padding-left: 24px;
+}
+
+li {
+    margin-bottom: 6px;
+}
+
+li strong { color: var(--accent); }
+
+/* ---- Tables ---- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 0.92rem;
+}
+
+th {
+    background: var(--table-header);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+}
+
+td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+}
+
+tr:nth-child(even) td {
+    background: var(--table-stripe);
+}
+
+/* ---- Code Blocks ---- */
+pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin: 16px 0 24px;
+}
+
+code {
+    font-family: "SF Mono", "Fira Code", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+}
+
+p code, li code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+/* ---- Math Display ---- */
+.math-display {
+    margin: 20px 0;
+    padding: 16px 20px;
+    background: var(--boxed-bg);
+    border-radius: 8px;
+    overflow-x: auto;
+    text-align: center;
+}
+
+.math-display.boxed {
+    border: 2px solid var(--boxed-border);
+    background: #f0f0ff;
+}
+
+/* ---- Horizontal Rules ---- */
+hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 40px 0;
+}
+
+/* ---- Document Header ---- */
+.doc-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.doc-header h1 {
+    font-size: 1.85rem;
+    margin-bottom: 12px;
+}
+
+.doc-subtitle {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+/* ---- Section Nav ---- */
+.toc {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0 40px;
+}
+
+.toc-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.toc ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc li {
+    margin-bottom: 4px;
+}
+
+.toc a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.92rem;
+}
+
+.toc a:hover {
+    text-decoration: underline;
+}
+
+.toc .toc-sub {
+    padding-left: 20px;
+}
+
+/* ---- Roadmap ---- */
+.roadmap {
+    background: linear-gradient(135deg, #eef2ff 0%, #f0f4ff 100%);
+    border: 1px solid #c7d2fe;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+    .container { padding: 20px 16px 60px; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.2rem; }
+    table { font-size: 0.82rem; }
+    th, td { padding: 8px 10px; }
+}
+
+/* ---- Print ---- */
+@media print {
+    body { background: white; }
+    .container { max-width: 100%; padding: 0; }
+    blockquote { break-inside: avoid; }
+    pre { break-inside: avoid; }
+}
+</style>
+
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']],
+        tags: 'ams',
+        macros: {
+            bm: ['\boldsymbol{#1}', 1]
+        }
+    },
+    svg: {
+        fontCache: 'global'
+    },
+    options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoreHtmlClass: 'tex2jax_ignore'
+    }
+};
+</script>
+<script>
+// MathJax SVG renderer — no external fonts needed, works with file:// protocol
+(function() {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js';
+    s.async = true;
+    s.onload = function() {
+        document.querySelectorAll('.math-loading').forEach(function(el) { el.style.display = 'none'; });
+    };
+    s.onerror = function() {
+        // Fallback: try alternate CDN
+        var s2 = document.createElement('script');
+        s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js';
+        s2.async = true;
+        document.head.appendChild(s2);
+    };
+    document.head.appendChild(s);
+})();
+</script>
+<style>
+.math-loading {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+.math-loading::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d1d5db;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    margin-left: 8px;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+</head>
+<body>
+<nav style="background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 24px; font-size: 0.88rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif; position: sticky; top: 0; z-index: 100;">
+  <a href="index.html" style="font-weight:700;color:#2563eb;text-decoration:none;">调研首页</a>
+  <span style="color:#ccc; margin: 0 8px;">|</span>
+  <a href="s00a_ddpm.html" style="color:#6b7280;text-decoration:none;">基础A</a>
+  <span style="color:#ccc; margin: 0 8px;">|</span>
+  <a href="s00b_flow_sde.html" style="font-weight:600;color:#2563eb;text-decoration:none;">基础B</a>
+  <span style="color:#ccc; margin: 0 8px;">|</span>
+  <a href="s01_overview.html" style="color:#6b7280;text-decoration:none;">01</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s02_discrete.html" style="color:#6b7280;text-decoration:none;">02</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s03_block.html" style="color:#6b7280;text-decoration:none;">03</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s04_continuous.html" style="color:#6b7280;text-decoration:none;">04</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s05_paradigms.html" style="color:#6b7280;text-decoration:none;">05</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s06_scaling.html" style="color:#6b7280;text-decoration:none;">06</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s07_speculative.html" style="color:#6b7280;text-decoration:none;">07</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s08_elbo_rl.html" style="color:#6b7280;text-decoration:none;">08</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s09_commercial.html" style="color:#6b7280;text-decoration:none;">09</a>
+  <span style="color:#ccc; margin: 0 6px;">|</span>
+  <a href="s10_comparison.html" style="color:#6b7280;text-decoration:none;">10</a>
+</nav>
+<div class="container">
+
+<div class="doc-header">
+<h1>连续时间生成模型：ODE、SDE 与 Flow Matching</h1>
+<div class="doc-subtitle">理论基础 · 第二章</div>
+</div>
+
+<div class="math-loading">正在加载数学公式渲染引擎</div>
+
+<div class="toc"><div class="toc-title">目录</div><ul><li><a href="#sec1">1. 直觉：从噪声到数据的连续演化</a></li><li><a href="#sec2">2. 连续时间演化方程</a></li><li><a href="#sec3">3. 理想路径的构建</a></li><li><a href="#sec4">4. 向量场的构建</a></li><li><a href="#sec5">5. ODE、SDE 与概率流 ODE 的统一</a></li><li><a href="#sec6">6. 训练目标</a></li><li><a href="#sec7">7. 推理与采样算法</a></li><li><a href="#appendix">附录 A-F</a></li></ul></div>
+
+<h1>Flow Matching 与 Diffusion Models：基于连续时间演化的统一视角</h1>
+<blockquote>
+<p><strong>本文档的核心目标</strong>：从连续时间的 ODE/SDE 视角出发，系统性地建立 Flow Matching 与 Score-based Diffusion 的完整理论框架，并揭示两者在高斯路径下的深层统一性。</p>
+<p><strong>推导路径总览</strong>：
+
+<div class="math-display">
+$$\underbrace{\text{演化方程}}_{\text{ODE / SDE}} \;\longrightarrow\; \underbrace{\text{理想路径}}_{\text{条件 / 边际分布}} \;\longrightarrow\; \underbrace{\text{目标向量场}}_{\text{向量场 / Score}} \;\longrightarrow\; \underbrace{\text{训练损失}}_{\text{FM / SM}} \;\longrightarrow\; \underbrace{\text{采样算法}}_{\text{ODE / SDE 积分}}$$
+</div>
+</blockquote>
+<hr />
+<h3>时间约定声明</h3>
+<blockquote>
+<p>本文统一采用 <strong>生成方向</strong> 的时间约定：$t = 0$ 对应纯噪声 $p_{\text{init}} = \mathcal{N}(0, I)$，$t = 1$ 对应目标数据 $p_{\text{data}}$。这与 Flow Matching 论文及部分连续时间 Score-based 文献（如 Song et al., 2021）一致。</p>
+<p>注意：经典 DDPM 论文（Ho et al., 2020）采用相反约定——$t=0$ 为数据，$t=T$ 为噪声，前向过程为加噪。本文会在涉及 DDPM 的章节中显式标注这一差异。</p>
+</blockquote>
+<hr />
+<h2 id="sec1">1. 直觉：从噪声到数据的连续演化</h2>
+<p>生成建模的核心问题是学习一个从简单分布到复杂分布的 <strong>连续变换路径</strong>：</p>
+<div class="math-display">
+$$p_0(x) = p_{\text{init}}(x) \quad\longrightarrow\quad p_1(x) = p_{\text{data}}(x)$$
+</div>
+<p>使得我们可以从标准高斯噪声采样，沿着这条路径&quot;流动&quot;到真实数据分布。</p>
+<p>实现这一目标的两种基本范式：</p>
+<ul>
+<li><strong>Flow Matching</strong>：学习一个 <strong>确定性的向量场</strong> $u_t(x)$，通过求解常微分方程（ODE）将噪声确定性地推送到数据。路径是光滑的、可逆的。</li>
+<li><strong>Diffusion Models</strong>：在确定性漂移之上叠加 <strong>随机扩散</strong>（布朗运动），通过随机微分方程（SDE）驱动演化。路径是随机的，但概率密度的演化仍然可精确控制。</li>
+</ul>
+<p>尽管动力学机制不同，两者的终极目标一致——<strong>构造一条连接噪声分布与数据分布的分布路径</strong> $\{p_t\}_{t \in [0,1]}$。</p>
+<hr />
+<h2 id="sec2">2. 连续时间演化方程</h2>
+<blockquote>
+<p>在定义具体的路径之前，我们需要建立描述概率密度如何随时间演化的基本数学工具。确定性演化由 ODE + 连续性方程描述；随机演化由 SDE + Fokker–Planck 方程描述。</p>
+</blockquote>
+<h3>2.1 确定性演化：ODE 与连续性方程</h3>
+<p><strong>常微分方程（ODE）</strong> 描述每个粒子的运动轨迹：</p>
+<div class="math-display">
+$$\frac{dX_t}{dt} = u_t(X_t), \quad X_0 \sim p_0(x)$$
+</div>
+<p>其中 $u_t(x): \mathbb{R}^d \to \mathbb{R}^d$ 是 <strong>向量场</strong>，定义了空间中每个点在时刻 $t$ 的运动速度。ODE 的积分结果定义了 <strong>流映射（Flow Map）</strong>：</p>
+<div class="math-display">
+$$\psi_t: X_0 \mapsto X_t = \psi_t(X_0)$$
+</div>
+<p>流映射是一个微分同胚（diffeomorphism），它将初始分布 $p_0$ 推前（push-forward）为时刻 $t$ 的分布：$p_t = (\psi_t)_\# p_0$。</p>
+<p>概率密度 $p_t(x)$ 的演化服从 <strong>连续性方程（Continuity Equation）</strong>：</p>
+<div class="math-display boxed">
+$$\boxed{\frac{\partial p_t(x)}{\partial t} = -\nabla_x \cdot \big(p_t(x)\, u_t(x)\big)}$$
+</div>
+<p>其物理含义是 <strong>概率守恒</strong>：局部密度的增减完全由概率流 $p_t u_t$ 的净流入/流出决定，概率不会凭空产生或消失。（完整推导见附录 A。）</p>
+<h3>2.2 随机演化：SDE 与 Fokker–Planck 方程</h3>
+<p><strong>随机微分方程（SDE）</strong> 在确定性漂移之上引入了随机扩散：</p>
+<div class="math-display">
+$$dX_t = f_t(X_t)\,dt + \sigma_t\, dW_t$$
+</div>
+<ul>
+<li>$f_t(x)$：<strong>漂移项（drift）</strong>，控制确定性运动方向</li>
+<li>$\sigma_t$：<strong>扩散系数（diffusion coefficient）</strong>，控制噪声注入强度</li>
+<li>$W_t$：<strong>标准布朗运动（Wiener Process）</strong>，$dW_t \sim \mathcal{N}(0, dt \cdot I)$（定义见附录 E）</li>
+</ul>
+<p>SDE 对应的概率密度演化服从 <strong>Fokker–Planck 方程</strong>：</p>
+<div class="math-display boxed">
+$$\boxed{\frac{\partial p_t(x)}{\partial t} = -\nabla_x \cdot \big(f_t(x)\, p_t(x)\big) + \frac{\sigma_t^2}{2} \Delta p_t(x)}$$
+</div>
+<p>第一项 $-\nabla \cdot (f_t p_t)$ 与连续性方程中的漂移输运完全一致；第二项 $\frac{\sigma_t^2}{2}\Delta p_t$ 是扩散项，描述概率密度在空间中的&quot;弥散&quot;效应。（标准推导见附录 E；与连续性方程的相容性验证见附录 D。）</p>
+<h3>2.3 两种演化的关键关系</h3>
+<p>若令 SDE 的漂移项取如下特殊形式：</p>
+<div class="math-display">
+$$f_t(x) = u_t(x) + \frac{\sigma_t^2}{2} \nabla_x \log p_t(x)$$
+</div>
+<p>代入 Fokker–Planck 方程，利用恒等式 $p_t \nabla \log p_t = \nabla p_t$，可以验证扩散项与 Score 项精确相消：</p>
+<div class="math-display">
+$$\frac{\partial p_t}{\partial t} = -\nabla \cdot (p_t u_t) - \frac{\sigma_t^2}{2}\Delta p_t + \frac{\sigma_t^2}{2}\Delta p_t = -\nabla \cdot (p_t u_t)$$
+</div>
+<p><strong>结论</strong>：该 SDE 的边际分布 $p_t(x)$ 与 ODE $\frac{dX_t}{dt} = u_t(X_t)$ 在每个时刻 $t$ 完全相同。这意味着 <strong>同一个分布路径 $\{p_t\}$ 既可以用 ODE 采样，也可以用 SDE 采样</strong>。这一结论是后续统一 Flow 与 Diffusion 的基石。</p>
+<hr />
+<h2 id="sec3">3. 理想路径的构建</h2>
+<blockquote>
+<p>上一节建立了描述分布演化的数学框架。本节要回答的问题是：如何 <strong>设计</strong> 一条从噪声到数据的具体路径？策略是：先定义以单个数据点 $z$ 为条件的 <strong>条件路径</strong>，再通过对 $z$ 边际化得到真实的 <strong>边际路径</strong>。</p>
+</blockquote>
+<h3>3.1 条件路径 $p_t(x|z)$</h3>
+<p>给定一个真实数据点 $z \sim p_{\text{data}}$，我们希望构造一个条件分布族 $p_t(x|z)$，使其在 $t=0$ 时为噪声、$t=1$ 时退化为数据点 $z$：</p>
+<div class="math-display">
+$$p_0(x|z) = p_{\text{init}}(x) = \mathcal{N}(x; 0, I), \quad p_1(x|z) = \delta_z(x)$$
+</div>
+<p><strong>高斯条件路径</strong> 是最自然的选择：</p>
+<div class="math-display">
+$$p_t(x|z) = \mathcal{N}(x;\, \alpha_t z,\, \beta_t^2 I)$$
+</div>
+<p>其中调度参数 $\alpha_t, \beta_t$ 满足边界条件：</p>
+<div class="math-display">
+$$\alpha_0 = 0,\; \alpha_1 = 1, \quad \beta_0 = 1,\; \beta_1 = 0$$
+</div>
+<p><strong>重参数化</strong>：从 $p_t(x|z)$ 采样等价于（详见附录 B）：</p>
+<div class="math-display boxed">
+$$\boxed{x_t = \alpha_t z + \beta_t \epsilon, \quad \epsilon \sim \mathcal{N}(0, I)}$$
+</div>
+<p><strong>线性调度（Linear Schedule）</strong> 是最简单的情形：$\alpha_t = t,\; \beta_t = 1 - t$，得到：</p>
+<div class="math-display">
+$$x_t = t z + (1-t)\epsilon$$
+</div>
+<p>这不仅仅是简单的线性插值——它对应 <strong>最优传输（Optimal Transport）理论中的直线路径</strong>（详见 5.3 节）。</p>
+<h3>3.2 边际路径 $p_t(x)$</h3>
+<p>条件路径描述的是从噪声到 <strong>单个数据点 $z$</strong> 的过渡。对所有可能的 $z$ 取边际，得到真实的分布路径：</p>
+<div class="math-display boxed">
+$$\boxed{p_t(x) = \int p_t(x|z)\, p_{\text{data}}(z)\, dz}$$
+</div>
+<p>容易验证边界条件：</p>
+<ul>
+<li>$t = 0$：$p_0(x) = \int \mathcal{N}(x; 0, I)\, p_{\text{data}}(z)\, dz = \mathcal{N}(x; 0, I) = p_{\text{init}}(x)$</li>
+<li>$t = 1$：$p_1(x) = \int \delta_z(x)\, p_{\text{data}}(z)\, dz = p_{\text{data}}(x)$</li>
+</ul>
+<p>这条边际路径 $\{p_t\}_{t \in [0,1]}$ 就是我们最终希望模型学习生成的分布演化。</p>
+<hr />
+<h2 id="sec4">4. 向量场的构建：描述路径的动力学</h2>
+<blockquote>
+<p>有了理想路径 $p_t(x)$ 之后，下一个问题是：什么样的向量场 $u_t(x)$ 能够 <strong>生成</strong> 这条路径？我们仍然采用&quot;先条件、后边际&quot;的策略。</p>
+</blockquote>
+<h3>4.1 条件向量场 $u_t(x|z)$</h3>
+<p>对于高斯条件路径 $p_t(x|z) = \mathcal{N}(\alpha_t z, \beta_t^2 I)$，其流映射为：</p>
+<div class="math-display">
+$$\psi_t(x_0|z) = \alpha_t z + \beta_t x_0, \quad x_0 \sim \mathcal{N}(0, I)$$
+</div>
+<p>对 $t$ 求导得到粒子的瞬时速度：</p>
+<div class="math-display">
+$$\frac{dX_t}{dt} = \dot\alpha_t z + \dot\beta_t x_0$$
+</div>
+<p>为了将其表示为当前位置 $x$ 的函数（而非初始位置 $x_0$），利用 $x_0 = \frac{x - \alpha_t z}{\beta_t}$ 代入：</p>
+<div class="math-display">
+$$u_t(x|z) = \dot\alpha_t z + \dot\beta_t \cdot \frac{x - \alpha_t z}{\beta_t} = \left(\dot\alpha_t - \frac{\dot\beta_t}{\beta_t}\alpha_t\right) z + \frac{\dot\beta_t}{\beta_t} x$$
+</div>
+<p>可以验证，此向量场代入连续性方程后恰好生成条件分布 $p_t(x|z)$。</p>
+<p><strong>线性调度下的简化</strong>（$\alpha_t = t,\; \beta_t = 1-t,\; \dot\alpha_t = 1,\; \dot\beta_t = -1$）：</p>
+<div class="math-display">
+$$u_t(x|z) = \left(1 - \frac{-1}{1-t} \cdot t\right)z + \frac{-1}{1-t} x = \frac{1}{1-t} z - \frac{1}{1-t} x$$
+</div>
+<div class="math-display boxed">
+$$\boxed{u_t(x|z) = \frac{z - x}{1 - t} = z - \epsilon}$$
+</div>
+<p>直觉上，条件向量场将粒子以恒定速度从当前位置 $x$ 直线推向目标点 $z$，剩余时间为 $1-t$。</p>
+<h3>4.2 边际向量场 $u_t(x)$ —— 真正的训练目标</h3>
+<p>推理时无法观测 $z$。对条件向量场在后验 $p(z|x, t)$ 上取期望，得到 <strong>边际向量场</strong>：</p>
+<div class="math-display">
+$$u_t(x) = \int u_t(x|z)\, p(z|x, t)\, dz = \int u_t(x|z)\, \frac{p_t(x|z)\, p_{\text{data}}(z)}{p_t(x)}\, dz$$
+</div>
+<p>等价关系：</p>
+<div class="math-display boxed">
+$$\boxed{p_t(x)\, u_t(x) = \int u_t(x|z)\, p_t(x|z)\, p_{\text{data}}(z)\, dz}$$
+</div>
+<p>$u_t(x)$ 是所有条件向量场在后验意义下的加权平均——它描述了在位置 $x$、时刻 $t$ 处，粒子&quot;平均而言&quot;应该移动的方向和速度。这是 Flow Matching 模型的 <strong>真正训练目标</strong>。</p>
+<p>然而，由于 $u_t(x)$ 依赖于不可解析计算的边际积分，我们无法直接使用它进行训练。这一困难将在第 6 节通过条件损失与边际损失的梯度等价性来解决。</p>
+<h3>4.3 Score Function 与噪声预测</h3>
+<p><strong>得分函数（Score Function）</strong> 定义为对数概率密度的梯度：</p>
+<div class="math-display">
+$$s_t(x) = \nabla_x \log p_t(x)$$
+</div>
+<p>它指向概率密度增长最快的方向，即&quot;朝向高概率区域&quot;的梯度方向。</p>
+<p><strong>条件 Score</strong> 对于高斯路径有简洁的闭式解：</p>
+<div class="math-display">
+$$p_t(x|z) = \frac{1}{(2\pi\beta_t^2)^{d/2}} \exp\!\left(-\frac{\|x - \alpha_t z\|^2}{2\beta_t^2}\right)$$
+</div>
+<div class="math-display">
+$$\nabla_x \log p_t(x|z) = -\frac{x - \alpha_t z}{\beta_t^2}$$
+</div>
+<p>代入 $x_t = \alpha_t z + \beta_t \epsilon$，得到：</p>
+<div class="math-display boxed">
+$$\boxed{\nabla_x \log p_t(x|z) = -\frac{\epsilon}{\beta_t}}$$
+</div>
+<p><strong>核心结论</strong>：在高斯路径下，<strong>学习 Score 函数等价于学习预测噪声</strong> $\epsilon$。这正是 DDPM 的核心思想。</p>
+<p><strong>边际 Score</strong> 同样通过对条件 Score 的后验期望获得：</p>
+<div class="math-display">
+$$\nabla_x \log p_t(x) = \int \nabla_x \log p_t(x|z) \cdot \frac{p_t(x|z)\, p_{\text{data}}(z)}{p_t(x)}\, dz = \mathbb{E}_{z \sim p(z|x,t)}\!\left[-\frac{\epsilon}{\beta_t}\right]$$
+</div>
+<hr />
+<h2 id="sec5">5. ODE、SDE 与概率流 ODE 的统一</h2>
+<blockquote>
+<p>前两节分别建立了 ODE（向量场）和 SDE（漂移 + 扩散）两套描述分布演化的语言。本节的核心任务是揭示它们之间的精确等价关系，并引入概率流 ODE 这一桥梁概念。</p>
+</blockquote>
+<h3>5.1 核心统一公式</h3>
+<p>任何 SDE $dX_t = f_t(X_t)\,dt + \sigma_t\,dW_t$ 的密度演化满足 Fokker–Planck 方程：</p>
+<div class="math-display">
+$$\partial_t p_t = -\nabla \cdot (f_t p_t) + \frac{\sigma_t^2}{2}\Delta p_t$$
+</div>
+<p>将其与连续性方程 $\partial_t p_t = -\nabla \cdot (u_t p_t)$ 对齐（令两者描述同一条分布路径），可得：</p>
+<div class="math-display boxed">
+$$\boxed{u_t(x) = f_t(x) - \frac{\sigma_t^2}{2} \nabla_x \log p_t(x)}$$
+</div>
+<p><strong>解读</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$u_t(x)$</td>
+<td>概率流速度场（ODE 视角下的向量场）</td>
+</tr>
+<tr>
+<td>$f_t(x)$</td>
+<td>SDE 漂移项（确定性运动速度）</td>
+</tr>
+<tr>
+<td>$\frac{\sigma_t^2}{2} \nabla_x \log p_t(x)$</td>
+<td>Score 修正项（扩散引起的概率流偏移）</td>
+</tr>
+<tr>
+<td>$\sigma_t$</td>
+<td>扩散系数（噪声强度）</td>
+</tr>
+</tbody>
+</table>
+<p>这条公式表明：<strong>向量场 $u_t$ 与 &quot;漂移 + Score&quot; $(f_t, s_t)$ 是同一概率流的两种等价参数化</strong>。</p>
+<h3>5.2 概率流 ODE（Probability Flow ODE）</h3>
+<p>上述统一公式的直接推论是 Song et al. (2021) 提出的 <strong>概率流 ODE</strong>：</p>
+<p>对于任意 SDE：</p>
+<div class="math-display">
+$$dX_t = f_t(X_t)\,dt + \sigma_t\,dW_t$$
+</div>
+<p>存在一个对应的确定性 ODE：</p>
+<div class="math-display boxed">
+$$\boxed{dX_t = \left[f_t(X_t) - \frac{\sigma_t^2}{2} \nabla_x \log p_t(X_t)\right] dt}$$
+</div>
+<p>使得两者在每个时刻 $t$ 的 <strong>边际分布 $p_t(x)$ 完全相同</strong>。</p>
+<p><strong>意义</strong>：</p>
+<ul>
+<li>这个 ODE 的漂移恰好是 $u_t(x) = f_t(x) - \frac{\sigma_t^2}{2} s_t(x)$，即边际向量场</li>
+<li>它证明了 <strong>Diffusion Model 在本质上也可以完全退化为一个 Flow 模型</strong>（只用 ODE 采样）</li>
+<li>DDIM（Denoising Diffusion Implicit Models）正是这个 PF-ODE 的离散时间版本</li>
+<li>实践中，ODE 采样通常比 SDE 采样需要更少的步数，因为确定性轨迹不会因布朗运动而&quot;绕路&quot;</li>
+</ul>
+<h3>5.3 最优传输与直线路径（Optimal Transport &amp; Rectified Flow）</h3>
+<p>回顾线性调度 $x_t = tz + (1-t)\epsilon$。从粒子轨迹的角度看，每个粒子从初始位置 $x_0 = \epsilon$ 沿 <strong>直线</strong> 运动到终点 $x_1 = z$：</p>
+<div class="math-display">
+$$X_t = (1-t) X_0 + t z$$
+</div>
+<p>这条直线路径不仅仅是一个简单的线性插值——它对应 <strong>最优传输（Optimal Transport, OT）理论</strong> 中的最优映射。在二次代价 $c(x, y) = \|x - y\|^2$ 下，直线传输是使总传输代价最小的方案。</p>
+<p><strong>Rectified Flow</strong>（Liu et al., 2023）正是利用了这一性质：</p>
+<ul>
+<li>传统 DDPM 的演化路径是弯曲的（受布朗运动影响，粒子轨迹高度随机）</li>
+<li>Flow Matching（特别是 Rectified Flow）通过设计直线路径，使得粒子从噪声到数据的移动距离最短</li>
+<li>直线路径的 ODE 更容易积分，因此推理时可以用 <strong>极少的步数</strong>（从 DDPM 的 1000 步压缩到 1~10 步）获得高质量样本</li>
+</ul>
+<h3>5.4 DDPM 与 Score-based 模型的统一：从变分推断到 SDE</h3>
+<blockquote>
+<p>本节是连接两份文档的桥梁：第一份文档（概率模型定义）从 <strong>变分推断</strong> 视角推导了 DDPM；本文（Flow Matching &amp; Diffusion）从 <strong>连续时间演化</strong> 视角建立了 Score-based 框架。这两条看似完全不同的理论路径，最终收敛于同一个数学对象。</p>
+</blockquote>
+<h4>两条独立的理论路径</h4>
+<p><strong>Ho et al. (2020) — DDPM，变分推断视角</strong>：</p>
+<p>DDPM 将生成过程建模为离散时间的变分自编码器。前向过程通过马尔可夫链逐步加噪：</p>
+<div class="math-display">
+$$q(x_t | x_{t-1}) = \mathcal{N}(x_t;\, \sqrt{1 - \beta_t}\, x_{t-1},\, \beta_t I), \quad t = 1, \ldots, T$$
+</div>
+<p>其中 $\beta_t$ 是噪声调度。逆向过程通过神经网络 $p_\theta(x_{t-1}|x_t)$ 去参数化。训练目标由变分下界（VLB）推导，最终化简为噪声预测损失：</p>
+<div class="math-display">
+$$L_{\text{DDPM}} = \mathbb{E}_{t, x_0, \epsilon}\left[\|\epsilon_\theta(x_t, t) - \epsilon\|^2\right]$$
+</div>
+<p>其中 $x_t = \sqrt{\bar\alpha_t}\, x_0 + \sqrt{1 - \bar\alpha_t}\, \epsilon$，$\bar\alpha_t = \prod_{i=1}^t (1 - \beta_i)$。</p>
+<p><strong>Yang Song &amp; Ermon (2019) — NCSN，Score Matching 视角</strong>：</p>
+<p>Score-based 生成模型完全不涉及变分推断。它直接学习数据分布的对数概率梯度（Score Function），然后用 Langevin Dynamics 沿梯度方向采样：</p>
+<div class="math-display">
+$$s_\theta(x, t) \approx \nabla_x \log p_t(x)$$
+</div>
+<p>训练目标为 Score Matching 损失，不涉及隐变量或 VLB。</p>
+<p>这两条路径的出发点截然不同：一个来自贝叶斯变分推断，一个来自能量模型与采样理论。</p>
+<h4>核心等价关系：$\epsilon_\theta$ 与 $s_\theta$ 的线性对应</h4>
+<p>Yang Song 的关键洞察是：DDPM 中通过变分推断化简出来的噪声预测网络 $\epsilon_\theta(x_t, t)$，与 Score Matching 中预测分数的网络 $s_\theta(x_t, t)$，在数学上存在 <strong>精确的线性比例关系</strong>。</p>
+<p>从 DDPM 的前向过程出发，$x_t$ 的条件分布为：</p>
+<div class="math-display">
+$$q(x_t | x_0) = \mathcal{N}(x_t;\, \sqrt{\bar\alpha_t}\, x_0,\, (1 - \bar\alpha_t) I)$$
+</div>
+<p>对 $x_t$ 求对数概率梯度（Score）：</p>
+<div class="math-display">
+$$\nabla_{x_t} \log q(x_t | x_0) = -\frac{x_t - \sqrt{\bar\alpha_t}\, x_0}{1 - \bar\alpha_t}$$
+</div>
+<p>代入 $x_t = \sqrt{\bar\alpha_t}\, x_0 + \sqrt{1 - \bar\alpha_t}\, \epsilon$，化简得：</p>
+<div class="math-display">
+$$\nabla_{x_t} \log q(x_t | x_0) = -\frac{\epsilon}{\sqrt{1 - \bar\alpha_t}}$$
+</div>
+<p>因此，DDPM 的噪声预测器 $\epsilon_\theta$ 与 Score 函数 $s_\theta$ 的关系为：</p>
+<div class="math-display boxed">
+$$\boxed{s_\theta(x_t, t) = \nabla_{x_t} \log p_t(x_t) = -\frac{\epsilon_\theta(x_t, t)}{\sqrt{1 - \bar\alpha_t}}}$$
+</div>
+<blockquote>
+<p>注：这里使用的是 DDPM 的标准记号（$\bar\alpha_t = \prod_{i=1}^t(1-\beta_i)$ 为累积信号保留率，$\sqrt{1-\bar\alpha_t}$ 为噪声标准差）。在本文的连续时间记号中，对应的噪声系数为 $\beta_t$，等价关系为 $s_\theta = -\epsilon_\theta / \beta_t$（见 4.3 节）。两者描述的是完全相同的数学关系，只是符号体系不同。</p>
+</blockquote>
+<p><strong>这一等价性的深刻含义</strong>：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>DDPM（Ho et al.）</th>
+<th>NCSN（Yang Song）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>理论出发点</strong></td>
+<td>变分推断，优化 VLB</td>
+<td>Score Matching，拟合对数梯度</td>
+</tr>
+<tr>
+<td><strong>网络预测目标</strong></td>
+<td>噪声 $\epsilon$</td>
+<td>Score $\nabla_x \log p_t(x)$</td>
+</tr>
+<tr>
+<td><strong>损失函数来源</strong></td>
+<td>KL 散度 → MSE 化简</td>
+<td>直接 Score 回归</td>
+</tr>
+<tr>
+<td><strong>实际网络输出</strong></td>
+<td>$\epsilon_\theta(x_t, t)$</td>
+<td>$s_\theta(x_t, t) = -\epsilon_\theta / \sqrt{1-\bar\alpha_t}$</td>
+</tr>
+<tr>
+<td><strong>代码实现</strong></td>
+<td><strong>完全相同</strong></td>
+<td><strong>完全相同</strong></td>
+</tr>
+</tbody>
+</table>
+<p>两条独立的理论路径，经过各自复杂的推导（一条走变分下界的裂项化简，一条走 Score Matching 的条件化），最终抵达了 <strong>完全等价的损失函数和网络架构</strong>。</p>
+<h4>从离散到连续：$T \to \infty$ 与 SDE 的统一</h4>
+<p>紧接着，Yang Song 在 2021 年的 ICLR 最佳论文 <em>Score-Based Generative Modeling through Stochastic Differential Equations</em> 中完成了最终的统一。</p>
+<p>核心操作是将 DDPM 的离散马尔可夫链步数 $T$ 推向无穷，将离散的加噪过程连续化：</p>
+<p><strong>离散前向过程（DDPM）</strong>：</p>
+<div class="math-display">
+$$q(x_t | x_{t-1}) = \mathcal{N}(x_t;\, \sqrt{1 - \beta_t}\, x_{t-1},\, \beta_t I), \quad t = 1, \ldots, T$$
+</div>
+<p>当 $T \to \infty$ 时，令连续时间 $s = t/T \in [0, 1]$，每步噪声量 $\beta_t \to \beta(s)\,ds$ 趋近于无穷小。离散的马尔可夫链收敛为一条连续时间的随机微分方程：</p>
+<div class="math-display boxed">
+$$\boxed{dX = -\frac{1}{2}\beta(s) X\,ds + \sqrt{\beta(s)}\,dW}$$
+</div>
+<p>这就是 <strong>Variance Preserving SDE（VP-SDE）</strong>——DDPM 的连续时间极限。</p>
+<p>在这一极限下：</p>
+<ul>
+<li>离散的前向转移 $q(x_t|x_{t-1})$ 变为 SDE 的漂移 + 扩散</li>
+<li>离散的变分下界 $L_{\text{VLB}}$ 的 $T$ 项求和变为连续时间积分</li>
+<li>逆向过程由 Anderson (1982) 的反向 SDE 定理精确给出，<strong>唯一需要学习的量就是 Score 函数</strong></li>
+</ul>
+<p><strong>反向 SDE</strong>（噪声 $\to$ 数据）：</p>
+<div class="math-display">
+$$dX = \left[-\frac{1}{2}\beta(s) X - \beta(s) \nabla_x \log p_s(X)\right] ds + \sqrt{\beta(s)}\,d\bar{W}, \quad s: 1 \to 0$$
+</div>
+<p>将噪声预测器代入 $s_\theta = -\epsilon_\theta / \sqrt{1-\bar\alpha_s}$，即可从 DDPM 的训练结果直接驱动这条 SDE 进行采样。</p>
+<h4>学术共识</h4>
+<p>至此，学术界形成了一个清晰的共识：</p>
+<blockquote>
+<p><strong>DDPM（变分推断视角）和 Score-based Models（SDE 视角）描述的是完全同一个数学对象。</strong> 它们的区别仅在于理论出发点不同——一个从 VLB 出发推导噪声预测，一个从 Score Matching 出发推导梯度预测——但通过 $s_\theta = -\epsilon_\theta / \sqrt{1-\bar\alpha_t}$ 这一线性关系，两者在代码实现和损失函数上完全等价。</p>
+</blockquote>
+<p>而本文第 5.1–5.2 节的概率流 ODE 进一步将这一统一推向极致：不仅 DDPM 与 Score-based SDE 等价，它们还与确定性的 Flow Matching 通过 $u_t = f_t - \frac{\sigma_t^2}{2} s_t$ 统一在同一个框架下。<strong>ODE、SDE、变分推断、Score Matching——四种视角，一个对象。</strong></p>
+<hr />
+<h2 id="sec6">6. 训练目标</h2>
+<blockquote>
+<p>第 4 节确定了边际向量场 $u_t(x)$ 和边际 Score $s_t(x)$ 作为训练目标。但由于它们依赖不可解析的边际积分，我们需要找到可计算的替代损失。本节的核心结论是：<strong>条件损失与边际损失在梯度意义下完全等价</strong>，因此可以用易计算的条件损失进行训练。</p>
+</blockquote>
+<h3>6.1 Flow Matching 损失</h3>
+<p><strong>边际损失（理想但不可计算）</strong>：</p>
+<div class="math-display">
+$$\mathcal{L}_{\text{FM}}(\theta) = \mathbb{E}_{t \sim \mathcal{U}[0,1],\; x \sim p_t} \left[\|u_\theta(x, t) - u_t(x)\|^2\right]$$
+</div>
+<p>$u_t(x)$ 含不可解析的积分，无法直接计算。</p>
+<p><strong>条件 Flow Matching 损失（CFM，可计算）</strong>：</p>
+<div class="math-display boxed">
+$$\boxed{\mathcal{L}_{\text{CFM}}(\theta) = \mathbb{E}_{t \sim \mathcal{U}[0,1],\; z \sim p_{\text{data}},\; x \sim p_t(\cdot|z)} \left[\|u_\theta(x, t) - u_t(x|z)\|^2\right]}$$
+</div>
+<p>其中条件目标 $u_t(x|z)$ 有闭式解（4.1 节已推导）。线性调度下：</p>
+<div class="math-display">
+$$u_t(x|z) = \frac{z - x}{1 - t} = z - \epsilon$$
+</div>
+<p>采样过程：$z \sim p_{\text{data}}$，$\epsilon \sim \mathcal{N}(0,I)$，$x_t = tz + (1-t)\epsilon$，计算 MSE 损失。</p>
+<h3>6.2 Score Matching 损失</h3>
+<p><strong>边际损失（不可计算）</strong>：</p>
+<div class="math-display">
+$$\mathcal{L}_{\text{SM}}(\theta) = \mathbb{E}_{t, x \sim p_t} \left[\|s_\theta(x, t) - \nabla_x \log p_t(x)\|^2\right]$$
+</div>
+<p><strong>条件 Score Matching 损失（CSM，可计算）</strong>：</p>
+<div class="math-display boxed">
+$$\boxed{\mathcal{L}_{\text{CSM}}(\theta) = \mathbb{E}_{t, z, x \sim p_t(\cdot|z)} \left[\|s_\theta(x, t) - \nabla_x \log p_t(x|z)\|^2\right]}$$
+</div>
+<p>代入高斯路径的条件 Score $\nabla_x \log p_t(x|z) = -\epsilon / \beta_t$：</p>
+<div class="math-display">
+$$\mathcal{L}_{\text{CSM}}(\theta) = \mathbb{E}_{t, z, \epsilon} \left[\left\|s_\theta(x_t, t) + \frac{\epsilon}{\beta_t}\right\|^2\right]$$
+</div>
+<h3>6.3 核心定理：条件损失与边际损失梯度等价</h3>
+<div class="math-display boxed">
+$$\boxed{\nabla_\theta \mathcal{L}_{\text{FM}} = \nabla_\theta \mathcal{L}_{\text{CFM}} \qquad \text{且} \qquad \nabla_\theta \mathcal{L}_{\text{SM}} = \nabla_\theta \mathcal{L}_{\text{CSM}}}$$
+</div>
+<p><strong>即：优化易计算的条件损失，与优化不可计算的边际目标在梯度意义下完全等价。</strong></p>
+<p>这是整个连续生成模型能够被实际训练的 <strong>最核心的数学基石</strong>。若没有此等价性，我们将永远卡在无法计算的边际积分上。（完整证明见附录 F。）</p>
+<p>证明的核心思路：展开两个损失的平方项，消去与 $\theta$ 无关的常数项后，利用全概率公式 $\int p_t(x|z) p_{\text{data}}(z)\, dz = p_t(x)$ 以及边际向量场的定义 $p_t(x) u_t(x) = \int u_t(x|z) p_t(x|z) p_{\text{data}}(z)\, dz$（式 A），证明两者的有效项完全相同。</p>
+<h3>6.4 DDPM 损失函数的推导</h3>
+<p>从条件 Score Matching 损失出发，进行噪声预测的重参数化。令网络输出 $\epsilon_\theta(x_t, t)$ 与 Score 的关系为：</p>
+<div class="math-display">
+$$\epsilon_\theta(x_t, t) = -\beta_t \, s_\theta(x_t, t)$$
+</div>
+<p>代入 $\mathcal{L}_{\text{CSM}}$：</p>
+<div class="math-display">
+$$\mathcal{L}_{\text{CSM}} = \mathbb{E}\left[\left\|-\frac{\epsilon_\theta(x_t, t)}{\beta_t} + \frac{\epsilon}{\beta_t}\right\|^2\right] = \mathbb{E}\left[\frac{1}{\beta_t^2}\|\epsilon_\theta(x_t, t) - \epsilon\|^2\right]$$
+</div>
+<p>DDPM 论文（Ho et al., 2020）去除了前面的加权系数 $1/\beta_t^2$（实验发现这能提升训练稳定性和生成质量），得到极简目标：</p>
+<div class="math-display boxed">
+$$\boxed{L_{\text{DDPM}} = \mathbb{E}_{t, z, \epsilon}\left[\|\epsilon_\theta(\alpha_t z + \beta_t \epsilon,\; t) - \epsilon\|^2\right]}$$
+</div>
+<p><strong>直觉</strong>：模型看到带噪样本 $x_t$，学习预测其中附加的噪声 $\epsilon$。</p>
+<blockquote>
+<p>注意：DDPM 使用离散时间 $t \in \{1, \ldots, T\}$，前向过程 $q(x_t|x_{t-1}) = \mathcal{N}(\sqrt{1-\beta_t}\,x_{t-1},\, \beta_t I)$，时间方向为 $x_0 \to x_T$（数据到噪声），与本文连续时间约定方向相反，但噪声预测的本质相同。</p>
+</blockquote>
+<hr />
+<h2 id="sec7">7. 推理与采样算法</h2>
+<blockquote>
+<p>训练完成后，我们得到了网络 $u_\theta$（或等价的 $\epsilon_\theta$ / $s_\theta$）。本节描述如何用它从噪声生成数据。</p>
+</blockquote>
+<h3>7.1 Flow Matching：ODE 采样</h3>
+<div class="math-display">
+$$x_0 \sim \mathcal{N}(0, I)$$
+</div>
+
+
+<div class="math-display">
+$$\text{for } t = 0 \to 1 \text{ (用 ODE solver 积分):} \quad \frac{dx}{dt} = u_\theta(x, t)$$
+</div>
+
+
+<div class="math-display">
+$$\text{return } x_1$$
+</div>
+<p>线性调度下的离散 Euler 步进：</p>
+<div class="math-display">
+$$x_{t+\Delta t} = x_t + \Delta t \cdot u_\theta(x_t, t)$$
+</div>
+<p>由于 Flow Matching 学习的是直线路径，ODE 轨迹接近线性，通常 <strong>5~20 步</strong> 即可获得高质量样本。</p>
+<h3>7.2 Score-based Diffusion：SDE 采样</h3>
+<div class="math-display">
+$$x_0 \sim \mathcal{N}(0, I)$$
+</div>
+
+
+<div class="math-display">
+$$\text{for } t = 0 \to 1 \text{ (Euler–Maruyama 离散化):}$$
+</div>
+
+
+<div class="math-display">
+$$x_{t+\Delta t} = x_t + \left[u_\theta(x_t, t) + \frac{\sigma_t^2}{2} s_\theta(x_t, t)\right] \Delta t + \sigma_t \sqrt{\Delta t}\, z, \quad z \sim \mathcal{N}(0, I)$$
+</div>
+
+
+<div class="math-display">
+$$\text{return } x_1$$
+</div>
+<p>SDE 采样由于布朗运动的随机性，通常需要更多步数（100~1000 步）。</p>
+<h3>7.3 DDPM 采样（离散时间）</h3>
+<p>在 DDPM 的离散框架中（$t = T \to 1$，时间方向为噪声到数据）：</p>
+<div class="math-display">
+$$x_T \sim \mathcal{N}(0, I)$$
+</div>
+
+
+<div class="math-display">
+$$\text{for } t = T, T-1, \ldots, 1:$$
+</div>
+
+
+<div class="math-display">
+$$\quad z \sim \mathcal{N}(0, I) \;\text{if } t > 1, \;\text{else } z = 0$$
+</div>
+
+
+<div class="math-display">
+$$\quad x_{t-1} = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar\alpha_t}}\, \epsilon_\theta(x_t, t)\right) + \sigma_t z$$
+</div>
+
+
+<div class="math-display">
+$$\text{return } x_0$$
+</div>
+<p>其中 $\alpha_t = 1 - \beta_t$，$\bar\alpha_t = \prod_{i=1}^t \alpha_i$。</p>
+<h3>7.4 一步或少步采样</h3>
+<p>在 Flow Matching 中，若直线路径学习得足够好，可直接预测终点：</p>
+<div class="math-display">
+$$x_1 \approx x_t + (1-t) \cdot u_\theta(x_t, t)$$
+</div>
+<p>在 DDPM 框架中，DDIM 采样器利用概率流 ODE 的离散化，也支持少步采样（10~50 步），甚至可以进一步通过蒸馏压缩到 1~4 步（Consistency Models）。</p>
+<hr />
+<h2 id="appendix">附录</h2>
+<h3>附录 A：连续性方程推导</h3>
+<p><strong>目标</strong>：证明 $p_t(x) = \int p_t(x|z)\, p(z)\,dz$ 满足 $\partial_t p_t = -\nabla \cdot (p_t u_t)$。</p>
+<p>已知条件连续性方程：$\partial_t p_t(x|z) = -\nabla \cdot (p_t(x|z)\, u_t(x|z))$。</p>
+<p><strong>Step 1</strong>：对边际密度求时间导数：</p>
+<div class="math-display">
+$$\partial_t p_t(x) = \int \partial_t p_t(x|z)\, p(z)\,dz$$
+</div>
+<p><strong>Step 2</strong>：代入条件连续性方程，并将 $\nabla$ 提出积分号（$\nabla$ 对 $x$ 作用，积分对 $z$）：</p>
+<div class="math-display">
+$$\partial_t p_t(x) = -\nabla \cdot \left(\int p_t(x|z)\, u_t(x|z)\, p(z)\,dz\right)$$
+</div>
+<p><strong>Step 3</strong>：利用边际向量场的定义 $p_t(x)\, u_t(x) = \int p_t(x|z)\, u_t(x|z)\, p(z)\,dz$，代入：</p>
+<div class="math-display boxed">
+$$\boxed{\partial_t p_t(x) = -\nabla \cdot \big(p_t(x)\, u_t(x)\big)}$$
+</div>
+<h3>附录 B：重参数化技巧（Reparameterization Trick）</h3>
+<p>从分布 $\mathcal{N}(\mu, \sigma^2 I)$ 采样是不可微的操作。重参数化将其改写为：</p>
+<div class="math-display">
+$$x = \mu + \sigma \epsilon, \quad \epsilon \sim \mathcal{N}(0, I)$$
+</div>
+<p>此时 $x$ 是参数 $(\mu, \sigma)$ 和随机变量 $\epsilon$ 的 <strong>可微函数</strong>，可以参与反向传播。</p>
+<p>在扩散/Flow 模型中，高斯路径 $p_t(x|z) = \mathcal{N}(\alpha_t z, \beta_t^2 I)$ 的重参数化形式为：</p>
+<div class="math-display">
+$$x_t = \alpha_t z + \beta_t \epsilon, \quad \epsilon \sim \mathcal{N}(0, I)$$
+</div>
+<h3>附录 C：标准布朗运动（Wiener Process）</h3>
+<p>$W_t \in \mathbb{R}^d$ 是连续时间随机过程，满足：</p>
+<ol>
+<li><strong>初值为零</strong>：$W_0 = 0$</li>
+<li><strong>独立增量</strong>：对 $0 \le t_1 < t_2 < \cdots < t_n$，增量 $W_{t_k} - W_{t_{k-1}}$ 相互独立</li>
+<li><strong>高斯增量</strong>：$W_t - W_s \sim \mathcal{N}(0, (t-s) I_d)$</li>
+<li><strong>连续路径</strong>：$t \mapsto W_t$ 几乎必然连续</li>
+</ol>
+<p>在 SDE $dX_t = f_t\,dt + \sigma_t\,dW_t$ 中，$dW_t$ 表示无穷小增量，$dW_t \sim \mathcal{N}(0, dt \cdot I)$。</p>
+<h3>附录 D：Fokker–Planck 方程推导（验证 SDE 与连续性方程的相容性）</h3>
+<p><strong>目标</strong>：验证当 $f_t(x) = u_t(x) + \frac{\sigma_t^2}{2} \nabla \log p_t(x)$ 时，SDE 的 Fokker–Planck 方程退化为连续性方程。</p>
+<p><strong>Step 1</strong>：写出 Fokker–Planck 方程：</p>
+<div class="math-display">
+$$\partial_t p_t = -\nabla \cdot (f_t p_t) + \frac{\sigma_t^2}{2}\Delta p_t = -\nabla \cdot (p_t u_t) - \nabla \cdot \left(p_t \frac{\sigma_t^2}{2} \nabla \log p_t\right) + \frac{\sigma_t^2}{2}\Delta p_t$$
+</div>
+<p><strong>Step 2</strong>：利用恒等式 $p_t \nabla \log p_t = \nabla p_t$ 和 $\sigma_t$ 与 $x$ 无关：</p>
+<div class="math-display">
+$$\nabla \cdot \left(p_t \frac{\sigma_t^2}{2} \nabla \log p_t\right) = \frac{\sigma_t^2}{2} \nabla \cdot (\nabla p_t) = \frac{\sigma_t^2}{2} \Delta p_t$$
+</div>
+<p><strong>Step 3</strong>：相消：</p>
+<div class="math-display">
+$$\partial_t p_t = -\nabla \cdot (p_t u_t) \underbrace{- \frac{\sigma_t^2}{2}\Delta p_t + \frac{\sigma_t^2}{2}\Delta p_t}_{= 0} = -\nabla \cdot (p_t u_t)$$
+</div>
+<p>这正是连续性方程，证明完毕。</p>
+<h3>附录 E：Fokker–Planck 方程的标准推导</h3>
+<p>对一般 SDE $dX_t = f_t(X_t)\,dt + \sigma_t\,dW_t$，概率密度 $p_t(x)$ 的演化方程可通过 Itô 引理或 Kramers–Moyal 展开推导。此处给出简要推导。</p>
+<p>对任意光滑测试函数 $\phi(x)$，由 Itô 引理：</p>
+<div class="math-display">
+$$d\phi(X_t) = \nabla\phi \cdot dX_t + \frac{1}{2}\text{tr}\!\left(\nabla^2\phi \cdot (dX_t)(dX_t)^\top\right)$$
+</div>
+<p>代入 $dX_t = f_t\,dt + \sigma_t\,dW_t$，利用 $(dW_t)(dW_t)^\top = dt \cdot I$：</p>
+<div class="math-display">
+$$d\phi(X_t) = \left(\nabla\phi \cdot f_t + \frac{\sigma_t^2}{2}\Delta\phi\right)dt + \sigma_t \nabla\phi \cdot dW_t$$
+</div>
+<p>取期望（$dW_t$ 项消失）并写成积分形式：</p>
+<div class="math-display">
+$$\frac{d}{dt}\mathbb{E}[\phi(X_t)] = \int \left(\nabla\phi \cdot f_t + \frac{\sigma_t^2}{2}\Delta\phi\right) p_t(x)\,dx$$
+</div>
+<p>利用分部积分（假设边界项为零）：</p>
+<div class="math-display">
+$$= \int \phi(x) \left[-\nabla \cdot (f_t p_t) + \frac{\sigma_t^2}{2}\Delta p_t\right] dx$$
+</div>
+<p>另一方面 $\frac{d}{dt}\mathbb{E}[\phi(X_t)] = \int \phi(x)\,\partial_t p_t(x)\,dx$。由 $\phi$ 的任意性：</p>
+<div class="math-display boxed">
+$$\boxed{\partial_t p_t = -\nabla \cdot (f_t p_t) + \frac{\sigma_t^2}{2}\Delta p_t}$$
+</div>
+<h3>附录 F：条件/边际损失梯度等价证明</h3>
+<p>以 Flow Matching 为例（Score Matching 同理）。</p>
+<p><strong>定义</strong>：</p>
+<ul>
+<li>边际向量场：$p_t(x)\,u_t(x) = \int u_t(x|z)\,p_t(x|z)\,p_{\text{data}}(z)\,dz \quad \cdots (\text{式 A})$</li>
+<li>边际损失：$\mathcal{L}_M(\theta) = \frac{1}{2}\mathbb{E}_{x \sim p_t}\left[\|u_\theta(x,t) - u_t(x)\|^2\right]$</li>
+<li>条件损失：$\mathcal{L}_C(\theta) = \frac{1}{2}\mathbb{E}_{z \sim p_{\text{data}},\, x \sim p_t(\cdot|z)}\left[\|u_\theta(x,t) - u_t(x|z)\|^2\right]$</li>
+</ul>
+<p><strong>证明</strong> $\nabla_\theta \mathcal{L}_M = \nabla_\theta \mathcal{L}_C$：</p>
+<p>展开平方项并对 $\theta$ 求导（消去与 $\theta$ 无关的项）：</p>
+<div class="math-display">
+$$\nabla_\theta \mathcal{L}_M = \nabla_\theta \mathbb{E}_{x \sim p_t}\left[\frac{1}{2}\|u_\theta\|^2 - \langle u_\theta, u_t(x) \rangle\right]$$
+</div>
+<div class="math-display">
+$$\nabla_\theta \mathcal{L}_C = \nabla_\theta \mathbb{E}_{z,x}\left[\frac{1}{2}\|u_\theta\|^2 - \langle u_\theta, u_t(x|z) \rangle\right]$$
+</div>
+<p><strong>比较第一项</strong>（网络输出平方）：</p>
+<div class="math-display">
+$$\mathbb{E}_{z,x}\left[\|u_\theta\|^2\right] = \iint \|u_\theta\|^2 p_t(x|z) p_{\text{data}}(z)\,dx\,dz = \int \|u_\theta\|^2 p_t(x)\,dx = \mathbb{E}_{x \sim p_t}\left[\|u_\theta\|^2\right]$$
+</div>
+<p>两者第一项相等。</p>
+<p><strong>比较第二项</strong>（交叉项，核心步骤）：</p>
+<div class="math-display">
+$$\mathbb{E}_{z,x}\left[\langle u_\theta, u_t(x|z) \rangle\right] = \iint \langle u_\theta(x,t),\, u_t(x|z) \rangle\, p_t(x|z)\, p_{\text{data}}(z)\,dx\,dz$$
+</div>
+<p>交换积分顺序（Fubini 定理），并将 $u_\theta(x,t)$（不含 $z$）提出内层积分：</p>
+<div class="math-display">
+$$= \int \left\langle u_\theta(x,t),\; \underbrace{\int u_t(x|z)\, p_t(x|z)\, p_{\text{data}}(z)\,dz}_{= p_t(x)\,u_t(x) \;\text{（式 A）}} \right\rangle dx$$
+</div>
+<div class="math-display">
+$$= \int \langle u_\theta(x,t),\, p_t(x)\,u_t(x) \rangle\,dx = \mathbb{E}_{x \sim p_t}\left[\langle u_\theta, u_t(x) \rangle\right]$$
+</div>
+<p>两者第二项也相等。因此 $\nabla_\theta \mathcal{L}_M = \nabla_\theta \mathcal{L}_C$，证明完毕。</p>
+
+
+<hr />
+<div style="display: flex; justify-content: space-between; margin-top: 40px; padding: 16px 0; border-top: 1px solid var(--border);">
+  <a href="s00a_ddpm.html" style="color: var(--accent); text-decoration: none; font-size: 0.95rem;">&larr; 基础 A：DDPM 变分推导</a>
+  <a href="s01_overview.html" style="color: var(--accent); text-decoration: none; font-size: 0.95rem;">全景概述与四大流派 &rarr;</a>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预测范式 (Prediction Paradigms) 大一统 - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html" class="active">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s5"><span class="num">05</span> 预测范式 (Prediction Paradigms) 大一统</h2>
+
+<p>无论底层是连续还是离散，算 Loss 时模型到底在预测什么？这决定了梯度稳定性和生成质量。以下对六种预测范式逐一展开数学原理。</p>
+
+<h3>5.1 连续扩散的三大预测目标</h3>
+
+<div class="card purple">
+  <div class="card-title">$\epsilon$-prediction vs $x_0$-prediction vs $v$-prediction</div>
+  <p>三种预测目标共享同一个前向过程 $\mathbf{x}_t = \sqrt{\bar{\alpha}_t}\,\mathbf{x}_0 + \sqrt{1-\bar{\alpha}_t}\,\boldsymbol{\epsilon}$，但网络的输出目标不同。</p>
+  
+  <h4>$\epsilon$-prediction（预测噪声）</h4>
+  <p>DDPM 原始目标。网络 $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$ 预测注入的高斯噪声，损失为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_\epsilon = \mathbb{E}_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left[ \| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \|^2 \right]$
+  </div>
+  <p>梯度行为：当 $t \to 0$（低噪声），$\mathbf{x}_t \approx \mathbf{x}_0$，网络需要预测一个接近零的噪声——信噪比极高但梯度极小，训练信号弱。当 $t \to 1$（高噪声），$\mathbf{x}_t \approx \boldsymbol{\epsilon}$，预测噪声容易但"噪声"和"语义"之间无直接对应——在 NLP 的连续 embedding 空间中尤为严重。</p>
+  
+  <h4>$x_0$-prediction（预测干净数据）</h4>
+  <p>网络 $f_\theta(\mathbf{x}_t, t)$ 直接预测干净数据 $\mathbf{x}_0$：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{x_0} = \mathbb{E}_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left[ \| \mathbf{x}_0 - f_\theta(\mathbf{x}_t, t) \|^2 \right]$
+  </div>
+  <p><strong>Back to Basics (何恺明, CVPR 2026)</strong> 的关键洞察：$x_0$-prediction 让网络输出始终落在<strong>数据流形</strong>上（而非噪声空间），即使网络容量看似不足，也能在高维空间中成功。对离散 DLM，$x_0$ 就是词汇表上的分类分布——可直接用交叉熵损失：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{x_0}^{\mathrm{disc}} = \mathbb{E}_{t, \mathbf{x}_t} \left[ \sum_{i \in \mathcal{M}_t} -\log p_\theta(x_0^i | \mathbf{x}_t) \right]$
+  </div>
+  <p>这使 $x_0$-prediction 成为<strong>离散 DLM 的绝对主流</strong>（MDLM、LLaDA、Dream、D3PM 均采用）。连续 DLM 中 ELF 也采用此范式（预测干净 embedding）。</p>
+  
+  <h4>$v$-prediction（预测速度）</h4>
+  <p>定义为噪声和数据的加权线性组合：</p>
+  <div class="formula-box">
+    $\mathbf{v}_t = \sqrt{\bar{\alpha}_t}\,\boldsymbol{\epsilon} - \sqrt{1-\bar{\alpha}_t}\,\mathbf{x}_0, \quad \mathcal{L}_v = \mathbb{E}[\|\mathbf{v}_t - v_\theta(\mathbf{x}_t, t)\|^2]$
+  </div>
+  <p>数值稳定性优势：在 $t \to 0$ 时 $v_t \approx -\mathbf{x}_0$（预测数据），在 $t \to 1$ 时 $v_t \approx \boldsymbol{\epsilon}$（预测噪声）——$v$-prediction 自动在两端选择信噪比更高的目标。Stable Diffusion 2.x、SD3、FLUX 均采用。<strong>本质上是连续空间概念</strong>，离散文本中不直接使用。</p>
+  
+  <h4>三种目标的等价性与非等价性</h4>
+  <p>理论上，三种预测目标通过前向过程的线性关系互相可推导：</p>
+  <div class="formula-box">
+    $\mathbf{x}_0 = \frac{1}{\sqrt{\bar{\alpha}_t}}(\mathbf{x}_t - \sqrt{1-\bar{\alpha}_t}\,\boldsymbol{\epsilon}), \quad \mathbf{v}_t = \sqrt{\bar{\alpha}_t}\,\boldsymbol{\epsilon} - \sqrt{1-\bar{\alpha}_t}\,\mathbf{x}_0$
+  </div>
+  <p>但实际训练中<strong>不等价</strong>：不同目标的损失景观（loss landscape）差异巨大，导致梯度方向和稳定性的根本不同。ELBO 分析表明：$\epsilon$-pred 在高噪声区梯度方差大，$x_0$-pred 在低噪声区更稳定，$v$-pred 两端兼顾。</p>
+</div>
+
+<h3>5.2 离散扩散的预测范式</h3>
+
+<div class="card green">
+  <div class="card-title">$x_0$-prediction 在离散空间的主导地位</div>
+  <p>离散扩散中，$x_0$-prediction 天然适配为<strong>词汇表上的分类分布</strong>。网络输出 $p_\theta(x_0^i | \mathbf{x}_t) \in \Delta^{K-1}$，损失为交叉熵。这与 DDPM 中"从 $\epsilon$ 反推 $\mathbf{x}_0$"的结构完全平行但更简洁——无需高斯假设，直接分类。</p>
+  
+  <h4>离散 $x_0$-pred 的梯度分析</h4>
+  <p>对 mask 位置 $i \in \mathcal{M}_t$，交叉熵损失的梯度为：</p>
+  <div class="formula-box">
+    $\nabla_\theta \mathcal{L} = -\sum_{i \in \mathcal{M}_t} \nabla_\theta \log p_\theta(x_0^i | \mathbf{x}_t)$
+  </div>
+  <p>梯度仅来自 mask 位置，未被 mask 的位置<strong>不贡献梯度</strong>——这是吸收态扩散的结构性优势：计算和梯度都集中在"信息缺失"的位置上。</p>
+</div>
+
+<div class="card pink">
+  <span class="tag arxiv">arXiv: 2310.16834</span>
+  <span class="tag org">ICML 2024</span>
+  <div class="card-title">Ratio Estimation（第四范式）：SEDD 的数学原理</div>
+  <p>SEDD 独立于 $x_0$ 和 $\epsilon$，直接估计概率密度的<strong>离散 score</strong>（比率）。</p>
+  
+  <h4>离散 Score 的定义</h4>
+  <p>连续空间中 score function 为 $\nabla_{\mathbf{x}} \log p_t(\mathbf{x})$，但离散空间无梯度。SEDD 定义离散类比——<strong>置换比率</strong>：</p>
+  <div class="formula-box">
+    $s_t(\mathbf{x}_t, i, v) = \frac{p_t(\mathbf{x}_t^{i \to v})}{p_t(\mathbf{x}_t)}$
+  </div>
+  <p>即：将位置 $i$ 的 token 替换为 $v$ 后，概率的乘性变化。$s_t > 1$ 表示替换后概率增加（更可能），$s_t < 1$ 表示概率降低。</p>
+  
+  <h4>Score Entropy Loss</h4>
+  <p>网络 $r_\theta$ 近似真实比率 $s_t$，使用 score entropy loss（等价于真实 score 分布下的 KL 散度）：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{SE}} = \mathbb{E}_{t, \mathbf{x}_t} \left[ \sum_{i=1}^{N} \sum_{v \in \mathcal{V}} s_t(\mathbf{x}_t, i, v) \left(\log s_t(\mathbf{x}_t, i, v) - \log r_\theta(\mathbf{x}_t, i, v)\right) \right]$
+  </div>
+  <p>关键优势：真实比率 $s_t$ 可通过前向过程的<strong>解析可逆性</strong>计算（利用转移矩阵），无需直接估计 $p_t$。采样时使用基于比率的 Gibbs 采样，仅需 32 步（vs 标准 1000 步）。</p>
+  <p>PPL 比 mask-based 离散扩散降低 25-75%，证明了<strong>离散扩散不一定需要走 mask prediction 路线</strong>。</p>
+</div>
+
+<h3>5.3 Discrete Flow Matching：Flow Matching 推广到离散空间 ⭐</h3>
+<div class="card cyan">
+  <span class="tag arxiv">arXiv: 2410.01553 · NeurIPS 2024</span>
+  <span class="tag org">Apple + MIT</span>
+  <div class="card-title">Discrete Flow Matching (DFM) / FS-DFM</div>
+  
+  <p>DFM 将连续 Flow Matching 的核心思想推广到<strong>离散状态空间</strong>，是连续与离散之间的桥梁。</p>
+  
+  <h4>核心思想：离散状态上的条件流</h4>
+  <p>连续 Flow Matching 在 $\mathbb{R}^d$ 上定义 ODE 轨迹 $x_t$，拟合速度场 $v_\theta(x_t, t)$。DFM 在<strong>离散空间</strong> $\mathcal{X} = \{1, \ldots, K\}^N$ 上定义类似的"概率流"：</p>
+  <div class="formula-box">
+    $\frac{dp_t(\mathbf{x})}{dt} = \sum_{\mathbf{x}' \neq \mathbf{x}} \left[ R_\theta(\mathbf{x}', \mathbf{x}, t)\, p_t(\mathbf{x}') - R_\theta(\mathbf{x}, \mathbf{x}', t)\, p_t(\mathbf{x}) \right]$
+  </div>
+  <p>这是离散空间上的<strong>主方程</strong>（master equation），$R_\theta(\mathbf{x}, \mathbf{x}', t)$ 是从状态 $\mathbf{x}$ 到 $\mathbf{x}'$ 的转移速率。网络学习的目标就是这些速率。</p>
+  
+  <h4>条件流与边缘流的等价性</h4>
+  <p>类似连续 FM 中条件速度场 $u_t(x_t | x_0)$ 与边缘速度场 $\mathbb{E}[u_t | x_t]$ 的梯度等价（见基础B），DFM 证明：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{cond}} = \mathbb{E}_{t, \mathbf{x}_0, \mathbf{x}_t} \left[ \sum_i \sum_{v \neq x_t^i} \mathrm{CE}\!\left(u_t^{i}(v | \mathbf{x}_t, \mathbf{x}_0),\; R_\theta^i(v | \mathbf{x}_t, t)\right) \right]
+  </div>
+  <p>$\mathcal{L}_{\mathrm{cond}}$ 用<strong>条件速率</strong> $u_t(v | \mathbf{x}_t, \mathbf{x}_0)$（给定干净数据的解析速率）训练网络，等价于优化<strong>边缘速率</strong>的 KL 散度——这是连续 FM 核心定理在离散空间的精确对应。</p>
+  
+  <h4>FS-DFM：128 倍采样加速</h4>
+  <p><strong>FS-DFM</strong> (Apple, arXiv: 2504.14480) 在 DFM 基础上引入 <strong>few-step 采样</strong>：</p>
+  <ul>
+    <li>利用离散 ODE 的<strong>分段常数</strong>特性：在两个相邻 token 替换之间，状态不变，可以大步长跳跃</li>
+    <li>训练时使用标准 DFM 损失，推理时通过自适应步长 ODE 求解器实现 <strong>8 步达到 1024 步基线的 PPL</strong></li>
+    <li>规模 0.17B - 1.7B，在 OpenWebText 上验证</li>
+  </ul>
+  <p>这是目前离散扩散推理加速的<strong>最高纪录</strong>——证明了离散 Flow Matching 在采样效率上的结构性优势。</p>
+</div>
+
+<h3>5.4 六大范式统一对比</h3>
+<table>
+  <tr><th>范式</th><th>网络输出</th><th>损失函数</th><th>适用空间</th><th>代表模型</th><th>核心优缺</th></tr>
+  <tr>
+    <td><strong>$\epsilon$-pred</strong></td>
+    <td>噪声 $\boldsymbol{\epsilon}$</td>
+    <td>MSE $\|\epsilon - \epsilon_\theta\|^2$</td>
+    <td>连续</td>
+    <td>DDPM, Diffusion-LM</td>
+    <td>高噪声区梯度方差大；NLP 中噪声与语义脱节</td>
+  </tr>
+  <tr>
+    <td><strong>$x_0$-pred</strong></td>
+    <td>干净数据 $\mathbf{x}_0$</td>
+    <td>MSE / CE</td>
+    <td>连续 + 离散</td>
+    <td>LLaDA, MDLM, ELF</td>
+    <td>输出落在数据流形上；离散空间天然适配分类</td>
+  </tr>
+  <tr>
+    <td><strong>$v$-pred</strong></td>
+    <td>速度 $\mathbf{v}_t$</td>
+    <td>MSE $\|v - v_\theta\|^2$</td>
+    <td>连续</td>
+    <td>SD 2.x, SD3, FLUX</td>
+    <td>数值稳定性最优；离散空间不可用</td>
+  </tr>
+  <tr>
+    <td><strong>Ratio est.</strong></td>
+    <td>密度比率 $s_t$</td>
+    <td>Score Entropy KL</td>
+    <td>离散</td>
+    <td>SEDD</td>
+    <td>独立于 $x_0$/$\epsilon$；PPL 降低 25-75%</td>
+  </tr>
+  <tr>
+    <td><strong>Discrete FM</strong></td>
+    <td>转移速率 $R_\theta$</td>
+    <td>条件速率 CE</td>
+    <td>离散</td>
+    <td>DFM, FS-DFM</td>
+    <td>FM 推广到离散；8 步达 1024 步基线</td>
+  </tr>
+  <tr>
+    <td><strong>Continuous FM</strong></td>
+    <td>速度场 $v_\theta$</td>
+    <td>MSE $\|v - v_\theta\|^2$</td>
+    <td>连续</td>
+    <td>ELF, LangFlow, COLA</td>
+    <td>路径更直，few-step 友好；需 rounding</td>
+  </tr>
+</table>
+
+<div class="insight">
+  <div class="insight-title">预测范式的大一统视角</div>
+  <p>所有预测范式可统一理解为：<strong>模型在学习前向过程 $q(\mathbf{x}_t | \mathbf{x}_0)$ 的某种逆映射</strong>。$\epsilon$-pred 预测前向过程中注入的噪声（逆推加了多少噪），$x_0$-pred 预测前向过程的起点（逆推干净数据是什么），$v$-pred 预测前向过程的瞬时方向（逆推速度场），Ratio est. 预测概率密度的相对变化（逆推 score），Discrete FM 预测离散状态的转移速率（逆推主方程系数）。<strong>选择哪种范式，本质是在选择"用什么坐标来描述逆过程"——不同坐标下，损失景观和梯度行为截然不同。</strong></p>
+</div>
+
+<div class="insight warning">
+  <div class="insight-title">Flow Matching vs Diffusion 的本质差异</div>
+  <p><strong>理论基础</strong>：Flow Matching 基于 ODE（常微分方程），拟合速度场 $v_\theta(x_t, t)$，推理时 ODE 积分 $x(0)=\epsilon \to x(1)=\mathrm{data}$。Diffusion 基于 SDE（随机微分方程），涉及 Fokker-Planck 方程和 Langevin 动力学，每步引入随机噪声。</p>
+  <p><strong>路径几何</strong>：FM 的条件路径 $x_t = (1-t)\epsilon + t x_0$ 是直线（Rectified Flow），ODE 积分仅需少量步数；Diffusion 的 $\mathbf{x}_t = \sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1-\bar{\alpha}_t}\boldsymbol{\epsilon}$ 是弧线，需要更多步数跟踪弯曲轨迹。</p>
+  <p><strong>工程实现</strong>：FM 训练更稳定（直线目标更简单），硬件兼容性更好，ELF、SD3、FLUX 均采用 Rectified Flow。Consistency Model 可在 Flow 基础上实现单步生成。</p>
+</div>
+
+<!-- ==================== Section 6 ==================== -->
+<div class="page-nav"><a href="s04_continuous.html">&larr; 连续隐空间扩散 (Continuous DLLM)</a><a href="s06_scaling.html">DLM Scaling Laws 与 AR 对比 &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

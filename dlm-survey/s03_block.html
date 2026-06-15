@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>块扩散与半自回归 (Block / Semi-AR) - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html" class="active">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s3"><span class="num">03</span> 块扩散与半自回归 (Block / Semi-AR)</h2>
+
+<p>块扩散认为没必要一上来就生成全篇纯噪声让模型去解——可以一段一段做扩散。宏观自回归保证长文本可控性，微观块内并行去噪提供速度优势。</p>
+
+<h3>3.1 BD3LM：AR 与 Diffusion 的精确插值 ⭐</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2503.09573</span>
+  <span class="tag org">Cornell Tech · ICLR 2025 Oral</span>
+  <div class="card-title">Block Diffusion: Interpolating Between Autoregressive and Diffusion Language Models</div>
+  <p>BD3LM 是块扩散的<strong>理论基础工作</strong>，建立了 AR 与 Diffusion 之间的精确插值框架。</p>
+  
+  <h4>核心思想：块级分解</h4>
+  <p>将序列 $\mathbf{x}$ (长度 $L$) 划分为 $B$ 个大小为 $L'$ 的块 ($B = L/L'$)。联合分布分解为：</p>
+  <div class="formula-box">
+    $\log p(\mathbf{x}) = \sum_{b=1}^{B} \log p(\mathbf{x}_b | \mathbf{x}_{&lt;b})$
+  </div>
+  <p>每个条件 $p(\mathbf{x}_b | \mathbf{x}_{&lt;b})$ 用离散扩散（mask 加噪 + 迭代去噪）建模，而非标准的分类预测。</p>
+  
+  <h4>插值的两个极限</h4>
+  <table>
+    <tr><th>块大小 $L'$</th><th>等价模型</th><th>特点</th></tr>
+    <tr><td>$L' = 1$</td><td>标准 AR（next-token prediction）</td><td>最强似然，完全串行</td></tr>
+    <tr><td>$L' = L$</td><td>全序列离散扩散 (MDLM/D3PM)</td><td>完全并行，似然较弱</td></tr>
+    <tr><td>$1 &lt; L' &lt; L$</td><td><strong>BD3LM（插值区间）</strong></td><td>AR 跨块 + 扩散块内，两全其美</td></tr>
+  </table>
+  
+  <h4>插值的数学证明</h4>
+  <p><strong>定理</strong>：BD3LM 的似然下界随块大小 $L'$ 单调递减，在两个极限处分别退化为 AR 和全序列扩散。</p>
+  <p><strong>证明</strong>。将联合分布 $\log p(\mathbf{x})$ 通过链式法则分解为块级条件概率之和：</p>
+  <div class="formula-box">
+    $\log p(\mathbf{x}) = \sum_{b=1}^{B} \log p(\mathbf{x}_b | \mathbf{x}_{&lt;b})$
+  </div>
+  <p>每个块条件 $p(\mathbf{x}_b | \mathbf{x}_{&lt;b})$ 用离散扩散建模，其对数似然有 ELBO 下界：</p>
+  <div class="formula-box">
+    $\log p(\mathbf{x}_b | \mathbf{x}_{&lt;b}) \geq \mathbb{E}_{q(\mathbf{x}_{b,t} | \mathbf{x}_b)} \left[ -\mathcal{L}_{\mathrm{diff}}(\mathbf{x}_{b,t}, t, \mathbf{x}_{&lt;b}) \right] := \mathcal{L}_{\mathrm{BD3LM}}^{(b)}$
+  </div>
+  <p>总似然下界为 $\mathcal{L}_{\mathrm{BD3LM}} = \sum_b \mathcal{L}_{\mathrm{BD3LM}}^{(b)}$。</p>
+  <ul>
+    <li>当 $L' = 1$ 时，每块仅含 1 个 token，离散扩散退化为确定性分类预测 $p(x_b | x_{&lt;b})$，ELBO 变为精确似然——<strong>完全等价于 AR</strong></li>
+    <li>当 $L' = L$ 时，$B = 1$，整段序列为一个块，块级 AR 消失——<strong>完全退化为 MDLM/D3PM 的全序列扩散</strong></li>
+    <li>当 $1 &lt; L' &lt; L$ 时，跨块依赖通过 AR 精确建模（无信息损失），块内通过扩散并行建模（有 ELBO gap），总体似然介于二者之间</li>
+  </ul>
+  <p><strong>关键推论</strong>：AR 成分贡献精确似然，扩散成分贡献 ELBO gap。$L'$ 越大 → 块内扩散 gap 越大 → 总似然越低，但并行度越高。这构成了一个<strong>似然-速度 Pareto 前沿</strong>。</p>
+  
+  <h4>Clipped 噪声调度</h4>
+  <p>BD3LM 引入"截断"噪声调度，将 masking 率限制在 $[\alpha_{\min}, \alpha_{\max}]$ 区间，避免极端 masking 率导致训练不稳定。截断阈值通过验证集网格搜索动态更新。</p>
+  
+  <h4>实验结果 (OpenWebText)</h4>
+  <table>
+    <tr><th>块大小 $L'$</th><th>PPL 上界</th><th>vs AR</th></tr>
+    <tr><td>AR baseline</td><td>17.54</td><td>—</td></tr>
+    <tr><td>4</td><td>≤ 20.73</td><td>差 3.2</td></tr>
+    <tr><td>8</td><td>≤ 21.68</td><td>差 4.1</td></tr>
+    <tr><td>16</td><td>≤ 22.27</td><td>差 4.7</td></tr>
+  </table>
+  <p>比 MDLM PPL 改善最高 13%，且需要更少的采样函数评估次数。<strong>支持生成超过训练上下文长度的序列</strong>——这是纯扩散模型做不到的。</p>
+</div>
+
+<h3>3.2 SDAR：AR 预训练 → 块扩散适配</h3>
+<div class="card green">
+  <span class="tag arxiv">arXiv: 2510.06303</span>
+  <span class="tag org">上海 AI Lab + 浙大 + 清华 · 2025.10</span>
+  <div class="card-title">SDAR: A Synergistic Diffusion-AutoRegression Paradigm</div>
+  <p>SDAR 的核心洞察：<strong>不要从头训练块扩散模型，直接轻量适配预训练 AR 模型</strong>。</p>
+  
+  <h4>三阶段训练</h4>
+  <ol>
+    <li><strong>标准 AR 预训练</strong>：使用 Qwen3 基础模型 (1.7B, 4B, 8B, 30B-A3B MoE)</li>
+    <li><strong>块扩散继续预训练</strong>：在开放语料上用块扩散目标继续训练</li>
+    <li><strong>SFT 适配</strong>：块大小可从默认 4 增大到 8/16/32/64</li>
+  </ol>
+  
+  <p>关键特点：不需要注意力退火或 logit 偏移。训练仅需<strong>几十 billion tokens</strong>（非几百 billion）即可完成适配。</p>
+  
+  <h4>关键结果</h4>
+  <ul>
+    <li>通用 benchmark (MMLU 等) 匹配 AR 基线</li>
+    <li>Science-tuned 30B-A3B 在 GPQA 和 ChemBench 上<strong>超越 AR-30B</strong>（ChemBench 72.8）</li>
+    <li>87.2 on HumanEval (30B-A3B)</li>
+    <li>自适应解码比静态方法快 <strong>>2x 吞吐量</strong></li>
+    <li><strong>更大模型容忍更大块</strong>——30B 可以用 block size 64 而不降质</li>
+  </ul>
+  
+  <div class="insight">
+    <div class="insight-title">BD3LM vs SDAR：理论 vs 实用</div>
+    <p>BD3LM 建立了 AR↔Diffusion 插值的<strong>理论框架</strong>（ICLR'25 Oral），但从零训练成本高。SDAR 则走<strong>实用路线</strong>：以 AR 为高效训练基础，在推理时提取扩散的并行性优势。两者的共同核心：<strong>块间 AR 保证似然和 KV cache，块内扩散提供并行 token 生成</strong>。</p>
+  </div>
+</div>
+
+<h3>3.3 SSD-LM：半自回归扩散的先驱</h3>
+<div class="card cyan">
+  <span class="tag arxiv">arXiv: 2210.17432</span>
+  <span class="tag org">UW · ACL 2023</span>
+  <div class="card-title">SSD-LM: Semi-autoregressive Simplex-based Diffusion Language Model</div>
+  <p>最早的块扩散语言模型之一。两个关键设计：</p>
+  <ul>
+    <li><strong>半自回归</strong>：迭代生成 token 块（而非单 token），支持灵活长度和本地双向上下文</li>
+    <li><strong>Simplex-based</strong>：直接在词汇概率 simplex 上做扩散（非 embedding 空间），可用现成分类器做 modular controllable generation</li>
+  </ul>
+  
+  <h4>Simplex 扩散的数学框架</h4>
+  <p>SSD-LM 的核心创新是将扩散过程定义在<strong>词汇概率单纯形</strong> $\Delta^{K-1} = \{\mathbf{w} \in \mathbb{R}^K : w_i \geq 0, \sum_i w_i = 1\}$ 上，而非连续的 embedding 空间。</p>
+  <p><strong>前向过程</strong>：将 one-hot 编码 $w_0 = \mathbf{e}_{x_0}$ 逐步加噪为 simplex 上的分布：</p>
+  <div class="formula-box">
+    $q(\mathbf{w}_t | \mathbf{w}_{t-1}) = \mathcal{N}_{\Delta}(\mathbf{w}_t; \sqrt{\alpha_t}\,\mathbf{w}_{t-1} + (1-\sqrt{\alpha_t})\mathbf{u},\; \sigma_t^2 \mathbf{I}_\Delta)$
+  </div>
+  <p>其中 $\mathbf{u} = \frac{1}{K}\mathbf{1}$ 是均匀分布（simplex 的中心），$\mathcal{N}_{\Delta}$ 表示投影到 simplex 上的高斯分布。直观理解：每个 token 的 one-hot 编码逐渐向均匀分布收缩，同时添加 simplex 上的噪声。</p>
+  <p><strong>反向过程</strong>：神经网络 $f_\theta$ 预测 simplex 上的去噪结果，输出仍为概率分布 $\hat{\mathbf{w}}_0 \in \Delta^{K-1}$。最终生成时通过 $\arg\max$ 或采样得到离散 token。</p>
+  <p><strong>关键优势：模块化可控生成</strong>。由于模型输出在 simplex 上（而非 embedding 空间），可以直接用<strong>现成分类器</strong> $c(\mathbf{w})$ 的梯度引导生成：</p>
+  <div class="formula-box">
+    $\hat{\mathbf{w}}_0^{\mathrm{guided}} = \hat{\mathbf{w}}_0 + \lambda \nabla_{\mathbf{w}} \log c(y | \mathbf{w}_t)$
+  </div>
+  <p>这避免了 embedding 空间扩散中"连续向量无法直接分类"的问题，实现了无需微调的 modular controllable generation。</p>
+  <p>在质量和多样性上匹配或超越 GPT-2，在引导生成任务上大幅优于扩散基线。</p>
+</div>
+
+<h3>3.4 Blockwise SFT 与 BlockGen：训练与采样优化</h3>
+<div class="card orange">
+  <div class="card-title">块扩散的训练与采样方法论</div>
+  <p><strong>Blockwise SFT</strong> (arXiv: 2508.19529, 2025.08)：识别出块扩散模型的<strong>训练-测试不一致</strong>问题——训练时随机 mask 整个 response，推理时按顺序块进行。</p>
+  
+  <h4>训练-测试不一致的数学描述</h4>
+  <p>标准块扩散训练的损失函数为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{standard}} = \mathbb{E}_{b \sim \mathrm{Uniform}(1,\ldots,B),\, t,\, q(\mathbf{x}_{b,t}|\mathbf{x}_b)} \left[ \mathrm{CE}\!\left(\mathbf{x}_b,\; p_\theta(\cdot | \mathbf{x}_{b,t}, \mathbf{x}_{\neq b})\right) \right]$
+  </div>
+  <p>其中所有其他块 $\mathbf{x}_{\neq b}$ 在训练时对模型<strong>完全可见</strong>。但推理时，块按从左到右顺序生成，当前块 $b$ 只能看到前文 $\mathbf{x}_{&lt;b}$，看不到后续块 $\mathbf{x}_{&gt;b}$。</p>
+  <p>Blockwise SFT 的修复方案：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{B-SFT}} = \mathbb{E}_{b,\, t,\, q(\mathbf{x}_{b,t}|\mathbf{x}_b)} \left[ \mathrm{CE}\!\left(\mathbf{x}_b,\; p_\theta(\cdot | \mathbf{x}_{b,t}, \mathbf{x}_{&lt;b}, \underbrace{\mathrm{MASK}(\mathbf{x}_{&gt;b})}_{\text{后续块不可见}})\right) \right]$
+  </div>
+  <p>即训练时每次只 mask 一个块，锁定前文 $\mathbf{x}_{&lt;b}$ 为上下文，<strong>阻断后续块</strong> $\mathbf{x}_{&gt;b}$ 的访问，使训练分布与推理分布对齐。损失仅在活跃块 $b$ 上计算。</p>
+  
+  <p><strong>BlockGen</strong> (arXiv: 2606.02241, ICLR 2026)：在<strong>混合块大小</strong>上训练（而非固定块大小），实现 AR↔Diffusion 的平滑似然插值。引入 AR-informed predictor-corrector 采样 (ARPC)：融合 AR 和扩散预测来识别并重新生成低似然段。发现：简单采样下 uniform-state 扩散领先；但用 ARPC 高步数采样时，masked diffusion 反超。</p>
+</div>
+
+<h3>3.5 DFlash：扩散投机解码的里程碑 ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <span class="tag arxiv">arXiv: 2602.06036</span>
+  <span class="tag org">Z Lab</span>
+  <span class="tag result">6x 无损加速</span>
+  <span class="tag speed">EAGLE-3 的 2.5x</span>
+  <div class="card-title">DFlash: Block Diffusion for Flash Speculative Decoding (MIMO)</div>
+  
+  <p>DFlash 的关键洞察：<strong>与其让扩散模型独立生成文本，不如让它充当 AR 模型的"草稿机"</strong>。使用 5 层 Transformer 构建轻量块扩散 draft 模型，在一次前向传播中并行生成 16 个 token 的草稿块。</p>
+  
+  <h4>核心技术</h4>
+  <ul>
+    <li><strong>MIMO (Multiple-In Multiple-Out) 范式</strong>：AR 草稿是 MISO（多次前向才出一批 token），DFlash 单次前向并行输出整个 block，GPU 效率远高于串行</li>
+    <li><strong>Target Context Feature 注入</strong>：从目标 AR 模型均匀抽取 5 层隐藏状态，经投影融合后注入 draft 模型<strong>每一层的 K-V 投影</strong>中（非仅输入 embedding），使 draft 模型成为目标模型的"扩散适配器"</li>
+    <li><strong>训练技巧</strong>：随机采样锚点位置构建训练 block、指数衰减 loss 权重（前序 token 更重要）、共享 embedding / LM head</li>
+  </ul>
+  
+  <h4>训练目标：块扩散 MLM</h4>
+  <p>DFlash 的 draft 模型使用<strong>掩码语言建模</strong>目标训练。给定锚点位置 $a$ 和块大小 $B=16$，构建训练块 $\mathbf{x}_{a:a+B}$。在训练中，随机 mask 块内 token（mask 率 $\sim \mathcal{U}[0,1]$），模型预测被 mask 的 token：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{draft}} = -\sum_{i \in \mathcal{M}} w_i \log p_\theta(x_{a+i} | \mathbf{x}_{a:a+B}^{\setminus \mathcal{M}}, \mathbf{c}_{\mathrm{target}})$
+  </div>
+  <p>其中 $\mathcal{M}$ 是 mask 位置集合，$w_i = \gamma^i$ 是指数衰减权重（$\gamma \approx 0.95$，前序 token 更重要），$\mathbf{c}_{\mathrm{target}}$ 是从目标模型注入的 context features。</p>
+  
+  <h4>验证机制：Block-wise Verification</h4>
+  <p>AR 目标模型<strong>一次性验证整个草稿块</strong>（非逐 token）：</p>
+  <ol>
+    <li>Draft 模型并行生成块 $\hat{\mathbf{x}}_{1:B}$</li>
+    <li>Target 模型计算 $p_{\mathrm{target}}(x_i | \mathbf{x}_{&lt;i}, \hat{\mathbf{x}}_{1:i-1})$ for all $i \in [1,B]$（单次前向，因果注意力）</li>
+    <li>从 $i=1$ 开始逐 token 检查：若 $\hat{x}_i$ 被接受（基于典型接受或随机接受），继续检查 $i+1$；否则拒绝 $\hat{x}_{i:B}$，从 $i$ 位置重新采样</li>
+  </ol>
+  <p><strong>关键优势</strong>：即使只接受前 $k$ 个 token（$k &lt; B$），target 模型也只需<strong>一次前向</strong>即可完成验证 + 生成第 $k+1$ 个 token。而 AR draft 需要 $B$ 次前向才能生成同样长度的草稿。</p>
+  
+  <h4>为什么块扩散优于 AR 草稿？</h4>
+  <table>
+    <tr><th>维度</th><th>AR Draft (EAGLE-3)</th><th>Block Diffusion Draft (DFlash)</th></tr>
+    <tr><td>生成方式</td><td>串行：$B$ 次前向</td><td>并行：1 次前向</td></tr>
+    <tr><td>GPU 利用率</td><td>低（memory-bound）</td><td>高（compute-bound）</td></tr>
+    <tr><td>草稿多样性</td><td>确定性或低温度采样</td><td>天然随机性（扩散采样）</td></tr>
+    <tr><td>接受长度</td><td>~3.4 tokens</td><td><strong>~6.5 tokens</strong></td></tr>
+    <tr><td>Draft 模型大小</td><td>~1B (EAGLE-3)</td><td>~50M (5 层)</td></tr>
+  </table>
+  <p><strong>理论洞察</strong>：AR draft 的串行生成导致 GPU 计算单元闲置（每次前向只处理 1 个 token），而块扩散的单次前向处理 16 个 token，充分利用 GPU 并行性。此外，扩散采样的随机性提供了更多样的草稿路径，增加被 target 模型接受的概率。</p>
+  
+  <h4>实验结果</h4>
+  <table>
+    <tr><th>模型</th><th>方法</th><th>平均加速比</th><th>平均接受长度</th><th>Draft FLOPs</th></tr>
+    <tr><td>Qwen3-8B</td><td>EAGLE-3 (tree=60)</td><td>2.02x</td><td>3.40</td><td>高（串行）</td></tr>
+    <tr><td>Qwen3-8B</td><td><strong>DFlash (block=16)</strong></td><td><strong>4.86x</strong></td><td><strong>6.49</strong></td><td><strong>低（并行）</strong></td></tr>
+    <tr><td>Qwen3-4B</td><td>EAGLE-3 (tree=60)</td><td>2.08x</td><td>3.48</td><td>高（串行）</td></tr>
+    <tr><td>Qwen3-4B</td><td><strong>DFlash (block=16)</strong></td><td><strong>4.91x</strong></td><td><strong>6.54</strong></td><td><strong>低（并行）</strong></td></tr>
+  </table>
+  
+  <div class="insight">
+    <div class="insight-title">DFlash 的范式意义</div>
+    <p>DFlash 证明了<strong>扩散模型的最佳用途可能不是独立生成文本，而是作为 AR 模型的加速器</strong>。这种"扩散草稿 + AR 验证"的范式绕过了扩散模型的两个弱点（长距离依赖弱、生成慢），同时保留了其核心优势（并行采样、多样性）。未来方向：将 DFlash 与 Nemotron 的自投机结合，用同一模型做草稿和验证。</p>
+  </div>
+  
+  <p>代码: <a href="https://github.com/z-lab/dflash" style="color:var(--cyan)">github.com/z-lab/dflash</a></p>
+</div>
+
+<h3>3.6 NVIDIA Nemotron-Diffusion：三模态统一 ⭐</h3>
+<div class="card cyan">
+  <span class="tag org">NVIDIA · 26 位作者</span>
+  <span class="tag speed">3-4x 加速</span>
+  <div class="card-title">Nemotron-Labs-Diffusion: Tri-Mode Language Model (AR + DLM + Self-Speculation)</div>
+  <p>NVIDIA 的核心思路：<strong>一个模型，三种解码模式，仅切换注意力 pattern</strong>。</p>
+  
+  <h4>三种解码模式</h4>
+  <ul>
+    <li><strong>AR 模式</strong>：标准因果注意力，逐 token 生成，与普通 LLM 完全一致</li>
+    <li><strong>Diffusion 模式</strong>：block 内双向注意力 + block 间因果注意力，并行去噪生成整个 block</li>
+    <li><strong>Self-Speculation 模式</strong>：<strong>同一模型</strong>先用 Diffusion 模式生成草稿 block，再用 AR 模式验证——无需独立 draft 模型，共享 KV cache</li>
+  </ul>
+  
+  <h4>训练目标：多任务联合训练</h4>
+  <p>Nemotron 在<strong>同一训练过程</strong>中同时优化 AR 和 Diffusion 两个目标：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{Nemotron}} = \mathcal{L}_{\mathrm{AR}} + \lambda \cdot \mathcal{L}_{\mathrm{Diff}} = \sum_{i} -\log p_\theta(x_i | x_{&lt;i}) + \lambda \cdot \mathbb{E}_{t} \left[ \sum_{i \in \mathcal{M}_t} -\log p_\theta(x_i | \mathbf{x}_t^{\mathrm{block}}) \right]$
+  </div>
+  <p>其中 $\mathcal{L}_{\mathrm{AR}}$ 使用因果注意力 mask，$\mathcal{L}_{\mathrm{Diff}}$ 使用 block 内双向 + block 间因果的混合注意力 mask。两个损失共享<strong>所有模型参数</strong>，仅注意力 mask 不同。可选 LoRA 增强 drafter 质量。</p>
+  
+  <h4>关键实验结果</h4>
+  <table>
+    <tr><th>硬件</th><th>模式</th><th>吞吐量 (tok/s)</th><th>加速比 vs AR</th></tr>
+    <tr><td>DGX Spark (8B)</td><td>AR</td><td>41.8</td><td>1.0x</td></tr>
+    <tr><td>DGX Spark (8B)</td><td><strong>Self-Speculation</strong></td><td><strong>112</strong></td><td><strong>2.7x</strong></td></tr>
+    <tr><td>GB200</td><td>AR</td><td>254</td><td>1.0x</td></tr>
+    <tr><td>GB200</td><td><strong>Self-Speculation + CUDA kernel</strong></td><td><strong>1,015</strong></td><td><strong>4.0x</strong></td></tr>
+  </table>
+  <p><strong>核心结论</strong>：(1) 三模态统一可行——同一模型同时具备 AR 和 Diffusion 能力，无质量损失；(2) Self-Speculation 消除了独立 draft 模型的部署开销；(3) 搭配 custom CUDA kernel 可在 GB200 上达到 1015 tok/s。</p>
+</div>
+
+<h3>3.7 TiDAR：扩散思考 + 自回归说话</h3>
+<div class="card cyan">
+  <span class="tag arxiv">arXiv: 2511.08923</span>
+  <span class="tag org">NVIDIA Research</span>
+  <div class="card-title">TiDAR: Think in Diffusion, Talk in Autoregression</div>
+  <p>序列级混合架构：在<strong>同一次前向传播</strong>中，通过结构化注意力掩码实现"扩散草拟 + AR 精修"。</p>
+  
+  <h4>核心机制：序列内模式混合</h4>
+  <p>将序列分为<strong>思考段</strong>（Diffusion）和<strong>输出段</strong>（AR）。思考段使用 block 内双向注意力并行生成多个 token 的草稿；输出段使用因果注意力逐 token 精修。两段共享同一模型权重，通过<strong>结构化注意力掩码</strong>实现模式切换：</p>
+  <div class="formula-box">
+    $\mathbf{A}_{ij} = \begin{cases} 1 & \text{if } i,j \in \text{同一 Diffusion block（双向）} \\ 1 & \text{if } j \leq i \text{ 且 } i \in \text{AR 段（因果）} \\ 0 & \text{otherwise} \end{cases}$
+  </div>
+  
+  <h4>关键实验结果</h4>
+  <table>
+    <tr><th>模型</th><th>方法</th><th>吞吐量加速比</th><th>质量保持</th></tr>
+    <tr><td>8B</td><td>纯 AR</td><td>1.0x</td><td>—</td></tr>
+    <tr><td>8B</td><td><strong>TiDAR</strong></td><td><strong>4.71x - 5.91x</strong></td><td>✅ 无损</td></tr>
+  </table>
+  <p><strong>核心结论</strong>：无需独立 draft/target model 即可实现 ~5x 加速。与 Nemotron 的区别：Nemotron 在模型级切换模式，TiDAR 在<strong>序列级</strong>混合两种模式（同一次前向传播内同时包含 Diffusion 和 AR token）。</p>
+</div>
+
+<h3>3.8 DiffuSpec / DART / PARD：投机解码家族</h3>
+<div class="card purple">
+  <div class="card-title">DiffuSpec · DART · PARD</div>
+  <p><strong>DiffuSpec</strong> (arXiv: 2510.02358, 清华+OPPO)：将 DLM 的并行草稿转化为因果一致性路径 (CPS)，自适应草稿长度 (ADL)，3x 加速，无需额外训练。</p>
+  <p><strong>DART</strong> (arXiv: 2601.19278)：在目标模型 hidden states 上添加<strong>单个轻量级层</strong>，直接并行预测多个未来 masked 位置的 logits，2.03x-3.44x 加速，超越 EAGLE3 达 30%。证明了 diffusion 思想即使只用单层也有效。</p>
+  <p><strong>PARD</strong> (arXiv: 2504.18583)：一次 forward pass 中预测多个未来 token，构建在现有高精度小模型上，通过 parallel draft adaptation 降低 drafting 成本。</p>
+</div>
+
+<h3>3.9 Fast-dLLM 系列 (NVIDIA)</h3>
+<div class="card orange">
+  <span class="tag arxiv">v1: 2505.22618 · v2: 2509.26328</span>
+  <div class="card-title">Fast-dLLM: 高效块扩散 LLM</div>
+  <p><strong>v1</strong>：块级近似 KV Cache + 置信度感知并行解码，免训练，吞吐量提升最高 <strong>27.6x</strong>。</p>
+  <p><strong>v2</strong>：将预训练 AR 模型适配为块扩散模型，仅需 ~1B token 训练数据（比 Dream 少 500x），互补注意力掩码 + 分层缓存 + 并行解码，比标准 AR 快 <strong>2.5x</strong>。</p>
+</div>
+
+<div class="insight">
+  <div class="insight-title">块扩散的理论演进脉络</div>
+  <p><strong>SSD-LM (2023)</strong> 开创了块扩散范式：在 simplex 上半 AR 生成，证明了块级扩散的可行性。<strong>BD3LM (2025)</strong> 建立了 AR↔Diffusion 的精确插值理论，证明块大小 $L'$ 控制似然-速度 Pareto 前沿。<strong>Blockwise SFT</strong> 识别并修复了训练-推理不一致问题。<strong>DFlash</strong> 则将块扩散重新定位为 AR 模型的加速器（投机解码），用 MIMO 并行草稿实现 6x 无损加速。<strong>Nemotron/TiDAR</strong> 进一步将 AR 和扩散统一在同一模型内，通过注意力 pattern 切换实现模式转换。核心公式：<strong>块间 AR（精确似然 + KV cache）+ 块内扩散（并行生成 + 多样性）</strong>。</p>
+</div>
+
+<!-- ==================== Section 4 ==================== -->
+<div class="page-nav"><a href="s02_discrete.html">&larr; 离散空间扩散 (Discrete Diffusion)</a><a href="s04_continuous.html">连续隐空间扩散 (Continuous DLLM) &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

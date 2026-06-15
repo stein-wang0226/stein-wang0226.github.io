@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLM 投机解码：DFlash vs MTP 深度分析 - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html" class="active">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s7"><span class="num">07</span> DLM 投机解码：DFlash vs MTP 深度分析</h2>
+
+<h3>7.0 投机解码基础概念</h3>
+<div class="card purple">
+  <div class="card-title">什么是投机解码 (Speculative Decoding)？</div>
+  <p>投机解码（又称推测解码）是一种<strong>无损加速</strong>大语言模型推理的技术。核心思想：用一个<strong>小而快的 draft 模型</strong>并行"猜测"多个 token，再用<strong>大而准的 target 模型</strong>一次性验证——接受正确的猜测，拒绝错误的。</p>
+  
+  <h4>基本流程</h4>
+  <ol>
+    <li><strong>Draft 阶段</strong>：小模型快速生成 $B$ 个候选 token $\hat{x}_1, \hat{x}_2, \ldots, \hat{x}_B$</li>
+    <li><strong>Verify 阶段</strong>：大模型<strong>一次前向</strong>同时计算所有 $B$ 个位置的概率 $p_{\mathrm{target}}(x_i | x_{<i})$</li>
+    <li><strong>Accept/Reject</strong>：从 $i=1$ 开始逐个检查，若 $\hat{x}_i$ 被接受则继续，否则从 $i$ 位置用 target 模型重新采样，丢弃 $\hat{x}_{i+1:B}$</li>
+  </ol>
+  
+  <h4>无损性保证</h4>
+  <p>接受-拒绝采样保证了最终输出的分布<strong>严格等于 target 模型的分布</strong>——不损失任何生成质量。每个 draft token $\hat{x}$ 的接受概率为：</p>
+  <div class="formula-box">
+    $P_{\mathrm{accept}}(\hat{x}) = \min\!\left(1, \frac{p_{\mathrm{target}}(\hat{x})}{q_{\mathrm{draft}}(\hat{x})}\right)$
+  </div>
+  <p>当 draft 和 target 分布越接近，接受率越高，加速比越大。极端情况下 $p = q$ 时，所有 draft token 都被接受。</p>
+  
+  <h4>为什么能加速？</h4>
+  <p>关键洞察：大模型的<strong>单次前向</strong>处理 1 个 token 和 $B$ 个 token 的耗时几乎相同（GPU 并行性）。因此：</p>
+  <ul>
+    <li><strong>不用投机</strong>：生成 $B$ 个 token 需要 $B$ 次大模型前向 → 耗时 $B \times t_{\mathrm{target}}$</li>
+    <li><strong>使用投机</strong>：1 次 draft（极快）+ 1 次 target 验证 → 耗时 $t_{\mathrm{draft}} + t_{\mathrm{target}} \approx t_{\mathrm{target}}$，但产出了 $k$ 个有效 token（$k$ 为接受长度）</li>
+  </ul>
+  <p>加速比 ≈ 平均接受长度 $\bar{k}$，典型值 2-6x。</p>
+  
+  <h4>DLM 做 Draft 的天然优势</h4>
+  <p>传统投机解码使用小 AR 模型做 draft（如 EAGLE），但 AR draft 需要<strong>$B$ 次串行前向</strong>才能生成 $B$ 个 token。扩散模型的并行生成能力使其成为理想的 draft 模型——<strong>一次前向即可并行输出整个 block</strong>（MIMO 范式），draft 开销从 $O(B)$ 降至 $O(1)$。这正是 DFlash 的核心思路。</p>
+</div>
+
+<h3>7.1 DFlash vs MTP 对比</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <div class="card-title">核心讨论：DFlash 不一定比 MTP 好</div>
+  
+  <table>
+    <tr><th>维度</th><th>DFlash (Block Diffusion Draft)</th><th>MTP (Multi-Token Prediction)</th></tr>
+    <tr><td>并行性</td><td>✅ 单次前向并行输出整个 block (MIMO)</td><td>⚠️ DeepSeek 串行链式 / Meta 独立并行 Heads</td></tr>
+    <tr><td>训练成本</td><td>需要训练独立的 draft 模型</td><td>训练时即学习多 token 预测（无额外模型）</td></tr>
+    <tr><td>质量保证</td><td>✅ 无损 (AR 验证)</td><td>✅ 无损 (rejection sampling)</td></tr>
+    <tr><td>加速比</td><td>~6x (Qwen3-8B)</td><td>DeepSeek 2.33x / Meta ~2x</td></tr>
+    <tr><td>适用场景</td><td>追求极致速度</td><td>追求简洁部署（无需额外模型）</td></tr>
+    <tr><td>局限</td><td>draft 模型质量影响接受率</td><td>多 head 间的干扰 / 串行依赖</td></tr>
+  </table>
+  
+  <p><strong>关键判断</strong>：DFlash 的 6x 加速是在特定实验条件下（Qwen3-8B + SGLang + B200 GPU）。在不同硬件、不同模型规模下，MTP 可能更有优势——尤其是训练时无需额外模型这一点。"不一定比 MTP 好"的结论是合理的。</p>
+  
+  <h4>投机解码接受率的数学分析</h4>
+  <p>投机解码的无损性保证基于<strong>接受-拒绝采样</strong>。给定 draft 分布 $q(x)$ 和 target 分布 $p(x)$，每个 draft token 的接受概率为：</p>
+  <div class="formula-box">
+    $P_{\mathrm{accept}}(x) = \min\!\left(1, \frac{p(x)}{q(x)}\right)$
+  </div>
+  <p>对于长度为 $B$ 的草稿块，<strong>期望接受长度</strong>为：</p>
+  <div class="formula-box">
+    $\mathbb{E}[\text{accepted}] = \sum_{k=1}^{B} \prod_{i=1}^{k} \mathbb{E}_{x_i \sim q}\!\left[\min\!\left(1, \frac{p(x_i|x_{&lt;i})}{q(x_i|x_{&lt;i})}\right)\right]$
+  </div>
+  <p>加速比的上界为 $\frac{B}{1 + B - \mathbb{E}[\text{accepted}]}$。当 draft 和 target 分布<strong>完全一致</strong>时（$p = q$），接受长度为 $B$，加速比趋近 $B$。实际中 DFlash 的 $\mathbb{E}[\text{accepted}] \approx 6.5$（$B=16$），加速比约 4.9x（受 target 验证开销影响）。</p>
+</div>
+
+<h3>7.2 投机系统中 AR vs DLM 的发散性分析</h3>
+<div class="card purple">
+  <div class="card-title">能否利用 DLM 的强拟合解决 AR 发散问题？</div>
+  
+  <h4>AR Draft Model 的发散问题</h4>
+  <ul>
+    <li><strong>路径依赖</strong>：AR 的每个 token 都依赖前一个，误差逐步累积</li>
+    <li><strong>误差累计</strong>：长序列中，早期的小偏差会导致后期完全偏离 teacher 分布</li>
+    <li><strong>高方差</strong>：与 teacher model 的 output distribution 更容易不 match，variance 大</li>
+    <li><strong>低重合概率</strong>：draft 和 teacher 的生成路径重合概率随长度指数下降</li>
+  </ul>
+  
+  <h4>AR 发散的数学分析</h4>
+  <p>令 $p$ 为 target 分布，$q$ 为 AR draft 分布。AR draft 在第 $k$ 步的条件分布为 $q(x_k | x_{&lt;k})$。由于 AR 的<strong>严格路径依赖</strong>，draft 和 target 的联合分布 KL 散度随长度线性增长：</p>
+  <div class="formula-box">
+    $D_{\mathrm{KL}}(p(\mathbf{x}_{1:B}) \| q(\mathbf{x}_{1:B})) = \sum_{k=1}^{B} \mathbb{E}_{\mathbf{x}_{&lt;k} \sim p} \left[ D_{\mathrm{KL}}(p(x_k | \mathbf{x}_{&lt;k}) \| q(x_k | \mathbf{x}_{&lt;k})) \right]$
+  </div>
+  <p>每步的局部 KL 散度 $\delta_k = D_{\mathrm{KL}}(p(\cdot|x_{&lt;k}) \| q(\cdot|x_{&lt;k})) > 0$（除非两分布完全一致），导致总散度 $\geq B \cdot \bar{\delta}$。更关键的是，draft 的采样路径 $\mathbf{x}_{1:k}$ 是从 $q$ 而非 $p$ 中采样的——这意味着<strong>条件 KL 的期望本身也在漂移</strong>，实际散度比线性增长更快。</p>
+  <p>结果：draft 和 teacher 的<strong>路径重合概率</strong>（即所有 $B$ 个 token 都被接受的概率）以指数衰减：</p>
+  <div class="formula-box">
+    $P(\text{all accepted}) = \prod_{k=1}^{B} \mathbb{E}_{x_k \sim q} \!\left[\min\!\left(1, \frac{p(x_k|x_{&lt;k})}{q(x_k|x_{&lt;k})}\right)\right] \leq (1 - \bar{\delta}/2)^B \to 0$
+  </div>
+  
+  <h4>DLM Draft Model 的潜在优势</h4>
+  <ul>
+    <li><strong>并行生成</strong>：一次性生成整个 block，没有逐步的误差累积——KL 散度不再随 $k$ 线性增长</li>
+    <li><strong>全局视图</strong>：block 内双向注意力提供了更丰富的上下文</li>
+    <li><strong>更强的 teacher 拟合</strong>：过拟合特性使其更精确地模拟 teacher 分布</li>
+    <li><strong>更长的接受长度</strong>：DLM draft 可能得到与 AR 端到端更长的 accepted length（draft 代价低，overlap 长度更 matter）</li>
+  </ul>
+</div>
+
+<h3>7.3 Block Diffusion 做投机的精度问题</h3>
+<div class="card red">
+  <div class="card-title">精度争议：训足够久可以比 AR 更好？</div>
+  <ul>
+    <li><strong>初始精度差</strong>：block diffusion drafter 在训练初期精度不如 AR drafter</li>
+    <li><strong>长期训练可弥补</strong>：讨论认为训练足够久后，block diffusion 可以达到甚至超越 AR 的精度</li>
+    <li><strong>连续扩散做投机效果差</strong>：用连续扩散预测 hidden state + MSE loss 的实验结果"还是非常差"——因为 hidden 空间缺乏离散监督信号</li>
+    <li><strong>何恺明的解决方案</strong>：在 $t=0$ 加 loss 强行收敛，而且是在 <strong>logit 空间</strong>上做（交叉熵），不是 hidden 空间（MSE）</li>
+  </ul>
+</div>
+
+<h3>7.4 投机解码完整时间线</h3>
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="date">2022.11 奠基</div>
+    <div class="content">Google DeepMind 提出 Speculative Decoding (ICML'23)</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2024.01 Self-Drafting</div>
+    <div class="content">Medusa 多头 + EAGLE-1 特征层</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2024.02-06 Tree-based</div>
+    <div class="content">Sequoia 硬件感知 + EAGLE-2 动态树 3.5x</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2024.05-12 MTP</div>
+    <div class="content">Meta 并行 Heads (ICML'24) + DeepSeek 串行链式 2.33x</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2025.03 EAGLE-3</div>
+    <div class="content">Training-time test，传统 AR drafting SOTA</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2025.10 DFlash</div>
+    <div class="content">Block Diffusion Drafting，<strong>4.9x-6x 加速</strong>，开启扩散投机新时代</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2026.05 Nemotron-Diff</div>
+    <div class="content">NVIDIA 三模态统一，同一模型 AR + DLM + Self-Speculation</div>
+  </div>
+</div>
+
+<h3>7.5 dLLM 加速推理新进展 (2025-2026) ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <div class="card-title">从投机解码到轨迹级优化——dLLM 推理加速的爆发期</div>
+  
+  <table>
+    <tr><th>方法</th><th>来源</th><th>核心思路</th><th>加速比</th><th>目标模型</th></tr>
+    <tr>
+      <td><strong>S2D2</strong></td>
+      <td>MIT-IBM / Red Hat<br>2026.03</td>
+      <td>同一模型切换扩散模式(draft)与 AR 模式(verify)，轻量 router 决定何时验证</td>
+      <td><strong>4.7x</strong></td>
+      <td>LLaDA2.1-Mini</td>
+    </tr>
+    <tr>
+      <td><strong>SimSD</strong></td>
+      <td>UCSD / UIUC / Google<br>2026.06</td>
+      <td>免训练 masking 策略 + 同步 RoPE，使 dLLM 模拟 AR 式左到右验证</td>
+      <td><strong>7.46x</strong></td>
+      <td>SDAR 系列</td>
+    </tr>
+    <tr>
+      <td><strong>Trajectory-Level SD</strong></td>
+      <td>ICML 2026</td>
+      <td>不推测 token，而推测<strong>多步去噪轨迹</strong>；置信度分层树探索 + 块级并行评估</td>
+      <td><strong>7-14x</strong></td>
+      <td>Fast-dLLM 基线</td>
+    </tr>
+    <tr>
+      <td><strong>Self-Spec Decoding</strong></td>
+      <td>2025.10</td>
+      <td>dLLM 同时充当 drafter 和 verifier，分层验证树，无需独立 draft 模型</td>
+      <td><strong>3.46x</strong></td>
+      <td>LLaDA, Dream</td>
+    </tr>
+    <tr>
+      <td><strong>BlockSpec</strong></td>
+      <td>Under review 2025-26</td>
+      <td>块级投机解码（非 token 级），利用 MDM 的天然块结构</td>
+      <td>—</td>
+      <td>dLLMs</td>
+    </tr>
+    <tr>
+      <td><strong>APD</strong></td>
+      <td>UCLA · NeurIPS 2025</td>
+      <td>自适应并行解码：混合扩散分布与紧凑 AR 助手模型概率</td>
+      <td>显著</td>
+      <td>通用 dLLMs</td>
+    </tr>
+  </table>
+  
+  <h4>Trajectory-Level SD 的数学原理</h4>
+  <p>传统投机解码在 <strong>token 空间</strong>推测：猜测"接下来的 $B$ 个 token 是什么"。Trajectory-Level SD 在<strong>去噪轨迹空间</strong>推测：猜测"接下来的 $S$ 步去噪路径是什么"。</p>
+  <p>标准 dLLM 去噪需要 $T$ 步迭代：$\mathbf{x}_T \to \mathbf{x}_{T-1} \to \cdots \to \mathbf{x}_0$。Trajectory-Level SD 的核心思想：</p>
+  <div class="formula-box">
+    $\text{Draft}: \hat{\mathbf{x}}_{T-S} = \mathrm{FastDenoise}(\mathbf{x}_T, S \text{ steps}) \quad \text{vs} \quad \text{Verify}: \mathbf{x}_{T-S} = \mathrm{FullDenoise}(\mathbf{x}_T, S \text{ steps})$
+  </div>
+  <p>快速去噪（如大步长 ODE 求解器、低精度模型）产生草稿轨迹 $\hat{\mathbf{x}}_{T-S}$，完整去噪验证其正确性。接受判据基于<strong>轨迹置信度</strong>而非逐 token 比较：</p>
+  <div class="formula-box">
+    $P_{\mathrm{accept}} = \min\!\left(1, \frac{p_{\mathrm{full}}(\hat{\mathbf{x}}_{T-S} | \mathbf{x}_T)}{p_{\mathrm{fast}}(\hat{\mathbf{x}}_{T-S} | \mathbf{x}_T)}\right)$
+  </div>
+  <p><strong>置信度分层树探索</strong>：构建多条候选轨迹的二叉树，按置信度排序探索。高置信度分支优先验证，若接受则跳过后续分支；若拒绝则探索下一分支。块级并行评估使得多条轨迹可在<strong>单次前向</strong>中同时验证。</p>
+  <p>结果：7-14x 加速（Fast-dLLM 基线），远超 token-level 投机（~4-6x）。这代表了从"token 投机"到"轨迹投机"的<strong>范式跃迁</strong>——利用了 dLLM 去噪过程的结构化特性。</p>
+  
+  <div class="insight">
+    <div class="insight-title">投机解码两大范式</div>
+    <p><strong>范式 A：Diffusion-as-Drafter for AR</strong>（DFlash, DiffuSpec, Spec Diff Decoding）：扩散模型并行生成多 token 草稿，AR 模型验证。优势：drafting 阶段本身并行化。</p>
+    <p><strong>范式 B：Accelerating dLLM Inference</strong>（Fast-dLLM, S2D2, SimSD, Trajectory-Level SD, Self-Spec）：直接加速扩散语言模型的推理。减少去噪步数或在去噪过程中并行 commit token。</p>
+    <p><strong>最新趋势</strong>：Trajectory-Level SD 代表了从"token 投机"到"轨迹投机"的范式跃迁——不再猜测"下一个 token 是什么"，而是猜测"接下来的去噪路径是什么"，实现 7-14x 加速。</p>
+  </div>
+</div>
+
+<!-- ==================== Section 8 ==================== -->
+<div class="page-nav"><a href="s06_scaling.html">&larr; DLM Scaling Laws 与 AR 对比</a><a href="s08_elbo_rl.html">ELBO 问题与 RL 训练 (SPG / GDSD) &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

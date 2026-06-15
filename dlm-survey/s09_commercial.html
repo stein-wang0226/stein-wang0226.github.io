@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商业落地现状与行业实践 - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html" class="active">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s9"><span class="num">09</span> 商业落地现状与行业实践</h2>
+
+<h3>9.1 各大厂商布局</h3>
+<table>
+  <tr><th>机构</th><th>方向</th><th>关键产品/论文</th><th>状态</th></tr>
+  <tr>
+    <td><strong>Google</strong></td>
+    <td>大规模纯扩散 LM</td>
+    <td>Gemini Diffusion (2025.05)</td>
+    <td>⚠️ 实验性，推理/知识任务显著弱于 AR</td>
+  </tr>
+  <tr>
+    <td><strong>NVIDIA</strong></td>
+    <td>三模态统一 + 投机加速</td>
+    <td>Nemotron-Diffusion-14B + Fast-dLLM</td>
+    <td>✅ 已开源 3B/8B/14B</td>
+  </tr>
+  <tr>
+    <td><strong>字节跳动</strong></td>
+    <td>大规模扩散 + 连续隐空间</td>
+    <td>Seed Diffusion (2146 tok/s) + Cola DLM</td>
+    <td>✅ Preview 版开源</td>
+  </tr>
+  <tr>
+    <td><strong>阿里/蚂蚁</strong></td>
+    <td>离散扩散 (类 BERT)</td>
+    <td>LLaDA 系列 (8B → 100B MoE)</td>
+    <td>✅ 全部开源，想落地</td>
+  </tr>
+  <tr>
+    <td><strong>Apple</strong></td>
+    <td>连续增强离散扩散</td>
+    <td>CADD (ICLR 2026)</td>
+    <td>✅ 开源 7B 代码模型</td>
+  </tr>
+  <tr>
+    <td><strong>Inception Labs</strong></td>
+    <td>商用级扩散 LM</td>
+    <td>Mercury 2 (1196 tok/s, 首个 dLLM 推理模型)</td>
+    <td>✅ 商业 API 运营</td>
+  </tr>
+</table>
+
+<h3>9.2 Gemini Diffusion 的"失败"评估</h3>
+<div class="card orange">
+  <span class="tag org">Google DeepMind · 2025.05</span>
+  <div class="card-title">Gemini Diffusion：不是失败，而是"尚未追平"</div>
+  
+  <p>Gemini Diffusion 并非彻底失败，Google 定位为"experimental research model"。核心数据：GPQA Diamond 40.4% (vs Flash 56.5%)，HumanEval 89.6% (接近持平)，推理速度 1479 tok/s。无正式技术报告/论文，未公开模型架构。</p>
+  
+  <p>社区评估：验证了扩散 LM 可以扩展到大规模并达到实用速度，但在<strong>质量上（尤其是推理和知识密集型任务）尚未追平 AR 模型</strong>。核心限制：无法做 Chain-of-Thought 推理——扩散模型的非因果生成特性使得复杂推理链困难。这不是 "scaling failed"，而是 "scaling is possible, but quality gap remains"。</p>
+</div>
+
+<h3>9.3 Mercury 2：首个商用 dLLM 推理模型</h3>
+<div class="card green">
+  <span class="tag arxiv">arXiv: 2506.17298</span>
+  <span class="tag org">Inception Labs</span>
+  <span class="tag speed">1196 tok/s</span>
+  <div class="card-title">Mercury 2: Ultra-Fast Diffusion Language Model</div>
+  <p>全球首个商业部署的 dLLM，也是首个具有推理能力的扩散 LLM。比 Claude 4.5 Haiku 质量更高，延迟仅为其 1/5。性能比 Mercury 1 提升 5x。证明了 dLLM 在商业推理场景中能同时兼顾质量和速度。</p>
+</div>
+
+<h3>9.4 dLLM 推理吞吐的理论分析 ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <div class="card-title">为什么 dLLM 在吞吐量上有理论优势？</div>
+  
+  <h4>AR 模型的吞吐瓶颈</h4>
+  <p>自回归模型生成 $N$ 个 token 需要 $N$ 次串行前向推理，吞吐量为：</p>
+  <div class="formula-box">
+    $T_{\mathrm{AR}} = \frac{1}{t_{\mathrm{step}}} \quad (\text{tok/s})$
+  </div>
+  <p>其中 $t_{\mathrm{step}}$ 为单次前向推理时间。受限于<strong>串行依赖</strong>，无法通过增加计算资源突破此上界（memory-bandwidth bound）。</p>
+  
+  <h4>dLLM 的吞吐量公式</h4>
+  <p>离散扩散语言模型生成 $N$ 个 token 只需 $S$ 步去噪（$S \ll N$），每步可并行处理整个序列：</p>
+  <div class="formula-box">
+    $T_{\mathrm{dLLM}} = \frac{N}{S \cdot t_{\mathrm{step}}} = \frac{N}{S} \cdot T_{\mathrm{AR}}$
+  </div>
+  <p>当 $N/S \gg 1$ 时（典型值：$N=512, S=8$，即 $N/S=64$），dLLM 理论吞吐量可达 AR 的<strong>数十倍</strong>。实际受 GPU 计算效率、注意力复杂度等因素影响，加速比通常为 3-10x。</p>
+  
+  <h4>投机解码的复合加速</h4>
+  <p>当 dLLM 作为 AR 模型的 drafter 时（DFlash 范式），总吞吐量为：</p>
+  <div class="formula-box">
+    $T_{\mathrm{spec}} = \frac{\bar{L}_{\mathrm{accept}}}{t_{\mathrm{draft}} + t_{\mathrm{verify}}} \approx \frac{\bar{L}_{\mathrm{accept}}}{t_{\mathrm{verify}}} \cdot \frac{t_{\mathrm{verify}}}{t_{\mathrm{draft}} + t_{\mathrm{verify}}}$
+  </div>
+  <p>其中 $\bar{L}_{\mathrm{accept}}$ 为平均接受长度。由于 dLLM drafting 可高度并行化（$t_{\mathrm{draft}} \ll \bar{L}_{\mathrm{accept}} \cdot t_{\mathrm{step}}^{\mathrm{AR}}$），DFlash 在 Qwen3-8B 上实现了 <strong>4.9-6x</strong> 加速。</p>
+  
+  <table>
+    <tr><th>系统</th><th>生成方式</th><th>吞吐量 (tok/s)</th><th>vs AR 基线</th></tr>
+    <tr><td>GPT-4 级 (估计)</td><td>AR 串行</td><td>~80-120</td><td>1x</td></tr>
+    <tr><td>Gemini Diffusion</td><td>纯扩散</td><td>1479</td><td>~12-18x</td></tr>
+    <tr><td>Seed Diffusion</td><td>离散扩散</td><td>2146</td><td>~18-27x</td></tr>
+    <tr><td>Mercury 2</td><td>商用扩散</td><td>1196</td><td>~10-15x</td></tr>
+    <tr><td>DFlash (Qwen3-8B)</td><td>扩散 draft + AR verify</td><td>—</td><td>4.9-6x</td></tr>
+    <tr><td>Trajectory-Level SD</td><td>轨迹投机</td><td>—</td><td>7-14x</td></tr>
+  </table>
+</div>
+
+<h3>9.5 速度-质量 Pareto 前沿分析 ⭐</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2602.15014</span>
+  <div class="card-title">困惑度不足以做跨族比较——需要 Pareto 前沿</div>
+  
+  <p>传统评估仅比较困惑度 (PPL)，但 dLLM 与 AR 的生成机制根本不同。<strong>速度-质量 Pareto 前沿</strong>才是公正的比较框架：</p>
+  
+  <div class="formula-box">
+    $\text{Pareto}(M) = \{(\text{PPL}_M,\; T_M) \mid \nexists M': \text{PPL}_{M'} \leq \text{PPL}_M \;\wedge\; T_{M'} \geq T_M\}$
+  </div>
+  
+  <p>核心发现（来自 Sahoo et al. 2026 的 IsoFLOP 实验）：</p>
+  <ul>
+    <li><strong>低吞吐量区间 [0, 200] tok/s</strong>：AR 模型占主导（PPL 更低）</li>
+    <li><strong>中吞吐量区间 [200, 400] tok/s</strong>：uniform-state 扩散开始占优</li>
+    <li><strong>高吞吐量区间 [600+] tok/s</strong>：uniform-state 扩散完全主导，AR 无法达到此速度</li>
+    <li><strong>Masked diffusion 在所有区间都不占 Pareto 最优</strong></li>
+  </ul>
+  
+  <p>这意味着：dLLM 的价值不在于"相同速度下困惑度更低"，而在于<strong>"在 AR 无法达到的高速度下提供可接受的质量"</strong>。</p>
+</div>
+
+<h3>9.6 商业化关键技术指标对比</h3>
+<div class="card cyan">
+  <div class="card-title">从学术指标到商业指标的转换</div>
+  
+  <table>
+    <tr><th>指标</th><th>定义</th><th>dLLM 优势</th><th>dLLM 劣势</th></tr>
+    <tr>
+      <td><strong>TTFT</strong><br>(Time to First Token)</td>
+      <td>首 token 延迟</td>
+      <td>✅ 并行生成，TTFT 极低<br>$t_{\mathrm{TTFT}}^{\mathrm{dLLM}} \approx S \cdot t_{\mathrm{step}}$</td>
+      <td>需等待 $S$ 步去噪完成</td>
+    </tr>
+    <tr>
+      <td><strong>TPOT</strong><br>(Time per Output Token)</td>
+      <td>每 token 平均生成时间</td>
+      <td>✅ $t_{\mathrm{TPOT}}^{\mathrm{dLLM}} = \frac{S \cdot t_{\mathrm{step}}}{N} \ll t_{\mathrm{step}}^{\mathrm{AR}}$</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>Cost per 1M tokens</strong></td>
+      <td>百万 token 成本</td>
+      <td>✅ FLOPs 更少 → 推理成本更低</td>
+      <td>训练成本可能更高（多 epoch）</td>
+    </tr>
+    <tr>
+      <td><strong>复杂推理质量</strong></td>
+      <td>GSM8K / MATH / GPQA</td>
+      <td>—</td>
+      <td>❌ CoT 能力弱于 AR<br>GPQA 差距 ~16% (Gemini)</td>
+    </tr>
+  </table>
+  
+  <div class="formula-box">
+    $\text{Cost}_{\mathrm{inference}} \propto \frac{\text{FLOPs}}{\text{token}} = \begin{cases} P \cdot 2 \cdot N & \text{(AR: } N \text{ 次前向)} \\ P \cdot 2 \cdot S & \text{(dLLM: } S \text{ 步去噪)} \end{cases}$
+  </div>
+  <p>当 $S \ll N$ 时，dLLM 的单 token 推理 FLOPs 远低于 AR，直接转化为<strong>更低的 GPU 推理成本</strong>。Mercury 2 的商业 API 定价即利用了此优势。</p>
+</div>
+
+<div class="insight">
+  <div class="insight-title">讨论核心观点：dLLM 商业化的"速度护城河"</div>
+  <p>dLLM 的商业价值并非"替代 AR"，而是占据 AR 无法触及的<strong>高吞吐、低延迟市场</strong>：实时对话、大规模批处理、边缘部署等场景。Mercury 2 的成功（1196 tok/s，Claude Haiku 质量）证明了这条路线的可行性。但<strong>复杂推理任务</strong>（coding、math、multi-step reasoning）仍是 AR 的领地——dLLM 在此领域的突破取决于 RL 训练（SPG/GDSD）和 CoT 能力的进展。</p>
+</div>
+
+<!-- ==================== Section 10 ==================== -->
+<div class="page-nav"><a href="s08_elbo_rl.html">&larr; ELBO 问题与 RL 训练 (SPG / GDSD)</a><a href="s10_comparison.html">综合对比表与未来方向 &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

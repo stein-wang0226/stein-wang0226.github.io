@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>离散空间扩散 (Discrete Diffusion) - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html" class="active">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s2"><span class="num">02</span> 离散空间扩散 (Discrete Diffusion)</h2>
+
+<p>离散扩散坚持文本的离散本质，通过状态转移概率（变成其他词或 [MASK]）进行加噪和去噪，不碰连续高斯噪声。</p>
+
+<h3>2.1 D3PM：离散扩散的开山鼻祖</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2107.03006</span>
+  <span class="tag org">Google Brain · NeurIPS 2021</span>
+  <div class="card-title">Structured Denoising Diffusion Probabilistic Models in Discrete State-Spaces</div>
+  <p>D3PM 将 DDPM 的连续高斯扩散推广到<strong>离散状态空间</strong>。核心思想：用<strong>转移矩阵</strong> $Q_t \in \mathbb{R}^{K \times K}$（$K$ 为词汇量）定义每步加噪规则：</p>
+  <div class="formula-box">
+    $q(\mathbf{x}_t | \mathbf{x}_{t-1}) = \mathrm{Cat}(\mathbf{x}_t; \mathbf{x}_{t-1}^\top Q_t)$
+  </div>
+  <p>论文探索了三种转移矩阵设计：</p>
+  <ul>
+    <li><strong>Uniform（均匀突变）</strong>：每个 token 以概率 $\beta_t$ 随机变成词汇表中任意词（含自身），转移矩阵为：
+      <div class="formula-box">
+        $[Q_t]_{ij} = (1 - \beta_t) \cdot \mathbf{1}_{i=j} + \frac{\beta_t}{K}$
+      </div>
+    </li>
+    <li><strong>Absorbing（吸收态/Mask）</strong>：引入特殊状态 $m$（[MASK]），每个 token 以概率 $\beta_t$ 变成 [MASK]，一旦变成 [MASK] 就永远不再变化：
+      <div class="formula-box">
+        $[Q_t]_{ij} = \begin{cases} 1 - \beta_t & \text{if } i = j \neq m \\ \beta_t & \text{if } j = m, i \neq m \\ 1 & \text{if } i = j = m \\ 0 & \text{otherwise} \end{cases}$
+      </div>
+      累积转移矩阵 $\bar{Q}_t = \prod_{s=1}^t Q_s$ 在吸收态下有简洁形式：$\alpha_t = \prod_{s=1}^t (1 - \beta_s)$ 为 token 保持未被 mask 的概率，$q(\mathbf{x}_t | \mathbf{x}_0)$ 中每个位置独立地以 $\alpha_t$ 保持原值、以 $1-\alpha_t$ 变为 [MASK]。</li>
+    <li><strong>Token-distance（距离敏感）</strong>：根据 token 在 embedding 空间中的距离决定转移概率</li>
+  </ul>
+  
+  <h4>吸收态下的贝叶斯反向过程推导</h4>
+  <p>对于吸收态转移矩阵，反向过程 $q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0)$ 有精确的解析形式。当 $\mathbf{x}_t^i = m$（第 $i$ 位被 mask）且 $\mathbf{x}_0^i \neq m$ 时：</p>
+  <div class="formula-box">
+    $q(\mathbf{x}_{t-1}^i | \mathbf{x}_t^i = m, \mathbf{x}_0^i) = \begin{cases} \frac{\alpha_{t-1} - \alpha_t}{1 - \alpha_t} & \text{if } \mathbf{x}_{t-1}^i = \mathbf{x}_0^i \text{ (revealed)} \\ \frac{1 - \alpha_{t-1}}{1 - \alpha_t} & \text{if } \mathbf{x}_{t-1}^i = m \text{ (still masked)} \end{cases}$
+  </div>
+  <p>直觉：在 $t$ 步被 mask 的 token，在 $t-1$ 步要么已经被 reveal 为真实值 $\mathbf{x}_0^i$（概率正比于 $\alpha_{t-1} - \alpha_t$），要么仍然是 mask（概率正比于 $1 - \alpha_{t-1}$）。当 $\mathbf{x}_t^i \neq m$ 时，$\mathbf{x}_{t-1}^i = \mathbf{x}_t^i$ 确定性地保持不变（吸收态的不可逆性）。</p>
+  <p>训练采用变分下界（ELBO），反向过程通过神经网络参数化 $p_\theta(\mathbf{x}_{t-1}|\mathbf{x}_t)$ 的 categorical 分布。D3PM 证明了<strong>离散扩散在理论上完全可行</strong>，为后续所有离散 DLM 奠定了数学基础。</p>
+  
+  <h4>训练目标：VLB 的完整推导</h4>
+  <p>D3PM 使用<strong>变分下界 + 辅助交叉熵</strong>的混合损失。VLB 的推导与 DDPM 完全平行，但从高斯分布的 KL 散度替换为 categorical 分布的 KL 散度。</p>
+  
+  <p><strong>第一步：对数似然的变分下界</strong>。与 DDPM 类似，对 $\log p_\theta(\mathbf{x}_0)$ 引入 $q(\mathbf{x}_{1:T}|\mathbf{x}_0)$ 做 Jensen 不等式：</p>
+  <div class="formula-box">
+    $\log p_\theta(\mathbf{x}_0) \geq \mathbb{E}_{q(\mathbf{x}_{1:T}|\mathbf{x}_0)} \left[ \log \frac{p_\theta(\mathbf{x}_{0:T})}{q(\mathbf{x}_{1:T}|\mathbf{x}_0)} \right] = -\mathcal{L}_{\mathrm{VLB}}$
+  </div>
+  
+  <p><strong>第二步：展开为三项</strong>。利用马尔可夫性 $q(\mathbf{x}_{1:T}|\mathbf{x}_0) = \prod_t q(\mathbf{x}_t|\mathbf{x}_{t-1})$，VLB 分解为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{VLB}} = \underbrace{D_{\mathrm{KL}}(q(\mathbf{x}_T|\mathbf{x}_0) \| p(\mathbf{x}_T))}_{\mathcal{L}_T \text{ (先验匹配)}} + \sum_{t=2}^{T} \underbrace{D_{\mathrm{KL}}(q(\mathbf{x}_{t-1}|\mathbf{x}_t,\mathbf{x}_0) \| p_\theta(\mathbf{x}_{t-1}|\mathbf{x}_t))}_{\mathcal{L}_t \text{ (去噪匹配)}} - \underbrace{\log p_\theta(\mathbf{x}_0|\mathbf{x}_1)}_{\mathcal{L}_0 \text{ (重建)}}$
+  </div>
+  <p>每一项的含义：</p>
+  <ul>
+    <li><strong>$\mathcal{L}_T$（先验匹配）</strong>：确保 $T$ 步后的加噪分布接近先验（全 mask 或均匀分布），不含可训练参数，训练时忽略</li>
+    <li><strong>$\mathcal{L}_t$（去噪匹配，$t=2,\ldots,T$）</strong>：核心训练项——模型的反向转移 $p_\theta(\mathbf{x}_{t-1}|\mathbf{x}_t)$ 与真实后验 $q(\mathbf{x}_{t-1}|\mathbf{x}_t,\mathbf{x}_0)$ 之间的 KL 散度。在离散空间中，KL 散度在 categorical 分布上计算：
+    <div class="formula-box">
+      $\mathcal{L}_t = \sum_{i=1}^{N} \sum_{v \in \mathcal{V}} q(x_{t-1}^i = v | \mathbf{x}_t, \mathbf{x}_0) \cdot \log \frac{q(x_{t-1}^i = v | \mathbf{x}_t, \mathbf{x}_0)}{p_\theta(x_{t-1}^i = v | \mathbf{x}_t)}$
+    </div>
+    其中 $q$ 的解析形式由上文的贝叶斯反向过程给出，$p_\theta$ 由神经网络参数化</li>
+    <li><strong>$\mathcal{L}_0$（重建）</strong>：从 $\mathbf{x}_1$（仅少量位置被 mask）重建 $\mathbf{x}_0$ 的负对数似然</li>
+  </ul>
+  
+  <p><strong>第三步：辅助交叉熵的必要性</strong>。D3PM 发现仅用 $\mathcal{L}_{\mathrm{VLB}}$ 训练极不稳定——因为 $\mathcal{L}_t$ 中的 KL 散度在 categorical 分布上的梯度方差很大。引入辅助 CE 项直接监督 $x_0$-prediction：</p>
+  <div class="formula-box">
+    $\mathcal{L} = \mathcal{L}_{\mathrm{VLB}} + \lambda \cdot \underbrace{\mathbb{E}_{t, q(\mathbf{x}_t|\mathbf{x}_0)} \left[ \sum_{i=1}^{N} -\log p_\theta(x_0^i | \mathbf{x}_t) \right]}_{\mathcal{L}_{\mathrm{CE}} \text{ (辅助交叉熵)}}$
+  </div>
+  <p>$\mathcal{L}_{\mathrm{CE}}$ 跳过了反向转移的中间步骤，直接让模型从任意噪声水平 $\mathbf{x}_t$ 预测干净数据 $\mathbf{x}_0$——这为 VLB 提供了更稳定的梯度信号。实验证明 $\lambda = 0.001$ 效果最好——CE 太强会压制 VLB 的精细调节能力。</p>
+  
+  <h4>关键实验结果</h4>
+  <table>
+    <tr><th>数据集</th><th>D3PM (Absorbing)</th><th>D3PM (Uniform)</th><th>对比基线</th></tr>
+    <tr><td>CIFAR-10 (bits/dim)</td><td><strong>3.44</strong></td><td>3.65</td><td>Multinomial Diffusion: 3.76</td></tr>
+    <tr><td>text8 (bits/char)</td><td><strong>1.45</strong></td><td>1.61</td><td>Multinomial Diffusion: 1.72</td></tr>
+    <tr><td>LM1B (PPL, 8K vocab)</td><td><strong>76.9</strong></td><td>88.3</td><td>—</td></tr>
+  </table>
+  <p><strong>核心结论</strong>：(1) <strong>吸收态 (Absorbing) 在文本上一致优于 Uniform</strong>——因为 mask 保留了"已确定"vs"未确定"的清晰二元状态，而 uniform 噪声在文本中引入语义混乱；(2) <strong>辅助 CE 项对收敛至关重要</strong>——去掉 $\mathcal{L}_{\mathrm{CE}}$ 后 text8 性能从 1.45 退化到 &gt;1.7；(3) D3PM 规模有限（小数据集 + 小模型），但建立的数学框架（转移矩阵 + VLB + 贝叶斯反向）直接被 MDLM/LLaDA 继承和简化。</p>
+  
+  <h4>反向过程的贝叶斯计算</h4>
+  <p>与 DDPM 类似，D3PM 的反向过程通过贝叶斯公式计算：</p>
+  <div class="formula-box">
+    $p_\theta(\mathbf{x}_{t-1}|\mathbf{x}_t) = \sum_{\mathbf{x}_0} q(\mathbf{x}_{t-1}|\mathbf{x}_t,\mathbf{x}_0) \cdot p_\theta(\mathbf{x}_0|\mathbf{x}_t)$
+  </div>
+  <p>即：模型先预测干净数据分布 $p_\theta(\mathbf{x}_0|\mathbf{x}_t)$，然后通过贝叶斯公式推导出 $t-1$ 步的分布。这与 DDPM 的"预测 $\epsilon$ → 计算 $\tilde{\mu}_t$"结构完全平行。</p>
+</div>
+
+<h3>2.2 MDLM：Mask 机制与扩散的完美结合</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2406.07524</span>
+  <span class="tag org">NeurIPS 2024</span>
+  <div class="card-title">Simplified and Generalized Masked Diffusion for Discrete Data</div>
+  <p>MDLM 将 D3PM 的吸收态路线<strong>彻底简化并优化</strong>。关键改进：</p>
+  <ul>
+    <li><strong>连续时间化</strong>：将离散步骤 $T$ 推广为连续时间 $t \in [0,1]$，加噪过程变为：每个 token 独立地以速率 $t$ 被替换为 [MASK]</li>
+    <li><strong>训练等价于加权 MLM</strong>：在连续时间框架下，变分下界（ELBO）化简为对所有 mask 比例的<strong>加权平均 Masked Language Modeling 损失</strong>：
+      <div class="formula-box">
+        $\mathcal{L}_{\mathrm{MDLM}} = \mathbb{E}_{t \sim \mathcal{U}[0,1]} \left[ \frac{1}{1-t} \sum_{i: x_t^i = \mathrm{MASK}} -\log p_\theta(x_0^i | \mathbf{x}_t) \right]$
+      </div>
+    </li>
+    <li><strong>转移矩阵退化</strong>：D3PM 的 $K \times K$ 转移矩阵退化为简单的吸收态矩阵——状态只有"原始 token"和"[MASK]"两种，极其优雅</li>
+    <li><strong>去噪即 MLM</strong>：在每个去噪步骤中，模型看到部分 [MASK] 的序列，预测被 mask 位置的真实 token——本质上就是 BERT 的 MLM 任务，但被赋予了<strong>生成式能力</strong></li>
+  </ul>
+  <p>模型规模 ~110M 参数，在 LM1B 上达到 PPL 23.0，OpenWebText 上 PPL 23.2，将扩散模型与 AR 模型的差距缩小到 15-25%。</p>
+  
+  <h4>连续时间马尔可夫链 (CTMC) 视角</h4>
+  <p>MDLM 的数学本质可以用 CTMC 精确描述。前向过程的速率矩阵为：</p>
+  <div class="formula-box">
+    $Q(t) = \beta(t) \cdot (\mathbf{1} \mathbf{e}_m^\top - I)$
+  </div>
+  <p>其中 $\mathbf{e}_m$ 是 mask 的 one-hot 向量，$\mathbf{1}$ 是全 1 向量。这是一个<strong>纯死亡过程</strong>（pure-death process）：每个非 mask token 独立地以速率 $\beta(t)$ 转移到 mask 状态。</p>
+  <p>反向过程的条件速率矩阵为：</p>
+  <div class="formula-box">
+    $R^{\mathbf{x}_0}(t) = -\frac{\alpha'_t}{1 - \alpha_t} \cdot \mathbf{e}_m (\mathbf{x}_0 - \mathbf{e}_m)^\top$
+  </div>
+  <p>描述了给定真实数据 $\mathbf{x}_0$ 下的反向 unmasking 动力学。MDLM 的核心简化在于：无需像 D3PM 那样做 N 次模型评估的蒙特卡洛估计，单次解析计算即可完成训练，同时保持前向-反向一致性。</p>
+  
+  <h4>从 CTMC 到加权 MLM 损失的完整推导</h4>
+  <p><strong>第一步：前向过程的生存概率</strong>。CTMC 前向过程中，每个 token 独立地以速率 $\beta(t)$ 被吸收为 mask。令 $\alpha_t$ 为 token 在时刻 $t$ 仍保持未被 mask 的概率，其满足微分方程：</p>
+  <div class="formula-box">
+    $\frac{d\alpha_t}{dt} = -\beta(t) \cdot \alpha_t \implies \alpha_t = \exp\!\left(-\int_0^t \beta(s)\,ds\right)$
+  </div>
+  <p>边界条件 $\alpha_0 = 1$（$t=0$ 时无噪声），$\alpha_1 \approx 0$（$t=1$ 时几乎全被 mask）。给定 $\mathbf{x}_0$，时刻 $t$ 每个位置 $i$ 独立地以概率 $\alpha_t$ 保持 $\mathbf{x}_0^i$、以概率 $1-\alpha_t$ 变为 mask——这与 D3PM 吸收态的累积转移矩阵 $\bar{Q}_t$ 在连续时间下的推广完全一致。</p>
+  
+  <p><strong>第二步：连续时间 ELBO</strong>。对 CTMC 扩散模型，变分下界可通过 Kolmogorov _backward_ 方程推导。连续时间 ELBO（取负号后为损失）为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{ELBO}} = \mathbb{E}_{q}\!\left[\int_0^1 \sum_{i=1}^{N} \sum_{y \neq x_t^i} R_\theta^{i}(t, \mathbf{x}_t, y) \cdot \log R_\theta^{i}(t, \mathbf{x}_t, y) - R^{\mathbf{x}_0, i}(t, \mathbf{x}_t, y) \cdot \log R_\theta^{i}(t, \mathbf{x}_t, y) \, dt\right]$
+  </div>
+  <p>其中 $R_\theta$ 是模型参数化的反向速率矩阵，$R^{\mathbf{x}_0}$ 是真实反向速率。直观理解：ELBO 度量了模型反向 unmasking 速率与真实 unmasking 速率之间的差异（在时间上积分）。</p>
+  
+  <p><strong>第三步：化简为加权 MLM</strong>。关键观察：在吸收态 CTMC 中，真实反向速率 $R^{\mathbf{x}_0}$ 仅在 mask → 真实 token 的转移上非零，且速率为 $-\frac{\alpha'_t}{1-\alpha_t}$。将模型参数化为 $p_\theta(x_0^i | \mathbf{x}_t)$（预测被 mask 位置的原始 token），并代入速率矩阵的解析形式，ELBO 可化简为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{MDLM}} = \mathbb{E}_{t \sim \mathcal{U}[0,1]} \left[ \frac{-\alpha'_t}{1 - \alpha_t} \sum_{i: x_t^i = \mathrm{MASK}} -\log p_\theta(x_0^i | \mathbf{x}_t) \right]$
+  </div>
+  <p>当选择 $\alpha_t = 1 - t$（线性调度，即 $\alpha'_t = -1$）时，权重系数变为 $\frac{1}{1-t}$，恰好得到上文的加权 MLM 公式。权重 $\frac{1}{1-t}$ 的物理含义：<strong>$t$ 越接近 1，mask 比例越高，每个 mask 位置的损失权重越大</strong>——这补偿了高噪声区间可用信息更少的困难。</p>
+  
+  <p><strong>第四步：训练-推理等价性</strong>。最终损失函数揭示了一个深刻事实：<strong>MDLM 的训练过程就是随机 mask 比例的 MLM</strong>。具体操作：(1) 采样 $t \sim \mathcal{U}[0,1]$；(2) 以概率 $1-\alpha_t$ 独立 mask 每个 token；(3) 用交叉熵预测所有被 mask 位置的原始 token，乘以权重 $\frac{-\alpha'_t}{1-\alpha_t}$。与 BERT 的 MLM 唯一区别是 mask 比例服从均匀分布而非固定 15%，以及时间步相关的权重因子。</p>
+
+  <h4>状态依赖的 Masking 调度</h4>
+  <p>MDLM 的一个重要推广：将标量调度 $\alpha_t$ 提升为<strong>向量</strong> $\boldsymbol{\alpha}_t \in \mathbb{R}^{K}$，允许每个 token 类型有不同的 masking 速率 $\alpha_{t,i}$。这使得模型可以在反向轨迹中<strong>更早地 unmask 语义重要的 token</strong>，但需要模型同时近似 $\mathbb{E}[\mathbf{x}_0|\mathbf{x}_t]$ 和 $\mathbb{E}[\mathbf{x}_0 \mathbf{x}_0^\top|\mathbf{x}_t]$。</p>
+  
+  <h4>与 DDPM 噪声调度的类比</h4>
+  <p>Masking 调度 $\alpha_t$ 的角色完全对应 DDPM 中的噪声调度。其导数 $\alpha'_t$ 控制损失在不同时间步的权重——类似 DDPM 中信号-噪声比 (SNR) 对损失权重的控制。这一类比使得连续扩散中成熟的调度设计经验可以迁移到离散场景。</p>
+</div>
+
+<h3>2.3 LLaDA：扩散模型走向大模型时代</h3>
+<div class="card green">
+  <span class="tag arxiv">arXiv: 2502.09992</span>
+  <span class="tag org">人大高瓴 + 蚂蚁集团 · ICLR 2025</span>
+  <span class="tag result">8B 参数 · 2.3T tokens</span>
+  <div class="card-title">Large Language Diffusion Models (LLaDA)</div>
+  <p>LLaDA 是首个从头训练的大规模掩码扩散语言模型，遵循预训练 + SFT 范式，用 0.13M H800 GPU-hours 在 2.3T tokens 上训练。</p>
+  
+  <h4>核心创新</h4>
+  <ul>
+    <li><strong>$x_0$-prediction（预测干净数据）</strong>：网络直接输出词汇表上的分类分布 $p_\theta(x_0^i | \mathbf{x}_t)$，使用交叉熵损失</li>
+    <li><strong>Low-confidence re-masking</strong>：去噪过程中，对低置信度预测重新 mask，让模型有机会修正错误——这是弥合训练-推理 gap 的关键技巧</li>
+    <li><strong>Semi-AR block generation</strong>：将序列分块，块间自回归、块内并行去噪</li>
+  </ul>
+  
+  <h4>训练目标推导：从似然上界到 Masked CE</h4>
+  <p>LLaDA 的训练目标可从连续时间 ELBO 出发严格推导。给定吸收态前向过程，在时刻 $t$，每个位置 $i$ 独立地以概率 $t$ 变为 mask（此处采用 LLaDA 的线性调度 $\alpha_t = 1-t$）。模型的参数化为 $p_\theta(\mathbf{x}_0 | \mathbf{x}_t)$，即给定含噪输入预测所有位置的干净 token 分布。</p>
+  <p>利用 MDLM 的 ELBO 化简结果，LLaDA 的训练损失为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{LLaDA}} = \mathbb{E}_{t \sim \mathcal{U}[0,1],\, q(\mathbf{x}_t | \mathbf{x}_0)} \left[ \frac{1}{1-t} \sum_{i \in \mathcal{M}_t} \mathrm{CE}\!\left(x_0^i,\; p_\theta(\cdot | \mathbf{x}_t)_i\right) \right]$
+  </div>
+  <p>其中 $\mathcal{M}_t = \{i : x_t^i = \mathrm{MASK}\}$ 是时刻 $t$ 被 mask 的位置集合，$\mathrm{CE}(x, p) = -\log p(x)$ 为交叉熵。这与 MDLM 的损失在形式上<strong>完全一致</strong>，区别在于工程实现：</p>
+  <ul>
+    <li><strong>仅 mask 位置参与损失计算</strong>：未被 mask 的位置不贡献梯度，因为模型对这些位置的预测不被监督——它们已经是"正确"的</li>
+    <li><strong>损失权重与 mask 比例的关系</strong>：$t$ 越大 → mask 比例越高 → $|\mathcal{M}_t|$ 越大但每个位置的权重 $\frac{1}{1-t}$ 也越大，两者的乘积使得总损失的期望值在各 $t$ 之间相对均衡</li>
+    <li><strong>与 BERT MLM 的本质区别</strong>：BERT 固定 mask 15% 且仅做理解；LLaDA 在 $t \in [0,1]$ 全范围采样 mask 比例，推理时从全 mask 出发迭代去噪，是真正的生成式模型</li>
+  </ul>
+  
+  <h4>Low-confidence Re-masking 算法</h4>
+  <p>训练时模型在给定 $\mathbf{x}_t$ 下独立预测每个 mask 位置，但推理时需要在<strong>同一轮</strong>去噪中将多个预测同时填入。这产生了 <strong>co-adaptation 问题</strong>：位置 A 的预测可能依赖于位置 B 仍为 mask 的状态，但 B 同时也被预测为非 mask——导致推理时的输入分布与训练时不匹配。</p>
+  <p>Low-confidence re-masking 的解决方案：</p>
+  <ol>
+    <li>模型对当前 $\mathbf{x}_t$ 中所有 mask 位置输出预测分布 $p_\theta(x_0^i | \mathbf{x}_t)$</li>
+    <li>计算每个预测的<strong>置信度</strong>（如最大 softmax 概率 $\max_v p_\theta(v | \mathbf{x}_t)_i$）</li>
+    <li>将置信度<strong>低于阈值</strong>的预测<strong>重新设为 mask</strong>，不填入本轮预测结果</li>
+    <li>仅将高置信度预测填入，进入下一去噪步骤</li>
+  </ol>
+  <p>这相当于在推理过程中引入了一个<strong>保守策略</strong>：宁可推迟低置信度位置的决策（留给后续步骤在有更多信息时再决定），也不愿引入错误。实验表明 re-masking 将生成质量提升 2-5 PPL，是弥合训练-推理 gap 最有效的手段。</p>
+  
+  <div class="insight">
+    <div class="insight-title">Remasking 机制在 dLLM 中的演进</div>
+    <p>Remasking（将已 unmask 的 token 重新 mask 回去）是 dLLM 采样质量的关键技巧，多个工作从不同角度发展了这一思想：</p>
+    <table>
+      <tr><th>工作</th><th>Remasking 策略</th><th>核心机制</th></tr>
+      <tr><td><strong>MDLM</strong></td><td>连续时间天然支持</td><td>CTMC 框架下 token 可在 unmask↔mask 间双向转移，remasking 是前向过程的自然结果</td></tr>
+      <tr><td><strong>LLaDA</strong></td><td>置信度阈值过滤</td><td>每步仅保留高置信度预测，低于阈值的重新 mask，推迟到后续步骤再决策</td></tr>
+      <tr><td><strong>Dream (CART)</strong></td><td>逐位置自适应加噪</td><td>根据上下文信息量给每个位置分配独立的等效时间步 $\tau_i$，信息不足的位置被更多 remask</td></tr>
+      <tr><td><strong>BlockGen (ARPC)</strong></td><td>AR-informed corrector</td><td>Predictor-corrector 采样中，corrector 步将低似然 token 重新 mask 并重新生成</td></tr>
+    </table>
+    <p><strong>统一视角</strong>：所有 remasking 变体的本质都是<strong>error correction</strong>——对抗 dLLM 采样中"一旦 unmask 就锁定"的单调性。普通采样是贪心的（每步不可逆），remasking 赋予模型"反悔"能力，在后续步骤利用更丰富上下文修正早期错误。这与 DDPM 中随机采样（每步加噪+去噪）的"探索-纠错"机制在精神上一致。</p>
+  </div>
+  
+  <h4>LLaDA 8B Base Benchmark</h4>
+  <table>
+    <tr><th>基准</th><th>LLaDA 8B</th><th>LLaMA-3 8B</th></tr>
+    <tr><td>MMLU</td><td><strong>65.9</strong></td><td>66.4</td></tr>
+    <tr><td>GSM8K</td><td><strong>70.7</strong></td><td>79.1</td></tr>
+    <tr><td>HumanEval</td><td>33.5</td><td>—</td></tr>
+    <tr><td>HellaSwag</td><td>72.5</td><td>—</td></tr>
+  </table>
+  
+  <p>LLaDA 在<strong>双向任务</strong>上展现独特优势：在反向诗歌生成评估中击败 GPT-4o（42.4 vs 34.3），验证了非因果生成的价值。</p>
+  
+  <h4>架构修改：与标准 LLM 的关键差异</h4>
+  <ul>
+    <li><strong>去除因果 mask</strong>：标准 LLM 使用因果注意力（每个位置只能看左侧），LLaDA 使用<strong>完全双向注意力</strong>——扩散模型必须同时看到所有位置才能预测 mask 位置</li>
+    <li><strong>GQA → Vanilla MHA</strong>：将 Grouped Query Attention 替换为标准多头注意力，因为<strong>KV cache 与扩散不兼容</strong>——每个去噪步骤所有位置都在变化，无法复用历史 KV</li>
+    <li><strong>FFN 维度缩减</strong>：由于 key/value head 数量增加（从 GQA 回到 MHA），相应缩减 FFN 维度以保持总参数量不变</li>
+    <li>其余沿用标准 LLM 架构（RoPE、RMSNorm、SwiGLU 等）</li>
+  </ul>
+  
+  <h4>Reversal Curse 消除</h4>
+  <p>AR 模型由于严格的左到右训练偏置，在反向推理时表现很差（如：学会了"A 是 B 的作者"却无法回答"B 的作者是谁"）。LLaDA 对所有 token <strong>无方向性归纳偏置</strong>，在 496 对中文诗歌补全数据集上，前向和后向生成的零样本准确率几乎一致，显著优于 GPT-4o 的反向方向。这是<strong>非因果生成的结构性优势</strong>。</p>
+  
+  <p><strong>讨论观点</strong>：阿里对离散扩散的定位是"类似于 BERT"——训练目标确实和 BERT 的 MLM 高度相似，但推理时是真正的生成式模型。阿里想落地，有一定收益但剩余算力浪费（去噪步骤多），这是离散扩散的商业化困境。</p>
+</div>
+
+<h3>2.4 LLaDA 2.0 (MoE)：100B 规模的稀疏激活</h3>
+<div class="card green">
+  <span class="tag arxiv">arXiv: 2512.15745 / 2509.24389</span>
+  <span class="tag result">100B 参数</span>
+  <div class="card-title">LLaDA 2.0 + LLaDA-MoE</div>
+  <p>LLaDA-MoE 首次将 Sparse Mixture of Experts 引入扩散语言模型，解决了扩散模型每次去噪都要全局 Attention 的巨大计算开销。LLaDA2.0-flash 扩展到 100B 参数，采用 3 阶段 block-level Warmup-Stable-Decay (WSD) 训练方案，HumanEval 达 94.51，性能匹配 Qwen3-30B。所有 MoE 变体已开源。</p>
+</div>
+
+<h3>2.5 Dream 7B：表征对齐的扩散模型</h3>
+<div class="card cyan">
+  <span class="tag arxiv">arXiv: 2508.15487</span>
+  <span class="tag org">HKU NLP</span>
+  <span class="tag result">580B tokens · 96 GPU · 10+ 天</span>
+  <div class="card-title">Dream: Diffusion Large Language Models</div>
+  <p>Dream 的核心贡献在于<strong>从 AR 权重初始化扩散模型</strong>：</p>
+  <ul>
+    <li><strong>Causal-to-bidirectional 转换</strong>：从 Qwen2.5-7B 的 AR 权重出发，将因果注意力转换为双向注意力，大幅节省从零训练的计算</li>
+    <li><strong>Mask 扩散范式</strong>：预测所有被 mask 的 token，使用 shifted 方式 + 双向注意力</li>
+    <li><strong>动态噪声重分配</strong>：自适应调整不同位置的噪声水平，提升去噪质量</li>
+  </ul>
+  <p>在 580B tokens 上继续预训练，SFT 使用 1.8M 指令对训练 3 个 epoch。在数学、代码、推理等 benchmark 上<strong>一致超越 LLaDA-8B</strong>，在多约束规划任务（Sudoku、Countdown）上超越 AR 竞品。</p>
+  
+  <h4>CART: Context-Adaptive Token-level Noise Rescheduling</h4>
+  <p>Dream 的<strong>核心创新</strong>。传统离散扩散对所有位置使用<strong>统一的全局时间步</strong> $t$——但不同位置的可预测性差异极大。CART 的做法：</p>
+  <ol>
+    <li>对每个 token 位置独立地度量<strong>上下文信息量</strong>（contextual informativeness）</li>
+    <li>使用<strong>几何混合</strong> (geometric mixtures) 加权邻近可见 token 的信号</li>
+    <li>动态地为每个位置分配合适的噪声水平——<strong>信息丰富的位置少加噪，模糊位置多加噪</strong></li>
+  </ol>
+  
+  <h4>CART 的数学形式化</h4>
+  <p>传统离散扩散对所有位置 $i$ 施加相同的全局噪声水平 $t$，即 $q(x_t^i | x_0^i)$ 中的 mask 概率 $1 - \alpha_t$ 对所有 $i$ 相同。CART 将其替换为<strong>逐位置自适应噪声</strong>：</p>
+  <div class="formula-box">
+    $q(x_t^i | x_0^i) = \begin{cases} x_0^i & \text{概率 } \alpha_{t}^{(i)} \\ \mathrm{MASK} & \text{概率 } 1 - \alpha_{t}^{(i)} \end{cases}$
+  </div>
+  <p>其中 $\alpha_{t}^{(i)}$ 是位置 $i$ 的<strong>个性化保留概率</strong>，由上下文信息量决定。具体计算分三步：</p>
+  <p><strong>(1) 局部上下文信息度量</strong>。对每个位置 $i$，收集其邻近的可见 token（未被 mask 的位置），使用几何混合计算上下文信号强度 $s_i$：</p>
+  <div class="formula-box">
+    $s_i = \left(\prod_{j \in \mathcal{V}_i} f(x_t^j, x_0^i)\right)^{1/|\mathcal{V}_i|}$
+  </div>
+  <p>其中 $\mathcal{V}_i$ 是位置 $i$ 的可见邻域，$f(x_t^j, x_0^i)$ 度量邻近 token $j$ 对预测位置 $i$ 的信息贡献（如注意力权重或互信息的近似）。几何混合（而非算术平均）的优势在于：只要有一个邻域 token 信息量极低，整体信号就会被拉低——这对<strong>异常难预测的位置</strong>更敏感。</p>
+  <p><strong>(2) 信息量到噪声水平的映射</strong>。将信号强度 $s_i$ 映射为等效时间步 $\tau_i \in [0, 1]$：</p>
+  <div class="formula-box">
+    $\tau_i = g(s_i) \quad \text{s.t.} \quad s_i \text{ 越大} \implies \tau_i \text{ 越小} \implies \text{噪声越少}$
+  </div>
+  <p>即信息量越丰富的位置，等效时间步越小（离初始数据越近），保留概率 $\alpha_{\tau_i}$ 越高。映射函数 $g$ 通常取单调递减的 sigmoid 或线性缩放。</p>
+  <p><strong>(3) 训练损失适配</strong>。将全局 $t$ 替换为逐位置的 $\tau_i$ 后，损失变为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{CART}} = \mathbb{E}_{t, \mathbf{x}_t} \left[ \sum_{i \in \mathcal{M}_t} w(\tau_i) \cdot \mathrm{CE}\!\left(x_0^i,\; p_\theta(\cdot | \mathbf{x}_t)_i\right) \right]$
+  </div>
+  <p>其中 $w(\tau_i)$ 是与位置 $i$ 的等效时间步对应的权重因子，类似 MDLM 中 $\frac{-\alpha'_{\tau_i}}{1-\alpha_{\tau_i}}$ 的角色。</p>
+  <p>直觉上，CART 相当于给每个位置一个<strong>独立的等效时间步</strong>，让模型将去噪资源集中在最难预测的位置。这与 DDPM 中所有维度共享同一噪声水平的设计形成对比。</p>
+  <p><strong>关键结果</strong>：仅用 LLaDA 25% 的训练数据即超越 LLaDA-8B，证明了 CART + AR 初始化的高效性。</p>
+</div>
+
+<h3>2.6 Seed Diffusion：字节跳动的大规模扩散 LM</h3>
+<div class="card orange">
+  <span class="tag arxiv">arXiv: 2508.02193</span>
+  <span class="tag org">字节跳动 Seed 团队</span>
+  <span class="tag speed">2,146 tok/s</span>
+  <div class="card-title">Seed Diffusion: A Large-Scale Diffusion Language Model</div>
+  <p>基于离散 mask 扩散，是目前开源的最大规模纯扩散 LM 之一。</p>
+  
+  <h4>架构与训练</h4>
+  <ul>
+    <li><strong>Masked Discrete Diffusion</strong>：采用与 LLaDA 相同的吸收态 mask 扩散框架，训练目标为加权 Masked CE（$x_0$-prediction）</li>
+    <li><strong>高效去噪调度</strong>：引入自适应步数调度——根据序列的信息熵动态调整去噪步数，简单序列少步、复杂序列多步</li>
+    <li><strong>并行解码优化</strong>：在推理时使用置信度感知的批量 unmask 策略，每步 unmask 高置信度 token，最大化 GPU 利用率</li>
+  </ul>
+  
+  <h4>训练目标</h4>
+  <p>Seed Diffusion 使用与 MDLM/LLaDA 一致的加权 Masked CE 损失：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{Seed}} = \mathbb{E}_{t \sim \mathcal{U}[0,1]} \left[ \frac{1}{1-t} \sum_{i \in \mathcal{M}_t} -\log p_\theta(x_0^i | \mathbf{x}_t) \right]$
+  </div>
+  <p>关键工程改进：(1) 使用<strong>余弦调度</strong>替代线性调度 $\alpha_t$，在中间时间步提供更均匀的训练信号；(2) 引入<strong>序列级 loss 归一化</strong>——按每条样本的 mask token 数归一化，避免长序列主导梯度。</p>
+  
+  <h4>关键实验结果</h4>
+  <table>
+    <tr><th>指标</th><th>Seed Diffusion</th><th>Mercury 2</th><th>Gemini Diffusion</th></tr>
+    <tr><td>推理速度 (tok/s)</td><td><strong>2,146</strong> (H20)</td><td>1,196 (H100)</td><td>1,479 (官方, excl. overhead)</td></tr>
+    <tr><td>模型开源</td><td>✅ Preview 版本</td><td>❌ 商用</td><td>❌ Preview</td></tr>
+    <tr><td>扩散范式</td><td>Masked Discrete</td><td>Masked Discrete</td><td>未公开</td></tr>
+  </table>
+  <p><strong>核心结论</strong>：证明了纯扩散路线在大规模模型上也能达到极快的推理速度（2,146 tok/s），超越 Mercury 和 Gemini Diffusion，是目前最快的开源 dLLM。</p>
+</div>
+
+<h3>2.7 SEDD：第四范式——比率估计</h3>
+<div class="card pink">
+  <span class="tag arxiv">arXiv: 2310.16834</span>
+  <span class="tag org">ICML 2024</span>
+  <div class="card-title">Score Entropy Discrete Diffusion (SEDD)</div>
+  <p>SEDD 提出了<strong>独立于 $x_0$-prediction 和 $\epsilon$-prediction 的第四种预测范式</strong>：不直接预测噪声或干净数据，而是估计数据分布的<strong>比率（ratios）</strong>。</p>
+  <div class="formula-box">
+    $r_\theta(\mathbf{x}_t, x^i, t) \approx \frac{p_t(\mathbf{x}_t^{x^i \to \text{new}})}{p_t(\mathbf{x}_t)}$
+  </div>
+  <p>即：估计将位置 $i$ 的 token 替换为另一个 token 后，概率密度的变化比率。使用 <strong>score entropy loss</strong> 训练（而非交叉熵或 MSE）。</p>
+  
+  <h4>Score Entropy Loss 推导</h4>
+  <p>连续扩散中的 score function 为 $\nabla_{\mathbf{x}} \log p_t(\mathbf{x})$，但在离散空间中梯度不存在。SEDD 定义了离散 score 的类比：<strong>非参数化比率</strong></p>
+  <div class="formula-box">
+    $s_t(\mathbf{x}_t, i, v) = \frac{p_t(\mathbf{x}_t^{i \to v})}{p_t(\mathbf{x}_t)}$
+  </div>
+  <p>即位置 $i$ 从当前 token $x_t^i$ 替换为 $v$ 后概率的乘性变化。网络的训练目标是最小化估计比率 $r_\theta$ 与真实比率 $s_t$ 之间的 <strong>score entropy loss</strong>：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{SEDD}} = \mathbb{E}_{t, \mathbf{x}_t} \left[ \sum_{i=1}^{N} \sum_{v \in \mathcal{V}} s_t(\mathbf{x}_t, i, v) \cdot \left(\log s_t(\mathbf{x}_t, i, v) - \log r_\theta(\mathbf{x}_t, i, v)\right) \right]$
+  </div>
+  <p>这等价于在真实 score 分布下的 <strong>KL 散度最小化</strong>（而非交叉熵或 MSE）。关键优势：真实比率 $s_t$ 可通过数据分布的前向过程解析计算（利用转移矩阵的可逆性），无需像 $x_0$-prediction 那样直接预测干净数据。</p>
+  <p>采样时使用<strong>基于比率的 Gibbs 采样</strong>：在每步中，根据 $r_\theta(\mathbf{x}_t, i, v)$ 选择替换哪个位置以及替换为什么 token。由于比率直接给出概率的相对变化，可以用少量采样步（32 步）达到高质量生成。</p>
+  <p>在 PPL 上比此前离散扩散方法降低 25-75%，生成困惑度比 GPT-2 好 6-8 倍，且仅需 <strong>32 次网络评估</strong>（vs 标准扩散的 1000 步）。SEDD 证明了离散扩散不一定需要走 mask prediction 路线。</p>
+</div>
+
+<h3>2.8 DiffuLLaMA / DiffuGPT：AR 适配为扩散</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2410.17891</span>
+  <div class="card-title">Scaling Diffusion Language Models via Adaptation from Autoregressive Models</div>
+  <p>将预训练 AR 模型转换为 dLLM：GPT-2 → DiffuGPT，LLaMA-2 → DiffuLLaMA。核心技术：</p>
+  <ul>
+    <li><strong>Attention mask 退火</strong>：逐步放松因果注意力约束，过渡到双向注意力</li>
+    <li><strong>Target shift 操作</strong>：调整预测目标以适应扩散训练</li>
+  </ul>
+  <p>规模从 127M 到 7B。7B DiffuLLaMA 在 GSM8K 达 63.1，HumanEval 15.5 pass@1。1024 token 仅需 256 次去噪迭代。<strong>核心结论：AR 适配路线远优于从零训练扩散模型</strong>。</p>
+</div>
+
+<!-- ==================== Section 3 ==================== -->
+<h3>2.9 离散扩散演进总结</h3>
+<table>
+  <tr><th>维度</th><th>D3PM (2021)</th><th>MDLM (2024)</th><th>LLaDA (2025)</th><th>Dream (2025)</th></tr>
+  <tr>
+    <td><strong>Token 处理</strong></td>
+    <td>分类转移矩阵 $Q_t$</td>
+    <td>吸收态 masking</td>
+    <td>吸收态 masking</td>
+    <td>吸收态 masking</td>
+  </tr>
+  <tr>
+    <td><strong>训练目标</strong></td>
+    <td>VLB + 辅助 CE</td>
+    <td>加权 CE (连续时间 ELBO)</td>
+    <td>Masked CE (似然上界)</td>
+    <td>加权 CE + CART</td>
+  </tr>
+  <tr>
+    <td><strong>噪声调度</strong></td>
+    <td>固定 $\beta_t$ per matrix</td>
+    <td>标量 $\alpha_t$ (或向量)</td>
+    <td>标量 $t$</td>
+    <td>逐 token 自适应 (CART)</td>
+  </tr>
+  <tr>
+    <td><strong>规模</strong></td>
+    <td>小 (text8, CIFAR)</td>
+    <td>GPT-2 级 (~110M)</td>
+    <td>8B 参数</td>
+    <td>7B 参数</td>
+  </tr>
+  <tr>
+    <td><strong>初始化</strong></td>
+    <td>从零训练</td>
+    <td>从零训练</td>
+    <td>从零训练</td>
+    <td>AR checkpoint</td>
+  </tr>
+  <tr>
+    <td><strong>核心创新</strong></td>
+    <td>转移矩阵设计</td>
+    <td>连续时间简化</td>
+    <td>规模化验证</td>
+    <td>AR 初始化 + 自适应噪声</td>
+  </tr>
+</table>
+
+<div class="insight">
+  <div class="insight-title">离散扩散的核心演进脉络</div>
+  <p><strong>D3PM (2021)</strong> 建立了离散扩散的数学基础（转移矩阵 + VLB），但训练复杂且规模有限。<strong>MDLM (2024)</strong> 将吸收态路线彻底简化为加权 MLM，证明了连续时间框架的优雅性。<strong>LLaDA (2025)</strong> 用 8B 参数证明了 mask 扩散可以 scale 到 LLM 级别并匹敌 AR。<strong>Dream (2025)</strong> 发现从 AR checkpoint 初始化 + 自适应噪声可以大幅节省训练成本。<strong>SEDD (2024)</strong> 则开辟了独立于 mask prediction 的第四范式。</p>
+</div>
+
+<div class="page-nav"><a href="s01_overview.html">&larr; 扩散语言模型全景概述与四大流派</a><a href="s03_block.html">块扩散与半自回归 (Block / Semi-AR) &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

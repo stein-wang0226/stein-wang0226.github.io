@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLM Scaling Laws 与 AR 对比 - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html" class="active">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s6"><span class="num">06</span> DLM Scaling Laws 与 AR 对比</h2>
+
+<h3>6.1 核心发现：DLM vs AR Scaling</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2410.17891 · 2507.15857</span>
+  <div class="card-title">Scaling Diffusion LMs · Diffusion Beats AR in Data-Constrained Settings</div>
+  
+  <h4>DLM Scaling Law 的数学框架</h4>
+  <p>AR 模型的 Chinchilla 定律表明最优训练满足 $N \propto D^{0.5}$（参数和数据同步增长）。DLM 的 scaling 行为有所不同：</p>
+  <div class="formula-box">
+    $L(N, D) = \left(\frac{N_c}{N}\right)^{\alpha_N} + \left(\frac{D_c}{D}\right)^{\alpha_D} + L_\infty$
+  </div>
+  <p>其中 $N$ 为参数量，$D$ 为数据量，$N_c, D_c$ 为临界常数，$\alpha_N, \alpha_D$ 为 scaling 指数。关键发现：</p>
+  <ul>
+    <li><strong>数据复用优势</strong>：DLM 可反复训练更多 epoch 而不过拟合。定义<strong>复用深度</strong> $\mathrm{RD}^* = D_{\mathrm{total}} / D_{\mathrm{unique}}$（总训练 token / 不重复 token），实验发现 DLM 的 $\mathrm{RD}^* \approx 513$（可训练 513 个 epoch），而 AR 的 $\mathrm{RD}^* \approx 32$（32 epoch 后开始过拟合）</li>
+    <li><strong>数据受限场景</strong>：当 $D_{\mathrm{unique}}$ 固定时，DLM 通过随机 masking 实现隐式数据增强——每个 token 在不同 mask 比例下被训练，等效于多种数据视角。AR 在同一数据上多 epoch 训练时梯度信号重复，快速过拟合</li>
+    <li><strong>计算阈值</strong>：DLM 需要超过临界计算量 $C_{\mathrm{threshold}} \propto U^{2.174}$（$U$ 为 unique tokens）才能在 PPL 上超越 AR——这意味着 DLM 在<strong>小规模下劣势明显，但大规模下追平甚至超越</strong></li>
+  </ul>
+  
+  <table>
+    <tr><th>维度</th><th>DLM</th><th>AR</th></tr>
+    <tr><td>Token 效率</td><td>❌ 较差——达到 AR 同等水平需要更多训练数据</td><td>✅ 更高</td></tr>
+    <tr><td>数据利用率</td><td>✅ 高——可反复训练更多 epoch（RD*≈513）</td><td>❌ ~32 epoch 后开始过拟合（RD*≈32）</td></tr>
+    <tr><td>泛化能力</td><td>⚠️ 之前认为更好——实验发现会过拟合</td><td>✅ 稳定</td></tr>
+    <tr><td>计算阈值</td><td>需要临界计算量 ($\propto U^{2.174}$) 才能超越 AR</td><td>更低</td></tr>
+    <tr><td>数据受限场景</td><td>✅ 胜出——随机 masking 作为隐式数据增强</td><td>❌ 过拟合</td></tr>
+  </table>
+</div>
+
+<h3>6.2 DLM 过拟合的"反直觉"优势 ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <div class="card-title">讨论核心观点：过拟合对投机系统可能是好事</div>
+  
+  <p>之前的研究认为 DLM 泛化更好，但实验发现 DLM 会过拟合。<strong>但对于投机解码系统，这反而是优势</strong>：</p>
+  <ul>
+    <li><strong>帮助模拟 teacher 分布</strong>：drafter 的过拟合意味着它能更好地拟合 teacher model 的条件分布</li>
+    <li><strong>更高的 acceptance rate</strong>：当 drafter 充分拟合 teacher 分布时，draft 与 teacher 的实际输出更匹配</li>
+    <li><strong>与 "过拟合有害" 的观念相反</strong>：在投机场景下，drafter 不需要泛化到新分布，只需要精确模拟当前 teacher</li>
+  </ul>
+</div>
+
+<h3>6.3 DLM 解码的"取巧"行为</h3>
+<div class="card orange">
+  <div class="card-title">讨论核心观点：high-entropy token 位置回避</div>
+  
+  <p><strong>AR 必须面对每一个 uncertainty 的位置</strong>：自回归生成是严格逐 token 的，在每个位置都必须做出决策，无法回避高熵（不确定性大）的 token。</p>
+  
+  <p><strong>DLM 解码时会主动避开 high-entropy 位置</strong>：DLM 倾向于先确定低熵（确定性高）的 token，把高熵位置留到最后。这种"取巧"行为导致：</p>
+  <ul>
+    <li>可能会 overfit，倾向选择简单的 solution</li>
+    <li>对于投机解码反而可能是好事——简单位置的 draft 更容易被接受，困难的留给 teacher 处理</li>
+    <li>整体策略：让 draft model 在简单位置高度匹配 teacher，困难位置由 teacher 自己生成</li>
+  </ul>
+</div>
+
+<h3>6.4 DLM 的超级数据学习能力 ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <span class="tag arxiv">arXiv: 2511.03276</span>
+  <span class="tag org">NUS + Sea AI Lab · 2025.11</span>
+  <div class="card-title">Diffusion Language Models are Super Data Learners</div>
+  <p>在严格控制的预训练设置下（统一架构、数据、优化器），系统性验证了 DLM 相对于 AR 的数据效率优势。</p>
+  
+  <h4>核心发现：Crossover 现象</h4>
+  <p>在 unique 数据量固定的条件下，DLM 和 AR 的性能曲线存在一个<strong>交叉点 (Crossover Point)</strong>：</p>
+  <ul>
+    <li><strong>低计算量区间</strong>：AR 占优——DLM 训练初期收敛更慢，token efficiency 较低</li>
+    <li><strong>高计算量区间</strong>：DLM 反超——通过多 epoch 复用同一数据，DLM 在 AR 已经过拟合后仍能持续改善</li>
+  </ul>
+  <p><strong>关键结论</strong>：DLM 的数据效率优势<strong>不是绝对的</strong>，而是在<strong>数据受限 + 充足算力</strong>条件下才显现。交叉点的位置取决于 unique 数据量——数据越少，交叉点越早出现，DLM 优势越大。</p>
+  
+  <h4>量化结果</h4>
+  <table>
+    <tr><th>实验设置</th><th>DLM</th><th>AR</th><th>结论</th></tr>
+    <tr><td>1B 模型 / 1B unique tokens</td><td>HellaSwag <strong>&gt;56%</strong>, MMLU <strong>&gt;33%</strong></td><td>HellaSwag ~45%, MMLU ~27%</td><td>DLM 大幅领先</td></tr>
+    <tr><td>1.7B 模型 / 10B unique Python tokens</td><td>~1.5T token 计算后反超 AR coder</td><td>~200B token 后过拟合停滞</td><td>Crossover 出现</td></tr>
+    <tr><td>数据充裕（&gt;1T unique tokens）</td><td>Token 效率低 ~2-3x</td><td>✅ 更高效</td><td>AR 占优</td></tr>
+  </table>
+  <p><strong>核心结论</strong>：DLM 的数据效率优势<strong>不是绝对的</strong>，而是在<strong>数据受限 + 充足算力</strong>条件下才显现。1B DLM 仅用 1B unique tokens 就能在 HellaSwag/MMLU 上达到需要 10x+ 数据量的 AR 模型水平。</p>
+</div>
+
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2510.04071</span>
+  <span class="tag org">NUS + Sea AI Lab · 2025.10</span>
+  <div class="card-title">What Makes Diffusion Language Models Super Data Learners?</div>
+  <p>深入解释了 DLM 数据效率优势的<strong>根源机制</strong>。</p>
+  
+  <h4>核心机制：Token 级隐式数据增强</h4>
+  <p>DLM 训练时，每个样本在每次迭代中经历<strong>不同的随机 masking</strong>——同一句话可能第一次 mask 30%、第二次 mask 70%、第三次 mask 95%。这等价于：</p>
+  <ul>
+    <li>每个 token 在<strong>不同上下文信息量</strong>下被训练（从几乎完整的上下文到几乎没有上下文）</li>
+    <li>每次训练迭代看到的<strong>有效训练样本</strong>都不同——即使是同一条原始数据</li>
+    <li>这构成了一种<strong>隐式的数据增强</strong>（implicit data augmentation），等效地扩大了训练集</li>
+  </ul>
+  <p><strong>与 AR 的对比</strong>：AR 模型在同一条数据上多次训练时，每个 token 看到的上下文（所有左侧 token）<strong>完全相同</strong>——没有随机性，没有数据增强效果，因此快速过拟合。</p>
+  
+  <h4>Masking 增强效果的量化</h4>
+  <p>通过消融实验，逐一隔离 DLM 与 AR 的差异因素（masking、双向注意力、dropout 等），发现：</p>
+  <table>
+    <tr><th>因素</th><th>对数据效率的贡献</th><th>说明</th></tr>
+    <tr><td><strong>Random masking of input tokens</strong></td><td>✅ 主导因素（~70%）</td><td>每次迭代不同 mask 模式 = 隐式数据增强</td></tr>
+    <tr><td>MLP dropout</td><td>⚠️ 部分贡献（~15%）</td><td>给 AR 加 dropout 也能部分获得类似增益</td></tr>
+    <tr><td>Weight decay</td><td>⚠️ 部分贡献（~10%）</td><td>更强的正则化减缓过拟合</td></tr>
+    <tr><td>双向注意力</td><td>⚠️ 有贡献但非主导</td><td>信息利用效率更高，但不是数据效率的根源</td></tr>
+  </table>
+  <p><strong>关键结论</strong>：random masking 是 DLM 数据效率优势的主导因素，stochastic regularization（dropout、weight decay）也能给 AR 带来类似增益。这意味着数据效率优势<strong>不是 DLM 架构独有的</strong>，而是可以通过引入随机性迁移到 AR。0.6B DLM 仅用 3B unique tokens 训练，即可在多个基准上超越用 36T tokens 训练的 Qwen3-0.6B。</p>
+  
+  <div class="insight">
+    <div class="insight-title">核心洞察</div>
+    <p>DLM 的数据效率优势并非来自架构本身，而是来自<strong>训练目标中的随机性</strong>——masking 机制为每个样本创造了指数级的"视角"变化。这一洞察意味着：(1) 任何引入 masking 随机性的训练方式都能提升数据效率；(2) AR 模型如果也引入某种形式的随机 masking（如 dropout、随机 token 替换），也可以部分获得类似优势。</p>
+  </div>
+</div>
+
+<div class="card cyan">
+  <span class="tag arxiv">arXiv: 2510.03280</span>
+  <span class="tag org">NUS + Sea AI Lab · 2025.09</span>
+  <div class="card-title">Training Optimal Large Diffusion Language Models (Quokka)</div>
+  <p>首个为 DLM 建立系统性 <strong>compute-optimal scaling law</strong> 的工作，涵盖 compute-constrained 和 data-constrained 两种场景。</p>
+  
+  <h4>核心贡献：DLM Scaling Law 拟合</h4>
+  <p>通过在 25M-1.7B 参数范围内的系统性实验，拟合出 DLM 的 Chinchilla 式 scaling exponents：</p>
+  <div class="formula-box">
+    $N_{\mathrm{opt}} \propto C^{0.50}, \quad D_{\mathrm{opt}} \propto C^{0.50}$
+  </div>
+  <p>即参数量和数据量应<strong>等比例增长</strong>（指数均为 0.50），与 AR 的 Chinchilla 定律（$a \approx 0.50, b \approx 0.50$）结构相似。但关键差异在于<strong>epoch 数</strong>：</p>
+  
+  <h4>Data-Constrained Scaling：Epoch 数是独立变量</h4>
+  <p>当 unique 数据量 $D_{\mathrm{unique}}$ 固定时，最优总训练 token 数 $D_{\mathrm{total}} = D_{\mathrm{unique}} \times E_{\mathrm{opt}}$，其中最优 epoch 数：</p>
+  <div class="formula-box">
+    $E_{\mathrm{opt}} \propto \left(\frac{C}{D_{\mathrm{unique}}}\right)^{0.5}$
+  </div>
+  <p>实验发现：10B 参数模型在 1T unique tokens 上可容忍约 <strong>1100 epochs</strong> 仍持续改善——远超 AR 的 ~30 epoch 上限。</p>
+  
+  <h4>关键建模决策的 Scaling 影响</h4>
+  <table>
+    <tr><th>设计选择</th><th>Scaling 影响</th><th>推荐</th></tr>
+    <tr><td>噪声类型</td><td>Masked &gt; Uniform（大规模下）</td><td>✅ Masked 扩散</td></tr>
+    <tr><td>噪声调度</td><td>线性 &gt; 余弦 &gt; 指数</td><td>✅ 线性调度 $\alpha_t = 1-t$</td></tr>
+    <tr><td>时间步采样</td><td>均匀 $t \sim \mathcal{U}[0,1]$ 最优</td><td>✅ 均匀采样</td></tr>
+    <tr><td>AR 初始化</td><td>节省 30-50% 训练计算</td><td>✅ 从 AR checkpoint 开始</td></tr>
+  </table>
+</div>
+
+<div class="card orange">
+  <span class="tag arxiv">arXiv: 2510.09885</span>
+  <span class="tag org">2025.10</span>
+  <div class="card-title">Diffusion-Inspired Masked Fine-Tuning for Knowledge Injection</div>
+  <p>从<strong>知识注入</strong>角度研究 dLLM 的 demasking 目标优势，提出 <strong>Masked SFT</strong> 方法将 dLLM 的数据效率优势嫁接到 AR 模型。</p>
+  
+  <h4>核心实验：Reversal Curse 与知识注入</h4>
+  <p>在严格控制的知识注入实验中（"A 是 B 的作者" → 测试 "B 的作者是谁"），对比 arLLM (Llama-3.1-8B) 和 dLLM (LLaDA-8B)：</p>
+  <table>
+    <tr><th>模型</th><th>Forward QA</th><th>Backward QA（无 paraphrase）</th><th>Backward QA（有 paraphrase）</th></tr>
+    <tr><td>Llama-3.1-8B (标准 SFT)</td><td>0.94</td><td><strong>≈ 0.00</strong></td><td>0.82</td></tr>
+    <tr><td>LLaDA-8B (标准训练)</td><td><strong>0.97</strong></td><td><strong>0.87</strong></td><td><strong>0.91</strong></td></tr>
+    <tr><td>Llama-3.1-8B + <strong>Masked SFT</strong></td><td>0.95</td><td><strong>0.92</strong></td><td>0.93</td></tr>
+  </table>
+  
+  <h4>Masked SFT 方法</h4>
+  <p>在 AR 模型的 SFT 阶段引入随机 masking：将部分 input token 替换为 [MASK]，强制模型从不完整上下文中重建信息。损失函数：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{MaskedSFT}} = \mathbb{E}_{t \sim \mathcal{U}[0,1]} \left[ \sum_{i \in \mathcal{M}_t} \mathrm{CE}(x_0^i, p_\theta(\cdot | \mathbf{x}_t^{\mathrm{masked}})_i) + \sum_{i \notin \mathcal{M}_t} \mathrm{CE}(x_0^i, p_\theta(\cdot | \mathbf{x}_t^{\mathrm{masked}})_i) \right]$
+  </div>
+  <p><strong>核心结论</strong>：(1) dLLM 的 demasking 目标天然抗 Reversal Curse——无需 paraphrase 即可双向检索知识；(2) Masked SFT 可以让 AR 模型获得类似优势，backward QA 从 ≈0 提升到 &gt;0.9；(3) 这证明了 masking 机制的优势可以<strong>跨架构迁移</strong>。</p>
+  
+  <div class="insight">
+    <div class="insight-title">四篇 "Super Data" 研究的统一结论</div>
+    <p>DLM 的数据效率优势是<strong>真实的、可量化的、有机制解释的</strong>：(1) <strong>现象</strong>：存在 Crossover Point，数据受限下 DLM 反超 AR（Super Data Learners）；(2) <strong>机制</strong>：随机 masking 提供 token 级隐式数据增强，等效放大训练集（What Makes）；(3) <strong>配方</strong>：DLM 需要专属的 compute-optimal 配比，epoch 数是关键变量（Training Optimal）；(4) <strong>桥接</strong>：Masking 机制可嫁接到 AR 训练中，部分缩小差距（Closing the Gap）。<strong>实践指导：当 unique 数据量有限时（如专业领域、低资源语言），DLM 是比 AR 更高效的选择。</strong></p>
+  </div>
+</div>
+
+<h3>6.5 Scaling Laws 的噪声类型依赖性 ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <span class="tag arxiv">arXiv: 2512.10858</span>
+  <span class="tag org">NeurIPS 2025</span>
+  <span class="tag result">25M → 10B 参数</span>
+  <div class="card-title">Scaling Behavior of Discrete Diffusion Language Models</div>
+  <p>首个覆盖 25M 到 <strong>10B 参数</strong>（$10^{22}$ FLOPs）的离散扩散 scaling 研究。核心发现：</p>
+  
+  <h4>噪声类型依赖的 Compute-Optimal Scaling</h4>
+  <p>对给定计算预算 $C$，最优参数-数据配比 $(N^*, D^*)$ 满足 $C \approx 6 N^* D^*$（FLOPs 近似）。但最优配比对噪声类型敏感：</p>
+  <div class="formula-box">
+    $\frac{N^*_{\mathrm{uniform}}}{D^*_{\mathrm{uniform}}} > \frac{N^*_{\mathrm{masked}}}{D^*_{\mathrm{masked}}}$
+  </div>
+  <p>即 <strong>Uniform 偏好"宽而浅"</strong>（更多参数、更少数据），<strong>Masked 偏好"窄而深"</strong>（更少参数、更多数据）。直觉上：Uniform 噪声在每个位置引入更强的语义扰动（可能变成任意 token），需要更大容量来建模复杂转移；Masked 噪声仅引入单一状态 [MASK]，信息损失模式简单，可从更多数据中持续学习。</p>
+  
+  <table>
+    <tr><th>噪声类型</th><th>Compute-Optimal 配方</th><th>特点</th></tr>
+    <tr>
+      <td><strong>Uniform（均匀突变）</strong></td>
+      <td>更多参数 + 更少数据</td>
+      <td>✅ 更 token-efficient，适合训练数据有限时</td>
+    </tr>
+    <tr>
+      <td><strong>Masked（吸收态）</strong></td>
+      <td>更多数据 + 更少参数</td>
+      <td>✅ 更符合传统 scaling 模式，数据饥渴</td>
+    </tr>
+  </table>
+  
+  <p>关键洞察：<strong>随着模型规模增大，masked 和 uniform 扩散的似然差距缩小</strong>——uniform 变体在大规模下越来越有竞争力。这与 AR 模型的 Chinchilla 定律不同：DLM 的 scaling law <strong>依赖于噪声类型</strong>，不是通用的。</p>
+</div>
+
+<h3>6.6 "Masked Diffusion 不是终极范式"</h3>
+<div class="card red">
+  <span class="tag arxiv">arXiv: 2602.15014</span>
+  <span class="tag org">ICML 2026 · Sahoo et al.</span>
+  <div class="card-title">Scaling Beyond Masked Diffusion Language Models</div>
+  <p>首个系统性的 <strong>IsoFLOP scaling 对比</strong>（uniform / masked / 插值架构），全部扩展到 1.7B 参数。颠覆性结论：</p>
+  <ul>
+    <li>Masked 模型用标准交叉熵（vs ELBO 目标）训练时 <strong>FLOPs 效率提升 ~12%</strong></li>
+    <li><strong>困惑度不足以做跨族比较</strong>：似然分数只在同一算法族内可靠，实际评估需要"速度-质量 Pareto 前沿"</li>
+    <li>1.7B uniform-state 模型在 GSM8K 上得分 <strong>65.8</strong>，超越 AR 和 masked diffusion</li>
+    <li>Uniform-state 模型在 [200,400] 和 [600+] tok/s 吞吐量区间占主导地位</li>
+    <li><strong>结论："Masked diffusion isn't the future paradigm."</strong> 领域应评估速度-质量权衡，而非仅看困惑度</li>
+  </ul>
+</div>
+
+<h3>6.7 Scaling Laws 总结表</h3>
+<table>
+  <tr><th>发现</th><th>来源</th><th>规模</th></tr>
+  <tr><td>DLM 在数据受限下存在 Crossover Point，反超 AR</td><td>Super Data Learners (2025.11)</td><td>—</td></tr>
+  <tr><td>随机 masking 提供 token 级隐式数据增强，是数据效率根源</td><td>What Makes Super Data (2025.10)</td><td>—</td></tr>
+  <tr><td>DLM 专属 compute-optimal 配方：epoch 数为关键独立变量</td><td>Training Optimal (2025.09)</td><td>—</td></tr>
+  <tr><td>Masking 机制可嫁接到 AR 训练中，部分缩小数据效率差距</td><td>Closing the Gap (2025.10)</td><td>—</td></tr>
+  <tr><td>Uniform 偏好更多参数+更少数据；Masked 偏好更多数据+更少参数</td><td>NeurIPS 2025</td><td>25M - 10B</td></tr>
+  <tr><td>Masked + CE 比 Masked + ELBO FLOPs 效率高 12%</td><td>ICML 2026 (Sahoo)</td><td>≤ 1.7B</td></tr>
+  <tr><td>Masked 与 Uniform 的似然差距随规模缩小</td><td>NeurIPS 2025</td><td>25M - 10B</td></tr>
+  <tr><td>dLLM 在 8B 匹敌 AR 多基准</td><td>LLaDA (ICLR 2025)</td><td>8B</td></tr>
+  <tr><td>dLLM 在 1.7B 超越 AR 的 GSM8K</td><td>ICML 2026 (Sahoo)</td><td>1.7B</td></tr>
+  <tr><td>AR→dLLM 适配优于从零训练</td><td>DiffuLLaMA (2024)</td><td>127M - 7B</td></tr>
+  <tr><td>离散 FM 128x 采样加速（8 步达 1024 步基线）</td><td>FS-DFM (Apple, 2025)</td><td>0.17B - 1.7B</td></tr>
+  <tr><td>连续 DLM 与 AR 计算差距仅 ~20x</td><td>Plaid (2025)</td><td>—</td></tr>
+</table>
+
+<div class="insight">
+  <div class="insight-title">DLM Scaling Laws 核心结论</div>
+  <p>DLM 的 scaling 行为与 AR 有<strong>四个本质区别</strong>：(1) 数据复用深度远超 AR（RD* ≈ 513 vs 32），使其在数据受限场景占优——根源在于随机 masking 提供的 token 级隐式数据增强（Super Data 系列）；(2) Scaling law 依赖噪声类型——Uniform 偏好宽浅、Masked 偏好窄深，不存在通用的 Chinchilla 配方；(3) DLM 需要专属的 compute-optimal 训练配方，epoch 数应作为独立变量纳入 scaling law；(4) 随规模增大 Masked 与 Uniform 的似然差距缩小，且 Uniform-state 模型在中等吞吐量下超越 Masked。核心判断：<strong>困惑度不是唯一的评估指标</strong>——领域应转向"速度-质量 Pareto 前沿"评估；<strong>当 unique 数据有限时，DLM 是比 AR 更高效的选择</strong>。</p>
+</div>
+
+<!-- ==================== Section 7 ==================== -->
+<div class="page-nav"><a href="s05_paradigms.html">&larr; 预测范式 (Prediction Paradigms) 大一统</a><a href="s07_speculative.html">DLM 投机解码：DFlash vs MTP 深度分析 &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM · Super Data Learners · Training Optimal DLM · Closing Data-Efficiency Gap</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

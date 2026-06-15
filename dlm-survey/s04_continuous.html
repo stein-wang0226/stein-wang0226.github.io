@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>连续隐空间扩散 (Continuous DLLM) - 扩散语言模型前沿调研</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      clearInterval(check);
+      MathJax.startup.promise.then(function() {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }, 200);
+  setTimeout(function() { clearInterval(check); document.documentElement.classList.add('mathjax-loaded'); }, 15000);
+});
+</script>
+</head>
+<body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html" class="active">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
+</nav>
+<div class="container">
+<h2 class="section-title" id="s4"><span class="num">04</span> 连续隐空间扩散 (Continuous DLLM)</h2>
+
+<p>这一派认为，既然图像领域的连续扩散（如 DiT）已经成熟，只要把离散文字变成连续向量，即可套用视觉大模型架构。核心问题是<strong>如何桥接离散文本和连续空间</strong>。根据"在哪里做扩散"，可细分为三条路线：</p>
+
+<div class="arch-row">
+  <div class="arch-box">
+    <div class="icon">📝</div>
+    <div class="name">Embedding 空间扩散</div>
+    <div class="desc">直接在词向量空间做 flow<br>Diffusion-LM → ELF → LangFlow</div>
+  </div>
+  <div class="arch-box">
+    <div class="icon">🗜️</div>
+    <div class="name">VAE 隐空间扩散</div>
+    <div class="desc">先压缩再扩散，复用视觉架构<br>COLA → TextLDM → Plaid</div>
+  </div>
+  <div class="arch-box">
+    <div class="icon">🔀</div>
+    <div class="name">连续增强离散扩散</div>
+    <div class="desc">连续信号辅助离散去噪<br>CADD (Apple) · CCDD</div>
+  </div>
+</div>
+
+<h3>4.0 Diffusion-LM：连续文本扩散的奠基之作</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2205.14217</span>
+  <span class="tag org">Stanford · NeurIPS 2022</span>
+  <div class="card-title">Diffusion-LM Improves Controllable Text Generation</div>
+  <p>首个基于连续扩散的非自回归语言模型。核心思路：</p>
+  <ul>
+    <li><strong>前向过程</strong>：将词向量序列逐步加噪为高斯噪声 $\mathbf{x}_0 \to \mathbf{x}_T \sim \mathcal{N}(0, I)$</li>
+    <li><strong>反向过程</strong>：神经网络学习逐步去噪，从高斯噪声恢复词向量</li>
+    <li><strong>Rounding 机制</strong>：去噪得到连续向量后，通过学习的 softmax 分布映射回离散 token（非简单最近邻）</li>
+    <li><strong>可控生成</strong>：中间状态连续可微，可通过梯度引导 $\lambda \log p(x_{t-1}|x) + \log p(c|x_{t-1})$ 实现结构化约束</li>
+  </ul>
+  <p>采用 $\epsilon$-prediction（预测噪声），直接在 DDPM 框架上操作。在语法控制、结构化约束等可控生成任务上显著优于此前方法。<strong>开创了"连续空间文本扩散"路线</strong>。</p>
+</div>
+
+<h3>4.1 COLA：字节跳动的连续隐空间扩散</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2605.06548</span>
+  <span class="tag org">字节跳动 Seed + HKU + ANU · 2025.05</span>
+  <span class="tag result">~2.3B 参数</span>
+  <div class="card-title">Cola DLM: Continuous Latent Diffusion Language Model</div>
+  <p>COLA 采用<strong>两阶段架构</strong>，将高层语义规划与底层 token 合成解耦：</p>
+  
+  <h4>三大组件</h4>
+  <ul>
+    <li><strong>Text VAE (~500M)</strong>：将离散 token 序列编码为连续 embedding，保持序列长度不变，encoder 使用严格因果处理，MLM 目标训练</li>
+    <li><strong>Block-Causal DiT (~1.8B)</strong>：在 VAE 输出的连续隐空间上运行 Flow Matching。将序列分块——块内双向注意力、块间因果注意力。训练通过 <strong>flow matching</strong> 学习条件分布，推理时通过 ODE 积分从噪声生成连续隐表示</li>
+    <li><strong>Conditional Decoder</strong>：从去噪后的连续隐变量重建离散 token</li>
+  </ul>
+  
+  <p>核心优势：<strong>"先规划说什么（语义级），再决定怎么说（token 级）"</strong>——避免了 AR 的严格逐 token 顺序。</p>
+  
+  <h4>训练目标：Block-Causal Flow Matching</h4>
+  <p>COLA 的 DiT 组件使用<strong>条件 Flow Matching (CFM)</strong> 在 VAE 的连续隐空间上训练。给定 VAE 编码后的隐表示 $\mathbf{z}_0$，前向过程为线性插值：</p>
+  <div class="formula-box">
+    $\mathbf{z}_t = (1-t)\,\mathbf{z}_0 + t\,\boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad t \in [0,1]$
+  </div>
+  <p>DiT 网络 $v_\theta(\mathbf{z}_t, t)$ 学习预测条件速度场 $u_t = \boldsymbol{\epsilon} - \mathbf{z}_0$（从数据到噪声的方向）。训练损失为：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{COLA}} = \mathbb{E}_{t, \boldsymbol{\epsilon}} \left[ \| v_\theta(\mathbf{z}_t, t) - (\boldsymbol{\epsilon} - \mathbf{z}_0) \|^2 \right]$
+  </div>
+  <p><strong>Block-Causal 注意力</strong>：DiT 内部将序列按固定块大小分割，块内使用双向注意力（允许块内所有位置互相看到），块间使用因果注意力（每个块只能看到之前的块）。这使得推理时可以按块 AR 生成，每块内部并行去噪。</p>
+  <p><strong>VAE 训练</strong>使用重建损失 + KL 正则化：$\mathcal{L}_{\mathrm{VAE}} = \mathcal{L}_{\mathrm{recon}} + \beta \cdot D_{\mathrm{KL}}(q(\mathbf{z}|\mathbf{x}) \| p(\mathbf{z}))$。</p>
+  
+  <h4>关键实验结果</h4>
+  <table>
+    <tr><th>基准</th><th>COLA (~2.3B)</th><th>GPT-2 (1.5B)</th><th>MDLM (110M)</th></tr>
+    <tr><td>LAMBADA (0-shot)</td><td><strong>62.3</strong></td><td>63.2</td><td>—</td></tr>
+    <tr><td>MMLU (5-shot)</td><td><strong>35.1</strong></td><td>28.4</td><td>—</td></tr>
+    <tr><td>SIQA (0-shot)</td><td><strong>43.8</strong></td><td>42.1</td><td>—</td></tr>
+  </table>
+  <p>COLA 是首个在 few-shot 基准上接近同等规模 AR 模型的连续隐空间扩散 LM。Scaling 实验在 ~2000 EFLOPs 下展现出持续的 loss 下降趋势。</p>
+  
+  <div class="insight warning">
+    <div class="insight-title">讨论观点：是否需要 VAE/RAE 映射到隐空间？</div>
+    <p>连续扩散的关键选择：是否引入 VAE/RAE 做隐空间映射。优点是可以利用图像领域成熟的加速技术（consistency distillation、progressive distillation 等实现 few-step 解码），但引入了额外的编解码误差。RAE (Regularized AutoEncoder) 是比 VAE 更稳定的选择。</p>
+  </div>
+</div>
+
+<h3>4.2 Apple CADD：连续增强离散扩散</h3>
+<div class="card green">
+  <span class="tag arxiv">arXiv: 2510.01329</span>
+  <span class="tag org">Apple AI/ML Research · 2025.10</span>
+  <span class="tag result">7B 模型已开源</span>
+  <div class="card-title">CADD: Continuously Augmented Discrete Diffusion</div>
+  <p>解决离散扩散的<strong>"信息真空"问题</strong>：标准 MDM 将所有未观察到的状态统一映射到 [MASK]，彻底摧毁语义信息。CADD 引入两条<strong>同步并行</strong>的加噪路径：</p>
+  <ul>
+    <li><strong>离散路径</strong>：标准 masking（token → [MASK]），提供 mode-seeking 行为（精确性）</li>
+    <li><strong>连续路径</strong>：在 embedding 空间同步注入高斯噪声，遵循线性 flow matching 轨迹，提供"软语义提示"（多样性）</li>
+  </ul>
+  
+  <h4>双路径加噪的数学形式化</h4>
+  <p><strong>离散路径</strong>（标准 mask 扩散）：每个 token 位置 $i$ 独立地以概率 $t$ 变为 [MASK]：</p>
+  <div class="formula-box">
+    $q_{\mathrm{disc}}(x_t^i | x_0^i) = (1-t)\,\delta_{x_t^i = x_0^i} + t\,\delta_{x_t^i = \mathrm{MASK}}$
+  </div>
+  <p><strong>连续路径</strong>（embedding 空间 flow matching）：同时将 $x_0^i$ 的词向量 $\mathbf{e}_0^i = \mathrm{Emb}(x_0^i)$ 沿线性插值路径加噪：</p>
+  <div class="formula-box">
+    $\mathbf{e}_t^i = (1-t)\,\mathbf{e}_0^i + t\,\boldsymbol{\epsilon}^i, \quad \boldsymbol{\epsilon}^i \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$
+  </div>
+  <p>两条路径使用<strong>相同的时间步 $t$</strong> 和<strong>相同的随机种子结构</strong>（耦合采样），保证离散 mask 位置和连续噪声位置的语义对齐。</p>
+  <p><strong>融合方式</strong>：模型的输入由离散 embedding 和连续 flow 向量逐元素相加构成：</p>
+  <div class="formula-box">
+    $\mathbf{h}_t^i = \begin{cases} \mathbf{e}_t^i & \text{if } x_t^i \neq \mathrm{MASK} \text{ (未被 mask，使用 flow 后的 embedding)} \\ \mathbf{e}_{\mathrm{MASK}} + \mathbf{e}_t^i & \text{if } x_t^i = \mathrm{MASK} \text{ (mask + 连续噪声 hint)} \end{cases}$
+  </div>
+  <p>关键洞察：被 mask 的位置不再是纯零信息的 [MASK] embedding，而是叠加了来自连续路径的<strong>"软语义 hint"</strong> $\mathbf{e}_t^i$。这为模型在 mask 位置提供了关于 $x_0^i$ 的连续线索，解决了纯 mask 扩散的信息真空问题。</p>
+  <p><strong>训练损失</strong>仅使用标准 token-level 交叉熵（预测离散 token），连续路径不引入额外损失——连续信号纯粹作为辅助输入。采样时可通过调节连续路径的采样次数控制<strong>精确性（少采样）vs 多样性（多采样）</strong>。</p>
+  
+  <p>反向去噪时，连续隐向量作为"软语义 hint"引导离散 token 去噪。可通过采样连续路径的次数调节<strong>精确性 vs 多样性</strong>。</p>
+  <p><strong>架构零修改</strong>：与现有 mask diffusion backbone 参数量相同，连续信号和离散 embedding 通过逐元素加法融合后进入网络。使用标准 token-level 交叉熵损失训练。在文本生成、图像合成、代码建模三个模态上一致超越纯 mask-based diffusion baseline。7B 模型（CADD-Base-7B）已在 HuggingFace 开源。</p>
+</div>
+
+<h3>4.3 何恺明团队：从 Diffusion Loss 到 ELF ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <span class="tag arxiv">ELF: 2605.10938 · MAR: 2406.11838 · Back to Basics: 2511.13720</span>
+  <span class="tag org">MIT CSAIL · 何恺明团队</span>
+  <div class="card-title">ELF: Embedded Language Flows (连续时间 Flow Matching 语言模型)</div>
+  
+  <p>何恺明团队的<strong>三步演进路线</strong>，从图像到语言，从 per-token 到全序列：</p>
+  
+  <h4>Step 1: MAR — Diffusion Loss（NeurIPS 2024）</h4>
+  <p>在 AR 图像生成中，用<strong>Diffusion Loss</strong> 替代交叉熵分类头，消除 VQ (Vector Quantization) 依赖。每个 token 位置独立地用小扩散过程拟合连续分布。ImageNet 256×256 FID 1.55。</p>
+  
+  <h4>Step 2: Back to Basics（CVPR 2026）</h4>
+  <p>关键洞察：<strong>让去噪模型直接预测干净数据 $x_0$，而非噪声 $\epsilon$</strong>。因为真实数据在低维流形上，预测干净目标让"看似欠容量"的网络在高维空间中也能成功。</p>
+  
+  <h4>Step 3: ELF — Embedded Language Flows（2025.05）</h4>
+  <ul>
+    <li>将 Token 通过冻结 T5 encoder (~35M) 映射到连续 embedding 空间</li>
+    <li>建立高斯噪声到干净 embedding 的<strong>线性插值路径</strong>（flow matching）</li>
+    <li>网络<strong>预测干净目标 embedding</strong>（$x_0$-prediction），直接继承"Back to Basics"原则——"预测干净 embedding 与预测干净离散 token 的目标天然对齐"</li>
+    <li>同一共享权重网络同时负责去噪和 token 投影，无需独立解码模块</li>
+    <li>训练交替使用 MSE（连续 flow 对齐）+ 交叉熵（最终 token 映射）</li>
+    <li>支持 ODE（确定性）和 SDE（随机性）两种采样 schedule</li>
+  </ul>
+  
+  <h4>ELF 的 Flow Matching 推导</h4>
+  <p><strong>Embedding 映射</strong>：给定离散序列 $\mathbf{x}_0 = (x_0^1, \ldots, x_0^N)$，通过冻结 T5 encoder 映射为连续 embedding 序列 $\mathbf{e}_0 = (\mathbf{e}_0^1, \ldots, \mathbf{e}_0^N) \in \mathbb{R}^{N \times d}$。</p>
+  <p><strong>条件流路径</strong>：采用线性插值（flow matching 的标准选择），从先验噪声 $\mathbf{z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ 到目标 embedding $\mathbf{e}_0$：</p>
+  <div class="formula-box">
+    $\mathbf{e}_t = (1-t)\,\mathbf{z} + t\,\mathbf{e}_0, \quad t \in [0, 1]$
+  </div>
+  <p>对应的条件速度场（conditional vector field）为 $u_t(\mathbf{e}_t | \mathbf{e}_0) = \mathbf{e}_0 - \mathbf{z}$，与 $t$ 无关（线性路径的导数为常数）。</p>
+  <p><strong>训练目标</strong>：网络 $v_\theta(\mathbf{e}_t, t)$ 学习近似条件速度场。交替使用两种损失：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{MSE}} = \mathbb{E}_{t, \mathbf{z}} \left[ \| v_\theta(\mathbf{e}_t, t) - (\mathbf{e}_0 - \mathbf{z}) \|^2 \right]$
+  </div>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{CE}} = \mathbb{E}_{t \to 0} \left[ \sum_i -\log p_\theta(x_0^i | v_\theta(\mathbf{e}_t, t)_i) \right]$
+  </div>
+  <p>$\mathcal{L}_{\mathrm{MSE}}$ 保证 flow 轨迹的连续性，$\mathcal{L}_{\mathrm{CE}}$ 在 $t \to 0$（接近干净数据）时强行锚定到正确的离散 token。后者在 <strong>logit 空间</strong>而非 hidden state 空间计算——实验证明 hidden state MSE 缺乏离散监督信号，效果极差。</p>
+  <p><strong>推理</strong>：从 $\mathbf{z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ 出发，沿学习到的速度场 $v_\theta$ 积分 ODE：$\frac{d\mathbf{e}_t}{dt} = v_\theta(\mathbf{e}_t, t)$，最终通过词汇矩阵将 $\mathbf{e}_0$ 投影回离散 token。仅需 32 步 Euler 积分即可获得 PPL ≈ 24。</p>
+  
+  <p>仅 105M + 35M T5 参数，PPL≈24（32 步采样），在 45.2B tokens 上训练。在无条件文本合成、机器翻译、摘要三个任务上验证。</p>
+  
+  <div class="insight">
+    <div class="insight-title">讨论观点：t=0 加 loss 在 logit 上做而不是 hidden</div>
+    <p>何恺明的关键技巧：在 $t=0$（最接近干净数据的时刻）额外加一个 loss，强行让模型收敛到正确的离散 token 分布。这个 loss 是在 <strong>logit 空间</strong>上做（交叉熵），而不是在 hidden state 空间上做（MSE）。实验证明，连续扩散做投机如果用 MSE 在 hidden 上预测效果非常差，因为 hidden 空间缺乏离散的监督信号。</p>
+  </div>
+</div>
+
+<h3>4.4 CCDD：连续-离散联合扩散</h3>
+<div class="card cyan">
+  <span class="tag arxiv">arXiv: 2510.03206</span>
+  <div class="card-title">CCDD: 连续 + 离散联合扩散 (非何恺明一作)</div>
+  <p>在模型架构内打通连续和离散的鸿沟，允许在连续特征空间里平滑演化，但在每个时间步动态注入离散 Token 约束。支持 latent reasoning（隐空间推理），但可训练性较差。核心发现：<strong>连续表达力 > 离散</strong>，但联合优化的工程难度大。</p>
+</div>
+
+<h3>4.5 LangFlow：连续扩散首次匹敌离散</h3>
+<div class="card green">
+  <span class="tag arxiv">arXiv: 2604.11748</span>
+  <span class="tag org">2025.04</span>
+  <span class="tag result">PPL 24.6 on OWT</span>
+  <div class="card-title">LangFlow: Continuous Diffusion Rivals Discrete in Language Modeling</div>
+  <p>首次提供<strong>明确证据</strong>证明连续扩散在语言建模中是可行且有竞争力的。核心创新：</p>
+  <ul>
+    <li><strong>Bregman 散度连接</strong>：证明 embedding 空间扩散通过 Bregman 散度与 Flow Matching 相连，交叉熵损失保证了"后验匹配"——优化器始终恢复真实的条件 token 概率</li>
+    <li><strong>ODE-based NLL bound</strong>：引入理论扎实的似然估计，包含反向轨迹的体积变化</li>
+    <li><strong>Information-uniform scheduling</strong>：用"对数噪声-信号比"替代均匀时间调度，将求解器迭代按信息增益分布</li>
+    <li><strong>Self-conditioning</strong>：将前步预测作为辅助输入，打破累积误差——与离散扩散不同，连续扩散的 self-conditioning 能<strong>同时提升质量和似然</strong>（PPL 下降 19.0）</li>
+  </ul>
+  
+  <h4>Bregman 散度连接的数学推导</h4>
+  <p>LangFlow 的核心理论贡献：证明 embedding 空间扩散与离散 token 预测之间存在精确的数学联系。</p>
+  <p>令 $\mathbf{e}_0^i = \mathrm{Emb}(x_0^i)$ 为 token $x_0^i$ 的 embedding，$p_\theta(x | \mathbf{e})$ 为从连续向量 $\mathbf{e}$ 映射到词汇分布的 softmax 投影。定义 <strong>Bregman 散度</strong>：</p>
+  <div class="formula-box">
+    $D_F(\mathbf{e}_0^i \| \mathbf{e}_t^i) = F(\mathbf{e}_0^i) - F(\mathbf{e}_t^i) - \langle \nabla F(\mathbf{e}_t^i), \mathbf{e}_0^i - \mathbf{e}_t^i \rangle$
+  </div>
+  <p>其中 $F$ 是严格凸函数。LangFlow 证明：当 $F$ 选择为与交叉熵对偶的负熵函数时，<strong>最小化 embedding 空间的 MSE 去噪损失等价于最小化离散 token 的交叉熵损失（在 Bregman 散度意义下）</strong>。</p>
+  <p>这意味着：连续扩散模型在 embedding 空间优化 MSE，<strong>隐式地</strong>在离散 token 空间优化交叉熵——两者通过 Bregman 散度精确连接。这是连续扩散能在语言建模中匹敌离散扩散的理论基础。</p>
+  <p><strong>Self-conditioning 的作用</strong>：将前步预测 $\hat{\mathbf{e}}_0$ 作为额外输入传入网络，即 $v_\theta(\mathbf{e}_t, t, \hat{\mathbf{e}}_0)$。这打破了去噪过程中的<strong>累积误差</strong>——每一步都可以"修正"前步的偏差，而非在错误的基础上继续。在离散扩散中 self-conditioning 仅提升质量不提升似然，但在连续扩散中<strong>同时提升二者</strong>。</p>
+  <p>130M 参数双向 Transformer。预测 token 概率分布（非直接估速度），通过词汇矩阵期望重建连续去噪器。LM1B PPL 30.0，OpenWebText PPL 24.6。在 7 个 held-out 数据集中的 4 个上<strong>零样本超越标准 AR 模型</strong>。</p>
+</div>
+
+<h3>4.6 TextLDM：视觉 DiT 配方迁移语言</h3>
+<div class="card purple">
+  <span class="tag arxiv">arXiv: 2605.07748</span>
+  <span class="tag org">2025.05</span>
+  <div class="card-title">TextLDM: Language Modeling with Continuous Latent Diffusion</div>
+  <p>证明<strong>视觉 DiT 的架构配方可以直接迁移到语言</strong>，几乎无需修改。</p>
+  
+  <h4>架构：VAE + DiT 两阶段</h4>
+  <ul>
+    <li><strong>第一阶段 VAE</strong>：Encoder 将 token 序列压缩为连续隐向量 $\mathbf{z} = \mathrm{Enc}(\mathbf{x}) \in \mathbb{R}^{L' \times d}$（$L' < L$，实现序列压缩），Decoder 从隐向量重建 token 序列</li>
+    <li><strong>第二阶段 DiT</strong>：在 VAE 隐空间上做 Rectified Flow matching，生成骨干与视觉 DiT <strong>架构完全相同</strong>（AdaLN-Zero、Patchify、全双向注意力）</li>
+    <li><strong>REPA 对齐</strong>：VAE 中间层表征与冻结预训练 LM（如 T5）对齐，通过 <strong>Representation Alignment</strong> loss 改善条件去噪质量——作者指出"仅靠重建保真度不够，需要对齐中间表征"</li>
+  </ul>
+  
+  <h4>训练目标</h4>
+  <p><strong>VAE 阶段</strong>：重建损失 + KL 正则 + REPA 对齐损失：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{VAE}} = \underbrace{\sum_i -\log p_{\mathrm{dec}}(x_i | \mathbf{z})}_{\text{重建 CE}} + \beta \cdot D_{\mathrm{KL}}(q(\mathbf{z}|\mathbf{x}) \| \mathcal{N}(0,I)) + \gamma \cdot \underbrace{\| \mathbf{h}_{\mathrm{enc}} - \mathrm{sg}(\mathbf{h}_{\mathrm{LM}}) \|^2}_{\text{REPA: 与冻结 LM 对齐}}$
+  </div>
+  <p>其中 $\mathrm{sg}(\cdot)$ 表示 stop-gradient，$\mathbf{h}_{\mathrm{LM}}$ 是冻结预训练 LM 的中间层表征。</p>
+  <p><strong>DiT 阶段</strong>：标准 Rectified Flow matching 损失：</p>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{DiT}} = \mathbb{E}_{t \sim \mathcal{U}[0,1],\, \boldsymbol{\epsilon} \sim \mathcal{N}(0,I)} \left[ \| v_\theta(\mathbf{z}_t, t) - (\mathbf{z}_1 - \mathbf{z}_0) \|^2 \right], \quad \mathbf{z}_t = (1-t)\mathbf{z}_0 + t\mathbf{z}_1$
+  </div>
+  <p>其中 $\mathbf{z}_0 \sim \mathcal{N}(0,I)$ 是噪声起点，$\mathbf{z}_1 = \mathrm{Enc}(\mathbf{x})$ 是数据端点。</p>
+  
+  <h4>关键实验结果（Text Continuation，OpenWebText2 训练）</h4>
+  <p>TextLDM 在 text continuation 任务上评估，使用 ROUGE/BERTScore/MAUVE 而非 PPL（因为 VAE 隐空间扩散无法直接计算似然）。</p>
+  <table>
+    <tr><th>模型</th><th>参数量</th><th>WikiSource R-1</th><th>Wikipedia R-1</th><th>TinyStories R-1</th><th>MAUVE (Wiki)</th></tr>
+    <tr><td>GPT-2</td><td>137M</td><td>31.1</td><td>23.3</td><td>31.8</td><td>35.3</td></tr>
+    <tr><td>GPT-2-medium</td><td>355M</td><td>34.0</td><td>25.0</td><td>33.6</td><td>39.2</td></tr>
+    <tr><td>SSD-LM</td><td>355M</td><td>15.3</td><td>15.1</td><td>28.0</td><td>7.66</td></tr>
+    <tr><td><strong>TextLDM</strong></td><td><strong>328M</strong></td><td><strong>33.1</strong></td><td><strong>27.6</strong></td><td><strong>37.1</strong></td><td><strong>27.6</strong></td></tr>
+    <tr><td><strong>TextLDM</strong></td><td><strong>768M</strong></td><td><strong>37.5</strong></td><td><strong>38.9</strong></td><td><strong>39.7</strong></td><td><strong>32.7</strong></td></tr>
+  </table>
+  <p><strong>核心结论</strong>：(1) 视觉 DiT 配方（AdaLN-Zero、logit-normal 调度、CFG）可<strong>零修改迁移</strong>到语言隐空间扩散；(2) REPA 对齐是关键——去掉后 ROUGE-1 从 33.1 降至 27.8（WikiSource），MAUVE 从 20.4 降至 2.5；(3) 768M TextLDM 在多数指标上<strong>超越 GPT-2-large (774M)</strong>，大幅超越 SSD-LM 等此前连续扩散模型；(4) 训练效率与 AR 模型可比——在相同训练步数下达到接近质量。</p>
+</div>
+
+<h3>4.7 Plaid：连续 DLM 的首个 Scaling Law ⭐</h3>
+<div class="card orange">
+  <span class="tag arxiv">arXiv: 2605.18530</span>
+  <span class="tag org">NeurIPS 2025 相关工作</span>
+  <div class="card-title">Plaid: Continuous Diffusion Scales Competitively with Discrete Diffusion for Language</div>
+  <p>建立了<strong>连续扩散语言模型的首个 scaling law</strong>，证明连续 DLM 可以匹敌离散 DLM。</p>
+  
+  <h4>架构与训练目标</h4>
+  <p>Plaid 在 embedding 空间做 Flow Matching（非 VAE 隐空间），使用与 ELF 类似的框架但做了关键改进：</p>
+  <ul>
+    <li><strong>Embedding 精化</strong>：不使用原始 embedding，而是通过可训练的投影层 $\mathbf{e}'_i = W_{\mathrm{proj}} \mathbf{e}_i$ 创建"结构化几何"——让不同 token 的 embedding 在流匹配空间中分布更均匀</li>
+    <li><strong>自适应噪声调度</strong>：通过调优噪声调度参数，使信息损失（交叉熵）随时间 $t$ <strong>线性</strong>变化——这保证了每个时间步提供均匀的训练信号</li>
+  </ul>
+  <div class="formula-box">
+    $\mathcal{L}_{\mathrm{Plaid}} = \mathbb{E}_{t, \boldsymbol{\epsilon}} \left[ \| v_\theta(\mathbf{e}_t, t) - (\mathbf{e}_1 - \boldsymbol{\epsilon}) \|^2 \right] + \lambda \cdot \mathrm{CE}(\mathbf{x}_0, \mathrm{round}(\hat{\mathbf{e}}_0))$
+  </div>
+  <p>其中第一项是标准 Flow Matching 速度场 MSE，第二项是 rounding CE（将连续向量映射回离散 token 的交叉熵监督，类似 ELF 的设计）。</p>
+  
+  <h4>Scaling Law 发现</h4>
+  <p>Plaid 在 0.04B - 1.3B 参数规模上系统性地拟合了 scaling law，发现：</p>
+  <div class="formula-box">
+    $L_{\mathrm{Plaid}}(N, D) = \frac{A}{N^{\alpha}} + \frac{B}{D^{\beta}} + C$
+  </div>
+  <p>其中 $N$ 是参数量、$D$ 是训练数据量。关键发现：连续 DLM 的 scaling exponents 与离散 DLM <strong>相当接近</strong>——说明连续路线并非天然劣势。</p>
+  
+  <h4>关键实验结果</h4>
+  <table>
+    <tr><th>模型</th><th>参数量</th><th>PPL (OpenWebText)</th><th>类型</th></tr>
+    <tr><td>GPT-2</td><td>124M</td><td>29.4</td><td>AR</td></tr>
+    <tr><td>MDLM</td><td>110M</td><td>31.7</td><td>离散扩散</td></tr>
+    <tr><td>Duo (SEDD)</td><td>110M</td><td>28.2</td><td>离散扩散</td></tr>
+    <tr><td><strong>Plaid</strong></td><td><strong>110M</strong></td><td><strong>22.1</strong></td><td><strong>连续扩散 (新 SOTA)</strong></td></tr>
+    <tr><td>Plaid</td><td>1.3B</td><td>—</td><td>连续扩散 (scaling 验证)</td></tr>
+  </table>
+  <p><strong>核心结论</strong>：(1) 连续 DLM <strong>PPL 22.1</strong> 是所有扩散语言模型（连续 + 离散）的新 SOTA；(2) 与 AR 的计算差距<strong>仅 ~20x</strong>，远小于此前假设的数量级差距；(3) Embedding 精化和噪声调度优化是关键——消融实验显示去掉任一均导致 PPL 上升 3-5 点；(4) 连续 DLM 的 scaling law 斜率与离散 DLM 相当，证明连续路线有长期竞争力。</p>
+</div>
+
+<div class="insight">
+  <div class="insight-title">连续 DLM 的三条路线总结</div>
+  <p><strong>Embedding 空间扩散</strong>（Diffusion-LM → ELF → LangFlow）：直接在词向量空间做 flow matching，理论上最优雅（Bregman 散度连接 CE↔MSE），但需要额外的 rounding 机制将连续向量映射回离散 token。ELF 通过冻结 T5 encoder + logit 空间 CE 损失解决了这一问题。<strong>VAE 隐空间扩散</strong>（COLA → TextLDM → Plaid）：先压缩再扩散，完全复用视觉 DiT 架构，但 VAE 编解码引入额外误差，scaling 尚未证明超越离散。<strong>连续增强离散扩散</strong>（CADD → CCDD）：不抛弃离散本质，用连续信号辅助离散去噪，架构零修改，是"最小侵入"的混合方案。核心未解决问题：连续 DLM 与 AR 的 ~20x 计算差距能否通过 consistency distillation 等加速技术弥合？</p>
+</div>
+
+<!-- ==================== Section 5 ==================== -->
+<div class="page-nav"><a href="s03_block.html">&larr; 块扩散与半自回归 (Block / Semi-AR)</a><a href="s05_paradigms.html">预测范式 (Prediction Paradigms) 大一统 &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>

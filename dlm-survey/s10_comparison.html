@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>综合对比与未来方向 - 扩散语言模型调研</title>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+</head>
+<body>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html" class="active">10</a>
+</nav>
+<div class="container">
+<a href="index.html" class="back-link">← 返回目录</a>
+
+<!-- ==================== Section 10 ==================== -->
+<h2 class="section-title" id="s10"><span class="num">10</span> 综合对比表与未来方向</h2>
+
+<h3>10.1 核心方法全景对比</h3>
+<table>
+  <tr>
+    <th>方法</th><th>类型</th><th>预测范式</th><th>核心思路</th><th>规模</th><th>开源</th>
+  </tr>
+  <tr>
+    <td><strong>D3PM</strong></td><td>离散扩散</td><td>$x_0$-pred</td><td>转移矩阵 $Q_t$ 定义离散加噪</td><td>—</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>MDLM</strong></td><td>离散扩散</td><td>$x_0$-pred</td><td>吸收态 mask + 连续时间 + 加权 MLM</td><td>~110M</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>LLaDA 8B</strong></td><td>离散扩散</td><td>$x_0$-pred</td><td>首个大规模 mask 扩散 LM，re-masking</td><td>8B</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>LLaDA 2.0 MoE</strong></td><td>离散扩散</td><td>$x_0$-pred</td><td>MoE 稀疏激活 + 3 阶段 WSD</td><td>100B</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>Dream 7B</strong></td><td>离散扩散</td><td>$x_0$-pred</td><td>AR→扩散适配 + 动态噪声重分配</td><td>7B</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>SEDD</strong></td><td>离散扩散</td><td>Ratio est.</td><td>概率密度比率估计，score entropy loss</td><td>~110M</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>Seed Diffusion</strong></td><td>离散扩散</td><td>$x_0$-pred</td><td>大规模离散状态扩散 + 高效调度</td><td>—</td><td>Preview</td>
+  </tr>
+  <tr>
+    <td><strong>Diffusion-LM</strong></td><td>连续 embedding</td><td>$\epsilon$-pred</td><td>首个连续文本扩散，可控生成</td><td>~350M</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>ELF</strong></td><td>连续 embedding</td><td>$x_0$-pred</td><td>Flow Matching + T5 embedding + 共享权重</td><td>140M</td><td>❌</td>
+  </tr>
+  <tr>
+    <td><strong>LangFlow</strong></td><td>连续 embedding</td><td>$x_0$-pred</td><td>Bregman 散度连接 + self-conditioning</td><td>130M</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>COLA</strong></td><td>VAE 隐空间</td><td>Flow matching</td><td>Text VAE + Block-Causal DiT</td><td>~2.3B</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>TextLDM</strong></td><td>VAE 隐空间</td><td>Flow matching</td><td>视觉 DiT 配方直接迁移 + REPA</td><td>—</td><td>❌</td>
+  </tr>
+  <tr>
+    <td><strong>Plaid</strong></td><td>连续扩散</td><td>—</td><td>连续 DLM 首个 scaling law，PPL 22.1</td><td>—</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>Apple CADD</strong></td><td>混合扩散</td><td>$x_0$-pred</td><td>双路径：离散 mask + 连续 Gaussian</td><td>7B</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>DFlash</strong></td><td>投机解码</td><td>—</td><td>Block 扩散 draft + AR verify (MIMO)</td><td>—</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>Nemotron-Diff</strong></td><td>三模态统一</td><td>—</td><td>一个模型 AR/DLM/Spec 模式切换</td><td>14B</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>Trajectory-Level SD</strong></td><td>轨迹投机</td><td>—</td><td>推测去噪轨迹（非 token），7-14x</td><td>—</td><td>✅</td>
+  </tr>
+  <tr>
+    <td><strong>Mercury 2</strong></td><td>商用扩散</td><td>—</td><td>首个商用 dLLM 推理模型</td><td>—</td><td>API</td>
+  </tr>
+</table>
+
+<h3>10.2 DLM RL 训练方法对比</h3>
+<table>
+  <tr><th>方法</th><th>机构</th><th>核心思路</th><th>vs ELBO</th><th>最大提升</th></tr>
+  <tr>
+    <td><strong>SPG</strong></td><td>Meta</td><td>上下界三明治策略梯度</td><td>减少 bias</td><td>+27% (Sudoku)</td>
+  </tr>
+  <tr>
+    <td><strong>GDSD</strong></td><td>—</td><td>去噪器自蒸馏绕过 ELBO</td><td>完全绕过</td><td>+19.6%</td>
+  </tr>
+  <tr>
+    <td><strong>DUEL</strong></td><td>Cornell</td><td>确定性去掩码精确似然</td><td>精确计算</td><td>缩小 32-82% 差距</td>
+  </tr>
+  <tr>
+    <td><strong>TUBE</strong></td><td>—</td><td>ELBO 互补上界 + 无偏 MC 估计</td><td>上下界配对</td><td>严格证明 block MDM &lt; AR</td>
+  </tr>
+</table>
+
+<h3>10.2.1 RL 方法理论深度对比 ⭐</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <div class="card-title">三种解决 ELBO bias 的数学路线</div>
+  
+  <h4>路线一：SPG — 减少 Bias（三明治估计）</h4>
+  <p>标准策略梯度需要 $\nabla_\theta \log \pi_\theta(\tau)$，但 dLLM 的轨迹对数似然 $\log \pi_\theta(\tau) = \log \sum_{\sigma} p_\theta(\mathbf{x}_0, \sigma)$ 需要对所有去掩码顺序 $\sigma$ 求和（$N!$ 项），不可精确计算。SPG 构造上下界优势函数：</p>
+  <div class="formula-box">
+    $\hat{A}^{\mathrm{lower}}_i = R_i - b - \lambda \cdot \mathrm{Var}_{\mathrm{upper}} \quad \leq \quad A_i \quad \leq \quad \hat{A}^{\mathrm{upper}}_i = R_i - b + \lambda \cdot \mathrm{Var}_{\mathrm{lower}}$
+  </div>
+  <p>策略梯度保守估计：正优势用下界（避免过度乐观），负优势用上界（避免过度惩罚）。<strong>Bias 减小但不消除</strong>，$O(1/\sqrt{N})$ 收敛。</p>
+  
+  <h4>路线二：GDSD — 完全绕过 ELBO（自蒸馏）</h4>
+  <p>从 KL 正则化 RL 目标出发，推导出最优策略的闭式解：</p>
+  <div class="formula-box">
+    $\pi^*(\mathbf{x}_0 | \mathbf{x}_t, t) \propto \pi_\theta(\mathbf{x}_0 | \mathbf{x}_t, t) \cdot \exp\!\left(\frac{A(\mathbf{x}_0)}{\beta}\right)$
+  </div>
+  <p>关键突破：将策略优化转化为<strong>去噪器自蒸馏</strong>——用 $\pi^*$ 作为教师，$\pi_\theta$ 作为学生。损失函数为 squared-logit 形式，<strong>无需配分函数归一化</strong>，完全消除 ELBO bias。理论上是无偏的。</p>
+  
+  <h4>路线三：DUEL — 精确似然计算</h4>
+  <p>统一主流 MDM 采样器为确定性去掩码过程，证明在此条件下可以精确计算似然：</p>
+  <div class="formula-box">
+    $\log p_\theta(\mathbf{x}_0) = \sum_{k=1}^{K} \log p_\theta(x_0^{(i_k)} | \mathbf{x}_{t_k}, t_k) \quad \text{（确定性顺序 } \{i_1, \ldots, i_K\}\text{）}$
+  </div>
+  <p>不需要对 $N!$ 个顺序求和——确定性策略只沿一条路径计算。<strong>精确但仅适用于确定性采样</strong>，随机采样仍需 ELBO。</p>
+  
+  <table>
+    <tr><th>维度</th><th>SPG</th><th>GDSD</th><th>DUEL</th></tr>
+    <tr><td>Bias</td><td>减小（$O(1/\sqrt{N})$）</td><td>消除</td><td>消除（确定性路径）</td></tr>
+    <tr><td>计算复杂度</td><td>$O(N \cdot S)$ 双采样</td><td>$O(N \cdot S)$ 自蒸馏</td><td>$O(N)$ 单路径</td></tr>
+    <tr><td>适用采样器</td><td>通用</td><td>通用</td><td>仅确定性</td></tr>
+    <tr><td>实验验证规模</td><td>LLaDA-8B</td><td>Dream-7B, LLaDA-8B</td><td>~110M</td></tr>
+  </table>
+</div>
+
+<h3>10.3 未来方向判断</h3>
+
+<div class="card purple">
+  <div class="card-title">方向一：扩散投机解码成为主流加速范式</div>
+  <p>DFlash / Nemotron / TiDAR 已经证明，dLLM 最务实的落地路径是<strong>不取代 AR 而是做加速器</strong>。扩散模型提供并行性优势（drafting / block decoding），AR 保证最终质量。未来可能走向"统一模型内投机"（Nemotron 路线），消除独立 draft model 的额外开销。</p>
+  
+  <p><strong>理论加速上限</strong>：投机解码的最大加速比受限于 draft 模型与 teacher 模型的分布距离：</p>
+  <div class="formula-box">
+    $\text{Speedup}_{\max} = \frac{1}{1 - \mathbb{E}[\min(1, \frac{p_{\mathrm{teacher}}(x)}{q_{\mathrm{draft}}(x)})]} = \frac{1}{D_{\mathrm{TV}}(p\|q) + \epsilon}$
+  </div>
+  <p>dLLM drafter 的核心优势：(1) 并行 drafting 使 $t_{\mathrm{draft}} \to 0$，加速比仅由接受率决定；(2) 过拟合特性使 $D_{\mathrm{TV}}(p\|q)$ 更小。Nemotron 路线将 drafter 和 verifier 统一为同一模型，进一步消除分布偏移。</p>
+</div>
+
+<div class="card green">
+  <div class="card-title">方向二：连续 Flow Matching 取代传统扩散</div>
+  <p>何恺明 ELF 的工作表明，连续 Flow Matching（$v$-prediction / $f$-prediction）是比传统离散扩散更优雅的路线。Rectified Flow 可以实现 1-2 步生成，Consistency Model 可以单步。连续空间原生支持 CFG、语义梯度等离散扩散不具备的能力。</p>
+  
+  <p><strong>关键数学优势——直线路径</strong>：Rectified Flow 的 ODE 轨迹是直线 $\mathbf{e}_t = (1-t)\mathbf{z} + t\mathbf{e}_0$，天然支持步数压缩：</p>
+  <div class="formula-box">
+    $\text{Reflow:} \quad \mathbf{v}_{\mathrm{reflow}}(\mathbf{e}_t, t) = \mathbb{E}[\mathbf{e}_0 - \mathbf{z} \mid \mathbf{e}_t] \quad \Rightarrow \quad \text{1-step: } \hat{\mathbf{e}}_0 = \mathbf{e}_T + \mathbf{v}_{\mathrm{reflow}}(\mathbf{e}_T, T)$
+  </div>
+  <p>经过 reflow 后，连续 FM 可以<strong>单步生成</strong>（直接从噪声映射到 embedding），这是离散扩散无法实现的——离散空间的"直线"概念不存在。连续空间的另一大优势是 <strong>CFG 原生支持</strong>：$\mathbf{v}_{\mathrm{cfg}} = \mathbf{v}_{\mathrm{uncond}} + w(\mathbf{v}_{\mathrm{cond}} - \mathbf{v}_{\mathrm{uncond}})$。</p>
+</div>
+
+<div class="card orange">
+  <div class="card-title">方向三：RL 训练是 dLLM 的核心瓶颈</div>
+  <p>ELBO 问题不解决，dLLM 就无法像 AR 模型那样享受 GRPO/PPO 等 RL 对齐的红利。SPG 和 GDSD 是重要突破，但还没有达到 AR RL 的成熟度。这是 dLLM 从"能生成"到"能推理"的关键一步。</p>
+  
+  <p><strong>AR vs dLLM 的 RL 差距量化</strong>：</p>
+  <div class="formula-box">
+    $\Delta_{\mathrm{RL}} = \underbrace{J_{\mathrm{AR}}^* - J_{\mathrm{dLLM}}^*}_{\text{RL 对齐后差距}} = \underbrace{(J_{\mathrm{AR}}^* - J_{\mathrm{AR}}^{\mathrm{SFT}})}_{\text{AR 的 RL 收益}} - \underbrace{(J_{\mathrm{dLLM}}^* - J_{\mathrm{dLLM}}^{\mathrm{SFT}})}_{\text{dLLM 的 RL 收益}} + \underbrace{(J_{\mathrm{AR}}^{\mathrm{SFT}} - J_{\mathrm{dLLM}}^{\mathrm{SFT}})}_{\text{SFT 基础差距}}$
+  </div>
+  <p>SPG 实验数据（LLaDA-8B）：dLLM 的 RL 收益约 AR 的 60-80%（Sudoku 上 +27% vs AR 通常 +40-50%）。<strong>两大差距来源</strong>：(1) ELBO bias 导致策略梯度估计质量低 (2) 非因果生成使得 CoT 推理链困难，限制了推理类奖励信号的有效利用。</p>
+</div>
+
+<div class="card cyan">
+  <div class="card-title">方向四：Scaling 仍未有定论</div>
+  <p>Gemini Diffusion 和 Seed Diffusion 证明了 dLLM 可以 scale up，但质量差距仍在。LLaDA 2.0 100B MoE 是目前最大规模的开源 dLLM。关键问题是：<strong>在同等计算预算下，dLLM 能否在复杂推理任务上追平 AR？</strong>这可能需要新的架构创新（不只是更大）。</p>
+  
+  <p><strong>Scaling 的噪声类型依赖性</strong>（来自 NeurIPS 2025 的大规模实验）：</p>
+  <div class="formula-box">
+    $\text{Compute-optimal:} \quad \begin{cases} N^*_{\mathrm{uniform}} \propto C^{0.55}, \quad D^*_{\mathrm{uniform}} \propto C^{0.45} & \text{（偏参数）} \\ N^*_{\mathrm{masked}} \propto C^{0.45}, \quad D^*_{\mathrm{masked}} \propto C^{0.55} & \text{（偏数据）} \end{cases}$
+  </div>
+  <p>与 AR 的 Chinchilla 定律（$N \propto C^{0.5}, D \propto C^{0.5}$）不同，dLLM 的 scaling law 依赖于噪声类型。uniform 扩散偏参数化（更适合数据受限场景），masked 扩散偏数据化（类似 AR 模式）。<strong>关键未知</strong>：当 $C > 10^{24}$ FLOPs 时，两种噪声类型的似然差距是否会进一步缩小？</p>
+</div>
+
+<div class="insight" style="margin-top: 32px;">
+  <div class="insight-title">讨论核心结论</div>
+  <p>当前 dLLM 领域处于"加速验证已成立，质量追赶进行中"的阶段。最具落地价值的方向是扩散投机解码（DFlash 路线），最具学术突破潜力的是连续 Flow Matching + RL 训练（ELF + SPG/GDSD 路线）。纯扩散 LM 的 scaling 需要更多实验验证——Gemini 的"失败"和 Seed 的成功都表明，scaling law 在 dLLM 上的表现比 AR 更复杂。</p>
+</div>
+
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · LLaDA-MoE · Dream · Seed Diffusion · SEDD · DiffuLLaMA · Diffusion-LM · COLA · CADD · ELF · MAR · Back to Basics · LangFlow · TextLDM · Plaid · CCDD · DFlash · Fast-dLLM · Nemotron-Diffusion · TiDAR · DiffuSpec · DART · PARD · S2D2 · SimSD · Trajectory-Level SD · Self-Spec · BlockSpec · APD · Gemini Diffusion · Mercury 2 · SPG · GDSD · DUEL · TUBE · FS-DFM · Discrete Flow Matching</p>
+</div>
+
+<div class="page-nav">
+  <a href="s09_commercial.html" class="nav-prev">← 上一篇：商业落地与行业实践</a>
+  <a href="index.html" class="nav-next">返回目录 →</a>
+</div>
+</div><!-- container end -->
+</body>
+</html>
