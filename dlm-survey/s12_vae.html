@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAE 原理、发展脉络与 VAE 家族 - 扩散语言模型调研</title>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+</head>
+<body>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a> <span class="sep">|</span> <a href="s11_loop_transformer.html">11</a> <span class="sep">|</span> <a href="s12_vae.html" class="active">12</a>
+</nav>
+<div class="container">
+<a href="index.html" class="back-link">&larr; 返回目录</a>
+
+<!-- ==================== Section 12 ==================== -->
+<h2 class="section-title" id="s12"><span class="num">12</span> VAE 原理、发展脉络与 VAE 家族</h2>
+
+<p>本章系统梳理 <strong>Variational Autoencoder (VAE)</strong> 的原理、训练目标、关键问题、六阶段发展脉络，以及 18 个 VAE 变体的技术细节。重点覆盖离散量化路线（VQ-VAE &rarr; RQ-VAE &rarr; SQ-VAE &rarr; FSQ &rarr; LFQ）和 VAE 在现代生成系统中的角色。</p>
+
+<!-- ==================== TOC ==================== -->
+<div class="toc">
+  <h2>本章目录</h2>
+  <ol>
+    <li><a href="#s12-1">12.1 核心原理：从 AE 到 VAE</a></li>
+    <li><a href="#s12-2">12.2 训练目标：ELBO 与重参数化</a></li>
+    <li><a href="#s12-3">12.3 VAE 在生成模型版图中的位置</a></li>
+    <li><a href="#s12-4">12.4 三大关键问题</a></li>
+    <li><a href="#s12-5">12.5 六阶段发展脉络</a></li>
+    <li><a href="#s12-6">12.6 VAE 家族系统梳理（18 个变体）</a></li>
+    <li><a href="#s12-7">12.7 量化路线深度对比：VQ vs RQ vs SQ vs FSQ vs LFQ</a></li>
+    <li><a href="#s12-8">12.8 VAE 在现代生成系统中的角色</a></li>
+    <li><a href="#s12-9">12.9 核心论文索引</a></li>
+  </ol>
+</div>
+
+<!-- ==================== 12.1 ==================== -->
+<h3 id="s12-1">12.1 核心原理：从 AE 到 VAE</h3>
+
+<h4>普通自编码器（AE）</h4>
+<p>编码器将输入压缩到隐空间：$x \to z$；解码器从隐空间重建：$z \to \hat{x}$。目标是最小化重建误差 $\|x - \hat{x}\|^2$。AE 的两个根本缺陷：<strong>隐空间不规整</strong>（$z$ 分布混乱，不适合随机采样生成新样本）和<strong>无显式概率模型</strong>（更像"压缩+重建"，不是严格的生成模型）。</p>
+
+<h4>VAE 的核心升级</h4>
+<p>VAE（Kingma & Welling, ICLR 2014）将 AE 升级为概率生成模型。假设数据生成过程：先从先验分布采样隐变量 $z \sim p(z)$（通常 $p(z) = \mathcal{N}(0, I)$），再由解码器生成数据 $x \sim p_\theta(x|z)$。</p>
+
+<div class="arch-row">
+  <div class="arch-box">
+    <div class="name">编码器 $q_\phi(z|x)$</div>
+    <div class="desc">
+      输出<strong>分布</strong>而非点<br>
+      $q_\phi(z|x) = \mathcal{N}(\mu(x),\, \sigma^2(x))$<br>
+      给定输入 $x$，它在 latent space<br>
+      是一个概率区域，而非确定点
+    </div>
+  </div>
+  <div class="arch-box">
+    <div class="name">解码器 $p_\theta(x|z)$</div>
+    <div class="desc">
+      输出<strong>条件分布</strong><br>
+      图像：Gaussian 或 Bernoulli<br>
+      文本：categorical over vocabulary<br>
+      从 latent $z$ 生成观测数据 $x$
+    </div>
+  </div>
+</div>
+
+<div class="insight">
+  <div class="insight-title">一句话总结</div>
+  <p>VAE 的本质是将 AE 的"确定性压缩-重建"升级为"概率编码-概率解码"，通过 KL 正则化让隐空间变得<strong>连续、平滑、可采样</strong>，从而成为一个真正的生成模型。</p>
+</div>
+
+<!-- ==================== 12.2 ==================== -->
+<h3 id="s12-2">12.2 训练目标：ELBO 与重参数化</h3>
+
+<h4>我们真正想优化什么？</h4>
+<p>最大化数据似然 $\log p_\theta(x)$，但边际化积分不可解：</p>
+<div class="formula-box">
+$$p_\theta(x) = \int p_\theta(x|z)\,p(z)\,dz \quad \text{（通常不可解）}$$
+</div>
+<p>引入近似后验 $q_\phi(z|x)$，推导出 <strong>ELBO（Evidence Lower Bound）</strong>：</p>
+<div class="formula-box">
+$$\mathcal{L}_{\text{ELBO}} = \underbrace{\mathbb{E}_{q_\phi(z|x)}\!\big[\log p_\theta(x|z)\big]}_{\text{重建项：保留信息}} - \underbrace{D_{\text{KL}}\!\big(q_\phi(z|x)\,\|\,p(z)\big)}_{\text{正则项：压缩 + 规整}}$$
+</div>
+<p>训练时最大化 ELBO（或最小化其负数）。<strong>直观理解</strong>：重建项要求 latent $z$ 中保留足够信息以还原输入；KL 项要求编码器后验 $q(z|x)$ 不要偏离先验 $p(z)$。VAE 本质上是<strong>重建 fidelity 与 latent regularization 之间的平衡</strong>。</p>
+
+<h4>重参数化技巧（Reparameterization Trick）</h4>
+<p>问题：$z \sim q_\phi(z|x)$ 是随机采样，梯度无法通过采样操作回传。</p>
+<div class="formula-box">
+$$z = \mu + \sigma \odot \epsilon, \quad \epsilon \sim \mathcal{N}(0, I)$$
+</div>
+<p>随机性"外包"给 $\epsilon$（不参与梯度计算），而 $\mu, \sigma$ 是编码器输出的确定性参数，可微分，从而实现端到端反向传播。这是 VAE 成功训练的关键技术。</p>
+
+<!-- ==================== 12.3 ==================== -->
+<h3 id="s12-3">12.3 VAE 在生成模型版图中的位置</h3>
+
+<div class="card purple">
+  <div class="card-title">四大深度生成模型对比</div>
+  <table>
+    <tr><th>模型</th><th>优势</th><th>劣势</th></tr>
+    <tr><td><strong>AE/VAE</strong></td><td>训练稳定、概率解释清晰、encoder 天然存在、潜空间连续</td><td>样本偏模糊、KL 过强时 posterior collapse</td></tr>
+    <tr><td><strong>GAN</strong></td><td>样本锐利</td><td>训练不稳定、缺概率解释、mode collapse</td></tr>
+    <tr><td><strong>Flow</strong></td><td>精确似然</td><td>结构受限（需可逆变换）、计算成本大</td></tr>
+    <tr><td><strong>Diffusion</strong></td><td>生成效果当前最好</td><td>采样慢、训练较重</td></tr>
+  </table>
+</div>
+
+<p>VAE 的独特定位：常作为更大系统的 <strong>"tokenizer / latent compressor"</strong>——不单独做最终生成器，而是先把高维数据压到 latent space，再在 latent 上做 diffusion 或 autoregressive 生成。</p>
+
+<!-- ==================== 12.4 ==================== -->
+<h3 id="s12-4">12.4 三大关键问题</h3>
+
+<div class="card cyan">
+  <div class="card-title">问题 1：模糊问题</div>
+  <p>VAE 生成样本常偏模糊。根本原因：pixel-wise Gaussian likelihood 偏向"平均化"——如果一个位置有多种合理输出，最优解接近"平均"。后续引入更强 decoder、perceptual loss、adversarial loss（VAE-GAN）、离散 latent（VQ 系）、multi-scale hierarchy。</p>
+</div>
+
+<div class="card orange">
+  <div class="card-title">问题 2：Posterior Collapse</div>
+  <p>现象：$q_\phi(z|x) \approx p(z)$，latent 不携带信息，decoder 单独就能重建。尤其当 decoder 很强（如 AR Transformer/RNN）时，模型倾向"跳过" latent。解决思路：KL annealing（渐进增加 KL 权重）、free bits（每个 latent 维度保留最低信息量）、$\beta$ 调节、弱化 decoder、分层 latent、InfoVAE。</p>
+</div>
+
+<div class="card yellow">
+  <div class="card-title">问题 3：先验过于简单</div>
+  <p>标准 $p(z) = \mathcal{N}(0, I)$ 太简单，真实数据对应的 latent 聚集结构往往远比单高斯复杂。改进方向：mixture prior（GMM）、VampPrior（可学习伪输入诱导混合先验）、flow prior（normalizing flow 增强先验灵活性）、hierarchical prior（多层先验）、discrete codebook（VQ 系）。</p>
+</div>
+
+<!-- ==================== 12.5 ==================== -->
+<h3 id="s12-5">12.5 六阶段发展脉络</h3>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="date">2013&ndash;2015 &middot; 奠基期</div>
+    <div class="content"><strong>VAE</strong>（Kingma & Welling, ICLR 2014）：概率生成模型 + 重参数化技巧。<strong>SGVB</strong>（Rezende et al., 2014）：Stochastic Backpropagation。基本定义现代 VAE 训练框架。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2016&ndash;2018 &middot; 表示能力与 Disentanglement</div>
+    <div class="content"><strong>&beta;-VAE</strong>（Higgins et al., ICLR 2017）：加权 KL 促进 disentangled representation。<strong>FactorVAE / &beta;-TCVAE</strong>：直接约束 total correlation。<strong>InfoVAE</strong>（Zhao et al., ICLR 2019）：增加 mutual information。<strong>MMD-VAE / WAE</strong>（Tolstikhin et al., ICLR 2018）：改造匹配方式。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2016&ndash;2019 &middot; 条件生成与结构化潜变量</div>
+    <div class="content"><strong>CVAE</strong>（Sohn et al., NeurIPS 2015）：条件 VAE。Semi-supervised VAE、Graph VAE、Sequence VAE、Multimodal VAE。让 latent 表示更适配任务结构。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2017&ndash;至今 &middot; 离散潜变量与 Codebook 路线</div>
+    <div class="content"><strong>VQ-VAE</strong>（NeurIPS 2017）&rarr; <strong>VQ-VAE-2</strong>（NeurIPS 2019）&rarr; <strong>RQ-VAE</strong>（ICLR 2022）&rarr; <strong>SQ-VAE</strong> &rarr; <strong>MAGVIT-v2 / LFQ</strong>（2023）&rarr; <strong>FSQ</strong>（ICLR 2024）&rarr; <strong>Open-MAGVIT2</strong>（2024）。用离散码本代替连续高斯 latent，提升表达能力与可组合性。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2016&ndash;2020 &middot; 更深层、更高质量生成</div>
+    <div class="content"><strong>Ladder VAE</strong>（NeurIPS 2016）&rarr; <strong>BIVA</strong>（NeurIPS 2019）&rarr; <strong>NVAE</strong>（NeurIPS 2020）。深层级 latent hierarchy、多尺度建模、更强 decoder/prior/posterior。NVAE 显著拉高 VAE 生成质量上限。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2021&ndash;至今 &middot; VAE 作为大型生成系统前端</div>
+    <div class="content"><strong>KL-VAE / SD-VAE</strong>（CVPR 2022）：Stable Diffusion 前端。<strong>SD3-VAE</strong>（2024）：16 通道。<strong>FLUX VAE</strong>（2024-2025）。<strong>REPA-E</strong>（ICCV 2025）：首次 VAE+Diffusion 端到端训练。<strong>Sora VQ-VAE</strong>（2024）：视频时空 patches。<strong>DA-VAE</strong>（2025）：Detail Alignment。</div>
+  </div>
+</div>
+
+<!-- ==================== 12.6 ==================== -->
+<h3 id="s12-6">12.6 VAE 家族系统梳理（18 个变体）</h3>
+
+<h4>12.6.1 连续 Latent 路线</h4>
+
+<div class="card purple">
+  <div class="card-title">Vanilla VAE</div>
+  <p>最经典的 VAE。连续高斯 latent，ELBO 目标。概率解释清晰，训练稳定，可做生成和表示学习。样本质量一般，latent 往往较平滑连续。适合入门和理论基线。</p>
+</div>
+
+<div class="card green">
+  <div class="card-title">&beta;-VAE（Higgins et al., ICLR 2017）</div>
+  <p>把 KL 项加权：$\mathcal{L} = \mathbb{E}[\log p_\theta(x|z)] - \beta D_{\text{KL}}(q_\phi(z|x)\|p(z))$，$\beta > 1$ 时更强约束 latent。动机是希望不同 latent 维度学到更独立、更解耦的语义因素（disentanglement）。本质是强化"信息瓶颈"——鼓励 latent 容量更低，保留最关键的生成因素。代价是重建质量下降。</p>
+</div>
+
+<div class="card cyan">
+  <div class="card-title">CVAE / C-VAE（Sohn et al., NeurIPS 2015）</div>
+  <p>在编码和解码时都引入条件变量 $c$：$q_\phi(z|x,c),\; p_\theta(x|z,c)$。生成时 $z \sim p(z),\; x \sim p_\theta(x|z,c)$。更可控，适合 supervised / conditional generation。常见应用：按类别生成图像、语义分割、image-to-image、条件合成。</p>
+</div>
+
+<div class="card orange">
+  <div class="card-title">InfoVAE / MMD-VAE（Zhao et al., ICLR 2019）</div>
+  <p>标准 VAE 的 KL 目标可能导致 posterior collapse。InfoVAE 在匹配先验的同时保留 $x$ 和 $z$ 的互信息。改写目标，引入 MMD（Maximum Mean Discrepancy）替代 KL。更强调 latent 的信息量，更抗 collapse，在表示学习上更有优势。</p>
+</div>
+
+<div class="card yellow">
+  <div class="card-title">WAE（Tolstikhin et al., ICLR 2018）</div>
+  <p>不逐样本约束 $q(z|x)$ 接近先验，而是让<strong>聚合后验</strong> $q(z) = \int q(z|x)p_{\text{data}}(x)dx$ 接近先验。匹配方式可以是 GAN 判别器、MMD、Wasserstein 距离。本质差异：VAE 要求每个样本后验接近先验（更严格）；WAE 要求整体分布接近即可（更宽松实用）。重建和样本质量通常更好。</p>
+</div>
+
+<h4>12.6.2 离散 Latent / Codebook 路线</h4>
+
+<div class="card purple">
+  <span class="tag arxiv">NeurIPS 2017</span>
+  <div class="card-title" style="margin-top:8px;">VQ-VAE（van den Oord et al.）</div>
+  <p>把连续 latent 改成<strong>离散 codebook 向量</strong>。编码器输出连续表示 $z_e(x)$，然后量化到码本中最近的向量：</p>
+  <div class="formula-box">
+    $$z_q(x) = e_k, \quad k = \arg\min_j \|z_e(x) - e_j\|_2$$
+  </div>
+  <p>其中 $\{e_j\}_{j=1}^K$ 是 codebook（$K$ 个码字向量）。训练目标（三部分 loss）：</p>
+  <div class="formula-box">
+    $$\mathcal{L} = \mathcal{L}_{\text{recon}} + \|\text{sg}[z_e(x)] - e\|^2 + \beta\|z_e(x) - \text{sg}[e]\|^2$$
+  </div>
+  <p>重建损失 + codebook loss（更新码本）+ commitment loss（让编码器"承诺"使用选中的码字）。梯度通过 <strong>straight-through estimator</strong> 近似传播。VQ-VAE 解决了：避免 posterior collapse（离散选择不容易被忽略）、适合与 AR prior 结合（在 code index 序列上训练 Transformer）、像"神经符号字典"。缺点：codebook collapse / dead codes。</p>
+</div>
+
+<div class="card green">
+  <span class="tag arxiv">NeurIPS 2019</span>
+  <div class="card-title" style="margin-top:8px;">VQ-VAE-2（Razavi et al.）</div>
+  <p>在 VQ-VAE 基础上做<strong>多尺度层级离散表示</strong>。上层 code 捕获全局语义/结构，下层 code 捕获局部细节/纹理。更强表示能力，更高质量图像生成。让 VQ 系列真正成为高质量图像生成的重要路线之一。</p>
+</div>
+
+<div class="card cyan">
+  <span class="tag arxiv">ICLR 2022</span>
+  <div class="card-title" style="margin-top:8px;">RQ-VAE（Residual Quantized VAE, Lee et al.）</div>
+  <p>不是只做一次量化，而是<strong>残差式多级量化</strong>：</p>
+  <div class="formula-box">
+    $$z_q \approx q_1 + q_2 + \cdots + q_L$$
+  </div>
+  <p>过程：第一次量化得 $q_1$，计算残差 $r_1 = z_e - q_1$，对残差再量化得 $q_2$，继续多级。第一级抓粗略语义，后面逐步补细节（类似图像压缩中的残差编码）。优势：表达能力指数级增大（$K^L$ 组合空间 vs $K$），更高码本利用效率。RQ-VAE 是现代离散图像 tokenizer 的核心技术之一。</p>
+</div>
+
+<div class="card orange">
+  <div class="card-title">SQ-VAE（Scalar Quantized VAE）</div>
+  <p>不是把整个向量映射到一个 codebook embedding，而是对<strong>每个维度或分组独立量化</strong>。优势：实现简单、搜索成本低（无需全码本最近邻搜索）、可扩展性强。缺点：维度独立量化可能损失联合结构信息。需要依赖多级/分组策略弥补。更工程友好，适合大规模 tokenization。</p>
+</div>
+
+<div class="card purple">
+  <span class="tag arxiv">ICLR 2024</span>
+  <span class="tag org">Google DeepMind</span>
+  <div class="card-title" style="margin-top:8px;">FSQ（Finite Scalar Quantization, Mentzer et al.）</div>
+  <p><strong>无码本量化</strong>——用预定义的有限标量级别集合替代 codebook。每个维度独立量化到有限集合 $\{v_1, v_2, \ldots, v_L\}$。量化操作就是简单的 round + clamp，完全可微（无需 straight-through estimator）。</p>
+  <p>消除 codebook collapse、dead codes、commitment loss 等 VQ-VAE 的典型问题。比 VQ-VAE 更简单稳定，在图像和视频 tokenization 上达到可比的性能。</p>
+</div>
+
+<div class="card green">
+  <span class="tag arxiv">arXiv 2023</span>
+  <span class="tag org">Google / CMU</span>
+  <div class="card-title" style="margin-top:8px;">MAGVIT-v2 / LFQ（Lookup-Free Quantization, Yu et al.）</div>
+  <p>视频 tokenizer，核心创新：<strong>Lookup-Free Quantization</strong>——将每个维度二值化为 $\{-1, +1\}$，用 $d$ 维二进制向量表示 $2^d$ 个离散码，<strong>无需显式码本查找</strong>。结合视频级别的多尺度时空建模。</p>
+  <p>关键结果：autoregressive 语言模型在高质量视觉 token 上可以击败 diffusion 模型。Open-MAGVIT2（Tencent ARC, 2024）提供开源复现，训练代码和预训练权重均公开。</p>
+</div>
+
+<h4>12.6.3 层级与高性能路线</h4>
+
+<div class="card cyan">
+  <div class="card-title">Hierarchical VAE（Ladder VAE / BIVA / NVAE）</div>
+  <p>多层 latent $z_L, z_{L-1}, \ldots, z_1$。高层表示抽象全局语义，低层表示局部细节。现实数据天然具有层级结构（类别 &rarr; 形状 &rarr; 纹理）。</p>
+  <table>
+    <tr><th>模型</th><th>出处</th><th>核心思路</th></tr>
+    <tr><td><strong>Ladder VAE</strong></td><td>NeurIPS 2016</td><td>自顶向下+自底向上推断结构</td></tr>
+    <tr><td><strong>BIVA</strong></td><td>NeurIPS 2019</td><td>双向推断，增强推断网络和生成网络的信息交互</td></tr>
+    <tr><td><strong>NVAE</strong></td><td>NeurIPS 2020</td><td>深层级卷积 VAE + 残差单元 + 多尺度 latent，拉高 VAE 生成质量上限</td></tr>
+  </table>
+</div>
+
+<h4>12.6.4 先验 / 后验增强路线</h4>
+
+<table>
+  <tr><th>模型</th><th>出处</th><th>核心思路</th><th>优势</th></tr>
+  <tr>
+    <td><strong>VampPrior</strong></td>
+    <td>AISTATS 2018</td>
+    <td>$p(z) = \frac{1}{K}\sum_k q_\phi(z|u_k)$，可学习伪输入诱导混合先验</td>
+    <td>先验更灵活，更贴近真实 latent 分布</td>
+  </tr>
+  <tr>
+    <td><strong>Flow-VAE</strong></td>
+    <td>Rezende & Mohamed, 2015</td>
+    <td>$z_K = f_K \circ \cdots \circ f_1(z_0)$，normalizing flow 增强后验/先验</td>
+    <td>更精确近似真实后验，提升似然</td>
+  </tr>
+  <tr>
+    <td><strong>Gumbel-VAE</strong></td>
+    <td>Jang et al., 2017</td>
+    <td>Categorical latent + Gumbel-Softmax 可微近似采样</td>
+    <td>端到端可微，不依赖 codebook lookup</td>
+  </tr>
+  <tr>
+    <td><strong>VAE-GAN</strong></td>
+    <td>Larsen et al., 2016</td>
+    <td>VAE 概率建模 + GAN 对抗学习</td>
+    <td>图像更清晰，但训练更不稳定</td>
+  </tr>
+</table>
+
+<h4>12.6.5 现代系统级 VAE</h4>
+
+<table>
+  <tr><th>模型</th><th>出处</th><th>核心思路</th><th>规模 / 通道</th></tr>
+  <tr>
+    <td><strong>KL-VAE (kl-f8)</strong></td>
+    <td>Rombach et al., CVPR 2022</td>
+    <td>Latent Diffusion 前端 VAE，$H \times W \times 3 \to H/8 \times W/8 \times 4$</td>
+    <td>压缩比 8&times;，4 通道</td>
+  </tr>
+  <tr>
+    <td><strong>SD3-VAE</strong></td>
+    <td>Stability AI, 2024</td>
+    <td>SD3 专属 VAE，从头训练</td>
+    <td>压缩比 8&times;，16 通道</td>
+  </tr>
+  <tr>
+    <td><strong>FLUX VAE</strong></td>
+    <td>Black Forest Labs, 2024</td>
+    <td>FLUX 系列使用的 VAE 架构</td>
+    <td>16 通道 latent</td>
+  </tr>
+  <tr>
+    <td><strong>REPA-E</strong></td>
+    <td>Leng et al., ICCV 2025</td>
+    <td>首次 VAE + Diffusion Transformer 端到端联合训练</td>
+    <td>representation alignment 稳定训练</td>
+  </tr>
+  <tr>
+    <td><strong>DA-VAE</strong></td>
+    <td>arXiv 2025</td>
+    <td>Detail Alignment，减少 token 数同时保留细节</td>
+    <td>压缩效率优化</td>
+  </tr>
+</table>
+
+<!-- ==================== 12.7 ==================== -->
+<h3 id="s12-7">12.7 量化路线深度对比：VQ vs RQ vs SQ vs FSQ vs LFQ</h3>
+
+<table>
+  <tr><th>方法</th><th>量化方式</th><th>码本</th><th>组合空间</th><th>优势</th><th>劣势</th></tr>
+  <tr>
+    <td><strong>VQ-VAE</strong></td>
+    <td>向量最近邻</td>
+    <td>显式 codebook</td>
+    <td>$K$</td>
+    <td>简单直接</td>
+    <td>dead codes, collapse</td>
+  </tr>
+  <tr>
+    <td><strong>RQ-VAE</strong></td>
+    <td>残差多级 VQ</td>
+    <td>多个 codebook</td>
+    <td>$K^L$</td>
+    <td>表达力强</td>
+    <td>训练复杂</td>
+  </tr>
+  <tr>
+    <td><strong>SQ-VAE</strong></td>
+    <td>标量/分组量化</td>
+    <td>多个小码本</td>
+    <td>$\prod L_i$</td>
+    <td>简洁高效</td>
+    <td>联合表达弱</td>
+  </tr>
+  <tr>
+    <td><strong>FSQ</strong></td>
+    <td>有限标量级别</td>
+    <td><strong>无码本</strong></td>
+    <td>$\prod L_i$</td>
+    <td>无 collapse，可微</td>
+    <td>表达力受限于级别选择</td>
+  </tr>
+  <tr>
+    <td><strong>LFQ</strong></td>
+    <td>二值化 $\{-1,+1\}^d$</td>
+    <td><strong>无码本</strong></td>
+    <td>$2^d$</td>
+    <td>查找免费，极快</td>
+    <td>需维度足够多</td>
+  </tr>
+</table>
+
+<div class="insight">
+  <div class="insight-title">直观比喻</div>
+  <p><strong>VQ-VAE</strong>：给整段音频/图像 patch 选一个"词"。<strong>RQ-VAE</strong>：先选主词，再选几个修饰词补充细节。<strong>SQ-VAE</strong>：把这个词拆成多个字母/音节分别编码。<strong>FSQ</strong>：直接规定每个字母只能从固定几个选项里选。<strong>LFQ</strong>：每个字母只有"是/否"两种选择，用二进制编码。</p>
+</div>
+
+<div class="card purple">
+  <div class="card-title">Codebook Collapse 问题与最新进展</div>
+  <p>Codebook collapse（大量码字从未被使用）是 VQ-VAE 的核心痛点。2025 年的 "Rethinking Codebook Collapse in Vector Quantization" 从理论角度分析：在 vanilla VQ 中，码字无法追踪编码器输出的漂移（non-stationarity），导致"死码"。最新解决方案包括：FSQ/LFQ 直接消除码本（无 collapse 风险）、Online Clustered Codebook（ICCV 2023，动态聚类更新码本）、EMA 更新（指数移动平均更新码字而非梯度）。</p>
+</div>
+
+<!-- ==================== 12.8 ==================== -->
+<h3 id="s12-8">12.8 VAE 在现代生成系统中的角色</h3>
+
+<h4>12.8.1 Latent Diffusion 前端（SD / SD3 / FLUX）</h4>
+<p>Stable Diffusion / SD3 / FLUX 等都使用 KL-VAE 将像素空间压缩到低维 latent，在 latent 上做 diffusion。VAE 的角色是<strong>表示压缩器 / latent interface</strong>。KL-f8 是最常用版本：$512 \times 512 \times 3 \to 64 \times 64 \times 4$（压缩比 8&times;）。SD3-VAE 扩展到 16 通道以保留更多细节。</p>
+
+<h4>12.8.2 Autoregressive 视觉 Tokenizer（VQ/RQ/FSQ/LFQ）</h4>
+<p>VQ-VAE / RQ-VAE / FSQ / LFQ 将图像/视频离散化为 token 序列，用 Transformer 在 token 空间上做 autoregressive 生成。代表系统：LlamaGen、Open-MAGVIT2、MAGVIT-v2。MAGVIT-v2 的关键发现：tokenizer 质量（而非生成模型架构）是视觉生成的关键瓶颈。</p>
+
+<h4>12.8.3 视频生成（Sora / MAGVIT）</h4>
+<p>Sora 使用 VQ-VAE 将视频压缩为时空 patches；MAGVIT-v2 专攻视频 tokenization（LFQ）；Open-MAGVIT2 开源复现。视频 VAE 的核心挑战：时空一致性（帧间连续）+ 高压缩比（1 分钟视频 &rarr; 可处理的 token 数）。</p>
+
+<h4>12.8.4 端到端联合训练（REPA-E）</h4>
+<p>传统方案：先训练 VAE（冻结），再训练 diffusion（在 latent 上）。REPA-E（ICCV 2025）首次实现端到端联合训练——VAE 参数也随 diffusion loss 一起更新。核心发现：直接用 diffusion loss 端到端训练 VAE 不稳定，但通过 representation alignment（REPA）可以稳定训练。端到端调优后 VAE 的 latent 质量显著提升，下游 FID 改善。</p>
+
+<div class="card cyan">
+  <div class="card-title">VAE 家族的总体演进逻辑</div>
+  <p><strong>矛盾 1</strong>：重建质量 vs latent 规整性（KL 太强 latent 好看但重建差，KL 太弱重建好但生成采样差 &rarr; &beta;-VAE, free bits, InfoVAE, WAE）。</p>
+  <p><strong>矛盾 2</strong>：连续平滑 latent vs 离散语义 token（连续适合插值、理论优雅；离散适合 tokenizer、组合生成 &rarr; Vanilla/&beta;/CVAE vs VQ/RQ/SQ/FSQ/LFQ）。</p>
+  <p><strong>矛盾 3</strong>：简单可训练 vs 高表达能力（单层高斯最简单；多层/flow/复杂 prior 表达力更强但训练更复杂 &rarr; Hierarchical VAE, NVAE, Flow-VAE, VampPrior）。</p>
+  <p><strong>矛盾 4</strong>：概率似然优化 vs 感知质量（似然高不一定视觉最好 &rarr; VAE-GAN, perceptual VAE, REPA-E）。</p>
+</div>
+
+<!-- ==================== 12.9 ==================== -->
+<h3 id="s12-9">12.9 核心论文索引</h3>
+
+<h4>连续 Latent 路线</h4>
+<table>
+  <tr><th>模型</th><th>论文</th><th>年份/会议</th><th>核心贡献</th></tr>
+  <tr><td>VAE</td><td>Kingma & Welling</td><td>ICLR 2014</td><td>概率生成 + 重参数化技巧</td></tr>
+  <tr><td>&beta;-VAE</td><td>Higgins et al.</td><td>ICLR 2017</td><td>加权 KL 促进 disentanglement</td></tr>
+  <tr><td>CVAE</td><td>Sohn et al.</td><td>NeurIPS 2015</td><td>条件 VAE</td></tr>
+  <tr><td>InfoVAE</td><td>Zhao et al.</td><td>ICLR 2019</td><td>MI 增强，抗 collapse</td></tr>
+  <tr><td>WAE</td><td>Tolstikhin et al.</td><td>ICLR 2018</td><td>聚合后验匹配</td></tr>
+  <tr><td>Ladder VAE</td><td>S&oslash;nderby et al.</td><td>NeurIPS 2016</td><td>双向推断结构</td></tr>
+  <tr><td>BIVA</td><td>Maal&oslash;e et al.</td><td>NeurIPS 2019</td><td>双向推断 VAE</td></tr>
+  <tr><td>NVAE</td><td>Vahdat & Kautz</td><td>NeurIPS 2020</td><td>深层级卷积 VAE</td></tr>
+  <tr><td>VampPrior</td><td>Tomczak & Welling</td><td>AISTATS 2018</td><td>可学习混合先验</td></tr>
+  <tr><td>Flow-VAE</td><td>Rezende & Mohamed</td><td>ICML 2015</td><td>Normalizing flow 增强后验</td></tr>
+  <tr><td>Gumbel-VAE</td><td>Jang et al.</td><td>ICLR 2017</td><td>Categorical + Gumbel-Softmax</td></tr>
+  <tr><td>VAE-GAN</td><td>Larsen et al.</td><td>ICML 2016</td><td>VAE + GAN 对抗学习</td></tr>
+</table>
+
+<h4>离散量化路线</h4>
+<table>
+  <tr><th>模型</th><th>论文</th><th>年份/会议</th><th>核心贡献</th></tr>
+  <tr><td>VQ-VAE</td><td>van den Oord et al.</td><td>NeurIPS 2017</td><td>向量量化码本</td></tr>
+  <tr><td>VQ-VAE-2</td><td>Razavi et al.</td><td>NeurIPS 2019</td><td>多尺度层级 VQ</td></tr>
+  <tr><td>RQ-VAE</td><td>Lee et al.</td><td>ICLR 2022</td><td>残差多级量化</td></tr>
+  <tr><td>MAGVIT-v2 / LFQ</td><td>Yu et al.</td><td>arXiv 2023</td><td>Lookup-Free 视频 tokenizer</td></tr>
+  <tr><td>FSQ</td><td>Mentzer et al.</td><td>ICLR 2024</td><td>无码本有限标量量化</td></tr>
+  <tr><td>Open-MAGVIT2</td><td>Tencent ARC</td><td>arXiv 2024</td><td>开源 MAGVIT-v2 复现</td></tr>
+</table>
+
+<h4>现代系统级 VAE</h4>
+<table>
+  <tr><th>模型</th><th>论文</th><th>年份/会议</th><th>核心贡献</th></tr>
+  <tr><td>KL-VAE / SD-VAE</td><td>Rombach et al.</td><td>CVPR 2022</td><td>Latent Diffusion VAE 前端</td></tr>
+  <tr><td>SD3-VAE</td><td>Stability AI</td><td>2024</td><td>16 通道 VAE</td></tr>
+  <tr><td>REPA-E</td><td>Leng et al.</td><td>ICCV 2025</td><td>VAE + DiT 端到端训练</td></tr>
+  <tr><td>DA-VAE</td><td>&mdash;</td><td>arXiv 2025</td><td>Detail Alignment 压缩</td></tr>
+</table>
+
+<!-- ==================== Page Nav ==================== -->
+<div class="page-nav"><a href="s11_loop_transformer.html">&larr; Looped Transformer 与 Latent Reasoning</a><a href="index.html">返回目录 &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于 18 个 VAE 变体 + 30+ 篇核心论文整理 &middot; 2026.06</p>
+  <p>涵盖：VAE &middot; &beta;-VAE &middot; CVAE &middot; InfoVAE &middot; WAE &middot; VQ-VAE &middot; VQ-VAE-2 &middot; RQ-VAE &middot; SQ-VAE &middot; FSQ &middot; LFQ &middot; NVAE &middot; Ladder VAE &middot; BIVA &middot; VampPrior &middot; Flow-VAE &middot; KL-VAE &middot; MAGVIT-v2 &middot; Open-MAGVIT2 &middot; REPA-E &middot; DA-VAE</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>
