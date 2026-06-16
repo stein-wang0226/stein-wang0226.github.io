@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Looped Transformer 与 Latent Reasoning - 扩散语言模型调研</title>
+<link rel="stylesheet" href="shared.css">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    ignoreHtmlClass: 'diagram|code-block'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.documentElement.classList.add('mathjax-loaded');
+      });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
+</head>
+<body>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a> <span class="sep">|</span> <a href="s11_loop_transformer.html" class="active">11</a>
+</nav>
+<div class="container">
+<a href="index.html" class="back-link">&larr; 返回目录</a>
+
+<!-- ==================== Section 11 ==================== -->
+<h2 class="section-title" id="s11"><span class="num">11</span> Looped Transformer 与 Latent Reasoning</h2>
+
+<p>本章聚焦于一条与扩散语言模型深度交叉的新兴路线：<strong>循环 Transformer（Looped Transformer）</strong>。其核心思想是让少量 Transformer 层反复执行多次，在不增加参数的前提下实现动态计算深度，从而在隐空间中完成"latent reasoning"（隐式推理）。覆盖 30+ 篇论文（2019&ndash;2026）。</p>
+
+<!-- ==================== TOC ==================== -->
+<div class="toc">
+  <h2>本章目录</h2>
+  <ol>
+    <li><a href="#s11-1">11.1 核心直觉：参数复用 vs 参数堆叠</a></li>
+    <li><a href="#s11-2">11.2 数学框架与核心理论</a></li>
+    <li><a href="#s11-3">11.3 复杂度类分析：为什么 CoT 不够</a></li>
+    <li><a href="#s11-4">11.4 与扩散模型的形式类比</a></li>
+    <li><a href="#s11-5">11.5 核心论文：Ouro / LoopLM</a></li>
+    <li><a href="#s11-6">11.6 核心论文：CCDD</a></li>
+    <li><a href="#s11-7">11.7 扩散语言模型中的 Latent Reasoning</a></li>
+    <li><a href="#s11-8">11.8 Looped Transformer 深度解析</a></li>
+    <li><a href="#s11-9">11.9 核心论文索引</a></li>
+    <li><a href="#s11-10">11.10 与 dLLM 项目的关联启示</a></li>
+  </ol>
+</div>
+
+<!-- ==================== 11.1 ==================== -->
+<h3 id="s11-1">11.1 核心直觉：参数复用 vs 参数堆叠</h3>
+
+<div class="insight">
+  <div class="insight-title">一句话总结</div>
+  <p>标准 Transformer 像拥有 $L$ 个不同"顾问"的团队，每人只看一遍问题；Looped Transformer 像只有 $k$ 个顾问（$k \ll L$），但他们会<strong>反复讨论 $T$ 轮</strong>，每轮重新审视并改进上一轮的结论。两种方案计算量相近（$k \times T \approx L$），但循环方案的<strong>参数量只有 $k/L$</strong>。</p>
+</div>
+
+<h4>定义：$(k \otimes T)$ Looped Transformer</h4>
+<p>给定 $k$ 层 Transformer block $M_\theta$，循环执行 $T$ 次：</p>
+<div class="formula-box">
+$$F^{(T)}(\mathbf{x}) = \text{LMHead} \circ \underbrace{M_\theta \circ M_\theta \circ \cdots \circ M_\theta}_{T\text{ 次}} \circ \text{Embed}(\mathbf{x})$$
+</div>
+<p>每次循环产生一个隐状态 $h^{(t)} = M_\theta(h^{(t-1)})$，可以理解为一次"latent thought"（隐式思考）。整个循环过程在<strong>不增加任何参数</strong>的前提下，将有效深度从 $k$ 扩展到 $kT$。</p>
+
+<div class="arch-row">
+  <div class="arch-box">
+    <div class="name">Standard Transformer</div>
+    <div class="desc">
+      $L$ 层独立参数<br>
+      Params = $L \times$ per-layer<br>
+      FLOPs = $L \times$ per-layer<br>
+      每层处理一次，信息单向传递
+    </div>
+  </div>
+  <div class="arch-box">
+    <div class="name">Looped Transformer $(k \otimes T)$</div>
+    <div class="desc">
+      $k$ 层共享参数，循环 $T$ 次<br>
+      Params = $k \times$ per-layer<br>
+      FLOPs = $k \times T \times$ per-layer<br>
+      每步精炼隐状态，迭代收敛
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 11.2 ==================== -->
+<h3 id="s11-2">11.2 数学框架与核心理论</h3>
+
+<h4>Theorem 5.1：群组合（ICLR 2025, Saunshi et al.）</h4>
+<div class="card purple">
+  <div class="card-title">定理</div>
+  <p>对于任意有限群 $G$ 和 $n$ 个元素的组合 $g_1 \circ g_2 \circ \cdots \circ g_n$，<strong>1 层</strong> Transformer 循环 $\lceil \log_2 n \rceil$ 次即可精确计算。Embedding size $d = 3(\lceil \log_2 |G| \rceil + \lceil \log_2 n + 1 \rceil)$，2 个 attention head。</p>
+  <p><strong>核心技巧</strong>是<strong>迭代平方</strong>（binary lifting）：每步将有效组合窗口加倍。例如计算 8 个飞镖得分总和：第 1 轮两两相加（4 个结果），第 2 轮再两两相加（2 个结果），第 3 轮得到总和。3 轮 = $\log_2 8$ 步完成，每轮用<strong>同一个</strong>加法操作。</p>
+</div>
+
+<h4>Theorem 5.4：循环模拟 CoT（ICLR 2025）</h4>
+<div class="card green">
+  <div class="card-title">定理</div>
+  <p>$L$ 层非循环 Transformer 的 $m$ 步 CoT 可被 $(L + O(1))$ 层的 looped transformer 用 $m$ 次循环模拟。核心构造：(1) masking all-but-one 维护循环计数器 $t$；(2) shift-by-one 将当前步输出移动到下一步输入位置；(3) token decoding 的 MLP 模拟编码-解码过程。</p>
+  <p><strong>意义</strong>：循环步数等价于隐式 CoT 步数——但每个循环步更新的是所有 $d$ 维隐状态（而非仅生成 1 个 token），信息带宽远大于文本 CoT。</p>
+</div>
+
+<h4>Effective Depth 实验</h4>
+<div class="card cyan">
+  <div class="card-title">关键发现：循环比新参数更有效</div>
+  <p>定义有效深度 $D = k \times L$。精度随 $\log(D)$ 对数增长：$\text{Acc} = \alpha \cdot \log(D) + \beta$。在推理任务上 $\alpha_{\text{loop}} / \alpha_{\text{base}} = 1.19$。</p>
+  <table>
+    <tr><th>模型</th><th>Perplexity</th><th>Math Problems</th><th>Reasoning Primitives</th></tr>
+    <tr><td>Base (24&otimes;1)</td><td><strong>7.40</strong></td><td>29.3</td><td>47.5</td></tr>
+    <tr><td>Loop (12&otimes;2)</td><td>7.90</td><td><strong>34.3</strong></td><td><strong>51.2</strong></td></tr>
+    <tr><td>Gap Coverage</td><td>&mdash;</td><td>282%</td><td>131%</td></tr>
+  </table>
+  <p>$(12 \otimes 2)$ looped model 在数学和推理上<strong>超越</strong> 24 层 baseline，尽管 perplexity 更差、参数少 50%。</p>
+</div>
+
+<h4>Expressive Power（Xu & Sato, ICML 2025）</h4>
+<p>从近似论角度定义了三种<strong>循环模型特有的连续性模量</strong>：Token 连续性模量 $\omega_f^{\text{tok}}(\delta)$、上下文连续性模量 $\omega_f^{\text{cont}}(\delta)$、序列连续性模量 $\omega_f(\delta)$。Theorem 3.6 证明近似误差随 $r$ 以 $r^{-1/((N+1)d+1)}$ 衰减。但 Lemma 4.1 揭示了<strong>固有限制</strong>：weight-tied FFN 无法精确记忆标签。</p>
+<p><strong>Timestep Encoding (TMLT)</strong> 引入 step-dependent scaling $\eta(t) \odot \text{FF}(X)$ 消除上述限制，Theorem 4.2 证明可实现<strong>零误差</strong>精确记忆。实验效果：Sudoku 从 65.6% 提升到 80.2%（$r=16$），edit distance 从 32.6% 提升到 57.3%（$r=50$）。</p>
+
+<!-- ==================== 11.3 ==================== -->
+<h3 id="s11-3">11.3 复杂度类分析：为什么 CoT 不够</h3>
+
+<p>这是理解 looped transformer 意义的理论核心。基于 Merrill & Sabharwal（NeurIPS 2025）和 Svete & Sabharwal（ICLR 2026 Oral）的综合分析：</p>
+
+<table>
+  <tr><th>模型类型</th><th>复杂度类</th><th>能力边界</th></tr>
+  <tr><td>固定深度 Transformer</td><td>TC⁰</td><td>无法处理正则语言、图连通性</td></tr>
+  <tr><td>CoT（$O(\log n)$ 步）</td><td>TC⁰</td><td>仍受限于常数深度电路</td></tr>
+  <tr><td><strong>Looped TF（$O(\log n)$ 次循环）</strong></td><td><strong>TC¹</strong></td><td>可解图连通性（NL-complete）</td></tr>
+  <tr><td>MDM（对数步掩码扩散）</td><td>NC¹</td><td>可识别正则语言，严格 &gt; CoT</td></tr>
+</table>
+
+<div class="insight warning">
+  <div class="insight-title">核心结论</div>
+  <p>CoT 的 $O(\log n)$ 步仍在 TC⁰ 内，只有超对数级 CoT 才能突破 TC⁰。而循环是退出 TC⁰ 最高效的路径——$O(\log n)$ 次循环即可达到 TC¹。进一步，Svete & Sabharwal 证明 $\text{CoT}[\log N] \subsetneq \text{MDM}[\log N, N]$，掩码扩散模型（MDM）严格超越 CoT，可达 NC¹ 复杂度类。</p>
+</div>
+
+<!-- ==================== 11.4 ==================== -->
+<h3 id="s11-4">11.4 与扩散模型的形式类比</h3>
+
+<p>Looped transformer 与扩散模型共享一个深层结构：<strong>从初始状态出发，经过迭代精炼到达目标状态</strong>。</p>
+
+<div class="arch-row">
+  <div class="arch-box">
+    <div class="name">Looped Transformer</div>
+    <div class="desc">
+      $h^{(t)} = M_\theta(h^{(t-1)})$<br>
+      确定性迭代，每步用相同参数 $M_\theta$<br>
+      隐状态 $h^{(t)}$ 逐步精炼<br>
+      最终步解码为 token
+    </div>
+  </div>
+  <div class="arch-box">
+    <div class="name">扩散模型（ODE 视角）</div>
+    <div class="desc">
+      $x_{t-\Delta t} = x_t + \Delta t \cdot v_\theta(x_t, t)$<br>
+      沿速度场 $v_\theta$ 迭代去噪<br>
+      连续隐空间保留不确定性<br>
+      最终步解码为 token
+    </div>
+  </div>
+</div>
+
+<p>LoopFormer（ICLR 2026）显式利用了这个类比：将循环步类比为扩散模型中的去噪步，通过 <strong>time/step conditioning</strong> 让模型感知当前处于轨迹的哪个位置。Huginn（NeurIPS 2025 Spotlight）更进一步——从随机噪声 $s_0 \sim \mathcal{N}(0, \sigma^2 I)$ 出发，在输入条件引导下逐步收敛到答案。</p>
+
+<div class="card yellow">
+  <div class="card-title">三条路线的统一视角</div>
+  <p>无论是循环 Transformer、连续扩散还是 COCONUT 的 continuous thought，它们都在做同一件事：<strong>在隐空间中执行迭代计算，用连续状态而非离散 token 传递中间推理结果</strong>。区别仅在于迭代机制（weight-tied forward / ODE 采样 / hidden state 回灌）和监督信号（最终步 / 每步 / 课程学习）。</p>
+</div>
+
+<hr>
+
+<!-- ==================== 11.5 ==================== -->
+<h3 id="s11-5">11.5 核心论文：Ouro / LoopLM</h3>
+
+<div class="card purple">
+  <span class="tag arxiv">arXiv:2510.25741</span>
+  <span class="tag org">ByteDance Seed / UCSC / Mila</span>
+  <span class="tag result">2025</span>
+  <div class="card-title" style="margin-top:8px;">Scaling Latent Reasoning via Looped Language Models</div>
+  <p><strong>作者：</strong>Rui-Jie Zhu (UCSC), Zixuan Wang (Princeton), Kai Hua / Ge Zhang (ByteDance Seed co-leads), Yoshua Bengio (Mila) 等</p>
+</div>
+
+<p><strong>核心贡献：</strong>提出 LoopLM 范式，将 loop depth 确立为继参数量和数据量之后的"第三条 scaling axis"。开源 Ouro 系列模型（1.4B / 2.6B），在推理密集任务上匹敌 8B&ndash;12B 级别标准 LLM。</p>
+
+<h4>架构设计</h4>
+<p>标准 decoder-only Transformer，但层栈以 weight-tied 方式循环执行 $t$ 次。每步产生独立的 LM head 输出和 cross-entropy loss。引入 exit gate（sigmoid + survival function）实现自适应计算深度，通过阈值 $q$ 控制推理时的循环步数。</p>
+
+<table>
+  <tr><th>模型</th><th>层数</th><th>循环步数</th><th>参数量</th><th>有效深度</th></tr>
+  <tr><td>Ouro 1.4B</td><td>24</td><td>4</td><td>1.4B</td><td>96</td></tr>
+  <tr><td>Ouro 2.6B</td><td>48 (upcycled)</td><td>4</td><td>2.6B</td><td>192</td></tr>
+</table>
+
+<h4>训练策略</h4>
+<p>分两阶段。<strong>Stage I</strong> 使用熵正则化 ELBO 训练（均匀先验防止 exit 分布坍缩），总训练量 7.7T tokens，序列长度从 4K 渐进到 64K。<strong>Stage II</strong> 冻结 LM 参数，只训练 exit gate 匹配实际 loss 下降曲线（ideal continuation probability）。循环步数从 8 降到 4（8 步时出现 loss spike）。</p>
+
+<h4>关键实验发现</h4>
+<table>
+  <tr><th>Benchmark</th><th>Ouro 2.6B</th><th>Qwen3-8B</th><th>差距</th></tr>
+  <tr><td>MATH500</td><td><strong>90.85</strong></td><td>62.30</td><td>+28.55</td></tr>
+  <tr><td>BBH</td><td><strong>80.46</strong></td><td>77.65</td><td>+2.81</td></tr>
+  <tr><td>MMLU-Pro</td><td><strong>55.73</strong></td><td>53.72</td><td>+2.01</td></tr>
+</table>
+
+<div class="card green">
+  <div class="card-title">知识容量 vs 知识操纵</div>
+  <p><strong>Capo task</strong> 证明循环<strong>不增加知识存储</strong>（~2 bits/param），但<strong>显著提升知识操纵能力</strong>（Mano modular arithmetic 任务全面优于 iso-parameter 和 iso-FLOP baseline）。MMLU 分类分析：推理重的类别提升巨大（Elementary Mathematics <strong>+155.6%</strong>），知识重的类别提升微小（Global Facts +8.3%）。</p>
+</div>
+
+<div class="card orange">
+  <div class="card-title">忠实性分析：LoopLM vs 标准 CoT</div>
+  <p>标准 CoT 模型的 thinking trace 对最终答案几乎没有修正作用（ROC AUC 0.99 = 后验合理化）。而 LoopLM 的中间步<strong>真正在修正决策</strong>——step-2 与 step-4 答案一致率仅 36.1%，说明循环过程中确实在推翻并重新推导结论。安全性随循环步数单调提升，即使在外推区域（$T > 4$）依然如此。</p>
+</div>
+
+<p><strong>Scaling Law：</strong>建立总 loss 和 step-wise loss 两套 scaling law（$R^2 = 0.96$ / $0.79$&ndash;$0.89$），跨模型大小、训练数据量和循环步数均可预测。</p>
+
+<p><strong>RL 尝试（DAPO/GRPO）未成功</strong>——动态 early-exit 与 vLLM/SGLang 固定执行路径不兼容。</p>
+
+<hr>
+
+<!-- ==================== 11.6 ==================== -->
+<h3 id="s11-6">11.6 核心论文：CCDD</h3>
+
+<div class="card purple">
+  <span class="tag arxiv">arXiv:2510.03206</span>
+  <span class="tag org">MIT / Microsoft Research</span>
+  <span class="tag result">ICML 2026</span>
+  <div class="card-title" style="margin-top:8px;">Make Your Diffusion Language Model a Latent Reasoner</div>
+  <p><strong>作者：</strong>Cai Zhou (MIT / Microsoft Research), Dinghuang Zhang (Microsoft Research) 等</p>
+</div>
+
+<p><strong>核心贡献：</strong>提出 CCDD 框架，在连续隐空间 $Z$ 和离散 token 空间 $X$ 上定义联合多模态扩散过程，统一了连续扩散模型（CDM）、离散扩散模型（DDM）和循环 Transformer 三种范式。</p>
+
+<h4>理论层级</h4>
+<div class="card purple">
+  <div class="card-title">表达力严格排序</div>
+  <div class="formula-box">
+    $$\text{CDM} \;\supset\; \text{Loop Transformer} \;\supset\; \text{DDM}$$
+  </div>
+  <ul>
+    <li><strong>Theorem 1（CDM 严格支配 DDM）：</strong>离散扩散的轨迹族严格包含于连续扩散的轨迹族。DDM 每步做"logits &rarr; sample &rarr; embed"量化（丢失完整 logit 几何），CDM 做"logits &rarr; logits"连续传播。</li>
+    <li><strong>Proposition 2（CDM 泛化 Loop Transformer）：</strong>任何 looped transformer 的 rollout 都可以被连续扩散 ODE 采样器精确模拟（显式 Euler，步长 $1/T$）。反之不然——确定性循环 rollout 无法模拟非退化随机 SDE 路径（Theorem 9）。</li>
+  </ul>
+</div>
+
+<h4>CCDD 方法</h4>
+<p>前向过程在离散空间用 CTMC（masked noise），连续空间用 VP-SDE，两者独立。反向过程由单个 time-conditioned Transformer 处理双模态输入，通过 cross-modal conditioning 注入耦合。三种架构变体：</p>
+
+<div class="arch-row">
+  <div class="arch-box">
+    <div class="name">MDiT</div>
+    <div class="desc">混合后处理<br>单套参数处理双模态</div>
+  </div>
+  <div class="arch-box">
+    <div class="name">MMDiT</div>
+    <div class="desc">交错处理<br>参数量翻倍，双套 attention</div>
+  </div>
+  <div class="arch-box">
+    <div class="name">MoEDiT</div>
+    <div class="desc">共享注意力 + 分离 MLP<br>参数不翻倍，推荐方案</div>
+  </div>
+</div>
+
+<p><strong>关键技术创新：</strong></p>
+<ul>
+  <li><strong>异步噪声调度：</strong>连续噪声衰减慢于离散噪声，使反向过程中隐表示先生成（充当隐式规划），再引导 token 解码。</li>
+  <li><strong>上下文嵌入：</strong>使用预训练 Qwen3-Embedding 的 contextualized 层输出作为连续空间目标，提供序列级语义和隐式知识蒸馏。</li>
+  <li><strong>CFG：</strong>连续模态作为条件、离散-only 作为无条件，训练时随机 drop 连续嵌入（$p = 0.15$）。</li>
+</ul>
+
+<h4>实验结果</h4>
+<table>
+  <tr><th>Benchmark</th><th>Model</th><th>Perplexity / NLL</th></tr>
+  <tr><td>LM1B</td><td>CCDD-MMDiT (216M)</td><td>25.76 (vs MDLM 39.17, <strong>&gt;25% 降幅</strong>)</td></tr>
+  <tr><td>OpenWebText</td><td>CCDD-MoEDiT + CFG</td><td>生成 NLL 8.25 (vs MDLM 9.19)</td></tr>
+</table>
+
+<hr>
+
+<!-- ==================== 11.7 ==================== -->
+<h3 id="s11-7">11.7 扩散语言模型中的 Latent Reasoning（2024&ndash;2026）</h3>
+
+<h4>11.7.1 理论：MDM 的表达力</h4>
+<div class="card green">
+  <span class="tag arxiv">arXiv:2510.13117</span>
+  <span class="tag org">ETH Zurich / AI2</span>
+  <span class="tag result">ICLR 2026 Oral</span>
+  <div class="card-title" style="margin-top:8px;">On the Reasoning Abilities of Masked Diffusion Language Models</div>
+  <p>dLLM 推理能力最重要的理论工作。核心结论：(1) MDM 等价于并行叶树（PLT）；(2) 对数步 MDM 可识别正则语言；(3) 严格分离 $\text{CoT}[\log N] \subsetneq \text{MDM}[\log N, N]$——MDM 可达 NC¹ 而 CoT 卡在 TC⁰；(4) $\text{MDM}[O(\log^d N), \text{poly}(N)] = AC^d$。为"离散扩散天然具备隐式推理能力"提供了最严格的理论背书。</p>
+</div>
+
+<h4>11.7.2 推理增强</h4>
+
+<div class="card cyan">
+  <div class="card-title">推理增强工作一览</div>
+  <table>
+    <tr><th>方法</th><th>出处</th><th>核心思路</th></tr>
+    <tr><td><strong>Diffusion-of-Thought (DoT)</strong></td><td>NeurIPS 2024</td><td>首次将 CoT 引入 dLLM：先在隐空间多步推理，再逐步 unmask 输出</td></tr>
+    <tr><td><strong>Lateral Thought RL</strong></td><td>NeurIPS 2025</td><td>RL 强化扩散去噪过程中的横向思维步骤（非 token 级 CoT）</td></tr>
+    <tr><td><strong>LaDiR</strong></td><td>arXiv:2510.04573</td><td>VAE 连续隐空间上做扩散，增强 LLM 推理能力</td></tr>
+    <tr><td><strong>LAMP</strong></td><td>ICLR 2026</td><td>Masked policy 做 dLLM 隐空间适应</td></tr>
+    <tr><td><strong>SPG</strong></td><td>ICLR 2026 (Meta)</td><td>三明治策略梯度解决 ELBO 梯度偏差</td></tr>
+  </table>
+</div>
+
+<h4>11.7.3 连续扩散 vs 离散扩散</h4>
+<p>CCDD（&sect;11.6）建立了完整的理论层级。实践中，连续扩散模型（CDM）虽然在理论上更强，但离散掩码扩散（如 MDLM / LLaDA）在文本生成上反而表现更好——CCDD 的理论贡献之一就是解释了这个看似矛盾的现象：CDM 的更大决策空间、低质量 embedding 目标和组合解码歧义是实际劣势。</p>
+
+<h4>11.7.4 Scaling 与加速</h4>
+<table>
+  <tr><th>方向</th><th>代表工作</th><th>关键结果</th></tr>
+  <tr><td>Scaling 论文</td><td>CMU, arXiv:2507.15857</td><td>dLLM 在数据受限场景下相比 AR 有 scaling 优势</td></tr>
+  <tr><td>高速推理</td><td>Seed Diffusion</td><td>2146 tok/s 离散扩散推理速度</td></tr>
+  <tr><td>投机解码</td><td>DFlash (Z Lab)</td><td>Block diffusion 做 AR speculative drafter，4.9&times; 加速</td></tr>
+  <tr><td>Few-step</td><td>d3LLM / CD4LM / SlowFast</td><td>10&times; / 14&times; / 15&ndash;34&times; 加速</td></tr>
+</table>
+
+<hr>
+
+<!-- ==================== 11.8 ==================== -->
+<h3 id="s11-8">11.8 Looped Transformer 深度解析</h3>
+
+<h4>11.8.1 历史脉络：从 Universal Transformer 到现代 LoopLM</h4>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="date">2019 &middot; ICLR</div>
+    <div class="content"><strong>Universal Transformer (UT)</strong>：循环 Transformer 的奠基工作。Weight-shared block 迭代 $K$ 次 + ACT 自适应停止。UT 存在 ACT 不稳定性（标准初始化导致 token 在 ~2 步即 halt）和高方差问题。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2023 &middot; ICML</div>
+    <div class="content"><strong>Looped Transformers as Programmable Computers</strong>：13 层 encoder 配合循环即可模拟指令集计算机（Turing 完备）。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2024 &middot; ICLR</div>
+    <div class="content"><strong>Looped Transformers are Better at Learning Algorithms</strong>：input injection $Y_{t+1} = M(Y_t + P)$ 防止输入影响随 $t \to \infty$ 衰减。以不到 10% 的参数匹配 12 层标准 Transformer。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2025 &middot; ICLR / NeurIPS</div>
+    <div class="content"><strong>理论突破</strong>：Reasoning with Latent Thoughts（循环 = 隐式 CoT）、COCONUT（Chain of Continuous Thought）、Huginn（从噪声到答案的循环收敛）。</div>
+  </div>
+  <div class="timeline-item">
+    <div class="date">2026 &middot; ICLR / ICML</div>
+    <div class="content"><strong>架构成熟</strong>：LoopFormer（弹性深度）、ChainGPT（双 reasoning）、MoDr（多分支路由）、Equilibrium Reasoners（吸引子学习）、LoopMoE（MoE + 循环）。</div>
+  </div>
+</div>
+
+<h4>11.8.2 核心架构对比</h4>
+
+<table>
+  <tr><th>架构</th><th>出处</th><th>核心机制</th><th>自适应深度</th><th>关键发现</th></tr>
+  <tr>
+    <td><strong>Ouro / LoopLM</strong></td>
+    <td>2025</td>
+    <td>Weight-tied 循环 + exit gate + 两阶段训练</td>
+    <td>Token-level sigmoid gate</td>
+    <td>Loop depth 是第三 scaling axis</td>
+  </tr>
+  <tr>
+    <td><strong>LoopFormer</strong></td>
+    <td>ICLR 2026</td>
+    <td>Shortcut-consistency + time/step conditioning (AdaLN)</td>
+    <td>预算 $M$ + schedule $\Delta$</td>
+    <td>解决表示坍缩，弹性深度推理</td>
+  </tr>
+  <tr>
+    <td><strong>COCONUT</strong></td>
+    <td>NeurIPS 2025</td>
+    <td>最后一层隐状态回灌为输入嵌入 + 课程学习</td>
+    <td>&lt;bot&gt; / &lt;eot&gt; 控制</td>
+    <td>隐空间 BFS，97.0% / 14.2 tok</td>
+  </tr>
+  <tr>
+    <td><strong>Huginn</strong></td>
+    <td>NeurIPS 2025 Spot.</td>
+    <td>Prelude-Recurrent-Coda，$s_0 \sim \mathcal{N}(0, \sigma^2 I)$</td>
+    <td>KL convergence</td>
+    <td>有效深度 132 层，轨道轨迹</td>
+  </tr>
+  <tr>
+    <td><strong>ChainGPT</strong></td>
+    <td>ICLR 2026</td>
+    <td>Dual-reasoning + multi-rank state update</td>
+    <td>快/慢思考双通道</td>
+    <td>同时支持快速直觉和慢速推理</td>
+  </tr>
+  <tr>
+    <td><strong>MoDr</strong></td>
+    <td>ICLR 2026</td>
+    <td>Mixture-of-Depth-Recurrent + 多分支路由</td>
+    <td>Multi-branch routing</td>
+    <td>自适应探索不同解题路径</td>
+  </tr>
+  <tr>
+    <td><strong>Eq. Reasoners</strong></td>
+    <td>ICML 2026</td>
+    <td>学习 attractor，循环动态收敛到不动点</td>
+    <td>Convergence-based</td>
+    <td>可扩展推理的形式化框架</td>
+  </tr>
+</table>
+
+<h4>11.8.3 LoopFormer 技术细节</h4>
+
+<div class="card cyan">
+  <div class="card-title">Shortcut Modulation（AdaLN-style）</div>
+  <p>时间/步长编码经 sinusoidal Fourier features + 2 层 MLP 生成条件向量 $c = e_t + e_\Delta$。$c$ 通过 AdaLN 调制每个 block：$\gamma$ 参数对 RMSNorm 输出做乘法缩放（before MHSA/FFN），$\alpha$ 参数对残差做 gating（after MHSA/FFN）。</p>
+  <p><strong>关键</strong>：调制 MLP 的最后一层<strong>零初始化</strong>，确保训练初始时 looped block 退化为无调制的标准 Transformer。</p>
+  <div class="formula-box">
+    $$\mathcal{L} = \mathcal{L}_L + 0.1 \cdot \mathcal{L}_S + 0.1 \cdot \|\text{stopgrad}(h^{(L)}) - h^{(S)}\|_2^2$$
+  </div>
+  <p>弹性推理时指定预算 $M \leq L$ 和 schedule $\Delta_M$。最优 schedule 模式：<strong>早期粗步 + 后期细步</strong>（类比扩散模型的去噪策略）。</p>
+</div>
+
+<div class="card orange">
+  <div class="card-title">表示坍缩分析</div>
+  <p>Naive early-exit baseline 呈现：(1) 平坦曲率——方向不变；(2) 高各向异性——token 坍缩到相同方向；(3) 高 CKA 相似度——后续步几乎不改变表示。LoopFormer 在所有度量上均显示逐步演化，证明 shortcut-consistency loss 有效防止了坍缩。</p>
+</div>
+
+<h4>11.8.4 COCONUT：Chain of Continuous Thought</h4>
+<p><strong>核心机制：</strong>将 LLM 最后一层隐状态 $h_t \in \mathbb{R}^d$ 直接回灌为后续位置的输入嵌入。用特殊 token <code>&lt;bot&gt;</code> 进入 latent mode、<code>&lt;eot&gt;</code> 退出。训练使用多阶段课程学习，从标准 CoT 渐进过渡到全 continuous thought。</p>
+<p><strong>关键发现——隐空间 BFS：</strong>continuous thought 在连续空间中可编码多个候选推理路径的叠加，COCONUT 在 latent 空间隐式执行 breadth-first search，而非标准 CoT 的 depth-first search。</p>
+<p><strong>实验结果（GPT-2 scale）：</strong>ProsQA 上 COCONUT 达 97.0% accuracy / 14.2 tokens（vs CoT 77.5% / 49.4 tokens）。去掉课程学习导致灾难性崩溃（97.0% &rarr; 52.4%）。</p>
+
+<h4>11.8.5 Huginn：从噪声到答案</h4>
+<p><strong>架构——Prelude-Recurrent-Coda：</strong>Prelude $P$（2 层）将输入嵌入；Recurrent Core $R$（4 层, weight-shared）迭代 $r$ 次，$s_i = R(A[e; s_{i-1}])$；Coda $C$（2 层）输出分布。状态初始化为随机噪声 $s_0 \sim \mathcal{N}(0, \sigma^2 I)$。</p>
+<p>$r=32$ 时有效深度 = $2 + (4 \times 32) + 2 = 132$ 层。3.5B 模型在 GSM8K/MATH 上匹敌 OLMo-7B。<strong>涌现行为</strong>：数值推理在 latent 空间产生<strong>轨道轨迹</strong>（orbital trajectories）——状态在结构化流形上做 2D 旋转，类似计数器/时钟。</p>
+
+<h4>11.8.6 Loop, Think, & Generalize（2026）</h4>
+<p><strong>三阶段 grokking：</strong>(1) 记忆 &rarr; (2) 同分布泛化 &rarr; (3) 系统泛化（OOD 组合）。循环是到达阶段 3 的关键。<strong>Overthinking 现象：</strong>随 $R$ 增加，logit margin 先增后降——存在最优 $R^*$。<strong>关键发现——中间监督有害：</strong>intermediate supervision 导致 shortcut learning，silent thinking（仅最终步监督）优于逐步监督。</p>
+
+<h4>11.8.7 训练技术演进</h4>
+<table>
+  <tr><th>技术</th><th>代表工作</th><th>核心思路</th><th>局限</th></tr>
+  <tr><td>ACT</td><td>Universal Transformer (2019)</td><td>Per-token halting probability</td><td>初始化陷阱、不稳定</td></tr>
+  <tr><td>Input injection</td><td>ICLR 2024</td><td>$Y_{t+1} = M(Y_t + P)$ 防止输入衰减</td><td>固定循环步数</td></tr>
+  <tr><td>Randomized depth</td><td>Huginn (2025)</td><td>Log-normal Poisson 采样 $r$</td><td>训练方差</td></tr>
+  <tr><td>Shortcut-consistency</td><td>LoopFormer (2026)</td><td>双轨迹 + stopgrad 自蒸馏</td><td>~1.5&times; 训练 FLOPs</td></tr>
+  <tr><td>Entropy regularization</td><td>Ouro (2025)</td><td>ELBO + uniform prior 防 exit 坍缩</td><td>需要 Stage II 精调</td></tr>
+  <tr><td>Timestep Encoding</td><td>Xu & Sato (ICML 2025)</td><td>Step-dependent scaling 消除固有误差</td><td>需要修改模型架构</td></tr>
+</table>
+
+<h4>11.8.8 自适应深度机制对比</h4>
+<table>
+  <tr><th>方法</th><th>粒度</th><th>机制</th><th>训练开销</th><th>推理灵活性</th></tr>
+  <tr><td>Ouro exit gate</td><td>Token</td><td>sigmoid + survival function</td><td>Stage II 精调</td><td>阈值 $q$ 控制</td></tr>
+  <tr><td>LoopFormer</td><td>Sequence</td><td>time/step conditioning + consistency</td><td>~1.5&times; FLOPs</td><td>预算 $M$ + schedule $\Delta$</td></tr>
+  <tr><td>ACT (UT)</td><td>Token</td><td>halting probability + ponder cost</td><td>不稳定</td><td>自适应</td></tr>
+  <tr><td>KL (Huginn)</td><td>Sequence</td><td>连续步 KL &lt; threshold</td><td>零额外训练</td><td>自适应</td></tr>
+  <tr><td>MoDr</td><td>Token</td><td>multi-branch routing</td><td>需要路由训练</td><td>路径探索</td></tr>
+  <tr><td>AdaPonderLM</td><td>Token</td><td>halting gate + KV reuse</td><td>需要 gate 训练</td><td>难 token 更多步</td></tr>
+</table>
+
+<h4>11.8.9 最新架构创新（2025&ndash;2026）</h4>
+<table>
+  <tr><th>工作</th><th>出处</th><th>核心思路</th></tr>
+  <tr><td><strong>LoopMoE</strong></td><td>arXiv:2606.04438</td><td>MoE + weight-shared 循环，不同循环步使用不同 expert 组合</td></tr>
+  <tr><td><strong>Parcae</strong></td><td>arXiv:2604.12946</td><td>约束注入谱范数防止循环不稳定</td></tr>
+  <tr><td><strong>STARS</strong></td><td>arXiv:2605.26733</td><td>将循环动态推向稳定不动点</td></tr>
+  <tr><td><strong>LT2</strong></td><td>arXiv:2605.20670</td><td>线性 attention 使循环推理在长序列上可扩展</td></tr>
+  <tr><td><strong>Memory-Efficient Loop TF</strong></td><td>arXiv:2605.07721</td><td>循环间共享 KV cache 实现 constant-memory 推理</td></tr>
+  <tr><td><strong>Training-Free Looped TF</strong></td><td>arXiv:2605.23872</td><td>免训练注入循环能力</td></tr>
+  <tr><td><strong>LoopRPT</strong></td><td>arXiv:2603.19714</td><td>RL 信号分配到每次隐式迭代</td></tr>
+  <tr><td><strong>"Prioritize the Process"</strong></td><td>arXiv:2602.10520</td><td>对完整 latent thought 轨迹给予 RL reward</td></tr>
+  <tr><td><strong>SpiralFormer</strong></td><td>arXiv:2602.11698</td><td>多分辨率递归下的层级依赖学习</td></tr>
+  <tr><td><strong>HRM-Text</strong></td><td>arXiv:2605.18797</td><td>1B 层级循环模型 + 双时间尺度</td></tr>
+  <tr><td><strong>Is One Layer Enough?</strong></td><td>ICML 2026</td><td>循环单层模型保留 80% 性能，仅 20% 参数</td></tr>
+  <tr><td><strong>Loop Think & Generalize</strong></td><td>arXiv:2604.07822</td><td>循环触发 grokking + 深度外推</td></tr>
+  <tr><td><strong>Universal TF Need Memory</strong></td><td>arXiv:2604.21999</td><td>Memory tokens 是复杂递归推理的必要条件</td></tr>
+  <tr><td><strong>How Much Is One Recurrence Worth?</strong></td><td>arXiv:2604.21106</td><td>Iso-depth scaling laws</td></tr>
+</table>
+
+<hr>
+
+<!-- ==================== 11.9 ==================== -->
+<h3 id="s11-9">11.9 核心论文索引</h3>
+
+<h4>Looped Transformer</h4>
+<table>
+  <tr><th>论文</th><th>arXiv / 会议</th><th>年份</th><th>核心贡献</th></tr>
+  <tr><td>Ouro / LoopLM</td><td>2510.25741</td><td>2025</td><td>开源 LoopLM 范式，loop depth 作为第三 scaling axis</td></tr>
+  <tr><td>LoopFormer</td><td>2602.11451 / ICLR'26</td><td>2026</td><td>弹性深度循环 Transformer</td></tr>
+  <tr><td>ChainGPT</td><td>ICLR'26</td><td>2026</td><td>Dual-reasoning + multi-rank state update</td></tr>
+  <tr><td>MoDr</td><td>ICLR'26</td><td>2026</td><td>Mixture-of-Depth-Recurrent</td></tr>
+  <tr><td>Equilibrium Reasoners</td><td>2605.21488 / ICML'26</td><td>2026</td><td>吸引子学习实现可扩展推理</td></tr>
+  <tr><td>Reasoning w/ Latent Thoughts</td><td>2502.17416 / ICLR'25</td><td>2025</td><td>循环等价于隐式 CoT 的理论证明</td></tr>
+  <tr><td>Loop, Think, & Generalize</td><td>2604.07822</td><td>2026</td><td>循环触发 grokking + 深度外推</td></tr>
+  <tr><td>On Expressive Power</td><td>2410.01405 / ICML'25</td><td>2025</td><td>近似论 + Timestep Encoding</td></tr>
+  <tr><td>Parcae</td><td>2604.12946</td><td>2026</td><td>循环 LM 的 scaling law</td></tr>
+  <tr><td>STARS</td><td>2605.26733</td><td>2026</td><td>稳定化循环动态的 test-time 外推</td></tr>
+  <tr><td>LoopRPT</td><td>2603.19714</td><td>2026</td><td>循环预训练中的 RL 信号分配</td></tr>
+  <tr><td>LoopMoE</td><td>2606.04438</td><td>2026</td><td>MoE + 迭代计算统一</td></tr>
+  <tr><td>Memory-Efficient Loop TF</td><td>2605.07721</td><td>2026</td><td>Constant-memory 循环推理</td></tr>
+  <tr><td>Training-Free Looped TF</td><td>2605.23872</td><td>2026</td><td>免训练注入循环能力</td></tr>
+  <tr><td>SpiralFormer</td><td>2602.11698</td><td>2026</td><td>多分辨率递归下的层级依赖学习</td></tr>
+  <tr><td>HRM-Text</td><td>2605.20613</td><td>2026</td><td>1B 层级循环模型 + 双时间尺度</td></tr>
+</table>
+
+<h4>Diffusion Language Model（Latent Reasoning 方向）</h4>
+<table>
+  <tr><th>论文</th><th>arXiv / 会议</th><th>年份</th><th>核心贡献</th></tr>
+  <tr><td>CCDD</td><td>2510.03206 / ICML'26</td><td>2025</td><td>连续-离散联合扩散，理论统一 CDM/LT/DDM</td></tr>
+  <tr><td>MDM Reasoning</td><td>2510.13117 / ICLR'26 Oral</td><td>2026</td><td>MDM 表达力理论：NC¹ &gt; TC⁰ (CoT)</td></tr>
+  <tr><td>COCONUT</td><td>2412.06769 / NeurIPS'25</td><td>2025</td><td>Chain of Continuous Thought</td></tr>
+  <tr><td>Diffusion-of-Thought</td><td>NeurIPS'24</td><td>2024</td><td>首次将 CoT 引入 dLLM</td></tr>
+  <tr><td>Lateral Thought RL</td><td>2505.10446 / NeurIPS'25</td><td>2025</td><td>RL 强化扩散横向思维链</td></tr>
+  <tr><td>LaDiR</td><td>2510.04573</td><td>2025</td><td>VAE + 连续扩散增强 LLM 推理</td></tr>
+  <tr><td>LAMP</td><td>ICLR'26</td><td>2026</td><td>Masked policy 做 dLLM 隐空间适应</td></tr>
+  <tr><td>SPG</td><td>2510.09541 / ICLR'26</td><td>2025</td><td>三明治策略梯度解决 ELBO bias</td></tr>
+  <tr><td>GDSD</td><td>2605.29398</td><td>2026</td><td>自蒸馏绕过 ELBO，+19.6%</td></tr>
+  <tr><td>DFlash</td><td>2602.06036</td><td>2026</td><td>Block diffusion speculative decoding 4.9&times;</td></tr>
+  <tr><td>ELF</td><td>2605.10938</td><td>2025</td><td>Flow matching 连续语言生成</td></tr>
+  <tr><td>CADD</td><td>2510.01329 / ICLR'26</td><td>2026</td><td>连续扩散 + 可训练性</td></tr>
+</table>
+
+<hr>
+
+<!-- ==================== 11.10 ==================== -->
+<h3 id="s11-10">11.10 与 dLLM 项目的关联启示</h3>
+
+<div class="card purple">
+  <div class="card-title">启示 1：CCDD 为 dLLM 提供了理论锚点</div>
+  <p>CCDD 证明连续扩散 &gt; looped transformer &gt; 离散扩散（表达力层级），而 dLLM 项目（Plan Corrector）利用的正是离散扩散的"surgical editing"能力。这意味着 dLLM 的优势不在表达力而在<strong>可控性和精确编辑</strong>——这是一个互补而非竞争的定位。</p>
+</div>
+
+<div class="card green">
+  <div class="card-title">启示 2：循环 vs 扩散的中间监督问题</div>
+  <p>Looped transformer 的核心训练难题（中间步无监督 &rarr; OOD）恰好是扩散模型的优势——扩散路径上的每个时间点都有重建目标。dLLM 的 RL 路线（SPG &rarr; GDSD &rarr; DMPO）可以借鉴 looped model 的 entropy regularization（Ouro Stage I）和 trajectory-level reward（"Prioritize the Process"）。</p>
+</div>
+
+<div class="card cyan">
+  <div class="card-title">启示 3：自适应深度是关键差异化能力</div>
+  <p>SWE-bench 等 agentic 任务中，不同 edit 的复杂度差异极大（单行 fix vs 跨文件重构）。LoopFormer 的 elastic depth 和 MoDr 的 multi-branch routing 为 dLLM agent 提供了按任务难度动态调节"思考深度"的架构范式。</p>
+</div>
+
+<div class="card orange">
+  <div class="card-title">启示 4：MoE + 循环是潜在的组合创新点</div>
+  <p>dLLM 项目中不同编辑类型可能需要不同的"专家"（如 code generation expert vs code deletion expert），LoopMoE 的 iteration-conditioned modulation 思路可直接迁移。</p>
+</div>
+
+<div class="insight">
+  <div class="insight-title">核心技术主题总结</div>
+  <ol>
+    <li><strong>表达力层级共识正在形成</strong>：MDM 可达 NC¹（严格超越 CoT 的 TC⁰），连续扩散 &gt; Loop Transformer &gt; 离散扩散。</li>
+    <li><strong>训练稳定性是核心瓶颈</strong>：几乎所有 looped model 工作都报告了 loss spike、梯度振荡和外推退化。当前最大可稳定训练的循环步数约为 4&ndash;8 步。</li>
+    <li><strong>自适应深度已成标配</strong>：2025 后的 looped model 都引入了某种形式的自适应计算（exit gate / consistency / routing / halting）。</li>
+    <li><strong>循环不增加知识容量但增强操纵能力</strong>：Ouro 的 Capo/Mano 实验提供了清晰的实验证据。</li>
+    <li><strong>RL 对齐是两线的共同未解问题</strong>：Ouro 的 DAPO/GRPO 尝试失败，dLLM 的 RL 路线仍处于早期。</li>
+    <li><strong>MoE + 循环的融合</strong>是新方向：LoopMoE、CCDD-MoEDiT、Sparse Layers are Critical 均表明稀疏专家路由与循环计算的组合可同时获得参数效率和推理深度。</li>
+    <li><strong>忠实推理 vs 后验合理化</strong>：LoopLM 的中间步是真正的"思考"（step-2 vs step-4 一致率仅 36.1%），而非 CoT 的后验合理化。</li>
+  </ol>
+</div>
+
+<!-- ==================== Page Nav ==================== -->
+<div class="page-nav"><a href="s10_comparison.html">&larr; 综合对比与未来方向</a><a href="index.html">返回目录 &rarr;</a></div>
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
+  <p>本文档基于 30+ 篇论文深度调研整理 &middot; 2026.06</p>
+  <p>涵盖：Ouro / LoopLM &middot; CCDD &middot; LoopFormer &middot; ChainGPT &middot; MoDr &middot; COCONUT &middot; Huginn &middot; Equilibrium Reasoners &middot; LoopMoE &middot; Parcae &middot; STARS &middot; LT2 &middot; LoopRPT &middot; MDM Reasoning &middot; SPG &middot; GDSD &middot; DFlash &middot; ELF &middot; CADD</p>
+</div>
+</div><!-- container end -->
+</body>
+</html>
