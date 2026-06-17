@@ -270,28 +270,116 @@ window.addEventListener('load', function() {
   <p><strong>关键结果</strong>：完整三阶段流水线在 Dream-7B 上：GSM8K <strong>87.9%</strong>，MATH500 <strong>44.2%</strong>，超越所有单阶段方法。证明了 dLLM 也可以走 AR 模型成熟的 "pretrain → SFT → RLHF" 路线。</p>
 </div>
 
-<h3>8.10 dLLM RL 技术全景对比</h3>
+<h3>8.10 VRPO：方差约减偏好优化</h3>
+<div class="card cyan">
+  <span class="tag arxiv">arXiv: 2505.19223</span>
+  <span class="tag org">LLaDA 1.5 · 人大 GSAI + 蚂蚁</span>
+  <div class="card-title">VRPO: Variance-Reduced Preference Optimization for Masked Diffusion LLMs</div>
+
+  <h4>问题：DPO 在 MDM 上为什么不稳定？</h4>
+  <p>AR 模型做 DPO 很直接——$\log p_\theta(y)$ 可以精确计算（每个 token 的 softmax 概率连乘）。但 Masked Diffusion Model 的 $\log p_\theta(y)$ 是 intractable 的，只能通过 ELBO 估计。ELBO 估计涉及<strong>双重 Monte Carlo 采样</strong>（采样时间步 $t$ + 采样 masked 序列 $\mathbf{y}_t$），导致梯度方差极大：</p>
+  <div class="formula-box">
+    $\text{Var}[\nabla_\theta \mathcal{L}_{\mathrm{DPO}}^{\mathrm{MDM}}] \propto \mathbb{V}[\hat{s}_\theta(\mathbf{y})]$
+  </div>
+  <p>其中 $\hat{s}_\theta$ 是 score estimator。VRPO 的核心发现（Theorem 1）：DPO loss 的偏差和方差都被 score estimator 的方差所控制。</p>
+
+  <h4>VRPO 的两个方差约减技术</h4>
+  <ul>
+    <li><strong>Monte Carlo Budget Allocation</strong>：不是均匀分配采样预算给所有位置，而是根据每个位置的"不确定性"动态分配——越不确定的 mask 位置分配更多采样次数</li>
+    <li><strong>Antithetic Sampling</strong>：对每个 mask 位置同时采样"互补"的两个样本（一个填充为 A，另一个填充为非 A），用两者的差来减少方差</li>
+  </ul>
+
+  <p><strong>关键结果</strong>：VRPO 使 LLaDA-8B 的 DPO 训练从不收敛变为稳定收敛，在多个偏好 benchmark 上提升显著。但 VRPO 仅针对 <strong>masked diffusion</strong> 设计——依赖 mask 位置的独立性来做方差约减，不适用于 uniform state diffusion。</p>
+</div>
+
+<h3>8.11 Uniform State Diffusion 的后训练：Diffusion Duality 路线 ⭐</h3>
+<div class="card pink">
+  <span class="tag arxiv">arXiv: 2506.10892 (Diffusion Duality)</span>
+  <span class="tag org">ICML 2025 · Sahoo et al.</span>
+  <div class="card-title">DiffusionGemma 的后训练：一条 Masked 走不通的路</div>
+
+  <h4>现有方法全部面向 Masked Diffusion</h4>
+  <p>上面所有方法（SPG/GDSD/d1/DiSPO/MDPO/DiFFPO/DARE/VRPO）都是为 <strong>masked/absorbing-state diffusion</strong> 设计的。它们依赖 mask 位置的独立性、absorbing state 的单调收敛性、或逐步去掩码的结构。DiffusionGemma 使用的是 <strong>uniform state diffusion</strong>，这些性质都不成立。</p>
+
+  <h4>Uniform Diffusion 后训练的独特机会：高斯-离散对偶</h4>
+  <p>Diffusion Duality 理论（§2.10）证明了 uniform discrete diffusion 可以从连续高斯扩散通过 argmax 映射推导。这为后训练提供了一条<strong>masked diffusion 走不通的独特路线</strong>：</p>
+
+  <div class="formula-box" style="border-left: 4px solid var(--pink, #e91e8a); padding-left: 16px;">
+    <strong>核心思路</strong>：在高斯空间做偏好优化/RL（连续空间 log-prob 精确可算），<br>然后通过 argmax 映射投影回离散空间
+  </div>
+
+  <p>具体步骤：</p>
+  <ol>
+    <li><strong>高斯空间 DPO</strong>：构造偏好对 $(\mathbf{w}^w, \mathbf{w}^l)$（连续高斯向量），在高斯空间做 DPO——连续空间的 $\log p_\theta(\mathbf{w})$ 是精确可算的（高斯 log-pdf 有闭式解）</li>
+    <li><strong>Argmax 投影</strong>：将高斯空间的偏好信号通过 $\mathbf{z} = \text{argmax}(\mathbf{w})$ 投影到离散空间</li>
+    <li><strong>离散策略更新</strong>：用投影后的信号更新 DiffusionGemma 的 denoiser</li>
+  </ol>
+
+  <h4>为什么 Masked Diffusion 做不到？</h4>
+  <table>
+    <tr><th>性质</th><th>Masked Diffusion</th><th>Uniform State Diffusion</th></tr>
+    <tr><td>高斯对偶</td><td>❌ 吸收态无法从高斯噪声自然产生</td><td>✅ argmax 映射自然导出</td></tr>
+    <tr><td>连续空间 log-prob</td><td>❌ 不存在对应的连续过程</td><td>✅ 高斯 log-pdf 闭式可算</td></tr>
+    <tr><td>Consistency Distillation</td><td>❌ 无确定性轨迹</td><td>✅ 高斯空间确定性路径可投影</td></tr>
+    <tr><td>VRPO 方差约减</td><td>✅ 依赖 mask 位置独立性</td><td>❌ 所有位置都可能被修正</td></tr>
+  </table>
+
+  <h4>DiffusionGemma 后训练的实用路线建议</h4>
+  <table>
+    <tr><th>阶段</th><th>方法</th><th>难度</th><th>说明</th></tr>
+    <tr>
+      <td><strong>Level 1</strong></td>
+      <td>SFT fine-tuning</td>
+      <td>低</td>
+      <td>在 Denoiser 上做 denoising loss SFT；需适配 Encoder-Denoiser 双模 attention</td>
+    </tr>
+    <tr>
+      <td><strong>Level 2</strong></td>
+      <td>Best-of-N + Reward-weighted SFT</td>
+      <td>低</td>
+      <td>利用 DiffusionGemma 速度优势大量采样 → verifier 打分 → 选 top-K 做 SFT；完全绕过 ELBO</td>
+    </tr>
+    <tr>
+      <td><strong>Level 3</strong></td>
+      <td>高斯-离散对偶 DPO</td>
+      <td>高</td>
+      <td>在高斯空间做 DPO → argmax 投影回离散空间；<strong>uniform 独享路线</strong>，有论文潜力</td>
+    </tr>
+    <tr>
+      <td><strong>Level 4</strong></td>
+      <td>GDSD 自蒸馏适配</td>
+      <td>中</td>
+      <td>GDSD 的 logit-space 操作不依赖 mask 结构，理论上可迁移到 uniform；需验证 squared-logit loss 在 uniform 下的表现</td>
+    </tr>
+  </table>
+</div>
+
+<h3>8.12 dLLM RL 技术全景对比</h3>
 <table>
-  <tr><th>方法</th><th>核心思路</th><th>是否绕过 ELBO</th><th>GSM8K</th><th>来源</th></tr>
-  <tr><td><strong>d1 (dGRPO)</strong></td><td>ELBO 近似 GRPO + 推理链 SFT</td><td>❌ 使用 ELBO</td><td>84.3%</td><td>NeurIPS 2025</td></tr>
-  <tr><td><strong>SPG</strong></td><td>上下界三明治策略梯度</td><td>⚠️ 减轻 bias</td><td>86.1%</td><td>Meta (FAIR)</td></tr>
-  <tr><td><strong>GDSD</strong></td><td>去噪器自蒸馏，logit 空间</td><td>✅ 完全绕过</td><td>—</td><td>2025.05</td></tr>
-  <tr><td><strong>DiSPO</strong></td><td>步级 DPO 偏好对齐</td><td>⚠️ 逐步近似</td><td>—</td><td>ICLR 2025 Oral</td></tr>
-  <tr><td><strong>MDPO</strong></td><td>On-policy 轨迹修复分布偏移</td><td>❌ 使用 ELBO</td><td>—</td><td>2025.08</td></tr>
-  <tr><td><strong>DiFFPO</strong></td><td>统一策略梯度 + 逐步重要性采样</td><td>⚠️ 逐步分解</td><td>87.4%</td><td>NeurIPS 2025</td></tr>
-  <tr><td><strong>DARE</strong></td><td>SFT→DPO→RL 完整流水线 + 奖励塑形</td><td>⚠️ 混合策略</td><td>87.9%</td><td>2025.04</td></tr>
+  <tr><th>方法</th><th>核心思路</th><th>绕过 ELBO?</th><th>适用 Uniform?</th><th>GSM8K</th><th>来源</th></tr>
+  <tr><td><strong>d1 (dGRPO)</strong></td><td>ELBO 近似 GRPO + 推理链 SFT</td><td>❌ 使用 ELBO</td><td>❌ 依赖 mask 结构</td><td>84.3%</td><td>NeurIPS 2025</td></tr>
+  <tr><td><strong>SPG</strong></td><td>上下界三明治策略梯度</td><td>⚠️ 减轻 bias</td><td>⚠️ 需重新推导上下界</td><td>86.1%</td><td>Meta (FAIR)</td></tr>
+  <tr><td><strong>GDSD</strong></td><td>去噪器自蒸馏，logit 空间</td><td>✅ 完全绕过</td><td>⚠️ logit 操作可迁移，需验证</td><td>—</td><td>2025.05</td></tr>
+  <tr><td><strong>DiSPO</strong></td><td>步级 DPO 偏好对齐</td><td>⚠️ 逐步近似</td><td>❌ 依赖 absorbing state</td><td>—</td><td>ICLR 2025 Oral</td></tr>
+  <tr><td><strong>MDPO</strong></td><td>On-policy 轨迹修复分布偏移</td><td>❌ 使用 ELBO</td><td>⚠️ 原理可迁移</td><td>—</td><td>2025.08</td></tr>
+  <tr><td><strong>DiFFPO</strong></td><td>统一策略梯度 + 逐步重要性采样</td><td>⚠️ 逐步分解</td><td>❌ 依赖 mask 分解</td><td>87.4%</td><td>NeurIPS 2025</td></tr>
+  <tr><td><strong>DARE</strong></td><td>SFT→DPO→RL 完整流水线 + 奖励塑形</td><td>⚠️ 混合策略</td><td>❌ 依赖 mask 步级分解</td><td>87.9%</td><td>2025.04</td></tr>
+  <tr><td><strong>VRPO</strong></td><td>方差约减 (MC budget + antithetic)</td><td>❌ 使用 ELBO</td><td>❌ 依赖 mask 位置独立性</td><td>—</td><td>LLaDA 1.5</td></tr>
+  <tr style="background: rgba(233,30,138,0.08);"><td><strong>高斯对偶 DPO</strong></td><td>高斯空间 DPO → argmax 投影</td><td>✅ 连续空间精确 log-prob</td><td><strong>✅ uniform 独享</strong></td><td>—</td><td>理论提案 (§2.10)</td></tr>
 </table>
 
 <div class="insight">
-  <div class="insight-title">dLLM RL 训练的核心挑战与解决路线</div>
-  <p>dLLM 做 RL 面临<strong>三大挑战</strong>：(1) <strong>似然不可计算</strong>——ELBO 有 bias，影响策略梯度估计（SPG 用三明治减轻、GDSD 完全绕过）；(2) <strong>训练-推理分布偏移</strong>——训练用随机 masking、推理用确定性策略（MDPO 引入 on-policy 轨迹）；(3) <strong>奖励稀疏</strong>——只有最终生成结果才有奖励信号（DARE 通过奖励塑形分配到每步）。当前最优路线是 <strong>DARE 的三阶段流水线</strong>（GSM8K 87.9%），但 <strong>GDSD 的无偏自蒸馏</strong>在理论上更优雅。d1 则证明了 dLLM 可以通过 RL 学会推理链。</p>
+  <div class="insight-title">dLLM 后训练的两条路线正在分化</div>
+  <p><strong>Masked diffusion 路线</strong>（LLaDA/MDLM/Dream）：已有成熟的后训练工具链（DARE 三阶段 GSM8K 87.9%），核心方法包括 SPG 三明治梯度、GDSD 自蒸馏、VRPO 方差约减。ELBO bias 问题有多重解决方案。</p>
+  <p><strong>Uniform state diffusion 路线</strong>（DiffusionGemma/Gemini Diffusion）：后训练工具几乎空白。但 Diffusion Duality 提供了一条独特路线——高斯-离散对偶使得连续空间精确 log-prob 可用，consistency distillation 可用。这是 masked diffusion 走不通的路。如果能实现"高斯空间 DPO → argmax 投影"，将是 uniform dLLM 后训练的重要突破。</p>
+  <p><strong>GDSD 可能是桥梁</strong>：GDSD 的 logit-space squared loss 不显式依赖 mask 结构（直接在 logit 空间操作），理论上最有可能迁移到 uniform diffusion。但尚未有实验验证。</p>
 </div>
 
 <!-- ==================== Section 9 ==================== -->
 <div class="page-nav"><a href="s07_speculative.html">&larr; DLM 投机解码：DFlash vs MTP 深度分析</a><a href="s09_commercial.html">商业落地现状与行业实践 &rarr;</a></div>
 <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
   <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
-  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM · d1 · DiSPO · MDPO · DiFFPO · DARE</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · DiffusionGemma · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM · d1 · DiSPO · MDPO · DiFFPO · DARE · VRPO · Diffusion Duality</p>
 </div>
 </div><!-- container end -->
 </body>
