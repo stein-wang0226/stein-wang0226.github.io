@@ -130,11 +130,11 @@ window.addEventListener('load', function() {
   <span class="tag arxiv">arXiv: 2506.10892 (Diffusion Duality, ICML 2025)</span>
   <div class="card-title">首个大厂开源 dLLM：为什么选 Uniform 而非 Masked？</div>
 
-  <h4>架构：Encoder-Denoiser 双模式</h4>
-  <p>在 Gemma 4 26B-A4B MoE 骨架上，将 Transformer 层改造为两个功能模式（共享权重和 KV-cache）：</p>
+  <h4>架构：Encoder-Decoder 双模式（one set of layers, used two ways）</h4>
+  <p>在 Gemma 4 26B-A4B MoE 骨架上，将同一套 Transformer 层改造为两个功能模式（共享权重和 KV-cache）：</p>
   <ul>
     <li><strong>Encoder 模式</strong>：causal attention，用于 prefill（prompt encoding）和 token commit</li>
-    <li><strong>Denoiser 模式</strong>：移除 causal mask，bidirectional attention，对 256-token 噪声 canvas 迭代去噪</li>
+    <li><strong>Decoder 模式</strong>：移除 causal mask，bidirectional attention，对 256-token 噪声 canvas 迭代去噪</li>
   </ul>
   <p>上下文窗口 256K tokens。量化后 FP8 ~26GB VRAM，Q4_K_M ~18GB。</p>
 
