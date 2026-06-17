@@ -101,14 +101,111 @@ window.addEventListener('load', function() {
   </tr>
 </table>
 
-<h3>9.2 Gemini Diffusion 的"失败"评估</h3>
+<h3>9.2 Gemini Diffusion → DiffusionGemma：从闭源实验到开源架构</h3>
 <div class="card orange">
-  <span class="tag org">Google DeepMind · 2025.05</span>
-  <div class="card-title">Gemini Diffusion：不是失败，而是"尚未追平"</div>
-  
-  <p>Gemini Diffusion 并非彻底失败，Google 定位为"experimental research model"。核心数据：GPQA Diamond 40.4% (vs Flash 56.5%)，HumanEval 89.6% (接近持平)，推理速度 1479 tok/s。无正式技术报告/论文，未公开模型架构。</p>
-  
-  <p>社区评估：验证了扩散 LM 可以扩展到大规模并达到实用速度，但在<strong>质量上（尤其是推理和知识密集型任务）尚未追平 AR 模型</strong>。核心限制：无法做 Chain-of-Thought 推理——扩散模型的非因果生成特性使得复杂推理链困难。这不是 "scaling failed"，而是 "scaling is possible, but quality gap remains"。</p>
+  <span class="tag org">Google DeepMind · 2025.05 (Gemini Diffusion) → 2026.06 (DiffusionGemma)</span>
+  <div class="card-title">Gemini Diffusion 的架构谜底：DiffusionGemma 26B</div>
+
+  <p>Gemini Diffusion（2025.05）发布时为"experimental research model"，<strong>无正式技术报告，未公开模型架构</strong>。一年后 Google 开源了 DiffusionGemma，揭示了整个技术栈：</p>
+
+  <table>
+    <tr><th>维度</th><th>Gemini Diffusion (闭源, 2025.05)</th><th>DiffusionGemma (开源, 2026.06)</th></tr>
+    <tr><td>骨干</td><td>未公开</td><td>Gemma 4 26B-A4B (MoE, 3.8B active)</td></tr>
+    <tr><td>扩散类型</td><td>未公开</td><td>Uniform State Diffusion（非 Masked）</td></tr>
+    <tr><td>注意力</td><td>未公开</td><td>Encoder(causal) + Denoiser(bidirectional) 双模式</td></tr>
+    <tr><td>生成块大小</td><td>未公开</td><td>256-token canvas, block-autoregressive</td></tr>
+    <tr><td>推理速度</td><td>1479 tok/s</td><td>1008 tok/s (H100), 1288 tok/s (H200)</td></tr>
+    <tr><td>GPQA Diamond</td><td>40.4%</td><td>73.2% (AR baseline 79.2%)</td></tr>
+    <tr><td>HumanEval</td><td>89.6%</td><td>—</td></tr>
+    <tr><td>协议</td><td>闭源 API</td><td>Apache 2.0 开源</td></tr>
+  </table>
+
+  <p>DiffusionGemma 相比 Gemini Diffusion 质量大幅提升（GPQA 40.4% → 73.2%），但仍落后 AR baseline。社区评价从"scaling is possible, but quality gap remains"演进为"<strong>uniform diffusion 在 26B 规模上可行，速度优势 4-6x，质量差距收窄至 ~6 个点</strong>"。</p>
+</div>
+
+<h3>9.2b DiffusionGemma 技术深潜：Uniform State Diffusion 的工业验证</h3>
+<div class="card green" style="border-left-width: 5px;">
+  <span class="tag org">Google DeepMind · 2026.06</span>
+  <span class="tag arxiv">arXiv: 2606.14620 (token commitment probe)</span>
+  <span class="tag arxiv">arXiv: 2506.10892 (Diffusion Duality, ICML 2025)</span>
+  <div class="card-title">首个大厂开源 dLLM：为什么选 Uniform 而非 Masked？</div>
+
+  <h4>架构：Encoder-Denoiser 双模式</h4>
+  <p>在 Gemma 4 26B-A4B MoE 骨架上，将 Transformer 层改造为两个功能模式（共享权重和 KV-cache）：</p>
+  <ul>
+    <li><strong>Encoder 模式</strong>：causal attention，用于 prefill（prompt encoding）和 token commit</li>
+    <li><strong>Denoiser 模式</strong>：移除 causal mask，bidirectional attention，对 256-token 噪声 canvas 迭代去噪</li>
+  </ul>
+  <p>上下文窗口 256K tokens。量化后 FP8 ~26GB VRAM，Q4_K_M ~18GB。</p>
+
+  <h4>理论基础：Diffusion Duality（ICML 2025, Sahoo et al.）</h4>
+  <p>DiffusionGemma 选择 uniform state diffusion 而非主流 masked diffusion 的关键理论支撑来自 MDLM 同一作者组的后续工作：</p>
+  <div class="formula-box">
+    <strong>Theorem 3.1</strong>: $\mathcal{L}_{\mathrm{ELBO}}^{\mathrm{uniform}} \geq \mathcal{L}_{\mathrm{ELBO}}^{\mathrm{Gaussian}}$<br>
+    （Uniform discrete diffusion 的 ELBO 比底层高斯扩散更 tight）
+  </div>
+  <p>核心推论：uniform discrete diffusion 可以从连续高斯扩散通过 argmax 映射自然推导，且在变分推断意义上<strong>比 continuous diffusion 更优</strong>。</p>
+
+  <h4>让 Uniform Diffusion 在 26B 规模 work 的关键优化</h4>
+  <table>
+    <tr><th>优化</th><th>机制</th><th>效果</th></tr>
+    <tr>
+      <td><strong>Curriculum Learning</strong></td>
+      <td>训练时用 tempered softmax 替代 hard argmax，降低梯度方差</td>
+      <td>训练速度 2x；与 masked gap &lt; 2 PPL</td>
+    </tr>
+    <tr>
+      <td><strong>Discrete Consistency Distillation</strong></td>
+      <td>在高斯空间算 deterministic path → 投影回离散空间</td>
+      <td>采样步数 1024→8（100x 加速）；<strong>masked 做不到</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Self-Conditioning</strong></td>
+      <td>每步将上一步 softmax 分布作为条件输入</td>
+      <td>避免振荡，加速收敛</td>
+    </tr>
+    <tr>
+      <td><strong>Entropy-Bounded Sampler</strong></td>
+      <td>$\sum H_i - \max H \leq \text{limit}$ 时才 commit</td>
+      <td>防止错误传播</td>
+    </tr>
+    <tr>
+      <td><strong>Adaptive Stopping</strong></td>
+      <td>稳定性(连续 N 步相同) + 置信度双重阈值</td>
+      <td>无需固定步数，简单文本 2-3 步收敛</td>
+    </tr>
+  </table>
+
+  <h4>Uniform vs Masked：不只是噪声策略的差异</h4>
+  <table>
+    <tr><th>维度</th><th>Masked Diffusion</th><th>Uniform State Diffusion</th></tr>
+    <tr><td>噪声</td><td>$[\mathrm{MASK}]$ token（二值）</td><td>均匀随机 token $\in \mathcal{V}$</td></tr>
+    <tr><td>Commit 后</td><td>Absorbing state（不可逆）</td><td><strong>任何步可修改（自纠错）</strong></td></tr>
+    <tr><td>Consistency Distillation</td><td>❌ 无连续流方程</td><td>✅ 高斯对偶提供确定性轨迹</td></tr>
+    <tr><td>训练难度</td><td>较低（二值噪声，方差小）</td><td>较高（$|\mathcal{V}|$ 空间，需 curriculum）</td></tr>
+    <tr><td>Pareto 最优</td><td>所有速度区间都不占优 (Sahoo 2026)</td><td>中高吞吐量区间占 Pareto 最优</td></tr>
+    <tr><td>代表</td><td>MDLM, LLaDA, Mercury 2</td><td>DiffusionGemma, Gemini Diffusion</td></tr>
+  </table>
+
+  <p><strong>核心洞察</strong>：Masked diffusion 之前效果更好是因为<strong>更容易优化</strong>（噪声空间二值化，梯度方差小），不是因为理论上更优。Diffusion Duality 解决了 uniform 的训练难题后，其独有优势——自纠错能力和 consistency distillation 兼容性——使其在工业规模上成为可行选择。</p>
+
+  <h4>Benchmark：速度-质量 trade-off 的具体数字</h4>
+  <table>
+    <tr><th>Benchmark</th><th>DiffusionGemma 26B</th><th>Gemma 4 26B-A4B (AR)</th><th>Gap</th></tr>
+    <tr><td>GPQA Diamond</td><td>73.2%</td><td>79.2%</td><td>-6.0</td></tr>
+    <tr><td>MMLU Pro</td><td>77.6%</td><td>~82%</td><td>-4~5</td></tr>
+    <tr><td>AIME 2026</td><td>69.1%</td><td>—</td><td>—</td></tr>
+    <tr><td>LiveCodeBench v6</td><td>69.1%</td><td>—</td><td>—</td></tr>
+    <tr><td>Codeforces ELO</td><td>1,429</td><td>—</td><td>—</td></tr>
+  </table>
+
+  <h4>Token Commitment 行为（arXiv 2606.14620）</h4>
+  <p>对 DiffusionGemma 内部行为的 probe 揭示了反直觉现象：</p>
+  <ul>
+    <li><strong>既非并行也非顺序</strong>：partial left-to-right commit bias，但大批量同时 commit，内部顺序 genuinely undefined</li>
+    <li>JSON 结构化输出的 commit 顺序 <strong>essentially arbitrary</strong></li>
+    <li>置信度追踪数学正确性，但<strong>不追踪事实性召回</strong></li>
+  </ul>
 </div>
 
 <h3>9.3 Mercury 2：首个商用 dLLM 推理模型</h3>
@@ -149,6 +246,7 @@ window.addEventListener('load', function() {
     <tr><th>系统</th><th>生成方式</th><th>吞吐量 (tok/s)</th><th>vs AR 基线</th></tr>
     <tr><td>GPT-4 级 (估计)</td><td>AR 串行</td><td>~80-120</td><td>1x</td></tr>
     <tr><td>Gemini Diffusion</td><td>纯扩散</td><td>1479</td><td>~12-18x</td></tr>
+    <tr><td>DiffusionGemma 26B</td><td>均匀扩散 (block-AR)</td><td>1008 (H100) / 1288 (H200)</td><td>~5-6x</td></tr>
     <tr><td>Seed Diffusion</td><td>离散扩散</td><td>2146</td><td>~18-27x</td></tr>
     <tr><td>Mercury 2</td><td>商用扩散</td><td>1196</td><td>~10-15x</td></tr>
     <tr><td>DFlash (Qwen3-8B)</td><td>扩散 draft + AR verify</td><td>—</td><td>4.9-6x</td></tr>
@@ -225,7 +323,7 @@ window.addEventListener('load', function() {
 <div class="page-nav"><a href="s08_elbo_rl.html">&larr; ELBO 问题与 RL 训练 (SPG / GDSD)</a><a href="s10_comparison.html">综合对比表与未来方向 &rarr;</a></div>
 <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
   <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
-  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · DiffusionGemma · Gemini Diffusion · Diffusion Duality · SPG · GDSD · FS-DFM</p>
 </div>
 </div><!-- container end -->
 </body>

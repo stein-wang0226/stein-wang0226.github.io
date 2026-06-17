@@ -273,6 +273,7 @@ window.addEventListener('load', function() {
     <li>Uniform-state 模型在 [200,400] 和 [600+] tok/s 吞吐量区间占主导地位</li>
     <li><strong>结论："Masked diffusion isn't the future paradigm."</strong> 领域应评估速度-质量权衡，而非仅看困惑度</li>
   </ul>
+  <p><strong>26B 规模验证（DiffusionGemma, 2026.06）</strong>：Google 开源的 DiffusionGemma 26B-A4B（Gemma 4 MoE 骨架）首次在工业规模上验证了 uniform state diffusion 的可行性——H100 上 1008 tok/s（AR baseline 5x），GPQA Diamond 73.2%（落后 AR 约 6 点，但远超 Gemini Diffusion 闭源版的 40.4%）。Diffusion Duality 理论（ICML 2025, Sahoo et al.）提供的 curriculum learning + consistency distillation 是 uniform 路线能扩展到 26B 的关键技术。</p>
 </div>
 
 <h3>6.7 Scaling Laws 总结表</h3>
@@ -287,6 +288,7 @@ window.addEventListener('load', function() {
   <tr><td>Masked 与 Uniform 的似然差距随规模缩小</td><td>NeurIPS 2025</td><td>25M - 10B</td></tr>
   <tr><td>dLLM 在 8B 匹敌 AR 多基准</td><td>LLaDA (ICLR 2025)</td><td>8B</td></tr>
   <tr><td>dLLM 在 1.7B 超越 AR 的 GSM8K</td><td>ICML 2026 (Sahoo)</td><td>1.7B</td></tr>
+  <tr><td>Uniform state diffusion 在 26B MoE 工业规模可行，5x 加速，质量 gap ~6pt</td><td>DiffusionGemma (Google, 2026)</td><td>26B (3.8B active)</td></tr>
   <tr><td>AR→dLLM 适配优于从零训练</td><td>DiffuLLaMA (2024)</td><td>127M - 7B</td></tr>
   <tr><td>离散 FM 128x 采样加速（8 步达 1024 步基线）</td><td>FS-DFM (Apple, 2025)</td><td>0.17B - 1.7B</td></tr>
   <tr><td>连续 DLM 与 AR 计算差距仅 ~20x</td><td>Plaid (2025)</td><td>—</td></tr>

@@ -402,13 +402,14 @@ window.addEventListener('load', function() {
 <!-- ==================== Section 3 ==================== -->
 <h3>2.9 离散扩散演进总结</h3>
 <table>
-  <tr><th>维度</th><th>D3PM (2021)</th><th>MDLM (2024)</th><th>LLaDA (2025)</th><th>Dream (2025)</th></tr>
+  <tr><th>维度</th><th>D3PM (2021)</th><th>MDLM (2024)</th><th>LLaDA (2025)</th><th>Dream (2025)</th><th>DiffusionGemma (2026)</th></tr>
   <tr>
     <td><strong>Token 处理</strong></td>
     <td>分类转移矩阵 $Q_t$</td>
     <td>吸收态 masking</td>
     <td>吸收态 masking</td>
     <td>吸收态 masking</td>
+    <td><strong>Uniform state diffusion</strong>（随机 token 替换）</td>
   </tr>
   <tr>
     <td><strong>训练目标</strong></td>
@@ -416,6 +417,7 @@ window.addEventListener('load', function() {
     <td>加权 CE (连续时间 ELBO)</td>
     <td>Masked CE (似然上界)</td>
     <td>加权 CE + CART</td>
+    <td>扩散 ELBO + curriculum (tempered softmax)</td>
   </tr>
   <tr>
     <td><strong>噪声调度</strong></td>
@@ -423,6 +425,7 @@ window.addEventListener('load', function() {
     <td>标量 $\alpha_t$ (或向量)</td>
     <td>标量 $t$</td>
     <td>逐 token 自适应 (CART)</td>
+    <td>自适应 (entropy-bounded + adaptive stopping)</td>
   </tr>
   <tr>
     <td><strong>规模</strong></td>
@@ -430,6 +433,7 @@ window.addEventListener('load', function() {
     <td>GPT-2 级 (~110M)</td>
     <td>8B 参数</td>
     <td>7B 参数</td>
+    <td><strong>26B MoE (3.8B active)</strong></td>
   </tr>
   <tr>
     <td><strong>初始化</strong></td>
@@ -437,6 +441,7 @@ window.addEventListener('load', function() {
     <td>从零训练</td>
     <td>从零训练</td>
     <td>AR checkpoint</td>
+    <td><strong>AR 适配</strong> (Gemma 4 → Encoder-Denoiser)</td>
   </tr>
   <tr>
     <td><strong>核心创新</strong></td>
@@ -444,6 +449,7 @@ window.addEventListener('load', function() {
     <td>连续时间简化</td>
     <td>规模化验证</td>
     <td>AR 初始化 + 自适应噪声</td>
+    <td><strong>Diffusion Duality + 自纠错 + consistency distillation</strong></td>
   </tr>
 </table>
 
@@ -452,10 +458,101 @@ window.addEventListener('load', function() {
   <p><strong>D3PM (2021)</strong> 建立了离散扩散的数学基础（转移矩阵 + VLB），但训练复杂且规模有限。<strong>MDLM (2024)</strong> 将吸收态路线彻底简化为加权 MLM，证明了连续时间框架的优雅性。<strong>LLaDA (2025)</strong> 用 8B 参数证明了 mask 扩散可以 scale 到 LLM 级别并匹敌 AR。<strong>Dream (2025)</strong> 发现从 AR checkpoint 初始化 + 自适应噪声可以大幅节省训练成本。<strong>SEDD (2024)</strong> 则开辟了独立于 mask prediction 的第四范式。</p>
 </div>
 
+<h3>2.10 Diffusion Duality：Uniform ELBO 为什么比 Gaussian 更 tight？ ⭐</h3>
+<div class="card pink">
+  <span class="tag arxiv">arXiv: 2506.10892</span>
+  <span class="tag org">ICML 2025 · Sahoo et al. (MDLM 同一作者组)</span>
+  <div class="card-title">Theorem 3.1 推导：离散均匀扩散的变分下界优于连续高斯扩散</div>
+
+  <p>D3PM 在 2021 年就定义了 uniform 转移矩阵，但实验发现"吸收态在文本上一致优于 Uniform"（§2.1 实验结论）。这导致整个领域涌向了 masked 路线。直到 2025 年的 Diffusion Duality 论文才揭示了一个反直觉的理论结果：<strong>uniform 的 ELBO 在理论上比底层高斯扩散更 tight</strong>。之前效果差是因为优化难度，不是理论上限。</p>
+
+  <h4>Step 1：高斯前向过程（连续空间）</h4>
+  <p>将 one-hot 编码的数据 $\mathbf{x} \in \{0,1\}^K$（$K = |\mathcal{V}|$）注入高斯噪声：</p>
+  <div class="formula-box">
+    $\mathbf{w}_t = \tilde{\alpha}_t \mathbf{x} + \sqrt{1 - \tilde{\alpha}_t^2}\;\boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$
+  </div>
+  <p>其中 $\tilde{\alpha}_t$ 从 1（干净）衰减到 0（纯噪声）。直觉：在 $K$ 维空间中，原始 one-hot 向量的某个维度有值为 1 的信号，随着噪声增大，这个信号逐渐被淹没，直到所有维度无法区分。</p>
+
+  <h4>Step 2：Argmax 映射——从连续到离散的桥梁</h4>
+  <p>定义 argmax 算子，将连续向量映射为离散 token：</p>
+  <div class="formula-box">
+    $\mathbf{z}_t = \operatorname*{arg\,max}(\mathbf{w}_t) = \operatorname*{arg\,max}_{\mathbf{z} \in \mathcal{V}}\; \mathbf{z}^\top \mathbf{w}_t$
+  </div>
+  <p>即取 $\mathbf{w}_t$ 中最大分量对应的维度作为离散 token。这是一个<strong>前推测度（pushforward measure）</strong>：将高斯密度映射为分类分布。</p>
+  <p>直觉类比：想象你在一个嘈杂的考试中辨认答案——高斯向量 $\mathbf{w}_t$ 是你的"模糊印象"（每个选项都有一个分数），argmax 是你最终"选的那个答案"。随着噪声增大，你的印象越来越模糊，选错的概率越来越大。</p>
+
+  <h4>Step 3：离散前向 marginal——自然导出 Uniform Diffusion</h4>
+  <p>对高斯 marginal 施加 argmax 后，得到的离散 marginal 恰好是 uniform 扩散的形式：</p>
+  <div class="formula-box">
+    $\mathbf{z}_t \sim \text{Cat}\!\left(\mathcal{T}(\tilde{\alpha}_t)\,\mathbf{x} + \big(1 - \mathcal{T}(\tilde{\alpha}_t)\big)\frac{\mathbf{1}}{K}\right)$
+  </div>
+  <p>即以概率 $\mathcal{T}(\tilde{\alpha}_t)$ 保留原始 token，以概率 $1 - \mathcal{T}(\tilde{\alpha}_t)$ 均匀替换为任意 token。这正是 <strong>uniform state diffusion 的前向过程</strong>！</p>
+  <p>其中插值算子 $\mathcal{T}$ 连接连续噪声 schedule 和离散转移概率：</p>
+  <div class="formula-box">
+    $\mathcal{T}(\tilde{\alpha}_t) = \frac{K}{K-1}\left[\int_{-\infty}^{\infty} \phi\!\left(z - \frac{\tilde{\alpha}_t}{\sqrt{1-\tilde{\alpha}_t^2}}\right)\Phi^{K-1}(z)\,\mathrm{d}z - \frac{1}{K}\right]$
+  </div>
+  <p>其中 $\phi$ 和 $\Phi$ 分别是标准正态分布的 PDF 和 CDF。直觉：这个积分计算的是"原始信号维度在加了噪声后仍然是最大值"的概率——当 $\tilde{\alpha}_t \to 1$ 时 $\mathcal{T} \to 1$（几乎总是对的），当 $\tilde{\alpha}_t \to 0$ 时 $\mathcal{T} \to 0$（退化到随机猜测 $1/K$）。</p>
+
+  <h4>Step 4：两个 ELBO 的形式化定义</h4>
+  <p><strong>高斯 NELBO</strong>（越小越好）：在连续空间学习反向过程 $\bar{p}_\theta$：</p>
+  <div class="formula-box">
+    $\text{NELBO}_{\text{Gauss}} = -\mathbb{E}_{t,\,\tilde{q}_t(\mathbf{w}_t|\mathbf{x})}\;\nu'(t)\;\|\mathbf{x} - \mathbf{x}_\theta(\mathbf{w}_t, t)\|_2^2$
+  </div>
+  <p><strong>离散 NELBO</strong>：在离散空间学习反向过程 $p_\theta$：</p>
+  <div class="formula-box">
+    $\text{NELBO}_{\text{disc}} = \mathbb{E}_{t,\,q_t(\mathbf{z}_t|\mathbf{x})}\; f(\mathbf{z}_t,\, \mathbf{x}_\theta(\mathbf{z}_t, t),\, \alpha_t;\, \mathbf{x})$
+  </div>
+  <p>关键约束：离散反向过程是高斯反向过程的前推——$p_\theta = [\text{argmax}]_\star\, \bar{p}_\theta$。即离散模型不需要独立建模完整的高斯分布，只需要判断"哪个维度最大"。</p>
+
+  <h4>Step 5：核心不等式 ⭐</h4>
+  <div class="formula-box" style="border-left: 4px solid var(--pink, #e91e8a); padding-left: 16px;">
+    $\log p_\theta(\mathbf{x}) \;\geq\; \text{ELBO}_{\text{disc}} \;\geq\; \text{ELBO}_{\text{Gauss}}$
+  </div>
+  <p>即：<strong>离散均匀扩散的 ELBO 比底层高斯扩散的 ELBO 更 tight</strong>（更接近真实的对数似然）。</p>
+
+  <h4>Step 6：推导——为什么 ELBO<sub>disc</sub> ≥ ELBO<sub>Gauss</sub></h4>
+  <p>ELBO 可以分解为对数似然减去后验 KL 散度：</p>
+  <div class="formula-box">
+    $\text{ELBO} = \log p_\theta(\mathbf{x}) - \text{KL}(q(\cdot|\mathbf{x}) \;\|\; p_\theta(\cdot|\mathbf{x}))$
+  </div>
+  <p>因此 ELBO 的 tightness 取决于后验 KL 散度的大小——<strong>KL 越小，ELBO 越 tight</strong>。</p>
+  <p>对于高斯空间，反向过程 $\bar{p}_\theta$ 需要建模完整的高斯分布（$K$ 维连续空间中的所有信息）。对于离散空间，反向过程 $p_\theta = [\text{argmax}]_\star \bar{p}_\theta$ 只需要建模"哪个维度最大"（一个离散选择）。</p>
+  <p>由于 argmax 是确定性映射，离散反向过程的信息量<strong>不超过</strong>高斯反向过程。由<strong>数据处理不等式（Data Processing Inequality）</strong>：</p>
+  <div class="formula-box">
+    $\text{KL}(q_t \;\|\; p_\theta^{\text{disc}}) \;\leq\; \text{KL}(\tilde{q}_t \;\|\; \bar{p}_\theta^{\text{Gauss}})$
+  </div>
+  <p>直觉：连续空间需要"精确还原每个分量的值"，而离散空间只需要"判断谁是老大"——后者是更宽松的任务，所以 KL 更小，ELBO 更 tight。</p>
+  <p>等价地，我们可以将离散 ELBO 写成：</p>
+  <div class="formula-box">
+    $\text{ELBO}_{\text{disc}} = \text{ELBO}_{\text{Gauss}} + \underbrace{\Delta_{\text{argmax}}}_{\geq 0}$
+  </div>
+  <p>其中 $\Delta_{\text{argmax}}$ 是 argmax 离散化带来的额外信息增益——因为离散模型只关心"谁最大"，不需要建模完整噪声分布，所以多出来的这部分 bound 永远非负。</p>
+
+  <h4>Step 7：直觉总结</h4>
+  <table>
+    <tr><th>维度</th><th>高斯空间</th><th>离散空间（uniform）</th></tr>
+    <tr><td>反向过程的任务</td><td>重建完整的高斯分布 $\mathcal{N}(\mu, \sigma^2 I)$</td><td>只判断哪个维度最大（argmax）</td></tr>
+    <tr><td>信息需求</td><td>需要精确建模所有 $K$ 个维度的值</td><td>只需排序信息（相对大小）</td></tr>
+    <tr><td>后验 KL</td><td>较大（约束更强）</td><td>较小（约束更弱）</td></tr>
+    <tr><td>ELBO tightness</td><td>较松</td><td><strong>较 tight</strong></td></tr>
+  </table>
+
+  <p>类比：高斯空间的模型像一个"全科医生"——需要诊断所有指标是否正常；离散空间的模型像一个"分诊护士"——只需要判断哪个指标最异常。后者是更简单的任务，所以学习更充分，bound 更 tight。</p>
+
+  <h4>Step 8：为什么 Masked Diffusion 没有这个对偶性质？</h4>
+  <p>Masked diffusion 用 $[\text{MASK}]$ token 替换——这是一个吸收态（absorbing state），前向过程的终点是一个"全 mask"的退化状态，不是均匀分布。这个结构<strong>不存在对应的高斯对偶</strong>：</p>
+  <ul>
+    <li>没有连续空间的噪声过程能自然产生 $[\text{MASK}]$ 吸收态</li>
+    <li>因此无法应用 argmax 映射建立高斯-离散桥梁</li>
+    <li>因此无法使用 <strong>Discrete Consistency Distillation</strong>（需要在高斯空间计算确定性轨迹再投影到离散空间）</li>
+  </ul>
+  <p>这意味着 uniform state diffusion 不仅有更 tight 的 ELBO，还独享 consistency distillation 带来的 <strong>100x 推理加速</strong>（采样步数 1024→8）。这是 DiffusionGemma 选择 uniform 而非 masked 的核心理论动机。</p>
+</div>
+
 <div class="page-nav"><a href="s01_overview.html">&larr; 扩散语言模型全景概述与四大流派</a><a href="s03_block.html">块扩散与半自回归 (Block / Semi-AR) &rarr;</a></div>
 <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
   <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
-  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · DiffusionGemma · Diffusion Duality · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM</p>
 </div>
 </div><!-- container end -->
 </body>
