@@ -296,10 +296,10 @@ window.addEventListener('load', function() {
 <div class="card pink">
   <span class="tag arxiv">arXiv: 2506.10892 (Diffusion Duality)</span>
   <span class="tag org">ICML 2025 · Sahoo et al.</span>
-  <div class="card-title">DiffusionGemma 的后训练：一条 Masked 走不通的路</div>
+  <div class="card-title">DiffusionGemma 的后训练：框架可迁移 + 高斯对偶独享路线</div>
 
-  <h4>现有方法全部面向 Masked Diffusion</h4>
-  <p>上面所有方法（SPG/GDSD/d1/DiSPO/MDPO/DiFFPO/DARE/VRPO）都是为 <strong>masked/absorbing-state diffusion</strong> 设计的。它们依赖 mask 位置的独立性、absorbing state 的单调收敛性、或逐步去掩码的结构。DiffusionGemma 使用的是 <strong>uniform state diffusion</strong>，这些性质都不成立。</p>
+  <h4>现有方法的 Masked vs Uniform 适用性</h4>
+  <p>上面 9 个方法中，<strong>只有 VRPO 是真正 mask-specific 的</strong>（依赖 mask 位置独立性做方差约减）。其他方法的<strong>框架层面</strong>（策略梯度、自蒸馏、步级分解、on-policy 轨迹、流水线结构）都是通用的——需要做的只是将 mask-specific 的数学公式（ELBO 表达式、transition matrix、bound 推导）替换为 uniform-specific 的版本。其中 <strong>GDSD 的 logit-space squared loss 完全不依赖噪声类型</strong>，理论上可直接用于 uniform diffusion。</p>
 
   <h4>Uniform Diffusion 后训练的独特机会：高斯-离散对偶</h4>
   <p>Diffusion Duality 理论（§2.10）证明了 uniform discrete diffusion 可以从连续高斯扩散通过 argmax 映射推导。这为后训练提供了一条<strong>masked diffusion 走不通的独特路线</strong>：</p>
@@ -357,22 +357,22 @@ window.addEventListener('load', function() {
 <h3>8.12 dLLM RL 技术全景对比</h3>
 <table>
   <tr><th>方法</th><th>核心思路</th><th>绕过 ELBO?</th><th>适用 Uniform?</th><th>GSM8K</th><th>来源</th></tr>
-  <tr><td><strong>d1 (dGRPO)</strong></td><td>ELBO 近似 GRPO + 推理链 SFT</td><td>❌ 使用 ELBO</td><td>❌ 依赖 mask 结构</td><td>84.3%</td><td>NeurIPS 2025</td></tr>
-  <tr><td><strong>SPG</strong></td><td>上下界三明治策略梯度</td><td>⚠️ 减轻 bias</td><td>⚠️ 需重新推导上下界</td><td>86.1%</td><td>Meta (FAIR)</td></tr>
-  <tr><td><strong>GDSD</strong></td><td>去噪器自蒸馏，logit 空间</td><td>✅ 完全绕过</td><td>⚠️ logit 操作可迁移，需验证</td><td>—</td><td>2025.05</td></tr>
-  <tr><td><strong>DiSPO</strong></td><td>步级 DPO 偏好对齐</td><td>⚠️ 逐步近似</td><td>❌ 依赖 absorbing state</td><td>—</td><td>ICLR 2025 Oral</td></tr>
-  <tr><td><strong>MDPO</strong></td><td>On-policy 轨迹修复分布偏移</td><td>❌ 使用 ELBO</td><td>⚠️ 原理可迁移</td><td>—</td><td>2025.08</td></tr>
-  <tr><td><strong>DiFFPO</strong></td><td>统一策略梯度 + 逐步重要性采样</td><td>⚠️ 逐步分解</td><td>❌ 依赖 mask 分解</td><td>87.4%</td><td>NeurIPS 2025</td></tr>
-  <tr><td><strong>DARE</strong></td><td>SFT→DPO→RL 完整流水线 + 奖励塑形</td><td>⚠️ 混合策略</td><td>❌ 依赖 mask 步级分解</td><td>87.9%</td><td>2025.04</td></tr>
-  <tr><td><strong>VRPO</strong></td><td>方差约减 (MC budget + antithetic)</td><td>❌ 使用 ELBO</td><td>❌ 依赖 mask 位置独立性</td><td>—</td><td>LLaDA 1.5</td></tr>
+  <tr><td><strong>d1 (dGRPO)</strong></td><td>ELBO 近似 GRPO + 推理链 SFT</td><td>❌ 使用 ELBO</td><td>⚠️ 需替换为 uniform ELBO 公式</td><td>84.3%</td><td>NeurIPS 2025</td></tr>
+  <tr><td><strong>SPG</strong></td><td>上下界三明治策略梯度</td><td>⚠️ 减轻 bias</td><td>⚠️ 需重新推导 uniform 上下界</td><td>86.1%</td><td>Meta (FAIR)</td></tr>
+  <tr style="background: rgba(0,200,100,0.08);"><td><strong>GDSD</strong></td><td>去噪器自蒸馏，logit 空间</td><td>✅ 完全绕过</td><td><strong>✅ logit 操作与噪声类型无关</strong></td><td>—</td><td>2025.05</td></tr>
+  <tr><td><strong>DiSPO</strong></td><td>步级 DPO 偏好对齐</td><td>⚠️ 逐步近似</td><td>⚠️ 需替换 per-step transition prob</td><td>—</td><td>ICLR 2025 Oral</td></tr>
+  <tr><td><strong>MDPO</strong></td><td>On-policy 轨迹修复分布偏移</td><td>❌ 使用 ELBO</td><td>⚠️ 框架通用，uniform 偏移可能更严重</td><td>—</td><td>2025.08</td></tr>
+  <tr><td><strong>DiFFPO</strong></td><td>统一策略梯度 + 逐步重要性采样</td><td>⚠️ 逐步分解</td><td>⚠️ 依赖马尔可夫性（两者共有）</td><td>87.4%</td><td>NeurIPS 2025</td></tr>
+  <tr><td><strong>DARE</strong></td><td>SFT→DPO→RL 完整流水线 + 奖励塑形</td><td>⚠️ 混合策略</td><td>⚠️ 流水线通用，奖励塑形需调整</td><td>87.9%</td><td>2025.04</td></tr>
+  <tr><td><strong>VRPO</strong></td><td>方差约减 (MC budget + antithetic)</td><td>❌ 使用 ELBO</td><td><strong>❌ 依赖 mask 位置独立性</strong></td><td>—</td><td>LLaDA 1.5</td></tr>
   <tr style="background: rgba(233,30,138,0.08);"><td><strong>高斯对偶 DPO</strong></td><td>高斯空间 DPO → argmax 投影</td><td>✅ 连续空间精确 log-prob</td><td><strong>✅ uniform 独享</strong></td><td>—</td><td>理论提案 (§2.10)</td></tr>
 </table>
 
 <div class="insight">
-  <div class="insight-title">dLLM 后训练的两条路线正在分化</div>
-  <p><strong>Masked diffusion 路线</strong>（LLaDA/MDLM/Dream）：已有成熟的后训练工具链（DARE 三阶段 GSM8K 87.9%），核心方法包括 SPG 三明治梯度、GDSD 自蒸馏、VRPO 方差约减。ELBO bias 问题有多重解决方案。</p>
-  <p><strong>Uniform state diffusion 路线</strong>（DiffusionGemma/Gemini Diffusion）：后训练工具几乎空白。但 Diffusion Duality 提供了一条独特路线——高斯-离散对偶使得连续空间精确 log-prob 可用，consistency distillation 可用。这是 masked diffusion 走不通的路。如果能实现"高斯空间 DPO → argmax 投影"，将是 uniform dLLM 后训练的重要突破。</p>
-  <p><strong>GDSD 可能是桥梁</strong>：GDSD 的 logit-space squared loss 不显式依赖 mask 结构（直接在 logit 空间操作），理论上最有可能迁移到 uniform diffusion。但尚未有实验验证。</p>
+  <div class="insight-title">dLLM 后训练：Masked vs Uniform 的真实差距没那么大</div>
+  <p>上述 9 个方法中，<strong>只有 VRPO 是真正 mask-specific 的</strong>（依赖 mask 位置独立性做方差约减）。其他方法的<strong>框架层面</strong>（策略梯度、自蒸馏、步级分解、on-policy 轨迹、流水线结构）都是通用的——它们需要的只是将 mask-specific 的数学公式（ELBO、transition matrix、bound）替换为 uniform-specific 的版本。</p>
+  <p><strong>最即战力的迁移候选</strong>：(1) <strong>GDSD</strong>——logit-space squared loss 完全不关心噪声类型，理论上可直接用于 uniform diffusion；(2) <strong>DARE 流水线</strong>——三阶段结构通用，只需调整每步的具体公式；(3) <strong>高斯对偶 DPO</strong>——uniform 独享的全新路线。</p>
+  <p><strong>Uniform diffusion 后训练的真正开放问题</strong>不是"现有方法能不能用"（大部分能适配），而是：(1) uniform ELBO 的梯度方差比 masked 更大（噪声空间 $|\mathcal{V}|$ vs 二值），需要新的方差约减技术；(2) 训推分布偏移在 uniform 下可能更严重（噪声是不确定的随机 token vs 确定的 [MASK]）。</p>
 </div>
 
 <!-- ==================== Section 9 ==================== -->
