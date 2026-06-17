@@ -147,6 +147,19 @@ window.addEventListener('load', function() {
   <p>关键优势：不需要对 $p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 进行显式归一化（避免了指数级求和），直接在 logit 空间操作。</p>
   
   <p>理论贡献：(1) 将 dLLM 的 RL 归约为去噪器自蒸馏，利用优势函数引导的自教师 (2) 证明现有 ELBO 方法是特定散度选择的特例，诊断其病理问题 (3) 提出无偏的 GDSD 目标函数。在 Dream-7B 和 LLaDA-8B 上验证，测试精度提升<strong>最高达 +19.6%</strong>。</p>
+
+  <h4>GDSD 对 Uniform Diffusion 的逐层适用性分析</h4>
+  <p>GDSD 的核心数学操作可以分为四个层次，其对 uniform diffusion 的适用性逐层不同：</p>
+  <table>
+    <tr><th>层次</th><th>组件</th><th>Mask 依赖？</th><th>Uniform 适用性</th></tr>
+    <tr style="background: rgba(0,200,100,0.08);"><td><strong>①最优策略推导</strong></td><td>$\pi^*(\mathbf{x}_0) \propto \pi_{\mathrm{old}}(\mathbf{x}_0)^{1-\beta} \cdot \pi_{\mathrm{ref}}(\mathbf{x}_0)^{\beta} \cdot \exp(\psi \cdot A(\mathbf{x}_0))$</td><td>❌ 分布级推导</td><td><strong>✅ 直接可用</strong>——不假设吸收态</td></tr>
+    <tr style="background: rgba(0,200,100,0.08);"><td><strong>②Squared-Logit Loss</strong></td><td>logit 空间的 $\| \text{logit}_\theta - \text{logit}_{\text{target}} \|^2$</td><td>❌ logit 操作</td><td><strong>✅ 直接可用</strong>——与噪声类型无关</td></tr>
+    <tr style="background: rgba(0,200,100,0.08);"><td><strong>③TLC (Token-level Logit Centralization)</strong></td><td>逐 token 中心化消除 scale ambiguity</td><td>❌ 纯 logit 操作</td><td><strong>✅ 直接可用</strong></td></tr>
+    <tr><td><strong>④前向加噪采样</strong> $q(\mathbf{x}_t | \mathbf{x}_0)$</td><td>从训练数据构造噪声中间态</td><td>✅ 使用 mask 替换</td><td>⚠️ 需替换为 uniform 前向过程（随机 token 替换）</td></tr>
+    <tr><td><strong>⑤Rollout + Advantage 估计</strong></td><td>迭代 re-masking 生成 rollout 轨迹</td><td>✅ 依赖 re-mask</td><td>⚠️ 需设计 uniform rollout 策略（如重新加噪→去噪）</td></tr>
+    <tr><td><strong>⑥Teacher Denoiser</strong></td><td>教师模型生成蒸馏目标</td><td>✅ 需匹配噪声类型</td><td>⚠️ 教师须在同类型 uniform 噪声上训练</td></tr>
+  </table>
+  <p><strong>结论</strong>：GDSD 的<strong>数学核心</strong>（①②③层）完全噪声无关——最优策略推导是分布级的、squared-logit loss 不关心 $\mathbf{x}_t$ 的构造方式。但<strong>工程基础设施</strong>（④⑤⑥层）需要适配 uniform 前向过程。原作者评价这种适配为 "straightforward for forward process but requires more thought for rollout decoder"。</p>
 </div>
 
 <div class="insight">
@@ -354,7 +367,88 @@ window.addEventListener('load', function() {
   </table>
 </div>
 
-<h3>8.12 dLLM RL 技术全景对比</h3>
+<h3>8.12 Uniform ELBO 梯度方差：量化分析</h3>
+<div class="card red">
+  <span class="tag arxiv">arXiv: 2506.10892 (Diffusion Duality)</span>
+  <span class="tag org">ICML 2025 · Sahoo et al.</span>
+  <div class="card-title">Uniform vs Masked 梯度方差的真实差距</div>
+
+  <h4>方差的根源：噪声空间的基数</h4>
+  <p>ELBO 梯度的方差直接取决于前向噪声过程的"选择空间"。Masked diffusion 在每个位置只有<strong>二值选择</strong>（保留 or 替换为 [MASK]），而 uniform diffusion 的选择空间是<strong>整个词汇表</strong> $|\mathcal{V}|$（保留 or 替换为 $|\mathcal{V}|-1$ 个随机 token 之一）：</p>
+  <div class="formula-box">
+    $\text{Var}_{\mathrm{uniform}}[\nabla_\theta \mathcal{L}] \sim |\mathcal{V}| \cdot \text{Var}_{\mathrm{masked}}[\nabla_\theta \mathcal{L}]$
+  </div>
+  <p>对于典型 LLM 词汇表（$|\mathcal{V}| \approx 32\text{K}$），直觉上方差可能大几个数量级。但由于 Rao-Blackwellization（对可解析维度的边际化）和实际 token 分布的非均匀性，<strong>实际差距约 10 倍</strong>。</p>
+
+  <h4>计算成本的量化对比</h4>
+  <table>
+    <tr><th>指标</th><th>Masked Diffusion</th><th>Uniform Diffusion</th><th>AR 基线</th></tr>
+    <tr><td>单次梯度估计方差</td><td>1× (baseline)</td><td>~10× higher</td><td>—</td></tr>
+    <tr><td>等效 compute multiplier</td><td>~14-16×</td><td>~23×</td><td>1×</td></tr>
+    <tr><td>Rao-Blackwellization 收益</td><td>~1.7 PPL ↓</td><td>~1.7 PPL ↓</td><td>N/A</td></tr>
+  </table>
+  <p>即：要达到相同的梯度估计精度，uniform diffusion 需要约 <strong>23 倍于 AR</strong> 的计算量，而 masked diffusion 需要约 14-16 倍。uniform 比 masked 多 ~1.5× 的计算成本。</p>
+
+  <h4>方差约减手段</h4>
+  <p><strong>Curriculum Learning (Tempered Softmax)</strong>：Diffusion Duality 提出的关键技巧。不用纯均匀噪声，而是用温度 $\tau$ 控制的 tempered softmax 分布：</p>
+  <div class="formula-box">
+    $q_\tau(x_t | x_0) \propto \exp\!\left(\frac{\log p_{\mathrm{LM}}(x_t | x_0)}{\tau}\right), \quad \tau: 0.001 \to 1.0 \text{ (annealing)}$
+  </div>
+  <p>当 $\tau = 0.001$ 时，噪声分布集中在 $x_0$ 附近（接近确定性），梯度方差降低<strong>一个数量级</strong>，训练收敛速度提升 <strong>2×</strong>。但 curriculum 引入了 bias（早期训练的噪声分布偏离目标分布），需要渐进退火到 $\tau = 1.0$ 来消除。</p>
+  <p>即使使用了 curriculum + Rao-Blackwellization，uniform 的计算成本仍然比 masked 高 <strong>~1.6×</strong>。这是 uniform diffusion 后训练需要面对的核心工程挑战。</p>
+
+  <h4>对后训练的影响</h4>
+  <p>RL 训练（如 GRPO）需要在 rollout 阶段<strong>多次</strong>估计 ELBO 梯度来计算 advantage——方差问题被进一步放大。这意味着 uniform dLLM 的 RL 训练可能需要：</p>
+  <ul>
+    <li>更大的 group size（GRPO 中的 $G$）来平均掉方差</li>
+    <li>更保守的 clip ratio 和 learning rate</li>
+    <li>Curriculum warm-up：先用低 $\tau$ 训练若干步，再渐进退火</li>
+    <li>或直接绕过 ELBO（GDSD / Best-of-N 路线）</li>
+  </ul>
+</div>
+
+<h3>8.13 UDM-GRPO：Uniform 离散扩散上的首个 RL 工作</h3>
+<div class="card orange">
+  <span class="tag arxiv">arXiv: 2604.18518</span>
+  <span class="tag org">ICML 2026 · 图像生成</span>
+  <div class="card-title">UDM-GRPO: Uniform Discrete Diffusion Meets GRPO (Text-to-Image)</div>
+
+  <h4>为什么重要？</h4>
+  <p>UDM-GRPO 是<strong>目前已知唯一在 uniform discrete diffusion 上做 RL 的已发表工作</strong>——但应用领域是<strong>图像生成</strong>（text-to-image），基础模型是 URSA。它证明了 uniform diffusion + RL 在原理上是可行的，同时揭示了 uniform 特有的技术挑战。</p>
+
+  <h4>核心发现：Uniform 特有的分布偏移</h4>
+  <p>标准 GRPO 在 RL rollout 时使用<strong>反向过程</strong>（从噪声到数据的去噪路径）生成轨迹。但对 uniform diffusion，反向过程中间态的分布与训练时前向过程的中间态分布<strong>严重不匹配</strong>：</p>
+  <div class="formula-box" style="border-left: 4px solid var(--orange, #ff9800); padding-left: 16px;">
+    <strong>Distribution Shift</strong>：训练时 $q(\mathbf{x}_t | \mathbf{x}_0)$ 采样的是"真实数据 + 均匀噪声"的混合，<br>
+    但 RL rollout 时 $\pi_\theta$ 生成的 $\mathbf{x}_t$ 是"模型幻觉 + 噪声"的混合——后者是 OOD 的
+  </div>
+  <p>这个问题在 masked diffusion 中不严重，因为 [MASK] 是一个<strong>确定的特殊 token</strong>，模型在训练时见过大量 [MASK]，对其有稳定的行为。但 uniform diffusion 的噪声是<strong>随机的真实 token</strong>，模型生成的中间态可能包含语义上不合理的 token 组合。</p>
+
+  <h4>UDM-GRPO 的解决方案：前向过程轨迹重建</h4>
+  <p>不使用反向过程生成的中间态来计算 advantage，而是：</p>
+  <ol>
+    <li>先用当前策略 $\pi_\theta$ 反向生成完整输出 $\mathbf{x}_0$</li>
+    <li>对 $\mathbf{x}_0$ 施加<strong>前向过程</strong> $q(\mathbf{x}_t | \mathbf{x}_0)$ 重建中间态轨迹</li>
+    <li>用前向过程重建的轨迹（in-distribution）来计算 advantage 和策略梯度</li>
+  </ol>
+  <p>这确保了 RL 训练中使用的中间态分布与训练时的分布一致，消除了 OOD 问题。</p>
+
+  <h4>对 DiffusionGemma 后训练的启示</h4>
+  <table>
+    <tr><th>UDM-GRPO 的经验</th><th>DiffusionGemma 迁移挑战</th></tr>
+    <tr><td>图像 token 空间有限（VQ-VAE codebook）</td><td>语言 token 空间 $|\mathcal{V}| \sim 32\text{K}$，方差更大</td></tr>
+    <tr><td>前向轨迹重建消除 OOD</td><td>语言中同样适用，但重建成本更高</td></tr>
+    <tr><td>Reward = CLIP score（连续值）</td><td>语言 reward 通常是离散的（正确/错误），信号更稀疏</td></tr>
+    <tr><td>无需 ELBO（图像用 VQ-VAE decoder）</td><td>语言 RL 仍需处理 ELBO 或使用 GDSD 绕过</td></tr>
+  </table>
+</div>
+
+<div class="insight">
+  <div class="insight-title">Uniform Diffusion 后训练：研究空白与机遇</div>
+  <p>截至目前，<strong>已发表的工作中没有任何一篇在 uniform-state diffusion language model 上做 DPO/RLHF/RL 后训练</strong>。Scaling Beyond Masked Diffusion (ICML 2026) 只在 uniform 模型上做了 SFT。UDM-GRPO 是唯一在 uniform 离散扩散上做 RL 的工作，但限于图像生成。D3PO（连续扩散的偏好优化）明确将 uniform noise 列为 future work。这意味着：<strong>DiffusionGemma 的后训练是一个完全未被探索的方向</strong>——既是高风险（无先例可参考），也是高回报（先发优势明确）。</p>
+</div>
+
+<h3>8.14 dLLM RL 技术全景对比</h3>
 <table>
   <tr><th>方法</th><th>核心思路</th><th>绕过 ELBO?</th><th>适用 Uniform?</th><th>GSM8K</th><th>来源</th></tr>
   <tr><td><strong>d1 (dGRPO)</strong></td><td>ELBO 近似 GRPO + 推理链 SFT</td><td>❌ 使用 ELBO</td><td>⚠️ 需替换为 uniform ELBO 公式</td><td>84.3%</td><td>NeurIPS 2025</td></tr>
@@ -365,21 +459,22 @@ window.addEventListener('load', function() {
   <tr><td><strong>DiFFPO</strong></td><td>统一策略梯度 + 逐步重要性采样</td><td>⚠️ 逐步分解</td><td>⚠️ 依赖马尔可夫性（两者共有）</td><td>87.4%</td><td>NeurIPS 2025</td></tr>
   <tr><td><strong>DARE</strong></td><td>SFT→DPO→RL 完整流水线 + 奖励塑形</td><td>⚠️ 混合策略</td><td>⚠️ 流水线通用，奖励塑形需调整</td><td>87.9%</td><td>2025.04</td></tr>
   <tr><td><strong>VRPO</strong></td><td>方差约减 (MC budget + antithetic)</td><td>❌ 使用 ELBO</td><td><strong>❌ 依赖 mask 位置独立性</strong></td><td>—</td><td>LLaDA 1.5</td></tr>
+  <tr style="background: rgba(255,152,0,0.08);"><td><strong>UDM-GRPO</strong></td><td>前向轨迹重建消除 uniform OOD</td><td>N/A (图像)</td><td><strong>✅ 唯一 uniform RL 实证</strong>（图像）</td><td>—</td><td>ICML 2026</td></tr>
   <tr style="background: rgba(233,30,138,0.08);"><td><strong>高斯对偶 DPO</strong></td><td>高斯空间 DPO → argmax 投影</td><td>✅ 连续空间精确 log-prob</td><td><strong>✅ uniform 独享</strong></td><td>—</td><td>理论提案 (§2.10)</td></tr>
 </table>
 
 <div class="insight">
-  <div class="insight-title">dLLM 后训练：Masked vs Uniform 的真实差距没那么大</div>
-  <p>上述 9 个方法中，<strong>只有 VRPO 是真正 mask-specific 的</strong>（依赖 mask 位置独立性做方差约减）。其他方法的<strong>框架层面</strong>（策略梯度、自蒸馏、步级分解、on-policy 轨迹、流水线结构）都是通用的——它们需要的只是将 mask-specific 的数学公式（ELBO、transition matrix、bound）替换为 uniform-specific 的版本。</p>
-  <p><strong>最即战力的迁移候选</strong>：(1) <strong>GDSD</strong>——logit-space squared loss 完全不关心噪声类型，理论上可直接用于 uniform diffusion；(2) <strong>DARE 流水线</strong>——三阶段结构通用，只需调整每步的具体公式；(3) <strong>高斯对偶 DPO</strong>——uniform 独享的全新路线。</p>
-  <p><strong>Uniform diffusion 后训练的真正开放问题</strong>不是"现有方法能不能用"（大部分能适配），而是：(1) uniform ELBO 的梯度方差比 masked 更大（噪声空间 $|\mathcal{V}|$ vs 二值），需要新的方差约减技术；(2) 训推分布偏移在 uniform 下可能更严重（噪声是不确定的随机 token vs 确定的 [MASK]）。</p>
+  <div class="insight-title">dLLM 后训练：Masked vs Uniform 的真实差距没那么大——但方差是硬伤</div>
+  <p>上述 10 个方法中，<strong>只有 VRPO 是真正 mask-specific 的</strong>。其他方法的框架层面都是通用的——需要的只是将 mask-specific 的数学公式替换为 uniform-specific 的版本。UDM-GRPO 已经在图像域验证了 uniform + RL 的可行性。</p>
+  <p><strong>Uniform diffusion 后训练的真正瓶颈不是方法缺失，而是梯度方差</strong>：uniform 的梯度方差约为 masked 的 10 倍（compute multiplier 23× vs 14-16×），RL rollout 进一步放大了这个问题。Diffusion Duality 的 curriculum learning 可以将方差降低一个数量级，但引入了 bias。</p>
+  <p><strong>最即战力的路线</strong>：(1) <strong>GDSD 自蒸馏</strong>——核心数学（最优策略推导 + squared-logit loss + TLC）完全噪声无关，只需适配前向过程采样和 rollout decoder；(2) <strong>Best-of-N + Reward-weighted SFT</strong>——完全绕过 ELBO，利用 DiffusionGemma 的速度优势；(3) <strong>高斯对偶 DPO</strong>——uniform 独享的全新路线，有理论支撑但工程验证空白。</p>
 </div>
 
 <!-- ==================== Section 9 ==================== -->
 <div class="page-nav"><a href="s07_speculative.html">&larr; DLM 投机解码：DFlash vs MTP 深度分析</a><a href="s09_commercial.html">商业落地现状与行业实践 &rarr;</a></div>
 <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85em;">
   <p>本文档基于讨论笔记 + 50+ 篇论文深度调研整理 · 2026.06</p>
-  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · DiffusionGemma · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM · d1 · DiSPO · MDPO · DiFFPO · DARE · VRPO · Diffusion Duality</p>
+  <p>涵盖：D3PM · MDLM · LLaDA · Dream · SEDD · DiffuLLaMA · DiffusionGemma · COLA · CADD · ELF · LangFlow · TextLDM · Plaid · DFlash · BD3LM · SDAR · Fast-dLLM · Nemotron · S2D2 · SimSD · Trajectory-Level SD · Mercury 2 · SPG · GDSD · FS-DFM · d1 · DiSPO · MDPO · DiFFPO · DARE · VRPO · UDM-GRPO · Diffusion Duality</p>
 </div>
 </div><!-- container end -->
 </body>
