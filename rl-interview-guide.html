@@ -733,7 +733,7 @@
     <a href="#rlhf">6. RLHF 流程</a>
     <a href="#rlvr">7. RLVR 范式</a>
     <a href="#dpo">8. DPO 推导</a>
-    <a href="#dpo-variants">8b. On/Off-policy DPO + 变体</a>
+    <a href="#opd">8b. OPD + OPSD（在线策略蒸馏）</a>
     <a href="#reward">9. Reward 设计</a>
     <a href="#comparison">10. 算法对比</a>
     <a href="#classic-rl">11. 经典 RL 算法</a>
@@ -768,7 +768,7 @@
         <li><a href="#rlhf">RLHF 完整流程</a></li>
         <li><a href="#rlvr">RLVR 范式详解</a></li>
         <li><a href="#dpo">DPO 公式推导</a></li>
-        <li><a href="#dpo-variants">On-policy DPO vs Off-policy DPO + DPO 变体全景</a></li>
+        <li><a href="#opd">OPD（On-Policy Distillation）+ OPSD（在线策略蒸馏）</a></li>
         <li><a href="#reward">Reward 设计方法论</a></li>
         <li><a href="#comparison">算法对比总结</a></li>
         <li><a href="#classic-rl">经典 RL 算法详解（DQN / DDPG / TD3 / SAC）</a></li>
@@ -2567,263 +2567,434 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 </section>
 
-<!-- ==================== Section 8b: On-policy vs Off-policy DPO + DPO 变体 ==================== -->
-<section id="dpo-variants">
-    <h2>8b. On-policy DPO vs Off-policy DPO + DPO 变体全景</h2>
+<!-- ==================== Section 8b: OPD (On-Policy Distillation) ==================== -->
+<section id="opd">
+    <h2>8b. OPD（On-Policy Distillation，在线策略蒸馏）+ OPSD</h2>
 
-    <p>标准 DPO 使用<strong>静态离线偏好数据集</strong>，这带来一个关键问题：训练数据来自旧策略，而优化目标是当前策略——存在<strong>分布偏移</strong>。本节系统梳理 On-policy DPO、Off-policy DPO 的区别，以及 SimPO / IPO / KTO / ORPO / CPO 等主要变体。</p>
+    <p>OPD 是 2025–2026 年最火的 LLM 后训练范式之一，已被 <strong>Qwen3、DeepSeek-V4、GLM-5、MiMo-V2-Flash、Nemotron-Cascade 2</strong> 等主流模型纳入生产流水线。核心思想：<strong>让学生模型自己生成回答（on-policy rollout），再由教师模型在这些学生轨迹上提供密集的 token 级监督信号</strong>，从而解决传统蒸馏（Off-policy KD）的 Exposure Bias 问题。</p>
 
-    <!-- ========= On-policy vs Off-policy DPO ========= -->
-    <h3>核心区别：数据从哪里来？</h3>
+    <!-- ========= OPD 核心定义 ========= -->
+    <h3>一句话定义</h3>
+    <div class="box-insight">
+        <strong>OPD（On-Policy Distillation）：</strong>学生模型 $\pi_\theta$ 先用当前策略生成回答 $y \sim \pi_\theta(\cdot|x)$，教师模型 $q$ 在学生生成的每个 prefix $c_t = (x, y_{<t})$ 上提供监督信号（logprob / top-k 分布 / full-vocab logits），学生据此更新参数。
+    </div>
+
+    <!-- ========= OPD vs Off-policy KD ========= -->
+    <h3>OPD 与普通蒸馏（Off-policy KD）的根本区别</h3>
 
     <div class="formula-box">
-        <div class="label">Off-policy DPO（标准 DPO）</div>
-        $$L_{\text{off-DPO}} = -\mathbb{E}_{(x,y_w,y_l)\sim\mathcal{D}_{\text{static}}}\left[\log\sigma\left(\beta\log\frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta\log\frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)\right]$$
+        <div class="label">Off-policy KD（传统蒸馏 / SFT）</div>
+        $$\mathcal{L}_{\text{off-KD}} = \sum_t D\big(q(\cdot|x, y^{\text{data}}_{<t}) \;\|\; \pi_\theta(\cdot|x, y^{\text{data}}_{<t})\big)$$
         <div class="formula-annotation">
-            <div class="item"><span class="symbol">$\mathcal{D}_{\text{static}}$</span>固定的离线偏好数据集，通常由 SFT 模型或外部模型生成</div>
-            <div class="item"><span class="symbol">$\pi_{\text{ref}}$</span>参考模型，一般就是 SFT 模型，训练中参数冻结</div>
-            <div class="item"><span class="symbol">特点</span>数据与当前策略 $\pi_\theta$ 无关——典型的 Off-policy 行为</div>
+            <div class="item"><span class="symbol">$y^{\text{data}}$</span>训练 prefix 来自数据集或 teacher 预生成——学生训练时从未见过自己的错误</div>
+            <div class="item"><span class="symbol">Exposure Bias</span>推理时学生自己生成 prefix，一旦走偏，后续 prefix 进入训练未见过区域，错误连锁放大</div>
         </div>
     </div>
 
     <div class="formula-box highlight">
-        <div class="label">On-policy DPO（迭代 DPO）</div>
-        <p><strong>每一轮迭代：</strong></p>
-        <ol style="padding-left:20px; margin:8px 0;">
-            <li>用当前策略 $\pi_\theta$ 对 prompt $x$ 采样多条回复 $\{y_1, y_2, \ldots, y_k\}$</li>
-            <li>用 Reward Model（或 LLM-as-Judge）对回复打分，构造偏好对 $(y_w, y_l)$</li>
-            <li>用这些 on-policy 偏好对执行 DPO 更新</li>
-        </ol>
-        $$L_{\text{on-DPO}} = -\mathbb{E}_{\substack{x\sim\mathcal{D}\\ y_w,y_l\sim\pi_\theta(\cdot|x)}}\left[\log\sigma\left(\beta\log\frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta\log\frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)\right]$$
+        <div class="label">OPD（On-Policy Distillation）</div>
+        $$y \sim \pi_\theta(\cdot|x), \quad c_t = (x, y_{<t})$$
+        $$\mathcal{L}_{\text{OPD}} = \mathbb{E}_{y \sim \pi_\theta} \left[ \sum_{t=1}^{|y|} D\big(q(\cdot|c_t) \;\|\; \pi_\theta(\cdot|c_t)\big) \right]$$
         <div class="formula-annotation">
-            <div class="item"><span class="symbol">$y_w,y_l\sim\pi_\theta$</span>偏好对由<strong>当前策略</strong>生成——这就是 On-policy 的本质</div>
-            <div class="item"><span class="symbol">RM 打分</span>需要额外的 Reward Model 或 LLM-Judge 来排序，相当于把 RLHF 和 DPO 的优点结合</div>
-            <div class="item"><span class="symbol">$\pi_{\text{ref}}$</span>仍用初始 SFT 模型（或每轮更新），不同实现有差异</div>
+            <div class="item"><span class="symbol">$y \sim \pi_\theta$</span>prefix 由学生自己生成——训练时就在处理"自己的错误"，消除 exposure bias</div>
+            <div class="item"><span class="symbol">$D(\cdot\|\cdot)$</span>可以是 forward KL、reverse KL 或 JSD，不同选择影响训练行为</div>
+            <div class="item"><span class="symbol">直觉</span>学生犯自己的错，老师针对这些具体错误给密集纠正信号——比 off-policy 更精准</div>
         </div>
     </div>
 
-    <h3>对比表：On-policy DPO vs Off-policy DPO</h3>
+    <!-- ========= 三个核心维度 ========= -->
+    <h3>OPD 的三个核心维度</h3>
     <table>
-        <tr><th>维度</th><th>Off-policy DPO（标准）</th><th>On-policy DPO（迭代）</th></tr>
+        <tr><th>维度</th><th>选项</th><th>关键问题</th></tr>
         <tr>
-            <td><strong>数据来源</strong></td>
-            <td>静态离线偏好数据（人工标注或 SFT 模型生成）</td>
-            <td>每轮用当前策略 $\pi_\theta$ 采样，RM 打分构造偏好对</td>
+            <td><strong>Prefix 来源</strong></td>
+            <td>dataset / teacher / student</td>
+            <td>off-policy vs on-policy（OPD 用 student rollout）</td>
         </tr>
         <tr>
-            <td><strong>分布偏移</strong></td>
-            <td>❌ 严重：训练数据分布 ≠ 当前策略分布，越训越偏</td>
-            <td>✅ 无：数据始终来自当前策略，分布一致</td>
+            <td><strong>Teacher 信号粒度</strong></td>
+            <td>sampled-token / top-k / full-vocab</td>
+            <td>每个 prefix 上看一个 token、一小撮候选，还是整个词表分布</td>
         </tr>
         <tr>
-            <td><strong>是否需要 RM</strong></td>
-            <td>不需要（DPO 的核心卖点）</td>
-            <td>需要 RM 或 LLM-Judge 来打分排序</td>
-        </tr>
-        <tr>
-            <td><strong>计算开销</strong></td>
-            <td>较低：一次训练，无需反复采样</td>
-            <td>较高：每轮需要 rollout 采样 + RM 推理</td>
-        </tr>
-        <tr>
-            <td><strong>训练稳定性</strong></td>
-            <td>较稳定，但学完后可能与实际分布脱节</td>
-            <td>更优：持续自我纠正，性能上限更高</td>
-        </tr>
-        <tr>
-            <td><strong>性能上限</strong></td>
-            <td>受限于离线数据质量</td>
-            <td>更高：SIMPLEMIX 等实验显示 On-policy DPO 平均比 Off-policy 高 6%+ on AlpacaEval 2</td>
-        </tr>
-        <tr>
-            <td><strong>代表工作</strong></td>
-            <td>原始 DPO（Rafailov et al., 2023）</td>
-            <td>On-Policy DPO (Xu et al., 2024), SIMPLEMIX, Self-Play DPO</td>
+            <td><strong>优化方式</strong></td>
+            <td>direct loss / policy gradient advantage</td>
+            <td>直接反传 KL 损失，还是把 KL 当 reward/advantage 走 PG 路线</td>
         </tr>
     </table>
 
-    <div class="box-insight">
-        <strong>面试高频追问：DPO 到底是 On-policy 还是 Off-policy？</strong><br/>
-        标准 DPO 本质上是 <strong>Off-policy</strong>：数据由外部（离线）收集，策略 $\pi_\theta$ 不参与数据生成。这带来分布偏移问题，是 DPO 的根本局限之一。On-policy DPO 是对这一局限的修复：让策略自己生成数据，再用 DPO 损失优化，形成"自我改进"循环。
+    <!-- ========= 信号粒度详解 ========= -->
+    <h3>三种 Teacher 信号粒度对比</h3>
+
+    <h4>Sampled-Token OPD（最低成本）</h4>
+    <div class="formula-box">
+        $$A_t = \log q(y_t|c_t) - \log \pi_\theta(y_t|c_t), \quad y_t \sim \pi_\theta(\cdot|c_t)$$
+        $$\nabla J \approx \sum_{t=1}^{T} A_t \cdot \nabla_\theta \log \pi_\theta(y_t|c_t)$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$A_t$</span>teacher-student logprob gap：teacher 更支持这个 token → $A_t > 0$，提高其概率</div>
+            <div class="item"><span class="symbol">只需</span>teacher 对 sampled token 的 logprob，无需 full logits（API 友好）</div>
+            <div class="item"><span class="symbol">缺点</span>单 token 信号高方差，大多数 token reward 为负，易被填充词/标点带偏</div>
+        </div>
     </div>
 
+    <h4>Top-K OPD（稳定且高效）</h4>
+    <div class="formula-box">
+        <div class="label">在 teacher top-K 支持集上做局部分布匹配</div>
+        $$S_t = \text{TopK}_q(c_t), \quad \hat{q}(v|c_t) = \frac{q(v|c_t)}{\sum_{u \in S_t} q(u|c_t)}, \quad \hat{\pi}(v|c_t) = \frac{\pi_\theta(v|c_t)}{\sum_{u \in S_t} \pi_\theta(u|c_t)}$$
+        $$\mathcal{L}_{\text{topK}}(c_t) = \sum_{v \in S_t} \hat{\pi}(v|c_t) \log \frac{\hat{\pi}(v|c_t)}{\hat{q}(v|c_t)}$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">核心改进</span>不只看 sampled token，在 teacher 最看好的 K 个候选上做分布匹配，信号更稳定</div>
+            <div class="item"><span class="symbol">重归一化</span>必须对支持集内概率做归一化，否则会崩溃</div>
+            <div class="item"><span class="symbol">verl / SWIFT</span>大规模 OPD 训练主要采用此形式</div>
+        </div>
+    </div>
+
+    <h4>Full-Vocab OPD（信息最完整）</h4>
+    <div class="formula-box">
+        $$\mathcal{L}_{\text{full}}(c_t) = \sum_{v \in \mathcal{V}} \pi_\theta(v|c_t) \log \frac{\pi_\theta(v|c_t)}{q(v|c_t)} \quad \text{(reverse KL)}$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">信息最完整</span>每个 prefix 比较整个词表分布，理论最优</div>
+            <div class="item"><span class="symbol">代价最大</span>需要 teacher 的 full logits，显存和通信成本高</div>
+            <div class="item"><span class="symbol">DeepSeek V4</span>采用多教师 + full-vocab reverse KL logit distillation</div>
+        </div>
+    </div>
+
+    <h4>三种粒度对比表</h4>
+    <table>
+        <tr><th>形式</th><th>Teacher 返回</th><th>每 prefix 信息量</th><th>成本</th><th>稳定性</th><th>代表工作</th></tr>
+        <tr>
+            <td><strong>Sampled-Token</strong></td>
+            <td>sampled token logprob</td>
+            <td>低</td>
+            <td>低（API 友好）</td>
+            <td>较差</td>
+            <td>verl k1/k2/k3</td>
+        </tr>
+        <tr>
+            <td><strong>Top-K</strong></td>
+            <td>top-k ids + logprobs</td>
+            <td>中</td>
+            <td>中</td>
+            <td>较好</td>
+            <td>verl-recipe/gkd, Revisiting OPD</td>
+        </tr>
+        <tr>
+            <td><strong>Full-Vocab</strong></td>
+            <td>full logits</td>
+            <td>高</td>
+            <td>高</td>
+            <td>最好</td>
+            <td>DeepSeek V4, SWIFT (default)</td>
+        </tr>
+    </table>
+
+    <!-- ========= KL 方向 ========= -->
+    <h3>KL 散度方向：Forward KL vs Reverse KL vs JSD</h3>
+
+    <div class="formula-box">
+        <div class="label">Forward KL（Mode-Covering）</div>
+        $$D_{KL}(q \| \pi_\theta) = \sum_v q(v) \log \frac{q(v)}{\pi_\theta(v)}$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">行为</span>teacher 认为有概率的 token，student 不能给太低 → 覆盖 teacher 多种模式，保多样性</div>
+            <div class="item"><span class="symbol">风险</span>student 容量不足时学得"平均"，生成质量下降</div>
+        </div>
+    </div>
+
+    <div class="formula-box highlight">
+        <div class="label">Reverse KL（Mode-Seeking）— OPD 最常用</div>
+        $$D_{KL}(\pi_\theta \| q) = \sum_v \pi_\theta(v) \log \frac{\pi_\theta(v)}{q(v)}$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">行为</span>student 把概率放到 teacher 不支持的地方会被重罚 → 收缩到 teacher 高概率模式</div>
+            <div class="item"><span class="symbol">适合</span>推理、代码、工具调用——需要走一条可靠路径的任务</div>
+            <div class="item"><span class="symbol">风险</span>可能导致多样性坍塌（diversity collapse）</div>
+        </div>
+    </div>
+
+    <div class="formula-box">
+        <div class="label">广义 JSD（两者之间插值）</div>
+        $$D_{JSD(\beta)}(q, \pi_\theta) = \beta \, D_{KL}(q \| m) + (1-\beta) \, D_{KL}(\pi_\theta \| m), \quad m = \beta q + (1-\beta) \pi_\theta$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\beta = 0$</span>退化为 forward KL</div>
+            <div class="item"><span class="symbol">$\beta = 1$</span>退化为 reverse KL</div>
+            <div class="item"><span class="symbol">$\beta = 0.5$</span>对称 JSD，GKD 论文推荐与 RL 结合时用 $\beta = 0.9$</div>
+        </div>
+    </div>
+
+    <!-- ========= 里程碑论文 ========= -->
+    <h3>OPD 里程碑论文</h3>
+    <table>
+        <tr><th>论文</th><th>年份</th><th>核心贡献</th></tr>
+        <tr>
+            <td><strong>MiniLLM</strong></td>
+            <td>2023</td>
+            <td>首次提出 LLM 的 reverse-KL on-policy 蒸馏，命名了 OPD 方向；需大量稳定化技巧</td>
+        </tr>
+        <tr>
+            <td><strong>GKD（Google DeepMind）</strong></td>
+            <td>ICLR 2024</td>
+            <td>统一框架：on/off/mixed-policy + forward/reverse/JSD 任意组合；实验证明 on-policy 效果最好</td>
+        </tr>
+        <tr>
+            <td><strong>DistiLLM / DistiLLM-2</strong></td>
+            <td>ICML 2024</td>
+            <td>Skew-KL divergence + 自适应 off-policy 利用，OPD 目标设计的重要基础</td>
+        </tr>
+        <tr>
+            <td><strong>Revisiting OPD</strong></td>
+            <td>2026</td>
+            <td>系统分析 sampled-token OPD 三类失败模式，提出 top-K local support matching 修复</td>
+        </tr>
+        <tr>
+            <td><strong>Rethinking OPD</strong></td>
+            <td>2026</td>
+            <td>发现 OPD 成功的两个关键条件：① thinking-pattern consistency；② teacher 要有新知识而非只是更大</td>
+        </tr>
+        <tr>
+            <td><strong>ExOPD</strong></td>
+            <td>2026</td>
+            <td>把 OPD 建模为 dense KL-constrained RL，通过 reward scaling 实现超越 teacher</td>
+        </tr>
+        <tr>
+            <td><strong>DeepSeek V4</strong></td>
+            <td>2025–2026</td>
+            <td>多教师 full-vocab reverse KL logit distillation，工业级 OPD 落地标杆</td>
+        </tr>
+    </table>
+
+    <!-- ========= OPD 失败模式 ========= -->
+    <h3>OPD 的三类失败模式（Revisiting OPD，2026）</h3>
     <div class="box-warning">
-        <strong>On-policy DPO 的陷阱：</strong><br/>
-        ① <strong>Reward Hacking</strong>：用 RM 打分构造偏好对，RM 本身的偏差会被放大；<br/>
-        ② <strong>参考模型漂移</strong>：如果 $\pi_{\text{ref}}$ 不随 $\pi_\theta$ 更新，KL 约束变得不准确；<br/>
-        ③ <strong>计算成本</strong>：每轮 rollout 开销与 PPO 相当，削弱了 DPO 简单高效的核心卖点。
+        <strong>失败模式 1：单 token 信号高度失衡</strong><br/>
+        sampled-token reward $\log q(y_t|c_t) - \log \pi_\theta(y_t|c_t)$ 大多数 token 为负，训练过度依赖少数正 reward token，易被填充词、标点带偏。
+    </div>
+    <div class="box-warning">
+        <strong>失败模式 2：Teacher 在 Student OOD prefix 上不可靠</strong><br/>
+        当 student 已进入重复、自我重置、错误推理轨迹，teacher 对局部 next-token 的概率未必代表整条轨迹质量。长序列越往后，teacher-student logprob gap 方差越大。
+    </div>
+    <div class="box-warning">
+        <strong>失败模式 3：Tokenizer / Special Token Mismatch</strong><br/>
+        跨模型 OPD 时，同一语义被切成不同 token。sampled-token 比较会把 tokenizer 差异误判成语义差异。
     </div>
 
-    <div class="box-interview">
-        <strong>面试标准答案：</strong><br/>
-        "标准 DPO 是 Off-policy 算法——使用静态离线偏好数据训练，策略不参与数据生成。优点是简单、无需 RM；缺点是存在分布偏移，性能上限受数据质量限制。On-policy DPO 通过让当前策略自己采样、RM 打分构造偏好对，解决了分布偏移问题，性能更强，但代价是需要额外 RM 且计算更贵。目前前沿实践（如 Zephyr、On-Policy DPO 论文）表明 On-policy 版本显著优于 Off-policy。"
-    </div>
-
-    <!-- ========= DPO 变体全景 ========= -->
-    <h3>DPO 变体全景图</h3>
-    <p>DPO 发表后涌现了大量变体，按<strong>改进维度</strong>分类如下：</p>
-
-    <!-- SimPO -->
-    <h4>SimPO（Simple Preference Optimization）— 去掉 Reference Model</h4>
-    <div class="formula-box">
-        <div class="label">SimPO 损失函数</div>
-        $$L_{\text{SimPO}} = -\mathbb{E}_{(x,y_w,y_l)}\left[\log\sigma\left(\frac{\beta}{|y_w|}\log\pi_\theta(y_w|x) - \frac{\beta}{|y_l|}\log\pi_\theta(y_l|x) - \gamma\right)\right]$$
-        <div class="formula-annotation">
-            <div class="item"><span class="symbol">$\frac{1}{|y|}\log\pi_\theta(y|x)$</span>序列长度归一化的平均对数概率——消除 DPO 中"长回复天然高概率"的偏差</div>
-            <div class="item"><span class="symbol">$\gamma$</span>目标奖励间隔（target reward margin），强制好回答的隐式奖励至少比坏回答高 $\gamma$</div>
-            <div class="item"><span class="symbol">无 $\pi_{\text{ref}}$</span>不需要参考模型——显存占用减少一半，训练更快</div>
-        </div>
+    <!-- ========= OPD 成功条件 ========= -->
+    <h3>OPD 成功的两个关键条件（Rethinking OPD，2026）</h3>
+    <div class="box-insight">
+        <strong>条件 1：Thinking-Pattern Consistency（思维模式一致性）</strong><br/>
+        关键指标是 top-k token overlap ratio：$\text{Overlap}(c_t) = \frac{|\text{TopK}_S(c_t) \cap \text{TopK}_T(c_t)|}{K}$<br/>
+        成功 OPD：overlap 从约 72% 升至 91%+，overlap token 承载 97–99% 概率质量。<br/>
+        失败 OPD：overlap 上不去，entropy mismatch 长期存在。
     </div>
     <div class="box-insight">
-        <strong>SimPO 的两个关键改进：</strong><br/>
-        ① <strong>长度归一化</strong>：DPO 的隐式奖励是序列总 log-prob，长序列天然数值更大，导致模型偏好生成冗长回复。SimPO 除以序列长度，消除这一偏差；<br/>
-        ② <strong>去掉 Reference Model</strong>：DPO 需要同时加载 $\pi_\theta$ 和 $\pi_{\text{ref}}$，SimPO 只需要 $\pi_\theta$，显存减半。<br/>
-        <strong>效果：</strong>在 AlpacaEval 2 上超过 DPO 最高 6.4 分，是当前最强的无 RM 偏好优化方法之一。
+        <strong>条件 2：Teacher 要有新知识，而不只是更大</strong><br/>
+        如果 teacher 只是同 pipeline 的更大模型，未必带来有效新能力。真正有效的 teacher 通常经过额外 post-training / RL，具备 student 没学过的新策略。
     </div>
 
-    <!-- IPO -->
-    <h4>IPO（Identity Preference Optimization）— 修复 DPO 的理论缺陷</h4>
-    <div class="formula-box">
-        <div class="label">IPO 损失函数</div>
-        $$L_{\text{IPO}} = \mathbb{E}_{(x,y_w,y_l)}\left[\left(\log\frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \log\frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} - \frac{1}{2\tau}\right)^2\right]$$
+    <h4>OPD 实践 Recipe</h4>
+    <table>
+        <tr><th>技巧</th><th>说明</th></tr>
+        <tr>
+            <td><strong>Off-policy Cold Start</strong></td>
+            <td>先用 teacher 轨迹做 SFT，让 student 靠近 teacher 的思考模板，再进入 OPD，提升初始 overlap ratio</td>
+        </tr>
+        <tr>
+            <td><strong>Teacher-Aligned Prompt Selection</strong></td>
+            <td>prompt 格式要对齐 teacher 训练格式；混入 OOD prompt 保持泛化</td>
+        </tr>
+        <tr>
+            <td><strong>长序列截断</strong></td>
+            <td>过长 response 导致 teacher 信号从后缀劣化，最优区间约 3K–7K tokens</td>
+        </tr>
+        <tr>
+            <td><strong>Special-Token Masking</strong></td>
+            <td>跨 tokenizer OPD 时 mask 特殊 token，避免 tokenizer 差异污染语义信号</td>
+        </tr>
+    </table>
+
+    <!-- ========= OPSD ========= -->
+    <h3>OPSD（On-Policy Self-Distillation）— 不需要外部 Teacher</h3>
+
+    <p>OPD 的核心限制是需要一个外部 teacher 模型（通常更大或经过额外 RL 训练）。<strong>OPSD（On-Policy Self-Distillation，ICML 2026）</strong>提出：<strong>同一个模型既当学生又当老师</strong>，通过"特权信息"（privileged information）让 teacher 角色获得更强监督能力。</p>
+
+    <div class="formula-box highlight">
+        <div class="label">OPSD 核心机制</div>
+        <p><strong>同一个参数，两种角色：</strong></p>
+        <ul style="padding-left:20px; margin:8px 0;">
+            <li><strong>Student</strong> $p_S(\cdot|x)$：只看问题 $x$，模拟推理条件</li>
+            <li><strong>Teacher</strong> $p_T(\cdot|x, y^*)$：额外接收正确答案 $y^*$（特权信息）</li>
+        </ul>
+        $$\mathcal{L}_{\text{OPSD}} = \mathbb{E}_{(x,y^*)\sim\mathcal{S}} \left[ \mathbb{E}_{\hat{y}\sim p_S(\cdot|x)} \left[ \frac{1}{|\hat{y}|} \sum_{n=1}^{|\hat{y}|} D\big(p_T(\cdot|x,y^*,\hat{y}_{<n}) \;\|\; p_S(\cdot|x,\hat{y}_{<n})\big) \right] \right]$$
         <div class="formula-annotation">
-            <div class="item"><span class="symbol">$(\cdot - \frac{1}{2\tau})^2$</span>用回归损失替代对数似然，目标是让概率比差值接近 $\frac{1}{2\tau}$</div>
-            <div class="item"><span class="symbol">$\tau$</span>温度参数，控制偏好强度。$\tau$ 小 → 更强的区分</div>
-            <div class="item"><span class="symbol">核心改进</span>DPO 的 sigmoid 损失在数据有噪声时容易过拟合，IPO 的 MSE 损失更鲁棒</div>
+            <div class="item"><span class="symbol">$\hat{y} \sim p_S$</span>学生自己生成回答（on-policy）</div>
+            <div class="item"><span class="symbol">$p_T(\cdot|x,y^*,\hat{y}_{<n})$</span>teacher 看到正确答案后，在每个 prefix 上给出"理想下一步"分布</div>
+            <div class="item"><span class="symbol">核心直觉</span>模型看到正确答案后"恍然大悟"，把这个顿悟信号传递给自己"没看到答案"的版本</div>
+            <div class="item"><span class="symbol">梯度只流经 student logits</span>teacher 作为固定监督目标，防止参数同步漂移</div>
         </div>
     </div>
+
+    <h4>OPSD 的 Policy-Gradient 视角：Dense Token-Level Reward</h4>
+    <div class="formula-box">
+        <div class="label">每个 token 的隐式奖励</div>
+        $$r_n(x, \hat{y}) \triangleq \log p_T(\hat{y}_n | x, y^*, \hat{y}_{<n}) - \log p_S(\hat{y}_n | x, \hat{y}_{<n})$$
+        $$\nabla_\theta \mathcal{L} = -\mathbb{E} \left[ \frac{1}{|\hat{y}|} \sum_{n=1}^{|\hat{y}|} r_n \cdot \nabla_\theta \log p_S(\hat{y}_n | x, \hat{y}_{<n}) \right]$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$r_n$</span>特权 teacher 比 student 更支持这个 token → 正 reward，反之负 reward</div>
+            <div class="item"><span class="symbol">vs GRPO</span>GRPO 是 sequence-level 二值奖励（全对/全错），OPSD 是每个 token 都有密集奖励信号</div>
+            <div class="item"><span class="symbol">vs STaR</span>STaR 丢弃错误推理，OPSD 即使最终答案错也能从每个 token 学到东西</div>
+        </div>
+    </div>
+
+    <h4>OPSD 关键技术：Per-Token Pointwise KL Clipping</h4>
     <div class="box-insight">
-        <strong>IPO 解决了什么？</strong>DPO 假设偏好数据是确定性的（$y_w$ 一定比 $y_l$ 好），但真实人类偏好有随机性。IPO 的理论分析表明 DPO 在偏好概率接近 0 或 1 时梯度爆炸，IPO 用 MSE 损失避免了这一问题，在噪声数据上更稳定。
+        <strong>问题：</strong>token 级 KL 散度高度偏斜——少量"风格 token"（如"wait"、"therefore"、"think"）的 KL 远大于数学关键 token，主导训练信号。<br/>
+        <strong>修复：</strong>对每个词表条目的 KL 贡献做上界截断（clipping），防止风格 token 压倒数学 token。<br/>
+        <strong>效果：</strong>训练稳定，防止 OPSD 在几百步内快速收敛后性能坍塌。
     </div>
 
-    <!-- KTO -->
-    <h4>KTO（Kahneman-Tversky Optimization）— 不需要配对数据</h4>
-    <div class="formula-box">
-        <div class="label">KTO 损失函数</div>
-        $$L_{\text{KTO}} = \mathbb{E}_{(x,y)\sim\mathcal{D}}\left[\max\left(0,\; 1 - \frac{\hat{r}_\theta(x,y) - z_{\text{ref}}}{\lambda_{\text{good/bad}}}\right)\right]$$
-        <div class="formula-annotation">
-            <div class="item"><span class="symbol">$(x,y)$</span>单条样本，<strong>不需要</strong> $(y_w, y_l)$ 配对——只需要标注"好"或"坏"</div>
-            <div class="item"><span class="symbol">$z_{\text{ref}}$</span>参考模型的 baseline 奖励（期望值）</div>
-            <div class="item"><span class="symbol">$\lambda_{\text{good}}, \lambda_{\text{bad}}$</span>分别对应好/坏样本的权重，灵感来自前景理论（Prospect Theory）的损失厌恶</div>
-        </div>
-    </div>
-    <div class="box-insight">
-        <strong>KTO 的核心突破：数据格式大幅放宽。</strong>传统 DPO 需要"一对好/坏回答"的配对数据，标注成本高。KTO 只需对单条回答打"👍/👎"，更容易大规模收集。损失函数受 Kahneman-Tversky 前景理论启发：对"坏回答"的惩罚权重高于"好回答"的奖励权重（损失厌恶），符合人类心理。
-    </div>
+    <h4>OPSD vs SFT vs GRPO 对比表</h4>
+    <table>
+        <tr><th>维度</th><th>SFT</th><th>GRPO（RL）</th><th>OPSD</th></tr>
+        <tr>
+            <td><strong>数据来源</strong></td>
+            <td>专家演示（off-policy）</td>
+            <td>学生 rollout（on-policy）</td>
+            <td>学生 rollout（on-policy）</td>
+        </tr>
+        <tr>
+            <td><strong>监督信号</strong></td>
+            <td>token-level NLL（稀疏）</td>
+            <td>sequence-level 二值奖励</td>
+            <td>token-level dense KL reward</td>
+        </tr>
+        <tr>
+            <td><strong>需要外部 Teacher</strong></td>
+            <td>需要专家数据</td>
+            <td>需要 Reward Model / Verifier</td>
+            <td>❌ 不需要，自己教自己</td>
+        </tr>
+        <tr>
+            <td><strong>采样效率</strong></td>
+            <td>无需采样</td>
+            <td>需 8+ rollouts / problem</td>
+            <td>仅需 1 rollout / problem</td>
+        </tr>
+        <tr>
+            <td><strong>Token 效率</strong></td>
+            <td>需完整推理链</td>
+            <td>长生成（16K tokens）</td>
+            <td>短生成（1024 tokens 即可）</td>
+        </tr>
+        <tr>
+            <td><strong>Zero-Gradient 问题</strong></td>
+            <td>无</td>
+            <td>全对/全错 batch → 梯度为零</td>
+            <td>无（dense KL 总有信号）</td>
+        </tr>
+        <tr>
+            <td><strong>适用场景</strong></td>
+            <td>有高质量标注数据</td>
+            <td>有可验证奖励（数学/代码）</td>
+            <td>有 ground-truth 答案，无需外部 teacher</td>
+        </tr>
+    </table>
 
-    <!-- ORPO -->
-    <h4>ORPO（Odds Ratio Preference Optimization）— SFT + DPO 合并为一阶段</h4>
-    <div class="formula-box">
-        <div class="label">ORPO 损失函数</div>
-        $$L_{\text{ORPO}} = \underbrace{L_{\text{SFT}}(y_w|x)}_{\text{SFT 项}} + \lambda \cdot \underbrace{L_{\text{OR}}}_{\text{Odds Ratio 偏好项}}$$
-        $$L_{\text{OR}} = -\mathbb{E}\left[\log\sigma\left(\log\frac{\text{odds}_\theta(y_w|x)}{\text{odds}_\theta(y_l|x)}\right)\right], \quad \text{odds}_\theta(y|x) = \frac{\pi_\theta(y|x)}{1-\pi_\theta(y|x)}$$
-        <div class="formula-annotation">
-            <div class="item"><span class="symbol">$L_{\text{SFT}}$</span>对好回答做标准 NLL 损失——保留 SFT 的功能</div>
-            <div class="item"><span class="symbol">odds ratio</span>用赔率比替代概率比，数学上更稳定</div>
-            <div class="item"><span class="symbol">无 $\pi_{\text{ref}}$</span>无需参考模型</div>
-            <div class="item"><span class="symbol">核心优势</span>SFT + 偏好优化一个阶段完成，训练流程简化</div>
-        </div>
-    </div>
-    <div class="box-insight">
-        <strong>ORPO 的创新：把 SFT 和 DPO 合二为一。</strong>传统流程是"SFT → DPO"两阶段，ORPO 用一个联合损失同时做 SFT（学习基本能力）和偏好优化（对齐偏好），减少了一次模型训练和一次 checkpoint 保存。在 Mistral-7B 上效果与 DPO 相当甚至略优。
-    </div>
+    <!-- ========= OPD 工业落地 ========= -->
+    <h3>OPD 工业落地现状（2025–2026）</h3>
+    <table>
+        <tr><th>模型</th><th>团队</th><th>OPD 用法</th></tr>
+        <tr>
+            <td><strong>Qwen3 / Qwen3.5</strong></td>
+            <td>Alibaba</td>
+            <td>标准 OPD 作为 post-training primitive，TRL DistillationTrainer 支持 40x 加速</td>
+        </tr>
+        <tr>
+            <td><strong>DeepSeek V4</strong></td>
+            <td>DeepSeek</td>
+            <td>多教师 full-vocab reverse KL logit distillation，学生轨迹上训练</td>
+        </tr>
+        <tr>
+            <td><strong>GLM-5 / GLM-5.1</strong></td>
+            <td>Zhipu</td>
+            <td>多教师 OPD，融合多个专家教师信号</td>
+        </tr>
+        <tr>
+            <td><strong>MiMo-V2-Flash</strong></td>
+            <td>Xiaomi</td>
+            <td>多教师 OPD 作为后训练核心组件</td>
+        </tr>
+        <tr>
+            <td><strong>Nemotron-Cascade 2</strong></td>
+            <td>NVIDIA</td>
+            <td>级联 OPD，多阶段蒸馏</td>
+        </tr>
+    </table>
 
-    <!-- CPO -->
-    <h4>CPO（Contrastive Preference Optimization）— 无参考模型的对比学习</h4>
-    <div class="formula-box">
-        <div class="label">CPO 损失函数</div>
-        $$L_{\text{CPO}} = -\mathbb{E}_{(x,y_w,y_l)}\left[\log\sigma\left(\beta\log\pi_\theta(y_w|x) - \beta\log\pi_\theta(y_l|x)\right)\right] + L_{\text{NLL}}(y_w)$$
-        <div class="formula-annotation">
-            <div class="item"><span class="symbol">无 $\pi_{\text{ref}}$</span>直接用 $\pi_\theta$ 的概率，无需参考模型</div>
-            <div class="item"><span class="symbol">$L_{\text{NLL}}(y_w)$</span>对好回答加 NLL 正则，防止模型退化</div>
-            <div class="item"><span class="symbol">与 SimPO 对比</span>CPO 没有长度归一化，SimPO 有；CPO 有 NLL 正则，SimPO 用 reward margin $\gamma$</div>
-        </div>
-    </div>
-
-    <!-- 汇总对比表 -->
-    <h3>DPO 及变体综合对比表</h3>
+    <!-- ========= 综合对比 ========= -->
+    <h3>SFT vs RL vs OPD vs OPSD 综合对比</h3>
     <table>
         <tr>
             <th>方法</th>
-            <th>需要 $\pi_{\text{ref}}$</th>
-            <th>需要配对数据</th>
-            <th>On/Off-policy</th>
-            <th>核心改进点</th>
-            <th>典型优势场景</th>
+            <th>信号密度</th>
+            <th>Policy 类型</th>
+            <th>需要 Teacher/RM</th>
+            <th>核心优势</th>
+            <th>核心风险</th>
         </tr>
         <tr>
-            <td><strong>DPO</strong></td>
-            <td>✅ 需要</td>
-            <td>✅ $(y_w, y_l)$ 配对</td>
+            <td><strong>SFT</strong></td>
+            <td>Token-level（NLL）</td>
             <td>Off-policy</td>
-            <td>去掉 RM，一步到位</td>
-            <td>资源有限、快速对齐</td>
+            <td>需要专家数据</td>
+            <td>简单稳定</td>
+            <td>Exposure bias</td>
         </tr>
         <tr>
-            <td><strong>On-policy DPO</strong></td>
-            <td>✅ 需要</td>
-            <td>✅ 每轮重新采样</td>
+            <td><strong>RLHF / GRPO</strong></td>
+            <td>Sequence-level（稀疏）</td>
             <td>On-policy</td>
-            <td>消除分布偏移，自我改进</td>
-            <td>有 RM、追求性能上限</td>
+            <td>需要 RM 或 Verifier</td>
+            <td>对齐效果好</td>
+            <td>高方差、reward hacking</td>
         </tr>
         <tr>
-            <td><strong>SimPO</strong></td>
-            <td>❌ 不需要</td>
-            <td>✅ $(y_w, y_l)$ 配对</td>
+            <td><strong>Off-policy KD</strong></td>
+            <td>Token-level（KL）</td>
             <td>Off-policy</td>
-            <td>长度归一化 + reward margin</td>
-            <td>显存受限、避免冗长回复</td>
+            <td>需要 teacher</td>
+            <td>密集监督</td>
+            <td>Exposure bias</td>
         </tr>
         <tr>
-            <td><strong>IPO</strong></td>
-            <td>✅ 需要</td>
-            <td>✅ $(y_w, y_l)$ 配对</td>
-            <td>Off-policy</td>
-            <td>MSE 损失，抗噪声偏好</td>
-            <td>偏好数据质量参差不齐</td>
-        </tr>
-        <tr>
-            <td><strong>KTO</strong></td>
-            <td>✅ 需要</td>
-            <td>❌ 单条 👍/👎</td>
-            <td>Off-policy</td>
-            <td>无需配对，前景理论加权</td>
-            <td>只有单条反馈数据</td>
-        </tr>
-        <tr>
-            <td><strong>ORPO</strong></td>
-            <td>❌ 不需要</td>
-            <td>✅ $(y_w, y_l)$ 配对</td>
-            <td>Off-policy</td>
-            <td>SFT + 偏好优化一阶段</td>
-            <td>想跳过 SFT 阶段</td>
-        </tr>
-        <tr>
-            <td><strong>CPO</strong></td>
-            <td>❌ 不需要</td>
-            <td>✅ $(y_w, y_l)$ 配对</td>
-            <td>Off-policy</td>
-            <td>无参考模型 + NLL 正则</td>
-            <td>显存受限，简单场景</td>
-        </tr>
-        <tr>
-            <td><strong>PPO (RLHF)</strong></td>
-            <td>✅ 需要</td>
-            <td>无需偏好对，需 RM</td>
+            <td><strong>OPD</strong></td>
+            <td>Token-level（KL reward）</td>
             <td>On-policy</td>
-            <td>最成熟，理论保证最强</td>
-            <td>有完善 RM、复杂对齐任务</td>
+            <td>需要 teacher</td>
+            <td>无 exposure bias + 密集监督</td>
+            <td>Teacher-student 分布不匹配、tokenizer 差异</td>
+        </tr>
+        <tr>
+            <td><strong>OPSD</strong></td>
+            <td>Token-level（self KL reward）</td>
+            <td>On-policy</td>
+            <td>❌ 无需外部 teacher</td>
+            <td>自给自足、无 exposure bias</td>
+            <td>受限于自身能力上限（需特权信息）</td>
         </tr>
     </table>
 
     <div class="box-interview">
-        <strong>面试高频题：DPO 有哪些变体？各自的改进点是什么？</strong><br/><br/>
-        "DPO 的核心问题是：① Off-policy 分布偏移；② 需要参考模型（显存翻倍）；③ 依赖高质量配对偏好数据。针对这三个问题，分别有：<br/>
-        <strong>针对①</strong>：On-policy DPO 让策略自己采样，消除分布偏移，性能更强但计算更贵；<br/>
-        <strong>针对②</strong>：SimPO（长度归一化 reward）、CPO（NLL 正则）、ORPO（联合 SFT）都去掉了参考模型，显存减半；<br/>
-        <strong>针对③</strong>：KTO 只需单条 👍/👎 数据，IPO 用 MSE 损失处理噪声偏好，都放宽了数据要求。<br/>
-        目前实践中 <strong>SimPO</strong> 因简单高效成为最受欢迎的无 RM 方案，<strong>On-policy DPO</strong> 在有 RM 场景下性能最强。"
+        <strong>面试高频题：什么是 OPD？和 SFT/RL 有什么区别？</strong><br/><br/>
+        "OPD（On-Policy Distillation）是当前最热的 LLM 后训练范式。核心流程：①学生模型自己生成回答（on-policy rollout）；②教师模型在学生生成的每个 prefix 上提供密集 token 级监督（KL / logprob gap）；③学生据此更新参数。<br/>
+        <strong>vs SFT：</strong>SFT 用固定数据集的 prefix 训练，存在 exposure bias（推理时学生自己生成的 prefix 偏离训练分布）。OPD 在学生自己生成的 prefix 上训练，消除这一偏差。<br/>
+        <strong>vs RL（GRPO/PPO）：</strong>RL 通常只有 sequence-level 稀疏奖励（答对/答错），高方差且需要大量 rollout。OPD 提供 token-level 密集监督，信号更丰富，采样效率更高。<br/>
+        <strong>关键论文：</strong>GKD（ICLR 2024）统一了 on/off/mixed-policy KD 框架；2026 年 Qwen3、DeepSeek V4、GLM-5 都将 OPD 作为核心 post-training 组件。<br/>
+        <strong>OPSD 拓展：</strong>不需要外部 teacher，同一模型通过特权信息（正确答案）扮演 teacher，对自己进行密集 token 级自蒸馏。"
+    </div>
+
+    <div class="box-insight">
+        <strong>关键决策点：能否访问 teacher logits？</strong><br/>
+        ✅ 能（white-box）：GKD、full-vocab / top-k OPD、DeepSeek V4 路线<br/>
+        ❌ 不能（black-box，只有 API）：GAD（判别器 reward）、OmniOPD（推测验证）<br/>
+        ❌ 没有 teacher：OPSD（自蒸馏）、SDFT（自我教学持续学习）
     </div>
 </section>
 
