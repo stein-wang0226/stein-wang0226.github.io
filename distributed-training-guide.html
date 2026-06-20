@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分布式训练指南 — DeepSpeed / FSDP / Megatron-LM</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface2: #334155;
+            --border: #475569;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --accent: #38bdf8;
+            --accent2: #818cf8;
+            --accent3: #34d399;
+            --accent4: #fb923c;
+            --accent5: #f472b6;
+            --danger: #ef4444;
+            --code-bg: #0d1117;
+            --gradient1: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            --gradient2: linear-gradient(135deg, #34d399 0%, #38bdf8 100%);
+            --gradient3: linear-gradient(135deg, #fb923c 0%, #f472b6 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(56,189,248,0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 50%, rgba(129,140,248,0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 80%, rgba(52,211,153,0.05) 0%, transparent 50%);
+            animation: heroGlow 15s ease-in-out infinite alternate;
+        }
+        @keyframes heroGlow { 0%{transform:translate(0,0)rotate(0deg)} 100%{transform:translate(-5%,3%)rotate(5deg)} }
+
+        .hero-content { position: relative; z-index: 1; max-width: 900px; }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: var(--gradient1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.2rem;
+            letter-spacing: -1px;
+        }
+        .hero .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto; margin-right: auto;
+        }
+        .hero-badges {
+            display: flex; flex-wrap: wrap; gap: 0.75rem;
+            justify-content: center; margin-bottom: 2rem;
+        }
+        .badge {
+            padding: 0.4rem 1rem; border-radius: 9999px;
+            font-size: 0.85rem; font-weight: 600; border: 1px solid;
+        }
+        .badge-blue { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.3); color: var(--accent); }
+        .badge-purple { background: rgba(129,140,248,0.1); border-color: rgba(129,140,248,0.3); color: var(--accent2); }
+        .badge-green { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); color: var(--accent3); }
+        .badge-orange { background: rgba(251,146,60,0.1); border-color: rgba(251,146,60,0.3); color: var(--accent4); }
+
+        .scroll-hint {
+            position: absolute; bottom: 2rem; left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--text-dim); font-size: 0.85rem;
+        }
+        .scroll-hint::after { content: ' \2193'; }
+        @keyframes bounce { 0%,100%{transform:translateX(-50%)translateY(0)} 50%{transform:translateX(-50%)translateY(8px)} }
+
+        /* Nav */
+        .toc-nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(15,23,42,0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 0;
+            overflow-x: auto;
+        }
+        .toc-nav ul {
+            display: flex; gap: 0.25rem; list-style: none;
+            max-width: 1200px; margin: 0 auto; padding: 0 1rem;
+            white-space: nowrap;
+        }
+        .toc-nav a {
+            display: block; padding: 0.4rem 0.9rem;
+            color: var(--text-dim); text-decoration: none;
+            font-size: 0.85rem; border-radius: 6px; transition: all 0.2s;
+        }
+        .toc-nav a:hover { color: var(--accent); background: rgba(56,189,248,0.1); }
+
+        /* Main */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+        section { padding: 4rem 0 2rem; }
+
+        h2 {
+            font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;
+            position: relative; display: inline-block;
+        }
+        h2 .num {
+            font-size: 0.9rem; font-weight: 600;
+            padding: 0.2rem 0.6rem; border-radius: 6px;
+            margin-right: 0.5rem; vertical-align: middle;
+        }
+        .section-desc {
+            color: var(--text-dim); font-size: 1.05rem;
+            margin-bottom: 2.5rem; max-width: 800px;
+        }
+        h3 {
+            font-size: 1.35rem; font-weight: 600;
+            margin: 2.5rem 0 1rem; color: var(--accent);
+        }
+        h4 {
+            font-size: 1.1rem; font-weight: 600;
+            margin: 1.5rem 0 0.8rem; color: var(--accent2);
+        }
+        p { margin-bottom: 1rem; color: var(--text); }
+        strong { color: var(--accent); }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin: 1.2rem 0;
+            border-left: 4px solid var(--accent);
+        }
+        .card.green  { border-left-color: var(--accent3); }
+        .card.purple { border-left-color: var(--accent2); }
+        .card.orange { border-left-color: var(--accent4); }
+        .card.pink   { border-left-color: var(--accent5); }
+        .card.red    { border-left-color: var(--danger); }
+        .card-title {
+            font-size: 1.1rem; font-weight: 700;
+            margin-bottom: 0.5rem; color: var(--text);
+        }
+        .card-title .tag {
+            display: inline-block; font-size: 0.7rem;
+            padding: 2px 8px; border-radius: 4px;
+            margin-left: 8px; font-weight: 600;
+            vertical-align: middle;
+        }
+        .tag.ms    { background: rgba(56,189,248,0.15); color: var(--accent); }
+        .tag.meta  { background: rgba(129,140,248,0.15); color: var(--accent2); }
+        .tag.nv    { background: rgba(52,211,153,0.15); color: var(--accent3); }
+        .tag.tip   { background: rgba(251,146,60,0.15); color: var(--accent4); }
+
+        /* Code */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            overflow-x: auto;
+            font-size: 0.88rem;
+            margin: 1rem 0 1.5rem;
+            line-height: 1.6;
+        }
+        code {
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', Menlo, Consolas, monospace;
+            font-size: 0.88em;
+        }
+        p code, li code {
+            background: var(--surface2);
+            padding: 2px 6px; border-radius: 4px;
+            color: var(--accent);
+        }
+
+        /* Tables */
+        table {
+            width: 100%; border-collapse: collapse;
+            margin: 1.2rem 0 1.5rem;
+            font-size: 0.9rem;
+        }
+        th {
+            text-align: left; padding: 0.8rem 1rem;
+            border-bottom: 2px solid var(--accent);
+            background: rgba(56,189,248,0.06);
+            font-weight: 700; color: var(--accent);
+        }
+        td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        tr:hover td { background: rgba(56,189,248,0.04); }
+
+        /* Insight boxes */
+        .insight {
+            background: rgba(56,189,248,0.06);
+            border: 1px solid rgba(56,189,248,0.2);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            margin: 1.2rem 0;
+        }
+        .insight-title {
+            font-weight: 700; color: var(--accent2);
+            margin-bottom: 0.3rem;
+        }
+        .warning {
+            background: rgba(251,146,60,0.06);
+            border: 1px solid rgba(251,146,60,0.2);
+        }
+        .warning .insight-title { color: var(--accent4); }
+
+        /* Architecture diagram boxes */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .arch-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+        .arch-box .icon { font-size: 2em; margin-bottom: 0.5rem; }
+        .arch-box .name { font-weight: 700; color: var(--accent); margin-bottom: 0.3rem; }
+        .arch-box .desc { font-size: 0.82em; color: var(--text-dim); }
+
+        /* Footer */
+        .page-footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        a { color: var(--accent); }
+
+        @media (max-width: 640px) {
+            .container { padding: 0 1rem; }
+            h2 { font-size: 1.5rem; }
+            .hero h1 { font-size: 1.8rem; }
+            table { font-size: 0.82rem; }
+            .arch-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1>DeepSpeed / FSDP / Megatron-LM</h1>
+        <p class="subtitle">大模型分布式训练三大框架全景指南 &mdash; ZeRO 分片、Tensor/Pipeline Parallelism、配置实战与选型决策</p>
+        <div class="hero-badges">
+            <span class="badge badge-blue">DeepSpeed ZeRO 1/2/3</span>
+            <span class="badge badge-purple">PyTorch FSDP / FSDP2</span>
+            <span class="badge badge-green">Megatron-LM TP+PP+SP</span>
+            <span class="badge badge-orange">2025-2026 工程实践</span>
+        </div>
+    </div>
+    <div class="scroll-hint">向下滚动</div>
+</div>
+
+<nav class="toc-nav">
+    <ul>
+        <li><a href="#overview">概述</a></li>
+        <li><a href="#deepspeed">DeepSpeed</a></li>
+        <li><a href="#fsdp">FSDP</a></li>
+        <li><a href="#megatron">Megatron-LM</a></li>
+        <li><a href="#selection">选型决策</a></li>
+        <li><a href="#troubleshooting">常见问题</a></li>
+        <li><a href="#example">完整示例</a></li>
+        <li><a href="#refs">参考资料</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+<!-- ==================== 1. 概述 ==================== -->
+<section id="overview">
+<h2><span class="num" style="background:var(--accent);color:var(--bg)">01</span> 概述</h2>
+<p class="section-desc">DeepSpeed（微软）、FSDP（PyTorch 原生）和 Megatron-LM（NVIDIA）是当前大模型分布式训练的三大主流方案。前两者基于 ZeRO 分片思想，Megatron-LM 以 Tensor Parallelism + Pipeline Parallelism 为核心，三者实现路径和适用场景各有不同。</p>
+
+<table>
+<thead>
+<tr><th>维度</th><th>DeepSpeed</th><th>FSDP</th><th>Megatron-LM</th></tr>
+</thead>
+<tbody>
+<tr><td>维护方</td><td>Microsoft</td><td>PyTorch (Meta)</td><td>NVIDIA</td></tr>
+<tr><td>核心并行策略</td><td>ZeRO Stage 1/2/3 + Offload</td><td>FULL_SHARD / SHARD_GRAD_OP</td><td>TP + PP + SP + DP + EP</td></tr>
+<tr><td>生态集成</td><td>HF Transformers / Accelerate</td><td>PyTorch 原生 / HF Accelerate</td><td>NeMo / 独立使用</td></tr>
+<tr><td>混合精度</td><td>FP16 / BF16 / FP32</td><td>FP16 / BF16 / FP32</td><td>FP16 / BF16 / <strong>FP8</strong> / FP32</td></tr>
+<tr><td>配置复杂度</td><td>JSON 配置文件</td><td>Python API / Accelerate YAML</td><td>命令行参数 / NeMo YAML</td></tr>
+<tr><td>最大验证规模</td><td>~100B+</td><td>~70B</td><td><strong>~1T+</strong> (Nemotron)</td></tr>
+<tr><td>适用场景</td><td>中大模型训练、RLHF</td><td>中等规模、PyTorch 原生</td><td>超大规模预训练（百B~T级）</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ==================== 2. DeepSpeed ==================== -->
+<section id="deepspeed">
+<h2><span class="num" style="background:var(--accent2);color:#fff">02</span> DeepSpeed</h2>
+<p class="section-desc">微软开发的分布式训练库，以 ZeRO（Zero Redundancy Optimizer）为核心，通过渐进式分片策略降低显存占用，支持 CPU/NVMe 卸载。</p>
+
+<h3>2.1 ZeRO 三阶段</h3>
+
+<div class="arch-grid">
+    <div class="arch-box">
+        <div class="name">ZeRO Stage 1</div>
+        <div class="desc">仅分片 Optimizer States<br>显存节省 ~33%</div>
+    </div>
+    <div class="arch-box">
+        <div class="name">ZeRO Stage 2</div>
+        <div class="desc">分片 Optimizer + Gradients<br>显存节省 ~50%</div>
+    </div>
+    <div class="arch-box">
+        <div class="name">ZeRO Stage 3</div>
+        <div class="desc">分片 Optimizer + Gradients + Parameters<br>显存节省 ~87% (8卡)</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">内存占用参考（7B 模型，Adam，单卡）</div>
+    <pre><code>Baseline (DDP):     ~120 GB/卡
+ZeRO-1:             ~80 GB/卡
+ZeRO-2:             ~60 GB/卡
+ZeRO-3 (8卡):       ~15 GB/卡</code></pre>
+</div>
+
+<h3>2.2 安装与配置</h3>
+
+<pre><code>pip install deepspeed
+ds_report   # 验证安装</code></pre>
+
+<h4>ZeRO-2 基础配置（7B 微调）</h4>
+<pre><code>{
+  "train_batch_size": "auto",
+  "train_micro_batch_size_per_gpu": "auto",
+  "gradient_accumulation_steps": "auto",
+  "gradient_clipping": 1.0,
+  "zero_optimization": {
+    "stage": 2,
+    "offload_optimizer": { "device": "cpu", "pin_memory": true },
+    "allgather_partitions": true,
+    "allgather_bucket_size": 5e8,
+    "reduce_scatter": true,
+    "reduce_bucket_size": 5e8,
+    "overlap_comm": true
+  },
+  "fp16": {
+    "enabled": true, "loss_scale": 0,
+    "loss_scale_window": 200, "initial_scale_power": 12
+  }
+}</code></pre>
+
+<h4>ZeRO-3 配置（13B+）</h4>
+<pre><code>{
+  "zero_optimization": {
+    "stage": 3,
+    "offload_optimizer": { "device": "cpu", "pin_memory": true },
+    "offload_param": { "device": "cpu", "pin_memory": true },
+    "overlap_comm": true,
+    "contiguous_gradients": true,
+    "stage3_prefetch_bucket_size": "auto",
+    "stage3_param_persistence_threshold": "auto",
+    "stage3_gather_16bit_weights_on_model_save": true
+  },
+  "bf16": { "enabled": true }
+}</code></pre>
+
+<h3>2.3 与 HuggingFace 集成</h3>
+
+<pre><code># train.py
+from transformers import AutoModelForCausalLM, TrainingArguments, Trainer
+
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-2-7b-hf",
+    torch_dtype="auto",
+    use_cache=False,   # ZeRO-3 必须关闭 KV cache
+)
+
+training_args = TrainingArguments(
+    output_dir="./output",
+    per_device_train_batch_size=2,
+    gradient_accumulation_steps=8,
+    num_train_epochs=3,
+    learning_rate=2e-5,
+    bf16=True,
+    deepspeed="ds_config.json",   # 指向配置文件
+    gradient_checkpointing=True,
+)
+
+trainer = Trainer(model=model, args=training_args, train_dataset=dataset)
+trainer.train()</code></pre>
+
+<h3>2.4 启动命令</h3>
+
+<pre><code># 单机多卡
+deepspeed --num_gpus=8 train.py
+
+# 多机多卡 (hostfile 格式: node_ip slots=N)
+deepspeed --hostfile=hostfile --num_nodes=2 --num_gpus=8 train.py
+
+# torchrun 兼容
+torchrun --nproc_per_node=8 train.py --deepspeed ds_config.json</code></pre>
+
+<h3>2.5 ZeRO-Offload（CPU/NVMe 卸载）</h3>
+
+<div class="card green">
+    <div class="card-title">当 GPU 内存不足时，可将 Optimizer States 甚至 Parameters 卸载到 CPU 或 NVMe</div>
+    <pre><code>{
+  "zero_optimization": {
+    "stage": 3,
+    "offload_optimizer": { "device": "cpu", "pin_memory": true },
+    "offload_param": {
+      "device": "nvme",
+      "nvme_path": "/mnt/nvme/deepspeed_offload",
+      "buffer_size": 1e9, "buffer_count": 5
+    }
+  }
+}</code></pre>
+</div>
+
+<div class="card">
+    <div class="card-title">内存节省对比（LLaMA-2 13B，8 x A100 80GB）</div>
+    <pre><code>ZeRO-3 (GPU only):        ~25 GB/卡
+ZeRO-3 + CPU Offload:     ~12 GB/卡
+ZeRO-3 + NVMe Offload:    ~6 GB/卡</code></pre>
+</div>
+</section>
+
+<!-- ==================== 3. FSDP ==================== -->
+<section id="fsdp">
+<h2><span class="num" style="background:var(--accent3);color:var(--bg)">03</span> FSDP</h2>
+<p class="section-desc">PyTorch 原生的 Fully Sharded Data Parallel，无需额外安装，与 HF Accelerate 深度集成，配置最为简洁。</p>
+
+<h3>3.1 分片策略</h3>
+
+<pre><code>from torch.distributed.fsdp import ShardingStrategy
+
+ShardingStrategy.FULL_SHARD       # 等价 ZeRO-3：完全分片
+ShardingStrategy.SHARD_GRAD_OP    # 等价 ZeRO-2：仅分片梯度和优化器状态
+ShardingStrategy.NO_SHARD         # 等价 DDP：不分片
+ShardingStrategy.HYBRID_SHARD     # 节点内完全分片 + 节点间复制（多机推荐）</code></pre>
+
+<h3>3.2 PyTorch 原生 API</h3>
+
+<pre><code>import torch.distributed as dist
+from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
+from torch.distributed.fsdp import MixedPrecision
+from torch.distributed.fsdp.wrap import transformer_auto_wrap_policy
+from functools import partial
+
+dist.init_process_group("nccl")
+local_rank = int(os.environ["LOCAL_RANK"])
+
+mp_policy = MixedPrecision(
+    param_dtype=torch.bfloat16,
+    reduce_dtype=torch.bfloat16,
+    buffer_dtype=torch.bfloat16,
+)
+
+from transformers.models.llama.modeling_llama import LlamaDecoderLayer
+auto_wrap_policy = partial(
+    transformer_auto_wrap_policy,
+    transformer_layer_cls={LlamaDecoderLayer},
+)
+
+model = FSDP(
+    model,
+    sharding_strategy=ShardingStrategy.FULL_SHARD,
+    mixed_precision=mp_policy,
+    auto_wrap_policy=auto_wrap_policy,
+    device_id=local_rank,
+    use_orig_params=True,      # 兼容 torch.compile
+    limit_all_gathers=True,    # 降低内存峰值
+)</code></pre>
+
+<h3>3.3 Accelerate 集成（最简洁）</h3>
+
+<div class="card green">
+    <div class="card-title">accelerate_config.yaml <span class="tag tip">推荐</span></div>
+    <pre><code>compute_environment: LOCAL_MACHINE
+distributed_type: FSDP
+fsdp_config:
+  fsdp_auto_wrap_policy: TRANSFORMER_BASED_WRAP
+  fsdp_transformer_layer_cls_to_wrap: LlamaDecoderLayer
+  fsdp_sharding_strategy: FULL_SHARD
+  fsdp_backward_prefetch: BACKWARD_PRE
+  fsdp_state_dict_type: FULL_STATE_DICT
+  fsdp_use_orig_params: true
+  fsdp_cpu_ram_efficient_loading: true
+  fsdp_sync_module_states: true
+mixed_precision: bf16
+num_processes: 8</code></pre>
+</div>
+
+<pre><code># 训练脚本极简
+from accelerate import Accelerator
+accelerator = Accelerator()
+model, optimizer, dataloader = accelerator.prepare(model, optimizer, dataloader)
+
+for batch in dataloader:
+    loss = model(**batch).loss
+    accelerator.backward(loss)
+    optimizer.step()
+    optimizer.zero_grad()
+
+# 启动
+accelerate launch --config_file accelerate_config.yaml train.py</code></pre>
+
+<h3>3.4 FSDP2（PyTorch 2.4+）</h3>
+
+<div class="insight">
+    <div class="insight-title">FSDP2：基于 DTensor，与 torch.compile 深度集成</div>
+    <pre><code>from torch.distributed.fsdp import fully_shard
+
+for layer in model.layers:
+    fully_shard(layer)
+fully_shard(model)
+
+model = torch.compile(model)   # 原生编译支持</code></pre>
+</div>
+</section>
+
+<!-- ==================== 4. Megatron-LM ==================== -->
+<section id="megatron">
+<h2><span class="num" style="background:var(--accent4);color:var(--bg)">04</span> Megatron-LM</h2>
+<p class="section-desc">NVIDIA 的大规模分布式训练框架，核心优势在于多维并行组合（TP/PP/SP/EP/CP），在百B至T级模型预训练中吞吐最优。</p>
+
+<h3>4.1 六大并行策略</h3>
+
+<div class="arch-grid">
+    <div class="arch-box">
+        <div class="name">TP</div>
+        <div class="desc">Tensor Parallelism<br>矩阵运算层内切分<br>必须单机内 (NVLink)</div>
+    </div>
+    <div class="arch-box">
+        <div class="name">PP</div>
+        <div class="desc">Pipeline Parallelism<br>模型层间流水线<br>可跨机 (P2P 通信)</div>
+    </div>
+    <div class="arch-box">
+        <div class="name">SP</div>
+        <div class="desc">Sequence Parallelism<br>LayerNorm/Dropout 序列维切分<br>须与 TP 同时启用</div>
+    </div>
+    <div class="arch-box">
+        <div class="name">DP</div>
+        <div class="desc">Data Parallelism<br>+ Distributed Optimizer<br>(等价 ZeRO Stage 1)</div>
+    </div>
+    <div class="arch-box">
+        <div class="name">EP</div>
+        <div class="desc">Expert Parallelism<br>MoE Expert 分片</div>
+    </div>
+    <div class="arch-box">
+        <div class="name">CP</div>
+        <div class="desc">Context Parallelism<br>超长序列维并行</div>
+    </div>
+</div>
+
+<h3>4.2 安装</h3>
+
+<pre><code># 方式一：源码安装（最新特性）
+git clone https://github.com/NVIDIA/Megatron-LM.git
+cd Megatron-LM && pip install -e .
+
+# 方式二：NeMo 安装（封装更完善，推荐入门）
+pip install nemo_toolkit[all]
+
+# 依赖
+pip install apex transformer_engine   # 混合精度 + FP8</code></pre>
+
+<h3>4.3 预训练启动命令</h3>
+
+<pre><code>#!/bin/bash
+# GPT 模型预训练（70B 示例，32 卡 = 4 机 x 8 卡）
+
+torchrun --nproc_per_node 8 --nnodes 4 \
+    --master_addr &lt;MASTER_IP&gt; --master_port 6000 \
+    pretrain_gpt.py \
+    --num-layers 80 --hidden-size 8192 --num-attention-heads 64 \
+    --seq-length 4096 --max-position-embeddings 4096 \
+    --micro-batch-size 1 --global-batch-size 256 \
+    --lr 0.00015 --min-lr 0.00001 --lr-decay-style cosine \
+    --train-iters 500000 --weight-decay 0.1 \
+    --clip-grad 1.0 --bf16 \
+    --tensor-model-parallel-size 8 \
+    --pipeline-model-parallel-size 4 \
+    --sequence-parallel \
+    --use-distributed-optimizer \
+    --recompute-activations</code></pre>
+
+<h3>4.4 并行策略详解</h3>
+
+<div class="card orange">
+    <div class="card-title">Tensor Parallelism (TP)</div>
+    <p>将 MLP 的列并行 + 行并行，Attention 的 head 分片。TP 必须在单机内（NVLink 高带宽），通常 TP &le; 8。参数和激活都按 TP 分片，单卡内存 &asymp; 总内存 / TP。</p>
+</div>
+
+<div class="card purple">
+    <div class="card-title">Pipeline Parallelism (PP)</div>
+    <p>将模型层分段，不同段放不同卡，用 micro-batch 流水线减少气泡。默认 1F1B 调度（气泡率 &asymp; (PP-1)/micro_batches），Interleaved 1F1B 更低。PP 可跨机（P2P 通信量小，仅传激活）。</p>
+</div>
+
+<div class="card green">
+    <div class="card-title">Sequence Parallelism (SP)</div>
+    <p>在 TP 区域之外（LayerNorm、Dropout），沿序列维度切分。非 TP 区域的激活内存从 batch&times;seq&times;hidden 降到 batch&times;(seq/TP)&times;hidden。必须与 TP 同时启用。</p>
+</div>
+
+<h3>4.5 并行策略组合建议</h3>
+
+<pre><code>单机 8 卡训练 7B:
+  TP=1, PP=1, DP=8 + Distributed Optimizer (≈ FSDP FULL_SHARD)
+
+单机 8 卡训练 13B:
+  TP=2, PP=1, DP=4 + SP + Distributed Optimizer
+  或 TP=4, PP=1, DP=2 + SP
+
+多机训练 70B (32卡):
+  TP=8, PP=2, DP=2 + SP + Distributed Optimizer
+
+多机训练 175B+ (128+ 卡):
+  TP=8, PP=8, DP=2 + SP + Interleaved Pipeline</code></pre>
+
+<h3>4.6 Checkpoint 转换（HF &harr; Megatron）</h3>
+
+<pre><code># HuggingFace → Megatron
+python tools/checkpoint/convert.py \
+    --model-type GPT --loader transformers --saver megatron \
+    --load-dir /path/to/hf_llama-7b \
+    --save-dir /path/to/megatron_llama-7b \
+    --target-tensor-parallel-size 4 \
+    --target-pipeline-parallel-size 2
+
+# Megatron → HuggingFace
+python tools/checkpoint/convert.py \
+    --model-type GPT --loader megatron --saver transformers \
+    --load-dir /path/to/megatron_llama-7b \
+    --save-dir /path/to/hf_llama-7b</code></pre>
+
+<h3>4.7 Megatron 独有优化</h3>
+
+<div class="card pink">
+    <div class="card-title">高级优化技巧</div>
+    <pre><code># 1. 交错式流水线调度（减少气泡）
+--num-layers-per-virtual-pipeline-stage 4
+
+# 2. FP8 训练（H100/H200，吞吐提升 ~50%）
+--fp8-format hybrid --fp8-margin 0 --fp8-interval 1
+
+# 3. 分组 GEMM（MoE 模型加速）
+--moe-grouped-gemm
+
+# 4. 通信计算重叠
+--overlap-p2p-communications    # PP 通信与计算重叠
+--overlap-param-gather          # 参数 all-gather 与计算重叠
+
+# 5. 异步梯度累积
+--gradient-accumulation-fusion  # 需安装 fused kernels</code></pre>
+</div>
+</section>
+
+<!-- ==================== 5. 选型决策 ==================== -->
+<section id="selection">
+<h2><span class="num" style="background:var(--accent5);color:#fff">05</span> 选型决策</h2>
+<p class="section-desc">根据模型规模、训练阶段和硬件条件选择最合适的方案。</p>
+
+<h3>5.1 按模型规模</h3>
+
+<pre><code>&lt; 1B 参数:      DDP 或 FSDP NO_SHARD（单机多卡即可）
+1B - 7B:        FSDP FULL_SHARD 或 DeepSpeed ZeRO-2（单机 8 卡）
+7B - 13B:       DeepSpeed ZeRO-3 / FSDP FULL_SHARD / Megatron TP=2+DP
+13B - 70B:      DeepSpeed ZeRO-3 + Offload / Megatron TP=4~8+PP
+70B+:           Megatron-LM TP+PP+DP（多机集群首选）
+175B - 1T+:     Megatron-LM 3D/4D 并行 + Interleaved PP</code></pre>
+
+<h3>5.2 按场景选择</h3>
+
+<table>
+<thead>
+<tr><th>场景</th><th>推荐方案</th><th>原因</th></tr>
+</thead>
+<tbody>
+<tr><td>LLaMA 微调 (LoRA)</td><td><strong>FSDP + Accelerate</strong></td><td>配置简单，HF 生态完善</td></tr>
+<tr><td>全参数训练 13B+</td><td><strong>DeepSpeed ZeRO-3</strong></td><td>内存效率最优</td></tr>
+<tr><td>超大规模预训练 (70B+)</td><td><strong>Megatron-LM</strong></td><td>TP+PP 吞吐最优</td></tr>
+<tr><td>RLHF 流水线</td><td><strong>DeepSpeed</strong></td><td>DeepSpeed-Chat 成熟</td></tr>
+<tr><td>PyTorch 原生工作流</td><td><strong>FSDP</strong></td><td>无额外依赖</td></tr>
+<tr><td>显存极度受限</td><td><strong>DeepSpeed ZeRO-Offload</strong></td><td>CPU/NVMe 卸载</td></tr>
+<tr><td>FP8 训练 (H100/H200)</td><td><strong>Megatron-LM</strong></td><td>Transformer Engine 原生支持</td></tr>
+<tr><td>MoE 模型训练</td><td><strong>Megatron-LM</strong></td><td>Expert Parallelism 原生支持</td></tr>
+</tbody>
+</table>
+
+<h3>5.3 性能对比（参考值）</h3>
+
+<div class="card">
+    <div class="card-title">LLaMA-2 7B 全参数微调，8 &times; A100 80GB</div>
+    <table>
+    <thead><tr><th>方案</th><th>吞吐量 (tokens/s)</th><th>显存/卡</th></tr></thead>
+    <tbody>
+    <tr><td>DDP (baseline)</td><td>~12,000</td><td>OOM</td></tr>
+    <tr><td>FSDP FULL_SHARD + BF16</td><td>~18,000</td><td>~45 GB</td></tr>
+    <tr><td>DeepSpeed ZeRO-2 + BF16</td><td>~19,500</td><td>~42 GB</td></tr>
+    <tr><td>DeepSpeed ZeRO-3 + BF16</td><td>~17,000</td><td>~28 GB</td></tr>
+    <tr><td>DeepSpeed ZeRO-3 + Offload</td><td>~14,000</td><td>~15 GB</td></tr>
+    <tr><td>Megatron TP=4+DP=2+SP+BF16</td><td>~22,000</td><td>~35 GB</td></tr>
+    </tbody>
+    </table>
+</div>
+
+<div class="card orange">
+    <div class="card-title">LLaMA-2 70B 预训练，32 &times; A100 80GB (4机)</div>
+    <table>
+    <thead><tr><th>方案</th><th>吞吐量 (tokens/s)</th><th>显存/卡</th></tr></thead>
+    <tbody>
+    <tr><td>DeepSpeed ZeRO-3 + Offload</td><td>~8,000</td><td>~20 GB</td></tr>
+    <tr><td>Megatron TP=8+PP=2+DP=2+SP</td><td>~18,000</td><td>~45 GB</td></tr>
+    <tr><td>Megatron TP=8+PP=2+DP=2+SP+FP8</td><td>~27,000 (H100)</td><td>~30 GB</td></tr>
+    </tbody>
+    </table>
+</div>
+
+<h3>5.4 最佳实践：分阶段组合</h3>
+
+<div class="insight">
+    <div class="insight-title">业界常见模式：预训练用 Megatron，SFT/RLHF 用 DeepSpeed/FSDP</div>
+    <p><strong>预训练阶段</strong> &mdash; Megatron-LM，充分利用 TP+PP 的大规模吞吐优势<br>
+    <strong>SFT 阶段</strong> &mdash; DeepSpeed ZeRO-2/3 或 FSDP，配置简单，快速迭代<br>
+    <strong>RLHF/DPO 阶段</strong> &mdash; DeepSpeed（DeepSpeed-Chat 成熟）或 FSDP + TRL</p>
+</div>
+
+<div class="warning insight">
+    <div class="insight-title">框架组合注意事项</div>
+    <p>Megatron-LM + DeepSpeed：Megatron 提供 TP+PP，DeepSpeed 提供 ZeRO DP，可进一步降低显存<br>
+    Megatron-LM + FSDP：较少组合，Megatron 自有的 DP 已足够<br>
+    DeepSpeed + FSDP：通常二选一，不混合使用</p>
+</div>
+</section>
+
+<!-- ==================== 6. 常见问题 ==================== -->
+<section id="troubleshooting">
+<h2><span class="num" style="background:var(--danger);color:#fff">06</span> 常见问题与排查</h2>
+
+<h3>6.1 显存 OOM</h3>
+
+<pre><code># 1. 开启梯度检查点
+model.gradient_checkpointing_enable()
+
+# 2. 减小 micro batch，增加 gradient accumulation
+per_device_train_batch_size=1
+gradient_accumulation_steps=16
+
+# 3. DeepSpeed: 启用 CPU offload
+# 4. FSDP: 使用 limit_all_gathers=True
+# 5. Megatron: 增大 TP 或启用 SP</code></pre>
+
+<h3>6.2 训练速度慢</h3>
+
+<pre><code># 1. 确保 use_cache=False（ZeRO-3/FSDP 下 KV cache 与分片冲突）
+# 2. 开启 overlap_comm（DeepSpeed）
+# 3. 使用 BF16 而非 FP16（A100+ 无需 loss scaling）
+# 4. FSDP: 使用 HYBRID_SHARD（多机场景）
+# 5. Megatron: 增加 prefetch_bucket_size，启用 SP</code></pre>
+
+<h3>6.3 Loss 不收敛 / NaN</h3>
+
+<pre><code># 1. 梯度裁剪: gradient_clipping=1.0
+# 2. 降低学习率: lr=1e-5
+# 3. 增加 warmup: warmup_ratio=0.1
+# 4. 检查 loss scaling（FP16 场景）
+#    DeepSpeed: initial_scale_power=12
+#    FSDP/Megatron: 使用 BF16 避免此问题</code></pre>
+
+<h3>6.4 多机通信问题</h3>
+
+<pre><code>export NCCL_DEBUG=INFO
+export NCCL_SOCKET_IFNAME=eth0   # 指定网卡
+
+# DeepSpeed: 确认 hostfile SSH 免密
+# FSDP: 确认 MASTER_ADDR / MASTER_PORT 一致
+# Megatron: 确认 torchrun --master_addr / --master_port / --node_rank 正确</code></pre>
+</section>
+
+<!-- ==================== 7. 完整示例 ==================== -->
+<section id="example">
+<h2><span class="num" style="background:var(--accent2);color:#fff">07</span> 完整示例：LLaMA-2 7B LoRA 微调</h2>
+
+<h3>DeepSpeed 配置 (ds_lora_config.json)</h3>
+
+<pre><code>{
+  "train_batch_size": "auto",
+  "train_micro_batch_size_per_gpu": "auto",
+  "gradient_accumulation_steps": "auto",
+  "gradient_clipping": 1.0,
+  "zero_optimization": {
+    "stage": 2,
+    "overlap_comm": true,
+    "contiguous_gradients": true
+  },
+  "bf16": { "enabled": true }
+}</code></pre>
+
+<h3>训练脚本</h3>
+
+<pre><code>from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments, Trainer
+from peft import LoraConfig, get_peft_model, TaskType
+
+model_name = "meta-llama/Llama-2-7b-hf"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.pad_token = tokenizer.eos_token
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_name, torch_dtype="auto", use_cache=False,
+)
+
+lora_config = LoraConfig(
+    task_type=TaskType.CAUSAL_LM,
+    r=16, lora_alpha=32,
+    target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],
+    lora_dropout=0.05, bias="none",
+)
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()  # ~0.3% 参数
+
+training_args = TrainingArguments(
+    output_dir="./lora_output",
+    per_device_train_batch_size=4,
+    gradient_accumulation_steps=4,
+    num_train_epochs=3,
+    learning_rate=2e-4,
+    warmup_ratio=0.03,
+    bf16=True,
+    deepspeed="ds_lora_config.json",
+    gradient_checkpointing=True,
+    optim="adamw_torch_fused",
+)
+
+trainer = Trainer(
+    model=model, args=training_args,
+    train_dataset=dataset, tokenizer=tokenizer,
+)
+trainer.train()
+model.save_pretrained("./lora_checkpoint")</code></pre>
+
+<pre><code># 启动
+deepspeed --num_gpus=8 train_lora.py</code></pre>
+</section>
+
+<!-- ==================== 8. 参考资料 ==================== -->
+<section id="refs">
+<h2><span class="num" style="background:var(--text-dim);color:var(--bg)">08</span> 参考资料</h2>
+
+<div class="card">
+    <p><a href="https://www.deepspeed.ai/">DeepSpeed 官方文档</a><br>
+    <a href="https://arxiv.org/abs/1910.02054">DeepSpeed ZeRO 论文 (arXiv:1910.02054)</a><br>
+    <a href="https://pytorch.org/docs/stable/fsdp.html">FSDP 官方文档</a><br>
+    <a href="https://huggingface.co/docs/accelerate/usage_guides/fsdp">Hugging Face Accelerate FSDP 指南</a><br>
+    <a href="https://github.com/NVIDIA/Megatron-LM">Megatron-LM GitHub</a><br>
+    <a href="https://arxiv.org/abs/1909.08053">Megatron-LM 论文 (arXiv:1909.08053)</a><br>
+    <a href="https://docs.nvidia.com/nemo-framework/user-guide/latest/index.html">NVIDIA NeMo 文档</a></p>
+</div>
+</section>
+
+<div class="page-footer">
+    <p>Distributed Training Guide &middot; Yuxiang Wang &middot; 2026</p>
+    <p>DeepSpeed / FSDP / Megatron-LM 三大框架全景</p>
+    <p style="margin-top:0.5rem"><a href="/index.html" style="color:var(--accent);text-decoration:none;">&larr; 返回首页</a></p>
+</div>
+
+</div><!-- container end -->
+</body>
+</html>
