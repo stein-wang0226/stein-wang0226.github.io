@@ -2576,7 +2576,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <!-- ========= OPD 核心定义 ========= -->
     <h3>一句话定义</h3>
     <div class="box-insight">
-        <strong>OPD（On-Policy Distillation）：</strong>学生模型 $\pi_\theta$ 先用当前策略生成回答 $y \sim \pi_\theta(\cdot|x)$，教师模型 $q$ 在学生生成的每个 prefix $c_t = (x, y_{<t})$ 上提供监督信号（logprob / top-k 分布 / full-vocab logits），学生据此更新参数。
+        <strong>OPD（On-Policy Distillation）：</strong>学生模型 $\pi_\theta$ 先用当前策略生成回答 $y \sim \pi_\theta(\cdot|x)$，教师模型 $q$ 在学生生成的每个 prefix $c_t = (x, y_{&lt;t})$ 上提供监督信号（logprob / top-k 分布 / full-vocab logits），学生据此更新参数。
     </div>
 
     <!-- ========= OPD vs Off-policy KD ========= -->
@@ -2584,7 +2584,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
     <div class="formula-box">
         <div class="label">Off-policy KD（传统蒸馏 / SFT）</div>
-        $$\mathcal{L}_{\text{off-KD}} = \sum_t D\big(q(\cdot|x, y^{\text{data}}_{<t}) \;\|\; \pi_\theta(\cdot|x, y^{\text{data}}_{<t})\big)$$
+        $$\mathcal{L}_{\text{off-KD}} = \sum_t D\big(q(\cdot|x, y^{\text{data}}_{&lt;t}) \;\|\; \pi_\theta(\cdot|x, y^{\text{data}}_{&lt;t})\big)$$
         <div class="formula-annotation">
             <div class="item"><span class="symbol">$y^{\text{data}}$</span>训练 prefix 来自数据集或 teacher 预生成——学生训练时从未见过自己的错误</div>
             <div class="item"><span class="symbol">Exposure Bias</span>推理时学生自己生成 prefix，一旦走偏，后续 prefix 进入训练未见过区域，错误连锁放大</div>
@@ -2593,7 +2593,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
     <div class="formula-box highlight">
         <div class="label">OPD（On-Policy Distillation）</div>
-        $$y \sim \pi_\theta(\cdot|x), \quad c_t = (x, y_{<t})$$
+        $$y \sim \pi_\theta(\cdot|x), \quad c_t = (x, y_{&lt;t})$$
         $$\mathcal{L}_{\text{OPD}} = \mathbb{E}_{y \sim \pi_\theta} \left[ \sum_{t=1}^{|y|} D\big(q(\cdot|c_t) \;\|\; \pi_\theta(\cdot|c_t)\big) \right]$$
         <div class="formula-annotation">
             <div class="item"><span class="symbol">$y \sim \pi_\theta$</span>prefix 由学生自己生成——训练时就在处理"自己的错误"，消除 exposure bias</div>
@@ -2822,10 +2822,10 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
             <li><strong>Student</strong> $p_S(\cdot|x)$：只看问题 $x$，模拟推理条件</li>
             <li><strong>Teacher</strong> $p_T(\cdot|x, y^*)$：额外接收正确答案 $y^*$（特权信息）</li>
         </ul>
-        $$\mathcal{L}_{\text{OPSD}} = \mathbb{E}_{(x,y^*)\sim\mathcal{S}} \left[ \mathbb{E}_{\hat{y}\sim p_S(\cdot|x)} \left[ \frac{1}{|\hat{y}|} \sum_{n=1}^{|\hat{y}|} D\big(p_T(\cdot|x,y^*,\hat{y}_{<n}) \;\|\; p_S(\cdot|x,\hat{y}_{<n})\big) \right] \right]$$
+        $$\mathcal{L}_{\text{OPSD}} = \mathbb{E}_{(x,y^*)\sim\mathcal{S}} \left[ \mathbb{E}_{\hat{y}\sim p_S(\cdot|x)} \left[ \frac{1}{|\hat{y}|} \sum_{n=1}^{|\hat{y}|} D\big(p_T(\cdot|x,y^*,\hat{y}_{&lt;n}) \;\|\; p_S(\cdot|x,\hat{y}_{&lt;n})\big) \right] \right]$$
         <div class="formula-annotation">
             <div class="item"><span class="symbol">$\hat{y} \sim p_S$</span>学生自己生成回答（on-policy）</div>
-            <div class="item"><span class="symbol">$p_T(\cdot|x,y^*,\hat{y}_{<n})$</span>teacher 看到正确答案后，在每个 prefix 上给出"理想下一步"分布</div>
+            <div class="item"><span class="symbol">$p_T(\cdot|x,y^*,\hat{y}_{&lt;n})$</span>teacher 看到正确答案后，在每个 prefix 上给出"理想下一步"分布</div>
             <div class="item"><span class="symbol">核心直觉</span>模型看到正确答案后"恍然大悟"，把这个顿悟信号传递给自己"没看到答案"的版本</div>
             <div class="item"><span class="symbol">梯度只流经 student logits</span>teacher 作为固定监督目标，防止参数同步漂移</div>
         </div>
@@ -2834,8 +2834,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <h4>OPSD 的 Policy-Gradient 视角：Dense Token-Level Reward</h4>
     <div class="formula-box">
         <div class="label">每个 token 的隐式奖励</div>
-        $$r_n(x, \hat{y}) \triangleq \log p_T(\hat{y}_n | x, y^*, \hat{y}_{<n}) - \log p_S(\hat{y}_n | x, \hat{y}_{<n})$$
-        $$\nabla_\theta \mathcal{L} = -\mathbb{E} \left[ \frac{1}{|\hat{y}|} \sum_{n=1}^{|\hat{y}|} r_n \cdot \nabla_\theta \log p_S(\hat{y}_n | x, \hat{y}_{<n}) \right]$$
+        $$r_n(x, \hat{y}) \triangleq \log p_T(\hat{y}_n | x, y^*, \hat{y}_{&lt;n}) - \log p_S(\hat{y}_n | x, \hat{y}_{&lt;n})$$
+        $$\nabla_\theta \mathcal{L} = -\mathbb{E} \left[ \frac{1}{|\hat{y}|} \sum_{n=1}^{|\hat{y}|} r_n \cdot \nabla_\theta \log p_S(\hat{y}_n | x, \hat{y}_{&lt;n}) \right]$$
         <div class="formula-annotation">
             <div class="item"><span class="symbol">$r_n$</span>特权 teacher 比 student 更支持这个 token → 正 reward，反之负 reward</div>
             <div class="item"><span class="symbol">vs GRPO</span>GRPO 是 sequence-level 二值奖励（全对/全错），OPSD 是每个 token 都有密集奖励信号</div>
