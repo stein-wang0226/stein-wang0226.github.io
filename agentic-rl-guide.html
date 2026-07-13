@@ -1271,7 +1271,28 @@
         <!-- OPD -->
         <h3 id="opd">4.7 OPD — On-Policy Distillation（在策略蒸馏）</h3>
 
-        <p>OPD 是 2026 年最活跃的算法族之一，位于<strong>知识蒸馏与 RL 的交叉点</strong>。核心思想：学生模型 on-policy 生成 rollout，教师模型提供 dense token-level 监督信号。数学上等价于 <strong>KL 约束 RL + dense token reward</strong>（reward = 教师-学生 log-prob 比）。</p>
+        <p>OPD（On-Policy Distillation）是 2026 年最活跃的算法族之一，位于<strong>知识蒸馏与 RL 的交叉点</strong>。它既是一种高效的模型压缩方法，也可以被严格等价地表述为带 dense token reward 的 KL 约束 RL。</p>
+
+        <div class="card teal">
+            <div class="card-title">OPD 原理 — 在策略蒸馏的数学本质</div>
+            <p><strong>标准蒸馏</strong>（off-policy）：学生模型学习教师模型在<strong>教师自己生成的数据</strong>上的分布。问题：教师分布和学生分布差异大时，学生在自己从未见过的 token 上被迫模仿教师，引入噪声。</p>
+            <p><strong>OPD</strong>（on-policy）：学生模型自己生成 rollout，教师模型在<strong>学生生成的 token</strong> 上提供监督信号。学生只在自己"能力范围内"的轨迹上向教师学习。</p>
+
+            <div class="formula-box key">
+                <span class="label">OPD 目标函数</span>
+                $$\mathcal{L}^{\text{OPD}}(\theta) = -\mathbb{E}_{x \sim \mathcal{D},\; y \sim \pi_\theta(\cdot|x)}\left[\sum_{t=1}^{|y|} \log \pi_T(y_t \mid x, y_{<t})\right]$$
+                <p>学生 $\pi_\theta$ on-policy 生成序列 $y$，教师 $\pi_T$ 在每个 token 位置给出交叉熵损失。注意期望是对<strong>学生分布</strong>采样（on-policy），而非教师分布。</p>
+            </div>
+
+            <div class="formula-box">
+                <span class="label">KL-RL 等价性（核心洞见）</span>
+                $$\underbrace{-\mathbb{E}_{y \sim \pi_\theta}\left[\sum_t \log \pi_T(y_t|\cdot)\right]}_{\text{OPD 交叉熵}} = \underbrace{\mathbb{E}_{y \sim \pi_\theta}\left[\sum_t r_t^{\text{teacher}}\right]}_{\text{Dense token reward}} + \underbrace{D_{\text{KL}}(\pi_\theta \| \pi_{\text{ref}})}_{\text{KL 正则}}$$
+                <p>其中 <strong>teacher reward</strong> 定义为 $r_t^{\text{teacher}} = \log \pi_T(y_t|x,y_{<t}) - \log \pi_\theta(y_t|x,y_{<t})$（教师-学生 log-ratio）。这意味着 OPD 等价于：用教师-学生 log-ratio 作为 dense token reward 做 RL，同时加 KL 正则防止学生偏离 reference model。</p>
+            </div>
+
+            <p><strong>与 GRPO 的对比</strong>：GRPO 是 <strong>sparse outcome reward</strong>（仅序列末尾有正确/错误信号），OPD 是 <strong>dense token reward</strong>（每个 token 都有教师信号）。两者互补——GRPO 适合教师发现（sparse verifier），OPD 适合知识压缩（dense teacher）。</p>
+            <p><strong>直觉类比</strong>：GRPO 像"考试只看最终答案对不对"，OPD 像"老师坐在旁边看你写每一步，随时纠正"。前者鼓励探索，后者高效传递知识。</p>
+        </div>
 
         <div class="card teal">
             <div class="card-title">OPD vs GRPO vs PPO vs DPO</div>
@@ -1284,6 +1305,21 @@
                     <tr><td><strong>定位</strong></td><td>教师→学生压缩</td><td>策略发现</td><td>策略优化</td><td>离线对齐</td></tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">Sparse-to-Dense 完整 Pipeline（面试高频考点）</div>
+            <p>2026 年的共识是 GRPO 和 OPD <strong>不是竞争关系，而是互补的两个阶段</strong>。完整的 post-training pipeline 分三步：</p>
+            <div class="formula-box">
+                <span class="label">三阶段 Pipeline</span>
+                <p><strong>Stage 1 · GRPO（教师发现）</strong>：Base Model + sparse verifier reward → 训练出强大的教师模型 $\pi_T$。此阶段 reward 稀疏（仅 outcome），目标是策略探索和能力发现。</p>
+                <p style="text-align:center;font-size:1.2em;margin:8px 0;">$\pi_{\text{base}} \xrightarrow{\text{GRPO + sparse reward}} \pi_T$（教师）</p>
+                <p><strong>Stage 2 · OPD（学生压缩）</strong>：$\pi_T$ 作为 live teacher，小模型 $\pi_\theta$ 作为 student，用 dense token-level 蒸馏高效传递知识。此阶段信号密集，压缩效率远高于 sparse RL。</p>
+                <p style="text-align:center;font-size:1.2em;margin:8px 0;">$\pi_T \xrightarrow{\text{OPD (dense)}} \pi_\theta$（学生）</p>
+                <p><strong>Stage 3 · Sparse RL（学生精炼）</strong>：学生模型用 GRPO + sparse reward 做最终精炼，突破教师天花板。此时学生已继承教师能力，sparse RL 可以在教师能力基础上继续探索。</p>
+                <p style="text-align:center;font-size:1.2em;margin:8px 0;">$\pi_\theta \xrightarrow{\text{GRPO + sparse reward}} \pi_\theta^*$（超越教师）</p>
+            </div>
+            <p><strong>效果</strong>：7B 学生通过此 pipeline 在 MATH 上达到 79.3%，AIME 达到 25.2%（arXiv:2605.12483）。ExOPD 的 reward scaling 进一步让学生<strong>直接超越教师</strong>：$\mathcal{L}^{\text{ExOPD}} = -\alpha \cdot \mathbb{E}[\sum_t \log \pi_T(\cdot)]$，当 $\alpha > 1$ 时学生可以超越教师分布。</p>
         </div>
 
         <div class="compare-grid">
@@ -1815,6 +1851,18 @@
                     <li><strong>代表性模型</strong>：Qwen3-Coder（80.2% SWE-bench，Forge + CISPO）、DeepSWE（完全开源，GRPO++）、Kimi K2（65.8%，MuonClip）、SWE-RL（NeurIPS'25，首个学术 RL coding agent）</li>
                 </ol>
                 <p>关键趋势：RL 训练从研究原型走向工程化——veRL/TorchForge 提供标准化训练循环，Agent Lightning 降低集成门槛，NeMo Gym 提供数据与环境基础设施。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>OPD 为什么等价于 KL 约束 RL？什么时候用 OPD 而不是 GRPO？<span class="difficulty diff-hard">困难</span><span class="freq-tag">高频</span></summary>
+            <div class="answer">
+                <p><strong>KL-RL 等价性</strong>：标准 OPD 的目标是在学生 on-policy 生成的数据上最小化教师的交叉熵。将其展开：</p>
+                <p>$$-\mathbb{E}_{y \sim \pi_\theta}\left[\sum_t \log \pi_T(y_t|\cdot)\right] = \mathbb{E}_{y \sim \pi_\theta}\left[\sum_t \underbrace{(\log \pi_T - \log \pi_\theta)}_{r_t^{\text{teacher}}}\right] + D_{\text{KL}}(\pi_\theta \| \pi_\theta)$$</p>
+                <p>第一项是 dense token reward（教师-学生 log-ratio），第二项是 KL 正则（防止学生偏离自身）。这恰好是 KL 约束 RL 的标准形式——<strong>reward = teacher log-ratio, KL penalty against reference model</strong>。</p>
+                <p><strong>什么时候用 OPD</strong>：①已有强教师模型，需要压缩到小模型 ②需要 dense supervision 加速训练（相比 sparse RL 效率高 6~12×）③学生模型需要继承教师的特定能力（如推理链风格、工具调用模式）。</p>
+                <p><strong>什么时候用 GRPO</strong>：①需要从零发现策略（无现成教师）②有可验证的 sparse reward（如数学答案正确性）③需要突破教师天花板（RLVR Ceiling 不适用 Agentic RL）。</p>
+                <p><strong>最佳实践</strong>：两者串联——GRPO 训练教师 → OPD 蒸馏学生 → GRPO 精炼学生（Sparse-to-Dense Pipeline）。</p>
             </div>
         </details>
 
