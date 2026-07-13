@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic RL 全景指南 · 从经典原理到前沿研究</title>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            svg: { fontCache: 'global' },
+            startup: {
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady().then(() => {
+                        document.body.classList.add('mathjax-loaded');
+                    });
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Literata:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+        :root {
+            --primary: #0d9488;
+            --primary-light: #ccfbf1;
+            --primary-dark: #0f766e;
+            --accent: #d97706;
+            --accent-light: #fef3c7;
+            --success: #059669;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --purple: #0f766e;
+            --purple-light: #f0fdfa;
+            --pink: #db2777;
+            --pink-light: #fce7f3;
+            --gray-50: #fafaf8;
+            --gray-100: #f3f1ec;
+            --gray-200: #d6d3cd;
+            --gray-300: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #1a1a2e;
+            --gray-900: #1a1a2e;
+            --radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.03);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .reading-progress {
+            position: fixed; top: 0; left: 0;
+            width: 0%; height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--purple), var(--accent));
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+
+        .back-to-top {
+            position: fixed; bottom: 32px; right: 32px;
+            width: 44px; height: 44px;
+            background: var(--primary);
+            color: white; border: none; border-radius: 50%;
+            cursor: pointer; font-size: 20px;
+            box-shadow: var(--shadow-md);
+            opacity: 0; transform: translateY(16px);
+            transition: all var(--transition);
+            z-index: 999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+        body {
+            font-family: 'Literata', Georgia, 'Noto Serif SC', serif;
+            line-height: 1.85;
+            color: var(--gray-800);
+            background: #fafaf8;
+            background-image: radial-gradient(ellipse at 20% 0%, rgba(13,148,136,0.04) 0%, transparent 50%),
+                              radial-gradient(ellipse at 80% 100%, rgba(15,118,110,0.03) 0%, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            max-width: 1280px;
+            margin: 0 auto;
+            gap: 0;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 32px 20px;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .sidebar h3 {
+            font-family: 'Sora', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gray-500);
+            margin-bottom: 14px;
+            padding-left: 8px;
+        }
+
+        .sidebar ul { list-style: none; }
+        .sidebar li { margin-bottom: 2px; }
+        .sidebar a {
+            display: block;
+            padding: 6px 12px;
+            color: var(--gray-600);
+            text-decoration: none;
+            font-size: 13px;
+            font-family: 'Sora', sans-serif;
+            border-radius: 6px;
+            transition: all var(--transition);
+        }
+        .sidebar a:hover { color: var(--primary); background: rgba(13,148,136,0.06); }
+        .sidebar a.active { color: var(--primary); background: rgba(13,148,136,0.08); font-weight: 600; }
+        .sidebar .sub { padding-left: 20px; font-size: 12px; }
+
+        .main-content {
+            padding: 48px 56px 80px;
+            min-width: 0;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 56px 32px 40px;
+            margin: -48px -56px 40px;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 40%, #14b8a6 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+        }
+        .hero h1 {
+            font-family: 'Sora', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .hero .subtitle {
+            font-size: 1.05em;
+            opacity: 0.92;
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .hero .meta {
+            margin-top: 16px;
+            font-size: 0.82em;
+            opacity: 0.75;
+            font-family: 'Sora', sans-serif;
+        }
+
+        /* Section headers */
+        h2.section-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.55em;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 48px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h2.section-title .num {
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            padding: 2px 12px;
+            font-size: 0.6em;
+            font-weight: 800;
+        }
+
+        h3 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin: 28px 0 12px;
+        }
+
+        h4 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.02em;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin: 20px 0 8px;
+        }
+
+        p { margin: 10px 0; }
+        strong { color: var(--primary-dark); }
+
+        /* Cards */
+        .card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 22px 26px;
+            margin: 16px 0;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--transition);
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card.teal { border-left: 4px solid var(--primary); }
+        .card.amber { border-left: 4px solid var(--accent); }
+        .card.green { border-left: 4px solid var(--success); }
+        .card.red { border-left: 4px solid var(--danger); }
+        .card.pink { border-left: 4px solid var(--pink); }
+
+        .card .card-title {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 1.05em;
+            margin-bottom: 8px;
+            color: var(--gray-800);
+        }
+
+        /* Formula boxes */
+        .formula-box {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 14px 0;
+            overflow-x: auto;
+        }
+        .formula-box .label {
+            font-family: 'Sora', sans-serif;
+            font-size: 0.78em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            display: inline-block;
+            padding: 2px 10px;
+            background: rgba(13,148,136,0.08);
+            border-radius: 4px;
+        }
+        .formula-box.key .label { color: #065f46; background: rgba(16,185,129,0.08); }
+        .formula-box.key { border-left-color: var(--success); }
+        .formula-box.warn .label { color: #92400e; background: rgba(245,158,11,0.1); }
+        .formula-box.warn { border-left-color: var(--accent); }
+
+        /* Info boxes */
+        .box-interview {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 1px solid #fde68a;
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 14px 0;
+        }
+        .box-interview::before {
+            content: "🎤 面试要点";
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: #92400e;
+            font-size: 0.85em;
+        }
+
+        .box-insight {
+            background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+            border: 1px solid #99f6e4;
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 14px 0;
+        }
+        .box-insight::before {
+            content: "💡 核心洞见";
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+            font-size: 0.85em;
+        }
+
+        .box-warning {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            border: 1px solid #fecaca;
+            border-left: 4px solid var(--danger);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 14px 0;
+        }
+        .box-warning::before {
+            content: "⚠️ 常见误区";
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: #991b1b;
+            font-size: 0.85em;
+        }
+
+        .box-analogy {
+            background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+            border: 1px solid #99f6e4;
+            border-left: 4px solid var(--purple);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 14px 0;
+        }
+        .box-analogy::before {
+            content: "🎯 类比";
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: #0f766e;
+            font-size: 0.85em;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 16px 0;
+            font-size: 0.88em;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+        th {
+            background: #f0fdfa;
+            color: var(--primary-dark);
+            font-family: 'Sora', sans-serif;
+            font-weight: 600;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 2px solid var(--primary);
+        }
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background: var(--gray-50); }
+        tbody tr:hover td { background: rgba(13,148,136,0.03); }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            font-family: 'Sora', sans-serif;
+            font-size: 0.72em;
+            padding: 2px 9px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin: 1px 3px;
+        }
+        .tag-teal { background: var(--primary-light); color: var(--primary-dark); }
+        .tag-amber { background: var(--accent-light); color: #92400e; }
+        .tag-green { background: var(--success-light); color: #065f46; }
+        .tag-red { background: var(--danger-light); color: #991b1b; }
+        .tag-pink { background: var(--pink-light); color: #9d174d; }
+
+        /* Code */
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--gray-100);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--primary-dark);
+        }
+
+        /* TOC */
+        nav.toc {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 24px 32px;
+            margin: 24px 0;
+        }
+        nav.toc h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1em;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        nav.toc ol { padding-left: 20px; }
+        nav.toc li {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--gray-600);
+        }
+        nav.toc a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        nav.toc a:hover { text-decoration: underline; }
+
+        /* Comparison grid */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .compare-grid .card { margin: 0; }
+
+        /* Algo tree / evolution diagram */
+        .evo-diagram {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        /* QA card */
+        .qa-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            margin: 12px 0;
+            overflow: hidden;
+        }
+        .qa-card summary {
+            padding: 14px 18px;
+            cursor: pointer;
+            font-family: 'Sora', sans-serif;
+            font-weight: 600;
+            font-size: 0.92em;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .qa-card summary::before {
+            content: "Q";
+            background: var(--primary);
+            color: white;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .qa-card[open] summary { border-bottom: 1px solid var(--gray-200); background: #f0fdfa; }
+        .qa-card .answer { padding: 16px 18px; font-size: 0.9em; line-height: 1.8; }
+        .qa-card .answer p { margin-bottom: 10px; }
+
+        .difficulty { font-size: 0.7em; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+        .diff-mid { background: #fef3c7; color: #92400e; }
+        .diff-hard { background: #fee2e2; color: #991b1b; }
+        .freq-tag { font-size: 0.7em; padding: 2px 8px; border-radius: 10px; background: #f0fdfa; color: #0f766e; }
+
+        /* Step cards (for algorithms) */
+        .step-card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 10px 0;
+        }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 28px; margin: 16px 0; }
+        .timeline::before {
+            content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+            width: 2px; background: var(--gray-200);
+        }
+        .timeline-item { position: relative; margin-bottom: 16px; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -24px; top: 6px;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--primary);
+        }
+        .timeline-item .date {
+            font-family: 'Sora', sans-serif;
+            font-size: 0.78em; color: var(--primary); font-weight: 600;
+        }
+        .timeline-item .content { font-size: 0.9em; }
+
+        /* Page nav */
+        .page-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .page-nav a {
+            font-family: 'Sora', sans-serif;
+            color: var(--primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.88em;
+            transition: all var(--transition);
+        }
+        .page-nav a:hover { background: white; border-color: var(--primary); }
+
+        .back-link {
+            display: inline-block;
+            font-family: 'Sora', sans-serif;
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-size: 0.85em;
+            margin-bottom: 16px;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .main-content { padding: 24px 20px 60px; }
+            .hero { margin: -24px -20px 24px; padding: 40px 20px 32px; }
+            .hero h1 { font-size: 1.6em; }
+            .compare-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+
+        /* Selection */
+        ::selection { background: rgba(13,148,136,0.15); }
+
+        /* MathJax fade-in */
+        .mathjax-loaded .MathJax { opacity: 1 !important; }
+        .MathJax { opacity: 0; transition: opacity 0.5s; }
+
+        /* Print */
+        @media print {
+            .sidebar, .back-to-top, .reading-progress { display: none !important; }
+            .layout { grid-template-columns: 1fr; }
+            .main-content { padding: 20px; }
+            .hero { background: var(--primary) !important; }
+            .card, .formula-box, .box-interview, .box-insight, .box-warning { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="reading-progress" id="progress"></div>
+
+<div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <h3>目录导航</h3>
+        <ul>
+            <li><a href="#intro">引言</a></li>
+            <li><a href="#part1">I · 数学基础</a></li>
+            <li class="sub"><a href="#mdp">MDP 建模</a></li>
+            <li class="sub"><a href="#pg">策略梯度定理</a></li>
+            <li class="sub"><a href="#is">重要性采样</a></li>
+            <li class="sub"><a href="#kl">KL 散度与信任域</a></li>
+            <li class="sub"><a href="#gae">GAE 优势估计</a></li>
+            <li><a href="#part2">II · 经典算法族谱</a></li>
+            <li class="sub"><a href="#ppo">PPO 家族</a></li>
+            <li class="sub"><a href="#dpo">DPO 家族</a></li>
+            <li class="sub"><a href="#grpo">GRPO 家族</a></li>
+            <li class="sub"><a href="#family-tree">族谱总图</a></li>
+            <li><a href="#part3">III · Agentic RL 核心问题</a></li>
+            <li class="sub"><a href="#rlvr-ceiling">RLVR Ceiling</a></li>
+            <li class="sub"><a href="#credit">信用分配</a></li>
+            <li class="sub"><a href="#multi-turn">多轮 RL</a></li>
+            <li class="sub"><a href="#tool-rl">工具调用 RL</a></li>
+            <li class="sub"><a href="#offpolicy">Off-Policy</a></li>
+            <li><a href="#part4">IV · 前沿算法创新</a></li>
+            <li class="sub"><a href="#gspo">GSPO</a></li>
+            <li class="sub"><a href="#steppo">StepPO</a></li>
+            <li class="sub"><a href="#arpo">ARPO</a></li>
+            <li class="sub"><a href="#gigpo">GiGPO</a></li>
+            <li class="sub"><a href="#ortho">正交叠加</a></li>
+            <li class="sub"><a href="#algo-2026">2026 前沿新算法</a></li>
+            <li class="sub"><a href="#opd">OPD / TrOPD</a></li>
+            <li><a href="#part5">V · 开源 RL 实践</a></li>
+            <li class="sub"><a href="#deepseek-r1">DeepSeek-R1</a></li>
+            <li class="sub"><a href="#kimi">Kimi k1.5 / K2</a></li>
+            <li class="sub"><a href="#qwen3">Qwen3</a></li>
+            <li class="sub"><a href="#glm">GLM-4.5 / GLM-5</a></li>
+            <li><a href="#part6">VI · Agentic 系统与基础设施</a></li>
+            <li class="sub"><a href="#coding-agents">Coding Agent RL</a></li>
+            <li class="sub"><a href="#training-infra">训练框架与基础设施</a></li>
+            <li class="sub"><a href="#github-repos">推荐开源 Repo</a></li>
+            <li><a href="#part7">VII · 面试高频 QA</a></li>
+            <li><a href="#ref">参考文献</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <a href="index.html" class="back-link">← 返回首页</a>
+
+        <div class="hero">
+            <h1>Agentic RL 全景指南</h1>
+            <p class="subtitle">从经典策略梯度到 2025-2026 最前沿的 Agentic 后训练，面向大厂基模组面试的系统性学习手册</p>
+            <p class="meta">涵盖 35+ 核心算法 · 8 大开源报告 · DeepSeek V4 / GLM-5.2 / Kimi K2.6 · ICLR / ICML 2026 前沿</p>
+        </div>
+
+        <!-- TOC -->
+        <nav class="toc">
+            <h2>目录</h2>
+            <ol>
+                <li><a href="#part1">数学基础 — MDP、策略梯度、IS、KL、GAE</a></li>
+                <li><a href="#part2">经典算法族谱 — PPO / DPO / GRPO 三大家族</a></li>
+                <li><a href="#part3">Agentic RL 核心问题 — RLVR Ceiling / 信用分配 / 多轮 / 工具调用 / Off-Policy</a></li>
+                <li><a href="#part4">前沿算法创新 — GSPO / StepPO / ARPO / GiGPO / OPD / 2026 新算法</a></li>
+                <li><a href="#part5">开源大模型 RL 实践 — DeepSeek-R1 / Kimi / Qwen3 / GLM</a></li>
+                <li><a href="#part6">Agentic 系统与基础设施 — Coding Agent RL / 开源训练框架 / 基础设施</a></li>
+                <li><a href="#part7">面试高频 QA — 12 道精选问答</a></li>
+            </ol>
+        </nav>
+
+        <!-- ======================= 引言 ======================= -->
+        <h2 class="section-title" id="intro">引言：为什么 Agentic RL 成为最热的方向</h2>
+
+        <p>2024-2026 年，LLM 后训练（post-training）范式经历了三次跃迁：<strong>RLHF</strong>（人类反馈）→ <strong>RLVR</strong>（可验证奖励）→ <strong>Agentic RL</strong>（智能体交互奖励）。DeepSeek-R1 用 GRPO 让模型涌现出推理能力，Kimi k1.5 将长链思维与 RL 对齐，Qwen3 实现了混合推理模式的 RL 训练——这些开源报告证明了 RL 后训练的巨大潜力。</p>
+
+        <p>然而，2025 年中的 <strong>RLVR Ceiling</strong> 研究（arXiv:2504.13837）揭示了一个关键瓶颈：纯推理 RL 的性能上限不超过 base model 的 pass@k。这意味着如果模型只能在静态文本上做推理，RL 无法超越"暴力采样"。<strong>Agentic RL</strong>——让模型在交互环境中通过工具调用、多轮对话、代码执行来解决问题——成为突破这一天花板的关键路径。</p>
+
+        <div class="box-insight">
+            <p>2026 年的范式共识：<strong>Agent = Model + Harness</strong>。RL 不再只优化"生成什么"，而是优化"如何与环境交互"——包括何时调用工具、如何规划多步行动、怎样从失败中恢复。这使得 Agentic RL 成为大厂基模组面试的核心考察方向。</p>
+        </div>
+
+        <!-- ======================= Part I ======================= -->
+        <h2 class="section-title" id="part1"><span class="num">I</span> 数学基础</h2>
+
+        <p>本节覆盖理解所有 RL 后训练算法所需的数学基础。每个公式都会逐项解释，配合直觉类比。</p>
+
+        <h3 id="mdp">1.1 马尔可夫决策过程（MDP）</h3>
+
+        <div class="formula-box key">
+            <span class="label">定义</span>
+            <p>MDP 五元组：$\mathcal{M} = (\mathcal{S}, \mathcal{A}, P, R, \gamma)$</p>
+            $$\mathcal{S}: \text{状态空间（如：当前 prompt + 已生成的 token 序列）}$$
+            $$\mathcal{A}: \text{动作空间（如：vocabulary 中所有 token）}$$
+            $$P(s'|s,a): \text{转移概率（生成 token } a \text{ 后的新状态）}$$
+            $$R(s,a): \text{奖励函数（如：答案正确=1，错误=0）}$$
+            $$\gamma \in [0,1]: \text{折扣因子（未来奖励的衰减系数）}$$
+        </div>
+
+        <div class="box-analogy">
+            <p>把 MDP 想象成一场考试：状态 $s$ 是你当前读到的题目+已写的半截答案，动作 $a$ 是你接下来写的一个字，奖励 $R$ 是最终得分。$\gamma$ 就像"你有多在乎后面的分数"——$\gamma=0$ 表示你只看眼前这一步，$\gamma \to 1$ 表示你完美规划全局。</p>
+        </div>
+
+        <p><strong>策略</strong> $\pi_\theta(a|s)$：参数化模型，给定状态输出动作的概率分布。对 LLM 来说，就是给定上下文后每个 token 的生成概率。</p>
+
+        <p><strong>目标函数</strong>：最大化期望累积回报</p>
+
+        <div class="formula-box">
+            <span class="label">目标</span>
+            $$J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\left[\sum_{t=0}^{T} \gamma^t R(s_t, a_t)\right]$$
+            <p>其中 $\tau = (s_0, a_0, s_1, a_1, \ldots, s_T)$ 是一条完整轨迹（trajectory）。</p>
+        </div>
+
+        <h3 id="pg">1.2 策略梯度定理</h3>
+
+        <div class="formula-box key">
+            <span class="label">核心定理</span>
+            $$\nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\left[\sum_{t=0}^{T} \nabla_\theta \log \pi_\theta(a_t|s_t) \cdot A^{\pi_\theta}(s_t, a_t)\right]$$
+        </div>
+
+        <p>逐项解释：</p>
+        <ul style="margin: 10px 0 10px 20px;">
+            <li>$\nabla_\theta \log \pi_\theta(a_t|s_t)$：<strong>score function</strong>，模型对动作 $a_t$ 的对数概率关于参数的梯度。直觉：这个方向是让模型"更想生成 $a_t$"的方向。</li>
+            <li>$A^{\pi_\theta}(s_t, a_t)$：<strong>优势函数</strong>，衡量动作 $a_t$ 比"平均水平"好多少。$A > 0$ 表示这个动作比平均好 → 加大其概率；$A < 0$ 表示比平均差 → 减小其概率。</li>
+        </ul>
+
+        <div class="box-analogy">
+            <p>想象考试后复盘：对每道写对且超出预期的题（$A > 0$），记住解题思路（$\nabla \log \pi$），下次遇到类似题更可能做对；对做错的题（$A < 0$），弱化这种思路。</p>
+        </div>
+
+        <h4>价值函数与优势函数</h4>
+
+        <div class="formula-box">
+            <span class="label">定义</span>
+            <p><strong>状态价值</strong>（从状态 $s$ 出发的期望回报）：</p>
+            $$V^\pi(s) = \mathbb{E}_{\tau \sim \pi}\left[\sum_{t=0}^{\infty} \gamma^t R(s_t, a_t) \;\middle|\; s_0 = s\right]$$
+            <p><strong>动作价值</strong>（在状态 $s$ 执行动作 $a$ 后的期望回报）：</p>
+            $$Q^\pi(s, a) = R(s,a) + \gamma \cdot \mathbb{E}_{s' \sim P}[V^\pi(s')]$$
+            <p><strong>优势函数</strong>（动作比平均好多少）：</p>
+            $$A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s)$$
+        </div>
+
+        <h3 id="is">1.3 重要性采样（Importance Sampling）</h3>
+
+        <p>策略梯度需要在当前策略 $\pi_\theta$ 下采样轨迹来计算梯度，但实际训练中我们常常需要用<strong>旧策略</strong> $\pi_{\theta_{\text{old}}}$ 采集的数据来更新<strong>新策略</strong> $\pi_\theta$。</p>
+
+        <div class="formula-box">
+            <span class="label">重要性采样比率</span>
+            $$r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)}$$
+            <p>当 $r_t = 1$ 时，新旧策略在这一步完全一致；$r_t > 1$ 表示新策略更倾向于生成这个动作。</p>
+        </div>
+
+        <div class="box-warning">
+            <p>如果 $r_t$ 过大或过小，更新步长会不稳定——这正是 PPO 需要 clip 的原因。在 Agentic RL 的多轮场景下，IS 比率会随 turn 数累积，导致严重的分布偏移（off-policy drift），这是大规模异步训练系统需要解决的核心问题。</p>
+        </div>
+
+        <h3 id="kl">1.4 KL 散度与信任域</h3>
+
+        <div class="formula-box">
+            <span class="label">KL 散度</span>
+            $$D_{\text{KL}}(\pi_\theta \| \pi_{\text{ref}}) = \mathbb{E}_{a \sim \pi_\theta}\left[\log \frac{\pi_\theta(a|s)}{\pi_{\text{ref}}(a|s)}\right]$$
+        </div>
+
+        <p>在 LLM 的 RL 训练中，KL 项有两个核心作用：</p>
+
+        <ul style="margin: 10px 0 10px 20px;">
+            <li><strong>防止 reward hacking</strong>：限制策略不要偏离 SFT/reference 模型太远，避免模型找到"捷径"获得高 reward 但生成质量崩溃。</li>
+            <li><strong>稳定训练</strong>：类比 PPO 的 clip，KL 约束是另一种"信任域"——确保每步更新不会太激进。</li>
+        </ul>
+
+        <p>PPO 的目标函数通常写作：</p>
+
+        <div class="formula-box key">
+            <span class="label">PPO-Clip 目标</span>
+            $$\mathcal{L}^{\text{PPO}}(\theta) = \mathbb{E}_t\left[\min\left(r_t(\theta) \hat{A}_t,\; \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t\right)\right] - \beta \cdot D_{\text{KL}}(\pi_\theta \| \pi_{\text{ref}})$$
+            <p>$\epsilon$ 通常取 0.1~0.2，控制单步更新幅度。$\beta$ 是 KL 惩罚系数。</p>
+        </div>
+
+        <h3 id="gae">1.5 广义优势估计（GAE）</h3>
+
+        <div class="formula-box key">
+            <span class="label">GAE(λ)</span>
+            $$\hat{A}_t^{\text{GAE}(\lambda)} = \sum_{l=0}^{T-t} (\gamma\lambda)^l \delta_{t+l}$$
+            <p>其中 $\delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)$ 是 TD 残差（Temporal Difference residual）。</p>
+        </div>
+
+        <ul style="margin: 10px 0 10px 20px;">
+            <li>$\lambda = 0$：$\hat{A}_t = \delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)$，只依赖一步 TD，<strong>低方差高偏差</strong>。</li>
+            <li>$\lambda = 1$：$\hat{A}_t = \sum_{l=0}^{T-t} \gamma^l r_{t+l} - V(s_t)$，蒙特卡洛回报减基线，<strong>高方差低偏差</strong>。</li>
+            <li>通常 $\lambda \in [0.9, 0.95]$，在偏差和方差之间取折中。</li>
+        </ul>
+
+        <div class="box-insight">
+            <p>GAE 是 PPO 能稳定训练的关键组件之一。但 GRPO 等 Critic-Free 方法绕过了 GAE，用组内相对奖励来计算优势——这正是下一节的核心话题。</p>
+        </div>
+
+        <!-- ======================= Part II ======================= -->
+        <h2 class="section-title" id="part2"><span class="num">II</span> 经典算法族谱</h2>
+
+        <p>当前 LLM RL 训练算法可分为三大家族：<strong>PPO（Critic-based）</strong>、<strong>DPO（Preference-based）</strong>、<strong>GRPO（Group-based / Critic-Free）</strong>。每个家族都有多个变体，针对不同的训练挑战做了针对性改进。</p>
+
+        <!-- PPO -->
+        <h3 id="ppo">2.1 PPO 家族（Critic-based）</h3>
+
+        <div class="card teal">
+            <div class="card-title">PPO — Proximal Policy Optimization <span class="tag tag-teal">2017 · Schulman et al.</span></div>
+            <p>PPO 是最经典的 on-policy RL 算法，通过 clip 机制限制每步更新幅度，并需要一个 <strong>Critic 网络</strong>（Value Network）来估计 $V(s)$ 以计算 GAE。</p>
+            <p><strong>优势</strong>：训练稳定、理论基础扎实、适合大规模并行。<br>
+            <strong>劣势</strong>：需要额外训练 Critic 网络（约 2× 显存开销）；Critic 估计不准时会导致梯度偏差。</p>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">VAPO <span class="tag tag-amber">2024</span></div>
+                <p>PPO 的方差控制变体。引入 <strong>variance-aware</strong> 优势估计，对 Critic 估计不确定性高的状态给予更保守的更新步长。减少了因 Critic 误差导致的训练震荡。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">VinePPO <span class="tag tag-amber">2024</span></div>
+                <p>使用 <strong>vine rollout</strong>（从中间状态分支采样）来获得无偏的 Q 值估计，消除了 GAE 的 bootstrap 偏差。代价是需要额外的 rollout 计算。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">LitePPO <span class="tag tag-green">2025</span></div>
+                <p>简化 PPO 实现：去掉 KL penalty，只保留 clip 约束；使用 token-level 优势而非 sequence-level。更适合 LLM 的大规模训练场景。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">PSGPO <span class="tag tag-green">2025</span></div>
+                <p><strong>Process Supervision</strong> 版 PPO：引入过程奖励模型（PRM），为推理链的每一步提供中间奖励信号，解决 outcome reward 的稀疏性问题。与 Step-GRPO 思路类似，但基于 Critic 框架。</p>
+            </div>
+        </div>
+
+        <!-- DPO -->
+        <h3 id="dpo">2.2 DPO 家族（Preference-based / Offline）</h3>
+
+        <div class="card teal">
+            <div class="card-title">DPO — Direct Preference Optimization <span class="tag tag-teal">2023 · Rafailov et al.</span></div>
+            <p>DPO 的核心洞见：在 KL 约束下，最优策略可以用 reference model 和 reward 的闭式解表示，因此可以<strong>绕过 reward model</strong>，直接从偏好对 (preferred, rejected) 学习。</p>
+
+            <div class="formula-box">
+                <span class="label">DPO Loss</span>
+                $$\mathcal{L}_{\text{DPO}}(\theta) = -\mathbb{E}_{(x,y_w,y_l)}\left[\log \sigma\left(\beta \log\frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log\frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)\right]$$
+                <p>$y_w$ = 优选回复，$y_l$ = 劣选回复。直觉：增大 $y_w$ 相对于 reference 的 log-ratio，减小 $y_l$ 的 log-ratio。</p>
+            </div>
+            <p><strong>优势</strong>：无需 reward model 和 RL 训练循环，训练简单稳定。<br>
+            <strong>劣势</strong>：离线方法，受限于训练数据分布；对偏好数据质量极度敏感。</p>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">SimPO <span class="tag tag-amber">2024</span></div>
+                <p><strong>Reference-Free</strong> 偏好优化：用 sequence 平均 log-prob 代替 reference model 的 log-ratio，省去 reference model 的推理开销。对资源有限的团队非常友好。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">KTO — Kahneman-Tversky Optimization <span class="tag tag-amber">2024</span></div>
+                <p>借鉴行为经济学的前景理论：人类对损失更敏感。KTO 对 "rejected" 样本给予更大权重，并且<strong>不需要配对数据</strong>——只需要知道每个样本是 good 还是 bad。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">IPO — Identity Preference Optimization <span class="tag tag-green">2024</span></div>
+                <p>用 identity mapping 替代 DPO 中的 Bradley-Terry 模型假设，避免 DPO 在确定性偏好（$y_w \gg y_l$）时梯度消失的问题。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Step-DPO <span class="tag tag-green">2025</span></div>
+                <p>将 DPO 扩展到 <strong>step-level</strong>：对推理链的每一步构建偏好对，而非仅对最终输出。配合过程奖励模型（PRM），在数学推理任务上显著提升。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">ORPO — Online Preference Optimization <span class="tag tag-green">2025</span></div>
+                <p>DPO 的 online 版本：在训练过程中用当前模型生成 negative 样本（而非固定数据集），减少离线偏差。可视为 DPO 与 RLHF 的折中。</p>
+            </div>
+        </div>
+
+        <!-- GRPO -->
+        <h3 id="grpo">2.3 GRPO 家族（Group-based / Critic-Free）</h3>
+
+        <div class="card teal">
+            <div class="card-title">GRPO — Group Relative Policy Optimization <span class="tag tag-teal">2024 · DeepSeek</span></div>
+            <p>GRPO 是 DeepSeek 在 R1 训练中使用的核心算法，最大的创新是<strong>去掉了 Critic 网络</strong>。优势函数通过在同一 prompt 下采样一组（G 个）回复，计算组内相对排名来估计：</p>
+
+            <div class="formula-box key">
+                <span class="label">GRPO 优势估计</span>
+                $$\hat{A}_i = \frac{r_i - \text{mean}(\{r_1, \ldots, r_G\})}{\text{std}(\{r_1, \ldots, r_G\}) + \epsilon}$$
+                <p>$r_i$ 是第 $i$ 个回复的奖励分数。直觉：不需要绝对评价（Critic），只需要"这组里谁更好"的相对排名。</p>
+            </div>
+
+            <div class="formula-box">
+                <span class="label">GRPO 目标函数</span>
+                $$\mathcal{L}^{\text{GRPO}}(\theta) = \mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G} \frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\left\{\min\left[r_{i,t}(\theta)\hat{A}_i,\; \text{clip}(r_{i,t}(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_i\right] - \beta \cdot D_{\text{KL}}\right\}\right]$$
+                <p>注意 token 级别的 clip 和 sequence 级别的 advantage 的结合。</p>
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">DAPO — Decoupled Alignment Policy Optimization <span class="tag tag-amber">2025</span></div>
+                <p>将 PPO/GRPO 中的 clip 操作<strong>解耦</strong>：对正优势和负优势使用不同的 clip 阈值 $(\epsilon_l, \epsilon_u)$。解决了 GRPO 中"entropy collapse"问题（策略多样性过早消失）。开源实现在 <code>verl</code> 框架中。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Dr.GRPO <span class="tag tag-amber">2025</span></div>
+                <p>诊断并修复 GRPO 的<strong>偏差问题</strong>：原始 GRPO 的 clip + 非对称优势分布会导致系统性低估负样本的梯度。Dr.GRPO 引入 unbiased 优势估计，在数学推理任务上比 GRPO 提升 1-3pp。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">StarPO <span class="tag tag-green">2025</span></div>
+                <p>专为<strong>多轮 Agent 交互</strong>设计的 GRPO 变体。将整条多轮交互轨迹视为一个 rollout，在 turn 边界计算相对优势。解决了多轮场景下 GRPO 的 advantage 稀释问题。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Step-GRPO <span class="tag tag-green">2025 · AAAI</span></div>
+                <p>在 GRPO 框架上引入 <strong>step-level reward</strong>：对推理链的每一步给予中间奖励（如：公式正确=0.1，最终答案正确=1.0）。用 rule-based 规则而非 PRM 提供步级奖励，更鲁棒。</p>
+            </div>
+        </div>
+
+        <!-- Family Tree -->
+        <h3 id="family-tree">2.4 族谱总图</h3>
+
+        <div class="evo-diagram">
+            <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+                <defs>
+                    <linearGradient id="gPPO" x1="0" x2="1"><stop offset="0" stop-color="#0d9488"/><stop offset="1" stop-color="#0f766e"/></linearGradient>
+                    <linearGradient id="gDPO" x1="0" x2="1"><stop offset="0" stop-color="#d97706"/><stop offset="1" stop-color="#92400e"/></linearGradient>
+                    <linearGradient id="gGRPO" x1="0" x2="1"><stop offset="0" stop-color="#059669"/><stop offset="1" stop-color="#065f46"/></linearGradient>
+                </defs>
+
+                <!-- Root -->
+                <rect x="340" y="10" width="220" height="40" rx="8" fill="url(#gPPO)" opacity="0.9"/>
+                <text x="450" y="35" text-anchor="middle" fill="white" font-family="Sora,sans-serif" font-size="13" font-weight="700">策略梯度 REINFORCE</text>
+
+                <!-- Three families -->
+                <line x1="450" y1="50" x2="150" y2="90" stroke="#0d9488" stroke-width="2"/>
+                <line x1="450" y1="50" x2="450" y2="90" stroke="#d97706" stroke-width="2"/>
+                <line x1="450" y1="50" x2="750" y2="90" stroke="#059669" stroke-width="2"/>
+
+                <rect x="60" y="90" width="180" height="36" rx="8" fill="url(#gPPO)"/>
+                <text x="150" y="113" text-anchor="middle" fill="white" font-family="Sora,sans-serif" font-size="12" font-weight="700">PPO (Critic-based)</text>
+
+                <rect x="360" y="90" width="180" height="36" rx="8" fill="url(#gDPO)"/>
+                <text x="450" y="113" text-anchor="middle" fill="white" font-family="Sora,sans-serif" font-size="12" font-weight="700">DPO (Preference)</text>
+
+                <rect x="660" y="90" width="180" height="36" rx="8" fill="url(#gGRPO)"/>
+                <text x="750" y="113" text-anchor="middle" fill="white" font-family="Sora,sans-serif" font-size="12" font-weight="700">GRPO (Critic-Free)</text>
+
+                <!-- PPO children -->
+                <line x1="150" y1="126" x2="70" y2="165" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <line x1="150" y1="126" x2="150" y2="165" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <line x1="150" y1="126" x2="230" y2="165" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+                <rect x="20" y="165" width="100" height="28" rx="6" fill="#ccfbf1" stroke="#0d9488" stroke-width="1"/>
+                <text x="70" y="183" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="10" font-weight="600">VAPO</text>
+
+                <rect x="100" y="165" width="100" height="28" rx="6" fill="#ccfbf1" stroke="#0d9488" stroke-width="1"/>
+                <text x="150" y="183" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="10" font-weight="600">VinePPO</text>
+
+                <rect x="180" y="165" width="100" height="28" rx="6" fill="#ccfbf1" stroke="#0d9488" stroke-width="1"/>
+                <text x="230" y="183" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="10" font-weight="600">LitePPO</text>
+
+                <rect x="90" y="205" width="120" height="28" rx="6" fill="#f0fdfa" stroke="#0d9488" stroke-width="1"/>
+                <text x="150" y="223" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="10" font-weight="600">PSGPO (Process)</text>
+
+                <!-- DPO children -->
+                <line x1="450" y1="126" x2="360" y2="165" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <line x1="450" y1="126" x2="450" y2="165" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <line x1="450" y1="126" x2="540" y2="165" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+                <rect x="310" y="165" width="100" height="28" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+                <text x="360" y="183" text-anchor="middle" fill="#92400e" font-family="Sora,sans-serif" font-size="10" font-weight="600">SimPO</text>
+
+                <rect x="400" y="165" width="100" height="28" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+                <text x="450" y="183" text-anchor="middle" fill="#92400e" font-family="Sora,sans-serif" font-size="10" font-weight="600">KTO</text>
+
+                <rect x="490" y="165" width="100" height="28" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+                <text x="540" y="183" text-anchor="middle" fill="#92400e" font-family="Sora,sans-serif" font-size="10" font-weight="600">IPO</text>
+
+                <rect x="350" y="205" width="100" height="28" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+                <text x="400" y="223" text-anchor="middle" fill="#92400e" font-family="Sora,sans-serif" font-size="10" font-weight="600">Step-DPO</text>
+
+                <rect x="460" y="205" width="100" height="28" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+                <text x="510" y="223" text-anchor="middle" fill="#92400e" font-family="Sora,sans-serif" font-size="10" font-weight="600">ORPO</text>
+
+                <!-- GRPO children -->
+                <line x1="750" y1="126" x2="660" y2="165" stroke="#059669" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <line x1="750" y1="126" x2="750" y2="165" stroke="#059669" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <line x1="750" y1="126" x2="840" y2="165" stroke="#059669" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+                <rect x="610" y="165" width="100" height="28" rx="6" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+                <text x="660" y="183" text-anchor="middle" fill="#065f46" font-family="Sora,sans-serif" font-size="10" font-weight="600">DAPO</text>
+
+                <rect x="700" y="165" width="100" height="28" rx="6" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+                <text x="750" y="183" text-anchor="middle" fill="#065f46" font-family="Sora,sans-serif" font-size="10" font-weight="600">Dr.GRPO</text>
+
+                <rect x="790" y="165" width="100" height="28" rx="6" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+                <text x="840" y="183" text-anchor="middle" fill="#065f46" font-family="Sora,sans-serif" font-size="10" font-weight="600">StarPO</text>
+
+                <rect x="680" y="205" width="140" height="28" rx="6" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+                <text x="750" y="223" text-anchor="middle" fill="#065f46" font-family="Sora,sans-serif" font-size="10" font-weight="600">Step-GRPO</text>
+
+                <!-- Agentic extensions row -->
+                <text x="450" y="275" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="12" font-weight="700">↓ Agentic RL 扩展 ↓</text>
+
+                <rect x="60" y="295" width="140" height="36" rx="8" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+                <text x="130" y="310" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="10" font-weight="600">GiGPO</text>
+                <text x="130" y="323" text-anchor="middle" fill="#57534e" font-family="Literata,serif" font-size="8.5">Group-in-Group · 多轮</text>
+
+                <rect x="230" y="295" width="140" height="36" rx="8" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+                <text x="300" y="310" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="10" font-weight="600">GSPO</text>
+                <text x="300" y="323" text-anchor="middle" fill="#57534e" font-family="Literata,serif" font-size="8.5">Sequence-level · Qwen</text>
+
+                <rect x="400" y="295" width="140" height="36" rx="8" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+                <text x="470" y="310" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="10" font-weight="600">StepPO</text>
+                <text x="470" y="323" text-anchor="middle" fill="#57534e" font-family="Literata,serif" font-size="8.5">Step-level GAE</text>
+
+                <rect x="570" y="295" width="140" height="36" rx="8" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5"/>
+                <text x="640" y="310" text-anchor="middle" fill="#0f766e" font-family="Sora,sans-serif" font-size="10" font-weight="600">ARPO</text>
+                <text x="640" y="323" text-anchor="middle" fill="#57534e" font-family="Literata,serif" font-size="8.5">Entropy-adaptive Rollout</text>
+
+                <rect x="330" y="355" width="240" height="36" rx="8" fill="#0f766e"/>
+                <text x="450" y="378" text-anchor="middle" fill="white" font-family="Sora,sans-serif" font-size="11" font-weight="700">正交叠加：ARPO + GiGPO + GSPO + DAPO</text>
+
+                <rect x="280" y="398" width="340" height="20" rx="4" fill="none"/>
+                <text x="450" y="413" text-anchor="middle" fill="#78716c" font-family="Literata,serif" font-size="9">2025-2026 前沿：多维度正交改进可自由组合</text>
+            </svg>
+        </div>
+
+        <!-- 族谱对比表 -->
+        <h3>2.5 三大家族核心对比</h3>
+
+        <table>
+            <thead>
+                <tr><th>维度</th><th>PPO 家族</th><th>DPO 家族</th><th>GRPO 家族</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Critic 网络</strong></td><td>需要（Value Network）</td><td>不需要</td><td>不需要（组内相对）</td></tr>
+                <tr><td><strong>数据模式</strong></td><td>On-policy</td><td>Offline（偏好对）</td><td>On-policy（组采样）</td></tr>
+                <tr><td><strong>显存开销</strong></td><td>~4× 模型（Actor+Critic+Ref+Reward）</td><td>~2× 模型（Actor+Ref）</td><td>~3× 模型（Actor+Ref+Reward）</td></tr>
+                <tr><td><strong>训练复杂度</strong></td><td>高（四个模型协同）</td><td>低（直接优化）</td><td>中（需采样 G 组回复）</td></tr>
+                <tr><td><strong>适用场景</strong></td><td>通用 RLHF、Agentic RL</td><td>人类偏好对齐、安全对齐</td><td>推理 RL、Coding Agent</td></tr>
+                <tr><td><strong>代表工作</strong></td><td>DeepSeek-V3, Anthropic</td><td>Zephyr, Tulu</td><td>DeepSeek-R1, Qwen3</td></tr>
+                <tr><td><strong>多轮扩展</strong></td><td>Turn-level AE, VAPO</td><td>Step-DPO</td><td>StarPO, GiGPO, GSPO</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ======================= Part III ======================= -->
+        <h2 class="section-title" id="part3"><span class="num">III</span> Agentic RL 核心问题</h2>
+
+        <!-- RLVR Ceiling -->
+        <h3 id="rlvr-ceiling">3.1 RLVR Ceiling：纯推理 RL 的天花板</h3>
+
+        <div class="card red">
+            <div class="card-title">核心结论 <span class="tag tag-red">arXiv:2504.13837 · NeurIPS 2025</span></div>
+            <p>清华 LeapLab 的研究揭示了一个令人不安的事实：<strong>纯推理 RL（RLVR）的性能上限不超过 base model 的 best-of-N (pass@k) 采样</strong>。换句话说，如果模型只在静态文本上做推理（数学题、代码题），RL 训练不会比"暴力采样取最好"更强。</p>
+            <p>这个结论意味着：如果目标只是提升推理质量，RL 可能只是在用更少的计算资源达到与 best-of-N 相同的水平，而非真正超越。</p>
+        </div>
+
+        <div class="box-insight">
+            <p><strong>为什么 Agentic RL 不受此限制？</strong> 因为 Agentic 场景下模型与环境交互——调用工具、执行代码、多轮对话——这些动作改变了环境状态，产生新的信息（如代码执行结果、API 返回值），这些信息是 base model 在纯文本采样中无法获得的。RL 在这里优化的不仅是"生成什么"，还有"如何获取信息"。</p>
+        </div>
+
+        <!-- Credit Assignment -->
+        <h3 id="credit">3.2 信用分配问题（Credit Assignment）</h3>
+
+        <p>Agentic RL 的核心难题之一是<strong>长链交互中的信用分配</strong>：一个 20 轮的 Agent 交互中，最终任务成功/失败的 reward 应该归因到哪些具体步骤？</p>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">Token-level <span class="tag tag-teal">经典</span></div>
+                <p>在每个 token 位置计算 advantage（PPO + GAE）。粒度最细，但对 Agent 来说 token 级信号太噪声——一个工具调用由数十个 token 组成，它们应该共享相同的 credit。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Turn-level <span class="tag tag-amber">EACL 2026</span></div>
+                <p>以 Agent 的一轮交互（action + observation）为单位计算 advantage。<strong>Turn-level AE</strong>（arXiv:2512.17008）将每轮视为一个"macro action"，用 GAE 在 turn 级别传播 credit。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Step-level <span class="tag tag-green">AAAI / 2025-2026</span></div>
+                <p>StepPO（arXiv:2604.18401）将"step"定义为 step-native MDP 中的原子操作，用 step-level GAE 配合长度归一化的重要性采样。比 turn-level 更精细，比 token-level 更稳定。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Group-in-Group <span class="tag tag-pink">NeurIPS 2025</span></div>
+                <p>GiGPO（arXiv:2505.10978）在 GRPO 的基础上提出双层分组：内层 group 在同一 prompt 下采样多条 trajectory，外层 group 跨 prompt 做 advantage normalization。解决多轮 Agent 的优势估计问题。</p>
+            </div>
+        </div>
+
+        <!-- Multi-turn RL -->
+        <h3 id="multi-turn">3.3 多轮 RL（Multi-turn Reinforcement Learning）</h3>
+
+        <div class="card teal">
+            <div class="card-title">核心挑战</div>
+            <p>与单轮 RL（一个 prompt → 一个 response → 一个 reward）不同，多轮 RL 面临三个额外挑战：</p>
+            <ol style="margin: 10px 0 10px 20px;">
+                <li><strong>环境状态演化</strong>：每轮交互后环境状态改变（如：文件系统变化、对话上下文增长），策略需要适应动态状态。</li>
+                <li><strong>长期信用分配</strong>：前几轮的决策可能影响很久之后的结果（如：选择了错误的 API 导致后续所有步骤失败）。</li>
+                <li><strong>IS 比率累积</strong>：多轮的 IS ratio 会连乘 $\prod_{k=1}^K r_k(\theta)$，导致极端值，训练极不稳定。</li>
+            </ol>
+        </div>
+
+        <div class="formula-box warn">
+            <span class="label">多轮 IS 问题</span>
+            <p>假设每轮的 IS ratio 为 $r_k = 1.1$（仅偏离 10%），经过 10 轮后累积 ratio 为 $1.1^{10} \approx 2.59$，远超 PPO 的 clip 范围 $[0.8, 1.2]$。这意味着多轮场景下 clip 几乎总是被触发，梯度信号被截断。</p>
+        </div>
+
+        <p>主流解决方案：</p>
+        <ul style="margin: 10px 0 10px 20px;">
+            <li><strong>StarPO</strong>：在 turn 边界重新计算 GRPO advantage，避免 ratio 跨 turn 累积。</li>
+            <li><strong>StepPO</strong>：step-level GAE + 长度归一化 IS，从 MDP 层面解决多步 ratio 问题。</li>
+            <li><strong>异步 IS Correction</strong>：在 rollout 和 training 之间引入双层 IS correction（token-level + trajectory-level），容忍更大的 off-policy 程度。</li>
+            <li><strong>Ratchet 机制</strong>：周期性将策略同步到 rollout worker，防止 off-policy drift。</li>
+        </ul>
+
+        <!-- Tool-Use RL -->
+        <h3 id="tool-rl">3.4 工具调用 RL（Tool-Use RL）</h3>
+
+        <p>让 LLM 学会<strong>何时</strong>调用工具、<strong>如何</strong>解读工具返回的结果，是 Agentic RL 的核心能力之一。</p>
+
+        <div class="card teal">
+            <div class="card-title">工具调用 RL 的 reward 设计</div>
+            <table>
+                <thead><tr><th>Reward 类型</th><th>描述</th><th>优劣</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Outcome Reward</strong></td><td>只在最终任务完成时给 +1/-1</td><td>简单但极度稀疏</td></tr>
+                    <tr><td><strong>Tool-use Reward</strong></td><td>对正确的工具调用格式给中间奖励</td><td>可能导致格式正确但逻辑错误的调用</td></tr>
+                    <tr><td><strong>Execution Reward</strong></td><td>工具执行成功给奖励（如：代码编译通过、API 返回 200）</td><td>更鲁棒，但需要可执行环境</td></tr>
+                    <tr><td><strong>Process Reward</strong></td><td>PRM 评估每步推理+工具调用的质量</td><td>最精细，但 PRM 本身需要训练</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p><strong>VTool-R1</strong>（2025）是多模态工具调用 RL 的代表：让 VLM 学会在视觉推理任务中调用计算工具（如：面积计算、坐标查询），用 GRPO + execution reward 训练，在 MathVista 等 benchmark 上显著提升。</p>
+
+        <!-- Off-Policy -->
+        <h3 id="offpolicy">3.5 Off-Policy 优化</h3>
+
+        <p>在大规模 RL 训练中，rollout（采样）和 training（更新）往往异步进行。rollout 使用的策略 $\pi_{\theta_{\text{old}}}$ 和当前训练策略 $\pi_\theta$ 之间存在 gap，这就是 off-policy 问题。</p>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">TOPR <span class="tag tag-teal">2025</span></div>
+                <p><strong>Truncated Off-Policy RL</strong>：对 off-policy 程度超过阈值的样本直接丢弃（截断），只保留"足够 on-policy"的数据来更新。简单有效但浪费数据。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">CISPO <span class="tag tag-amber">2025</span></div>
+                <p><strong>Corrected IS Policy Optimization</strong>：对 IS ratio 进行 bias correction，减少 off-policy 数据引入的偏差。在保持数据利用率的同时控制训练稳定性。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">OPD / TrOPD <span class="tag tag-green">2025 · arXiv:2606.01249</span></div>
+                <p><strong>Online Policy Distillation</strong>：将 off-policy 数据通过蒸馏方式利用——用 off-policy trajectory 构造 teacher signal，然后用 KL 蒸馏训练当前策略。TrOPD 加入信任域约束 + FKL outlier 过滤，比标准 OPD 提升 3-6pp。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Agent Lightning <span class="tag tag-pink">Microsoft · 2025</span></div>
+                <p>Drop-in RL training for existing Agent 框架：无需重写代码即可为任意 Agent pipeline 添加 RL 训练。核心思想是将 Agent 的 rollout（trajectory 采样）和 RL 训练解耦，支持异步执行。与 veRL / TRL 等框架集成。</p>
+            </div>
+        </div>
+
+        <!-- ======================= Part IV ======================= -->
+        <h2 class="section-title" id="part4"><span class="num">IV</span> 前沿算法创新</h2>
+
+        <p>2025-2026 年涌现了大量对 GRPO/PPO 的改进。这些改进大多<strong>正交</strong>——分别从不同维度解决不同问题，可以自由组合。</p>
+
+        <!-- GSPO -->
+        <h3 id="gspo">4.1 GSPO — Group Sequence Policy Optimization</h3>
+
+        <div class="card teal">
+            <div class="card-title">GSPO <span class="tag tag-teal">Qwen Team · arXiv:2507.18071</span></div>
+            <p><strong>问题</strong>：GRPO 在 sequence 级别使用同一个 advantage $\hat{A}_i$ 来加权整个 sequence 的所有 token，导致 sequence 内部"好 token"和"坏 token"得到相同的梯度方向。</p>
+            <p><strong>方案</strong>：在 sequence 级别做 GRPO（组内相对排名），但将 advantage 在 sequence 内部按 token-level log-prob 差异进行二次分配。相当于"sequence 间 GRPO + sequence 内 token-level credit"。</p>
+            <p><strong>效果</strong>：在 Qwen 系列的 RL 训练中取代原始 GRPO，提升了长 sequence 的训练效率。</p>
+        </div>
+
+        <!-- StepPO -->
+        <h3 id="steppo">4.2 StepPO — Step-Aligned Policy Optimization</h3>
+
+        <div class="card teal">
+            <div class="card-title">StepPO <span class="tag tag-teal">arXiv:2604.18401 · 2026</span></div>
+            <p><strong>核心创新</strong>：将 Agent 的多轮交互建模为 <strong>step-native MDP</strong>——每个 "step"（一组 action + observation）是一个 MDP 原子操作，而非将整条 trajectory 视为一个 episode。</p>
+            <p><strong>技术方案</strong>：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>Step-level GAE：在 step 边界（而非 token 边界）计算 TD 残差和优势</li>
+                <li>长度归一化 IS：对 IS ratio 按 step 长度做归一化，防止多步 ratio 累积爆炸</li>
+                <li>Step-aligned clip：clip 范围根据 step 在 trajectory 中的位置动态调整</li>
+            </ul>
+            <p><strong>面试重点</strong>：StepPO 是目前最系统的多轮 Agent RL 解决方案，同时解决了信用分配和 IS 稳定性两个问题。</p>
+        </div>
+
+        <!-- ARPO -->
+        <h3 id="arpo">4.3 ARPO — Adaptive Rollout Policy Optimization</h3>
+
+        <div class="card teal">
+            <div class="card-title">ARPO <span class="tag tag-teal">arXiv:2507.19849 · 2025</span></div>
+            <p><strong>问题</strong>：固定长度的 rollout 效率低——简单问题不需要长 rollout，复杂问题需要更多探索。</p>
+            <p><strong>方案</strong>：<strong>熵自适应 Rollout</strong>——监控策略熵 $H(\pi_\theta)$，当熵低于阈值时提前终止 rollout（策略已经"确定"了），将计算资源集中在高熵（不确定）的样本上。</p>
+            <p><strong>效果</strong>：在保持训练效果的同时，rollout 计算量减少 20-30%。</p>
+        </div>
+
+        <!-- GiGPO -->
+        <h3 id="gigpo">4.4 GiGPO — Group-in-Group Policy Optimization</h3>
+
+        <div class="card teal">
+            <div class="card-title">GiGPO <span class="tag tag-teal">arXiv:2505.10978 · NeurIPS 2025</span></div>
+            <p><strong>问题</strong>：标准 GRPO 在同一 prompt 下采样 G 条独立回复做优势估计。但 Agentic 场景中，一个 prompt 对应多条<strong>交互式 trajectory</strong>（每条 trajectory 包含多轮 action-observation），标准 GRPO 无法区分"trajectory 间差异"和"trajectory 内部差异"。</p>
+            <p><strong>方案</strong>：双层分组——</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>外层</strong>：跨不同 prompt 做 advantage normalization（解决 prompt 难度差异）</li>
+                <li><strong>内层</strong>：在同一 prompt 下的多条 trajectory 做 GRPO advantage（解决 trajectory 质量差异）</li>
+            </ul>
+            <p><strong>效果</strong>：在多轮 Agent 任务（如 SWE-bench）上比标准 GRPO 提升 3-5pp。</p>
+        </div>
+
+        <!-- Orthogonal stacking -->
+        <h3 id="ortho">4.5 正交叠加：多维度改进的自由组合</h3>
+
+        <div class="box-insight">
+            <p>2025-2026 年的一个重要共识是：RL 算法的各个改进维度是<strong>正交的</strong>，可以自由组合。以下是四个主要维度和代表算法：</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>维度</th><th>解决的问题</th><th>代表算法</th><th>组合兼容性</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Ratio / Clip</strong></td><td>IS ratio 不稳定</td><td>DAPO（解耦 clip）、GSPO（sequence-level）</td><td>可与任何 advantage 方法组合</td></tr>
+                <tr><td><strong>Advantage</strong></td><td>信用分配粒度</td><td>GiGPO（双层）、Step-GRPO（step-level）、StepPO（step GAE）</td><td>可与任何 clip 方法组合</td></tr>
+                <tr><td><strong>Rollout</strong></td><td>采样效率</td><td>ARPO（熵自适应）</td><td>独立于优化算法</td></tr>
+                <tr><td><strong>Gradient</strong></td><td>梯度估计质量</td><td>DAPO（去偏梯度）、StarPO（稳定梯度）</td><td>可与 advantage 正交</td></tr>
+                <tr><td><strong>Stability</strong></td><td>训练稳定性</td><td>StarPO（多轮稳定）、ARPO（熵正则化）</td><td>通用稳定化技术</td></tr>
+            </tbody>
+        </table>
+
+        <div class="formula-box key">
+            <span class="label">推荐组合</span>
+            <p><strong>Agentic RL 最优组合（2026 前沿）</strong>：</p>
+            $$\text{ARPO (adaptive rollout)} + \text{GiGPO (双层 advantage)} + \text{GSPO (seq-level ratio)} + \text{DAPO (解耦 clip)} + \text{StarPO (稳定化)}$$
+            <p>这五个改进分别作用于不同维度，理论上可以完全叠加。实际训练中需要根据任务复杂度调整各组件的超参数。</p>
+        </div>
+
+        <!-- 2026 New Algorithms -->
+        <h3 id="algo-2026">4.6 2026 前沿新算法</h3>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">Tree-GRPO <span class="tag tag-teal">ICLR 2026</span></div>
+                <p>将 GRPO 的 chain-based rollout 替换为 <strong>tree-search rollout</strong>：每个交互步骤作为树节点，共享前缀高效采样。树内优化等价于 step-level DPO。arXiv:2509.21240</p>
+            </div>
+            <div class="card">
+                <div class="card-title">T²PO <span class="tag tag-amber">ICML 2026 Spotlight</span></div>
+                <p><strong>不确定性引导探索</strong>：token-level 不确定性监控 + 重采样无效 turn，双层优化防止多轮 RL 训练崩溃。arXiv:2605.02178</p>
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">EAPO <span class="tag tag-green">2026.04</span></div>
+                <p><strong>熵感知信用分配</strong>：证明 token 可携带的 credit 上界由其熵决定（CMI）。四象限分解 + 动态调整学习信号：放大不确定 token 的 advantage，压缩确定性 token。arXiv:2604.11056</p>
+            </div>
+            <div class="card">
+                <div class="card-title">ResT <span class="tag tag-pink">ICLR 2026</span></div>
+                <p><strong>工具调用 token 重加权</strong>：发现结构化低熵 token 是工具调用 reward 的主要决定因素。熵感知重加权从结构正确逐步转移到语义推理。4B 模型超 GPT-4o 4.11%。arXiv:2509.21826</p>
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">RAGEN-2 <span class="tag tag-teal">2026.04</span></div>
+                <p><strong>发现 "Template Collapse"</strong>：agent 输出看似多样但实际不依赖输入的失败模式。<strong>SNR-Aware Filtering</strong>：训练时优先选择信息量大的 prompt，持续提升成功率。arXiv:2604.06268</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Forge + CISPO <span class="tag tag-amber">MiniMax · 2026</span></div>
+                <p><strong>首个生产级 Agent RL 框架</strong>：三层中间件架构（agent / 抽象 / 计算），Windowed-FIFO 调度，共享历史树合并 → <strong>40× 训练加速</strong>。CISPO 多域并发 RL 防止灾难性遗忘。</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">2026 其他重要算法论文</div>
+            <table>
+                <thead><tr><th>算法</th><th>会议</th><th>核心贡献</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>HiPER</strong></td><td>ICML 2026</td><td>分层 credit assignment：战略规划 vs 逐步执行的显式 credit 分离</td></tr>
+                    <tr><td><strong>SPIRAL</strong></td><td>ICLR 2026</td><td>零和博弈 self-play 提升通用推理，Role-Conditioned Advantage Estimation</td></tr>
+                    <tr><td><strong>RLAnything</strong></td><td>ICML 2026</td><td>环境 + 策略 + reward model 三者的动态闭环联合优化</td></tr>
+                    <tr><td><strong>SRPO/RRPO</strong></td><td>2026.05</td><td>Self-Reset：模型自诊断错误并从该时刻重启，无需外部监督</td></tr>
+                    <tr><td><strong>GSsPO</strong></td><td>2026.02</td><td>Group Sub-sequence PO：梯度对齐 Think-Action 原子语义边界</td></tr>
+                    <tr><td><strong>SWEET-RL</strong></td><td>2025.03</td><td>协作式多轮 RL + 训练阶段数据做 step-by-step feedback</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">ICLR / ICML 2026 顶会重要论文</div>
+            <table>
+                <thead><tr><th>论文</th><th>会议/类型</th><th>核心贡献</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>AgentFlow (Flow-GRPO)</strong></td><td>ICLR 2026 Oral</td><td>将稀疏长 horizon credit 分解为 per-stage policy update，planner/executor/verifier 模块架构</td></tr>
+                    <tr><td><strong>MemAgent</strong></td><td>ICLR 2026 Oral</td><td>Multi-conv RL 训练 memory agent，8K 训 → 3.5M eval 的极致 context 外推</td></tr>
+                    <tr><td><strong>LLMs Get Lost</strong></td><td>ICLR 2026 Oral</td><td>200K+ 模拟对话揭示多轮交互 39% 性能衰退，模型无法从早期错误恢复</td></tr>
+                    <tr><td><strong>Do We Need Adam?</strong></td><td>ICML 2026 Oral</td><td>SGD 在 RL fine-tuning 中匹配/超越 AdamW，仅更新 &lt;0.02% 参数</td></tr>
+                    <tr><td><strong>Maximum Likelihood RL</strong></td><td>ICML 2026 Oral</td><td>一行 REINFORCE 改动桥接 MLE 和 RL，数学推理 sample efficiency 提升 20×</td></tr>
+                    <tr><td><strong>GTPO / GRPO-S</strong></td><td>ICML 2026 Poster</td><td>Dynamic Entropy Weighting 实现 per-token reward 分配（替代 GRPO 统一 reward）</td></tr>
+                    <tr><td><strong>WS-GRPO</strong></td><td>ICML 2026 Poster</td><td>Weakly-Supervised GRPO：训练 preference model 做 prefix-level 停止，减少 over-thinking</td></tr>
+                    <tr><td><strong>Advantage Collapse in GRPO</strong></td><td>ICML 2026 Poster</td><td>诊断 GRPO 组内 uniform reward 导致 advantage collapse + virtual-sample 修复</td></tr>
+                    <tr><td><strong>EchoRL</strong></td><td>ICML 2026 Poster</td><td>后期 RL 训练 zero reward variance 问题的 step-by-step entropy 信号恢复</td></tr>
+                    <tr><td><strong>FlowRL</strong></td><td>ICLR 2026 Poster</td><td>用 reward distribution matching 替代 reward maximization，coding +10%、math +5.1%</td></tr>
+                    <tr><td><strong>InT (Intervention Training)</strong></td><td>ICLR 2026 Poster</td><td>模型自诊断首个推理错误 + 自提纠正 patch，step-level credit 无需外部 PRM</td></tr>
+                    <tr><td><strong>AgentGym-RL</strong></td><td>ICLR 2026 Poster</td><td><strong>ScalingInter-RL</strong>：渐进 horizon 扩展防止长 horizon 行为崩溃</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- OPD -->
+        <h3 id="opd">4.7 OPD — On-Policy Distillation（在策略蒸馏）</h3>
+
+        <p>OPD 是 2026 年最活跃的算法族之一，位于<strong>知识蒸馏与 RL 的交叉点</strong>。核心思想：学生模型 on-policy 生成 rollout，教师模型提供 dense token-level 监督信号。数学上等价于 <strong>KL 约束 RL + dense token reward</strong>（reward = 教师-学生 log-prob 比）。</p>
+
+        <div class="card teal">
+            <div class="card-title">OPD vs GRPO vs PPO vs DPO</div>
+            <table>
+                <thead><tr><th>维度</th><th>OPD</th><th>GRPO</th><th>PPO</th><th>DPO</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>信号类型</strong></td><td>Dense teacher log-ratio</td><td>Sparse group reward</td><td>Sparse reward + Critic</td><td>Preference pairs</td></tr>
+                    <tr><td><strong>On/Off-policy</strong></td><td>On-policy (student-sampled)</td><td>On-policy</td><td>On-policy</td><td>Off-policy</td></tr>
+                    <tr><td><strong>需要教师?</strong></td><td>✓ Live teacher</td><td>✗</td><td>✗ (需要 reward model)</td><td>✗ (需要偏好数据)</td></tr>
+                    <tr><td><strong>定位</strong></td><td>教师→学生压缩</td><td>策略发现</td><td>策略优化</td><td>离线对齐</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">TrOPD <span class="tag tag-teal">arXiv:2606.01249 · 2026.05</span></div>
+                <p><strong>Trust-Region On-Policy Distillation</strong>：识别标准 OPD 的关键失败模式——师生分布差异大时 teacher 梯度不可靠。三重机制：①信任域约束（仅用可靠 teacher token）②分布外区域用 forward-KL 近似 ③off-policy prefix 引导探索。比 OPD/EOPD/REOPOLD <strong>+3~6pp</strong>。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">ExOPD <span class="tag tag-amber">arXiv:2602.12125 · 2026.02</span></div>
+                <p><strong>超越教师</strong>：证明标准 OPD 是 dense KL-RL 的特例（reward 和正则权重均为 1）。引入 <strong>reward scaling > 1</strong>，让学生超越教师。多专家合并时学生超越所有单一教师。</p>
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">REOPOLD <span class="tag tag-green">arXiv:2603.11137 · 2026.03</span></div>
+                <p>将 OPD 重构为 policy optimization：teacher-student log-ratio 作为 dense token reward。三重稳定化：reward clipping + entropy-based 动态 token 采样 + explore-to-refine 训练策略。<strong>6.7~12× 更高 sample efficiency</strong>。7B 学生匹配 32B 教师。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Beyond GRPO & OPD <span class="tag tag-pink">arXiv:2605.12483 · 2026.05</span></div>
+                <p><strong>Sparse-to-Dense 原则</strong>：GRPO 和 OPD 是互补阶段而非竞争。GRPO = sparse reward 用于教师发现，OPD = dense 监督用于学生压缩。完整 pipeline：教师 GRPO → 学生 OPD → 学生 sparse reward。79.3% MATH / 25.2% AIME。</p>
+            </div>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">Agentic OPD 变体（多轮 Agent 蒸馏）</div>
+            <table>
+                <thead><tr><th>变体</th><th>arXiv</th><th>核心创新</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>SOD</strong></td><td>2605.07725</td><td>Step-wise OPD：多轮 agent 中单个错误工具调用导致 cascade drift，动态按 step 重加权 teacher 影响</td></tr>
+                    <tr><td><strong>TurnOPD</strong></td><td>2607.05804</td><td>Turn-Aware OPD：自适应 rollout 深度预算 + 渐进 turn-归一化 loss，解决多轮全 horizon 浪费</td></tr>
+                    <tr><td><strong>ATOD</strong></td><td>2606.27814</td><td>Annealed OPD：早期 teacher-guided 蒸馏退火到后期 reward-based RL 探索，<strong>+2.16 超教师</strong></td></tr>
+                    <tr><td><strong>MAD-OPD / OPAD</strong></td><td>2605.01347</td><td>Multi-Agent Debate 替代单教师 + On-Policy Agentic Distillation（step-level sampling for agents）</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box-insight">
+            <p><strong>OPD 属于 Agentic RL 吗？</strong>标准 OPD 本身是<strong>通用 post-training 技术</strong>（蒸馏+RL 交叉），不是 Agentic RL。但 2026 年已涌现多个 agentic 变体（SOD/TurnOPD/ATOD/OPAD），专门解决多轮 agent 蒸馏问题。OPD 与 GRPO 是<strong>互补关系</strong>：GRPO 做教师发现（sparse reward），OPD 做学生压缩（dense supervision）。面试时需能清晰区分 OPD（蒸馏范式）与 GRPO（RL 范式）的定位差异。</p>
+        </div>
+        <h2 class="section-title" id="part5"><span class="num">V</span> 开源大模型 RL 实践</h2>
+
+        <!-- DeepSeek-R1 -->
+        <h3 id="deepseek-r1">5.1 DeepSeek-R1</h3>
+
+        <div class="card teal">
+            <div class="card-title">DeepSeek-R1 <span class="tag tag-teal">arXiv:2501.12948 · Nature 2025</span></div>
+            <p>DeepSeek-R1 是 GRPO 的标志性应用，首次在大规模 LLM 上证明了<strong>纯 RL 可以涌现出推理能力</strong>。</p>
+            <p><strong>训练流程</strong>：</p>
+            <ol style="margin: 10px 0 10px 20px;">
+                <li><strong>Cold-start SFT</strong>：少量高质量推理样本做冷启动（~数千条）</li>
+                <li><strong>RL Stage 1 — Reasoning RL</strong>：用 GRPO + rule-based reward（数学答案正确性、代码通过率）训练，模型自发涌现出 chain-of-thought 推理</li>
+                <li><strong>Rejection sampling + SFT</strong>：从 RL 模型采样高质量推理链，混合通用 SFT 数据再训练</li>
+                <li><strong>RL Stage 2 — All-purpose RL</strong>：加入安全性、helpfulness 等 reward 信号做最终对齐</li>
+            </ol>
+            <p><strong>关键发现</strong>：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>模型在 RL Stage 1 中自发学会了"让我想想"、"验证一下"等推理行为，<strong>无需人工标注</strong></li>
+                <li>GRPO 的 reward 只需要 outcome-level（答案对/错），不需要 process-level 标注</li>
+                <li>RL 训练过程中出现了 <strong>"aha moment"</strong>——模型在某些 step 突然学会新的推理策略</li>
+            </ul>
+        </div>
+
+        <div class="box-interview">
+            <p>面试高频问："DeepSeek-R1 的 GRPO 与 PPO 相比有什么优势？" 回答要点：①去掉 Critic 网络节省显存 ②组内相对奖励不需要绝对奖励模型 ③on-policy 组采样天然适合 LLM 的并行推理 ④但 GRPO 有 entropy collapse 风险，需要 DAPO 等补充。</p>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">DeepSeek V4 <span class="tag tag-amber">2026.04 · arXiv:2606.19348</span></div>
+            <p>DeepSeek 最新旗舰模型，从推理模型进化为 <strong>通用 agentic 智能</strong>：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>架构</strong>：V4-Pro 1.6T 总参/49B 活跃，V4-Flash 284B/13B，均支持 <strong>1M token</strong> 上下文</li>
+                <li><strong>注意力创新</strong>：Compressed Sparse Attention (CSA) + Heavily Compressed Attention (HCA) 混合架构</li>
+                <li><strong>mHC</strong>（Manifold-Constrained Hyper-Connections）：替代标准残差连接，稳定信号传播</li>
+                <li><strong>训练流程</strong>：32T+ tokens 预训练 → 两步对齐（领域专家 SFT+GRPO 培养专家 → on-policy 蒸馏统一能力）</li>
+                <li><strong>Agentic 定位</strong>：开源 SOTA on agentic coding benchmarks，效率仅 V3.2 的 27% 推理计算 + 10% 显存</li>
+            </ul>
+        </div>
+
+        <!-- Kimi -->
+        <h3 id="kimi">5.2 Kimi k1.5 / K2</h3>
+
+        <div class="card teal">
+            <div class="card-title">Kimi k1.5 <span class="tag tag-teal">arXiv:2501.12599</span></div>
+            <p><strong>核心贡献</strong>：将 <strong>long thinking</strong>（长链思维）与 RL 对齐结合。Kimi k1.5 在推理时生成极长的思考链（可达数万 token），然后用 RL 优化思考质量。</p>
+            <p><strong>关键技术</strong>：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>Long2Short</strong>：用长思考模型蒸馏出短思考模型，在推理效率和质量之间取得平衡</li>
+                <li><strong>Model-based length penalty</strong>：在 RL reward 中加入思考长度的惩罚，避免模型"啰嗦"</li>
+                <li><strong>Multi-stage RL</strong>：先 RL 训练长思考，再蒸馏，再 RL 微调短思考</li>
+            </ul>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">Kimi K2 → K2.5 → K2.6 <span class="tag tag-teal">Moonshot · 2025-2026</span></div>
+            <p>K2 系列从 agentic RL 进化到 <strong>multi-agent swarm</strong>：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>K2</strong>（2025.07）：MoE 1T/32B，Agentic RL + MuonClip，SWE-bench 65.8%</li>
+                <li><strong>K2.5</strong>（2026.02，arXiv:2602.02276）：Visual Agentic Intelligence，100 sub-agents / 1,500 steps，SWE-bench 71.4%</li>
+                <li><strong>K2.6</strong>（2026.04）：<strong>Agent Swarm</strong> 架构——300 并行 sub-agents / 4,000 协调 steps，Claw Groups 多 agent 协作工作空间，SWE-bench Verified <strong>80.2%</strong></li>
+            </ul>
+            <p>关键进化：从单 agent RL → multi-agent coordination → swarm intelligence。K2.6 的 Agent Swarm 是首个展示数千步协调的开源系统。</p>
+        </div>
+
+        <!-- Qwen3 -->
+        <h3 id="qwen3">5.3 Qwen3</h3>
+
+        <div class="card teal">
+            <div class="card-title">Qwen3 <span class="tag tag-teal">2025</span></div>
+            <p><strong>核心创新</strong>：<strong>混合思考模式</strong>——模型可以在 thinking mode（生成详细推理链）和 non-thinking mode（直接回答）之间动态切换。</p>
+            <p><strong>RL 训练</strong>：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>使用 <strong>GSPO</strong>（Group Sequence Policy Optimization）作为核心 RL 算法</li>
+                <li><strong>GDN 线性注意力</strong>：75% GDN + 25% attention 的混合架构，支持超长上下文</li>
+                <li>RL 训练同时覆盖 reasoning（数学/代码）和 agentic（工具调用/对话）能力</li>
+            </ul>
+            <p><strong>面试点</strong>：Qwen3 的混合模式本质上是一个 <strong>mixture-of-experts at inference time</strong>——thinking mode 消耗更多计算但更准确，non-thinking mode 快速回答简单问题。这与 MoE 的 routing 思想一脉相承。</p>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">Qwen3-Coder-Next <span class="tag tag-amber">2026.03 · arXiv:2603.00729</span></div>
+            <p>极致效率的 coding agent：<strong>80B 总参 / 仅 3B 活跃</strong>，在消费级硬件（&lt;60GB）上达到前沿水平。</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>环境合成</strong>：专用 agent 从 PR 直接生成可运行 Docker 容器作为训练数据</li>
+                <li><strong>工具格式泛化</strong>：训练融合多种 schema（XML-style、qwen3_coder format），鲁棒的 IDE 交互</li>
+                <li><strong>反 reward hacking</strong>：阻止 agent 使用网络命令作弊的 RL 机制</li>
+                <li><strong>Context Packing</strong>：best-fit 打包长上下文，避免截断和幻觉</li>
+                <li>SWE-bench Verified <strong>71.3%</strong>（with OpenHands），3B active 参数的最高效率</li>
+            </ul>
+        </div>
+
+        <!-- GLM -->
+        <h3 id="glm">5.4 GLM-4.5 / GLM-5 / GLM-5.2</h3>
+
+        <div class="card teal">
+            <div class="card-title">GLM-4.5 <span class="tag tag-teal">Zhipu AI · 2025</span></div>
+            <p>GLM-4.5 主打 <strong>reasoning + coding + agentic</strong> 三大能力的统一：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>使用 <strong>MTP</strong>（Multi-Token Prediction）加速推理，Meta 的并行 heads 方案</li>
+                <li>RL 后训练覆盖数学推理、代码生成、Agent 交互三大场景</li>
+                <li>强调 <strong>agentic ability</strong>：内置 tool-use 能力，支持多轮 API 调用</li>
+            </ul>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">GLM-5 <span class="tag tag-teal">2026</span></div>
+            <p>GLM-5 的口号是 "from Vibe Coding to Agentic Engineering"——从简单的代码补全升级到<strong>自主软件工程</strong>。核心改进包括：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>更强的多轮代码编辑能力（理解大型 codebase 的上下文）</li>
+                <li>自主 debug 循环：生成代码 → 执行 → 分析错误 → 修复 → 重试</li>
+                <li>Agentic RL 训练环境包含真实的 GitHub issue 和 SWE-bench 场景</li>
+            </ul>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">GLM-5.2 <span class="tag tag-amber">2026.06 · MIT License</span></div>
+            <p>Zhipu AI 最新旗舰，当前最强开源文本模型，与 GPT-5.5 和 Claude Opus 4.8 正面竞争：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>架构</strong>：MoE 744B/40B，<strong>1M context</strong>，128K output</li>
+                <li><strong>IndexShare</strong>：轻量 indexer 跨 4 层稀疏注意力复用，per-token FLOPs 降低 <strong>2.9×</strong></li>
+                <li><strong>异步 RL 基础设施 "Slime"</strong>：rollout 与 training 解耦到不同硬件，双端概率加权稳定学习</li>
+                <li>SWE-bench Pro <strong>62.1</strong>（超过 GPT-5.5 的 58.6），FrontierSWE <strong>74.4</strong></li>
+                <li>AIME 2026 <strong>99.2</strong>，Terminal-Bench 2.1 <strong>81.0</strong>，Design Arena <strong>#1</strong></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-title">GLM 生态其他重要工作</div>
+            <table>
+                <thead><tr><th>工作</th><th>时间</th><th>核心贡献</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>GLM-5V-Turbo</strong></td><td>2026.04 · arXiv:2604.26752</td><td>多模态 agent：CogViT + MMTP + 30+ 任务联合 RL</td></tr>
+                    <tr><td><strong>ComputerRL</strong></td><td>2025.08 · arXiv:2508.14040</td><td>桌面级 RL：数千并行虚拟桌面环境 + Entropulse（RL/SFT 交替维持探索熵）</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ======================= Part VI ======================= -->
+        <h2 class="section-title" id="part6"><span class="num">VI</span> Agentic 系统与基础设施</h2>
+
+        <!-- Coding Agent RL -->
+        <h3 id="coding-agents">6.1 Coding Agent RL 全景</h3>
+
+        <p>2025-2026 年，coding agent 成为 Agentic RL 最重要的落地场景。SWE-bench Verified 成为衡量 agent 能力的核心 benchmark，头部系统已突破 70%+ 的解决率。</p>
+
+        <div class="card teal">
+            <div class="card-title">SWE-bench Verified 排行榜（2026.07）</div>
+            <table>
+                <thead><tr><th>排名</th><th>Agent</th><th>组织</th><th>Resolve Rate</th><th>RL 训练?</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td><strong>Kimi K2.6</strong></td><td>Moonshot AI</td><td>80.2%</td><td>✓ Agent Swarm</td></tr>
+                    <tr><td>2</td><td><strong>Qwen3-Coder</strong></td><td>Alibaba</td><td>80.2%</td><td>✓ Forge + CISPO</td></tr>
+                    <tr><td>3</td><td><strong>Claude 4.5 Opus</strong></td><td>Anthropic</td><td>76.8%</td><td>RLHF (未公开)</td></tr>
+                    <tr><td>4</td><td><strong>MiniMax M2.5</strong></td><td>MiniMax</td><td>75.8%</td><td>✓ Forge + CISPO</td></tr>
+                    <tr><td>5</td><td><strong>Gemini 3 Flash</strong></td><td>Google</td><td>75.8%</td><td>RL (未公开)</td></tr>
+                    <tr><td>6</td><td><strong>GLM-5.2</strong></td><td>Zhipu AI</td><td>72.8%</td><td>✓ Slime RL</td></tr>
+                    <tr><td>7</td><td><strong>Kimi K2.5</strong></td><td>Moonshot AI</td><td>71.4%</td><td>✓ Visual Agentic RL</td></tr>
+                    <tr><td>8</td><td><strong>Qwen3-Coder-Next</strong></td><td>Alibaba</td><td>71.3%</td><td>✓ 80B/3B MoE</td></tr>
+                    <tr><td>9</td><td><strong>DeepSeek V4 Pro</strong></td><td>DeepSeek</td><td>70.8%</td><td>✓ GRPO + distillation</td></tr>
+                    <tr><td>10</td><td><strong>Kimi K2</strong></td><td>Moonshot AI</td><td>65.8%</td><td>✓ GRPO + MuonClip</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size: 0.85em; color: #666; margin-top: 8px;">注：Kimi K2.6 与 Qwen3-Coder 均报告 80.2%，可能使用不同 evaluation scaffold。SWE-bench Pro（更难变体）：Claude Opus 4.8 = 69.2%，GLM-5.2 = 62.1%，GPT-5.5 = 58.6%。</p>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">Qwen3-Coder <span class="tag tag-teal">Alibaba · 2025</span></div>
+                <p><strong>开源 SOTA</strong>：MoE 480B/35B active，256K context。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>内部 "Forge" 框架 + CISPO 算法（MoE 稳定性）</li>
+                    <li>20,000 并行 sandbox 环境执行 rollout</li>
+                    <li>Process reward 机制：自动分解 feature → spec → 代码</li>
+                    <li>SWE-bench 80.2% · Multi-SWE-bench 51.3%</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-title">DeepSWE <span class="tag tag-amber">Together AI · 2025</span></div>
+                <p><strong>完全开源</strong>：基于 Qwen3-32B，64×H100 训练 6 天。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>GRPO++（Clip High + 无 KL penalty）</li>
+                    <li>K8s 编排 Docker sandbox + compact filtering（隐藏超时 trajectory）</li>
+                    <li>4,500 任务 · sparse outcome reward（测试通过/失败）</li>
+                    <li>Pass@1 42.2% · Pass@16 71.0%</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">SWE-RL <span class="tag tag-green">Meta · NeurIPS 2025</span></div>
+                <p>首个将 RL 扩展到真实软件工程任务的学术工作。基于 Llama 3 70B，用 rule-based reward（输出与 ground truth 对比）。NeurIPS 2025 主会接收。41.0% resolve rate。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Kimi-Dev <span class="tag tag-pink">Moonshot · 2025</span></div>
+                <p><strong>Agentless Training as Skill Prior</strong>：先训单轮 workflow（BugFixer + TestWriter），再将 skill prior 迁移到多轮 agentic 框架。纯 outcome reward + Test-Time Self-Play。60.4% SWE-bench。</p>
+            </div>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">MiniMax M2.5 <span class="tag tag-teal">MiniMax · 2026.02 · arXiv:2605.26494</span></div>
+            <p><strong>$1/小时的前沿模型</strong>：229.9B 总参/9.8B 活跃，以极致成本效率著称。</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>Forge 框架</strong>：agent-native RL，训练-推理引擎完全解耦，~40× 训练加速</li>
+                <li><strong>CISPO 算法</strong>：多域并发 RL（逻辑 + 标准问答 + 自主任务），防止灾难性遗忘</li>
+                <li>Windowed-FIFO 调度 + 前缀树合并消除重复计算</li>
+                <li>SWE-bench Verified <strong>75.8%</strong>（high reasoning），比前代快 37%</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-title">商业 Coding Agent（RL 细节未公开）</div>
+            <table>
+                <thead><tr><th>Agent</th><th>组织</th><th>特点</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Devin</strong></td><td>Cognition</td><td>首个商业自主 coding agent，Goldman Sachs 生产部署（2025.07），估值 $4B+</td></tr>
+                    <tr><td><strong>OpenAI Codex</strong></td><td>OpenAI</td><td>Sandboxed cloud agent，RL post-training 优化多轮 SE 任务</td></tr>
+                    <tr><td><strong>Claude Code</strong></td><td>Anthropic</td><td>Terminal-native agentic coding，Claude 4.5 Opus 驱动，SWE-bench 76.8%</td></tr>
+                    <tr><td><strong>Cursor</strong></td><td>Anysphere</td><td>Agent-first IDE，多 Agent 架构，3.0 版本</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Training Frameworks -->
+        <h3 id="training-infra">6.2 开源 RL 训练框架</h3>
+
+        <p>2025 年，Agentic RL 训练基础设施快速成熟。以下框架支撑了几乎所有开源 Agentic RL 工作：</p>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">veRL (HybridFlow) <span class="tag tag-teal">verl-project · 2025</span></div>
+                <p><strong>最广泛采用的开源 RL 训练框架</strong>。源自 ByteDance 研究，支持 PPO/GRPO/DPO + Agentic RL 扩展。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>原生 vLLM 集成，高效 rollout</li>
+                    <li>专用 Agentic RL 模式：支持多轮环境交互</li>
+                    <li>灵活 hybrid execution（Ray + FSDP）</li>
+                    <li>EMNLP 2025 Demo Track</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-title">TorchForge <span class="tag tag-amber">PyTorch/Meta · 2025</span></div>
+                <p><strong>PyTorch 官方</strong> Agentic RL 库，GPU-cloud 规模训练。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>PyTorch-native 设计，与 torch.distributed 深度集成</li>
+                    <li>专为大规模 agentic rollout 优化</li>
+                    <li>标志着 Agentic RL 进入主流基础设施</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">Agent Lightning <span class="tag tag-green">Microsoft · 2025</span></div>
+                <p><strong>Drop-in RL for any Agent</strong>：无需重写代码为现有 Agent pipeline 添加 RL 训练。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>Rollout 与 RL 训练解耦，异步执行</li>
+                    <li>与 veRL / TRL / LangChain 等框架集成</li>
+                    <li>arXiv:2508.03680</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-title">TRL v1.0 <span class="tag tag-pink">Hugging Face · 2025</span></div>
+                <p>与 HF 生态深度集成，新增 Agentic RL 支持（tool-use agent 训练）。最易上手的入门选择。</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">其他关键框架</div>
+            <table>
+                <thead><tr><th>框架</th><th>组织</th><th>定位</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>OpenRLHF</strong></td><td>开源社区</td><td>Ray-based PPO/DPO，vLLM 集成，可扩展性强</td></tr>
+                    <tr><td><strong>NVIDIA NeMo Gym</strong></td><td>NVIDIA</td><td>Rollout-as-a-Service + SWE-RL case study + 数据管理</td></tr>
+                    <tr><td><strong>OpenEnv</strong></td><td>HF 社区</td><td>标准化 Agentic RL 训练环境，社区共建</td></tr>
+                    <tr><td><strong>Search-R1</strong></td><td>开源社区</td><td>RL 训练 search-augmented agent 的高效框架</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box-insight">
+            <p><strong>2025-2026 基础设施格局</strong>：veRL 是事实标准（最多开源工作基于此），TorchForge 代表 PyTorch 官方的主流信号，Agent Lightning 解决"已有 Agent 如何加 RL"的集成问题。三者形成 <code>训练核心</code> → <code>PyTorch 原生</code> → <code>框架胶水</code> 的互补层次。</p>
+        </div>
+
+        <!-- Infra -->
+        <h3 id="infra">6.3 训练基础设施要点</h3>
+
+        <table>
+            <thead><tr><th>组件</th><th>挑战</th><th>主流方案</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Rollout Engine</strong></td><td>Agent 交互需要实时环境反馈</td><td>vLLM / SGLang + sandbox（Docker / nsjail）</td></tr>
+                <tr><td><strong>Weight Sync</strong></td><td>大模型权重跨节点同步瓶颈</td><td>MoE Lazy Sync / FSDP sharding / Ray-based parameter server</td></tr>
+                <tr><td><strong>Environment</strong></td><td>代码执行 / 浏览器 / API 的安全隔离</td><td>Docker sandbox / E2B / Modal</td></tr>
+                <tr><td><strong>Reward Model</strong></td><td>Agentic 场景的 reward 设计</td><td>Rule-based（代码测试） + Model-based（LLM judge）</td></tr>
+                <tr><td><strong>Memory</strong></td><td>长 trajectory 的上下文管理</td><td>三层记忆：Working / Episodic / Long-term</td></tr>
+            </tbody>
+        </table>
+
+        <!-- GitHub Repos -->
+        <h3 id="github-repos">6.4 推荐开源 Repo（按 Star 排序）</h3>
+
+        <div class="card teal">
+            <div class="card-title">核心训练框架</div>
+            <table>
+                <thead><tr><th>Repo</th><th>Stars</th><th>定位</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>deepseek-ai/DeepSeek-R1</strong></td><td>~92k</td><td>GRPO 标志性项目，推理 RL 的起点</td></tr>
+                    <tr><td><strong>huggingface/open-r1</strong></td><td>~26k</td><td>DeepSeek-R1 开源复现，完整 SFT+GRPO pipeline</td></tr>
+                    <tr><td><strong>verl-project/verl</strong></td><td>~22k</td><td>事实标准 RL 训练库（PPO/GRPO/DAPO/RLOO），671B 规模</td></tr>
+                    <tr><td><strong>huggingface/trl</strong></td><td>~19k</td><td>HF 生态 RL 库，GRPO/DPO/Reward 训练最易上手</td></tr>
+                    <tr><td><strong>OpenPipe/ART</strong></td><td>~10k</td><td>Serverless Agentic RL，多步 agent GRPO 训练 + 即时部署</td></tr>
+                    <tr><td><strong>OpenRLHF/OpenRLHF</strong></td><td>~10k</td><td>Ray + vLLM 架构，生产级 RLHF 框架</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-title">算法实现 & 研究 Repo</div>
+            <table>
+                <thead><tr><th>Repo</th><th>Stars</th><th>定位</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>opendilab/awesome-RLHF</strong></td><td>~4.4k</td><td>RLHF 最全论文/代码索引（2020-2026）</td></tr>
+                    <tr><td><strong>RAGEN-AI/RAGEN</strong></td><td>~2.7k</td><td>多轮 Agent RL + StarPO + SNR-Aware Filtering</td></tr>
+                    <tr><td><strong>TsinghuaC3I/Awesome-RL-for-LRMs</strong></td><td>~2.5k</td><td>LLM RL 权威论文索引</td></tr>
+                    <tr><td><strong>langfengq/verl-agent</strong></td><td>~2.1k</td><td>GiGPO 官方实现（多轮 agent RL on veRL）</td></tr>
+                    <tr><td><strong>BytedTsinghua-SIA/DAPO</strong></td><td>~1.8k</td><td>Decoupled Clip + Dynamic Sampling，AIME 2024 SOTA</td></tr>
+                    <tr><td><strong>thinkwee/AgentsMeetRL</strong></td><td>~1.7k</td><td>Agentic RL 最佳 awesome list（全领域分类索引）</td></tr>
+                    <tr><td><strong>lsdefine/simple_GRPO</strong></td><td>~1.7k</td><td>~200 行极简 GRPO 实现，面试理解 GRPO 首选</td></tr>
+                    <tr><td><strong>sail-sg/understand-r1-zero</strong></td><td>~1.3k</td><td>R1-Zero 训练动力学分析 + Dr. GRPO 修复</td></tr>
+                    <tr><td><strong>AgentR1/Agent-R1</strong></td><td>~1.5k</td><td>端到端多步 agent RL，step-level MDP</td></tr>
+                    <tr><td><strong>meta-pytorch/torchforge</strong></td><td>~700</td><td>PyTorch 官方 agentic RL 库</td></tr>
+                    <tr><td><strong>AMAP-ML/Tree-GRPO</strong></td><td>~400</td><td>ICLR 2026 Tree-search rollout for GRPO</td></tr>
+                    <tr><td><strong>thunlp/OPD</strong></td><td>~600</td><td>OPD 官方实现（清华 NLP，TrOPD/ExOPD 全系列）</td></tr>
+                    <tr><td><strong>thinkwee/AwesomeOPD</strong></td><td>~350</td><td>On-Policy Distillation 最全论文/代码索引</td></tr>
+                    <tr><td><strong>chiefovoavicii/MAD-OPD</strong></td><td>~150</td><td>Multi-Agent Debate OPD，突破蒸馏天花板</td></tr>
+                    <tr><td><strong>chrisliu298/awesome-on-policy-distillation</strong></td><td>~120</td><td>OPD 变体 & Agentic 蒸馏 curated list</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box-insight">
+            <p><strong>面试必备 Repo 知识</strong>：能说清楚 <code>veRL</code>（生产标准）、<code>TRL</code>（入门首选）、<code>open-r1</code>（R1 复现）、<code>ART</code>（agentic RL 部署）四个框架的定位差异。知道 <code>simple_GRPO</code> 是理解 GRPO 内部机制的最佳教学代码。<code>DAPO</code> 和 <code>Dr. GRPO</code> 是 GRPO 最重要的两个改进方向。蒸馏方向关注 <code>thunlp/OPD</code>（官方实现）和 <code>AwesomeOPD</code>（最全索引）。</p>
+        </div>
+
+        <!-- ======================= Part VII ======================= -->
+        <h2 class="section-title" id="part7"><span class="num">VII</span> 面试高频 QA</h2>
+
+        <details class="qa-card" open>
+            <summary>GRPO 为什么不需要 Critic？与 PPO 的本质区别是什么？<span class="difficulty diff-mid">中等</span><span class="freq-tag">高频</span></summary>
+            <div class="answer">
+                <p><strong>本质区别</strong>在于 advantage 的估计方式。PPO 需要一个 Critic 网络 $V_\phi(s)$ 来估计状态价值，然后计算 $A(s,a) = Q(s,a) - V(s)$。这引入了额外的参数、显存开销和估计偏差。</p>
+                <p>GRPO 的做法是：对同一个 prompt 采样 $G$ 个回复（如 $G=8$），用组内奖励的均值和标准差做归一化：$\hat{A}_i = (r_i - \bar{r}) / (\sigma_r + \epsilon)$。这是用 <strong>Monte Carlo 组内排名</strong> 替代了 Critic 的 <strong>learned value estimation</strong>。</p>
+                <p><strong>类比</strong>：PPO 像请了一个评委（Critic）给每个选手打分，然后用选手分数减评委的平均预期来算优势。GRPO 像直接让一组选手同台竞技，按排名算优势——不需要评委，但需要多个选手（G 个 rollout）。</p>
+                <p><strong>代价</strong>：GRPO 需要更多的 rollout（$G \geq 4$），但省去了 Critic 训练的不稳定性和显存。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>什么是 RLVR Ceiling？Agentic RL 如何突破它？<span class="difficulty diff-hard">困难</span><span class="freq-tag">高频</span></summary>
+            <div class="answer">
+                <p><strong>RLVR Ceiling</strong>（arXiv:2504.13837）证明：对于纯推理任务（静态文本输入 → 文本输出），RL 训练后的模型性能不会超过 base model 的 best-of-N (pass@k) 采样。直觉：RL 只能重新分配模型已有的概率质量，无法让模型生成"能力之外"的答案。</p>
+                <p><strong>Agentic RL 不受此限制</strong>，因为：</p>
+                <ul style="margin: 8px 0 8px 20px;">
+                    <li>Agent 可以<strong>与环境交互获取新信息</strong>（执行代码得到运行结果、调用 API 获取外部知识），这些信息不在 base model 的参数或 prompt 中</li>
+                    <li>RL 优化的不仅是"生成什么"，还有"如何获取信息"——工具调用策略、多轮交互规划等</li>
+                    <li>环境状态的改变（如文件修改、变量更新）创造了全新的 state space，超越了纯文本推理的固定状态空间</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>DPO 和 GRPO 的训练数据需求有什么区别？<span class="difficulty diff-mid">中等</span><span class="freq-tag">高频</span></summary>
+            <div class="answer">
+                <p><strong>DPO</strong> 需要<strong>偏好对数据</strong> $(x, y_w, y_l)$：同一个 prompt 下，一个"好回复"和一个"差回复"的配对。这些数据通常来自人类标注或强模型生成+排序，<strong>离线固定</strong>。</p>
+                <p><strong>GRPO</strong> 需要<strong>可验证奖励函数</strong>：给定 prompt 和回复，能自动判断奖励分数（如数学答案正确=1、错误=0）。训练时 <strong>online 采样</strong> G 个回复并计算组内相对优势。</p>
+                <p>关键区别：DPO 是 offline（受限于数据质量），GRPO 是 on-policy（持续从当前策略采样，数据随训练演化）。这就是为什么 GRPO 更适合 reasoning 场景——模型可以探索不同的推理路径并从中学习。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>多轮 RL 中 IS ratio 累积问题怎么解决？<span class="difficulty diff-hard">困难</span><span class="freq-tag">高频</span></summary>
+            <div class="answer">
+                <p><strong>问题</strong>：$K$ 轮交互后，IS ratio 为 $\prod_{k=1}^K r_k(\theta)$，即使每轮仅偏离 10%，10 轮后 ratio 可达 $1.1^{10} \approx 2.59$，远超 clip 范围。</p>
+                <p><strong>解决方案</strong>：</p>
+                <ul style="margin: 8px 0 8px 20px;">
+                    <li><strong>StarPO</strong>：在 turn 边界重新计算 advantage，不让 ratio 跨 turn 连乘</li>
+                    <li><strong>StepPO</strong>：step-native MDP + 长度归一化 IS $\bar{r}_k = r_k^{1/|step_k|}$，按 step 长度归一化</li>
+                    <li><strong>异步双层 IS</strong>：token-level IS × trajectory-level IS correction，两层分别控制 off-policy 偏差</li>
+                    <li><strong>Ratchet</strong>：周期性同步 rollout worker 和 trainer 的策略参数，防止 drift 过大</li>
+                    <li><strong>TOPR</strong>：直接丢弃 off-policy 程度超阈值的 trajectory</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>GiGPO 的双层分组具体怎么做？<span class="difficulty diff-hard">困难</span><span class="freq-tag">中频</span></summary>
+            <div class="answer">
+                <p>标准 GRPO：一个 prompt → G 条回复 → 组内归一化 advantage。问题：Agentic 场景中不同 prompt 的难度差异巨大，组间比较不公平。</p>
+                <p><strong>GiGPO 双层分组</strong>：</p>
+                <ol style="margin: 8px 0 8px 20px;">
+                    <li><strong>内层</strong>：对每个 prompt $x_i$，采样 $G$ 条 trajectory $\{\tau_{i,1}, \ldots, \tau_{i,G}\}$，计算组内 advantage：$A_{i,j}^{\text{inner}} = (R(\tau_{i,j}) - \bar{R}_i) / \sigma_i$</li>
+                    <li><strong>外层</strong>：跨 $B$ 个 prompt，计算 prompt 级别的 baseline：$A_{i}^{\text{outer}} = (\bar{R}_i - \bar{R}_{\text{batch}}) / \sigma_{\text{batch}}$</li>
+                    <li><strong>最终 advantage</strong>：$\hat{A}_{i,j} = A_{i,j}^{\text{inner}} + \alpha \cdot A_{i}^{\text{outer}}$</li>
+                </ol>
+                <p>直觉：内层解决"同一问题下哪个解法更好"，外层解决"哪些问题值得更多学习"。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>StepPO 和 Turn-level AE 的区别？<span class="difficulty diff-mid">中等</span><span class="freq-tag">中频</span></summary>
+            <div class="answer">
+                <p><strong>Turn-level AE</strong>（arXiv:2512.17008）：将 Agent 的每一轮交互（thought + action + observation）视为一个 macro action，在 turn 边界计算 GAE。粒度较粗，一个 turn 可能包含多个逻辑步骤。</p>
+                <p><strong>StepPO</strong>（arXiv:2604.18401）：将"step"定义为 step-native MDP 中的原子操作。一个 step 可能跨越多个 turn（如：plan → execute → verify 是一个完整的 step），也可能是一个 turn 中的子步骤。StepPO 还引入了<strong>长度归一化 IS</strong> 和 <strong>step-aligned clip</strong>，是更系统的解决方案。</p>
+                <p>简单说：Turn-level AE 是 PPO 的简单适配（在 turn 边界插入 GAE），StepPO 是从 MDP 建模层面重新设计的完整方案。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>DAPO 的 decoupled clipping 是什么？为什么有效？<span class="difficulty diff-mid">中等</span><span class="freq-tag">中频</span></summary>
+            <div class="answer">
+                <p>标准 PPO/GRPO 的 clip 是对称的：$\text{clip}(r, 1-\epsilon, 1+\epsilon)$，正负方向 clip 幅度相同。</p>
+                <p><strong>DAPO</strong> 将 clip 解耦为：$\text{clip}(r, 1-\epsilon_l, 1+\epsilon_u)$，其中 $\epsilon_l \neq \epsilon_u$。</p>
+                <p><strong>为什么有效</strong>：在 GRPO 训练中，组内优势分布通常不对称（少数回复特别好，多数平庸）。对称 clip 会导致：正优势被过度 clip（限制了学习好回复的速度），负优势 clip 不足（差回复的惩罚过大）。DAPO 允许更大的 $\epsilon_u$（少 clip 正优势）和更小的 $\epsilon_l$（多 clip 负优势），缓解 entropy collapse。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>DeepSeek-R1 的训练流程中 RL 起了什么作用？<span class="difficulty diff-mid">中等</span><span class="freq-tag">高频</span></summary>
+            <div class="answer">
+                <p>R1 的训练有四步，RL 在两个阶段发挥作用：</p>
+                <ol style="margin: 8px 0 8px 20px;">
+                    <li><strong>Cold-start SFT</strong>：用少量高质量推理数据做冷启动，给模型一个基本的推理格式</li>
+                    <li><strong>RL Stage 1（Reasoning RL）</strong>：用 GRPO + rule-based reward 训练。<strong>这一步是核心</strong>——模型在 RL 探索中自发涌现出 CoT 推理能力，包括"让我验证"、"换个思路"等行为。这些行为不是 SFT 教的，是 RL "发现"的</li>
+                    <li><strong>Rejection Sampling + SFT</strong>：从 RL 模型采样高质量推理链，混合通用数据做 SFT，稳定模型格式</li>
+                    <li><strong>RL Stage 2（All-purpose RL）</strong>：加入安全性、helpfulness reward 做最终对齐</li>
+                </ol>
+                <p>关键洞见：RL Stage 1 是推理能力的"涌现源"，SFT 只是提供格式，最终能力来自 RL 的探索与优化。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>Agentic RL 的 reward 设计有哪些范式？<span class="difficulty diff-hard">困难</span><span class="freq-tag">高频</span></summary>
+            <div class="answer">
+                <p>按 reward 信号的粒度和来源分四类：</p>
+                <ul style="margin: 8px 0 8px 20px;">
+                    <li><strong>Outcome Reward</strong>：只看最终结果（任务成功=1，失败=0）。简单但稀疏。适用于有明确成功/失败标准的任务（SWE-bench：测试通过/不通过）</li>
+                    <li><strong>Process Reward (PRM)</strong>：为推理/行动的每一步打分。需要训练 PRM 或设计规则。Step-GRPO 用 rule-based PRM（公式正确=0.1）</li>
+                    <li><strong>Execution Reward</strong>：基于工具执行结果（代码编译通过、API 返回成功、搜索结果相关度）。Agentic 场景特有，信息量最丰富</li>
+                    <li><strong>AI Feedback (RLAIF)</strong>：用另一个 LLM 作为 judge 评估 agent 行为质量。灵活但有 judge bias</li>
+                </ul>
+                <p>2026 年的趋势是 <strong>混合 reward</strong>：$R = w_1 R_{\text{outcome}} + w_2 R_{\text{process}} + w_3 R_{\text{exec}}$，兼顾稀疏但准确的 outcome reward 和密集但可能有噪声的 process reward。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>"Agent = Model + Harness" 这个范式是什么含义？<span class="difficulty diff-mid">中等</span><span class="freq-tag">中频</span></summary>
+            <div class="answer">
+                <p>2026 年的共识是：一个 Agent 系统不只是 LLM 本身（Model），还包括包裹模型的 <strong>Harness</strong>（脚手架/框架）。Harness 负责：</p>
+                <ul style="margin: 8px 0 8px 20px;">
+                    <li><strong>工具注册与调度</strong>（Tool Registry）：管理可用工具列表、参数 schema、调用权限</li>
+                    <li><strong>上下文管理</strong>（Context Manager）：在多轮交互中筛选、压缩、注入相关信息</li>
+                    <li><strong>记忆系统</strong>（Memory）：Working（当前对话）、Episodic（历史轨迹）、Long-term（持久知识）</li>
+                    <li><strong>执行环境</strong>（Sandbox）：安全的代码执行、浏览器操作、API 调用</li>
+                    <li><strong>规划与编排</strong>（Orchestration）：FSM-based（有限状态机）、开放 ReAct、分层（Voyager 式）</li>
+                </ul>
+                <p>SWE-Agent 的 "Interface > Model"（ACI 比模型大小更重要）就是这个范式的实证。Agentic RL 训练的目标不仅是优化 Model，也包括优化 Harness 中的决策策略。</p>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>Off-Policy 方法（TOPR / CISPO / OPD）的区别？<span class="difficulty diff-hard">困难</span><span class="freq-tag">中频</span></summary>
+            <div class="answer">
+                <p>三者解决同一个问题——rollout 策略与训练策略不同步（off-policy）——但方案不同：</p>
+                <ul style="margin: 8px 0 8px 20px;">
+                    <li><strong>TOPR（截断）</strong>：设一个阈值 $\delta$，如果 IS ratio $|r_t - 1| > \delta$，直接丢弃这条样本。简单粗暴，但会浪费数据，尤其在异步训练场景下大量数据被丢弃。</li>
+                    <li><strong>CISPO（修正）</strong>：对 IS ratio 做 bias correction——估计 off-policy 引入的偏差并从梯度中减去。保留了数据但增加了计算复杂度。</li>
+                    <li><strong>OPD / TrOPD（蒸馏）</strong>：不把 off-policy 数据直接用于梯度更新，而是用它构造 teacher signal，通过 KL 蒸馏来训练当前策略。TrOPD 额外加入信任域约束 + FKL outlier 过滤。效果最好（+3~6pp vs 标准 OPD）。</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="qa-card">
+            <summary>Agentic RL 开源训练生态的全景是什么？<span class="difficulty diff-hard">困难</span><span class="freq-tag">中频</span></summary>
+            <div class="answer">
+                <p>2025-2026 年的 Agentic RL 开源生态可分为四层：</p>
+                <ol style="margin: 8px 0 8px 20px;">
+                    <li><strong>训练核心框架</strong>：veRL（HybridFlow，事实标准，Ray + FSDP + vLLM 集成）和 TorchForge（PyTorch 官方，GPU-cloud 规模）。支持 PPO/GRPO/DPO + Agentic RL 扩展</li>
+                    <li><strong>框架胶水层</strong>：Agent Lightning（Microsoft，drop-in RL for any agent）、TRL v1.0（HF 生态，tool-use agent 训练）。解决"已有 Agent 系统如何加 RL"</li>
+                    <li><strong>环境基础设施</strong>：NVIDIA NeMo Gym（Rollout-as-a-Service）、OpenEnv（HF 社区标准化环境）、E2B/Modal（sandbox 即服务）。提供安全隔离的代码执行 / 浏览器 / API 环境</li>
+                    <li><strong>代表性模型</strong>：Qwen3-Coder（80.2% SWE-bench，Forge + CISPO）、DeepSWE（完全开源，GRPO++）、Kimi K2（65.8%，MuonClip）、SWE-RL（NeurIPS'25，首个学术 RL coding agent）</li>
+                </ol>
+                <p>关键趋势：RL 训练从研究原型走向工程化——veRL/TorchForge 提供标准化训练循环，Agent Lightning 降低集成门槛，NeMo Gym 提供数据与环境基础设施。</p>
+            </div>
+        </details>
+
+        <!-- ======================= References ======================= -->
+        <h2 class="section-title" id="ref">参考文献</h2>
+
+        <div class="card">
+            <div class="card-title">核心论文</div>
+            <ol style="margin: 10px 0 10px 20px; font-size: 0.88em; line-height: 2;">
+                <li>Schulman et al., <em>Proximal Policy Optimization Algorithms</em>, 2017. <span class="tag tag-teal">PPO</span></li>
+                <li>Rafailov et al., <em>Direct Preference Optimization</em>, NeurIPS 2023. arXiv:2305.18290 <span class="tag tag-amber">DPO</span></li>
+                <li>DeepSeek-AI, <em>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL</em>, 2025. arXiv:2501.12948 <span class="tag tag-green">GRPO</span></li>
+                <li>Moonshot AI, <em>Kimi k1.5: Scaling Reinforcement Learning with LLMs</em>, 2025. arXiv:2501.12599</li>
+                <li>Qwen Team, <em>Qwen3 Technical Report</em>, 2025. <span class="tag tag-teal">GSPO</span></li>
+                <li>Zhipu AI, <em>GLM-4.5: Reasoning, Coding, and Agentic Abilities</em>, 2025.</li>
+                <li>Zhipu AI, <em>GLM-5: From Vibe Coding to Agentic Engineering</em>, 2026. arXiv:2602.15763</li>
+                <li>Yu et al., <em>Does Reinforcement Learning Really Incentivize Reasoning Capabilities in LLMs Beyond the Base Model?</em>, NeurIPS 2025. arXiv:2504.13837 <span class="tag tag-red">RLVR Ceiling</span></li>
+                <li>GiGPO: <em>Group-in-Group Policy Optimization for LLM Agent Training</em>, NeurIPS 2025. arXiv:2505.10978</li>
+                <li>GSPO: <em>Group Sequence Policy Optimization</em>, Qwen Team. arXiv:2507.18071</li>
+                <li>ARPO: arXiv:2507.19849, 2025.</li>
+                <li>StepPO: <em>Step-Aligned Policy Optimization for Agentic RL</em>, 2026. arXiv:2604.18401</li>
+                <li>Step-GRPO, AAAI 2025. <em>Enhancing Reasoning Quality via Step-level Rewards</em>.</li>
+                <li>Turn-level AE: <em>Turn-Level Advantage Estimation with PPO for Multi-Turn Dialogue</em>, EACL 2026. arXiv:2512.17008</li>
+                <li>TrOPD: arXiv:2606.01249, 2025. <em>Trust-Region Online Policy Distillation</em>.</li>
+                <li>RAGEN (StarPO): <em>State-Thinking-Actions-Reward Policy Optimization</em>, 2025. arXiv:2504.20073</li>
+                <li>Wei et al., <em>SWE-RL: Scaling LLM Reasoning for Real-World Software Engineering</em>, NeurIPS 2025. arXiv:2502.18449</li>
+                <li>DeepSWE, Together AI 2025. <em>Fully Open-source Coding Agent with GRPO++</em>.</li>
+                <li>Kimi-Dev, Moonshot AI 2025. <em>Agentless Training as Skill Prior for SWE-Agents</em>. arXiv:2509.23045</li>
+                <li>Qwen3-Coder, Alibaba 2025. <em>Execution-Driven RL for Coding Agents</em>. arXiv:2603.00729</li>
+                <li>veRL (HybridFlow): <em>Flexible RL Post-Training Framework</em>, EMNLP 2025 Demo.</li>
+                <li>TorchForge, PyTorch/Meta 2025. <em>PyTorch-native Agentic RL Library</em>.</li>
+                <li>Agent Lightning, Microsoft Research 2025. arXiv:2508.03680</li>
+                <li>ToolRL: <em>Reward is All Tool Learning Needs</em>, NeurIPS 2025.</li>
+                <li><em>A Practitioner's Guide to Multi-turn Agentic RL</em>, Fireworks AI, NeurIPS 2025. arXiv:2510.01132</li>
+                <li>DeepSeek-V4, 2026. <em>Towards Highly Efficient Million-Token Context Intelligence</em>. arXiv:2606.19348</li>
+                <li>GLM-5.2, Zhipu AI, 2026. z.ai/blog/glm-5.2</li>
+                <li>GLM-5V-Turbo, 2026. <em>Native Foundation Model for Multimodal Agents</em>. arXiv:2604.26752</li>
+                <li>ComputerRL, Zhipu/Tsinghua, 2025. arXiv:2508.14040</li>
+                <li>Kimi K2.5, Moonshot AI, 2026. <em>Visual Agentic Intelligence</em>. arXiv:2602.02276</li>
+                <li>MiniMax-M2 Series, 2026. <em>Mini Activations Unleashing Max Potential</em>. arXiv:2605.26494</li>
+                <li>Tree-GRPO, ICLR 2026. <em>Tree Search for LLM Agent RL</em>. arXiv:2509.21240</li>
+                <li>T²PO, ICML 2026 Spotlight. <em>Uncertainty-Guided Exploration for Stable Multi-Turn Agentic RL</em>. arXiv:2605.02178</li>
+                <li>EAPO, 2026. <em>Polarity-Entropy Analysis for Token-Level Credit</em>. arXiv:2604.11056</li>
+                <li>ResT, ICLR 2026. <em>Reshaping Token-Level Policy Gradients for Tool-Use</em>. arXiv:2509.21826</li>
+                <li>RAGEN-2, 2026. <em>Reasoning Collapse and SNR-Aware Filtering</em>. arXiv:2604.06268</li>
+                <li>HiPER, ICML 2026. <em>Hierarchical RL with Explicit Credit Assignment</em>. arXiv:2602.16165</li>
+                <li>SPIRAL, ICLR 2026. <em>Self-Play on Zero-Sum Games for Reasoning</em>. arXiv:2506.24119</li>
+                <li>RLAnything, ICML 2026. <em>Dynamic RL System</em>. arXiv:2602.02488</li>
+                <li>SRPO/RRPO, 2026. <em>Credit Assignment with Resets</em>. arXiv:2605.25507</li>
+                <li>Credit Assignment Survey, 2026. <em>From Reasoning to Agentic</em>. arXiv:2604.09459</li>
+                <li>AgentFlow (Flow-GRPO), ICLR 2026 Oral. <em>In-the-Flow Agentic System Optimization</em>. arXiv:2510.05592</li>
+                <li>MemAgent, ICLR 2026 Oral. <em>Multi-Conv RL-based Memory Agent</em>. arXiv:2507.02259</li>
+                <li>LLMs Get Lost In Multi-Turn Conversation, ICLR 2026 Oral. arXiv:2505.06120</li>
+                <li>Do We Need Adam?, ICML 2026 Oral. <em>SGD for RL Fine-Tuning</em>. arXiv:2602.07729</li>
+                <li>Maximum Likelihood RL, ICML 2026 Oral. arXiv:2602.02710</li>
+                <li>GTPO / GRPO-S, ICML 2026. <em>Token and Sequence-Level Reward Shaping</em>.</li>
+                <li>WS-GRPO, ICML 2026. <em>Weakly-Supervised GRPO for Rollout-Efficient Reasoning</em>.</li>
+                <li>Advantage Collapse in GRPO, ICML 2026. arXiv:2605.21125</li>
+                <li>EchoRL, ICML 2026. <em>Reinforcement Learning via Rollout Echoing</em>.</li>
+                <li>FlowRL, ICLR 2026. <em>Matching Reward Distributions for LLM Reasoning</em>. arXiv:2509.15207</li>
+                <li>InT, ICLR 2026. <em>Self-Proposed Interventions for Credit Assignment</em>. arXiv:2601.14209</li>
+                <li>AgentGym-RL, ICLR 2026. <em>ScalingInter-RL for Long-Horizon Agents</em>. arXiv:2509.08755</li>
+                <li>MUA-RL, ICLR 2026. <em>Multi-turn User-interacting Agent RL</em>. arXiv:2508.18669</li>
+                <li>E2H Reasoner, ICLR 2026. <em>Curriculum RL from Easy to Hard</em>. arXiv:2506.06632</li>
+                <li>RL Scaling Behaviors, ACL 2026. arXiv:2509.25300</li>
+                <li>TrOPD: <em>Trust Region On-Policy Distillation</em>, 2026. arXiv:2606.01249</li>
+                <li>ExOPD: <em>Learning Beyond Teacher via Generalized OPD</em>, 2026. arXiv:2602.12125</li>
+                <li>REOPOLD: <em>Scaling Reasoning Efficiently via Relaxed OPD</em>, 2026. arXiv:2603.11137</li>
+                <li>Beyond GRPO and OPD: <em>Sparse-to-Dense Reward Principle</em>, 2026. arXiv:2605.12483</li>
+                <li>SOD: <em>Step-wise On-Policy Distillation for Agents</em>, 2026. arXiv:2605.07725</li>
+                <li>TurnOPD: <em>Turn-Aware OPD for Multi-Turn Agents</em>, 2026. arXiv:2607.05804</li>
+                <li>ATOD: <em>Annealed Turn-aware OPD for Multi-Turn Agents</em>, 2026. arXiv:2606.27814</li>
+                <li>MAD-OPD: <em>Breaking OPD Ceiling via Multi-Agent Debate</em>, 2026. arXiv:2605.01347</li>
+                <li>Rethinking OPD, Tsinghua THUNLP, 2026. arXiv:2604.13016</li>
+                <li>OPD Survey: <em>A Survey of On-Policy Distillation for LLMs</em>, 2026. arXiv:2604.00626</li>
+                <li>SimPO: <em>Simple Preference Optimization with Reference-Free Reward</em>, 2024. arXiv:2405.14734</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <div class="card-title">综述与学习资源</div>
+            <ol style="margin: 10px 0 10px 20px; font-size: 0.88em; line-height: 2;">
+                <li><em>The Landscape of Agentic Reinforcement Learning for LLMs: A Survey</em>, arXiv:2509.02547v5</li>
+                <li><em>Agentic RL with Implicit Step Rewards</em>, ICLR 2026 (Oral). Credit assignment from terminal rewards.</li>
+                <li><em>Awesome RL for Large Reasoning Models</em>, <a href="https://github.com/TsinghuaC3I/Awesome-RL-for-LRMs" style="color:var(--primary);">GitHub</a></li>
+                <li><em>Awesome RLVR</em>, <a href="https://github.com/opendilab/awesome-RLVR" style="color:var(--primary);">GitHub</a></li>
+                <li>Wolfe, <em>Agentic RL: Frameworks and Best Practices</em>, <a href="https://cameronrwolfe.substack.com/p/agentic-rl" style="color:var(--primary);">Substack</a></li>
+                <li><em>Awesome RL-based Agentic Search Papers</em>, <a href="https://github.com/ventr1c/Awesome-RL-based-Agentic-Search-Papers" style="color:var(--primary);">GitHub</a></li>
+            </ol>
+        </div>
+
+        <!-- Page nav -->
+        <div class="page-nav">
+            <a href="index.html">← 返回首页</a>
+            <a href="rl-interview-guide.html">RL 面试速查手册 →</a>
+        </div>
+    </main>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+    // Reading progress
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progress').style.width = pct + '%';
+
+        // Back to top visibility
+        const btn = document.getElementById('backToTop');
+        if (h.scrollTop > 400) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+
+        // Sidebar active state
+        const sections = document.querySelectorAll('h2.section-title, h3[id]');
+        const links = document.querySelectorAll('.sidebar a');
+        let current = '';
+        sections.forEach(sec => {
+            if (sec.offsetTop - 120 <= h.scrollTop) current = sec.id;
+        });
+        links.forEach(a => {
+            a.classList.remove('active');
+            if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>
