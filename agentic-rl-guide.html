@@ -601,17 +601,22 @@
             <li class="sub"><a href="#gigpo">GiGPO</a></li>
             <li class="sub"><a href="#ortho">正交叠加</a></li>
             <li class="sub"><a href="#algo-2026">2026 前沿新算法</a></li>
-            <li class="sub"><a href="#opd">OPD / TrOPD</a></li>
-            <li><a href="#part5">V · 开源 RL 实践</a></li>
+            <li><a href="#part5">V · OPD 在策略蒸馏</a></li>
+            <li class="sub"><a href="#opd">OPD 原理</a></li>
+            <li class="sub"><a href="#opd-compare">算法对比</a></li>
+            <li class="sub"><a href="#opd-pipeline">Sparse-to-Dense</a></li>
+            <li class="sub"><a href="#opd-variants">前沿变体</a></li>
+            <li class="sub"><a href="#opd-agentic">Agentic OPD</a></li>
+            <li><a href="#part6">VI · 开源 RL 实践</a></li>
             <li class="sub"><a href="#deepseek-r1">DeepSeek-R1</a></li>
             <li class="sub"><a href="#kimi">Kimi k1.5 / K2</a></li>
             <li class="sub"><a href="#qwen3">Qwen3</a></li>
             <li class="sub"><a href="#glm">GLM-4.5 / GLM-5</a></li>
-            <li><a href="#part6">VI · Agentic 系统与基础设施</a></li>
+            <li><a href="#part7">VII · Agentic 系统与基础设施</a></li>
             <li class="sub"><a href="#coding-agents">Coding Agent RL</a></li>
             <li class="sub"><a href="#training-infra">训练框架与基础设施</a></li>
             <li class="sub"><a href="#github-repos">推荐开源 Repo</a></li>
-            <li><a href="#part7">VII · 面试高频 QA</a></li>
+            <li><a href="#part8">VIII · 面试高频 QA</a></li>
             <li><a href="#ref">参考文献</a></li>
         </ul>
     </aside>
@@ -633,10 +638,11 @@
                 <li><a href="#part1">数学基础 — MDP、策略梯度、IS、KL、GAE</a></li>
                 <li><a href="#part2">经典算法族谱 — PPO / DPO / GRPO 三大家族</a></li>
                 <li><a href="#part3">Agentic RL 核心问题 — RLVR Ceiling / 信用分配 / 多轮 / 工具调用 / Off-Policy</a></li>
-                <li><a href="#part4">前沿算法创新 — GSPO / StepPO / ARPO / GiGPO / OPD / 2026 新算法</a></li>
-                <li><a href="#part5">开源大模型 RL 实践 — DeepSeek-R1 / Kimi / Qwen3 / GLM</a></li>
-                <li><a href="#part6">Agentic 系统与基础设施 — Coding Agent RL / 开源训练框架 / 基础设施</a></li>
-                <li><a href="#part7">面试高频 QA — 12 道精选问答</a></li>
+                <li><a href="#part4">前沿算法创新 — GSPO / StepPO / ARPO / GiGPO / 2026 新算法</a></li>
+                <li><a href="#part5">OPD 在策略蒸馏 — 数学原理 / KL-RL 等价 / Sparse-to-Dense Pipeline / Agentic OPD</a></li>
+                <li><a href="#part6">开源大模型 RL 实践 — DeepSeek-R1 / Kimi / Qwen3 / GLM</a></li>
+                <li><a href="#part7">Agentic 系统与基础设施 — Coding Agent RL / 开源训练框架 / 基础设施</a></li>
+                <li><a href="#part8">面试高频 QA — 13 道精选问答</a></li>
             </ol>
         </nav>
 
@@ -1268,31 +1274,41 @@
             </table>
         </div>
 
-        <!-- OPD -->
-        <h3 id="opd">4.7 OPD — On-Policy Distillation（在策略蒸馏）</h3>
+        <!-- Part IV ends. OPD is now Part V (standalone chapter). -->
 
-        <p>OPD（On-Policy Distillation）是 2026 年最活跃的算法族之一，位于<strong>知识蒸馏与 RL 的交叉点</strong>。它既是一种高效的模型压缩方法，也可以被严格等价地表述为带 dense token reward 的 KL 约束 RL。</p>
+        <!-- ======================= Part V: OPD ======================= -->
+        <h2 class="section-title" id="part5"><span class="num">V</span> OPD — On-Policy Distillation（在策略蒸馏）</h2>
+
+        <h3 id="opd">5.1 OPD 原理 — 在策略蒸馏的数学本质</h3>
 
         <div class="card teal">
-            <div class="card-title">OPD 原理 — 在策略蒸馏的数学本质</div>
+            <div class="card-title">OPD 核心原理</div>
+            <p>OPD（On-Policy Distillation）是 2026 年最活跃的算法族之一，位于<strong>知识蒸馏与 RL 的交叉点</strong>。它既是一种高效的模型压缩方法，也可以被严格等价地表述为带 dense token reward 的 KL 约束 RL。</p>
             <p><strong>标准蒸馏</strong>（off-policy）：学生模型学习教师模型在<strong>教师自己生成的数据</strong>上的分布。问题：教师分布和学生分布差异大时，学生在自己从未见过的 token 上被迫模仿教师，引入噪声。</p>
             <p><strong>OPD</strong>（on-policy）：学生模型自己生成 rollout，教师模型在<strong>学生生成的 token</strong> 上提供监督信号。学生只在自己"能力范围内"的轨迹上向教师学习。</p>
+        </div>
 
+        <div class="card teal">
+            <div class="card-title">OPD 目标函数</div>
             <div class="formula-box key">
                 <span class="label">OPD 目标函数</span>
                 $$\mathcal{L}^{\text{OPD}}(\theta) = -\mathbb{E}_{x \sim \mathcal{D},\; y \sim \pi_\theta(\cdot|x)}\left[\sum_{t=1}^{|y|} \log \pi_T(y_t \mid x, y_{<t})\right]$$
                 <p>学生 $\pi_\theta$ on-policy 生成序列 $y$，教师 $\pi_T$ 在每个 token 位置给出交叉熵损失。注意期望是对<strong>学生分布</strong>采样（on-policy），而非教师分布。</p>
             </div>
+        </div>
 
+        <div class="card teal">
+            <div class="card-title">KL-RL 等价性（核心洞见）</div>
             <div class="formula-box">
-                <span class="label">KL-RL 等价性（核心洞见）</span>
+                <span class="label">KL-RL 等价性</span>
                 $$\underbrace{-\mathbb{E}_{y \sim \pi_\theta}\left[\sum_t \log \pi_T(y_t|\cdot)\right]}_{\text{OPD 交叉熵}} = \underbrace{\mathbb{E}_{y \sim \pi_\theta}\left[\sum_t r_t^{\text{teacher}}\right]}_{\text{Dense token reward}} + \underbrace{D_{\text{KL}}(\pi_\theta \| \pi_{\text{ref}})}_{\text{KL 正则}}$$
                 <p>其中 <strong>teacher reward</strong> 定义为 $r_t^{\text{teacher}} = \log \pi_T(y_t|x,y_{<t}) - \log \pi_\theta(y_t|x,y_{<t})$（教师-学生 log-ratio）。这意味着 OPD 等价于：用教师-学生 log-ratio 作为 dense token reward 做 RL，同时加 KL 正则防止学生偏离 reference model。</p>
             </div>
-
             <p><strong>与 GRPO 的对比</strong>：GRPO 是 <strong>sparse outcome reward</strong>（仅序列末尾有正确/错误信号），OPD 是 <strong>dense token reward</strong>（每个 token 都有教师信号）。两者互补——GRPO 适合教师发现（sparse verifier），OPD 适合知识压缩（dense teacher）。</p>
             <p><strong>直觉类比</strong>：GRPO 像"考试只看最终答案对不对"，OPD 像"老师坐在旁边看你写每一步，随时纠正"。前者鼓励探索，后者高效传递知识。</p>
         </div>
+
+        <h3 id="opd-compare">5.2 OPD vs 其他算法族</h3>
 
         <div class="card teal">
             <div class="card-title">OPD vs GRPO vs PPO vs DPO</div>
@@ -1306,6 +1322,8 @@
                 </tbody>
             </table>
         </div>
+
+        <h3 id="opd-pipeline">5.3 Sparse-to-Dense 完整 Pipeline</h3>
 
         <div class="card teal">
             <div class="card-title">Sparse-to-Dense 完整 Pipeline（面试高频考点）</div>
@@ -1321,6 +1339,8 @@
             </div>
             <p><strong>效果</strong>：7B 学生通过此 pipeline 在 MATH 上达到 79.3%，AIME 达到 25.2%（arXiv:2605.12483）。ExOPD 的 reward scaling 进一步让学生<strong>直接超越教师</strong>：$\mathcal{L}^{\text{ExOPD}} = -\alpha \cdot \mathbb{E}[\sum_t \log \pi_T(\cdot)]$，当 $\alpha > 1$ 时学生可以超越教师分布。</p>
         </div>
+
+        <h3 id="opd-variants">5.4 OPD 前沿变体</h3>
 
         <div class="compare-grid">
             <div class="card">
@@ -1344,8 +1364,10 @@
             </div>
         </div>
 
+        <h3 id="opd-agentic">5.5 Agentic OPD 变体（多轮 Agent 蒸馏）</h3>
+
         <div class="card teal">
-            <div class="card-title">Agentic OPD 变体（多轮 Agent 蒸馏）</div>
+            <div class="card-title">Agentic OPD 变体</div>
             <table>
                 <thead><tr><th>变体</th><th>arXiv</th><th>核心创新</th></tr></thead>
                 <tbody>
@@ -1360,10 +1382,12 @@
         <div class="box-insight">
             <p><strong>OPD 属于 Agentic RL 吗？</strong>标准 OPD 本身是<strong>通用 post-training 技术</strong>（蒸馏+RL 交叉），不是 Agentic RL。但 2026 年已涌现多个 agentic 变体（SOD/TurnOPD/ATOD/OPAD），专门解决多轮 agent 蒸馏问题。OPD 与 GRPO 是<strong>互补关系</strong>：GRPO 做教师发现（sparse reward），OPD 做学生压缩（dense supervision）。面试时需能清晰区分 OPD（蒸馏范式）与 GRPO（RL 范式）的定位差异。</p>
         </div>
-        <h2 class="section-title" id="part5"><span class="num">V</span> 开源大模型 RL 实践</h2>
+
+        <!-- ======================= Part VI ======================= -->
+        <h2 class="section-title" id="part6"><span class="num">VI</span> 开源大模型 RL 实践</h2>
 
         <!-- DeepSeek-R1 -->
-        <h3 id="deepseek-r1">5.1 DeepSeek-R1</h3>
+        <h3 id="deepseek-r1">6.1 DeepSeek-R1</h3>
 
         <div class="card teal">
             <div class="card-title">DeepSeek-R1 <span class="tag tag-teal">arXiv:2501.12948 · Nature 2025</span></div>
@@ -1400,7 +1424,7 @@
         </div>
 
         <!-- Kimi -->
-        <h3 id="kimi">5.2 Kimi k1.5 / K2</h3>
+        <h3 id="kimi">6.2 Kimi k1.5 / K2</h3>
 
         <div class="card teal">
             <div class="card-title">Kimi k1.5 <span class="tag tag-teal">arXiv:2501.12599</span></div>
@@ -1425,7 +1449,7 @@
         </div>
 
         <!-- Qwen3 -->
-        <h3 id="qwen3">5.3 Qwen3</h3>
+        <h3 id="qwen3">6.3 Qwen3</h3>
 
         <div class="card teal">
             <div class="card-title">Qwen3 <span class="tag tag-teal">2025</span></div>
@@ -1452,7 +1476,7 @@
         </div>
 
         <!-- GLM -->
-        <h3 id="glm">5.4 GLM-4.5 / GLM-5 / GLM-5.2</h3>
+        <h3 id="glm">6.4 GLM-4.5 / GLM-5 / GLM-5.2</h3>
 
         <div class="card teal">
             <div class="card-title">GLM-4.5 <span class="tag tag-teal">Zhipu AI · 2025</span></div>
@@ -1497,11 +1521,11 @@
             </table>
         </div>
 
-        <!-- ======================= Part VI ======================= -->
-        <h2 class="section-title" id="part6"><span class="num">VI</span> Agentic 系统与基础设施</h2>
+        <!-- ======================= Part VII ======================= -->
+        <h2 class="section-title" id="part7"><span class="num">VII</span> Agentic 系统与基础设施</h2>
 
         <!-- Coding Agent RL -->
-        <h3 id="coding-agents">6.1 Coding Agent RL 全景</h3>
+        <h3 id="coding-agents">7.1 Coding Agent RL 全景</h3>
 
         <p>2025-2026 年，coding agent 成为 Agentic RL 最重要的落地场景。SWE-bench Verified 成为衡量 agent 能力的核心 benchmark，头部系统已突破 70%+ 的解决率。</p>
 
@@ -1584,7 +1608,7 @@
         </div>
 
         <!-- Training Frameworks -->
-        <h3 id="training-infra">6.2 开源 RL 训练框架</h3>
+        <h3 id="training-infra">7.2 开源 RL 训练框架</h3>
 
         <p>2025 年，Agentic RL 训练基础设施快速成熟。以下框架支撑了几乎所有开源 Agentic RL 工作：</p>
 
@@ -1644,7 +1668,7 @@
         </div>
 
         <!-- Infra -->
-        <h3 id="infra">6.3 训练基础设施要点</h3>
+        <h3 id="infra">7.3 训练基础设施要点</h3>
 
         <table>
             <thead><tr><th>组件</th><th>挑战</th><th>主流方案</th></tr></thead>
@@ -1658,7 +1682,7 @@
         </table>
 
         <!-- GitHub Repos -->
-        <h3 id="github-repos">6.4 推荐开源 Repo（按 Star 排序）</h3>
+        <h3 id="github-repos">7.4 推荐开源 Repo（按 Star 排序）</h3>
 
         <div class="card teal">
             <div class="card-title">核心训练框架</div>
@@ -1703,8 +1727,8 @@
             <p><strong>面试必备 Repo 知识</strong>：能说清楚 <code>veRL</code>（生产标准）、<code>TRL</code>（入门首选）、<code>open-r1</code>（R1 复现）、<code>ART</code>（agentic RL 部署）四个框架的定位差异。知道 <code>simple_GRPO</code> 是理解 GRPO 内部机制的最佳教学代码。<code>DAPO</code> 和 <code>Dr. GRPO</code> 是 GRPO 最重要的两个改进方向。蒸馏方向关注 <code>thunlp/OPD</code>（官方实现）和 <code>AwesomeOPD</code>（最全索引）。</p>
         </div>
 
-        <!-- ======================= Part VII ======================= -->
-        <h2 class="section-title" id="part7"><span class="num">VII</span> 面试高频 QA</h2>
+        <!-- ======================= Part VIII ======================= -->
+        <h2 class="section-title" id="part8"><span class="num">VIII</span> 面试高频 QA</h2>
 
         <details class="qa-card" open>
             <summary>GRPO 为什么不需要 Critic？与 PPO 的本质区别是什么？<span class="difficulty diff-mid">中等</span><span class="freq-tag">高频</span></summary>
