@@ -23,8 +23,19 @@ window.MathJax = {
 };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script>
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, true);
+</script>
 </head>
 <body>
+<div id="math-loading"><div class="spinner"></div>正在加载数学公式渲染...</div>
 <nav class="nav-bar">
   <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
   <span class="sep">|</span>

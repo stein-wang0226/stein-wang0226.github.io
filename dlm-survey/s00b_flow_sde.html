@@ -4,270 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>连续时间生成模型：ODE、SDE 与 Flow Matching</title>
+<link rel="stylesheet" href="shared.css">
 <style>
-:root {
-    --bg: #fafafa;
-    --fg: #1a1a2e;
-    --card-bg: #ffffff;
-    --border: #e0e0e0;
-    --accent: #2563eb;
-    --accent-light: #dbeafe;
-    --quote-bg: #f0f4ff;
-    --quote-border: #3b82f6;
-    --code-bg: #f3f4f6;
-    --boxed-bg: #f8f9ff;
-    --boxed-border: #6366f1;
-    --table-header: #eef2ff;
-    --table-stripe: #f9fafb;
-    --transition-bg: #fffbeb;
-    --transition-border: #f59e0b;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    background: var(--bg);
-    color: var(--fg);
-    line-height: 1.8;
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-}
-
-.container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-}
-
-/* ---- Headings ---- */
-h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-    letter-spacing: -0.02em;
-    color: var(--fg);
-}
-
-h2 {
-    font-size: 1.35rem;
-    font-weight: 700;
-    margin: 48px 0 16px 0;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--accent);
-    color: var(--fg);
-}
-
-h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 32px 0 12px 0;
-    color: var(--fg);
-}
-
-h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 24px 0 8px 0;
-    color: #374151;
-}
-
-/* ---- Paragraphs & Inline ---- */
-p {
-    margin: 0 0 16px 0;
-}
-
-strong { font-weight: 600; }
-
-/* ---- Blockquotes (transition paragraphs & notes) ---- */
-blockquote {
-    margin: 20px 0;
-    padding: 16px 20px;
-    background: var(--quote-bg);
-    border-left: 4px solid var(--quote-border);
-    border-radius: 0 8px 8px 0;
-    font-size: 0.95rem;
-    color: #374151;
-}
-
+/* s00b-specific supplementary styles */
+.doc-header { text-align: center; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+.doc-header h1 { font-size: 1.85rem; margin-bottom: 12px; }
+.doc-subtitle { font-size: 0.95rem; color: var(--text2); }
+blockquote { margin: 20px 0; padding: 16px 20px; background: #f0fdfa; border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 0.95rem; }
 blockquote p:last-child { margin-bottom: 0; }
-
-/* Transition blockquotes (between major sections) get warm styling */
-blockquote.transition {
-    background: var(--transition-bg);
-    border-left-color: var(--transition-border);
-}
-
-/* ---- Lists ---- */
-ul, ol {
-    margin: 0 0 16px 0;
-    padding-left: 24px;
-}
-
-li {
-    margin-bottom: 6px;
-}
-
-li strong { color: var(--accent); }
-
-/* ---- Tables ---- */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0 24px;
-    font-size: 0.92rem;
-}
-
-th {
-    background: var(--table-header);
-    font-weight: 600;
-    text-align: left;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-}
-
-td {
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-}
-
-tr:nth-child(even) td {
-    background: var(--table-stripe);
-}
-
-/* ---- Code Blocks ---- */
-pre {
-    background: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 20px;
-    overflow-x: auto;
-    font-size: 0.88rem;
-    line-height: 1.6;
-    margin: 16px 0 24px;
-}
-
-code {
-    font-family: "SF Mono", "Fira Code", "JetBrains Mono", Menlo, Consolas, monospace;
-    font-size: 0.88em;
-}
-
-p code, li code {
-    background: var(--code-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.85em;
-}
-
-/* ---- Math Display ---- */
-.math-display {
-    margin: 20px 0;
-    padding: 16px 20px;
-    background: var(--boxed-bg);
-    border-radius: 8px;
-    overflow-x: auto;
-    text-align: center;
-}
-
-.math-display.boxed {
-    border: 2px solid var(--boxed-border);
-    background: #f0f0ff;
-}
-
-/* ---- Horizontal Rules ---- */
-hr {
-    border: none;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--border), transparent);
-    margin: 40px 0;
-}
-
-/* ---- Document Header ---- */
-.doc-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-}
-
-.doc-header h1 {
-    font-size: 1.85rem;
-    margin-bottom: 12px;
-}
-
-.doc-subtitle {
-    font-size: 0.95rem;
-    color: #6b7280;
-}
-
-/* ---- Section Nav ---- */
-.toc {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin: 24px 0 40px;
-}
-
-.toc-title {
-    font-weight: 700;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #6b7280;
-    margin-bottom: 12px;
-}
-
-.toc ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.toc li {
-    margin-bottom: 4px;
-}
-
-.toc a {
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 0.92rem;
-}
-
-.toc a:hover {
-    text-decoration: underline;
-}
-
-.toc .toc-sub {
-    padding-left: 20px;
-}
-
-/* ---- Roadmap ---- */
-.roadmap {
-    background: linear-gradient(135deg, #eef2ff 0%, #f0f4ff 100%);
-    border: 1px solid #c7d2fe;
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin: 24px 0;
-    text-align: center;
-    font-size: 0.95rem;
-}
-
-/* ---- Responsive ---- */
-@media (max-width: 640px) {
-    .container { padding: 20px 16px 60px; }
-    h1 { font-size: 1.4rem; }
-    h2 { font-size: 1.2rem; }
-    table { font-size: 0.82rem; }
-    th, td { padding: 8px 10px; }
-}
-
-/* ---- Print ---- */
-@media print {
-    body { background: white; }
-    .container { max-width: 100%; padding: 0; }
-    blockquote { break-inside: avoid; }
-    pre { break-inside: avoid; }
-}
+blockquote.transition { background: #fffbeb; border-left-color: var(--orange); }
+.math-display { margin: 20px 0; padding: 16px 20px; background: #f0fdfa; border-radius: 8px; overflow-x: auto; text-align: center; }
+.math-display.boxed { border: 2px solid var(--accent2); background: #f0fdfa; }
+hr { border: none; height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent); margin: 40px 0; }
 </style>
 
 <script>
@@ -277,7 +25,7 @@ window.MathJax = {
         displayMath: [['$$', '$$']],
         tags: 'ams',
         macros: {
-            bm: ['\boldsymbol{#1}', 1]
+            bm: ['\\boldsymbol{#1}', 1]
         }
     },
     svg: {
@@ -321,7 +69,7 @@ window.MathJax = {
     width: 16px;
     height: 16px;
     border: 2px solid #d1d5db;
-    border-top-color: #3b82f6;
+    border-top-color: #0d9488;
     border-radius: 50%;
     margin-left: 8px;
     animation: spin 0.8s linear infinite;
@@ -332,32 +80,11 @@ window.MathJax = {
 
 </head>
 <body>
-<nav style="background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 24px; font-size: 0.88rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif; position: sticky; top: 0; z-index: 100;">
-  <a href="index.html" style="font-weight:700;color:#2563eb;text-decoration:none;">调研首页</a>
-  <span style="color:#ccc; margin: 0 8px;">|</span>
-  <a href="s00a_ddpm.html" style="color:#6b7280;text-decoration:none;">基础A</a>
-  <span style="color:#ccc; margin: 0 8px;">|</span>
-  <a href="s00b_flow_sde.html" style="font-weight:600;color:#2563eb;text-decoration:none;">基础B</a>
-  <span style="color:#ccc; margin: 0 8px;">|</span>
-  <a href="s01_overview.html" style="color:#6b7280;text-decoration:none;">01</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s02_discrete.html" style="color:#6b7280;text-decoration:none;">02</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s03_block.html" style="color:#6b7280;text-decoration:none;">03</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s04_continuous.html" style="color:#6b7280;text-decoration:none;">04</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s05_paradigms.html" style="color:#6b7280;text-decoration:none;">05</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s06_scaling.html" style="color:#6b7280;text-decoration:none;">06</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s07_speculative.html" style="color:#6b7280;text-decoration:none;">07</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s08_elbo_rl.html" style="color:#6b7280;text-decoration:none;">08</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s09_commercial.html" style="color:#6b7280;text-decoration:none;">09</a>
-  <span style="color:#ccc; margin: 0 6px;">|</span>
-  <a href="s10_comparison.html" style="color:#6b7280;text-decoration:none;">10</a>
+<nav class="nav-bar">
+  <a href="index.html" style="font-weight:700;color:var(--accent);">首页</a>
+  <span class="sep">|</span>
+  <a href="s00a_ddpm.html">基础A</a> <span class="sep">|</span> <a href="s00b_flow_sde.html" class="active">基础B</a> <span class="sep">|</span>
+  <a href="s01_overview.html">01</a> <span class="sep">|</span> <a href="s02_discrete.html">02</a> <span class="sep">|</span> <a href="s03_block.html">03</a> <span class="sep">|</span> <a href="s04_continuous.html">04</a> <span class="sep">|</span> <a href="s05_paradigms.html">05</a> <span class="sep">|</span> <a href="s06_scaling.html">06</a> <span class="sep">|</span> <a href="s07_speculative.html">07</a> <span class="sep">|</span> <a href="s08_elbo_rl.html">08</a> <span class="sep">|</span> <a href="s09_commercial.html">09</a> <span class="sep">|</span> <a href="s10_comparison.html">10</a>
  <span class="sep">|</span> <a href="s11_loop_transformer.html">11</a>
  <span class="sep">|</span> <a href="s12_vae.html">12</a>
 </nav>

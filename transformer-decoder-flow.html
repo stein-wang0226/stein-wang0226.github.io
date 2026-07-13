@@ -14,23 +14,24 @@
     ]
   });"></script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Literata:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
   :root {
-    --bg: #fafafa;
+    --bg: #fafaf8;
     --card: #ffffff;
     --text: #1a1a2e;
-    --muted: #64748b;
-    --accent: #3b82f6;
-    --accent2: #8b5cf6;
-    --border: #e2e8f0;
-    --code-bg: #f1f5f9;
-    --highlight: #eff6ff;
-    --green: #10b981;
-    --orange: #f59e0b;
+    --muted: #78716c;
+    --accent: #0d9488;
+    --accent2: #0f766e;
+    --border: #d6d3cd;
+    --code-bg: #f3f1ec;
+    --highlight: #f0fdfa;
+    --green: #059669;
+    --orange: #d97706;
     --red: #ef4444;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+    font-family: 'Literata', Georgia, 'Noto Serif SC', serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.8;
@@ -41,7 +42,7 @@
     text-align: center;
     margin-bottom: 3rem;
     padding: 2.5rem 2rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border-radius: 16px;
     color: white;
   }
@@ -58,7 +59,7 @@
   .part-title .icon { font-size: 1.3rem; }
 
   .notation {
-    background: var(--highlight); border: 1px solid #bfdbfe;
+    background: var(--highlight); border: 1px solid #99f6e4;
     border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;
   }
   .notation h3 { font-size: 1rem; color: var(--accent); margin-bottom: 0.6rem; }
@@ -120,8 +121,8 @@
   }
 
   .flow {
-    background: linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%);
-    border: 1px solid #c7d2fe; border-radius: 12px;
+    background: linear-gradient(135deg, #f0fdfa 0%, #f5f0fa 100%);
+    border: 1px solid #99f6e4; border-radius: 12px;
     padding: 1.3rem 1.5rem; margin: 1rem 0;
     text-align: center; font-size: 1rem;
     overflow-x: auto; white-space: nowrap;
@@ -133,7 +134,7 @@
     border: 1px solid var(--border);
   }
   .compare-table th {
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: white; padding: 0.8rem 1rem; font-weight: 600; text-align: left;
   }
   .compare-table td {
@@ -255,7 +256,7 @@
       <div class="formula">$A = \text{softmax}(\text{mask}(S)) \in \mathbb{R}^{B \times h \times L \times L}$</div>
 
       <p style="margin-top:0.6rem"><strong>Causal mask 形状</strong>（以 $L=5$ 为例）：</p>
-      <div class="dim-chain" style="font-family:'SF Mono','Fira Code',monospace; text-align:left; line-height:1.7">
+      <div class="dim-chain" style="font-family:'JetBrains Mono',monospace; text-align:left; line-height:1.7">
         <span style="color:#92400e">　 　 k₀　 k₁　 k₂　 k₃　 k₄</span><br>
         <span style="color:#92400e">q₀　 ✓　 ·　 ·　 ·　 ·</span><br>
         <span style="color:#92400e">q₁　 ✓　 ✓　 ·　 ·　 ·</span><br>
@@ -799,41 +800,41 @@
     .code-header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 0.7rem 1.2rem;
-      background: linear-gradient(135deg, #1e293b, #334155);
-      color: white;
+      background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+      color: #134e4a;
     }
     .code-header .title {
       font-weight: 600; font-size: 0.95rem;
     }
     .code-header .ref {
       font-size: 0.78rem; opacity: 0.8;
-      background: rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.06);
       padding: 2px 8px; border-radius: 4px;
     }
     .code-body {
       padding: 1.2rem; overflow-x: auto;
-      background: #0f172a; color: #e2e8f0;
-      font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+      background: #f8f7f4; color: #1a1a2e;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.85rem; line-height: 1.65;
       tab-size: 4;
       white-space: pre;
     }
     .code-body .cmt { color: #64748b; }
     .code-body .kw { color: #c084fc; }
-    .code-body .fn { color: #34d399; }
+    .code-body .fn { color: #059669; }
     .code-body .var { color: #fbbf24; }
-    .code-body .str { color: #34d399; }
+    .code-body .str { color: #059669; }
     .code-body .num { color: #f97316; }
     .code-body .cls { color: #67e8f9; }
-    .code-body .op { color: #f472b6; }
-    .code-body .imp { color: #e2e8f0; }
+    .code-body .op { color: #db2777; }
+    .code-body .imp { color: #1a1a2e; }
     .code-body .doc { color: #94a3b8; font-style: italic; }
     .code-map {
       padding: 0.8rem 1.2rem; background: var(--highlight);
-      border-top: 1px solid #bfdbfe; font-size: 0.88rem;
+      border-top: 1px solid #99f6e4; font-size: 0.88rem;
     }
     .code-map code {
-      background: #e2e8f0; padding: 1px 5px; border-radius: 3px;
+      background: #e8e5de; padding: 1px 5px; border-radius: 3px;
       font-size: 0.85rem;
     }
   </style>

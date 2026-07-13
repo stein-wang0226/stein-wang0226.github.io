@@ -22,26 +22,27 @@
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Literata:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
         :root {
-            --primary: #2563eb;
-            --primary-light: #dbeafe;
-            --primary-dark: #1e40af;
-            --accent: #f59e0b;
+            --primary: #0d9488;
+            --primary-light: #ccfbf1;
+            --primary-dark: #0f766e;
+            --accent: #d97706;
             --accent-light: #fef3c7;
-            --success: #10b981;
+            --success: #059669;
             --success-light: #d1fae5;
             --danger: #ef4444;
             --danger-light: #fee2e2;
-            --purple: #7c3aed;
-            --purple-light: #ede9fe;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
+            --purple: #0f766e;
+            --purple-light: #f0fdfa;
+            --gray-50: #fafaf8;
+            --gray-100: #f3f1ec;
+            --gray-200: #d6d3cd;
+            --gray-300: #a8a29e;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #1a1a2e;
+            --gray-900: #1a1a2e;
             --radius: 12px;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.03);
@@ -79,12 +80,12 @@
         .back-to-top:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', 'PingFang SC', sans-serif;
+            font-family: 'Literata', Georgia, 'Noto Serif SC', serif;
             line-height: 1.85;
             color: var(--gray-800);
-            background: #f4f6fb;
-            background-image: radial-gradient(ellipse at 20% 0%, rgba(37,99,235,0.04) 0%, transparent 50%),
-                              radial-gradient(ellipse at 80% 100%, rgba(124,58,237,0.03) 0%, transparent 50%);
+            background: #fafaf8;
+            background-image: radial-gradient(ellipse at 20% 0%, rgba(13,148,136,0.04) 0%, transparent 50%),
+                              radial-gradient(ellipse at 80% 100%, rgba(15,118,110,0.03) 0%, transparent 50%);
             min-height: 100vh;
         }
 
@@ -154,7 +155,7 @@
         .tag-blue { background: var(--primary-light); color: var(--primary-dark); }
         .tag-amber { background: var(--accent-light); color: #92400e; }
         .tag-green { background: var(--success-light); color: #065f46; }
-        .tag-purple { background: var(--purple-light); color: #5b21b6; }
+        .tag-purple { background: var(--purple-light); color: #0f766e; }
 
         /* TOC */
         nav.toc {
@@ -307,7 +308,7 @@
         }
 
         .formula-box:hover {
-            box-shadow: 0 4px 20px rgba(37,99,235,0.08);
+            box-shadow: 0 4px 20px rgba(13,148,136,0.08);
         }
 
         .formula-box.highlight {
@@ -339,7 +340,7 @@
             margin-bottom: 10px;
             display: inline-block;
             padding: 2px 10px;
-            background: rgba(37,99,235,0.08);
+            background: rgba(13,148,136,0.08);
             border-radius: 4px;
         }
 
@@ -396,16 +397,16 @@
         .box-warning::before { content: "⚠️ 面试易错点"; font-weight: 700; display: block; margin-bottom: 10px; color: #991b1b; font-size: 0.88rem; letter-spacing: 0.3px; }
 
         .box-interview {
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
             border-left: 5px solid var(--primary);
         }
         .box-interview::before { content: "🎤 30秒面试回答"; font-weight: 700; display: block; margin-bottom: 10px; color: var(--primary-dark); font-size: 0.88rem; letter-spacing: 0.3px; }
 
         .box-analogy {
-            background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+            background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
             border-left: 5px solid var(--purple);
         }
-        .box-analogy::before { content: "🎯 类比"; font-weight: 700; display: block; margin-bottom: 10px; color: #5b21b6; font-size: 0.88rem; letter-spacing: 0.3px; }
+        .box-analogy::before { content: "🎯 类比"; font-weight: 700; display: block; margin-bottom: 10px; color: #0f766e; font-size: 0.88rem; letter-spacing: 0.3px; }
 
         /* Tables */
         table {
@@ -422,7 +423,7 @@
         }
 
         th {
-            background: linear-gradient(135deg, var(--gray-900), #2d3748);
+            background: var(--accent);
             color: white;
             padding: 14px 18px;
             text-align: left;
@@ -440,7 +441,7 @@
 
         tr:last-child td { border-bottom: none; }
         tr:nth-child(even) { background: var(--gray-50); }
-        tbody tr:hover td { background: rgba(37,99,235,0.03); }
+        tbody tr:hover td { background: rgba(13,148,136,0.03); }
 
         /* Cards */
         .step-card {
@@ -478,7 +479,7 @@
             justify-content: center;
             font-size: 0.8rem;
             font-weight: 700;
-            box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+            box-shadow: 0 2px 6px rgba(13,148,136,0.3);
         }
 
         /* Evolution diagram */
@@ -524,11 +525,11 @@
 
         /* ASCII art */
         .ascii-diagram {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: #a5f3fc;
+            background: #f8f7f4;
+            color: #0f766e;
             padding: 26px 30px;
             border-radius: var(--radius);
-            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.82rem;
             line-height: 1.5;
             overflow-x: auto;
@@ -651,7 +652,7 @@
         }
 
         /* Selection color */
-        ::selection { background: rgba(37,99,235,0.15); }
+        ::selection { background: rgba(13,148,136,0.15); }
 
         /* ===== Sidebar Outline ===== */
         .sidebar-outline {
@@ -693,13 +694,13 @@
 
         .sidebar-outline a:hover {
             color: var(--primary);
-            background: rgba(37,99,235,0.04);
+            background: rgba(13,148,136,0.04);
         }
 
         .sidebar-outline a.active {
             color: var(--primary);
             border-left-color: var(--primary);
-            background: rgba(37,99,235,0.06);
+            background: rgba(13,148,136,0.06);
             font-weight: 600;
         }
 
@@ -814,37 +815,37 @@
 
     <!-- V/Q/A 关系图 -->
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 260" style="width:100%;max-width:660px;margin:10px auto 20px;display:block;">
-      <rect width="660" height="260" rx="16" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <rect width="660" height="260" rx="16" fill="#f0fdfa" stroke="#d6d3cd" stroke-width="1"/>
       <!-- Title equation -->
-      <text x="330" y="32" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a" font-family="'Times New Roman',serif" font-style="italic">Q(s,a) = V(s) + A(s,a)</text>
+      <text x="330" y="32" text-anchor="middle" font-size="15" font-weight="800" fill="#1a1a2e" font-family="'Times New Roman',serif" font-style="italic">Q(s,a) = V(s) + A(s,a)</text>
 
       <!-- V(s) card -->
-      <rect x="30" y="54" width="185" height="68" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
-      <text x="122" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af" font-family="'Times New Roman',serif" font-style="italic">V(s)</text>
-      <text x="122" y="100" text-anchor="middle" font-size="10.5" fill="#475569" font-family="system-ui,sans-serif">所有动作的平均水平</text>
+      <rect x="30" y="54" width="185" height="68" rx="10" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+      <text x="122" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#0f766e" font-family="'Times New Roman',serif" font-style="italic">V(s)</text>
+      <text x="122" y="100" text-anchor="middle" font-size="10.5" fill="#78716c" font-family="'Sora',sans-serif">所有动作的平均水平</text>
 
       <!-- Q(s,a) card -->
       <rect x="238" y="54" width="185" height="68" rx="10" fill="#f0fdf4" stroke="#10b981" stroke-width="1.5"/>
       <text x="330" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#065f46" font-family="'Times New Roman',serif" font-style="italic">Q(s,a)</text>
-      <text x="330" y="100" text-anchor="middle" font-size="10.5" fill="#475569" font-family="system-ui,sans-serif">做这个具体动作的预期得分</text>
+      <text x="330" y="100" text-anchor="middle" font-size="10.5" fill="#78716c" font-family="'Sora',sans-serif">做这个具体动作的预期得分</text>
 
       <!-- A(s,a) card -->
       <rect x="446" y="54" width="185" height="68" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
       <text x="538" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e" font-family="'Times New Roman',serif" font-style="italic">A(s,a)</text>
-      <text x="538" y="100" text-anchor="middle" font-size="10.5" fill="#475569" font-family="system-ui,sans-serif">这个动作相对平均的增量</text>
+      <text x="538" y="100" text-anchor="middle" font-size="10.5" fill="#78716c" font-family="'Sora',sans-serif">这个动作相对平均的增量</text>
 
       <!-- A values -->
       <rect x="60" y="148" width="160" height="40" rx="8" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
-      <text x="140" y="173" text-anchor="middle" font-size="12" font-weight="600" fill="#065f46" font-family="system-ui,sans-serif">A &gt; 0 → 好动作</text>
+      <text x="140" y="173" text-anchor="middle" font-size="12" font-weight="600" fill="#065f46" font-family="'Sora',sans-serif">A &gt; 0 → 好动作</text>
 
       <rect x="250" y="148" width="160" height="40" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
-      <text x="330" y="173" text-anchor="middle" font-size="12" font-weight="600" fill="#991b1b" font-family="system-ui,sans-serif">A &lt; 0 → 坏动作</text>
+      <text x="330" y="173" text-anchor="middle" font-size="12" font-weight="600" fill="#991b1b" font-family="'Sora',sans-serif">A &lt; 0 → 坏动作</text>
 
       <rect x="440" y="148" width="160" height="40" rx="8" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1"/>
-      <text x="520" y="173" text-anchor="middle" font-size="12" font-weight="600" fill="#4b5563" font-family="system-ui,sans-serif">A = 0 → 平均水平</text>
+      <text x="520" y="173" text-anchor="middle" font-size="12" font-weight="600" fill="#4b5563" font-family="'Sora',sans-serif">A = 0 → 平均水平</text>
 
       <!-- Bottom summary -->
-      <text x="330" y="224" text-anchor="middle" font-size="11" fill="#64748b" font-family="system-ui,sans-serif">直觉：V 是"底线"，A 衡量"偏离底线多少"，Q 是两者之和</text>
+      <text x="330" y="224" text-anchor="middle" font-size="11" fill="#64748b" font-family="'Sora',sans-serif">直觉：V 是"底线"，A 衡量"偏离底线多少"，Q 是两者之和</text>
     </svg>
 
     <h3>第四层：策略相关</h3>
@@ -1144,12 +1145,12 @@
           <stop offset="100%" stop-color="#d97706"/>
         </linearGradient>
         <linearGradient id="gNum" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#3b82f6"/>
+          <stop offset="0%" stop-color="#0d9488"/>
           <stop offset="100%" stop-color="#1d4ed8"/>
         </linearGradient>
         <linearGradient id="gFinal" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="#1d4ed8"/>
-          <stop offset="100%" stop-color="#1e40af"/>
+          <stop offset="100%" stop-color="#0f766e"/>
         </linearGradient>
         <filter id="ds" x="-2%" y="-2%" width="104%" height="108%">
           <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#1e3a5f" flood-opacity="0.07"/>
@@ -1160,15 +1161,15 @@
       </defs>
 
       <!-- background -->
-      <rect width="700" height="680" rx="18" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
-      <text x="350" y="34" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a" font-family="system-ui,sans-serif" letter-spacing="0.5">REINFORCE 推导核心链路</text>
+      <rect width="700" height="680" rx="18" fill="#f0fdfa" stroke="#d6d3cd" stroke-width="1"/>
+      <text x="350" y="34" text-anchor="middle" font-size="15" font-weight="800" fill="#1a1a2e" font-family="'Sora',sans-serif" letter-spacing="0.5">REINFORCE 推导核心链路</text>
 
       <!-- ===== Step 1 ===== -->
-      <rect x="40" y="52" width="620" height="72" rx="12" fill="url(#gCard)" stroke="#e2e8f0" stroke-width="1" filter="url(#ds)"/>
+      <rect x="40" y="52" width="620" height="72" rx="12" fill="url(#gCard)" stroke="#d6d3cd" stroke-width="1" filter="url(#ds)"/>
       <circle cx="72" cy="88" r="16" fill="url(#gNum)"/>
       <text x="72" y="93" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="system-ui">1</text>
-      <text x="100" y="80" font-size="12" font-weight="700" fill="#334155" font-family="system-ui,sans-serif">写出梯度积分形式</text>
-      <text x="100" y="100" font-size="13" fill="#1e293b" font-family="'Times New Roman',serif" font-style="italic">∇J = ∇∫P(τ|θ)R(τ)dτ = ∫∇P · R dτ</text>
+      <text x="100" y="80" font-size="12" font-weight="700" fill="#1a1a2e" font-family="'Sora',sans-serif">写出梯度积分形式</text>
+      <text x="100" y="100" font-size="13" fill="#1a1a2e" font-family="'Times New Roman',serif" font-style="italic">∇J = ∇∫P(τ|θ)R(τ)dτ = ∫∇P · R dτ</text>
       <text x="540" y="100" font-size="10.5" fill="#ef4444" font-weight="600" font-family="system-ui">⚠ ∇P 无法直接算</text>
 
       <!-- arrow -->
@@ -1178,29 +1179,29 @@
       <rect x="40" y="155" width="620" height="72" rx="12" fill="#fffbeb" stroke="#fbbf24" stroke-width="1.5" filter="url(#ds)"/>
       <circle cx="72" cy="191" r="16" fill="url(#gStar)"/>
       <text x="72" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="system-ui">2</text>
-      <text x="100" y="183" font-size="12" font-weight="700" fill="#92400e" font-family="system-ui,sans-serif">Log-Derivative Trick ★  积分 → 期望 → 可采样</text>
+      <text x="100" y="183" font-size="12" font-weight="700" fill="#92400e" font-family="'Sora',sans-serif">Log-Derivative Trick ★  积分 → 期望 → 可采样</text>
       <text x="100" y="203" font-size="13" fill="#78350f" font-family="'Times New Roman',serif" font-style="italic">∇P = P·∇log P  ⟹  ∫P·∇logP·R dτ = E[∇logP · R(τ)]</text>
 
       <!-- arrow -->
       <line x1="350" y1="227" x2="350" y2="253" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
 
       <!-- ===== Step 3 ===== -->
-      <rect x="40" y="258" width="620" height="72" rx="12" fill="url(#gCard)" stroke="#e2e8f0" stroke-width="1" filter="url(#ds)"/>
+      <rect x="40" y="258" width="620" height="72" rx="12" fill="url(#gCard)" stroke="#d6d3cd" stroke-width="1" filter="url(#ds)"/>
       <circle cx="72" cy="294" r="16" fill="url(#gNum)"/>
       <text x="72" y="299" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="system-ui">3</text>
-      <text x="100" y="286" font-size="12" font-weight="700" fill="#334155" font-family="system-ui,sans-serif">展开 log P(τ|θ)，环境项消掉</text>
-      <text x="100" y="306" font-size="13" fill="#1e293b" font-family="'Times New Roman',serif" font-style="italic">∇logP = ∇log π + ∇log P(env)</text>
+      <text x="100" y="286" font-size="12" font-weight="700" fill="#1a1a2e" font-family="'Sora',sans-serif">展开 log P(τ|θ)，环境项消掉</text>
+      <text x="100" y="306" font-size="13" fill="#1a1a2e" font-family="'Times New Roman',serif" font-style="italic">∇logP = ∇log π + ∇log P(env)</text>
       <text x="454" y="306" font-size="13" fill="#16a34a" font-weight="700" font-family="system-ui">→ 只剩 Σ∇log π(aₜ|sₜ)</text>
 
       <!-- arrow -->
       <line x1="350" y1="330" x2="350" y2="356" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
 
       <!-- ===== Step 4 ===== -->
-      <rect x="40" y="361" width="620" height="72" rx="12" fill="url(#gCard)" stroke="#e2e8f0" stroke-width="1" filter="url(#ds)"/>
+      <rect x="40" y="361" width="620" height="72" rx="12" fill="url(#gCard)" stroke="#d6d3cd" stroke-width="1" filter="url(#ds)"/>
       <circle cx="72" cy="397" r="16" fill="url(#gNum)"/>
       <text x="72" y="402" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="system-ui">4</text>
-      <text x="100" y="389" font-size="12" font-weight="700" fill="#334155" font-family="system-ui,sans-serif">得到初始公式</text>
-      <text x="100" y="409" font-size="13" fill="#1e293b" font-family="'Times New Roman',serif" font-style="italic">∇J = E[ Σₜ ∇log π(aₜ|sₜ) · R(τ) ]</text>
+      <text x="100" y="389" font-size="12" font-weight="700" fill="#1a1a2e" font-family="'Sora',sans-serif">得到初始公式</text>
+      <text x="100" y="409" font-size="13" fill="#1a1a2e" font-family="'Times New Roman',serif" font-style="italic">∇J = E[ Σₜ ∇log π(aₜ|sₜ) · R(τ) ]</text>
       <text x="488" y="409" font-size="10.5" fill="#ef4444" font-weight="600" font-family="system-ui">⚠ R(τ) 含过去奖励，方差大</text>
 
       <!-- arrow -->
@@ -1210,19 +1211,19 @@
       <rect x="40" y="464" width="620" height="86" rx="12" fill="#fffbeb" stroke="#fbbf24" stroke-width="1.5" filter="url(#ds)"/>
       <circle cx="72" cy="500" r="16" fill="url(#gStar)"/>
       <text x="72" y="505" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="system-ui">5</text>
-      <text x="100" y="492" font-size="12" font-weight="700" fill="#92400e" font-family="system-ui,sans-serif">Reward-to-go ★  R(τ) → Gₜ</text>
-      <text x="100" y="512" font-size="12" fill="#78350f" font-family="system-ui,sans-serif">r₀…rₜ₋₁ 和 aₜ 无关 → E[∇logπ · c] = 0（Score Function Lemma）</text>
-      <text x="100" y="534" font-size="12" fill="#78350f" font-family="system-ui,sans-serif">过去奖励消掉，只剩未来回报 Gₜ → 方差更小</text>
+      <text x="100" y="492" font-size="12" font-weight="700" fill="#92400e" font-family="'Sora',sans-serif">Reward-to-go ★  R(τ) → Gₜ</text>
+      <text x="100" y="512" font-size="12" fill="#78350f" font-family="'Sora',sans-serif">r₀…rₜ₋₁ 和 aₜ 无关 → E[∇logπ · c] = 0（Score Function Lemma）</text>
+      <text x="100" y="534" font-size="12" fill="#78350f" font-family="'Sora',sans-serif">过去奖励消掉，只剩未来回报 Gₜ → 方差更小</text>
 
       <!-- arrow to final -->
       <line x1="350" y1="550" x2="350" y2="578" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
 
       <!-- ===== Final ===== -->
-      <rect x="40" y="583" width="620" height="76" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#ds)"/>
+      <rect x="40" y="583" width="620" height="76" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="2" filter="url(#ds)"/>
       <rect x="40" y="583" width="6" height="76" rx="3" fill="url(#gFinal)"/>
-      <text x="70" y="610" font-size="13" font-weight="800" fill="#1e40af" font-family="system-ui,sans-serif">最终公式</text>
-      <text x="170" y="610" font-size="14" fill="#1e293b" font-family="'Times New Roman',serif" font-style="italic">∇J = E[ Σₜ ∇log π(aₜ|sₜ) · Gₜ ]</text>
-      <text x="70" y="640" font-size="11.5" fill="#475569" font-family="system-ui,sans-serif">采 N 条轨迹 → 每条算 ∇logπ · Gₜ → 取平均 ≈ 真实梯度（Monte Carlo 近似）</text>
+      <text x="70" y="610" font-size="13" font-weight="800" fill="#0f766e" font-family="'Sora',sans-serif">最终公式</text>
+      <text x="170" y="610" font-size="14" fill="#1a1a2e" font-family="'Times New Roman',serif" font-style="italic">∇J = E[ Σₜ ∇log π(aₜ|sₜ) · Gₜ ]</text>
+      <text x="70" y="640" font-size="11.5" fill="#78716c" font-family="'Sora',sans-serif">采 N 条轨迹 → 每条算 ∇logπ · Gₜ → 取平均 ≈ 真实梯度（Monte Carlo 近似）</text>
     </svg>
 
     <div class="step-card">
@@ -1504,7 +1505,7 @@ abla 1 = 0$。这个结论后续会反复使用——Baseline 能减、Advantage
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 620" style="width:100%;max-width:700px;margin:10px auto 24px;display:block;">
       <defs>
         <linearGradient id="gActor" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#3b82f6"/>
+          <stop offset="0%" stop-color="#0d9488"/>
           <stop offset="100%" stop-color="#1d4ed8"/>
         </linearGradient>
         <linearGradient id="gCritic" x1="0" y1="0" x2="1" y2="1">
@@ -1526,7 +1527,7 @@ abla 1 = 0$。这个结论后续会反复使用——Baseline 能减、Advantage
           <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#64748b"/>
         </marker>
         <marker id="arr2b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#3b82f6"/>
+          <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0d9488"/>
         </marker>
         <marker id="arr2o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#d97706"/>
@@ -1534,35 +1535,35 @@ abla 1 = 0$。这个结论后续会反复使用——Baseline 能减、Advantage
       </defs>
 
       <!-- background -->
-      <rect width="700" height="620" rx="18" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
-      <text x="350" y="34" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a" font-family="system-ui,sans-serif" letter-spacing="0.5">Actor-Critic 训练流程</text>
+      <rect width="700" height="620" rx="18" fill="#f0fdfa" stroke="#d6d3cd" stroke-width="1"/>
+      <text x="350" y="34" text-anchor="middle" font-size="15" font-weight="800" fill="#1a1a2e" font-family="'Sora',sans-serif" letter-spacing="0.5">Actor-Critic 训练流程</text>
 
       <!-- ====== Row 1: Actor + Environment ====== -->
       <!-- Actor box -->
-      <rect x="40" y="56" width="260" height="80" rx="14" fill="url(#gCalc)" stroke="#3b82f6" stroke-width="2" filter="url(#ds2)"/>
+      <rect x="40" y="56" width="260" height="80" rx="14" fill="url(#gCalc)" stroke="#0d9488" stroke-width="2" filter="url(#ds2)"/>
       <rect x="40" y="56" width="6" height="80" rx="3" fill="url(#gActor)"/>
-      <text x="64" y="82" font-size="13" font-weight="800" fill="#1e40af" font-family="system-ui,sans-serif">Actor π<tspan font-size="9" baseline-shift="sub">θ</tspan>（策略网络）</text>
-      <text x="64" y="104" font-size="11.5" fill="#475569" font-family="system-ui,sans-serif">输入 s → 输出动作分布 → 采样 a</text>
-      <text x="64" y="122" font-size="10.5" fill="#64748b" font-family="system-ui,sans-serif">（学生：决定怎么做）</text>
+      <text x="64" y="82" font-size="13" font-weight="800" fill="#0f766e" font-family="'Sora',sans-serif">Actor π<tspan font-size="9" baseline-shift="sub">θ</tspan>（策略网络）</text>
+      <text x="64" y="104" font-size="11.5" fill="#78716c" font-family="'Sora',sans-serif">输入 s → 输出动作分布 → 采样 a</text>
+      <text x="64" y="122" font-size="10.5" fill="#64748b" font-family="'Sora',sans-serif">（学生：决定怎么做）</text>
 
       <!-- Environment box -->
       <rect x="400" y="56" width="260" height="80" rx="14" fill="url(#gCalc)" stroke="#10b981" stroke-width="2" filter="url(#ds2)"/>
       <rect x="400" y="56" width="6" height="80" rx="3" fill="url(#gEnv)"/>
-      <text x="424" y="82" font-size="13" font-weight="800" fill="#065f46" font-family="system-ui,sans-serif">Environment 环境</text>
-      <text x="424" y="104" font-size="11.5" fill="#475569" font-family="system-ui,sans-serif">接收 a → 返回 (s′, r, done)</text>
-      <text x="424" y="122" font-size="10.5" fill="#64748b" font-family="system-ui,sans-serif">（试卷：给出成绩）</text>
+      <text x="424" y="82" font-size="13" font-weight="800" fill="#065f46" font-family="'Sora',sans-serif">Environment 环境</text>
+      <text x="424" y="104" font-size="11.5" fill="#78716c" font-family="'Sora',sans-serif">接收 a → 返回 (s′, r, done)</text>
+      <text x="424" y="122" font-size="10.5" fill="#64748b" font-family="'Sora',sans-serif">（试卷：给出成绩）</text>
 
       <!-- Arrow: Actor → Env -->
       <line x1="300" y1="86" x2="395" y2="86" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr2)"/>
-      <text x="348" y="80" text-anchor="middle" font-size="10" fill="#475569" font-family="system-ui,sans-serif">动作 a</text>
+      <text x="348" y="80" text-anchor="middle" font-size="10" fill="#78716c" font-family="'Sora',sans-serif">动作 a</text>
 
       <!-- Arrow: Env → down to data -->
       <line x1="530" y1="136" x2="530" y2="165" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr2)"/>
 
       <!-- ====== Row 2: Collected Data ====== -->
       <rect x="120" y="170" width="460" height="52" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5" filter="url(#ds2)"/>
-      <text x="350" y="194" text-anchor="middle" font-size="12" font-weight="700" fill="#065f46" font-family="system-ui,sans-serif">采集数据：(sₜ, aₜ, rₜ, sₜ₊₁) × 多步</text>
-      <text x="350" y="212" text-anchor="middle" font-size="10.5" fill="#475569" font-family="system-ui,sans-serif">一条或多条轨迹的交互经验</text>
+      <text x="350" y="194" text-anchor="middle" font-size="12" font-weight="700" fill="#065f46" font-family="'Sora',sans-serif">采集数据：(sₜ, aₜ, rₜ, sₜ₊₁) × 多步</text>
+      <text x="350" y="212" text-anchor="middle" font-size="10.5" fill="#78716c" font-family="'Sora',sans-serif">一条或多条轨迹的交互经验</text>
 
       <!-- Arrow: data → split to both -->
       <line x1="250" y1="222" x2="170" y2="258" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr2)"/>
@@ -1572,56 +1573,56 @@ abla 1 = 0$。这个结论后续会反复使用——Baseline 能减、Advantage
       <!-- Critic box -->
       <rect x="400" y="262" width="260" height="80" rx="14" fill="url(#gCalc)" stroke="#f59e0b" stroke-width="2" filter="url(#ds2)"/>
       <rect x="400" y="262" width="6" height="80" rx="3" fill="url(#gCritic)"/>
-      <text x="424" y="288" font-size="13" font-weight="800" fill="#92400e" font-family="system-ui,sans-serif">Critic V<tspan font-size="9" baseline-shift="sub">φ</tspan>（价值网络）</text>
-      <text x="424" y="310" font-size="11.5" fill="#475569" font-family="system-ui,sans-serif">输入 s → 输出 V<tspan font-size="8" baseline-shift="sub">φ</tspan>(s)（状态评分）</text>
-      <text x="424" y="328" font-size="10.5" fill="#64748b" font-family="system-ui,sans-serif">（老师：评估当前局面好坏）</text>
+      <text x="424" y="288" font-size="13" font-weight="800" fill="#92400e" font-family="'Sora',sans-serif">Critic V<tspan font-size="9" baseline-shift="sub">φ</tspan>（价值网络）</text>
+      <text x="424" y="310" font-size="11.5" fill="#78716c" font-family="'Sora',sans-serif">输入 s → 输出 V<tspan font-size="8" baseline-shift="sub">φ</tspan>(s)（状态评分）</text>
+      <text x="424" y="328" font-size="10.5" fill="#64748b" font-family="'Sora',sans-serif">（老师：评估当前局面好坏）</text>
 
       <!-- Compute Advantage box -->
-      <rect x="40" y="262" width="260" height="80" rx="14" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.5" filter="url(#ds2)"/>
-      <text x="170" y="292" text-anchor="middle" font-size="13" font-weight="800" fill="#5b21b6" font-family="system-ui,sans-serif">计算 Advantage</text>
-      <text x="170" y="314" text-anchor="middle" font-size="12" fill="#6d28d9" font-family="'Times New Roman',serif" font-style="italic">δₜ = rₜ + γV<tspan font-size="8.5" baseline-shift="sub">φ</tspan>(sₜ₊₁) − V<tspan font-size="8.5" baseline-shift="sub">φ</tspan>(sₜ)</text>
-      <text x="170" y="332" text-anchor="middle" font-size="10.5" fill="#7c3aed" font-family="system-ui,sans-serif">"这一步比预期好了多少"(TD残差)</text>
+      <rect x="40" y="262" width="260" height="80" rx="14" fill="#ccfbf1" stroke="#5eead4" stroke-width="1.5" filter="url(#ds2)"/>
+      <text x="170" y="292" text-anchor="middle" font-size="13" font-weight="800" fill="#0f766e" font-family="'Sora',sans-serif">计算 Advantage</text>
+      <text x="170" y="314" text-anchor="middle" font-size="12" fill="#0f766e" font-family="'Times New Roman',serif" font-style="italic">δₜ = rₜ + γV<tspan font-size="8.5" baseline-shift="sub">φ</tspan>(sₜ₊₁) − V<tspan font-size="8.5" baseline-shift="sub">φ</tspan>(sₜ)</text>
+      <text x="170" y="332" text-anchor="middle" font-size="10.5" fill="#0f766e" font-family="'Sora',sans-serif">"这一步比预期好了多少"(TD残差)</text>
 
       <!-- Arrow: Critic → Advantage (provide V_φ) -->
       <line x1="395" y1="302" x2="305" y2="302" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr2o)"/>
-      <text x="350" y="296" text-anchor="middle" font-size="9.5" fill="#92400e" font-family="system-ui,sans-serif">提供 V<tspan font-size="7" baseline-shift="sub">φ</tspan>(s)</text>
+      <text x="350" y="296" text-anchor="middle" font-size="9.5" fill="#92400e" font-family="'Sora',sans-serif">提供 V<tspan font-size="7" baseline-shift="sub">φ</tspan>(s)</text>
 
       <!-- ====== Row 4: Two updates in parallel ====== -->
       <!-- Arrow down from Advantage to Actor Update -->
-      <line x1="170" y1="342" x2="170" y2="388" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr2b)"/>
+      <line x1="170" y1="342" x2="170" y2="388" stroke="#0d9488" stroke-width="1.5" marker-end="url(#arr2b)"/>
 
       <!-- Arrow down from Critic to Critic Update -->
       <line x1="530" y1="342" x2="530" y2="388" stroke="#d97706" stroke-width="1.5" marker-end="url(#arr2o)"/>
 
       <!-- Actor Update -->
-      <rect x="40" y="392" width="260" height="92" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#ds2)"/>
+      <rect x="40" y="392" width="260" height="92" rx="14" fill="#f0fdfa" stroke="#0d9488" stroke-width="2" filter="url(#ds2)"/>
       <circle cx="66" cy="414" r="12" fill="url(#gActor)"/>
       <text x="66" y="418" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="system-ui">A</text>
-      <text x="86" y="418" font-size="12" font-weight="700" fill="#1e40af" font-family="system-ui,sans-serif">Actor 更新</text>
-      <text x="56" y="440" font-size="11" fill="#1e293b" font-family="'Times New Roman',serif" font-style="italic">θ ← θ + α · ∇log π<tspan font-size="8" baseline-shift="sub">θ</tspan>(a|s) · δₜ</text>
-      <text x="56" y="460" font-size="10" fill="#475569" font-family="system-ui,sans-serif">δₜ &gt; 0：增大该动作概率</text>
-      <text x="56" y="474" font-size="10" fill="#475569" font-family="system-ui,sans-serif">δₜ &lt; 0：减小该动作概率</text>
+      <text x="86" y="418" font-size="12" font-weight="700" fill="#0f766e" font-family="'Sora',sans-serif">Actor 更新</text>
+      <text x="56" y="440" font-size="11" fill="#1a1a2e" font-family="'Times New Roman',serif" font-style="italic">θ ← θ + α · ∇log π<tspan font-size="8" baseline-shift="sub">θ</tspan>(a|s) · δₜ</text>
+      <text x="56" y="460" font-size="10" fill="#78716c" font-family="'Sora',sans-serif">δₜ &gt; 0：增大该动作概率</text>
+      <text x="56" y="474" font-size="10" fill="#78716c" font-family="'Sora',sans-serif">δₜ &lt; 0：减小该动作概率</text>
 
       <!-- Critic Update -->
       <rect x="400" y="392" width="260" height="92" rx="14" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" filter="url(#ds2)"/>
       <circle cx="426" cy="414" r="12" fill="url(#gCritic)"/>
       <text x="426" y="418" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="system-ui">C</text>
-      <text x="446" y="418" font-size="12" font-weight="700" fill="#92400e" font-family="system-ui,sans-serif">Critic 更新</text>
-      <text x="416" y="440" font-size="11" fill="#1e293b" font-family="'Times New Roman',serif" font-style="italic">φ ← φ − α<tspan font-size="8" baseline-shift="sub">c</tspan> · ∇<tspan font-size="8" baseline-shift="sub">φ</tspan>(V<tspan font-size="8" baseline-shift="sub">φ</tspan>(s) − Gₜ)²</text>
-      <text x="416" y="460" font-size="10" fill="#475569" font-family="system-ui,sans-serif">让预测值 V<tspan font-size="7" baseline-shift="sub">φ</tspan> 逼近真实回报 Gₜ</text>
-      <text x="416" y="474" font-size="10" fill="#475569" font-family="system-ui,sans-serif">（MSE 最优解 = 条件期望 V<tspan font-size="7" baseline-shift="super">π</tspan>）</text>
+      <text x="446" y="418" font-size="12" font-weight="700" fill="#92400e" font-family="'Sora',sans-serif">Critic 更新</text>
+      <text x="416" y="440" font-size="11" fill="#1a1a2e" font-family="'Times New Roman',serif" font-style="italic">φ ← φ − α<tspan font-size="8" baseline-shift="sub">c</tspan> · ∇<tspan font-size="8" baseline-shift="sub">φ</tspan>(V<tspan font-size="8" baseline-shift="sub">φ</tspan>(s) − Gₜ)²</text>
+      <text x="416" y="460" font-size="10" fill="#78716c" font-family="'Sora',sans-serif">让预测值 V<tspan font-size="7" baseline-shift="sub">φ</tspan> 逼近真实回报 Gₜ</text>
+      <text x="416" y="474" font-size="10" fill="#78716c" font-family="'Sora',sans-serif">（MSE 最优解 = 条件期望 V<tspan font-size="7" baseline-shift="super">π</tspan>）</text>
 
       <!-- ====== Row 5: Loop back ====== -->
       <!-- merge arrows down -->
-      <line x1="170" y1="484" x2="170" y2="520" stroke="#3b82f6" stroke-width="1.5"/>
+      <line x1="170" y1="484" x2="170" y2="520" stroke="#0d9488" stroke-width="1.5"/>
       <line x1="530" y1="484" x2="530" y2="520" stroke="#d97706" stroke-width="1.5"/>
       <line x1="170" y1="520" x2="530" y2="520" stroke="#64748b" stroke-width="1.5"/>
       <line x1="350" y1="520" x2="350" y2="542" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr2)"/>
 
       <!-- Loop box -->
-      <rect x="170" y="546" width="360" height="52" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,3"/>
-      <text x="350" y="570" text-anchor="middle" font-size="12" font-weight="700" fill="#334155" font-family="system-ui,sans-serif">↻ 回到 Actor 采新数据，重复上述流程</text>
-      <text x="350" y="588" text-anchor="middle" font-size="10.5" fill="#64748b" font-family="system-ui,sans-serif">两个网络在循环中互相促进：Critic 评分更准 → Actor 策略更好 → 数据质量更高</text>
+      <rect x="170" y="546" width="360" height="52" rx="12" fill="#f0fdfa" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="350" y="570" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a2e" font-family="'Sora',sans-serif">↻ 回到 Actor 采新数据，重复上述流程</text>
+      <text x="350" y="588" text-anchor="middle" font-size="10.5" fill="#64748b" font-family="'Sora',sans-serif">两个网络在循环中互相促进：Critic 评分更准 → Actor 策略更好 → 数据质量更高</text>
     </svg>
 
     <div class="box-analogy">
@@ -1650,10 +1651,10 @@ abla 1 = 0$。这个结论后续会反复使用——Baseline 能减、Advantage
         <p><strong>Step 1：回顾策略梯度</strong></p>
         <p>我们已知策略梯度可以写成（用 Advantage 替代 $G_t$，因为减去 baseline 不改变期望）：</p>
         $$\nabla_\theta J = \mathbb{E}_{a \sim \pi_\theta}\left[\nabla_\theta\log\pi_\theta(a|s) \cdot A^\pi(s,a)\right]$$
-        <p style="font-size:0.92em;color:#475569;margin-top:6px;">
+        <p style="font-size:0.92em;color:#78716c;margin-top:6px;">
             <strong>注：</strong>这里从 REINFORCE 的轨迹形式 $\mathbb{E}_\tau[\sum_t \nabla\log\pi \cdot G_t]$ 换成了单步形式 $\mathbb{E}_{s\sim d^\pi,\, a\sim\pi(\cdot|s)}[\cdot]$。两者等价——"对轨迹求期望再对时间步求和" = "直接对状态访问分布 $d^\pi(s)$ 下所有 $(s,a)$ 对求期望"。IS 用单步形式是因为只需校正单个动作的概率比 $\frac{\pi_\theta(a|s)}{\pi_{old}(a|s)}$，避免整条轨迹 $T$ 个比值连乘导致方差指数级爆炸。
         </p>
-        <p style="font-size:0.92em;color:#475569;margin-top:4px;">
+        <p style="font-size:0.92em;color:#78716c;margin-top:4px;">
             <strong>$d^\pi(s)$ 是什么？</strong>状态访问分布——按策略 $\pi$ 运行时，跨所有时间步，处于状态 $s$ 的平均概率：$d^\pi(s) = \frac{1}{T}\sum_{t=0}^{T-1}P(s_t=s|\pi)$。直觉：跑很多条轨迹后统计"在状态 $s$ 总共待了多少比例的时间"。它由初始分布 $\rho_0$、环境转移 $P(s'|s,a)$、策略 $\pi$ 三者共同决定。
         </p>
 
@@ -1684,10 +1685,10 @@ abla_\theta\pi_\theta}{\pi_{\theta_{old}}}$。</p>
         $$J(\theta) - J(\theta_{old}) \approx L(\theta)$$
         <p>（当 $\pi_\theta$ 接近 $\pi_{\theta_{old}}$ 时，$L(\theta)$ 是策略改进量 $J(\theta)-J(\theta_{old})$ 的一阶近似。）</p>
 
-        <p style="font-size:0.92em;color:#475569;margin-top:4px;">
+        <p style="font-size:0.92em;color:#78716c;margin-top:4px;">
             <strong>为什么这个近似有用？</strong>我们的目标是最大化策略改进量 $J(\theta)-J(\theta_{old})$，但 $J(\theta)$ 需要新策略的状态分布 $d^{\pi_\theta}$（还没部署，算不了）。而 $L(\theta)$ 只用旧数据就能算 → 最大化 $L(\theta)$ 就等价于最大化策略改进量（在近似有效范围内）。
         </p>
-        <p style="font-size:0.92em;color:#475569;margin-top:4px;">
+        <p style="font-size:0.92em;color:#78716c;margin-top:4px;">
             <strong>一阶近似怎么来的？</strong>对 $L(\theta)$ 在 $\theta=\theta_{old}$ 处 Taylor 展开：$L(\theta_{old})=0$（因为概率比=1，而 $\mathbb{E}[A]=0$），且 $
 abla_\theta L\big|_{\theta_{old}} = 
 abla_\theta J\big|_{\theta_{old}}$（前面 Step 4 证明的）。所以在 $\theta_{old}$ 附近：$J(\theta)-J(\theta_{old}) \approx 
@@ -1695,7 +1696,7 @@ abla_\theta J\big|_{\theta_{old}}^T(\theta-\theta_{old}) =
 abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。即两者共享同一个起点（=0）和同一个梯度方向 → 局部行为一致。
         </p>
 
-        <p style="font-size:0.92em;color:#475569;margin-top:4px;">
+        <p style="font-size:0.92em;color:#78716c;margin-top:4px;">
             <strong>$J(\theta)$ 的单步形式：</strong>$J(\theta) = \mathbb{E}_{s\sim d^{\pi_\theta},\,a\sim\pi_\theta(\cdot|s)}[r(s,a)]$。注意 $J$ 里的状态分布是 $d^{\pi_\theta}$（新策略的），而 $L$ 里用的是 $d^{\pi_{old}}$（旧策略的）。近似 $L \approx J-J_{old}$ 成立的前提：$\pi_\theta \approx \pi_{old}$ 时 $d^{\pi_\theta} \approx d^{\pi_{old}}$。这也是 KL 约束的深层原因——不仅控制动作分布差异（IS 方差），还保证状态分布近似有效。
         </p>
 
@@ -1821,29 +1822,29 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <h4>图解 clip 效果</h4>
     <!-- PPO Clip 机制图 -->
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 240" style="width:100%;max-width:700px;margin:10px auto 20px;display:block;">
-      <rect width="700" height="240" rx="16" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <rect width="700" height="240" rx="16" fill="#f0fdfa" stroke="#d6d3cd" stroke-width="1"/>
 
       <!-- Left: A_t > 0 -->
-      <text x="175" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#065f46" font-family="system-ui,sans-serif">Aₜ &gt; 0（好动作，想增大概率）</text>
+      <text x="175" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#065f46" font-family="'Sora',sans-serif">Aₜ &gt; 0（好动作，想增大概率）</text>
       <!-- Axes -->
       <line x1="45" y1="180" x2="330" y2="180" stroke="#94a3b8" stroke-width="1"/>
       <line x1="45" y1="40" x2="45" y2="180" stroke="#94a3b8" stroke-width="1"/>
       <text x="36" y="54" font-size="9" fill="#64748b" font-family="system-ui" text-anchor="end">目标值</text>
       <text x="320" y="196" font-size="9" fill="#64748b" font-family="system-ui" text-anchor="end">rₜ</text>
       <!-- Curve: rises then flat -->
-      <polyline points="45,160 120,120 175,85 175,85" stroke="#3b82f6" stroke-width="2" fill="none"/>
-      <line x1="175" y1="85" x2="310" y2="85" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3"/>
+      <polyline points="45,160 120,120 175,85 175,85" stroke="#0d9488" stroke-width="2" fill="none"/>
+      <line x1="175" y1="85" x2="310" y2="85" stroke="#0d9488" stroke-width="2" stroke-dasharray="6,3"/>
       <!-- Clip boundary -->
       <line x1="175" y1="40" x2="175" y2="185" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,3"/>
       <text x="175" y="200" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600" font-family="system-ui">1+ε</text>
       <text x="120" y="200" text-anchor="middle" font-size="10" fill="#64748b" font-family="system-ui">1</text>
       <line x1="120" y1="175" x2="120" y2="185" stroke="#94a3b8" stroke-width="1"/>
       <!-- Label -->
-      <text x="240" y="78" font-size="9.5" fill="#ef4444" font-weight="600" font-family="system-ui,sans-serif">← 超过后梯度=0</text>
-      <text x="100" y="108" font-size="9.5" fill="#3b82f6" font-family="system-ui,sans-serif">正常学习区间</text>
+      <text x="240" y="78" font-size="9.5" fill="#ef4444" font-weight="600" font-family="'Sora',sans-serif">← 超过后梯度=0</text>
+      <text x="100" y="108" font-size="9.5" fill="#0d9488" font-family="'Sora',sans-serif">正常学习区间</text>
 
       <!-- Right: A_t < 0 -->
-      <text x="525" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#991b1b" font-family="system-ui,sans-serif">Aₜ &lt; 0（坏动作，想减小概率）</text>
+      <text x="525" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#991b1b" font-family="'Sora',sans-serif">Aₜ &lt; 0（坏动作，想减小概率）</text>
       <!-- Axes -->
       <line x1="385" y1="180" x2="670" y2="180" stroke="#94a3b8" stroke-width="1"/>
       <line x1="385" y1="40" x2="385" y2="180" stroke="#94a3b8" stroke-width="1"/>
@@ -1858,11 +1859,11 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
       <text x="525" y="200" text-anchor="middle" font-size="10" fill="#64748b" font-family="system-ui">1</text>
       <line x1="525" y1="175" x2="525" y2="185" stroke="#94a3b8" stroke-width="1"/>
       <!-- Label -->
-      <text x="420" y="78" font-size="9.5" fill="#ef4444" font-weight="600" font-family="system-ui,sans-serif">← 低于后梯度=0</text>
-      <text x="550" y="108" font-size="9.5" fill="#f59e0b" font-family="system-ui,sans-serif">正常学习区间</text>
+      <text x="420" y="78" font-size="9.5" fill="#ef4444" font-weight="600" font-family="'Sora',sans-serif">← 低于后梯度=0</text>
+      <text x="550" y="108" font-size="9.5" fill="#f59e0b" font-family="'Sora',sans-serif">正常学习区间</text>
 
       <!-- Divider -->
-      <line x1="350" y1="14" x2="350" y2="220" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="350" y1="14" x2="350" y2="220" stroke="#d6d3cd" stroke-width="1" stroke-dasharray="3,3"/>
     </svg>
 
     <h4>min 的作用</h4>
@@ -1934,48 +1935,48 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
           <stop offset="100%" stop-color="#f8fafc"/>
         </linearGradient>
         <marker id="arrL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-          <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#3b82f6"/>
+          <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0d9488"/>
         </marker>
       </defs>
-      <rect width="660" height="340" rx="16" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
-      <text x="330" y="30" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="system-ui,sans-serif">PPO 完整训练循环</text>
+      <rect width="660" height="340" rx="16" fill="#f0fdfa" stroke="#d6d3cd" stroke-width="1"/>
+      <text x="330" y="30" text-anchor="middle" font-size="14" font-weight="800" fill="#1a1a2e" font-family="'Sora',sans-serif">PPO 完整训练循环</text>
 
       <!-- Step 1 -->
-      <rect x="40" y="50" width="580" height="50" rx="10" fill="url(#gLoop)" stroke="#3b82f6" stroke-width="1.5"/>
-      <circle cx="66" cy="75" r="14" fill="#3b82f6"/>
+      <rect x="40" y="50" width="580" height="50" rx="10" fill="url(#gLoop)" stroke="#0d9488" stroke-width="1.5"/>
+      <circle cx="66" cy="75" r="14" fill="#0d9488"/>
       <text x="66" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="system-ui">1</text>
-      <text x="90" y="72" font-size="12" font-weight="600" fill="#1e40af" font-family="system-ui,sans-serif">用当前策略 π<tspan font-size="8.5" baseline-shift="sub">θ_old</tspan> 采集一批轨迹</text>
-      <text x="90" y="90" font-size="10.5" fill="#64748b" font-family="system-ui,sans-serif">与环境交互得到 (sₜ, aₜ, rₜ, sₜ₊₁) × 多步</text>
+      <text x="90" y="72" font-size="12" font-weight="600" fill="#0f766e" font-family="'Sora',sans-serif">用当前策略 π<tspan font-size="8.5" baseline-shift="sub">θ_old</tspan> 采集一批轨迹</text>
+      <text x="90" y="90" font-size="10.5" fill="#64748b" font-family="'Sora',sans-serif">与环境交互得到 (sₜ, aₜ, rₜ, sₜ₊₁) × 多步</text>
 
       <!-- Arrow -->
-      <line x1="330" y1="100" x2="330" y2="118" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrL)"/>
+      <line x1="330" y1="100" x2="330" y2="118" stroke="#0d9488" stroke-width="1.5" marker-end="url(#arrL)"/>
 
       <!-- Step 2 -->
       <rect x="40" y="122" width="580" height="50" rx="10" fill="url(#gLoop)" stroke="#10b981" stroke-width="1.5"/>
       <circle cx="66" cy="147" r="14" fill="#10b981"/>
       <text x="66" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="system-ui">2</text>
-      <text x="90" y="143" font-size="12" font-weight="600" fill="#065f46" font-family="system-ui,sans-serif">对每步计算 GAE advantage Âₜ</text>
-      <text x="90" y="161" font-size="10.5" fill="#64748b" font-family="system-ui,sans-serif">δₜ = rₜ + γV(sₜ₊₁) − V(sₜ)，然后 Âₜ = Σ(γλ)ˡδₜ₊ₗ</text>
+      <text x="90" y="143" font-size="12" font-weight="600" fill="#065f46" font-family="'Sora',sans-serif">对每步计算 GAE advantage Âₜ</text>
+      <text x="90" y="161" font-size="10.5" fill="#64748b" font-family="'Sora',sans-serif">δₜ = rₜ + γV(sₜ₊₁) − V(sₜ)，然后 Âₜ = Σ(γλ)ˡδₜ₊ₗ</text>
 
       <!-- Arrow -->
-      <line x1="330" y1="172" x2="330" y2="190" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrL)"/>
+      <line x1="330" y1="172" x2="330" y2="190" stroke="#0d9488" stroke-width="1.5" marker-end="url(#arrL)"/>
 
       <!-- Step 3 (highlighted) -->
       <rect x="40" y="194" width="580" height="58" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
       <circle cx="66" cy="223" r="14" fill="#f59e0b"/>
       <text x="66" y="228" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="system-ui">3</text>
-      <text x="90" y="216" font-size="12" font-weight="600" fill="#92400e" font-family="system-ui,sans-serif">对这批数据做 K 个 epoch 的 mini-batch 梯度更新</text>
-      <text x="90" y="234" font-size="10.5" fill="#92400e" font-family="system-ui,sans-serif">K = 3~10，同一批数据反复用 ← PPO 的效率优势（对比 REINFORCE 用一次就扔）</text>
+      <text x="90" y="216" font-size="12" font-weight="600" fill="#92400e" font-family="'Sora',sans-serif">对这批数据做 K 个 epoch 的 mini-batch 梯度更新</text>
+      <text x="90" y="234" font-size="10.5" fill="#92400e" font-family="'Sora',sans-serif">K = 3~10，同一批数据反复用 ← PPO 的效率优势（对比 REINFORCE 用一次就扔）</text>
 
       <!-- Arrow -->
-      <line x1="330" y1="252" x2="330" y2="270" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrL)"/>
+      <line x1="330" y1="252" x2="330" y2="270" stroke="#0d9488" stroke-width="1.5" marker-end="url(#arrL)"/>
 
       <!-- Step 4 -->
-      <rect x="40" y="274" width="580" height="50" rx="10" fill="url(#gLoop)" stroke="#7c3aed" stroke-width="1.5"/>
-      <circle cx="66" cy="299" r="14" fill="#7c3aed"/>
+      <rect x="40" y="274" width="580" height="50" rx="10" fill="url(#gLoop)" stroke="#0f766e" stroke-width="1.5"/>
+      <circle cx="66" cy="299" r="14" fill="#0f766e"/>
       <text x="66" y="304" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="system-ui">4</text>
-      <text x="90" y="295" font-size="12" font-weight="600" fill="#5b21b6" font-family="system-ui,sans-serif">扔掉旧数据，θ<tspan font-size="8.5" baseline-shift="sub">old</tspan> ← θ，回到步骤 1</text>
-      <text x="90" y="313" font-size="10.5" fill="#64748b" font-family="system-ui,sans-serif">新策略的数据分布已变化，旧数据不再有效 → 必须重新采集</text>
+      <text x="90" y="295" font-size="12" font-weight="600" fill="#0f766e" font-family="'Sora',sans-serif">扔掉旧数据，θ<tspan font-size="8.5" baseline-shift="sub">old</tspan> ← θ，回到步骤 1</text>
+      <text x="90" y="313" font-size="10.5" fill="#64748b" font-family="'Sora',sans-serif">新策略的数据分布已变化，旧数据不再有效 → 必须重新采集</text>
 
       <!-- Loop arrow back -->
       <path d="M 620,299 Q 640,299 640,175 Q 640,52 620,75" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arrL)"/>
@@ -2258,11 +2259,11 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
           <feDropShadow dx="0" dy="1" stdDeviation="3" flood-color="#1e3a5f" flood-opacity="0.06"/>
         </filter>
       </defs>
-      <rect width="680" height="380" rx="16" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <rect width="680" height="380" rx="16" fill="#f0fdfa" stroke="#d6d3cd" stroke-width="1"/>
 
       <!-- Root -->
-      <rect x="220" y="16" width="240" height="40" rx="10" fill="#1e293b" filter="url(#ds3)"/>
-      <text x="340" y="42" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="system-ui,sans-serif">LLM 训练范式</text>
+      <rect x="220" y="16" width="240" height="40" rx="10" fill="#1a1a2e" filter="url(#ds3)"/>
+      <text x="340" y="42" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="'Sora',sans-serif">LLM 训练范式</text>
 
       <!-- 3 branches down -->
       <line x1="340" y1="56" x2="340" y2="72" stroke="#94a3b8" stroke-width="1.5"/>
@@ -2272,24 +2273,24 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
       <line x1="560" y1="72" x2="560" y2="88" stroke="#94a3b8" stroke-width="1.5"/>
 
       <!-- RLHF Branch -->
-      <rect x="20" y="90" width="200" height="52" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#ds3)"/>
-      <text x="120" y="113" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af" font-family="system-ui,sans-serif">RLHF</text>
-      <text x="120" y="131" text-anchor="middle" font-size="10" fill="#475569" font-family="system-ui,sans-serif">reward 从人类偏好学习（需 RM）</text>
+      <rect x="20" y="90" width="200" height="52" rx="10" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5" filter="url(#ds3)"/>
+      <text x="120" y="113" text-anchor="middle" font-size="13" font-weight="700" fill="#0f766e" font-family="'Sora',sans-serif">RLHF</text>
+      <text x="120" y="131" text-anchor="middle" font-size="10" fill="#78716c" font-family="'Sora',sans-serif">reward 从人类偏好学习（需 RM）</text>
       <!-- RLHF children -->
-      <line x1="120" y1="142" x2="120" y2="156" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="70" y1="156" x2="170" y2="156" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="70" y1="156" x2="70" y2="168" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="170" y1="156" x2="170" y2="168" stroke="#3b82f6" stroke-width="1"/>
-      <rect x="30" y="170" width="80" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
-      <text x="70" y="190" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e40af" font-family="system-ui">PPO</text>
-      <rect x="130" y="170" width="80" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
-      <text x="170" y="190" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e40af" font-family="system-ui">DPO</text>
-      <text x="170" y="214" text-anchor="middle" font-size="9" fill="#64748b" font-family="system-ui,sans-serif">（跳过 RM）</text>
+      <line x1="120" y1="142" x2="120" y2="156" stroke="#0d9488" stroke-width="1"/>
+      <line x1="70" y1="156" x2="170" y2="156" stroke="#0d9488" stroke-width="1"/>
+      <line x1="70" y1="156" x2="70" y2="168" stroke="#0d9488" stroke-width="1"/>
+      <line x1="170" y1="156" x2="170" y2="168" stroke="#0d9488" stroke-width="1"/>
+      <rect x="30" y="170" width="80" height="30" rx="6" fill="#ccfbf1" stroke="#99f6e4" stroke-width="1"/>
+      <text x="70" y="190" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f766e" font-family="system-ui">PPO</text>
+      <rect x="130" y="170" width="80" height="30" rx="6" fill="#ccfbf1" stroke="#99f6e4" stroke-width="1"/>
+      <text x="170" y="190" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f766e" font-family="system-ui">DPO</text>
+      <text x="170" y="214" text-anchor="middle" font-size="9" fill="#64748b" font-family="'Sora',sans-serif">（跳过 RM）</text>
 
       <!-- RLVR Branch (highlighted) -->
       <rect x="240" y="90" width="200" height="52" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#ds3)"/>
-      <text x="340" y="113" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e" font-family="system-ui,sans-serif">RLVR</text>
-      <text x="340" y="131" text-anchor="middle" font-size="10" fill="#78350f" font-family="system-ui,sans-serif">reward 来自可验证规则（不需 RM）</text>
+      <text x="340" y="113" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e" font-family="'Sora',sans-serif">RLVR</text>
+      <text x="340" y="131" text-anchor="middle" font-size="10" fill="#78350f" font-family="'Sora',sans-serif">reward 来自可验证规则（不需 RM）</text>
       <!-- Star badge -->
       <rect x="400" y="78" width="60" height="18" rx="9" fill="#ef4444"/>
       <text x="430" y="91" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="system-ui">当前主流</text>
@@ -2305,34 +2306,34 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
       <text x="340" y="190" text-anchor="middle" font-size="10.5" font-weight="600" fill="#92400e" font-family="system-ui">PPO</text>
       <rect x="375" y="170" width="80" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
       <text x="415" y="190" text-anchor="middle" font-size="10.5" font-weight="600" fill="#92400e" font-family="system-ui">REINFORCE</text>
-      <text x="265" y="214" text-anchor="middle" font-size="9" fill="#78350f" font-family="system-ui,sans-serif">（DeepSeek-R1）</text>
+      <text x="265" y="214" text-anchor="middle" font-size="9" fill="#78350f" font-family="'Sora',sans-serif">（DeepSeek-R1）</text>
 
       <!-- RLAIF Branch -->
-      <rect x="460" y="90" width="200" height="52" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#ds3)"/>
-      <text x="560" y="113" text-anchor="middle" font-size="13" font-weight="700" fill="#5b21b6" font-family="system-ui,sans-serif">RLAIF</text>
-      <text x="560" y="131" text-anchor="middle" font-size="10" fill="#6d28d9" font-family="system-ui,sans-serif">reward 从 AI 反馈学习</text>
+      <rect x="460" y="90" width="200" height="52" rx="10" fill="#f0fdfa" stroke="#0f766e" stroke-width="1.5" filter="url(#ds3)"/>
+      <text x="560" y="113" text-anchor="middle" font-size="13" font-weight="700" fill="#0f766e" font-family="'Sora',sans-serif">RLAIF</text>
+      <text x="560" y="131" text-anchor="middle" font-size="10" fill="#0f766e" font-family="'Sora',sans-serif">reward 从 AI 反馈学习</text>
       <!-- RLAIF children -->
-      <line x1="560" y1="142" x2="560" y2="168" stroke="#7c3aed" stroke-width="1"/>
-      <rect x="510" y="170" width="100" height="30" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
-      <text x="560" y="190" text-anchor="middle" font-size="10.5" font-weight="600" fill="#5b21b6" font-family="system-ui">PPO / DPO</text>
+      <line x1="560" y1="142" x2="560" y2="168" stroke="#0f766e" stroke-width="1"/>
+      <rect x="510" y="170" width="100" height="30" rx="6" fill="#ccfbf1" stroke="#99f6e4" stroke-width="1"/>
+      <text x="560" y="190" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f766e" font-family="system-ui">PPO / DPO</text>
 
       <!-- Bottom summary boxes -->
-      <rect x="30" y="240" width="200" height="54" rx="10" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
-      <text x="130" y="260" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e40af" font-family="system-ui,sans-serif">RLHF 适用场景</text>
-      <text x="130" y="278" text-anchor="middle" font-size="9.5" fill="#475569" font-family="system-ui,sans-serif">主观任务：对话、写作、创意</text>
+      <rect x="30" y="240" width="200" height="54" rx="10" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1"/>
+      <text x="130" y="260" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f766e" font-family="'Sora',sans-serif">RLHF 适用场景</text>
+      <text x="130" y="278" text-anchor="middle" font-size="9.5" fill="#78716c" font-family="'Sora',sans-serif">主观任务：对话、写作、创意</text>
 
       <rect x="240" y="240" width="200" height="54" rx="10" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
-      <text x="340" y="260" text-anchor="middle" font-size="10.5" font-weight="600" fill="#92400e" font-family="system-ui,sans-serif">RLVR 适用场景</text>
-      <text x="340" y="278" text-anchor="middle" font-size="9.5" fill="#78350f" font-family="system-ui,sans-serif">可验证任务：数学、代码、逻辑</text>
+      <text x="340" y="260" text-anchor="middle" font-size="10.5" font-weight="600" fill="#92400e" font-family="'Sora',sans-serif">RLVR 适用场景</text>
+      <text x="340" y="278" text-anchor="middle" font-size="9.5" fill="#78350f" font-family="'Sora',sans-serif">可验证任务：数学、代码、逻辑</text>
 
-      <rect x="450" y="240" width="200" height="54" rx="10" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
-      <text x="550" y="260" text-anchor="middle" font-size="10.5" font-weight="600" fill="#5b21b6" font-family="system-ui,sans-serif">RLAIF 适用场景</text>
-      <text x="550" y="278" text-anchor="middle" font-size="9.5" fill="#6d28d9" font-family="system-ui,sans-serif">标注成本高、AI 可替代人类判断</text>
+      <rect x="450" y="240" width="200" height="54" rx="10" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1"/>
+      <text x="550" y="260" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f766e" font-family="'Sora',sans-serif">RLAIF 适用场景</text>
+      <text x="550" y="278" text-anchor="middle" font-size="9.5" fill="#0f766e" font-family="'Sora',sans-serif">标注成本高、AI 可替代人类判断</text>
 
       <!-- Key insight -->
       <rect x="120" y="310" width="440" height="50" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
-      <text x="340" y="333" text-anchor="middle" font-size="11" font-weight="600" fill="#065f46" font-family="system-ui,sans-serif">核心区分：三者的差异在于 reward 来源，而非优化算法</text>
-      <text x="340" y="350" text-anchor="middle" font-size="10" fill="#475569" font-family="system-ui,sans-serif">同一个优化算法（如 PPO）可以服务于任何一种范式</text>
+      <text x="340" y="333" text-anchor="middle" font-size="11" font-weight="600" fill="#065f46" font-family="'Sora',sans-serif">核心区分：三者的差异在于 reward 来源，而非优化算法</text>
+      <text x="340" y="350" text-anchor="middle" font-size="10" fill="#78716c" font-family="'Sora',sans-serif">同一个优化算法（如 PPO）可以服务于任何一种范式</text>
     </svg>
 
     <h3>为什么 RLVR 突然火了？</h3>
@@ -3126,7 +3127,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h4>DQN 完整训练流程（面试白板六步法）</h4>
-    <div class="step-card" style="background: linear-gradient(135deg, var(--primary-light) 0%, #f0f4ff 100%); border-left: 4px solid var(--primary); padding: 24px 28px;">
+    <div class="step-card" style="background: linear-gradient(135deg, var(--primary-light) 0%, #f0fdfa 100%); border-left: 4px solid var(--primary); padding: 24px 28px;">
 
         <p style="margin-bottom:16px;"><strong style="color:var(--primary);">Step 1 · 初始化</strong></p>
         <ul style="margin:0 0 18px 20px; line-height:2.2;">

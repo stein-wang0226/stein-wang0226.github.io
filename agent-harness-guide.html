@@ -267,7 +267,7 @@
         .code-block pre {
             padding: 1.25rem;
             overflow-x: auto;
-            font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
             line-height: 1.6;
         }
@@ -277,11 +277,11 @@
         }
 
         code {
-            font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, monospace;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .inline-code {
-            background: rgba(56,189,248,0.1);
+            background: rgba(13,148,136,0.1);
             color: var(--accent);
             padding: 0.15rem 0.45rem;
             border-radius: 4px;
@@ -318,7 +318,7 @@
             border-bottom: 1px solid rgba(71,85,105,0.4);
         }
 
-        tbody tr:hover { background: rgba(56,189,248,0.03); }
+        tbody tr:hover { background: rgba(13,148,136,0.03); }
 
         /* Architecture Diagram */
         .arch-diagram {
@@ -331,7 +331,7 @@
         }
 
         .arch-diagram pre {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.82rem;
             line-height: 1.5;
             color: var(--accent);
@@ -344,10 +344,10 @@
             margin: 1.5rem 0;
             border-left: 4px solid;
         }
-        .highlight-blue { background: rgba(56,189,248,0.08); border-color: var(--accent); }
-        .highlight-green { background: rgba(52,211,153,0.08); border-color: var(--accent3); }
-        .highlight-orange { background: rgba(251,146,60,0.08); border-color: var(--accent4); }
-        .highlight-purple { background: rgba(129,140,248,0.08); border-color: var(--accent2); }
+        .highlight-blue { background: rgba(13,148,136,0.08); border-color: var(--accent); }
+        .highlight-green { background: rgba(5,150,105,0.08); border-color: var(--accent3); }
+        .highlight-orange { background: rgba(217,119,6,0.08); border-color: var(--accent4); }
+        .highlight-purple { background: rgba(15,118,110,0.08); border-color: var(--accent2); }
         .highlight-red { background: rgba(239,68,68,0.08); border-color: var(--danger); }
 
         .highlight-box .hl-title {
@@ -414,13 +414,13 @@
             color: var(--text-dim);
         }
 
-        .l4 { background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.3); }
+        .l4 { background: rgba(13,148,136,0.08); border-color: rgba(13,148,136,0.3); }
         .l4 .layer-label { color: var(--accent); }
-        .l3 { background: rgba(129,140,248,0.08); border-color: rgba(129,140,248,0.3); }
+        .l3 { background: rgba(15,118,110,0.08); border-color: rgba(15,118,110,0.3); }
         .l3 .layer-label { color: var(--accent2); }
-        .l2 { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.3); }
+        .l2 { background: rgba(5,150,105,0.08); border-color: rgba(5,150,105,0.3); }
         .l2 .layer-label { color: var(--accent3); }
-        .l1 { background: rgba(251,146,60,0.08); border-color: rgba(251,146,60,0.3); }
+        .l1 { background: rgba(217,119,6,0.08); border-color: rgba(217,119,6,0.3); }
         .l1 .layer-label { color: var(--accent4); }
 
         /* Comparison Grid */
@@ -467,9 +467,9 @@
             font-size: 0.78rem;
             font-weight: 600;
         }
-        .tag-new { background: rgba(52,211,153,0.2); color: var(--accent3); }
-        .tag-key { background: rgba(56,189,248,0.2); color: var(--accent); }
-        .tag-warn { background: rgba(251,146,60,0.2); color: var(--accent4); }
+        .tag-new { background: rgba(5,150,105,0.2); color: var(--accent3); }
+        .tag-key { background: rgba(13,148,136,0.2); color: var(--accent); }
+        .tag-warn { background: rgba(217,119,6,0.2); color: var(--accent4); }
 
         /* Timeline */
         .timeline {
@@ -646,23 +646,23 @@
     <h3>Harness 的五大核心组件</h3>
     <div class="card-grid">
         <div class="card">
-            <div class="card-title"><div class="card-icon" style="background:rgba(56,189,248,0.2);color:var(--accent);">1</div> AgentLoop / Orchestrator</div>
+            <div class="card-title"><div class="card-icon" style="background:rgba(13,148,136,0.2);color:var(--accent);">1</div> AgentLoop / Orchestrator</div>
             <p style="font-size:0.9rem;color:var(--text-dim);">管理多轮交互循环：LLM 生成 Action → 解析 → 路由到工具 → 拿回 Observation → 拼入上下文 → 下一轮推理</p>
         </div>
         <div class="card">
-            <div class="card-title"><div class="card-icon" style="background:rgba(129,140,248,0.2);color:var(--accent2);">2</div> Sandbox Manager</div>
+            <div class="card-title"><div class="card-icon" style="background:rgba(15,118,110,0.2);color:var(--accent2);">2</div> Sandbox Manager</div>
             <p style="font-size:0.9rem;color:var(--text-dim);">创建/销毁/监控隔离执行环境，确保工具调用不会影响宿主系统或其他轨迹</p>
         </div>
         <div class="card">
-            <div class="card-title"><div class="card-icon" style="background:rgba(52,211,153,0.2);color:var(--accent3);">3</div> Trajectory Buffer</div>
+            <div class="card-title"><div class="card-icon" style="background:rgba(5,150,105,0.2);color:var(--accent3);">3</div> Trajectory Buffer</div>
             <p style="font-size:0.9rem;color:var(--text-dim);">收集和缓存完整的 Agent 交互轨迹（Thought + Action + Observation 序列），供训练使用</p>
         </div>
         <div class="card">
-            <div class="card-title"><div class="card-icon" style="background:rgba(251,146,60,0.2);color:var(--accent4);">4</div> Reward Calculator</div>
+            <div class="card-title"><div class="card-icon" style="background:rgba(217,119,6,0.2);color:var(--accent4);">4</div> Reward Calculator</div>
             <p style="font-size:0.9rem;color:var(--text-dim);">对轨迹进行多维度打分：Step Reward（逐步即时反馈）+ Episode Reward（终局目标导向）</p>
         </div>
         <div class="card">
-            <div class="card-title"><div class="card-icon" style="background:rgba(244,114,182,0.2);color:var(--accent5);">5</div> Sync Manager</div>
+            <div class="card-title"><div class="card-icon" style="background:rgba(219,39,119,0.2);color:var(--accent5);">5</div> Sync Manager</div>
             <p style="font-size:0.9rem;color:var(--text-dim);">管理训练端与推理端之间的策略权重同步（NCCL broadcast），确保 Rollout 使用最新策略</p>
         </div>
     </div>
