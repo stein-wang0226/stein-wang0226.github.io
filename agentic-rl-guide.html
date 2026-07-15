@@ -628,7 +628,7 @@
         <div class="hero">
             <h1>Agentic RL 全景指南</h1>
             <p class="subtitle">从经典策略梯度到 2025-2026 最前沿的 Agentic 后训练，面向大厂基模组面试的系统性学习手册</p>
-            <p class="meta">涵盖 40+ 核心算法 · 9 大开源报告 · DeepSeek V4 / GLM-5.2 Async RL / GUI Agent RL · ICLR / ICML 2026 前沿</p>
+            <p class="meta">涵盖 50+ 核心算法 · 12 大开源报告 · DeepSeek V4 / GLM-5.2 Async RL / GUI Agent RL · ICLR / ICML 2026 前沿</p>
         </div>
 
         <!-- TOC -->
@@ -1249,6 +1249,10 @@
                     <tr><td><strong>SRPO/RRPO</strong></td><td>2026.05</td><td>Self-Reset：模型自诊断错误并从该时刻重启，无需外部监督</td></tr>
                     <tr><td><strong>GSsPO</strong></td><td>2026.02</td><td>Group Sub-sequence PO：梯度对齐 Think-Action 原子语义边界</td></tr>
                     <tr><td><strong>SWEET-RL</strong></td><td>2025.03</td><td>协作式多轮 RL + 训练阶段数据做 step-by-step feedback</td></tr>
+                    <tr><td><strong>Entrocraft</strong></td><td>2026.04</td><td>精确熵曲线控制：rejection sampling 实现定制熵调度，4B 超越 8B baseline，pass@K +50%，训练 plateau 延长 4×</td></tr>
+                    <tr><td><strong>SORL (SO-PPO / SO-GRPO)</strong></td><td>2025.11</td><td>稳定 off-policy 长 horizon agent：Turn-Level IS + Clipping-Triggered Normalization，防止多轮 RL 训练崩溃</td></tr>
+                    <tr><td><strong>MT-GRPO / GTPO</strong></td><td>2026.04</td><td>Tool-calling agent 的多轮 RL：迭代 step-level reward 校准，修复朴素 step scoring 导致的性能退化</td></tr>
+                    <tr><td><strong>MathForge (DGPO + MQR)</strong></td><td>ICLR 2026</td><td>Difficulty-Aware GRPO 修复难 prompt 更新过小的缺陷 + Multi-Aspect 问题重构生成更难的变体</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1375,6 +1379,8 @@
                     <tr><td><strong>TurnOPD</strong></td><td>2607.05804</td><td>Turn-Aware OPD：自适应 rollout 深度预算 + 渐进 turn-归一化 loss，解决多轮全 horizon 浪费</td></tr>
                     <tr><td><strong>ATOD</strong></td><td>2606.27814</td><td>Annealed OPD：早期 teacher-guided 蒸馏退火到后期 reward-based RL 探索，<strong>+2.16 超教师</strong></td></tr>
                     <tr><td><strong>MAD-OPD / OPAD</strong></td><td>2605.01347</td><td>Multi-Agent Debate 替代单教师 + On-Policy Agentic Distillation（step-level sampling for agents）</td></tr>
+                    <tr><td><strong>OPSD</strong></td><td>2601.18734</td><td>Self-Distilled Reasoner：单模型同时做 teacher（看 privileged 信息）和 student（只看 query），token 效率优于 RL 方法</td></tr>
+                    <tr><td><strong>Context Distillation</strong></td><td>2602.12275</td><td>Microsoft Research（Li Dong, Furu Wei）：on-policy 序列 + context-aware teacher 的 KL 最小化，将 solution trace 知识内化到模型</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1383,7 +1389,10 @@
             <p><strong>OPD 属于 Agentic RL 吗？</strong>标准 OPD 本身是<strong>通用 post-training 技术</strong>（蒸馏+RL 交叉），不是 Agentic RL。但 2026 年已涌现多个 agentic 变体（SOD/TurnOPD/ATOD/OPAD），专门解决多轮 agent 蒸馏问题。OPD 与 GRPO 是<strong>互补关系</strong>：GRPO 做教师发现（sparse reward），OPD 做学生压缩（dense supervision）。面试时需能清晰区分 OPD（蒸馏范式）与 GRPO（RL 范式）的定位差异。</p>
         </div>
 
-        <!-- ======================= Part VI ======================= -->
+        <div class="card" style="border-left: 3px solid #ef4444;">
+            <div class="card-title">⚠ 重要负面结果：Privileged Self-Distillation 伤害 Thinking Models <span class="tag tag-red">Princeton · 2026.07 · arXiv:2607.05184</span></div>
+            <p>Kaur et al. 发现：让 thinking model 做 privileged self-distillation（teacher 看到正确答案、student 只看 query）反而<strong>严重损害长推理能力</strong>——avg@16 准确率下降最高达 <strong>17%</strong>。机制分析表明，privileged teacher 会惩罚 reconsideration tokens（验证、回溯、修正），而这些恰恰是 thinking model 的核心优势。在 Qwen3 和 OLMo 上跨 AIME24/AIME25/HMMT25 一致验证。<strong>启示：对 reasoning model 做 OPD 时，必须仔细评估 privileged information 是否真的有益。</strong></p>
+        </div>
         <h2 class="section-title" id="part6"><span class="num">VI</span> 开源大模型 RL 实践</h2>
 
         <!-- DeepSeek-R1 -->
@@ -1673,6 +1682,8 @@
                 <tbody>
                     <tr><td><strong>OpenRLHF</strong></td><td>开源社区</td><td>Ray-based PPO/DPO，vLLM 集成，可扩展性强</td></tr>
                     <tr><td><strong>NVIDIA NeMo Gym</strong></td><td>NVIDIA</td><td>Rollout-as-a-Service + SWE-RL case study + 数据管理</td></tr>
+                    <tr><td><strong>Polar</strong></td><td>NVIDIA · 2026.05 · arXiv:2605.24220</td><td><strong>Harness-agnostic async RL</strong>：不透明中间层日志/回放生成序列，适配任意未修改 agent harness。4B 模型 SWE-bench +22.6</td></tr>
+                    <tr><td><strong>ProRL Agent</strong></td><td>NVIDIA · 2026.03 · arXiv:2603.18815</td><td>API 驱动 Rollout-as-a-Service：完全解耦 trajectory 生成与模型更新，HPC 集群无需 admin 权限。已集成到 NeMo Gym</td></tr>
                     <tr><td><strong>OpenEnv</strong></td><td>HF 社区</td><td>标准化 Agentic RL 训练环境，社区共建</td></tr>
                     <tr><td><strong>Search-R1</strong></td><td>开源社区</td><td>RL 训练 search-augmented agent 的高效框架</td></tr>
                 </tbody>
@@ -1781,6 +1792,27 @@
                 <li>9B 模型 OSWorld <strong>48.1%</strong> SOTA（超越 OpenAI CUA o3 的 42.9%、Claude 4.0 Sonnet 的 30.7%）</li>
                 <li>开源：<code>THUDM/ComputerRL</code></li>
             </ul>
+        </div>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">WebAgent-R1 <span class="tag tag-teal">2025.05 · arXiv:2505.16421</span></div>
+                <p><strong>端到端多轮 RL 训练 Web Agent</strong>：仅需 binary completion signal，无需 step annotation。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>异步环境交互 + behavior cloning warm-start</li>
+                    <li>Qwen-2.5-3B: 6.1% → <strong>33.9%</strong>，Llama-3.1-8B: 8.5% → <strong>44.8%</strong></li>
+                    <li>WebArena-Lite 上超越 OpenAI o3 等商业系统</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-title">DynaWeb <span class="tag tag-amber">2026.01 · arXiv:2601.22149</span></div>
+                <p><strong>Model-Based RL for Web Agents</strong>：构建合成"世界模型"模拟网页状态，agent 在模拟环境中排练。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>真实专家 demo + 模拟动作混合训练</li>
+                    <li>Sample-efficient：大幅减少真实 web 交互需求</li>
+                    <li>在 WebVoyager 和 WebArena 上提升开源浏览模型</li>
+                </ul>
+            </div>
         </div>
 
         <div class="card">
@@ -2000,6 +2032,17 @@
                 <li>WebRL: <em>Training LLM Web Agents via Self-Evolving Online Curriculum RL</em>, THUDM, ICLR 2025. arXiv:2411.02337</li>
                 <li>GLM-5V-Turbo, 2026. <em>Native Foundation Model for Multimodal Agents</em>. arXiv:2604.26752</li>
                 <li>ComputerRL, Zhipu/Tsinghua, 2025. arXiv:2508.14040</li>
+                <li>Polar: <em>Agentic RL on Any Harness at Scale</em>, NVIDIA, 2026. arXiv:2605.24220</li>
+                <li>ProRL Agent: <em>Rollout-as-a-Service for RL Training of Multi-Turn LLM Agents</em>, NVIDIA, 2026. arXiv:2603.18815</li>
+                <li>WebAgent-R1: <em>Training Web Agents via End-to-End Multi-Turn RL</em>, 2025. arXiv:2505.16421</li>
+                <li>DynaWeb: <em>Model-Based RL of Web Agents</em>, 2026. arXiv:2601.22149</li>
+                <li>Entrocraft: <em>Addressing Performance Saturation via Precise Entropy Curve Control</em>, 2026. arXiv:2604.26326</li>
+                <li>SORL: <em>Stabilizing Off-Policy Training for Long-Horizon LLM Agents</em>, 2025. arXiv:2511.20718</li>
+                <li>MT-GRPO/GTPO: <em>Multi-Turn RL for Tool-Calling Agents with Iterative Reward Calibration</em>, 2026. arXiv:2604.02869</li>
+                <li>MathForge (DGPO+MQR), ICLR 2026. <em>Difficulty-Aware GRPO and Multi-Aspect Question Reformulation</em>. arXiv:2601.20614</li>
+                <li>OPSD: <em>Self-Distilled Reasoner: On-Policy Self-Distillation for LLMs</em>, 2026. arXiv:2601.18734</li>
+                <li>On-Policy Context Distillation, Microsoft Research, 2026. arXiv:2602.12275</li>
+                <li>Rethinking OPSD for Thinking Models, Princeton, 2026. arXiv:2607.05184</li>
                 <li>Kimi K2.5, Moonshot AI, 2026. <em>Visual Agentic Intelligence</em>. arXiv:2602.02276</li>
                 <li>MiniMax-M2 Series, 2026. <em>Mini Activations Unleashing Max Potential</em>. arXiv:2605.26494</li>
                 <li>Tree-GRPO, ICLR 2026. <em>Tree Search for LLM Agent RL</em>. arXiv:2509.21240</li>
