@@ -628,7 +628,7 @@
         <div class="hero">
             <h1>Agentic RL 全景指南</h1>
             <p class="subtitle">从经典策略梯度到 2025-2026 最前沿的 Agentic 后训练，面向大厂基模组面试的系统性学习手册</p>
-            <p class="meta">涵盖 35+ 核心算法 · 8 大开源报告 · DeepSeek V4 / GLM-5.2 / Kimi K2.6 · ICLR / ICML 2026 前沿</p>
+            <p class="meta">涵盖 40+ 核心算法 · 9 大开源报告 · DeepSeek V4 / GLM-5.2 Async RL / GUI Agent RL · ICLR / ICML 2026 前沿</p>
         </div>
 
         <!-- TOC -->
@@ -641,7 +641,7 @@
                 <li><a href="#part4">前沿算法创新 — GSPO / StepPO / ARPO / GiGPO / 2026 新算法</a></li>
                 <li><a href="#part5">OPD 在策略蒸馏 — 数学原理 / KL-RL 等价 / Sparse-to-Dense Pipeline / Agentic OPD</a></li>
                 <li><a href="#part6">开源大模型 RL 实践 — DeepSeek-R1 / Kimi / Qwen3 / GLM</a></li>
-                <li><a href="#part7">Agentic 系统与基础设施 — Coding Agent RL / 开源训练框架 / 基础设施</a></li>
+                <li><a href="#part7">Agentic 系统与基础设施 — Coding Agent RL / 开源训练框架 / GUI Agent RL / 基础设施</a></li>
                 <li><a href="#part8">面试高频 QA — 13 道精选问答</a></li>
             </ol>
         </nav>
@@ -1489,25 +1489,39 @@
         </div>
 
         <div class="card teal">
-            <div class="card-title">GLM-5 <span class="tag tag-teal">2026</span></div>
-            <p>GLM-5 的口号是 "from Vibe Coding to Agentic Engineering"——从简单的代码补全升级到<strong>自主软件工程</strong>。核心改进包括：</p>
+            <div class="card-title">GLM-5 <span class="tag tag-teal">2026 · z.ai/blog/glm-5</span></div>
+            <p>GLM-5 的口号是 "from Vibe Coding to Agentic Engineering"——从简单的代码补全升级到<strong>自主软件工程</strong>。其四阶段 RL 后训练 pipeline 是当前最复杂的开源模型训练流水线之一：</p>
             <ul style="margin: 10px 0 10px 20px;">
-                <li>更强的多轮代码编辑能力（理解大型 codebase 的上下文）</li>
-                <li>自主 debug 循环：生成代码 → 执行 → 分析错误 → 修复 → 重试</li>
-                <li>Agentic RL 训练环境包含真实的 GitHub issue 和 SWE-bench 场景</li>
+                <li><strong>Stage 1 — Reasoning RL</strong>：基于 GRPO + IcePop 技术减少 training-inference mismatch，混合域训练覆盖数学/科学/代码/工具推理</li>
+                <li><strong>Stage 2 — Agentic RL</strong>：全异步解耦 RL 框架处理长 horizon agent 轨迹。创新包括：<strong>TITO (Token-in-Token-out) 网关</strong>防止 tokenization 错误、<strong>Direct Double-sided Importance Sampling</strong> 稳定 off-policy 学习、<strong>DP-aware routing</strong> 最大化 KV-cache 复用</li>
+                <li><strong>Stage 3 — General RL</strong>：hybrid reward 系统（rule-based + outcome + generative models）+ Human-in-the-loop style alignment</li>
+                <li><strong>Stage 4 — On-Policy Cross-Stage Distillation</strong>：缓解能力退化，保留前序阶段学到的技能</li>
             </ul>
+            <p style="font-size:0.88em;color:var(--text-dim);">Intelligence Index v4.0 得分 50（开源第一），LMArena Text + Code Arena 双第一。ARC 基准（含 SWE-bench）相比 GLM-4.7 提升约 20%，与 Claude Opus 4.5 和 GPT-5.2 对标。arXiv:2602.15763</p>
         </div>
 
         <div class="card teal">
             <div class="card-title">GLM-5.2 <span class="tag tag-amber">2026.06 · MIT License</span></div>
             <p>Zhipu AI 最新旗舰，当前最强开源文本模型，与 GPT-5.5 和 Claude Opus 4.8 正面竞争：</p>
             <ul style="margin: 10px 0 10px 20px;">
-                <li><strong>架构</strong>：MoE 744B/40B，<strong>1M context</strong>，128K output</li>
+                <li><strong>架构</strong>：MoE 750B-A40B（744B 总参/40B 激活），<strong>1M context</strong>，128K output</li>
                 <li><strong>IndexShare</strong>：轻量 indexer 跨 4 层稀疏注意力复用，per-token FLOPs 降低 <strong>2.9×</strong></li>
-                <li><strong>异步 RL 基础设施 "Slime"</strong>：rollout 与 training 解耦到不同硬件，双端概率加权稳定学习</li>
-                <li>SWE-bench Pro <strong>62.1</strong>（超过 GPT-5.5 的 58.6），FrontierSWE <strong>74.4</strong></li>
-                <li>AIME 2026 <strong>99.2</strong>，Terminal-Bench 2.1 <strong>81.0</strong>，Design Arena <strong>#1</strong></li>
+                <li><strong>Single-Rollout Asynchronous Optimization</strong>（arXiv:2607.07508）：核心创新 —— 用<strong>单条 rollout 采样</strong>替代传统 group-wise 采样，配合<strong>双侧 token-level clipping</strong>稳定 off-policy 异步更新。解决传统异步 RL 中 group sampling 不适配 agent workflow 的问题，在 SWE-Bench Verified、BeyondAIME、IMOAnswerBench 上超越 GRPO 变体</li>
+                <li><strong>异步 RL 基础设施 "Slime"</strong>：rollout 与 training 解耦到不同硬件，千次迭代保持稳定</li>
+                <li>SWE-bench Verified <strong>72.8%</strong>，FrontierSWE <strong>74.4</strong>，AIME 2026 <strong>99.2</strong></li>
             </ul>
+        </div>
+
+        <div class="card" style="border-left: 3px solid var(--primary);">
+            <div class="card-title">研究洞察：RL 训练只需更新单层？<span class="tag tag-pink">arXiv:2607.01232 · 2026.07</span></div>
+            <p>Zhang et al. 发现 Transformer 中 RL 增益的分布<strong>高度集中</strong>：提出 <strong>Layer Contribution</strong> 指标（单层独立训练恢复全参数 RL 收益的比例），在 Qwen2.5/Qwen3 七个模型（1.5B-8B）上用 GRPO、Dr.GRPO、GiGPO 三种算法验证：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>高贡献层集中在<strong>网络中部 40%-60%</strong>，边界层（靠近输入/输出）贡献 &lt;30%</li>
+                <li>最强单层（如 Qwen3-1.7B 的 Layer 10）贡献率达 <strong>114%</strong>（超越全参数训练）</li>
+                <li>仅更新 top-10 层在 Qwen3-8B 上数学准确率达 <strong>69.11%</strong>，超越全参数的 66.43%</li>
+                <li>层贡献排名在不同算法、数据集、架构间<strong>高度相关</strong> → 暗示存在通用的"RL 学习瓶颈层"</li>
+            </ul>
+            <p style="font-size:0.88em;color:var(--text-dim);">启示：Agentic RL 训练可通过<strong>选择性层更新</strong>大幅降低计算开销，同时保持甚至超越全参数 RL 效果。</p>
         </div>
 
         <div class="card">
@@ -1515,8 +1529,10 @@
             <table>
                 <thead><tr><th>工作</th><th>时间</th><th>核心贡献</th></tr></thead>
                 <tbody>
+                    <tr><td><strong>AutoGLM</strong></td><td>2024.11 · arXiv:2411.00820</td><td>GUI agent：planner/grounder 解耦架构 + <strong>self-evolving online curriculum RL</strong>。VAB-WebArena-Lite <strong>59.1%</strong>（超越 GPT-4o），OpenTable 任务 <strong>96.2%</strong> 完成率，AndroidLab <strong>36.2%</strong></td></tr>
+                    <tr><td><strong>WebRL</strong></td><td>2024.11 · ICLR 2025 · arXiv:2411.02337</td><td>LLM Web Agent 自进化 RL：<strong>actor-critic 变异失败指令</strong>生成训练数据 + KL 约束策略更新 + 经验回放。解决 agent 训练数据稀缺问题</td></tr>
+                    <tr><td><strong>ComputerRL</strong></td><td>2025.08 · arXiv:2508.14040</td><td>桌面级 RL：<strong>API-GUI 混合动作空间</strong> + 数千并行 Docker 虚拟桌面 + <strong>Step-Level GRPO</strong> + <strong>Entropulse</strong>（RL/SFT 交替维持探索熵）。9B 模型 OSWorld <strong>48.1%</strong> SOTA（超越 OpenAI CUA o3 的 42.9%）</td></tr>
                     <tr><td><strong>GLM-5V-Turbo</strong></td><td>2026.04 · arXiv:2604.26752</td><td>多模态 agent：CogViT + MMTP + 30+ 任务联合 RL</td></tr>
-                    <tr><td><strong>ComputerRL</strong></td><td>2025.08 · arXiv:2508.14040</td><td>桌面级 RL：数千并行虚拟桌面环境 + Entropulse（RL/SFT 交替维持探索熵）</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1727,7 +1743,62 @@
             <p><strong>面试必备 Repo 知识</strong>：能说清楚 <code>veRL</code>（生产标准）、<code>TRL</code>（入门首选）、<code>open-r1</code>（R1 复现）、<code>ART</code>（agentic RL 部署）四个框架的定位差异。知道 <code>simple_GRPO</code> 是理解 GRPO 内部机制的最佳教学代码。<code>DAPO</code> 和 <code>Dr. GRPO</code> 是 GRPO 最重要的两个改进方向。蒸馏方向关注 <code>thunlp/OPD</code>（官方实现）和 <code>AwesomeOPD</code>（最全索引）。</p>
         </div>
 
-        <!-- ======================= Part VIII ======================= -->
+        <!-- GUI / Web / Desktop Agent RL -->
+        <h3 id="gui-agents">7.5 GUI / Web / Desktop Agent RL</h3>
+
+        <p>除 coding agent 外，<strong>GUI 操控 agent</strong>（网页浏览、桌面控制、手机操作）是 Agentic RL 的第二大落地场景。核心挑战在于：视觉感知的连续动作空间、超长 horizon（几十到上百步）、以及环境状态的高维度。Zhipu/THUDM 在这一方向形成了最完整的开源研究矩阵。</p>
+
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">AutoGLM <span class="tag tag-teal">Zhipu · 2024.11 · arXiv:2411.00820</span></div>
+                <p><strong>GUI Foundation Agent</strong>：将规划（planner）与定位（grounder）解耦为两个独立模块，分别优化。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>训练：<strong>Self-evolving online curriculum RL</strong>——actor-critic 框架自动生成难度递进的训练任务</li>
+                    <li>KL 约束策略更新 + 基于 actor 置信度的经验回放过滤</li>
+                    <li>VAB-WebArena-Lite <strong>59.1%</strong>（大幅超越 GPT-4o），OpenTable 预订 <strong>96.2%</strong></li>
+                    <li>移动端：AndroidLab <strong>36.2%</strong>（超越主要商业模型），真实中国 App（微信/淘宝）<strong>89.7%</strong> 成功率</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-title">WebRL <span class="tag tag-amber">THUDM · ICLR 2025 · arXiv:2411.02337</span></div>
+                <p><strong>Web Agent 自进化 RL</strong>：解决 agent 训练数据稀缺的核心问题。</p>
+                <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
+                    <li>Actor-Critic 架构：<strong>变异失败指令</strong>生成新训练数据（将"预订餐厅"失败转化为"搜索餐厅"等更简单的子任务）</li>
+                    <li>KL-constrained policy update 防止策略漂移</li>
+                    <li>自进化课程：模型自己发现哪些任务太难、自动降级为可学习的子任务</li>
+                    <li>ICLR 2025 接收，开源框架 <code>THUDM/WebRL</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card teal">
+            <div class="card-title">ComputerRL <span class="tag tag-green">Zhipu/Tsinghua · 2025.08 · arXiv:2508.14040</span></div>
+            <p><strong>桌面级 Computer Use Agent 的端到端 RL 训练</strong>，训练出 OSWorld SOTA：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>API-GUI 混合动作空间</strong>：统一编程式 API 调用和直接 GUI 操作（点击/拖拽/键入），克服纯 GUI 接口的 人类中心偏差。混合空间平均成功率 <strong>26.2%</strong> vs 纯 GUI <strong>11.2%</strong></li>
+                <li><strong>基础设施</strong>：数千并行 Docker 虚拟桌面环境 + gRPC 协议 + 异步训练解耦数据采集与模型更新</li>
+                <li><strong>三阶段训练</strong>：Behavior Cloning → <strong>Step-Level GRPO</strong>（成功轨迹中正确动作 +1） → <strong>Entropulse</strong>（RL/SFT 交替防止探索熵坍塌）</li>
+                <li>9B 模型 OSWorld <strong>48.1%</strong> SOTA（超越 OpenAI CUA o3 的 42.9%、Claude 4.0 Sonnet 的 30.7%）</li>
+                <li>开源：<code>THUDM/ComputerRL</code></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-title">GUI Agent RL 关键 Benchmark</div>
+            <table>
+                <thead><tr><th>Benchmark</th><th>场景</th><th>头部成绩</th><th>特点</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>OSWorld</strong></td><td>桌面操作系统（Ubuntu/Windows/macOS）</td><td>ComputerRL 48.1%</td><td>最全面的桌面 agent benchmark，真实 OS 环境</td></tr>
+                    <tr><td><strong>WebArena / VAB-WebArena-Lite</strong></td><td>Web 浏览（电商/论坛/地图等）</td><td>AutoGLM 59.1%</td><td>真实网站交互，端到端评测</td></tr>
+                    <tr><td><strong>AndroidLab / AndroidWorld</strong></td><td>Android 手机操作</td><td>AutoGLM 36.2%</td><td>移动设备 agent 核心基准</td></tr>
+                    <tr><td><strong>Mind2Web</strong></td><td>Web 导航（离线评测）</td><td>—</td><td>大规模人类标注的 web 导航数据</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="box-insight">
+            <p><strong>GUI Agent RL 的技术演进</strong>：从 AutoGLM 的 planner/grounder 解耦（2024.11）→ WebRL 的自进化课程（ICLR 2025）→ ComputerRL 的 step-level GRPO + Entropulse（2025.08），三篇工作来自同一个团队（Zhipu/THUDM），形成了<strong>web → mobile → desktop</strong> 的全场景覆盖。核心共性是：<strong>异步 rollout</strong> + <strong>自动课程学习</strong> + <strong>探索熵维持</strong>。这与 coding agent RL 的 <strong>同步 group sampling</strong> 形成鲜明对比——GUI agent 的轨迹更长、环境交互更慢，迫使训练框架走向异步解耦。</p>
+        </div>
         <h2 class="section-title" id="part8"><span class="num">VIII</span> 面试高频 QA</h2>
 
         <details class="qa-card" open>
@@ -1923,6 +1994,10 @@
                 <li><em>A Practitioner's Guide to Multi-turn Agentic RL</em>, Fireworks AI, NeurIPS 2025. arXiv:2510.01132</li>
                 <li>DeepSeek-V4, 2026. <em>Towards Highly Efficient Million-Token Context Intelligence</em>. arXiv:2606.19348</li>
                 <li>GLM-5.2, Zhipu AI, 2026. z.ai/blog/glm-5.2</li>
+                <li>Hou et al., <em>Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning</em>, 2026. arXiv:2607.07508 <span class="tag tag-teal">GLM-5.2 Async RL</span></li>
+                <li>Zhang et al., <em>Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training</em>, 2026. arXiv:2607.01232 <span class="tag tag-pink">Layer Contribution</span></li>
+                <li>AutoGLM: <em>Autonomous Foundation Agents for GUIs</em>, Zhipu AI, 2024. arXiv:2411.00820 <span class="tag tag-amber">GUI Agent</span></li>
+                <li>WebRL: <em>Training LLM Web Agents via Self-Evolving Online Curriculum RL</em>, THUDM, ICLR 2025. arXiv:2411.02337</li>
                 <li>GLM-5V-Turbo, 2026. <em>Native Foundation Model for Multimodal Agents</em>. arXiv:2604.26752</li>
                 <li>ComputerRL, Zhipu/Tsinghua, 2025. arXiv:2508.14040</li>
                 <li>Kimi K2.5, Moonshot AI, 2026. <em>Visual Agentic Intelligence</em>. arXiv:2602.02276</li>
