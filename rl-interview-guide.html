@@ -1012,6 +1012,82 @@
         </tr>
     </table>
 
+    <h4>原理深度解析：为什么 On-Policy 必须同分布？</h4>
+
+    <p>On-policy 算法（如 PPO）的核心数学工具是<strong>策略梯度定理（Policy Gradient Theorem）</strong>。策略梯度的目标是计算 $\nabla_\theta J(\theta)$，即如何调整策略参数 $\theta$ 以增加总期望奖励。</p>
+
+    <div class="formula-box">
+        <div class="label">策略梯度定理</div>
+        $$\nabla_\theta J(\theta) = \mathbb{E}_{a \sim \pi_\theta} \left[ \nabla_\theta \log \pi_\theta(a|s) \cdot Q^\pi(s,a) \right]$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">$\mathbb{E}_{a \sim \pi_\theta}$</span>关键：期望基于当前策略 $\pi_\theta$ 的分布采样得到</div>
+            <div class="item"><span class="symbol">$Q^\pi(s,a)$</span>动作价值函数，衡量在状态 $s$ 执行动作 $a$ 后的期望回报</div>
+        </div>
+    </div>
+
+    <p><strong>为什么不同分布会失败？</strong> 公式中的期望 $\mathbb{E}_{a \sim \pi_\theta}$ 明确要求数据来自当前策略。如果直接用旧策略 $\pi_{\text{old}}$ 采集的数据来估计当前策略的梯度，就像用“日本人的身高数据”来估计“美国人的平均身高”——分布不同，估计必然有偏。</p>
+
+    <p>当新旧策略差异过大时，Importance Sampling 的比率 $\frac{\pi_\theta(a|s)}{\pi_{\text{old}}(a|s)}$ 会剧烈波动，导致梯度方向变得极其随机。轻则更新低效，重则策略“崩掉”（参数发散或陷入局部最优）。这正是 PPO 必须引入 Clip 机制、强行限制更新步长的根本原因。</p>
+
+    <h4>为什么 Off-Policy / Offline 可以克服分布偏移？</h4>
+
+    <p>Off-policy 算法（如 DQN、SAC）不依赖策略梯度定理作为唯一武器，它们的核心是<strong>值函数学习（Value-based Learning）</strong>与<strong>贝尔曼方程（Bellman Equation）</strong>。</p>
+
+    <div class="formula-box">
+        <div class="label">贝尔曼最优方程</div>
+        $$Q(s,a) = r + \gamma \max_{a'} Q(s', a')$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">物理规律</span>该式描述的是环境本身的转移规律：在 $s$ 执行 $a$ 会得到 $r$ 并转移到 $s'$，这与采集数据的策略无关</div>
+        </div>
+    </div>
+
+    <p><strong>逻辑差异：</strong>贝尔曼方程刻画的是环境的客观物理规律。无论是专家、新手还是随机策略，只要产生了 $(s, a, r, s')$ 这组转移数据，其中包含的规律就是一致的。因此 Off-policy 方法可以复用历史数据，只要状态-动作覆盖足够。</p>
+
+    <p><strong>Offline RL 的特殊处理：</strong>普通 Off-policy 只需要学习环境的物理规律，但 Offline RL 还要解决<strong>外推误差（Extrapolation Error）</strong>问题——如果数据里没见过某个动作，模型可能会幻想它的奖励很高。Offline 算法（如 CQL）通过增加惩罚项，强迫模型“只在见过的数据范围内进行优化”，从而保证离线数据的稳定学习。</p>
+
+    <h4>优缺点对比</h4>
+
+    <div class="box-analogy">
+        <strong>On-Policy</strong> 像<strong>“学徒实践”</strong>——必须亲自上场，做错了立刻改，但之前的经验很快就忘了；<strong>Off-Policy</strong> 像<strong>“看书/看录像总结”</strong>——反复研究历史案例，效率高，但容易看走眼（估计偏差）。
+    </div>
+
+    <table>
+        <tr>
+            <th>维度</th>
+            <th>On-Policy（如 PPO）</th>
+            <th>Off-Policy（如 SAC / DQN）</th>
+        </tr>
+        <tr>
+            <td><strong>数据利用率</strong></td>
+            <td>极低。数据必须是新鲜的，用完即弃</td>
+            <td>极高。历史数据可反复拿来“刷题”</td>
+        </tr>
+        <tr>
+            <td><strong>收敛稳定性</strong></td>
+            <td>极稳。直接优化目标，步子小，不容易跑偏</td>
+            <td>不稳定。容易产生 Q 值高估，可能训练很久突然崩盘</td>
+        </tr>
+        <tr>
+            <td><strong>计算开销</strong></td>
+            <td>采样时间长，但单次训练计算压力小</td>
+            <td>采样时间短，但维护 Buffer 和反复回放的计算压力大</td>
+        </tr>
+        <tr>
+            <td><strong>实现难度</strong></td>
+            <td>相对简单，调参较容易</td>
+            <td>复杂。需要处理经验回放、目标网络更新等细节</td>
+        </tr>
+        <tr>
+            <td><strong>适用场景</strong></td>
+            <td>仿真环境（采样成本低）、LLM 微调</td>
+            <td>现实世界、机器人、离线数据集</td>
+        </tr>
+    </table>
+
+    <div class="box-insight">
+        <strong>核心总结</strong>：On-Policy 不能用异分布数据，是因为它的数学前提是“用当前的分布去估计梯度”，一旦分布偏了，梯度方向就错了；Off-Policy 能够用异分布数据，是因为它学习的是环境的“状态转移价值”，这是一种客观存在的规律，不依赖于当前策略。
+    </div>
+
     <div class="box-insight">
         <strong>面试关键点</strong>：PPO 虽然使用了 Importance Sampling（概率比 $r_t(\theta) = \frac{\pi_\theta(a|s)}{\pi_{\theta_{\text{old}}}(a|s)}$），但它仍然是 <strong>On-Policy</strong> 算法——$\pi_{\theta_{\text{old}}}$ 只是上一轮的自身策略，数据用几个 epoch 后就丢弃，不存入长期 Replay Buffer。这是面试中常见的辨析题。
     </div>
