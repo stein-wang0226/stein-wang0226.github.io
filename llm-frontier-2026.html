@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM 前沿 2026 — 模型 / 架构 / 优化器 / Agent / RL / Benchmark / Protein</title>
+    <meta name="description" content="2026 年 LLM 前沿进展滚动调研：开源模型(Kimi/Qwen/DeepSeek)、前沿模型(GPT-6/Claude/Gemini/Grok)、Loop Transformer 新架构、Muon 优化器、Agent、RL 算法(GRPO家族)、OPD、训练策略、Benchmark(含 Terminal-Bench)、Protein LLM。事实与传闻分栏，附来源。">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Literata:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+        :root {
+            --bg: #f7f5f0;
+            --surface: #ffffff;
+            --surface2: #f3f1ec;
+            --border: #d6d3cd;
+            --text: #1a1a2e;
+            --text-dim: #78716c;
+            --accent: #0d9488;
+            --accent2: #0f766e;
+            --accent3: #059669;
+            --accent4: #d97706;
+            --accent5: #db2777;
+            --danger: #ef4444;
+            --code-bg: #f8f7f4;
+            --gradient1: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            --gradient3: linear-gradient(135deg, #d97706 0%, #db2777 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Literata', Georgia, 'Noto Serif SC', serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 62vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; padding: 3rem 2rem;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(13,148,136,0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 50%, rgba(217,119,6,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 80%, rgba(5,150,105,0.05) 0%, transparent 50%);
+            animation: heroGlow 15s ease-in-out infinite alternate;
+        }
+        @keyframes heroGlow { 0%{transform:translate(0,0)rotate(0deg)} 100%{transform:translate(-5%,3%)rotate(5deg)} }
+        .hero-content { position: relative; z-index: 1; max-width: 900px; }
+        .hero .kicker {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 1rem;
+        }
+        .hero h1 {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800;
+            background: var(--gradient1);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 1.1rem; letter-spacing: -1px;
+        }
+        .hero .subtitle {
+            font-size: 1.15rem; color: var(--text-dim);
+            margin-bottom: 1.8rem; max-width: 720px; margin-left: auto; margin-right: auto;
+        }
+        .hero-badges { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin-bottom: 1.4rem; }
+        .badge {
+            padding: 0.35rem 0.9rem; border-radius: 9999px;
+            font-size: 0.82rem; font-weight: 600; border: 1px solid;
+            font-family: 'Sora', sans-serif;
+        }
+        .badge-blue { background: rgba(13,148,136,0.1); border-color: rgba(13,148,136,0.3); color: var(--accent); }
+        .badge-purple { background: rgba(15,118,110,0.1); border-color: rgba(15,118,110,0.3); color: var(--accent2); }
+        .badge-green { background: rgba(5,150,105,0.1); border-color: rgba(5,150,105,0.3); color: var(--accent3); }
+        .badge-orange { background: rgba(217,119,6,0.1); border-color: rgba(217,119,6,0.3); color: var(--accent4); }
+        .updated-pill {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 9999px; padding: 0.4rem 1rem; color: var(--text-dim);
+        }
+        .updated-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent3); box-shadow: 0 0 0 3px rgba(5,150,105,0.18); }
+        .home-link { position: absolute; top: 1.6rem; left: 1.8rem; z-index: 2;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            color: var(--text-dim); text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px; }
+        .home-link:hover { color: var(--accent); border-color: var(--accent); }
+
+        /* Nav */
+        .toc-nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(247,245,240,0.92); backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border); padding: 0.7rem 0; overflow-x: auto;
+        }
+        .toc-nav ul { display: flex; gap: 0.2rem; list-style: none; max-width: 1200px; margin: 0 auto; padding: 0 1rem; white-space: nowrap; }
+        .toc-nav a { display: block; padding: 0.4rem 0.85rem; color: var(--text-dim); text-decoration: none; font-size: 0.84rem; border-radius: 6px; transition: all 0.2s; font-family: 'Sora', sans-serif; }
+        .toc-nav a:hover, .toc-nav a.active { color: var(--accent); background: rgba(13,148,136,0.1); }
+
+        /* Main */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+        section { padding: 3.4rem 0 1.4rem; scroll-margin-top: 70px; }
+        h2 { font-family: 'Sora', sans-serif; font-size: 1.85rem; font-weight: 700; margin-bottom: 0.5rem; position: relative; display: inline-block; letter-spacing: -0.5px; }
+        h2 .num { font-size: 0.85rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 6px; margin-right: 0.5rem; vertical-align: middle; }
+        .section-desc { color: var(--text-dim); font-size: 1.02rem; margin-bottom: 2rem; max-width: 840px; }
+        h3 { font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 600; margin: 2.2rem 0 0.9rem; color: var(--accent); }
+        h4 { font-family: 'Sora', sans-serif; font-size: 1.06rem; font-weight: 600; margin: 1.4rem 0 0.7rem; color: var(--accent2); }
+        p { margin-bottom: 1rem; }
+        ul.tight { margin: 0 0 1.1rem 1.3rem; }
+        ul.tight li { margin-bottom: 0.5rem; }
+        strong { color: var(--accent2); font-weight: 600; }
+        a { color: var(--accent); }
+
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem 1.8rem; margin: 1.1rem 0; border-left: 4px solid var(--accent); }
+        .card.green { border-left-color: var(--accent3); }
+        .card.purple { border-left-color: var(--accent2); }
+        .card.orange { border-left-color: var(--accent4); }
+        .card.pink { border-left-color: var(--accent5); }
+        .card.red { border-left-color: var(--danger); }
+        .card-title { font-family: 'Sora', sans-serif; font-size: 1.08rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text); }
+
+        pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.4rem; overflow-x: auto; font-size: 0.86rem; margin: 1rem 0 1.4rem; line-height: 1.6; }
+        code { font-family: 'JetBrains Mono', Menlo, Consolas, monospace; font-size: 0.86em; }
+        p code, li code, td code { background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--accent2); }
+
+        table { width: 100%; border-collapse: collapse; margin: 1.1rem 0 1.5rem; font-size: 0.88rem; }
+        th { text-align: left; padding: 0.75rem 0.9rem; border-bottom: 2px solid var(--accent); background: rgba(13,148,136,0.06); font-weight: 700; color: var(--accent); font-family: 'Sora', sans-serif; font-size: 0.84rem; }
+        td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+        tr:hover td { background: rgba(13,148,136,0.04); }
+        .table-wrap { overflow-x: auto; }
+
+        .insight { background: rgba(13,148,136,0.06); border: 1px solid rgba(13,148,136,0.2); border-radius: 10px; padding: 1.1rem 1.4rem; margin: 1.1rem 0; }
+        .insight-title { font-family: 'Sora', sans-serif; font-weight: 700; color: var(--accent2); margin-bottom: 0.3rem; }
+        .warning { background: rgba(217,119,6,0.07); border: 1px solid rgba(217,119,6,0.25); }
+        .warning .insight-title { color: var(--accent4); }
+
+        /* status pills inline */
+        .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.04em; padding: 1px 8px; border-radius: 9999px; vertical-align: middle; margin-left: 6px; white-space: nowrap; }
+        .pill.fact { background: rgba(5,150,105,0.13); color: var(--accent3); }
+        .pill.rumor { background: rgba(239,68,68,0.12); color: var(--danger); }
+        .pill.self { background: rgba(217,119,6,0.14); color: var(--accent4); }
+        .pill.preprint { background: rgba(120,113,108,0.14); color: var(--text-dim); }
+
+        /* incremental update entry block (used by the weekly automation) */
+        .update-entry { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent3); border-radius: 10px; padding: 1rem 1.4rem; margin: 0.9rem 0; }
+        .entry-date { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--accent3); letter-spacing: 0.05em; display: inline-block; margin-bottom: 0.4rem; background: rgba(5,150,105,0.09); padding: 1px 8px; border-radius: 5px; }
+
+        .src-list { font-size: 0.82rem; color: var(--text-dim); word-break: break-word; }
+        .src-list a { color: var(--accent2); }
+
+        .page-footer { text-align: center; padding: 3rem 1rem; color: var(--text-dim); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3.5rem; }
+        .page-footer a { color: var(--accent2); text-decoration: none; border-bottom: 1px solid var(--border); }
+
+        @media (max-width: 640px) {
+            .container { padding: 0 1rem; }
+            h2 { font-size: 1.45rem; }
+            .hero h1 { font-size: 1.8rem; }
+            table { font-size: 0.8rem; }
+            .home-link { top: 1rem; left: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <a class="home-link" href="/index.html">&larr; Stein's Notes</a>
+    <div class="hero-content">
+        <div class="kicker">Frontier Tracker · Rolling Survey</div>
+        <h1>LLM 前沿 2026</h1>
+        <p class="subtitle">模型 · 架构 · 优化器 · Agent · RL · 训练策略 · Benchmark · Protein LLM 的滚动式前沿追踪。事实与传闻分栏，每条附一手来源，由每周自动任务增量更新。</p>
+        <div class="hero-badges">
+            <span class="badge badge-blue">Kimi / Qwen / DeepSeek</span>
+            <span class="badge badge-purple">Loop Transformer</span>
+            <span class="badge badge-green">Muon 优化器</span>
+            <span class="badge badge-orange">GRPO 家族 / OPD</span>
+            <span class="badge badge-blue">Terminal-Bench</span>
+            <span class="badge badge-purple">Protein LLM</span>
+        </div>
+        <div class="updated-pill"><span class="dot"></span> 最后更新 <span id="last-updated">2026-09-10</span></div>
+    </div>
+</div>
+
+<nav class="toc-nav">
+    <ul>
+        <li><a href="#overview">速览</a></li>
+        <li><a href="#models">开源模型</a></li>
+        <li><a href="#frontier">前沿模型</a></li>
+        <li><a href="#arch">新架构</a></li>
+        <li><a href="#optimizer">Muon</a></li>
+        <li><a href="#agent">Agent</a></li>
+        <li><a href="#rl">RL 算法</a></li>
+        <li><a href="#opd">OPD</a></li>
+        <li><a href="#training">训练策略</a></li>
+        <li><a href="#bench">Benchmark</a></li>
+        <li><a href="#protein">Protein LLM</a></li>
+        <li><a href="#rumor">事实 vs 传闻</a></li>
+        <li><a href="#changelog">更新日志</a></li>
+        <li><a href="#sources">来源</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+<!-- ==================== 00 速览 ==================== -->
+<section id="overview">
+<h2><span class="num" style="background:var(--accent);color:var(--bg)">00</span> 本期前沿速览</h2>
+<p class="section-desc">一页读懂 2026-09 时点最值得关注的信号。下方各主题按「事实 <span class="pill fact">FACT</span> / 传闻 <span class="pill rumor">RUMOR</span> / 厂商自报 <span class="pill self">SELF-REPORT</span> / 预印本 <span class="pill preprint">PREPRINT</span>」分栏标注。</p>
+<div class="insight">
+    <div class="insight-title">五条速览</div>
+    <ul class="tight">
+        <li><strong>稀疏注意力成开源主线</strong>：DeepSeek-V3.2 的 DSA、GLM-5 集成 DSA、Kimi 用 MLA；DeepSeek-V4 Preview 已把上下文推到 1M。</li>
+        <li><strong>Muon 走进万亿参数生产模型</strong>：Kimi K2 用 MuonClip 全程零 loss spike；Moonlight 实证同算力约 2× 效率。</li>
+        <li><strong>「GPT-6 用 Loop Transformer」仍是传闻</strong>：公开可证的循环深度实证是 Huginn（arXiv:2502.05171）；OpenAI 未确认 Astra 架构。</li>
+        <li><strong>RL 的增量在「修偏」</strong>：GSPO（序列级重要性，稳 MoE）、Dr.GRPO（去长度偏置）、Clip-Cov/KL-Cov（抗熵坍缩）。</li>
+        <li><strong>Benchmark 关键词 = 饱和与污染</strong>：GPQA/MMLU-Pro/AIME/ARC-AGI-2 相继见顶，社区转向 HLE、Terminal-Bench(-Science)、τ²/τ³、SWE-bench Pro。</li>
+    </ul>
+</div>
+</section>
+
+<!-- ==================== 01 开源模型 ==================== -->
+<section id="models">
+<h2><span class="num" style="background:var(--accent2);color:#fff">01</span> 开源模型最新迭代</h2>
+<p class="section-desc">Kimi / Qwen / DeepSeek 三强的最新技术坐标，以及 GLM、MiniMax、Llama 的对照。参数、上下文、注意力变体均以官方模型卡 / arXiv / HuggingFace 核实。</p>
+<!-- AUTO:INSERT:models -->
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-10</span>
+    <div class="card-title">Kimi K2.6（Moonshot，2026-05，Modified MIT）<span class="pill fact">FACT</span></div>
+    <p>MoE 总参 <strong>1T / 激活 32B</strong>，61 层（含 1 dense），384 专家每 token 选 8 + 1 共享；注意力 <strong>MLA</strong>，上下文 <strong>256K</strong>；MoonViT(400M) 视觉编码器 → 原生多模态。亮点是长程编码、编码驱动设计与 <strong>Agent Swarm 集群编排</strong>。K2.5 论文（arXiv:2602.02276）给出文本-视觉联合预训练/SFT/RL 配方，Swarm 并行最多降延迟 4.5×。</p>
+</div>
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-10</span>
+    <div class="card-title">Qwen3.8-Max（阿里，2026-08-03，开放权重）<span class="pill fact">FACT</span></div>
+    <p>MoE 总参 <strong>2.4T / 激活 95B</strong>，主打<strong>长程自主任务</strong>——连续数天自主编码、科研复现、芯片设计优化、多模态，可处理 200+ 页文档 / 100+ 小时视频。谱系 Qwen3.5 → 3.6-35B-A3B → 3.7-Max → 3.8-Max；另有 Qwen3.8-Flash-Next。多模态旗舰 Qwen3-VL-235B-A22B（2025-09，235B/22B，262K）。</p>
+</div>
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-10</span>
+    <div class="card-title">DeepSeek-V3.2 → V4 Preview<span class="pill fact">FACT</span></div>
+    <p>V3.2（2025-12-02，arXiv:2512.02556，MIT）：MoE 671B/37B，257 专家激活 9，128K，注意力 <strong>DSA（DeepSeek Sparse Attention）</strong>——lightning indexer + 细粒度 token 选择，在 MLA 的 MQA 模式下每 query 选 2048 KV token，长上下文显著降本；后训练用 Specialist Distillation + <strong>Mixed RL(GRPO)</strong>。高算力版 V3.2-Speciale 拿下 <strong>IMO 2025 & IOI 2025 金牌</strong>（论文称超越 GPT-5，属自报）。<strong>V4 Preview</strong>（官方 2026-04-24，已开源）：V4-Pro 1.6T/49B、V4-Flash 284B/13B，标配 <strong>1M 上下文</strong>，Token-wise 压缩 + DSA，Pro 主打 Agentic Coding（属 Preview 非正式发布）。</p>
+</div>
+
+<div class="card">
+    <div class="card-title">开源对照表</div>
+    <div class="table-wrap">
+    <table>
+    <thead><tr><th>模型</th><th>发布方 / 时间</th><th>结构</th><th>注意力</th><th>上下文</th><th>许可</th></tr></thead>
+    <tbody>
+    <tr><td>Kimi K2.6</td><td>Moonshot · 2026-05</td><td>MoE 1T/32B，384专家×8+1</td><td>MLA</td><td>256K</td><td>Modified MIT</td></tr>
+    <tr><td>Qwen3.8-Max</td><td>阿里 · 2026-08</td><td>MoE 2.4T/95B</td><td>—</td><td>长程</td><td>开放权重</td></tr>
+    <tr><td>DeepSeek-V3.2</td><td>DeepSeek · 2025-12</td><td>MoE 671B/37B，257专家</td><td>DSA(MLA)</td><td>128K</td><td>MIT</td></tr>
+    <tr><td>DeepSeek-V4 Preview</td><td>DeepSeek · 2026-04</td><td>Pro 1.6T/49B · Flash 284B/13B</td><td>压缩+DSA</td><td>1M</td><td>开源(Preview)</td></tr>
+    <tr><td>GLM-5</td><td>智谱 Z.ai · 2026-02</td><td>MoE 744B/40B</td><td>集成 DSA</td><td>—</td><td>Apache-2.0</td></tr>
+    <tr><td>MiniMax-M2</td><td>MiniMax · 2025-10</td><td>MoE 230B/10B</td><td>—</td><td>128K</td><td>MIT</td></tr>
+    <tr><td>Llama 4</td><td>Meta · 2025-04</td><td>原生多模态 Scout/Maverick/Behemoth</td><td>—</td><td>—</td><td>社区许可</td></tr>
+    </tbody>
+    </table>
+    </div>
+    <p class="src-list">注：Meta Llama 后继「延期并转向闭源」为媒体援引消息人士 <span class="pill rumor">RUMOR</span>；MiniMax M3(2026-06) 仅低质源提及 <span class="pill rumor">RUMOR</span>。</p>
+</div>
+</section>
+
+<!-- ==================== 02 前沿模型 ==================== -->
+<section id="frontier">
+<h2><span class="num" style="background:var(--accent3);color:#fff">02</span> 闭源前沿模型全景</h2>
+<p class="section-desc">OpenAI / Anthropic / Google DeepMind / xAI 的最新层级与能力轴。基准分数多为厂商自报，已单独标注。</p>
+<!-- AUTO:INSERT:frontier -->
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-10</span>
+    <div class="card-title">OpenAI GPT-6 Astra（2026-09-03/04 发布）<span class="pill fact">FACT</span></div>
+    <p>上下文 <strong>1.05M</strong>（输入≤922K / 输出≤128K），文本+图像输入；工具含 code execution、hosted shell、computer use、MCP；训练用 10 万+ GPU（Stargate）。厂商自报 <span class="pill self">SELF-REPORT</span>：Agent's Last Exam 59.3%、OSWorld 2.0 72.6%、Terminal-Bench 4.0 57.9%。前代 GPT-5.6（2026-06/07，含 Sol 变体）。</p>
+    <div class="warning" style="margin-top:0.6rem"><p style="margin:0"><strong>⚠️ 传闻：</strong>「Astra 采用 loop / recurrent transformer 循环架构」仅出自 The Information 匿名信源，<strong>OpenAI 发布物与 system card 均未确认</strong>。详见 <a href="#arch">§新架构</a>。</p></div>
+</div>
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-10</span>
+    <div class="card-title">Anthropic：Mythos &gt; Fable &gt; Opus &gt; Sonnet<span class="pill fact">FACT</span></div>
+    <p>新层级：<strong>Fable 5 / Mythos 5</strong>（2026-06，Fable=Mythos 级安全化通用版、几乎全基准 SOTA；Mythos=更高能力受限访问）→ <strong>Opus 5</strong>（2026-07，半价逼近 Fable 5，Frontier-Bench / GDPval-AA 新 SOTA）→ <strong>Fable 5.1 / Mythos 5.1</strong>（2026-09，号称全球最强编码/知识工作，同模型不同护栏，Fable 5.1 约便宜 25%、agent 场景达 45%，引入 Enterprise Frontier Safeguards）。日常线 Sonnet 4.6（2026-02，1M beta）、Opus 4.8（2026-05）。</p>
+</div>
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-10</span>
+    <div class="card-title">Google Gemini 3.1 Pro · xAI Grok 4.6<span class="pill fact">FACT</span></div>
+    <p><strong>Gemini 3.1 Pro</strong>（2026-02-19）：原生多模态，上下文 1M / 输出 64K，文/图/音/视频输入，含 Deep Think 模式；官方基准 HLE 44.4%、ARC-AGI-2 77.1%、GPQA Diamond 94.3%、SWE-Bench Verified 80.6%。<strong>Grok 4.6</strong>（约 2026-08）：500K，文本+图像，推理档含 xhigh，$2/$6；Grok 4.5 与 Cursor 联训。「Grok 4.6 1.5T 参数」<span class="pill rumor">RUMOR</span>、「Gemini 3.5 Pro 延期」<span class="pill rumor">RUMOR</span>。</p>
+</div>
+</section>
+
+<!-- ==================== 03 新架构 ==================== -->
+<section id="arch">
+<h2><span class="num" style="background:var(--accent4);color:#fff">03</span> 新架构：Loop Transformer 与循环深度</h2>
+<p class="section-desc">2025–2026 的架构主线是「注意力降本（稀疏/线性/混合）+ 记忆外挂 + 深度循环换 test-time compute」。与站内 <a href="/dlm-survey/s11_loop_transformer.html">dlm-survey · Loop Transformer</a> 互链去重。</p>
+<!-- AUTO:INSERT:arch -->
+
+<h3>3.1 循环深度潜空间推理（Recurrent Depth）<span class="pill fact">FACT</span></h3>
+<p>Geiping et al.《Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach》（arXiv:2502.05171，NeurIPS 2025）提出模型 <strong>Huginn</strong>：3.5B 参数、800B token 预训练，由<strong>单个循环块反复迭代</strong>构成，测试时可展开到任意深度——最多相当于 50 步迭代，达到「相当于 50B 参数模型的算力负载」。权重已开源（<code>tomg-group-umd/huginn-0125</code>）。</p>
+<div class="insight">
+    <div class="insight-title">与思维链（CoT）的本质区别</div>
+    <p style="margin:0">推理发生在<strong>连续潜空间</strong>而非离散 token 序列；无需专门的推理训练数据（不用 R1 式 RL/蒸馏）；可在很小上下文窗口内完成深度计算；test-time compute 的扩展维度从「生成更多 token」变为「迭代更多层」。代价是潜空间推理<strong>不可被 CoT 监控</strong>，可解释性与安全监督更难——这正是它在 GPT-6 传闻中被反复提及的原因。</p>
+</div>
+
+<div class="warning">
+    <div class="insight-title">⚠️ 3.2 「GPT-6(Astra) 使用 Looped Transformer」= 传闻 <span class="pill rumor">RUMOR</span></div>
+    <p style="margin:0">2026-09-01 The Information 报道 Astra 使用「constrained recurrent depth」，但 <strong>OpenAI 发布文档与 system card 均未提及</strong>。首席科学家 Pachocki 称前沿模型（含 Astra）计算图深度与 GPT-4 在 2 倍以内，并批评相关报道「混乱」（见 Sebastian Raschka 2026-09-09 分析）。学术上循环深度的最强公开实证仍是 Huginn。<strong>本页按未证实处理。</strong></p>
+</div>
+
+<h3>3.3 其它架构信号 <span class="pill fact">FACT</span></h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>方向</th><th>代表工作</th><th>要点</th></tr></thead>
+<tbody>
+<tr><td>稀疏注意力</td><td>DeepSeek NSA（arXiv:2502.11089）→ V3.2 的 DSA；GLM-5 集成 DSA</td><td>硬件对齐、可原生训练，长上下文速度大幅超越全注意力；2026 开源主线</td></tr>
+<tr><td>线性 / 混合 SSM</td><td>Mamba-2（arXiv:2405.21060）；Qwen3-Next-80B-A3B（Gated DeltaNet + Gated Attention）；Nemotron 3 Nano（arXiv:2512.20848）</td><td>混合架构在 2025 年底成为开源前沿模型的常规选项</td></tr>
+<tr><td>记忆机制</td><td>Google Titans（arXiv:2501.00663）；Meta Memory Layers at Scale（arXiv:2412.09764）</td><td>测试时学习记忆 / 大容量键值记忆层替代部分 FFN，事实性任务提升显著</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- ==================== 04 优化器 ==================== -->
+<section id="optimizer">
+<h2><span class="num" style="background:var(--accent5);color:#fff">04</span> 优化器：Muon 与后 Adam 时代</h2>
+<p class="section-desc">Muon 是 2024–2026 最受关注的新型优化器，已从 NanoGPT speedrun 走进万亿参数生产模型。</p>
+<!-- AUTO:INSERT:optimizer -->
+
+<h3>4.1 核心思想 <span class="pill fact">FACT</span></h3>
+<p><strong>Muon = MomentUm Orthogonalized by Newton–Schulz</strong>，由 Keller Jordan 于 2024-10/11 提出。直觉分三步：① 照常计算 SGD 动量缓冲；② 对每个 <strong>2D 权重矩阵</strong>的动量做<strong>正交化</strong>——用 Newton–Schulz 迭代（约 5 步五次多项式 <code>X ← aX + b(XXᵀ)X + c(XXᵀ)²X</code>，系数由 Jeremy Bernstein 调优）近似 <code>UVᵀ</code>，即把更新矩阵的所有奇异值拉平到 ≈1；③ 效果是所有方向的更新幅度均等，避免「少数主方向垄断学习率」，等效于<strong>谱范数下的最速下降</strong>（Bernstein &amp; Newhouse《Old Optimizer, New Norm》arXiv:2409.20325）。Muon 只用于隐藏层 2D 矩阵；embedding、输出头与 1D 参数仍用 AdamW。</p>
+
+<h3>4.2 规模化与工业落地 <span class="pill fact">FACT</span></h3>
+<div class="card green">
+    <p><strong>Moonlight</strong>（Moonshot AI，arXiv:2502.16982）：加权重衰减 + 对齐每参数更新尺度(RMS) → 开箱即用；同算力最优训练下相对 AdamW <strong>约 2× 计算效率</strong>；训练 Moonlight-3B/16B MoE（5.7T token）；开源内存最优的分布式 Muon（每参数显存与带动量 SGD 同阶，远低于 Adam 的两份状态）。</p>
+    <p style="margin-bottom:0"><strong>Kimi K2</strong>（arXiv:2507.20534，1T MoE）：使用 <strong>MuonClip = Muon + QK-clip</strong>——在 &gt;1T token 训练中 Muon 会引发注意力 logit 爆炸，QK-clip 对 Q/K 投影做受控缩放化解，实现<strong>全程零 loss spike</strong>。这是 Muon 首次在万亿参数级生产模型上被官方确认使用。</p>
+</div>
+<p>NanoGPT speedrun 战绩：AdamW 时代 45min 级 → Muon 12.8min（2024-10-30）→ 8.5min（2024-11-06）→ 3.14min（2025-01-16）→ 2026 初 &lt;100s。</p>
+
+<h3>4.3 优化器对照</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>优化器</th><th>核心机制</th><th>现状 / 何时选</th></tr></thead>
+<tbody>
+<tr><td><strong>Muon</strong></td><td>动量 + Newton–Schulz 正交化（谱范数最速下降）</td><td>隐藏层密集训练约 1.4–2× 算力节省；显存与 SGD-momentum 同阶；需 weight decay + 尺度对齐，&gt;1T token 需 QK-clip</td></tr>
+<tr><td>AdamW</td><td>逐坐标二阶矩归一化</td><td>默认基线；在 Muon 方案中负责 embedding / 输出头 / 1D 参数</td></tr>
+<tr><td>SOAP</td><td>在 Shampoo 特征基内跑 Adam（arXiv:2409.11321）</td><td>与 Muon 同期竞争，中小规模好，但状态显存/通信开销更大</td></tr>
+<tr><td>Schedule-Free</td><td>迭代平均免学习率调度（arXiv:2405.15682）</td><td>常与 Muon 组合，speedrun 谱系标配</td></tr>
+<tr><td>Lion / Adafactor</td><td>符号化动量 / 分解式二阶矩</td><td>省显存但对超参敏感，前沿模型采用有限</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- ==================== 05 Agent ==================== -->
+<section id="agent">
+<h2><span class="num" style="background:var(--accent);color:var(--bg)">05</span> Agent 最新进展</h2>
+<p class="section-desc">与站内 <a href="/agent-harness-guide.html">Agent Harness 深度解析</a> 互补，聚焦 2025–2026 的真正增量。</p>
+<!-- AUTO:INSERT:agent -->
+<div class="card">
+<ul class="tight">
+    <li><strong>Deep-Research 型 agent 产品化</strong>：OpenAI deep research（2025-02-02，基于 o3）自主多步浏览 + 工具 + 合成带引用长报告；范式是把「检索→阅读→反思→再检索」的长程闭环交给 agent 规划，而非单轮 RAG。</li>
+    <li><strong>Computer-Use / GUI 原生 agent</strong>：字节 <strong>UI-TARS</strong>（arXiv:2501.12326）只以截图为输入直接输出键鼠动作，端到端感知-推理-操作，不依赖 DOM/无障碍树 → GUI agent 从「结构化 API 编排」转向「像素级原生」。</li>
+    <li><strong>Agentic RL 成独立方向</strong>：综述 arXiv:2509.02547（v5 2026-04）提出双维分类（agent 能力 × 任务域）；方法论从「单轮答案对错奖励」转向 <strong>agentic rollout（多轮环境交互轨迹）+ 环境交互奖励</strong>，在 SWE / τ-bench / OSWorld / 终端沙箱里采样给分。</li>
+    <li><strong>软件工程 RL 落地</strong>：SWE-RL（arXiv:2502.18449，Meta FAIR）用轻量规则型奖励（与真值补丁相似度）在开源软件演化数据上做 RL。</li>
+</ul>
+</div>
+<p class="src-list">常规化：工具调用、ReAct 规划、RAG。真正前沿：原生 GUI agent、多轮环境奖励 RL、Deep-Research 长程闭环、多 agent 协作+联合 RL（仍早期）。</p>
+</section>
+
+<!-- ==================== 06 RL ==================== -->
+<section id="rl">
+<h2><span class="num" style="background:var(--accent2);color:#fff">06</span> RL 算法前沿（GRPO 家族 / RLVR）</h2>
+<p class="section-desc">与站内 <a href="/agentic-rl-guide.html">Agentic RL 全景指南</a>、<a href="/rl-interview-guide.html">RL 面试速查</a> 互链；此处只留 2025–2026 的算法增量。</p>
+<!-- AUTO:INSERT:rl -->
+<p><strong>GRPO</strong>（DeepSeekMath 提出，组内相对优势、去 critic）是 RLVR 的默认起点；<strong>RLVR（可验证奖励）</strong>用可自动判定的信号（数学答案、单元测试、规则匹配）当奖励，规避奖励模型偏差。2025–26 的增量集中在「修偏」与「稳 MoE」：</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>问题</th><th>表现</th><th>2025–26 修复</th></tr></thead>
+<tbody>
+<tr><td>训练/推理不一致</td><td>rollout 引擎(vLLM/SGLang)与训练引擎数值/token 级偏差致 off-policy 漂移</td><td><strong>GSPO</strong> 序列级重要性比率（arXiv:2507.18071，Qwen）；DAPO Clip-Higher；截断重要性采样(TIS)</td></tr>
+<tr><td>熵坍缩</td><td>早期熵骤降、探索枯竭、性能饱和（经验律 <code>R=−a·e^H+b</code>）</td><td><strong>Clip-Cov / KL-Cov</strong>（arXiv:2505.22617）；Clip-Higher；熵正则</td></tr>
+<tr><td>长度偏置</td><td>GRPO 难度/长度归一化人为拉长（尤其错误）回答</td><td><strong>Dr.GRPO</strong> 去偏（arXiv:2503.20783）；DAPO Token-Level Loss</td></tr>
+</tbody>
+</table>
+</div>
+<div class="insight">
+    <div class="insight-title">DAPO 四技术（arXiv:2503.14476，ByteDance Seed/清华）</div>
+    <p style="margin:0">Clip-Higher（解耦上下裁剪、缓解熵坍缩）· Dynamic Sampling（过滤全对/全错样本保梯度信号）· Token-Level Policy Gradient Loss（去长度归一偏置）· Overlong Reward Shaping（抑制超长噪声惩罚）。GSPO 则用整条输出的序列级重要性比率替代 token 级，显著<strong>稳定 MoE 的 RL 训练</strong>。</p>
+</div>
+</section>
+
+<!-- ==================== 07 OPD ==================== -->
+<section id="opd">
+<h2><span class="num" style="background:var(--accent3);color:#fff">07</span> OPD（On-Policy Distillation）提要</h2>
+<p class="section-desc">站内 <a href="/agentic-rl-guide.html">Agentic RL 全景指南</a> 已有 OPD 独立长章节，此处仅作提要 + 互链。</p>
+<!-- AUTO:INSERT:opd -->
+<div class="card green">
+    <p><strong>原理</strong>（Thinking Machines Lab 博客，Kevin Lu，2025-10-27）：让<strong>学生模型自己采样轨迹</strong>，再由更强的<strong>教师模型对每个 token 逐一打分</strong>（以 reverse-KL 作 per-token 惩罚）。学习发生在「学生真实会到达的状态」上，因此能纠正学生自身的失败模式。</p>
+    <ul class="tight" style="margin-bottom:0.4rem">
+        <li><strong>vs SFT / off-policy 蒸馏</strong>：后者模仿教师产出，学生看不到自己会犯的错误分布；OPD 在学生自采样状态上监督。</li>
+        <li><strong>vs RL</strong>：RL 也是自采样，但奖励是稀疏的结果级信号；OPD 是稠密的 per-token 教师监督，样本效率高得多。</li>
+    </ul>
+    <p class="src-list" style="margin-bottom:0">成本效益：博客称达 RL 相当推理能力成本仅「一小部分」（9–30×，自蒸馏 50–100×）——<span class="pill self">厂商单方数据，未独立复现</span>。定位：OPD 打底 + RLVR 冲高，互补。</p>
+</div>
+</section>
+
+<!-- ==================== 08 训练策略 ==================== -->
+<section id="training">
+<h2><span class="num" style="background:var(--accent4);color:#fff">08</span> 训练策略</h2>
+<p class="section-desc">一手来源：Qwen3 技术报告（arXiv:2505.09388）、DeepSeek-V3 技术报告（arXiv:2412.19437）。与站内 <a href="/distributed-training-guide.html">分布式训练指南</a> 互链。</p>
+<!-- AUTO:INSERT:training -->
+<div class="card">
+<ul class="tight">
+    <li><strong>三段式预训练</strong>：① 通用阶段 ~30T token / 4096 序列；② <strong>mid-training（中段训练）</strong> ~5T 高质量 token，偏 STEM/代码/推理/合成数据；③ 长上下文阶段（4096→32768）。Qwen3 总 36T token / 119 语言。mid-training 在 2025 年已从模糊说法变为技术报告里的<strong>正式阶段</strong>。</li>
+    <li><strong>长上下文扩展</strong>：RoPE base 10,000 → 1,000,000，配合 YaRN 与 Dual Chunk Attention，支持 128K（报告未宣称 1M）。</li>
+    <li><strong>现代后训练管线</strong>：Long-CoT Cold Start（长思维链冷启动）→ RL；行业通用为 SFT → 奖励建模/RLVR(PPO/GRPO) + 拒绝采样(RFT/STaR) + 课程学习。</li>
+    <li><strong>效率</strong>：DeepSeek-V3（671B/37B）配 MLA + auxiliary-loss-free 负载均衡 + 多 token 预测(MTP)，仅用 2.788M H800 GPU-hours，<strong>FP8 混合精度全量训练</strong>；Qwen3 MoE 128 专家激活 8、global-batch 负载均衡。</li>
+</ul>
+</div>
+</section>
+
+<!-- ==================== 09 Benchmark ==================== -->
+<section id="bench">
+<h2><span class="num" style="background:var(--accent5);color:#fff">09</span> Benchmark（含 Terminal-Bench 专项）</h2>
+<p class="section-desc">2026 的关键词是<strong>饱和与污染</strong>。每个基准覆盖「样本构造 / 评测方法 / 现状」三维；厂商自报分数已标注。</p>
+<!-- AUTO:INSERT:bench -->
+
+<h3>9.1 Terminal-Bench 专项核查 <span class="pill fact">FACT</span></h3>
+<div class="card purple">
+    <p>稳定版 <strong>v4.0.0 = 精确 66 个任务</strong>（Harbor Hub 后端确认 "66 of 66"，latest=4.0.0）。版本沿革：<strong>2.0 = 89 任务</strong>，<strong>2.1</strong> 并非新增而是修复 2.0 的 89 个任务中的 28 个（外部依赖/资源不匹配/规格错误）。</p>
+    <p><strong>发布快照 ≠ 实时数据</strong>：66 是 v4.0.0 的发布快照任务数；榜单每行 <code>n_trials=330</code>（≈66×5 trial）是实时运行数据，按 resolution rate + 95% 置信区间排序。实时榜首 <strong>GPT-6 Astra + Codex(max) 58.18%</strong>（CI 55.39–60.97），并列 Claude Fable 5.1 57.88%——远未饱和。</p>
+    <p style="margin-bottom:0"><strong>Terminal-Bench-Science</strong>：v0.1.0，70 任务 / 5 领域（life/physical/Earth/mathematical/engineering）；live 榜首 Claude Opus 5 / Claude Code 仅 30.0%（科研级长程，未饱和）；v0.2 仍在征稿。论文 arXiv:2601.11868。</p>
+</div>
+<div class="warning">
+    <div class="insight-title">⚠️ 方法论坑 & 更正</div>
+    <p style="margin:0">① 官网 tbench.ai 是 Next.js 动态页，直接抓 HTML <strong>拿不到榜单行数据</strong> → 需从官网取数据集包名 <code>terminal-bench/terminal-bench/4</code>，再调 Harbor Hub 的 leaderboard-read 后端读取。② 早前流传的「v3.0.0 = 74 任务」<strong>无法从一手来源证实</strong>，本页不采用。</p>
+</div>
+
+<h3>9.2 推理 / 通用 / Agent 基准对照</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>基准</th><th>样本构造</th><th>评测方法</th><th>现状（饱和？）</th></tr></thead>
+<tbody>
+<tr><td>GPQA-Diamond</td><td>198 题研究生级理化生，Google-proof</td><td>4 选 1，须以 "ANSWER:" 结尾</td><td>模型已超人类专家(69.7%)，<strong>接近天花板</strong></td></tr>
+<tr><td>HLE</td><td>2500 题 / 100+ 学科 / 多模态，含隐藏题防过拟合</td><td>闭式+置信度，o3-mini 裁判</td><td>Gemini 3 Pro 38.3%，<strong>仍远未饱和</strong>（最硬通用榜之一）</td></tr>
+<tr><td>ARC-AGI-2</td><td>各层 120 题，剔除可穷举搜索</td><td>pass@2 校准人类可解性</td><td>榜首 GPT-6 Astra 95.0%，<strong>快速逼近饱和</strong></td></tr>
+<tr><td>MMLU-Pro</td><td>12,032 题 / 14 学科 / 10 选项</td><td>CoT vs 直接，24 prompt 风格</td><td>头部 ~90%，<strong>趋于饱和</strong></td></tr>
+<tr><td>AIME 24/25</td><td>每年 30 题，整数答案</td><td>pass@1 精确匹配</td><td>GPT-5.2 99%，<strong>严重饱和</strong>、小样本脆弱</td></tr>
+<tr><td>LiveCodeBench</td><td>滚动采集竞赛题、标注发布日期防污染</td><td>LLM 生成测试 + pass@1</td><td>抗污染设计，难题仍有区分度</td></tr>
+<tr><td>SWE-bench Verified</td><td>500 人工验证任务 / 12 Python 仓库 / 每题 3 标注者</td><td>改代码跑单元测试 pass/fail</td><td>头部 95% <span class="pill self">全自报·0独立验证</span>；<strong>污染争议</strong>：仅凭 task ID 可检索答案，同权重在 SWE-bench Pro 仅 45.9%，OpenAI 已弃用</td></tr>
+<tr><td>τ-bench</td><td>retail 115 + airline 50 任务，工具 API + mock DB + policy，LLM 模拟用户</td><td>比对最终 DB 态，核心指标 <strong>pass^k</strong>（k 次全成功）</td><td>已扩展 τ²(dual-control) / τ³(banking/voice)</td></tr>
+</tbody>
+</table>
+</div>
+<p class="src-list">方法学争议：harness drift（同权重不同 scaffold 波动 10–20 分）、采样方差（需报 CI）、LLM 裁判偏差（AI21：接近标准答案的输出被系统性高估）。</p>
+</section>
+
+<!-- ==================== 10 Protein LLM ==================== -->
+<section id="protein">
+<h2><span class="num" style="background:var(--accent3);color:#fff">10</span> Protein LLM（领域 LLM + Agent 切片）</h2>
+<p class="section-desc">仅收录公开发表信息。蛋白质是「领域 LLM」最成熟的试验田：海量无标注序列 + 可自动计算的稠密奖励 + 可编程确定性工具链，使 RL+Agent+工具闭环能在湿实验前被大规模验证。</p>
+<!-- AUTO:INSERT:protein -->
+
+<h3>10.1 蛋白 / 基因组语言模型 <span class="pill fact">FACT</span></h3>
+<div class="card green">
+    <p>谱系：ESM-2/ESMFold（Science 2023，15B）→ <strong>ESM-3</strong>（Science 2025，98B，序列/结构/功能多轨，「模拟 5 亿年进化」）→ ESM C/Cambrian（EvolutionaryScale 2024-12，300M/600M/6B）。</p>
+    <p><strong>重大变动</strong>：EvolutionaryScale 团队 2025-11-06 并入 <strong>CZ Biohub</strong>（Alex Rives 任 Head of Science）。2026-05-27 Biohub 发布「蛋白质生物学世界模型」，开源 <strong>ESMC-6B（转 MIT）+ ESMFold2 + 稀疏自编码器(SAE) + ESM Atlas（68 亿序列 / 11 亿结构）+ binder 设计</strong>，Nature 独立报道。</p>
+    <p style="margin-bottom:0"><strong>Evo 2</strong>（Arc × NVIDIA，Nature 2026-04-30，Apache-2.0）：StripedHyena 2，7B/20B/40B，<strong>100 万 token（1 兆碱基）上下文</strong>，训于 9.3 万亿碱基对，零样本推断非编码致病突变。<span class="pill rumor">无公开 Evo 3 / AlphaFold 4</span></p>
+</div>
+<p class="src-list">结构预测：AlphaFold 3（Nature 2024，代码 Apache-2.0 但<strong>权重受非商业条款约束</strong>）；开源替代栈 Boltz-2(MIT，宣称逼近 FEP 精度但已有独立质疑 arXiv:2603.05532)、Chai-1(MIT)、字节 Protenix-v2。「ESMFold2 结合朝向超 AF3」目前主要依据 Biohub 自有新闻稿，缺独立复现 <span class="pill self">厂商口径</span>。</p>
+
+<h3>10.2 蛋白 Agent + 工具 + RL</h3>
+<div class="card">
+    <p><strong>已发表</strong>：ProtAgents（Buehler MIT，Digital Discovery 2024）——LLM 多智能体 + 物理第一性原理模拟协作做 de novo 蛋白设计（奠基作）；Proteo-R1（ICML 2026，MLLM 理解专家 + 扩散生成专家双专家解耦）；DPLM-Evo（ICML 2026，演化式离散扩散显式建模替换/插入/删除）；Co-Scientist 与 Robin（同登 Nature 2026-05，科学发现多智能体进入主流期刊认可）。</p>
+    <p style="margin-bottom:0"><strong>预印本（未评审，谨慎）</strong> <span class="pill preprint">PREPRINT</span>：AgentPLM（RAD 交错调用 ESMFold/FoldX/Vina + CAPO 轨迹级 DPO，最贴近「蛋白 agent+工具+RL」）、ProtoCycle（SFT 轨迹+在线 RL）、VenusFactory2（自演化多智能体）、ProteinZero（逆折叠在线 RL 自改进）、ApexAmphion（6.4B PLM+PPO，体外 100% 命中）。</p>
+</div>
+
+<div class="warning">
+    <div class="insight-title">⚠️ 关键边界证据（务必写入）</div>
+    <p style="margin:0">朴素文本 CoT 迁移到蛋白功能理解<strong>无效</strong>——PFUA（arXiv:2601.03604）实证 RL 只放大表层关键词、不引入新生物学知识；Reflection Pretraining（arXiv:2512.20954）从理论上指出蛋白/RNA LM 的 token 空间表达力不足致 CoT 不成立；ABLE（2026-09-05）测得 15 个前沿模型中 <strong>7 个拒绝全部蛋白设计工具任务</strong>。</p>
+</div>
+
+<div class="insight">
+    <div class="insight-title">领域 RL 何时有效：一条经验法则</div>
+    <p style="margin:0">Cao et al.（arXiv:2510.01571）在抗菌肽设计、激酶变体优化、抗体工程、逆折叠四域系统配对 RL 与 PLM，结论：收益由 <strong>任务余量 × 奖励保真度 × 策略容量</strong> 三因子交互决定；<strong>瓶颈是奖励保真度而非策略规模</strong> → 先做奖励建模与校准，再扩策略规模。对任何领域 LLM 团队可直接迁移。</p>
+</div>
+</section>
+
+<!-- ==================== 11 事实 vs 传闻 ==================== -->
+<section id="rumor">
+<h2><span class="num" style="background:var(--danger);color:#fff">11</span> 事实 vs 传闻（分栏存档）</h2>
+<p class="section-desc">本页所有存疑论断集中列出，避免被当作既成事实传播。</p>
+<div class="card red">
+    <div class="card-title">传闻 / 未证实 <span class="pill rumor">RUMOR</span></div>
+    <ul class="tight" style="margin-bottom:0">
+        <li>GPT-6 Astra「循环 / loop transformer 架构」（仅 The Information 匿名信源，OpenAI 未确认）</li>
+        <li>Grok 4.6「1.5T 参数」（第三方泄露）；Gemini 3.5 Pro 延期（社媒/低质源）</li>
+        <li>MiniMax M3（2026-06）；Meta Llama 后继转向闭源（媒体援引消息人士）</li>
+        <li>Terminal-Bench「v3.0.0 = 74 任务」（无一手来源，本页不采用）</li>
+        <li>ESMFold2 结合朝向超越 AlphaFold 3（缺独立第三方复现）</li>
+    </ul>
+</div>
+<div class="card orange">
+    <div class="card-title">厂商自报基准 / 单方数据 <span class="pill self">SELF-REPORT</span></div>
+    <p style="margin-bottom:0">Frontier-Bench、DeepSWE、OSWorld、Agent's Last Exam、Terminal-Bench 厂商分、SWE-bench Verified 头部 95%（全 self-reported、0 独立验证）、OPD 效率倍数 9–30× / 50–100×（Thinking Machines 单方）——引用时须标注自报属性。</p>
+</div>
+</section>
+
+<!-- ==================== 12 更新日志 ==================== -->
+<section id="changelog">
+<h2><span class="num" style="background:var(--accent2);color:#fff">12</span> 更新日志</h2>
+<p class="section-desc">每周一由 QoderWork 定时任务自动做增量调研并在此追加一条；手动更新同样登记。</p>
+<!-- AUTO:INSERT:changelog -->
+<div class="update-entry">
+    <span class="entry-date">2026-09-10</span>
+    <p style="margin:0"><strong>首版发布</strong>。建立 10 大主题框架（开源模型 / 前沿模型 / 新架构 / Muon / Agent / RL / OPD / 训练策略 / Benchmark / Protein LLM）+ 事实-传闻分栏 + 参考来源。核实要点：DeepSeek-V4 Preview 已开源、GPT-6 Astra 已发布、Terminal-Bench v4.0.0=66 任务（更正 v3.0.0=74 传闻）、Muon 经 Kimi K2 落地万亿参数。</p>
+</div>
+</section>
+
+<!-- ==================== 13 来源 ==================== -->
+<section id="sources">
+<h2><span class="num" style="background:var(--accent);color:var(--bg)">13</span> 参考来源</h2>
+<p class="section-desc">一手来源优先（官方 blog / arXiv abs / HuggingFace / 期刊 DOI）。作者与日期均以 arXiv abs 完整作者列表或 CrossRef 核验，非搜索摘要。</p>
+<div class="card">
+<div class="src-list">
+<p><strong>开源模型</strong>：<a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6 (HF)</a> · <a href="https://arxiv.org/abs/2602.02276">Kimi K2.5 arXiv</a> · <a href="https://qwen.ai/blog?id=qwen3.8">Qwen3.8-Max blog</a> · <a href="https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/">the-decoder</a> · <a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 arXiv</a> · <a href="https://api-docs.deepseek.com/news/news260424/">DeepSeek-V4 Preview</a> · <a href="https://github.com/zai-org/GLM-5">GLM-5</a> · <a href="https://github.com/MiniMax-AI/MiniMax-M2">MiniMax-M2</a></p>
+<p><strong>前沿模型</strong>：<a href="https://openai.com/index/gpt-6-astra/">GPT-6 Astra</a> · <a href="https://www.anthropic.com/news/claude-opus-5">Claude Opus 5</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Fable/Mythos 5.1</a> · <a href="https://deepmind.google/models/model-cards/gemini-3-1-pro/">Gemini 3.1 Pro</a> · <a href="https://x.ai/news/grok-4-6">Grok 4.6</a></p>
+<p><strong>新架构</strong>：<a href="https://arxiv.org/abs/2502.05171">Recurrent Depth / Huginn</a> · <a href="https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and">Raschka: GPT-6 & Looped Transformers（传闻梳理）</a> · <a href="https://arxiv.org/abs/2502.11089">DeepSeek NSA</a> · <a href="https://arxiv.org/abs/2405.21060">Mamba-2</a> · <a href="https://arxiv.org/abs/2501.00663">Titans</a> · <a href="https://arxiv.org/abs/2412.09764">Memory Layers</a></p>
+<p><strong>优化器</strong>：<a href="https://kellerjordan.github.io/posts/muon/">Keller Jordan: Muon</a> · <a href="https://arxiv.org/abs/2502.16982">Moonlight (Muon scalable)</a> · <a href="https://arxiv.org/abs/2507.20534">Kimi K2 (MuonClip)</a> · <a href="https://arxiv.org/abs/2409.20325">Old Optimizer, New Norm</a> · <a href="https://arxiv.org/abs/2409.11321">SOAP</a> · <a href="https://arxiv.org/abs/2405.15682">Schedule-Free</a></p>
+<p><strong>Agent / RL / OPD</strong>：<a href="https://arxiv.org/abs/2501.12326">UI-TARS</a> · <a href="https://arxiv.org/abs/2509.02547">Agentic RL Survey</a> · <a href="https://arxiv.org/abs/2502.18449">SWE-RL</a> · <a href="https://arxiv.org/abs/2503.14476">DAPO</a> · <a href="https://arxiv.org/abs/2503.20783">Dr.GRPO</a> · <a href="https://arxiv.org/abs/2507.18071">GSPO</a> · <a href="https://arxiv.org/abs/2505.22617">Entropy Mechanism</a> · <a href="https://thinkingmachines.ai/blog/on-policy-distillation/">On-Policy Distillation</a></p>
+<p><strong>训练策略</strong>：<a href="https://arxiv.org/abs/2505.09388">Qwen3 Technical Report</a> · <a href="https://arxiv.org/abs/2412.19437">DeepSeek-V3 Technical Report</a></p>
+<p><strong>Benchmark</strong>：<a href="https://www.tbench.ai/">Terminal-Bench</a> · <a href="https://hub.harborframework.com/datasets/terminal-bench/terminal-bench/4">Harbor Hub 数据集 rev4</a> · <a href="https://www.tbench.ai/news/terminal-bench-science-0-1">TB-Science 0.1</a> · <a href="https://arxiv.org/html/2601.11868v1">Terminal-Bench 论文</a> · <a href="https://epoch.ai/benchmarks/gpqa-diamond">GPQA-Diamond</a> · <a href="https://agi.safe.ai/">HLE</a> · <a href="https://arcprize.org/results">ARC Prize</a> · <a href="https://arxiv.org/abs/2406.01574">MMLU-Pro</a> · <a href="https://livecodebench.github.io/">LiveCodeBench</a> · <a href="https://epoch.ai/benchmarks/swe-bench-verified">SWE-bench Verified</a> · <a href="https://taubench.com/">τ-bench</a> · <a href="https://www.digitalapplied.com/blog/llm-benchmark-methodology-2026-contamination-leaderboard-guide">Benchmark Methodology 2026</a></p>
+<p style="margin-bottom:0"><strong>Protein LLM</strong>：<a href="https://biohub.org/news/world-model-of-protein-biology/">Biohub World Model</a> · <a href="https://huggingface.co/biohub/ESMC-6B">ESMC-6B (HF, MIT)</a> · <a href="https://doi.org/10.1126/science.ads0018">ESM-3 (Science)</a> · <a href="https://doi.org/10.1038/s41586-026-10176-5">Evo 2 (Nature)</a> · <a href="https://github.com/google-deepmind/alphafold3">AlphaFold 3</a> · <a href="https://doi.org/10.1039/d4dd00013g">ProtAgents</a> · <a href="https://arxiv.org/abs/2605.02937">Proteo-R1</a> · <a href="https://arxiv.org/abs/2606.02386">AgentPLM</a> · <a href="https://arxiv.org/abs/2601.03604">PFUA</a> · <a href="https://arxiv.org/abs/2510.01571">RL×PLM 三因子</a> · <a href="https://arxiv.org/abs/2609.05818">ABLE</a></p>
+</div>
+</div>
+</section>
+
+</div>
+
+<div class="page-footer">
+    <p>Yuxiang Wang · Fudan University · 前沿追踪由每周自动调研任务增量维护</p>
+    <p><a href="/index.html">返回首页</a> · <a href="https://github.com/stein-wang0226">GitHub</a></p>
+</div>
+
+<script>
+    // scroll-spy for toc-nav
+    const links = Array.from(document.querySelectorAll('.toc-nav a'));
+    const map = {};
+    links.forEach(a => { const id = a.getAttribute('href').slice(1); const s = document.getElementById(id); if (s) map[id] = a; });
+    const spy = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                links.forEach(l => l.classList.remove('active'));
+                const a = map[e.target.id]; if (a) a.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+    Object.keys(map).forEach(id => spy.observe(document.getElementById(id)));
+</script>
+
+</body>
+</html>
