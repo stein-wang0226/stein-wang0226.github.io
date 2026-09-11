@@ -180,7 +180,7 @@
             <span class="badge badge-blue">Terminal-Bench</span>
             <span class="badge badge-purple">Protein LLM</span>
         </div>
-        <div class="updated-pill"><span class="dot"></span> 最后更新 <span id="last-updated">2026-09-10</span></div>
+        <div class="updated-pill"><span class="dot"></span> 最后更新 <span id="last-updated">2026-09-11</span></div>
     </div>
 </div>
 
@@ -212,7 +212,7 @@
 <div class="insight">
     <div class="insight-title">五条速览</div>
     <ul class="tight">
-        <li><strong>稀疏注意力成开源主线</strong>：DeepSeek-V3.2 的 DSA、GLM-5 集成 DSA、Kimi 用 MLA；DeepSeek-V4 Preview 已把上下文推到 1M。</li>
+        <li><strong>开源主线 = 更大 MoE + 极致降本</strong>：Kimi K3 把开源模型推到 <strong>3T 级</strong>（KDA 注意力 + LatentMoE），DeepSeek-V4.1-Flash 用 <strong>CED + CSA2 + FP4 KV</strong> 把每 token KV 压到 890B（约 V4-Flash 的 1/4）；DSA/MLA 稀疏注意力仍是共识。</li>
         <li><strong>Muon 走进万亿参数生产模型</strong>：Kimi K2 用 MuonClip 全程零 loss spike；Moonlight 实证同算力约 2× 效率。</li>
         <li><strong>「GPT-6 用 Loop Transformer」仍是传闻</strong>：公开可证的循环深度实证是 Huginn（arXiv:2502.05171）；OpenAI 未确认 Astra 架构。</li>
         <li><strong>RL 的增量在「修偏」</strong>：GSPO（序列级重要性，稳 MoE）、Dr.GRPO（去长度偏置）、Clip-Cov/KL-Cov（抗熵坍缩）。</li>
@@ -226,6 +226,20 @@
 <h2><span class="num" style="background:var(--accent2);color:#fff">01</span> 开源模型最新迭代</h2>
 <p class="section-desc">Kimi / Qwen / DeepSeek 三强的最新技术坐标，以及 GLM、MiniMax、Llama 的对照。参数、上下文、注意力变体均以官方模型卡 / arXiv / HuggingFace 核实。</p>
 <!-- AUTO:INSERT:models -->
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-11</span>
+    <div class="card-title">Kimi K3（Moonshot，开源，Kimi K3 License）<span class="pill fact">FACT</span></div>
+    <p><strong>已开源、且是 Moonshot 当前最新旗舰</strong>（更正首版把 K2.6 当作最新口径）。HuggingFace <code>moonshotai/Kimi-K3</code> 于 2026-06-13 建库、2026-09-02 更新，权重公开（下载量已逾 230 万）。官方定位<strong>全球首个开源 3T 级模型</strong>：总参 <strong>2.8T</strong>，采用 <strong>KDA（Kimi Delta Attention）+ AttnRes（Attention Residuals）</strong> 注意力，<strong>Stable LatentMoE</strong> 框架每 token 激活 <strong>896 专家中的 16 个</strong>，相对 Kimi K2 的整体 scaling 效率提升约 <strong>2.5×</strong>；原生视觉、<strong>1M 上下文</strong>，权重以 MXFP4（U8）压缩分发。路透报道其发布时间约 2026-07-17。技术报告见仓库 <code>k3_tech_report.pdf</code>。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/moonshotai/Kimi-K3">HF moonshotai/Kimi-K3</a> · <a href="https://www.kimi.com/blog/kimi-k3">Kimi 官方博客</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">GitHub MoonshotAI/Kimi-K3</a>。「scaling 效率 2.5×」为厂商自报 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-11</span>
+    <div class="card-title">DeepSeek-V4.1-Flash（DeepSeek，2026-09-10，MIT，含技术报告）<span class="pill fact">FACT</span></div>
+    <p>多模态 MoE，<strong>骨干 552B</strong>、<strong>1M 上下文</strong>，原生图文输入、自回归生成；HF <code>deepseek-ai/DeepSeek-V4.1-Flash</code> 已开放权重（MIT）。核心是 <strong>Causal Encoder-Decoder（CED）</strong>：40 层 = 20 层因果编码器 + 20 层解码器，解码器全局 KV 由编码器末层隐状态投影而来，因而 <strong>prefill 仅激活 8B、decode 激活 16B</strong>，对输入密集的 agentic 负载显著降本。叠加 <strong>CSA2（Full/Reindex/Reuse 三静态模式跨层共享 KV 与 indexer）+ 分层稀疏 indexer + FP4 主 KV 缓存</strong>，每 token 全局 KV 压到 <strong>890B（约 V4-Flash 的 1/4）</strong>；<strong>SWA Bounded Replay</strong> 把持久化 KV 再降到约 1/8。另含 Single-Pass mHC、Engram 条件记忆（196B，token 查表稀疏访问）、DSpark 投机解码；MoE 为 1 共享 + 384 路由专家、每 token 激活 6 个。预训练 <strong>45T token</strong>（稀疏注意力 @64K，34T 处扩到 1M）；后训练沿用 SFT→RL→OPD，改动集中在 agent 任务/环境的大规模自动合成，并支持 <strong>1–100 连续可调推理强度</strong>。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf">DeepSeek-V4.1 技术报告 PDF（51 页）</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">HF 模型卡</a> · <a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek 官方发布</a>。基准「优于 V4-Pro / V4-Flash」为厂商自报 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
 
 <div class="update-entry">
     <span class="entry-date">2026-09-10</span>
@@ -251,10 +265,12 @@
     <table>
     <thead><tr><th>模型</th><th>发布方 / 时间</th><th>结构</th><th>注意力</th><th>上下文</th><th>许可</th></tr></thead>
     <tbody>
-    <tr><td>Kimi K2.6</td><td>Moonshot · 2026-05</td><td>MoE 1T/32B，384专家×8+1</td><td>MLA</td><td>256K</td><td>Modified MIT</td></tr>
+    <tr><td>Kimi K3</td><td>Moonshot · 2026-07</td><td>MoE 2.8T，LatentMoE 896专家×16</td><td>KDA + AttnRes</td><td>1M</td><td>Kimi K3 License</td></tr>
+    <tr><td>Kimi K2.6（前代）</td><td>Moonshot · 2026-05</td><td>MoE 1T/32B，384专家×8+1</td><td>MLA</td><td>256K</td><td>Modified MIT</td></tr>
     <tr><td>Qwen3.8-Max</td><td>阿里 · 2026-08</td><td>MoE 2.4T/95B</td><td>—</td><td>长程</td><td>开放权重</td></tr>
     <tr><td>DeepSeek-V3.2</td><td>DeepSeek · 2025-12</td><td>MoE 671B/37B，257专家</td><td>DSA(MLA)</td><td>128K</td><td>MIT</td></tr>
     <tr><td>DeepSeek-V4 Preview</td><td>DeepSeek · 2026-04</td><td>Pro 1.6T/49B · Flash 284B/13B</td><td>压缩+DSA</td><td>1M</td><td>开源(Preview)</td></tr>
+    <tr><td>DeepSeek-V4.1-Flash</td><td>DeepSeek · 2026-09-10</td><td>MoE 552B，CED 8B/16B，384专家×6+1</td><td>CSA2 + FP4 KV</td><td>1M</td><td>MIT</td></tr>
     <tr><td>GLM-5</td><td>智谱 Z.ai · 2026-02</td><td>MoE 744B/40B</td><td>集成 DSA</td><td>—</td><td>Apache-2.0</td></tr>
     <tr><td>MiniMax-M2</td><td>MiniMax · 2025-10</td><td>MoE 230B/10B</td><td>—</td><td>128K</td><td>MIT</td></tr>
     <tr><td>Llama 4</td><td>Meta · 2025-04</td><td>原生多模态 Scout/Maverick/Behemoth</td><td>—</td><td>—</td><td>社区许可</td></tr>
@@ -297,6 +313,13 @@
 <p class="section-desc">2025–2026 的架构主线是「注意力降本（稀疏/线性/混合）+ 记忆外挂 + 深度循环换 test-time compute」。与站内 <a href="/dlm-survey/s11_loop_transformer.html">dlm-survey · Loop Transformer</a> 互链去重。</p>
 <!-- AUTO:INSERT:arch -->
 
+<div class="update-entry">
+    <span class="entry-date">2026-09-11</span>
+    <div class="card-title">Qwen4 架构进展：混合线性注意力 MoE 是主线信号<span class="pill fact">FACT</span></div>
+    <p><strong>截至目前没有独立命名的「Qwen4」正式发布</strong>——阿里官方谱系仍是 Qwen3.5 → 3.6 → 3.7-Max → <strong>Qwen3.8-Max / Qwen3.8-Flash-Next</strong>。所谓「Qwen4 架构」目前主要体现在 <strong>Qwen3-Next / Qwen3.8-Flash-Next</strong> 这条<strong>混合注意力试验线</strong>：以 <strong>Gated DeltaNet（门控线性注意力/类 Delta 规则）</strong> 交替 <strong>Gated Attention（门控全注意力）</strong>，叠加高稀疏 MoE，用大部分线性层把长上下文的 KV/算力成本压下来、只在少数层保留全注意力做精确检索。这与 DeepSeek 的 DSA/CSA2、Kimi 的 KDA 属同一时代命题——<strong>「注意力降本」是 Qwen 下一代架构最确定的方向</strong>。任何「Qwen4 即将发布/已用 loop 架构」的说法暂无官方证实 <span class="pill rumor">RUMOR</span>。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://qwen.ai/blog?id=qwen3-next">Qwen3-Next 官方博客</a> · <a href="https://github.com/QwenLM/Qwen3.8-Flash-Next">GitHub QwenLM/Qwen3.8-Flash-Next</a> · <a href="https://huggingface.co/blog">HF Blog: 注意力架构之争</a>。</p>
+</div>
+
 <h3>3.1 循环深度潜空间推理（Recurrent Depth）<span class="pill fact">FACT</span></h3>
 <p>Geiping et al.《Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach》（arXiv:2502.05171，NeurIPS 2025）提出模型 <strong>Huginn</strong>：3.5B 参数、800B token 预训练，由<strong>单个循环块反复迭代</strong>构成，测试时可展开到任意深度——最多相当于 50 步迭代，达到「相当于 50B 参数模型的算力负载」。权重已开源（<code>tomg-group-umd/huginn-0125</code>）。</p>
 <div class="insight">
@@ -315,7 +338,8 @@
 <thead><tr><th>方向</th><th>代表工作</th><th>要点</th></tr></thead>
 <tbody>
 <tr><td>稀疏注意力</td><td>DeepSeek NSA（arXiv:2502.11089）→ V3.2 的 DSA；GLM-5 集成 DSA</td><td>硬件对齐、可原生训练，长上下文速度大幅超越全注意力；2026 开源主线</td></tr>
-<tr><td>线性 / 混合 SSM</td><td>Mamba-2（arXiv:2405.21060）；Qwen3-Next-80B-A3B（Gated DeltaNet + Gated Attention）；Nemotron 3 Nano（arXiv:2512.20848）</td><td>混合架构在 2025 年底成为开源前沿模型的常规选项</td></tr>
+<tr><td>线性 / 混合 SSM</td><td>Mamba-2（arXiv:2405.21060）；Qwen3-Next-80B-A3B / Qwen3.8-Flash-Next（Gated DeltaNet + Gated Attention）；Kimi K3（KDA + AttnRes）；Nemotron 3 Nano（arXiv:2512.20848）</td><td>混合/门控线性注意力在 2026 年成为开源前沿模型降本的主流选项</td></tr>
+<tr><td>编解码 / KV 压缩</td><td>DeepSeek-V4.1-Flash（Causal Encoder-Decoder + CSA2 + FP4 主 KV，890B/token）；Engram 条件记忆（196B 查表）</td><td>把「注意力降本」推进到「KV 缓存极限压缩」，面向输入密集的长程 agentic 负载</td></tr>
 <tr><td>记忆机制</td><td>Google Titans（arXiv:2501.00663）；Meta Memory Layers at Scale（arXiv:2412.09764）</td><td>测试时学习记忆 / 大容量键值记忆层替代部分 FFN，事实性任务提升显著</td></tr>
 </tbody>
 </table>
@@ -514,6 +538,10 @@
 <p class="section-desc">每周一由 QoderWork 定时任务自动做增量调研并在此追加一条；手动更新同样登记。</p>
 <!-- AUTO:INSERT:changelog -->
 <div class="update-entry">
+    <span class="entry-date">2026-09-11</span>
+    <p style="margin:0"><strong>增量更新</strong>。新增 3 条：① <strong>Kimi K3</strong>（开源 2.8T，KDA+AttnRes，LatentMoE 896×16，1M）——更正首版把 K2.6 当作 Moonshot 最新的口径；② <strong>DeepSeek-V4.1-Flash</strong>（2026-09-10，MIT，CED+CSA2+FP4 KV，890B/token，含 51 页技术报告）；③ <strong>Qwen4 架构</strong> 信号（无独立发布，方向落在 Qwen3-Next/3.8-Flash-Next 混合线性注意力 MoE）。开源对照表补 K3 / V4.1-Flash 行，§新架构表补「编解码/KV 压缩」行，刷新速览首条。</p>
+</div>
+<div class="update-entry">
     <span class="entry-date">2026-09-10</span>
     <p style="margin:0"><strong>首版发布</strong>。建立 10 大主题框架（开源模型 / 前沿模型 / 新架构 / Muon / Agent / RL / OPD / 训练策略 / Benchmark / Protein LLM）+ 事实-传闻分栏 + 参考来源。核实要点：DeepSeek-V4 Preview 已开源、GPT-6 Astra 已发布、Terminal-Bench v4.0.0=66 任务（更正 v3.0.0=74 传闻）、Muon 经 Kimi K2 落地万亿参数。</p>
 </div>
@@ -525,9 +553,9 @@
 <p class="section-desc">一手来源优先（官方 blog / arXiv abs / HuggingFace / 期刊 DOI）。作者与日期均以 arXiv abs 完整作者列表或 CrossRef 核验，非搜索摘要。</p>
 <div class="card">
 <div class="src-list">
-<p><strong>开源模型</strong>：<a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6 (HF)</a> · <a href="https://arxiv.org/abs/2602.02276">Kimi K2.5 arXiv</a> · <a href="https://qwen.ai/blog?id=qwen3.8">Qwen3.8-Max blog</a> · <a href="https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/">the-decoder</a> · <a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 arXiv</a> · <a href="https://api-docs.deepseek.com/news/news260424/">DeepSeek-V4 Preview</a> · <a href="https://github.com/zai-org/GLM-5">GLM-5</a> · <a href="https://github.com/MiniMax-AI/MiniMax-M2">MiniMax-M2</a></p>
+<p><strong>开源模型</strong>：<a href="https://huggingface.co/moonshotai/Kimi-K3">Kimi K3 (HF)</a> · <a href="https://www.kimi.com/blog/kimi-k3">Kimi K3 官方博客</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">Kimi K3 GitHub/技术报告</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash (HF)</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf">V4.1 技术报告 PDF</a> · <a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek-V4.1-Flash 发布</a> · <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6 (HF)</a> · <a href="https://arxiv.org/abs/2602.02276">Kimi K2.5 arXiv</a> · <a href="https://qwen.ai/blog?id=qwen3.8">Qwen3.8-Max blog</a> · <a href="https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/">the-decoder</a> · <a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 arXiv</a> · <a href="https://api-docs.deepseek.com/news/news260424/">DeepSeek-V4 Preview</a> · <a href="https://github.com/zai-org/GLM-5">GLM-5</a> · <a href="https://github.com/MiniMax-AI/MiniMax-M2">MiniMax-M2</a></p>
 <p><strong>前沿模型</strong>：<a href="https://openai.com/index/gpt-6-astra/">GPT-6 Astra</a> · <a href="https://www.anthropic.com/news/claude-opus-5">Claude Opus 5</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Fable/Mythos 5.1</a> · <a href="https://deepmind.google/models/model-cards/gemini-3-1-pro/">Gemini 3.1 Pro</a> · <a href="https://x.ai/news/grok-4-6">Grok 4.6</a></p>
-<p><strong>新架构</strong>：<a href="https://arxiv.org/abs/2502.05171">Recurrent Depth / Huginn</a> · <a href="https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and">Raschka: GPT-6 & Looped Transformers（传闻梳理）</a> · <a href="https://arxiv.org/abs/2502.11089">DeepSeek NSA</a> · <a href="https://arxiv.org/abs/2405.21060">Mamba-2</a> · <a href="https://arxiv.org/abs/2501.00663">Titans</a> · <a href="https://arxiv.org/abs/2412.09764">Memory Layers</a></p>
+<p><strong>新架构</strong>：<a href="https://arxiv.org/abs/2502.05171">Recurrent Depth / Huginn</a> · <a href="https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and">Raschka: GPT-6 & Looped Transformers（传闻梳理）</a> · <a href="https://arxiv.org/abs/2502.11089">DeepSeek NSA</a> · <a href="https://qwen.ai/blog?id=qwen3-next">Qwen3-Next（Gated DeltaNet 混合注意力）</a> · <a href="https://github.com/QwenLM/Qwen3.8-Flash-Next">Qwen3.8-Flash-Next</a> · <a href="https://arxiv.org/abs/2405.21060">Mamba-2</a> · <a href="https://arxiv.org/abs/2501.00663">Titans</a> · <a href="https://arxiv.org/abs/2412.09764">Memory Layers</a></p>
 <p><strong>优化器</strong>：<a href="https://kellerjordan.github.io/posts/muon/">Keller Jordan: Muon</a> · <a href="https://arxiv.org/abs/2502.16982">Moonlight (Muon scalable)</a> · <a href="https://arxiv.org/abs/2507.20534">Kimi K2 (MuonClip)</a> · <a href="https://arxiv.org/abs/2409.20325">Old Optimizer, New Norm</a> · <a href="https://arxiv.org/abs/2409.11321">SOAP</a> · <a href="https://arxiv.org/abs/2405.15682">Schedule-Free</a></p>
 <p><strong>Agent / RL / OPD</strong>：<a href="https://arxiv.org/abs/2501.12326">UI-TARS</a> · <a href="https://arxiv.org/abs/2509.02547">Agentic RL Survey</a> · <a href="https://arxiv.org/abs/2502.18449">SWE-RL</a> · <a href="https://arxiv.org/abs/2503.14476">DAPO</a> · <a href="https://arxiv.org/abs/2503.20783">Dr.GRPO</a> · <a href="https://arxiv.org/abs/2507.18071">GSPO</a> · <a href="https://arxiv.org/abs/2505.22617">Entropy Mechanism</a> · <a href="https://thinkingmachines.ai/blog/on-policy-distillation/">On-Policy Distillation</a></p>
 <p><strong>训练策略</strong>：<a href="https://arxiv.org/abs/2505.09388">Qwen3 Technical Report</a> · <a href="https://arxiv.org/abs/2412.19437">DeepSeek-V3 Technical Report</a></p>
