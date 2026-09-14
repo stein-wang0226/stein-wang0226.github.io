@@ -180,7 +180,7 @@
             <span class="badge badge-blue">Terminal-Bench</span>
             <span class="badge badge-purple">Protein LLM</span>
         </div>
-        <div class="updated-pill"><span class="dot"></span> 最后更新 <span id="last-updated">2026-09-11</span></div>
+        <div class="updated-pill"><span class="dot"></span> 最后更新 <span id="last-updated">2026-09-14</span></div>
     </div>
 </div>
 
@@ -228,6 +228,34 @@
 <!-- AUTO:INSERT:models -->
 
 <div class="update-entry">
+    <span class="entry-date">2026-09-14</span>
+    <div class="card-title">GLM-5.3（智谱 Z.ai，2026-09-04，GLM-5.3 License）<span class="pill fact">FACT</span></div>
+    <p>组织级巡检补录（页面此前只到 GLM-5）。HF <code>zai-org/GLM-5.3</code>（arch <code>glm_moe_dsa</code>，MoE + DSA 稀疏注意力，FP8 分发）2026-08-25 建库、2026-09-04 更新。<strong>沿用 GLM-5.2 同一基座，全部增益来自后训练</strong>：官方称其为<strong>当前最强的开源权重编码模型</strong>，在自研 Z.ai Code Bench 上较 GLM-5.2 <strong>+50%</strong>，并在 <strong>Terminal-Bench 3.0（28.3）与 Agents' Last Exam</strong> 拿下开源 SOTA；随后训练规模扩大<strong>涌现出网络安全能力</strong>，在 CyberGym 漏洞发现达 <strong>84.5</strong>（SOTA）、利用链 ExploitGym 较 5.2 翻倍以上。技术报告《GLM-5: from Vibe Coding to Agentic Engineering》（arXiv:2602.15763，Zhenyu Hou、Zhengxiao Du、Qinkai Zheng 等）。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/zai-org/GLM-5.3">HF zai-org/GLM-5.3</a> · <a href="https://arxiv.org/abs/2602.15763">GLM-5 技术报告 arXiv:2602.15763</a>。上述基准分均为厂商自报 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-14</span>
+    <div class="card-title">GLM-5.3-Flash（智谱 Z.ai，2026-09-07，MIT，原生多模态）<span class="pill fact">FACT</span></div>
+    <p>GLM-5 系列<strong>首个原生多模态</strong>模型（image-text-to-text），<strong>总参 320B / 激活仅 18B</strong>，MIT 许可，HF <code>zai-org/GLM-5.3-Flash</code>（arch <code>glm5_next</code>，下载量已逾 157 万）。首次在 GLM 系列引入<strong>稀疏 + 线性注意力的混合架构</strong>，在保留精确长上下文能力的同时大幅压低长上下文服务成本；并采用 <strong>mHC（Manifold-Constrained Hyper-Connections，流形约束超连接）</strong>提升 scaling 效率；配最新 <strong>30T token 多模态预训练</strong>语料。官方称以 <strong>1/10 价格</strong>全面超越 GLM-5.2、在编码/agentic 基准上逼近 Claude Opus 4.8；支持 <code>reasoning_effort</code>（low/high/max）思考预算控制。详见 <a href="#arch">§新架构</a>。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/zai-org/GLM-5.3-Flash">HF zai-org/GLM-5.3-Flash</a> · <a href="https://arxiv.org/abs/2602.15763">GLM-5 技术报告</a>。超越 5.2 / 逼近 Opus 4.8 为厂商自报 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-14</span>
+    <div class="card-title">MiniMax-M3（MiniMax，2026-06/07 正式发布，MiniMax Community License）<span class="pill fact">FACT</span></div>
+    <p><strong>更正：M3 已正式发布，从本页「传闻」栏移出。</strong>HF <code>MiniMaxAI/MiniMax-M3</code>（arch <code>minimax_m3_vl</code>）2026-06-02 建库、2026-07-23 更新，权重公开。<strong>原生多模态、1M 上下文、总参 ~428B / 激活 ~23B</strong>；从训练第一步起做文本/图像/视频<strong>混合模态训练</strong>以实现更深语义融合。核心是 <strong>MSA（MiniMax Sparse Attention）</strong>：相较 GQA 大幅降低注意力算力/显存，在 1M 上下文下较 M2 实现 <strong>9× prefill、15× decode 加速、每 token 算力降至 1/20</strong>；主打长程 agentic 的编码与 cowork，<code>thinking</code> 支持 enabled/adaptive/disabled 三档。技术报告《MiniMax Sparse Attention》（arXiv:2606.13392，Xunhao Lai、Weiqi Xu 等）。同期组织内还有视频生成 <strong>MiniMax-H3</strong>（text/image→video+audio，下载量逾 480 万）与 <strong>Music3</strong>。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/MiniMaxAI/MiniMax-M3">HF MiniMaxAI/MiniMax-M3</a> · <a href="https://arxiv.org/abs/2606.13392">MiniMax Sparse Attention arXiv:2606.13392</a> · <a href="https://huggingface.co/MiniMaxAI/MiniMax-H3">MiniMax-H3</a>。加速倍数与 agentic 表现为厂商自报 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-14</span>
+    <div class="card-title">Mistral Large 3 675B（Mistral AI，Apache-2.0，多模态 granular MoE）<span class="pill fact">FACT</span></div>
+    <p>本页<strong>首次收录 Mistral 前沿模型</strong>。HF <code>mistralai/Mistral-Large-3-675B-Instruct-2512</code>：<strong>多模态 granular MoE，总参 675B / 激活约 41B</strong>（语言主干 673B/39B + 2.5B 视觉编码器），从零用 <strong>3000 张 H200</strong> 训练，<strong>256K 上下文</strong>，Apache-2.0。Instruct 版为 FP8 后训练，面向 chat/agentic/指令场景，原生 function calling 与 JSON 输出、支持 11+ 语言；部署上 FP8 单节点（B200/H200）或 NVFP4 单节点（H100/A100）即可跑。其 NVFP4 量化变体 <code>…-NVFP4</code> 于 2026-09-11 更新。这是欧洲开源阵营当前最大规模的前沿权重。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">HF mistralai/Mistral-Large-3-675B-Instruct-2512</a> · <a href="https://mistral.ai/news">Mistral 官方 news</a>。</p>
+</div>
+
+<div class="update-entry">
     <span class="entry-date">2026-09-11</span>
     <div class="card-title">Kimi K3（Moonshot，开源，Kimi K3 License）<span class="pill fact">FACT</span></div>
     <p><strong>已开源、且是 Moonshot 当前最新旗舰</strong>（更正首版把 K2.6 当作最新口径）。HuggingFace <code>moonshotai/Kimi-K3</code> 于 2026-06-13 建库、2026-09-02 更新，权重公开（下载量已逾 230 万）。官方定位<strong>全球首个开源 3T 级模型</strong>：总参 <strong>2.8T</strong>，采用 <strong>KDA（Kimi Delta Attention）+ AttnRes（Attention Residuals）</strong> 注意力，<strong>Stable LatentMoE</strong> 框架每 token 激活 <strong>896 专家中的 16 个</strong>，相对 Kimi K2 的整体 scaling 效率提升约 <strong>2.5×</strong>；原生视觉、<strong>1M 上下文</strong>，权重以 MXFP4（U8）压缩分发。路透报道其发布时间约 2026-07-17。技术报告见仓库 <code>k3_tech_report.pdf</code>。</p>
@@ -271,13 +299,17 @@
     <tr><td>DeepSeek-V3.2</td><td>DeepSeek · 2025-12</td><td>MoE 671B/37B，257专家</td><td>DSA(MLA)</td><td>128K</td><td>MIT</td></tr>
     <tr><td>DeepSeek-V4 Preview</td><td>DeepSeek · 2026-04</td><td>Pro 1.6T/49B · Flash 284B/13B</td><td>压缩+DSA</td><td>1M</td><td>开源(Preview)</td></tr>
     <tr><td>DeepSeek-V4.1-Flash</td><td>DeepSeek · 2026-09-10</td><td>MoE 552B，CED 8B/16B，384专家×6+1</td><td>CSA2 + FP4 KV</td><td>1M</td><td>MIT</td></tr>
+    <tr><td>GLM-5.3</td><td>智谱 Z.ai · 2026-09</td><td>MoE（沿用 5.2 基座，纯后训练增益）</td><td>DSA(glm_moe_dsa)</td><td>—</td><td>GLM-5.3 License</td></tr>
+    <tr><td>GLM-5.3-Flash</td><td>智谱 Z.ai · 2026-09</td><td>MoE 320B/18B，原生多模态</td><td>稀疏+线性混合 + mHC</td><td>长上下文</td><td>MIT</td></tr>
     <tr><td>GLM-5</td><td>智谱 Z.ai · 2026-02</td><td>MoE 744B/40B</td><td>集成 DSA</td><td>—</td><td>Apache-2.0</td></tr>
+    <tr><td>MiniMax-M3</td><td>MiniMax · 2026-06</td><td>MoE ~428B/23B，原生多模态</td><td>MSA 稀疏注意力</td><td>1M</td><td>MiniMax Community</td></tr>
     <tr><td>MiniMax-M2</td><td>MiniMax · 2025-10</td><td>MoE 230B/10B</td><td>—</td><td>128K</td><td>MIT</td></tr>
     <tr><td>Llama 4</td><td>Meta · 2025-04</td><td>原生多模态 Scout/Maverick/Behemoth</td><td>—</td><td>—</td><td>社区许可</td></tr>
+    <tr><td>Mistral Large 3</td><td>Mistral AI · 2025-11</td><td>granular MoE 675B/41B，多模态</td><td>—</td><td>256K</td><td>Apache-2.0</td></tr>
     </tbody>
     </table>
     </div>
-    <p class="src-list">注：Meta Llama 后继「延期并转向闭源」为媒体援引消息人士 <span class="pill rumor">RUMOR</span>；MiniMax M3(2026-06) 仅低质源提及 <span class="pill rumor">RUMOR</span>。</p>
+    <p class="src-list">注：Meta Llama 后继「延期并转向闭源」为媒体援引消息人士 <span class="pill rumor">RUMOR</span>。MiniMax M3 已于 2026-06/07 正式发布，本周由传闻栏移出、更正为 <span class="pill fact">FACT</span>。</p>
 </div>
 </section>
 
@@ -312,6 +344,13 @@
 <h2><span class="num" style="background:var(--accent4);color:#fff">03</span> 新架构：Loop Transformer 与循环深度</h2>
 <p class="section-desc">2025–2026 的架构主线是「注意力降本（稀疏/线性/混合）+ 记忆外挂 + 深度循环换 test-time compute」。与站内 <a href="/dlm-survey/s11_loop_transformer.html">dlm-survey · Loop Transformer</a> 互链去重。</p>
 <!-- AUTO:INSERT:arch -->
+
+<div class="update-entry">
+    <span class="entry-date">2026-09-14</span>
+    <div class="card-title">GLM-5.3-Flash：GLM 系列首次采用「稀疏 + 线性」混合注意力 + mHC<span class="pill fact">FACT</span></div>
+    <p>智谱 <strong>GLM-5.3-Flash</strong>（arch <code>glm5_next</code>，320B/18B，MIT）在 GLM 系列中<strong>首次引入稀疏注意力与线性注意力的混合架构</strong>——用大部分线性层压低长上下文服务成本、仅保留必要的稀疏/全注意力做精确检索；并叠加 <strong>mHC（Manifold-Constrained Hyper-Connections）</strong>提升 scaling 效率。这与 Qwen3-Next（Gated DeltaNet + Gated Attention）、Kimi K3（KDA + AttnRes）、DeepSeek-V4.1-Flash（CSA2）构成同一条 2026 开源主线：<strong>混合/门控线性注意力 + 极致 KV 降本</strong>已从试验走向各家旗舰的默认选项。同门 GLM-5.3 则延续 <code>glm_moe_dsa</code> 的 DSA 稀疏注意力路线。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/zai-org/GLM-5.3-Flash">HF GLM-5.3-Flash 模型卡</a> · <a href="https://arxiv.org/abs/2602.15763">GLM-5 技术报告</a>。</p>
+</div>
 
 <div class="update-entry">
     <span class="entry-date">2026-09-11</span>
@@ -521,7 +560,7 @@
     <ul class="tight" style="margin-bottom:0">
         <li>GPT-6 Astra「循环 / loop transformer 架构」（仅 The Information 匿名信源，OpenAI 未确认）</li>
         <li>Grok 4.6「1.5T 参数」（第三方泄露）；Gemini 3.5 Pro 延期（社媒/低质源）</li>
-        <li>MiniMax M3（2026-06）；Meta Llama 后继转向闭源（媒体援引消息人士）</li>
+        <li>Meta Llama 后继转向闭源（媒体援引消息人士）<span style="color:var(--text-dim)">；MiniMax M3 曾列此栏，2026-09-14 经官方 HF 权重核实已正式发布、更正为 FACT</span></li>
         <li>Terminal-Bench「v3.0.0 = 74 任务」（无一手来源，本页不采用）</li>
         <li>ESMFold2 结合朝向超越 AlphaFold 3（缺独立第三方复现）</li>
     </ul>
@@ -538,6 +577,10 @@
 <p class="section-desc">每周一由 QoderWork 定时任务自动做增量调研并在此追加一条；手动更新同样登记。</p>
 <!-- AUTO:INSERT:changelog -->
 <div class="update-entry">
+    <span class="entry-date">2026-09-14</span>
+    <p style="margin:0"><strong>增量更新（组织级巡检补录）</strong>。新增 4 条开源模型 + 1 条架构：① <strong>GLM-5.3</strong>（Z.ai，沿用 5.2 基座、纯后训练增益，自称最强开源编码模型，Terminal-Bench 3.0=28.3、CyberGym=84.5 SOTA）；② <strong>GLM-5.3-Flash</strong>（GLM 系列首个原生多模态，320B/18B，MIT，首用稀疏+线性混合注意力 + mHC）；③ <strong>MiniMax-M3</strong>（~428B/23B，1M 上下文，MSA 稀疏注意力）——<strong>由传闻栏移出、更正为已正式发布 FACT</strong>；④ <strong>Mistral Large 3 675B</strong>（Apache-2.0 多模态 granular MoE，256K，本页首次收录 Mistral 前沿模型）；⑤ §新架构补 GLM-5.3-Flash 混合注意力条目。开源对照表补 4 行，#rumor 删除 M3 传闻，#sources 增补 6 条链接。闭源实验室（OpenAI/Anthropic/DeepMind/xAI）与 Terminal-Bench 在 09-11→09-14 窗口内无可核实的新进展（Anthropic 最新 news 停在 09-01，OpenAI/tbench 站点本次不可达）。</p>
+</div>
+<div class="update-entry">
     <span class="entry-date">2026-09-11</span>
     <p style="margin:0"><strong>增量更新</strong>。新增 3 条：① <strong>Kimi K3</strong>（开源 2.8T，KDA+AttnRes，LatentMoE 896×16，1M）——更正首版把 K2.6 当作 Moonshot 最新的口径；② <strong>DeepSeek-V4.1-Flash</strong>（2026-09-10，MIT，CED+CSA2+FP4 KV，890B/token，含 51 页技术报告）；③ <strong>Qwen4 架构</strong> 信号（无独立发布，方向落在 Qwen3-Next/3.8-Flash-Next 混合线性注意力 MoE）。开源对照表补 K3 / V4.1-Flash 行，§新架构表补「编解码/KV 压缩」行，刷新速览首条。</p>
 </div>
@@ -553,7 +596,7 @@
 <p class="section-desc">一手来源优先（官方 blog / arXiv abs / HuggingFace / 期刊 DOI）。作者与日期均以 arXiv abs 完整作者列表或 CrossRef 核验，非搜索摘要。</p>
 <div class="card">
 <div class="src-list">
-<p><strong>开源模型</strong>：<a href="https://huggingface.co/moonshotai/Kimi-K3">Kimi K3 (HF)</a> · <a href="https://www.kimi.com/blog/kimi-k3">Kimi K3 官方博客</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">Kimi K3 GitHub/技术报告</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash (HF)</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf">V4.1 技术报告 PDF</a> · <a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek-V4.1-Flash 发布</a> · <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6 (HF)</a> · <a href="https://arxiv.org/abs/2602.02276">Kimi K2.5 arXiv</a> · <a href="https://qwen.ai/blog?id=qwen3.8">Qwen3.8-Max blog</a> · <a href="https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/">the-decoder</a> · <a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 arXiv</a> · <a href="https://api-docs.deepseek.com/news/news260424/">DeepSeek-V4 Preview</a> · <a href="https://github.com/zai-org/GLM-5">GLM-5</a> · <a href="https://github.com/MiniMax-AI/MiniMax-M2">MiniMax-M2</a></p>
+<p><strong>开源模型</strong>：<a href="https://huggingface.co/moonshotai/Kimi-K3">Kimi K3 (HF)</a> · <a href="https://www.kimi.com/blog/kimi-k3">Kimi K3 官方博客</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">Kimi K3 GitHub/技术报告</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash (HF)</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf">V4.1 技术报告 PDF</a> · <a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek-V4.1-Flash 发布</a> · <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6 (HF)</a> · <a href="https://arxiv.org/abs/2602.02276">Kimi K2.5 arXiv</a> · <a href="https://qwen.ai/blog?id=qwen3.8">Qwen3.8-Max blog</a> · <a href="https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/">the-decoder</a> · <a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 arXiv</a> · <a href="https://api-docs.deepseek.com/news/news260424/">DeepSeek-V4 Preview</a> · <a href="https://github.com/zai-org/GLM-5">GLM-5</a> · <a href="https://github.com/MiniMax-AI/MiniMax-M2">MiniMax-M2</a> · <a href="https://huggingface.co/zai-org/GLM-5.3">GLM-5.3 (HF)</a> · <a href="https://arxiv.org/abs/2602.15763">GLM-5 技术报告 arXiv</a> · <a href="https://huggingface.co/zai-org/GLM-5.3-Flash">GLM-5.3-Flash (HF)</a> · <a href="https://huggingface.co/MiniMaxAI/MiniMax-M3">MiniMax-M3 (HF)</a> · <a href="https://arxiv.org/abs/2606.13392">MiniMax Sparse Attention arXiv</a> · <a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">Mistral Large 3 675B (HF)</a></p>
 <p><strong>前沿模型</strong>：<a href="https://openai.com/index/gpt-6-astra/">GPT-6 Astra</a> · <a href="https://www.anthropic.com/news/claude-opus-5">Claude Opus 5</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Fable/Mythos 5.1</a> · <a href="https://deepmind.google/models/model-cards/gemini-3-1-pro/">Gemini 3.1 Pro</a> · <a href="https://x.ai/news/grok-4-6">Grok 4.6</a></p>
 <p><strong>新架构</strong>：<a href="https://arxiv.org/abs/2502.05171">Recurrent Depth / Huginn</a> · <a href="https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and">Raschka: GPT-6 & Looped Transformers（传闻梳理）</a> · <a href="https://arxiv.org/abs/2502.11089">DeepSeek NSA</a> · <a href="https://qwen.ai/blog?id=qwen3-next">Qwen3-Next（Gated DeltaNet 混合注意力）</a> · <a href="https://github.com/QwenLM/Qwen3.8-Flash-Next">Qwen3.8-Flash-Next</a> · <a href="https://arxiv.org/abs/2405.21060">Mamba-2</a> · <a href="https://arxiv.org/abs/2501.00663">Titans</a> · <a href="https://arxiv.org/abs/2412.09764">Memory Layers</a></p>
 <p><strong>优化器</strong>：<a href="https://kellerjordan.github.io/posts/muon/">Keller Jordan: Muon</a> · <a href="https://arxiv.org/abs/2502.16982">Moonlight (Muon scalable)</a> · <a href="https://arxiv.org/abs/2507.20534">Kimi K2 (MuonClip)</a> · <a href="https://arxiv.org/abs/2409.20325">Old Optimizer, New Norm</a> · <a href="https://arxiv.org/abs/2409.11321">SOAP</a> · <a href="https://arxiv.org/abs/2405.15682">Schedule-Free</a></p>
