@@ -21,6 +21,7 @@
             --accent4: #d97706;
             --accent5: #db2777;
             --danger: #ef4444;
+            --link: #0f766e;
             --code-bg: #f8f7f4;
             --gradient1: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             --gradient3: linear-gradient(135deg, #d97706 0%, #db2777 100%);
@@ -113,7 +114,8 @@
         ul.tight { margin: 0 0 1.1rem 1.3rem; }
         ul.tight li { margin-bottom: 0.5rem; }
         strong { color: var(--accent2); font-weight: 600; }
-        a { color: var(--accent); }
+        a { color: var(--link); }
+        a:focus-visible { outline: 3px solid var(--accent4); outline-offset: 3px; border-radius: 3px; }
 
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem 1.8rem; margin: 1.1rem 0; border-left: 4px solid var(--accent); }
         .card.green { border-left-color: var(--accent3); }
@@ -137,6 +139,7 @@
         .insight-title { font-family: 'Sora', sans-serif; font-weight: 700; color: var(--accent2); margin-bottom: 0.3rem; }
         .warning { background: rgba(217,119,6,0.07); border: 1px solid rgba(217,119,6,0.25); }
         .warning .insight-title { color: var(--accent4); }
+        .warning h3.insight-title { margin: 0 0 0.3rem; font-size: 1rem; }
 
         /* status pills inline */
         .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.04em; padding: 1px 8px; border-radius: 9999px; vertical-align: middle; margin-left: 6px; white-space: nowrap; }
@@ -145,7 +148,7 @@
         .pill.self { background: rgba(217,119,6,0.14); color: var(--accent4); }
         .pill.preprint { background: rgba(120,113,108,0.14); color: var(--text-dim); }
 
-        /* incremental update entry block (used by the weekly automation) */
+        /* incremental update entry block (used by the scheduled automation) */
         .update-entry { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent3); border-radius: 10px; padding: 1rem 1.4rem; margin: 0.9rem 0; }
         .entry-date { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--accent3); letter-spacing: 0.05em; display: inline-block; margin-bottom: 0.4rem; background: rgba(5,150,105,0.09); padding: 1px 8px; border-radius: 5px; }
 
@@ -162,16 +165,20 @@
             table { font-size: 0.8rem; }
             .home-link { top: 1rem; left: 1rem; }
         }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .hero::before { animation: none; }
+        }
     </style>
 </head>
 <body>
 
-<div class="hero">
+<header class="hero">
     <a class="home-link" href="/index.html">&larr; Stein's Notes</a>
     <div class="hero-content">
         <div class="kicker">Frontier Tracker · Rolling Survey</div>
         <h1>LLM 前沿 2026</h1>
-        <p class="subtitle">模型 · 架构 · 优化器 · Agent · RL · 训练策略 · Benchmark · Protein LLM 的滚动式前沿追踪。事实与传闻分栏，每条附一手来源，由每周自动任务增量更新。</p>
+        <p class="subtitle">模型 · 架构 · 优化器 · Agent · RL · 训练策略 · Benchmark · Protein LLM 的滚动式前沿追踪。事实、传闻与厂商自报均按标签标注，每条附一手来源，由定时任务增量更新。</p>
         <div class="hero-badges">
             <span class="badge badge-blue">Kimi / Qwen / DeepSeek</span>
             <span class="badge badge-purple">Loop Transformer</span>
@@ -180,11 +187,11 @@
             <span class="badge badge-blue">Terminal-Bench</span>
             <span class="badge badge-purple">Protein LLM</span>
         </div>
-        <div class="updated-pill"><span class="dot"></span> 最后更新 <span id="last-updated">2026-09-14</span></div>
+        <div class="updated-pill"><span class="dot" aria-hidden="true"></span> 最后更新 <time id="last-updated" datetime="2026-09-14">2026-09-14</time></div>
     </div>
-</div>
+</header>
 
-<nav class="toc-nav">
+<nav class="toc-nav" aria-label="页面目录">
     <ul>
         <li><a href="#overview">速览</a></li>
         <li><a href="#models">开源模型</a></li>
@@ -203,12 +210,12 @@
     </ul>
 </nav>
 
-<div class="container">
+<main class="container">
 
 <!-- ==================== 00 速览 ==================== -->
 <section id="overview">
 <h2><span class="num" style="background:var(--accent);color:var(--bg)">00</span> 本期前沿速览</h2>
-<p class="section-desc">一页读懂 2026-09 时点最值得关注的信号。下方各主题按「事实 <span class="pill fact">FACT</span> / 传闻 <span class="pill rumor">RUMOR</span> / 厂商自报 <span class="pill self">SELF-REPORT</span> / 预印本 <span class="pill preprint">PREPRINT</span>」分栏标注。</p>
+<p class="section-desc">一页读懂 2026-09 时点最值得关注的信号。下方各主题按「事实 <span class="pill fact">FACT</span> / 传闻 <span class="pill rumor">RUMOR</span> / 厂商自报 <span class="pill self">SELF-REPORT</span> / 预印本 <span class="pill preprint">PREPRINT</span>」标签标注。</p>
 <div class="insight">
     <div class="insight-title">五条速览</div>
     <ul class="tight">
@@ -367,7 +374,7 @@
 </div>
 
 <div class="warning">
-    <div class="insight-title">⚠️ 3.2 「GPT-6(Astra) 使用 Looped Transformer」= 传闻 <span class="pill rumor">RUMOR</span></div>
+    <h3 class="insight-title">⚠️ 3.2 「GPT-6(Astra) 使用 Looped Transformer」= 传闻 <span class="pill rumor">RUMOR</span></h3>
     <p style="margin:0">2026-09-01 The Information 报道 Astra 使用「constrained recurrent depth」，但 <strong>OpenAI 发布文档与 system card 均未提及</strong>。首席科学家 Pachocki 称前沿模型（含 Astra）计算图深度与 GPT-4 在 2 倍以内，并批评相关报道「混乱」（见 Sebastian Raschka 2026-09-09 分析）。学术上循环深度的最强公开实证仍是 Huginn。<strong>本页按未证实处理。</strong></p>
 </div>
 
@@ -523,7 +530,7 @@
 <!-- ==================== 10 Protein LLM ==================== -->
 <section id="protein">
 <h2><span class="num" style="background:var(--accent3);color:#fff">10</span> Protein LLM（领域 LLM + Agent 切片）</h2>
-<p class="section-desc">仅收录公开发表信息。蛋白质是「领域 LLM」最成熟的试验田：海量无标注序列 + 可自动计算的稠密奖励 + 可编程确定性工具链，使 RL+Agent+工具闭环能在湿实验前被大规模验证。</p>
+<p class="section-desc">仅收录公开可核验信息，并对已发表与预印本分层标注。蛋白质是「领域 LLM」最成熟的试验田：海量无标注序列 + 可自动计算的稠密奖励 + 可编程确定性工具链，使 RL+Agent+工具闭环能在湿实验前被大规模验证。</p>
 <!-- AUTO:INSERT:protein -->
 
 <h3>10.1 蛋白 / 基因组语言模型 <span class="pill fact">FACT</span></h3>
@@ -574,7 +581,7 @@
 <!-- ==================== 12 更新日志 ==================== -->
 <section id="changelog">
 <h2><span class="num" style="background:var(--accent2);color:#fff">12</span> 更新日志</h2>
-<p class="section-desc">每周一由 QoderWork 定时任务自动做增量调研并在此追加一条；手动更新同样登记。</p>
+<p class="section-desc">每 3 天由定时任务自动做增量调研并在此追加一条；手动更新同样登记。</p>
 <!-- AUTO:INSERT:changelog -->
 <div class="update-entry">
     <span class="entry-date">2026-09-14</span>
@@ -608,12 +615,12 @@
 </div>
 </section>
 
-</div>
+</main>
 
-<div class="page-footer">
-    <p>Yuxiang Wang · Fudan University · 前沿追踪由每周自动调研任务增量维护</p>
+<footer class="page-footer">
+    <p>Yuxiang Wang · Fudan University · 前沿追踪由每 3 天增量调研任务维护</p>
     <p><a href="/index.html">返回首页</a> · <a href="https://github.com/stein-wang0226">GitHub</a></p>
-</div>
+</footer>
 
 <script>
     // scroll-spy for toc-nav
@@ -623,8 +630,15 @@
     const spy = new IntersectionObserver((entries) => {
         entries.forEach(e => {
             if (e.isIntersecting) {
-                links.forEach(l => l.classList.remove('active'));
-                const a = map[e.target.id]; if (a) a.classList.add('active');
+                links.forEach(l => {
+                    l.classList.remove('active');
+                    l.removeAttribute('aria-current');
+                });
+                const a = map[e.target.id];
+                if (a) {
+                    a.classList.add('active');
+                    a.setAttribute('aria-current', 'location');
+                }
             }
         });
     }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
