@@ -187,7 +187,7 @@
             <span class="badge badge-blue">Terminal-Bench</span>
             <span class="badge badge-purple">Protein LLM</span>
         </div>
-        <div class="updated-pill"><span class="dot" aria-hidden="true"></span> 最后更新 <time id="last-updated" datetime="2026-09-14">2026-09-14</time></div>
+        <div class="updated-pill"><span class="dot" aria-hidden="true"></span> 最后更新 <time id="last-updated" datetime="2026-10-13">2026-10-13</time></div>
     </div>
 </header>
 
@@ -215,7 +215,7 @@
 <!-- ==================== 00 速览 ==================== -->
 <section id="overview">
 <h2><span class="num" style="background:var(--accent);color:var(--bg)">00</span> 本期前沿速览</h2>
-<p class="section-desc">一页读懂 2026-09 时点最值得关注的信号。下方各主题按「事实 <span class="pill fact">FACT</span> / 传闻 <span class="pill rumor">RUMOR</span> / 厂商自报 <span class="pill self">SELF-REPORT</span> / 预印本 <span class="pill preprint">PREPRINT</span>」标签标注。</p>
+<p class="section-desc">一页读懂 2026-10 时点最值得关注的信号。下方各主题按「事实 <span class="pill fact">FACT</span> / 传闻 <span class="pill rumor">RUMOR</span> / 厂商自报 <span class="pill self">SELF-REPORT</span> / 预印本 <span class="pill preprint">PREPRINT</span>」标签标注。</p>
 <div class="insight">
     <div class="insight-title">五条速览</div>
     <ul class="tight">
@@ -327,6 +327,20 @@
 <!-- AUTO:INSERT:frontier -->
 
 <div class="update-entry">
+    <time class="entry-date" datetime="2026-10-13">2026-10-13</time>
+    <div class="card-title">OpenAI GPT-6 Sol / Luna 与 GPT-6.1 Sol<span class="pill fact">FACT</span></div>
+    <p><strong>GPT-6 Sol / Luna</strong> 于 2026-09-22 在 Responses 与 Chat Completions API 正式发布，均接受文本与图像输入：Sol 面向高能力推理，Luna 面向低成本、低延迟任务。<strong>GPT-6.1 Sol</strong> 于 09-29 发布，定位复杂编码与专业工作，并在 Responses API 中加入 <strong>Multi-agent（beta）</strong>，可在一次请求中把工作委派给子代理；10-08 又新增 Ultrafast 服务层。标准价（≤272K 输入）为每百万 token $2 输入 / $0.10 缓存输入 / $10 输出；价格、速度与能力比较均为官方口径 <span class="pill self">SELF-REPORT</span>。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://developers.openai.com/api/docs/changelog">OpenAI API Changelog（2026-09-22、09-29、10-08）</a>。</p>
+</div>
+
+<div class="update-entry">
+    <time class="entry-date" datetime="2026-10-13">2026-10-13</time>
+    <div class="card-title">Anthropic Claude 5.5 家族：Opus、Sonnet、Haiku<span class="pill fact">FACT</span></div>
+    <p>Anthropic 依次发布 <strong>Opus 5.5</strong>（09-22）、<strong>Sonnet 5.5</strong>（09-28）与 <strong>Haiku 5.5</strong>（10-07）。Opus 5.5 主打复杂编码、computer use 与知识工作，API 价为每百万 token $4 输入 / $20 输出；Sonnet 5.5 面向日常编码与文档工作，维持 $2 / $10；Haiku 5.5 面向高吞吐与子代理，≤100K 输入时为 $0.10 / $0.50，并首次在 Haiku 级加入可调 effort。厂商自报 <span class="pill self">SELF-REPORT</span>：Opus 5.5 在 Terminal-Bench 4.0 得 66.4%，Sonnet 5.5 得 70.6%，Haiku 5.5 得 39.2%；这些数字未视作独立排行榜结论。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://www.anthropic.com/claude-opus-5-5">Claude Opus 5.5</a> · <a href="https://www.anthropic.com/claude-sonnet-5-5">Claude Sonnet 5.5</a> · <a href="https://www.anthropic.com/claude-haiku-5-5">Claude Haiku 5.5</a>。</p>
+</div>
+
+<div class="update-entry">
     <span class="entry-date">2026-09-10</span>
     <div class="card-title">OpenAI GPT-6 Astra（2026-09-03/04 发布）<span class="pill fact">FACT</span></div>
     <p>上下文 <strong>1.05M</strong>（输入≤922K / 输出≤128K），文本+图像输入；工具含 code execution、hosted shell、computer use、MCP；训练用 10 万+ GPU（Stargate）。厂商自报 <span class="pill self">SELF-REPORT</span>：Agent's Last Exam 59.3%、OSWorld 2.0 72.6%、Terminal-Bench 4.0 57.9%。前代 GPT-5.6（2026-06/07，含 Sol 变体）。</p>
@@ -406,7 +420,7 @@
     <p><strong>Moonlight</strong>（Moonshot AI，arXiv:2502.16982）：加权重衰减 + 对齐每参数更新尺度(RMS) → 开箱即用；同算力最优训练下相对 AdamW <strong>约 2× 计算效率</strong>；训练 Moonlight-3B/16B MoE（5.7T token）；开源内存最优的分布式 Muon（每参数显存与带动量 SGD 同阶，远低于 Adam 的两份状态）。</p>
     <p style="margin-bottom:0"><strong>Kimi K2</strong>（arXiv:2507.20534，1T MoE）：使用 <strong>MuonClip = Muon + QK-clip</strong>——在 &gt;1T token 训练中 Muon 会引发注意力 logit 爆炸，QK-clip 对 Q/K 投影做受控缩放化解，实现<strong>全程零 loss spike</strong>。这是 Muon 首次在万亿参数级生产模型上被官方确认使用。</p>
 </div>
-<p>NanoGPT speedrun 战绩：AdamW 时代 45min 级 → Muon 12.8min（2024-10-30）→ 8.5min（2024-11-06）→ 3.14min（2025-01-16）→ 2026 初 &lt;100s。</p>
+<p>NanoGPT speedrun 官方记录表中的可核验里程碑：Muon 谱系从 <strong>12.0min（2024-10-18）</strong>推进到 <strong>8.2min（2024-11-06）</strong>、<strong>3.142min（2025-01-13）</strong>；2026-01-04 的混合精度 Muon / Adam 交织方案为 <strong>1.878min</strong>，到 2026-08-30 的 ANVIL 优化器栈记录为 <strong>0.665min</strong>。后者是整套训练栈的结果，不应单独归因于 Muon。</p>
 
 <h3>4.3 优化器对照</h3>
 <div class="table-wrap">
@@ -584,6 +598,10 @@
 <p class="section-desc">每 3 天由定时任务自动做增量调研并在此追加一条；手动更新同样登记。</p>
 <!-- AUTO:INSERT:changelog -->
 <div class="update-entry">
+    <time class="entry-date" datetime="2026-10-13">2026-10-13</time>
+    <p style="margin:0"><strong>增量更新 + 优化器事实巡检</strong>。新增 2 条：① OpenAI 2026-09-22 的 GPT-6 Sol / Luna、09-29 的 GPT-6.1 Sol（含 Multi-agent beta）与 10-08 Ultrafast；② Anthropic 09-22→10-07 正式发布 Claude Opus / Sonnet / Haiku 5.5。复核 §优化器的 Muon 核心论文、Moonlight 与 Kimi K2 采用均可由一手来源确认；修正 NanoGPT speedrun 的五个里程碑口径：12.8→12.0min（日期 10-30→10-18）、8.5→8.2min、3.14 的日期 01-16→01-13，并以 1.878min（2026-01-04）和 0.665min（2026-08-30）替代无法支持的“2026 初 &lt;100s”，同时注明 0.665min 属 ANVIL 整体训练栈、不可单独归因于 Muon。组织级巡检未发现新的前沿通用开源 LLM：Qwen 新增为图像生成、Mistral 为阿拉伯语 ASR，DeepSeek / GLM 为既有仓库维护。</p>
+</div>
+<div class="update-entry">
     <span class="entry-date">2026-09-14</span>
     <p style="margin:0"><strong>增量更新（组织级巡检补录）</strong>。新增 4 条开源模型 + 1 条架构：① <strong>GLM-5.3</strong>（Z.ai，沿用 5.2 基座、纯后训练增益，自称最强开源编码模型，Terminal-Bench 3.0=28.3、CyberGym=84.5 SOTA）；② <strong>GLM-5.3-Flash</strong>（GLM 系列首个原生多模态，320B/18B，MIT，首用稀疏+线性混合注意力 + mHC）；③ <strong>MiniMax-M3</strong>（~428B/23B，1M 上下文，MSA 稀疏注意力）——<strong>由传闻栏移出、更正为已正式发布 FACT</strong>；④ <strong>Mistral Large 3 675B</strong>（Apache-2.0 多模态 granular MoE，256K，本页首次收录 Mistral 前沿模型）；⑤ §新架构补 GLM-5.3-Flash 混合注意力条目。开源对照表补 4 行，#rumor 删除 M3 传闻，#sources 增补 6 条链接。闭源实验室（OpenAI/Anthropic/DeepMind/xAI）与 Terminal-Bench 在 09-11→09-14 窗口内无可核实的新进展（Anthropic 最新 news 停在 09-01，OpenAI/tbench 站点本次不可达）。</p>
 </div>
@@ -604,9 +622,9 @@
 <div class="card">
 <div class="src-list">
 <p><strong>开源模型</strong>：<a href="https://huggingface.co/moonshotai/Kimi-K3">Kimi K3 (HF)</a> · <a href="https://www.kimi.com/blog/kimi-k3">Kimi K3 官方博客</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">Kimi K3 GitHub/技术报告</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash (HF)</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf">V4.1 技术报告 PDF</a> · <a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek-V4.1-Flash 发布</a> · <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6 (HF)</a> · <a href="https://arxiv.org/abs/2602.02276">Kimi K2.5 arXiv</a> · <a href="https://qwen.ai/blog?id=qwen3.8">Qwen3.8-Max blog</a> · <a href="https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/">the-decoder</a> · <a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 arXiv</a> · <a href="https://api-docs.deepseek.com/news/news260424/">DeepSeek-V4 Preview</a> · <a href="https://github.com/zai-org/GLM-5">GLM-5</a> · <a href="https://github.com/MiniMax-AI/MiniMax-M2">MiniMax-M2</a> · <a href="https://huggingface.co/zai-org/GLM-5.3">GLM-5.3 (HF)</a> · <a href="https://arxiv.org/abs/2602.15763">GLM-5 技术报告 arXiv</a> · <a href="https://huggingface.co/zai-org/GLM-5.3-Flash">GLM-5.3-Flash (HF)</a> · <a href="https://huggingface.co/MiniMaxAI/MiniMax-M3">MiniMax-M3 (HF)</a> · <a href="https://arxiv.org/abs/2606.13392">MiniMax Sparse Attention arXiv</a> · <a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">Mistral Large 3 675B (HF)</a></p>
-<p><strong>前沿模型</strong>：<a href="https://openai.com/index/gpt-6-astra/">GPT-6 Astra</a> · <a href="https://www.anthropic.com/news/claude-opus-5">Claude Opus 5</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Fable/Mythos 5.1</a> · <a href="https://deepmind.google/models/model-cards/gemini-3-1-pro/">Gemini 3.1 Pro</a> · <a href="https://x.ai/news/grok-4-6">Grok 4.6</a></p>
+<p><strong>前沿模型</strong>：<a href="https://openai.com/index/gpt-6-astra/">GPT-6 Astra</a> · <a href="https://developers.openai.com/api/docs/changelog">OpenAI API Changelog（GPT-6 / 6.1）</a> · <a href="https://www.anthropic.com/news/claude-opus-5">Claude Opus 5</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Fable/Mythos 5.1</a> · <a href="https://www.anthropic.com/claude-opus-5-5">Claude Opus 5.5</a> · <a href="https://www.anthropic.com/claude-sonnet-5-5">Claude Sonnet 5.5</a> · <a href="https://www.anthropic.com/claude-haiku-5-5">Claude Haiku 5.5</a> · <a href="https://deepmind.google/models/model-cards/gemini-3-1-pro/">Gemini 3.1 Pro</a> · <a href="https://x.ai/news/grok-4-6">Grok 4.6</a></p>
 <p><strong>新架构</strong>：<a href="https://arxiv.org/abs/2502.05171">Recurrent Depth / Huginn</a> · <a href="https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and">Raschka: GPT-6 & Looped Transformers（传闻梳理）</a> · <a href="https://arxiv.org/abs/2502.11089">DeepSeek NSA</a> · <a href="https://qwen.ai/blog?id=qwen3-next">Qwen3-Next（Gated DeltaNet 混合注意力）</a> · <a href="https://github.com/QwenLM/Qwen3.8-Flash-Next">Qwen3.8-Flash-Next</a> · <a href="https://arxiv.org/abs/2405.21060">Mamba-2</a> · <a href="https://arxiv.org/abs/2501.00663">Titans</a> · <a href="https://arxiv.org/abs/2412.09764">Memory Layers</a></p>
-<p><strong>优化器</strong>：<a href="https://kellerjordan.github.io/posts/muon/">Keller Jordan: Muon</a> · <a href="https://arxiv.org/abs/2502.16982">Moonlight (Muon scalable)</a> · <a href="https://arxiv.org/abs/2507.20534">Kimi K2 (MuonClip)</a> · <a href="https://arxiv.org/abs/2409.20325">Old Optimizer, New Norm</a> · <a href="https://arxiv.org/abs/2409.11321">SOAP</a> · <a href="https://arxiv.org/abs/2405.15682">Schedule-Free</a></p>
+<p><strong>优化器</strong>：<a href="https://kellerjordan.github.io/posts/muon/">Keller Jordan: Muon</a> · <a href="https://github.com/KellerJordan/modded-nanogpt">modded-nanogpt 官方记录表</a> · <a href="https://arxiv.org/abs/2502.16982">Moonlight (Muon scalable)</a> · <a href="https://arxiv.org/abs/2507.20534">Kimi K2 (MuonClip)</a> · <a href="https://arxiv.org/abs/2409.20325">Old Optimizer, New Norm</a> · <a href="https://arxiv.org/abs/2409.11321">SOAP</a> · <a href="https://arxiv.org/abs/2405.15682">Schedule-Free</a></p>
 <p><strong>Agent / RL / OPD</strong>：<a href="https://arxiv.org/abs/2501.12326">UI-TARS</a> · <a href="https://arxiv.org/abs/2509.02547">Agentic RL Survey</a> · <a href="https://arxiv.org/abs/2502.18449">SWE-RL</a> · <a href="https://arxiv.org/abs/2503.14476">DAPO</a> · <a href="https://arxiv.org/abs/2503.20783">Dr.GRPO</a> · <a href="https://arxiv.org/abs/2507.18071">GSPO</a> · <a href="https://arxiv.org/abs/2505.22617">Entropy Mechanism</a> · <a href="https://thinkingmachines.ai/blog/on-policy-distillation/">On-Policy Distillation</a></p>
 <p><strong>训练策略</strong>：<a href="https://arxiv.org/abs/2505.09388">Qwen3 Technical Report</a> · <a href="https://arxiv.org/abs/2412.19437">DeepSeek-V3 Technical Report</a></p>
 <p><strong>Benchmark</strong>：<a href="https://www.tbench.ai/">Terminal-Bench</a> · <a href="https://hub.harborframework.com/datasets/terminal-bench/terminal-bench/4">Harbor Hub 数据集 rev4</a> · <a href="https://www.tbench.ai/news/terminal-bench-science-0-1">TB-Science 0.1</a> · <a href="https://arxiv.org/html/2601.11868v1">Terminal-Bench 论文</a> · <a href="https://epoch.ai/benchmarks/gpqa-diamond">GPQA-Diamond</a> · <a href="https://agi.safe.ai/">HLE</a> · <a href="https://arcprize.org/results">ARC Prize</a> · <a href="https://arxiv.org/abs/2406.01574">MMLU-Pro</a> · <a href="https://livecodebench.github.io/">LiveCodeBench</a> · <a href="https://epoch.ai/benchmarks/swe-bench-verified">SWE-bench Verified</a> · <a href="https://taubench.com/">τ-bench</a> · <a href="https://www.digitalapplied.com/blog/llm-benchmark-methodology-2026-contamination-leaderboard-guide">Benchmark Methodology 2026</a></p>
