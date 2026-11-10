@@ -187,7 +187,7 @@
             <span class="badge badge-blue">Terminal-Bench</span>
             <span class="badge badge-purple">Protein LLM</span>
         </div>
-        <div class="updated-pill"><span class="dot" aria-hidden="true"></span> 最后更新 <time id="last-updated" datetime="2026-10-20">2026-10-20</time></div>
+        <div class="updated-pill"><span class="dot" aria-hidden="true"></span> 最后更新 <time id="last-updated" datetime="2026-11-10">2026-11-10</time></div>
     </div>
 </header>
 
@@ -215,7 +215,7 @@
 <!-- ==================== 00 速览 ==================== -->
 <section id="overview">
 <h2><span class="num" style="background:var(--accent);color:var(--bg)">00</span> 本期前沿速览</h2>
-<p class="section-desc">一页读懂 2026-10 时点最值得关注的信号。下方各主题按「事实 <span class="pill fact">FACT</span> / 传闻 <span class="pill rumor">RUMOR</span> / 厂商自报 <span class="pill self">SELF-REPORT</span> / 预印本 <span class="pill preprint">PREPRINT</span>」标签标注。</p>
+<p class="section-desc">一页读懂 2026-11 时点最值得关注的信号。下方各主题按「事实 <span class="pill fact">FACT</span> / 传闻 <span class="pill rumor">RUMOR</span> / 厂商自报 <span class="pill self">SELF-REPORT</span> / 预印本 <span class="pill preprint">PREPRINT</span>」标签标注。</p>
 <div class="insight">
     <div class="insight-title">五条速览</div>
     <ul class="tight">
@@ -233,6 +233,27 @@
 <h2><span class="num" style="background:var(--accent2);color:#fff">01</span> 开源模型最新迭代</h2>
 <p class="section-desc">Kimi / Qwen / DeepSeek 三强的最新技术坐标，以及 GLM、MiniMax、Llama 的对照。参数、上下文、注意力变体均以官方模型卡 / arXiv / HuggingFace 核实。</p>
 <!-- AUTO:INSERT:models -->
+<div class="update-entry">
+    <time class="entry-date" datetime="2026-11-02">2026-11-02</time>
+    <div class="card-title">Kimi K3.1 Pro（Moonshot，3T 级开源权重，多模态 agentic 后训练）<span class="pill fact">FACT</span></div>
+    <p>Moonshot 在 HF 发布 <code>moonshotai/Kimi-K3.1-Pro</code>：官方定位为<strong>从 Kimi K3 后训练而来的 3T 级原生多模态 agentic 模型</strong>，2026-11-02 建库、11-05 更新，许可为 <strong>Kimi K3.1 Pro License</strong>。模型卡称其沿用 MoE 架构、1M context，并把部分 full-attention Gated MLA 层替换为 <strong>Gated DeepSeek Sparse Attention（Gated DSA）</strong> 以提高长上下文效率；后训练采用跨数百个下游领域的大规模联合 RL，重点覆盖 coding、agentic、工具调用、多模态与网络安全评测。与 Kimi K3 相比，它更像<strong>后训练/推理与 agent harness 强化版</strong>，而非新基座架构重启。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">HF moonshotai/Kimi-K3.1-Pro</a> · <a href="https://www.kimi.ai">Kimi 官方入口</a>。Terminal-Bench、SWE-Marathon、DeepSWE、Agents' Last Exam、OSWorld 等表格分数及横向对比均为官方模型卡口径 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
+
+<div class="update-entry">
+    <time class="entry-date" datetime="2026-10-17">2026-10-17</time>
+    <div class="card-title">MiniMax-M3.1-Flash（MiniMax，1M 上下文，多模态 MoE，DSpark）<span class="pill fact">FACT</span></div>
+    <p><code>MiniMaxAI/MiniMax-M3.1-Flash</code> 于 2026-10-17 建库、11-05 更新，MiniMax Community License。模型卡给出<strong>原生多模态 MoE、约 428B 总参 / 23B 激活、1M context</strong>，面向 coding、agentic workflows、computer use、cybersecurity 与图像/视频输入。相对 M3 的主要增量不是参数规模，而是<strong>全模型稀疏注意力、quantization-aware training、DSpark speculative decoding draft head</strong>，目标是把 M3 的长上下文 agent 能力压到更可服务的 Flash 形态。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash">HF MiniMaxAI/MiniMax-M3.1-Flash</a>。BankerToolBench、DeepSWE v1.1、OSWorld V2、Agents' Last Exam、CyberGym 等性能数字为 MiniMax 模型卡自报 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
+
+<div class="update-entry">
+    <time class="entry-date" datetime="2026-09-30">2026-09-30</time>
+    <div class="card-title">Mistral Large 4（Mistral AI，1T open-weight granular MoE，1M context）<span class="pill fact">FACT</span></div>
+    <p>Mistral 发布 <code>mistralai/Mistral-Large-4-1T-A52B</code>：<strong>约 1T 总参、约 52B 激活（含 embedding/output），128 routed experts、每 token 激活 4 个 + 1 shared expert</strong>，原生多模态、1M context，统一覆盖 instruction following、reasoning、coding 与 agentic workflows；同时提供 NVFP4 量化 checkpoint。模型卡称内置 DSpark speculative decoding draft head，最高吞吐提升约 1.9×；许可为 <strong>Mistral Ecosystem Open-Weight License</strong>（modified MIT 风格，商业/非商业可用但须遵守该生态许可）。它把欧洲开源权重线从 Large 3 的 675B/256K 推到 1T/1M。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B">HF Mistral-Large-4-1T-A52B</a> · <a href="https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B/blob/main/assets/technical_report.pdf">technical report PDF</a> · <a href="https://mistral.ai/news/mistral-large-4-oss/">Mistral 官方博客</a>。Artificial Analysis Coding Agent Index、Intelligence Index、吞吐倍数等为模型卡/厂商口径 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
+
 <div class="update-entry">
     <time class="entry-date" datetime="2026-10-17">2026-10-17</time>
     <div class="card-title">DeepSeek-V4.1-Flash-1017（DeepSeek，MIT，wish-driven programming update）<span class="pill fact">FACT</span></div>
@@ -306,6 +327,7 @@
     <table>
     <thead><tr><th>模型</th><th>发布方 / 时间</th><th>结构</th><th>注意力</th><th>上下文</th><th>许可</th></tr></thead>
     <tbody>
+    <tr><td>Kimi K3.1 Pro</td><td>Moonshot · 2026-11</td><td>3T 级 MoE，K3 后训练强化版</td><td>Gated DSA + MLA 系</td><td>1M</td><td>Kimi K3.1 Pro License</td></tr>
     <tr><td>Kimi K3</td><td>Moonshot · 2026-07</td><td>MoE 2.8T，LatentMoE 896专家×16</td><td>KDA + AttnRes</td><td>1M</td><td>Kimi K3 License</td></tr>
     <tr><td>Kimi K2.6（前代）</td><td>Moonshot · 2026-05</td><td>MoE 1T/32B，384专家×8+1</td><td>MLA</td><td>256K</td><td>Modified MIT</td></tr>
     <tr><td>Qwen3.8-Max</td><td>阿里 · 2026-08</td><td>MoE 2.4T/95B</td><td>—</td><td>长程</td><td>开放权重</td></tr>
@@ -316,9 +338,11 @@
     <tr><td>GLM-5.3</td><td>智谱 Z.ai · 2026-09</td><td>MoE（沿用 5.2 基座，纯后训练增益）</td><td>DSA(glm_moe_dsa)</td><td>—</td><td>GLM-5.3 License</td></tr>
     <tr><td>GLM-5.3-Flash</td><td>智谱 Z.ai · 2026-09</td><td>MoE 320B/18B，原生多模态</td><td>稀疏+线性混合 + mHC</td><td>长上下文</td><td>MIT</td></tr>
     <tr><td>GLM-5</td><td>智谱 Z.ai · 2026-02</td><td>MoE 744B/40B</td><td>集成 DSA</td><td>—</td><td>Apache-2.0</td></tr>
+    <tr><td>MiniMax-M3.1-Flash</td><td>MiniMax · 2026-10</td><td>MoE ~428B/23B，原生多模态</td><td>全模型稀疏注意力 + DSpark</td><td>1M</td><td>MiniMax Community</td></tr>
     <tr><td>MiniMax-M3</td><td>MiniMax · 2026-06</td><td>MoE ~428B/23B，原生多模态</td><td>MSA 稀疏注意力</td><td>1M</td><td>MiniMax Community</td></tr>
     <tr><td>MiniMax-M2</td><td>MiniMax · 2025-10</td><td>MoE 230B/10B</td><td>—</td><td>128K</td><td>MIT</td></tr>
     <tr><td>Llama 4</td><td>Meta · 2025-04</td><td>原生多模态 Scout/Maverick/Behemoth</td><td>—</td><td>—</td><td>社区许可</td></tr>
+    <tr><td>Mistral Large 4</td><td>Mistral AI · 2026-09</td><td>granular MoE ~1T/~52B，多模态</td><td>—</td><td>1M</td><td>Mistral Ecosystem Open-Weight</td></tr>
     <tr><td>Mistral Large 3</td><td>Mistral AI · 2025-11</td><td>granular MoE 675B/41B，多模态</td><td>—</td><td>256K</td><td>Apache-2.0</td></tr>
     </tbody>
     </table>
@@ -494,6 +518,23 @@
 <p class="section-desc">站内 <a href="/agentic-rl-guide.html">Agentic RL 全景指南</a> 已有 OPD 独立长章节，此处仅作提要 + 互链。</p>
 <!-- AUTO:INSERT:opd -->
 <div class="update-entry">
+    <time class="entry-date" datetime="2026-11-10">2026-11-10</time>
+    <div class="card-title">MOPD 第 3.2 节：同一个 reverse-KL 目标的两种可落地 loss<span class="pill preprint">PREPRINT</span></div>
+    <p><a href="https://arxiv.org/abs/2606.30406">MOPD</a> 的 Stage 3 不是让 student 离线模仿 teacher 数据，而是在 <strong>student 自己 rollout 的状态分布</strong> 上，把样本按领域 dispatch 给 Math / IF / SWE / Tool Use 等 teacher，优化 per-token reverse-KL。第 3.2 节给了两种工程实现：① <strong>Policy Gradient MOPD</strong>：把 teacher 与 student 在已采样 token 上的 log-prob 差 <code>log π_teacher(y_t) - log π_student(y_t)</code> 当作 stop-gradient per-token advantage，并做双边裁剪后接入 PPO/GRPO 类训练框架；② <strong>Top-k Distillation MOPD</strong>：让 teacher 只返回每个位置的 top-k token 分布，在 top-k 集合上做截断 reverse-KL，并额外加入 <code>-π_student(v)+π_teacher(v)</code> 偏差修正项，保证 top-k 内 <code>π_student = π_teacher</code> 时 loss 最小。</p>
+    <div class="table-wrap">
+    <table>
+    <thead><tr><th>实现</th><th>teacher 信号</th><th>优势</th><th>主要代价</th></tr></thead>
+    <tbody>
+    <tr><td>Policy Gradient MOPD</td><td>student 采样 token 的 teacher logprob</td><td>最容易复用 PPO/GRPO；只改 advantage 计算</td><td>每位置单 token 信号，方差较高</td></tr>
+    <tr><td>Top-k Distillation MOPD</td><td>teacher top-k token 概率分布</td><td>信号更密、更接近分布蒸馏；无需 full-vocab logits</td><td>需要 teacher prefill 服务返回 top-k logits/probs</td></tr>
+    </tbody>
+    </table>
+    </div>
+    <p>这也解释了它与常见“能力合并/模型合并”路线的差异：<strong>Mix-RL</strong> 是把多域 prompt 混在一起做 RL，容易域间干扰；<strong>Cascade RL</strong> 顺序训练，后域可能覆盖前域；<strong>Off-Policy Finetune</strong> 学的是 teacher 轨迹，不在 student 自己会到达的错误状态上纠偏；<strong>Param-Merge / task arithmetic</strong> 直接合权重，便宜但缺少 token 级 teacher 监督。MOPD 的核心折中是：teacher 不再生成完整训练答案，而作为<strong>学生轨迹上的稠密 token-level critic</strong>，以更像 RL 基建的方式整合多教师能力。</p>
+    <p style="margin-bottom:0" class="src-list">来源：<a href="https://arxiv.org/abs/2606.30406">MOPD arXiv:2606.30406 §3.2</a>。Qwen3-30B-A3B normalised score、MiMo-V2-Flash 部署与优于 Mix-RL / Cascade RL / Off-Policy Finetune / Param-Merge 的结论均为论文作者自报 <span class="pill self">SELF-REPORT</span>。</p>
+</div>
+
+<div class="update-entry">
     <time class="entry-date" datetime="2026-06-30">2026-06-30</time>
     <div class="card-title">MOPD：多教师 OPD，把单教师压缩扩展为多领域能力整合<span class="pill preprint">PREPRINT</span></div>
     <p><a href="https://arxiv.org/abs/2606.30406">MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training</a> 将 OPD 从“一个 teacher → 一个 student”扩展为<strong>多领域 RL teacher → 统一 student</strong>：先分别训练 Math / Instruction Following / SWE / Tool Use 等领域 teacher，再让 student 在自身 rollout 上按领域路由 teacher 信号做 on-policy distillation。论文在 <strong>Qwen3-30B-A3B</strong> 上报告 MOPD 优于 Mix-RL、Cascade RL、Off-Policy Finetune 与 Param-Merge，并称继承了各 teacher 的大部分能力；还披露已用于 <strong>MiMo-V2-Flash</strong> 的工业级后训练。</p>
@@ -617,6 +658,10 @@
 <p class="section-desc">每 3 天由定时任务自动做增量调研并在此追加一条；手动更新同样登记。</p>
 <!-- AUTO:INSERT:changelog -->
 <div class="update-entry">
+    <time class="entry-date" datetime="2026-11-10">2026-11-10</time>
+    <p style="margin:0"><strong>增量更新 + MOPD 算法补充</strong>。新增 4 条：① Moonshot <strong>Kimi K3.1 Pro</strong>（3T 级 open-weight，多模态 agentic 后训练，Kimi K3.1 Pro License）；② <strong>MiniMax-M3.1-Flash</strong>（~428B/23B，1M context，全模型稀疏注意力 + QAT + DSpark）；③ <strong>Mistral Large 4</strong>（~1T/~52B active，1M context，Mistral Ecosystem Open-Weight License）；④ <strong>MOPD §3.2</strong> 算法级补充：Policy Gradient MOPD 与 Top-k Distillation MOPD 两种 loss，并对比 Mix-RL / Cascade RL / Off-Policy Finetune / Param-Merge 等能力合并路线。复核 §OPD 的 MOPD arXiv:2606.30406 第 3.2 节，修正/删除 0；相关 benchmark 与性能比较均维持 SELF-REPORT。组织级巡检：DeepSeek-V4.1-Flash-1017 为既有仓库维护；Qwen/GLM 多为既有权重维护；facebook 命中非通用 LLM 仓库，未收录。</p>
+</div>
+<div class="update-entry">
     <time class="entry-date" datetime="2026-10-20">2026-10-20</time>
     <p style="margin:0"><strong>补录 RSI / 自进化 Agent 主题</strong>。新增 1 条至 §Agent：把 RSI 定位为 agent harness / 训练后自适应 / RL 搜索交叉方向，收录 Darwin Gödel Machine、SEAL、MetaSkill-Evolve 与 AI research agent RSI 四条一手 arXiv 线索；同时明确这不是“通用模型已实现无限递归自我提升”，多数结果仍为预印本/作者自报，需保持 SELF-REPORT 标注。未新增闭源媒体传闻到事实栏。</p>
 </div>
@@ -648,7 +693,7 @@
 <p class="section-desc">一手来源优先（官方 blog / arXiv abs / HuggingFace / 期刊 DOI）。作者与日期均以 arXiv abs 完整作者列表或 CrossRef 核验，非搜索摘要。</p>
 <div class="card">
 <div class="src-list">
-<p><strong>开源模型</strong>：<a href="https://huggingface.co/moonshotai/Kimi-K3">Kimi K3 (HF)</a> · <a href="https://www.kimi.com/blog/kimi-k3">Kimi K3 官方博客</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">Kimi K3 GitHub/技术报告</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">DeepSeek-V4.1-Flash-1017 (HF)</a> · <a href="https://api-docs.deepseek.com/news/news261017/">DeepSeek-V4.1-Flash-1017 发布</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash (HF)</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf">V4.1 技术报告 PDF</a> · <a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek-V4.1-Flash 发布</a> · <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6 (HF)</a> · <a href="https://arxiv.org/abs/2602.02276">Kimi K2.5 arXiv</a> · <a href="https://qwen.ai/blog?id=qwen3.8">Qwen3.8-Max blog</a> · <a href="https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/">the-decoder</a> · <a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 arXiv</a> · <a href="https://api-docs.deepseek.com/news/news260424/">DeepSeek-V4 Preview</a> · <a href="https://github.com/zai-org/GLM-5">GLM-5</a> · <a href="https://github.com/MiniMax-AI/MiniMax-M2">MiniMax-M2</a> · <a href="https://huggingface.co/zai-org/GLM-5.3">GLM-5.3 (HF)</a> · <a href="https://arxiv.org/abs/2602.15763">GLM-5 技术报告 arXiv</a> · <a href="https://huggingface.co/zai-org/GLM-5.3-Flash">GLM-5.3-Flash (HF)</a> · <a href="https://huggingface.co/MiniMaxAI/MiniMax-M3">MiniMax-M3 (HF)</a> · <a href="https://arxiv.org/abs/2606.13392">MiniMax Sparse Attention arXiv</a> · <a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">Mistral Large 3 675B (HF)</a></p>
+<p><strong>开源模型</strong>：<a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro (HF)</a> · <a href="https://huggingface.co/moonshotai/Kimi-K3">Kimi K3 (HF)</a> · <a href="https://www.kimi.com/blog/kimi-k3">Kimi K3 官方博客</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">Kimi K3 GitHub/技术报告</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">DeepSeek-V4.1-Flash-1017 (HF)</a> · <a href="https://api-docs.deepseek.com/news/news261017/">DeepSeek-V4.1-Flash-1017 发布</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash (HF)</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf">V4.1 技术报告 PDF</a> · <a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek-V4.1-Flash 发布</a> · <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6 (HF)</a> · <a href="https://arxiv.org/abs/2602.02276">Kimi K2.5 arXiv</a> · <a href="https://qwen.ai/blog?id=qwen3.8">Qwen3.8-Max blog</a> · <a href="https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/">the-decoder</a> · <a href="https://arxiv.org/abs/2512.02556">DeepSeek-V3.2 arXiv</a> · <a href="https://api-docs.deepseek.com/news/news260424/">DeepSeek-V4 Preview</a> · <a href="https://github.com/zai-org/GLM-5">GLM-5</a> · <a href="https://github.com/MiniMax-AI/MiniMax-M2">MiniMax-M2</a> · <a href="https://huggingface.co/zai-org/GLM-5.3">GLM-5.3 (HF)</a> · <a href="https://arxiv.org/abs/2602.15763">GLM-5 技术报告 arXiv</a> · <a href="https://huggingface.co/zai-org/GLM-5.3-Flash">GLM-5.3-Flash (HF)</a> · <a href="https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash">MiniMax-M3.1-Flash (HF)</a> · <a href="https://huggingface.co/MiniMaxAI/MiniMax-M3">MiniMax-M3 (HF)</a> · <a href="https://arxiv.org/abs/2606.13392">MiniMax Sparse Attention arXiv</a> · <a href="https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B">Mistral Large 4 1T (HF)</a> · <a href="https://mistral.ai/news/mistral-large-4-oss/">Mistral Large 4 官方博客</a> · <a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">Mistral Large 3 675B (HF)</a></p>
 <p><strong>前沿模型</strong>：<a href="https://openai.com/index/gpt-6-astra/">GPT-6 Astra</a> · <a href="https://developers.openai.com/api/docs/changelog">OpenAI API Changelog（GPT-6 / 6.1）</a> · <a href="https://www.anthropic.com/news/claude-opus-5">Claude Opus 5</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Fable/Mythos 5.1</a> · <a href="https://www.anthropic.com/claude-opus-5-5">Claude Opus 5.5</a> · <a href="https://www.anthropic.com/claude-sonnet-5-5">Claude Sonnet 5.5</a> · <a href="https://www.anthropic.com/claude-haiku-5-5">Claude Haiku 5.5</a> · <a href="https://deepmind.google/models/model-cards/gemini-3-1-pro/">Gemini 3.1 Pro</a> · <a href="https://x.ai/news/grok-4-6">Grok 4.6</a></p>
 <p><strong>新架构</strong>：<a href="https://arxiv.org/abs/2502.05171">Recurrent Depth / Huginn</a> · <a href="https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and">Raschka: GPT-6 & Looped Transformers（传闻梳理）</a> · <a href="https://arxiv.org/abs/2502.11089">DeepSeek NSA</a> · <a href="https://qwen.ai/blog?id=qwen3-next">Qwen3-Next（Gated DeltaNet 混合注意力）</a> · <a href="https://github.com/QwenLM/Qwen3.8-Flash-Next">Qwen3.8-Flash-Next</a> · <a href="https://arxiv.org/abs/2405.21060">Mamba-2</a> · <a href="https://arxiv.org/abs/2501.00663">Titans</a> · <a href="https://arxiv.org/abs/2412.09764">Memory Layers</a></p>
 <p><strong>优化器</strong>：<a href="https://kellerjordan.github.io/posts/muon/">Keller Jordan: Muon</a> · <a href="https://github.com/KellerJordan/modded-nanogpt">modded-nanogpt 官方记录表</a> · <a href="https://arxiv.org/abs/2502.16982">Moonlight (Muon scalable)</a> · <a href="https://arxiv.org/abs/2507.20534">Kimi K2 (MuonClip)</a> · <a href="https://arxiv.org/abs/2409.20325">Old Optimizer, New Norm</a> · <a href="https://arxiv.org/abs/2409.11321">SOAP</a> · <a href="https://arxiv.org/abs/2405.15682">Schedule-Free</a></p>
