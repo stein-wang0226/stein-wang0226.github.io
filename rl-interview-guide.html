@@ -2832,11 +2832,80 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
             <td>把 OPD 建模为 dense KL-constrained RL，通过 reward scaling 实现超越 teacher</td>
         </tr>
         <tr>
+            <td><strong>MOPD</strong></td>
+            <td>2026</td>
+            <td>多教师 OPD：先为不同领域独立训练 RL teacher，再在学生 on-policy rollout 上按领域路由教师信号，实现多能力集成</td>
+        </tr>
+        <tr>
             <td><strong>DeepSeek V4</strong></td>
             <td>2025–2026</td>
             <td>多教师 full-vocab reverse KL logit distillation，工业级 OPD 落地标杆</td>
         </tr>
     </table>
+
+    <!-- ========= MOPD ========= -->
+    <h3>MOPD（Multi-Teacher OPD）：多教师能力整合</h3>
+    <div class="box-insight">
+        <strong>一句话：</strong>MOPD 不是为了把一个 teacher 压缩到一个 student，而是为了把<strong>多个领域 RL teacher 的能力</strong>整合进同一个模型。典型流程是：通用 SFT 得到共享起点 → 数学、指令跟随、SWE / 工具等领域分别做 specialised RL 得到多个 teacher → 学生用自己的 on-policy rollout 生成轨迹 → 根据 prompt 所属领域路由到对应 teacher，最小化每个 token 上的 reverse KL。
+    </div>
+
+    <div class="formula-box highlight">
+        <div class="label">MOPD 目标函数（按领域路由 teacher）</div>
+        $$y \sim \pi_\theta(\cdot|x), \quad d = \text{Domain}(x), \quad \pi_{\phi_d} = \text{Teacher}_d$$
+        $$\mathcal{L}_{\text{MOPD}} = \mathbb{E}_{x,\;y\sim\pi_\theta}\left[\frac{1}{|y|}\sum_t \sum_{v\in\mathcal{V}}\pi_\theta(v|x,y_{&lt;t})\log\frac{\pi_\theta(v|x,y_{&lt;t})}{\pi_{\phi_d}(v|x,y_{&lt;t})}\right]$$
+        <div class="formula-annotation">
+            <div class="item"><span class="symbol">多教师</span>每个领域有自己的 RL teacher，teacher 可以用不同 reward、sandbox、超参独立训练</div>
+            <div class="item"><span class="symbol">On-policy</span>轨迹来自学生自己，避免 Off-Policy Finetune / SFT 蒸馏的 exposure bias</div>
+            <div class="item"><span class="symbol">Dense</span>teacher 在每个 token 上给分布或 logprob，信号比 Mix-RL 的结果级 reward 更密</div>
+        </div>
+    </div>
+
+    <h4>MOPD vs 其他多能力集成路线</h4>
+    <table>
+        <tr><th>路线</th><th>怎么合能力</th><th>主要问题</th><th>MOPD 的对应修复</th></tr>
+        <tr>
+            <td><strong>Mix-RL</strong></td>
+            <td>把多域 prompt 混在一起联合 RL</td>
+            <td>多域 reward/advantage 互相干扰，容易 capability see-saw</td>
+            <td>先分域训练 teacher，再统一蒸馏；能力生产与能力集成解耦</td>
+        </tr>
+        <tr>
+            <td><strong>Cascade RL</strong></td>
+            <td>按领域串行 RL</td>
+            <td>后训练领域会冲掉前面领域，长链路稳定性差</td>
+            <td>teacher 并行训练，最终一次路由蒸馏，避免固定顺序依赖</td>
+        </tr>
+        <tr>
+            <td><strong>Off-Policy Finetune</strong></td>
+            <td>用各 teacher 生成轨迹，再做离线 SFT</td>
+            <td>训练 prefix 来自 teacher，不是 student 自己的推理状态</td>
+            <td>student rollout 上让 teacher prefill 打分，训练/推理状态分布一致</td>
+        </tr>
+        <tr>
+            <td><strong>Param-Merge</strong></td>
+            <td>平均权重或 task arithmetic</td>
+            <td>参数冲突、系数敏感，融合后不一定像任一 teacher</td>
+            <td>在 policy space 上合能力，不直接做 weight-space 融合</td>
+        </tr>
+    </table>
+
+    <h4>论文实验结论（arXiv:2606.30406）</h4>
+    <div class="box-insight">
+        <strong>Qwen3-30B-A3B 三域实验：</strong>MOPD 在 Math / Instruction Following / SWE-bench Verified 上做多域集成，normalised score 达到 <strong>0.9373</strong>，高于 Mix-RL 0.8818、Cascade RL 0.7752、Off-Policy Finetune 0.8241、Task Arithmetic 0.8574；相当于在三个领域都关闭了约 <strong>91–95%</strong> 的 student→teacher headroom。<br/>
+        <strong>工业规模验证：</strong>在 MiMo-V2-Flash（309B 级）上，用 Math / Code / IF / SWE / Tool Use 等 teacher 做 MOPD，多数 benchmark 匹配或超过对应 teacher（如 AIME25 +0.2、HMMT25 +1.8、LCB +0.6），IFBench 和 SWE-bench 有小幅回退。
+    </div>
+
+    <h4>工程实现要点</h4>
+    <ul>
+        <li><strong>Teacher prefill service 化：</strong>学生 rollout 完成后异步请求对应 teacher 计算 per-token logprob / top-k logits，类似 reward service；论文报告 teacher prefill 成本基本被 student sampling 隐藏。</li>
+        <li><strong>PG 与 Top-K 两种实现：</strong>policy-gradient 形式把 $\log\pi_{\phi_d}(y_t)-\log\pi_\theta(y_t)$ 当 token advantage；Top-K 形式只传 teacher top-k 分布，降低通信和显存负担。论文中同源 teacher 下二者效果相近。</li>
+        <li><strong>Same-origin teacher 很关键：</strong>teacher 最好从同一个 SFT checkpoint 分域 RL 得到。直接换成更强但分布差异大的外部模型，初始 KL 变大，容易 entropy 收缩甚至训练发散。</li>
+        <li><strong>可多轮迭代：</strong>一轮 MOPD 后的 student 可作为下一轮分域 RL teacher 的初始化，再做第二轮 MOPD，继续吸收新 teacher 的能力。</li>
+    </ul>
+
+    <div class="box-warning">
+        <strong>面试/研究判断：</strong>MOPD 的价值在于<strong>组织多个后训练团队/多个领域 RL 管线</strong>，让各领域 teacher 并行迭代，再用统一 student 集成；如果只有单一 teacher 或单一任务，它退化为普通 OPD，未必需要 MOPD 的复杂路由和服务化 teacher 架构。
+    </div>
 
     <!-- ========= OPD 失败模式 ========= -->
     <h3>OPD 的三类失败模式（Revisiting OPD，2026）</h3>

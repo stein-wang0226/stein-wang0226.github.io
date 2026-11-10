@@ -545,6 +545,7 @@
     <ul class="tight" style="margin-bottom:0.4rem">
         <li><strong>vs SFT / off-policy 蒸馏</strong>：后者模仿教师产出，学生看不到自己会犯的错误分布；OPD 在学生自采样状态上监督。</li>
         <li><strong>vs RL</strong>：RL 也是自采样，但奖励是稀疏的结果级信号；OPD 是稠密的 per-token 教师监督，样本效率高得多。</li>
+        <li><strong>MOPD（arXiv:2606.30406）</strong>：把 OPD 从单教师压缩扩展到<strong>多领域能力整合</strong>。先独立训练 Math / IF / SWE / Tool Use 等 RL teacher，再让统一 student 在自身 rollout 上按领域路由 teacher 信号。Qwen3-30B-A3B 上 normalised score 0.937，优于 Mix-RL / Cascade RL / Off-Policy Finetune / Param-Merge；MiMo-V2-Flash 已验证工业级可用。</li>
     </ul>
     <p class="src-list" style="margin-bottom:0">成本效益：博客称达 RL 相当推理能力成本仅「一小部分」（9–30×，自蒸馏 50–100×）——<span class="pill self">厂商单方数据，未独立复现</span>。定位：OPD 打底 + RLVR 冲高，互补。</p>
 </div>

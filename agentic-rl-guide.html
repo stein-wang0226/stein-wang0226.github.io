@@ -1368,6 +1368,17 @@
             </div>
         </div>
 
+        <div class="compare-grid">
+            <div class="card">
+                <div class="card-title">MOPD <span class="tag tag-teal">arXiv:2606.30406 · 2026.06</span></div>
+                <p><strong>Multi-Teacher OPD</strong>：面向多领域能力整合，而非单 teacher 压缩。流程是 General SFT → 各领域独立 RL teacher（Math / IF / SWE / Tool Use 等）→ 学生 on-policy rollout → 按 prompt 领域路由到对应 teacher 做 per-token reverse-KL 蒸馏。Qwen3-30B-A3B 上 normalised score <strong>0.937</strong>，高于 Mix-RL 0.882、Cascade RL 0.775、Off-Policy Finetune 0.824；MiMo-V2-Flash 上多数 benchmark 匹配或超过 teacher。</p>
+            </div>
+            <div class="card">
+                <div class="card-title">MOPD 的工程含义 <span class="tag tag-amber">能力生产 / 能力集成解耦</span></div>
+                <p>它把多域 post-training 从“一个超长联合 RL run”拆成两层：领域团队并行训练 teacher，集成阶段只做 dense on-policy distillation。关键约束是 <strong>same-origin teachers</strong>：teacher 最好从同一 SFT checkpoint 分域 RL 而来；论文中换成更强但分布差异大的外部 teacher 会使 KL 放大、entropy 收缩甚至训练不稳定。</p>
+            </div>
+        </div>
+
         <h3 id="opd-agentic">5.5 Agentic OPD 变体（多轮 Agent 蒸馏）</h3>
 
         <div class="card teal">
