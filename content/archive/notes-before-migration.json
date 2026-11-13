@@ -1,0 +1,13 @@
+[
+  {"title":"LLM Frontier · 滚动追踪","url":"llm-frontier-2026.html","category":"前沿追踪","description":"模型、架构、优化器、Agent、RL 与 Protein LLM 的增量追踪，区分事实、预印本与厂商自报。"},
+  {"title":"Agentic RL 全景指南","url":"agentic-rl-guide.html","category":"强化学习","description":"PPO、DPO、GRPO、OPD 与 Agent 后训练的算法和实践。"},
+  {"title":"扩散语言模型前沿调研","url":"dlm-survey/index.html","category":"扩散模型","description":"DDPM、Flow/SDE、离散与连续扩散、块扩散、Scaling、解码和 RL，共 14 篇章节。"},
+  {"title":"Transformer Decoder 全流程","url":"transformer-decoder-flow.html","category":"模型架构","description":"训练与推理的数据流、RoPE、Attention、KV Cache 和张量维度。"},
+  {"title":"强化学习面试速查手册","url":"rl-interview-guide.html","category":"强化学习","description":"策略梯度、PPO、GRPO、RLHF、DPO 与 RLVR 的推导及算法对比。"},
+  {"title":"Agent Harness 深度解析","url":"agent-harness-guide.html","category":"Agent","description":"训练基础设施、异步 Rollout、工具编排、Sandbox 与 Reward 工程。"},
+  {"title":"分布式训练指南","url":"distributed-training-guide.html","category":"训练工程","description":"DeepSpeed、FSDP、Megatron-LM、ZeRO 与多维并行配置。"},
+  {"title":"LLM 算法岗面试题库","url":"llm-interview-bank.html","category":"面试复习","description":"LLM、RLHF、VLM、Agent、RAG 与推理工程面试题。"},
+  {"title":"VLM 算法知识与面经","url":"vlm-knowledge-interview.html","category":"多模态","description":"视觉编码器、对齐训练、分辨率处理、MoE 与代码实现。"},
+  {"title":"LLM & Multimodal 面试复习笔记","url":"https://stein-wang0226.github.io/mllm-interview-notes/","category":"外部笔记","description":"独立子站：Transformer、预训练、多模态、训练微调和工程实践。"},
+  {"title":"NLP & LLM 课程笔记","url":"https://stein-wang0226.github.io/llm-study-notes/","category":"外部笔记","description":"独立子站：复旦 CS40008 课程整理。"}
+]

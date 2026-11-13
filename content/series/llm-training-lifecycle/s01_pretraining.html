@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>01 · 预训练：从数据到通用 Base</title>
+<meta name="description" content="LLM 预训练的数据治理、因果语言建模、FIM、训练预算、长上下文与 checkpoint 交接。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="purpose">
+<h2>预训练要得到什么样的起点</h2>
+<p class="lead">通用 Base 学习文本与代码中的知识、结构和条件分布。它可能已经能续写推理、解释错误或生成工具调用的文本，但尚未保证稳定遵循对话协议，也没有直接以真实任务成功率为优化目标。</p>
+<p>贯穿四章的例子是：“读取 <code>sample.csv</code>，删除 value 为空的行，写入 <code>out.csv</code>。”完成它需要 CSV 知识、代码能力、工具协议和执行验证。预训练主要提供前两类先验；Midtraining 加强工程上下文，SFT 教可靠操作，RL 用环境结果改进策略。这个分工帮助定位问题，但能力会跨阶段重叠。</p>
+<figure>
+<div class="flow" aria-label="预训练的数据与产物流程">
+<div class="stage"><b>原始数据</b><small>网页、书籍、论文、代码<br>保留来源、许可与版本</small></div>
+<div class="stage"><b>治理与编码</b><small>去重、过滤、切分<br>Tokenizer、采样与 packing</small></div>
+<div class="stage"><b>梯度更新</b><small>Causal LM / FIM<br>优化器、并行与评测</small></div>
+<div class="stage"><b>通用 Base</b><small>权重 + 配置 + 数据状态<br>交给 CPT / 后训练分支</small></div>
+</div>
+<figcaption>这里采用主流自回归 decoder。多模态、扩散模型与其他目标可以扩展此链路，但其具体损失不与本章交叉熵混用。</figcaption>
+</figure>
+</section>
+<section id="data">
+<h2>数据治理先定义分布，再定义训练量</h2>
+<p>“训练了多少 token”只描述读入量。质量、重复次数、知识覆盖、样本之间的关系和评测污染，会改变同样预算的效果。Llama 3 与 Olmo 3 报告都把数据治理和配方作为核心训练工程。<a href="index.html#ref-16">[16]</a> <a href="index.html#ref-4">[4]</a></p>
+<table>
+<thead><tr><th>步骤</th><th>实际处理</th><th>应保留的证据</th></tr></thead>
+<tbody>
+<tr><td>来源登记</td><td>记录抓取 / 发布版本、语言、许可、仓库和提交；按来源分类</td><td>source ID、内容 hash、来源时间、许可与允许用途</td></tr>
+<tr><td>解析与质量过滤</td><td>剔除模板噪声、损坏编码、无意义重复；保留对目标有用的公式、代码与结构</td><td>过滤规则版本、每桶保留率、抽样人工检查</td></tr>
+<tr><td>去重与污染隔离</td><td>文档级、片段级近重复；检查评测题、解法、同源 PR 与衍生样本</td><td>去重簇、split ID、污染检测范围和例外记录</td></tr>
+<tr><td>样本组织</td><td>文档边界、文件路径和结构；避免误把互不相关内容视为连续故事</td><td>序列化格式、边界标记、截断策略</td></tr>
+<tr><td>混合采样</td><td>按 token / 样本 / source 的明确口径设置权重与重复次数</td><td>唯一 token、实际见到的 token、各桶有效目标数</td></tr>
+<tr><td>训练 / 验证划分</td><td>尽量按来源族或仓库隔离，防止同一内容的改写分别落入两侧</td><td>冻结留出集、近重复检查结果、版本清单</td></tr>
+</tbody>
+</table>
+<p>例如 20B 唯一数据被反复采样到 100B 输入，不能称为 100B 独立知识。若把训练完成的补丁、测试答案或 verifier 输出放进评测提示，就改变了任务条件。数据污染既可能发生在预训练，也可能由后续合成与拒绝采样传播。</p>
+<pre><code># 教学样例：数据清单与模型文本分开
+{
+  "record_id": "csv-doc-01",
+  "source_group": "csv-manual-demo",
+  "split": "train",
+  "kind": "document",
+  "text": "CSV row counts exclude the header. Empty value cells are missing.",
+  "provenance": {"version": "demo-v1", "license": "demo"},
+  "dedup_cluster": "csv-rule-01"
+}
+
+# 训练输入来自 text；record_id、split 与 provenance 用于审计。
+# 同一内容产生的 QA / paraphrase 应继承 source_group 与 split。</code></pre>
+<p class="note">这是示意 schema，不是公开团队的数据文件格式。正式训练应另外记录数据分片 checksum、生成器配置与访问权限。</p>
+</section>
+<section id="objective">
+<h2>Causal LM：每个 token 的条件预测</h2>
+<p>给定序列 <code>x₁ … xₙ</code>，decoder 用前文预测下一 token。训练同时预测多个位置，推理则逐步生成；这两个过程共享参数，但数据流和 KV Cache 使用方式不同，详见<a href="../transformer-decoder-flow.html">Decoder 全流程</a>。</p>
+<div class="equation" role="math" aria-label="带目标掩码的因果语言模型损失">L_LM = − Σᵢ mᵢ log pθ(xᵢ | x&lt;ᵢ) / Σᵢ mᵢ
+mᵢ ∈ {0,1}：有效目标位置；padding 与隔离样本的首 token 不计入目标。</div>
+<p>普通文档的多数 token 都是目标。对拼接的独立文档，可以隔离 attention 并屏蔽新文档首 token 的 loss，防止前一文档末尾被用来预测后一文档起点。不同配方可能采用不同边界规则，必须在数据与模型实现中保持一致。</p>
+<pre><code># 概念上的 shift；不是特定框架 API
+input_ids   = [BOS, "CSV", "rows", "exclude", "header", EOS]
+target_mask = [  0,     1,      1,         1,        1,   1]
+
+# logits 在当前位置预测下一位置
+loss = cross_entropy(logits[:, :-1], labels[:, 1:])
+
+# labels 对应当前 token 的身份；target_mask 先在未 shift 的位置构建。
+# 模型 API 若内部已 shift，不能在外部再 shift 一遍。</code></pre>
+<p>优化器更新的是模型权重。训练目标不会直接证明“CSV 已被正确清洗”：模型可以对说明文本损失很低，却调用错工具、误删合法的 0，或在文件没写好时声称完成。后续阶段需要引入行动分布与结果验证。</p>
+</section>
+<section id="fim">
+<h2>FIM：把补全与编辑条件编码进因果序列</h2>
+<p>Fill-in-the-Middle 将原文切成 prefix、middle、suffix，再序列化为“已知前缀 + 已知后缀 → 中间缺失内容”。仍用自回归交叉熵；模型是在重排后的序列上预测 token。原始 FIM 研究表明，这样可以让 decoder 学习中间补全，并研究与正常续写的混合。<a href="index.html#ref-15">[15]</a></p>
+<pre><code># 原文件
+def clean(rows):
+    return [r for r in rows if r["value"]]
+
+# 示意序列；实际 special token 由模型 tokenizer 定义
+&lt;fim_prefix&gt;def clean(rows):
+&lt;fim_suffix&gt;
+# callers / tests may follow here
+&lt;fim_middle&gt;    return [r for r in rows if r["value"]]</code></pre>
+<p>重排顺序、截取位置和目标范围都影响任务。FIM 不自动保证 prefix / suffix 完全不算 loss，也不自动建立多文件依赖。函数感知 FIM 会额外选择调用者、相关定义或测试等上下文；第二章讨论其合成教师与实验边界。<a href="index.html#ref-8">[8]</a></p>
+<div class="callout"><strong>从目标理解能力：</strong>文档 LM 学“这里通常接什么”，FIM 学“在已知前后文下缺什么”，trace 监督学“给定历史和观察下一步做什么”。三者都能落到 token 交叉熵，但条件分布不同。</div>
+</section>
+<section id="budget">
+<h2>算力预算：参数、token 与实际吞吐</h2>
+<p>Chinchilla 讨论的是固定训练算力下，如何同时选择模型规模与数据量。它不能被简化成对所有部署目标都有效的固定 token / parameter 比例。模型长期推理成本、数据质量、MoE 激活规模和继续训练价值会改变取舍。<a href="index.html#ref-14">[14]</a></p>
+<div class="equation" role="math" aria-label="训练计算量的粗略估计">C_train ≈ 6 × N × T
+N：稠密模型参数量；T：实际输入训练 token。
+这是粗估；长上下文 attention、辅助头、MoE 路由及系统开销需单独核算。</div>
+<p>MoE 的总参数量决定权重存储的一部分成本，激活参数量更接近单 token 前馈计算量；不能仅把总参数代入来横比训练效率。GPU 小时还取决于并行、通信、padding、重计算、精度与故障恢复。Mask 掉某些目标通常仍需要它们的前向和上下文计算，因此“少算 loss”不等于同比节省输入算力。</p>
+<table>
+<thead><tr><th>统计量</th><th>含义</th><th>常见误读</th></tr></thead>
+<tbody>
+<tr><td>唯一 token</td><td>去重后的语料容量，明确 tokenizer</td><td>把重复采样量当成新增数据</td></tr>
+<tr><td>输入训练 token</td><td>模型实际读取量；明确是否计 padding</td><td>不同长度 / packing 的计算成本被当成相同</td></tr>
+<tr><td>有效目标 token</td><td>产生监督损失的位置数</td><td>按输入 10% 的 trace 被当成 10% 梯度权重</td></tr>
+<tr><td>FLOPs / GPU 小时</td><td>计算量与硬件占用的实测口径</td><td>相同 token 被称为严格等总算力</td></tr>
+<tr><td>端到端预算</td><td>预处理、训练、教师、rollout 与验证成本</td><td>只比较策略更新 GPU，却忽略合成和环境执行</td></tr>
+</tbody>
+</table>
+<p>DeepSeek-V4 公开 32T+ 训练量及长上下文阶段，官方模型卡也给出同一大规模链路；Nemotron 3 Ultra 报告 20T 预训练。它们展示工业投入规模，无法由总 token 独立解释最终质量。<a href="index.html#ref-10">[10]</a> <a href="index.html#ref-26">[26]</a> <a href="index.html#ref-11">[11]</a></p>
+</section>
+<section id="curriculum">
+<h2>长上下文与 late pretraining：课程和数据一起变</h2>
+<p>把上下文窗口调大只改变可容纳长度；要学会检索、跨文件依赖和多轮状态，仍需要相应数据。更长序列也改变 attention 成本、有效 batch 和位置分布。Qwen3 的三段预训练、GLM-5 的长度课程与 Olmo 的 Longmino 都展示了逐阶段组织。<a href="index.html#ref-12">[12]</a> <a href="index.html#ref-3">[3]</a> <a href="index.html#ref-4">[4]</a></p>
+<table>
+<thead><tr><th>公开方案</th><th>可核对做法</th><th>不能据此假定</th></tr></thead>
+<tbody>
+<tr><td>Qwen3</td><td>通用预训练 → 强化知识与推理的数据阶段 → 长上下文阶段</td><td>所有团队都在同一位置设置一个独立的 Midtraining checkpoint</td></tr>
+<tr><td>GLM-5</td><td>32K / 128K / 200K，分别训练 1T / 500B / 50B token</td><td>160B issue–PR 唯一数据池就是该阶段的全部训练量</td></tr>
+<tr><td>Olmo 3</td><td>Dolmino 能力准备；Longmino 的 7B 用 50B、32B 用 100B 训练 token</td><td>50B 是所有模型的统一长上下文预算</td></tr>
+<tr><td>DeepSeek-V4</td><td>公开上下文从 4K 扩展到 1M 的训练安排</td><td>仅修改推理 max length 就等价于该训练过程</td></tr>
+</tbody>
+</table>
+<p>课程不是保证收益的魔法。长数据不足会导致名义窗口可用、实际依赖处理差；长样本过多又可能挤压短任务或原有能力。需要短 / 长任务分桶、位置敏感检索、跨文件执行和能力回归共同评估。</p>
+</section>
+<section id="systems">
+<h2>训练系统保证可继续、可比较</h2>
+<p>数据并行扩大 batch，张量 / 流水线并行拆分模型，序列或上下文并行分担长序列；ZeRO / FSDP 管理参数、梯度和优化器状态。如何组合取决于模型、序列和通信瓶颈，现有<a href="../distributed-training-guide.html">分布式指南</a>提供实现入口。</p>
+<p>可恢复训练需要权重之外的优化器状态、学习率调度、随机数、数据分片游标及 global step。若改变 tokenizer，token ID、embedding 与已学分布的兼容问题必须处理；常见 CPT 使用原 tokenizer，而不是在继续训练时随意重新分词。</p>
+<pre><code># 教学性的产物目录；不要求采用这些文件名
+base-checkpoint/
+  weights/                   # model shards
+  model-config.json          # architecture, context, positional settings
+  tokenizer/                 # vocab, special tokens, normalization
+  training-state/            # optimizer, scheduler, RNG, sampler cursor
+  data-manifest.json         # source hashes, mixture, input/target counts
+  training-config.json       # precision, parallelism, loss, packing
+  eval-report.json           # held-out loss + capability regressions</code></pre>
+<p>恢复用 checkpoint 与对外推理权重可以分开保存，但必须能追溯到同一训练状态。构建模型卡时应明确 checkpoint 的阶段和是否经过后训练，避免把 Instruct 权重的结果当成 Base 的自然先验。</p>
+</section>
+<section id="handoff">
+<h2>什么时候进入 CPT 或后训练</h2>
+<p>进入下一阶段的依据是能力与业务缺口：若缺领域知识、仓库结构和长依赖，可试领域 CPT；若知识够但不遵守工具协议，可先做 SFT；若示范行为稳定但任务成功率、探索或错误恢复不足，可再引入 RL。它们不是必须依次支付的四笔固定预算。</p>
+<table>
+<thead><tr><th>交接项</th><th>必须说清楚</th></tr></thead>
+<tbody>
+<tr><td>起始模型</td><td>精确 checkpoint、Base / Instruct、上下文与 tokenizer</td></tr>
+<tr><td>基线能力</td><td>通用、领域、代码、指令和长上下文的当前表现与协议</td></tr>
+<tr><td>继续训练配置</td><td>新阶段优化器 / scheduler 是否重置，回放来源和预算</td></tr>
+<tr><td>公平对照</td><td>同下游 SFT 看初始化增量；等总算力看投资价值</td></tr>
+<tr><td>失败与回退</td><td>允许的分项退化、可恢复 checkpoint、数据和目标变更记录</td></tr>
+</tbody>
+</table>
+<p>下一章将用明确的混合配比和真实消融回答：把软件工程文档、仓库与轨迹放进 Base 的准备阶段，有什么可确认的收益，又有哪些尚不能确认的部分。</p>
+</section>
+<section id="sources">
+<h2>本章证据与延伸阅读</h2>
+<p>基础目标与预算：<a href="index.html#ref-14">[14] Chinchilla</a>、<a href="index.html#ref-15">[15] FIM</a>。工业数据与课程：<a href="index.html#ref-16">[16] Llama 3</a>、<a href="index.html#ref-12">[12] Qwen3</a>、<a href="index.html#ref-3">[3] GLM-5</a>、<a href="index.html#ref-4">[4] Olmo 3</a>、<a href="index.html#ref-10">[10] V4</a>、<a href="index.html#ref-11">[11] Ultra</a>及<a href="index.html#ref-26">[26] 官方模型卡</a>。</p>
+<p class="note">样本 schema、公式实现提示、目录与交接检查为教学归纳；本章不声称复现了这些团队的训练。</p>
+</section>
+</main>
+</body>
+</html>

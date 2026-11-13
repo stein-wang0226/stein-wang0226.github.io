@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Base Model 的 Mid-training｜技术调研</title>
+<style>
+:root{color-scheme:light;--paper:#f7f8f5;--ink:#192c28;--muted:#46615a;--line:#cddbd4;--accent:#08634c;--panel:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.75 "PingFang SC","Noto Sans SC",system-ui,sans-serif}
+header{background:#16372f;color:#fff;padding:56px 22px 42px}header>div,main,nav>div{max-width:960px;margin:auto}header p{max-width:760px;color:#dfede6}
+.eyebrow{font-size:13px;letter-spacing:.12em;color:#a7d9c2}h1{font-size:clamp(31px,5vw,52px);line-height:1.15;margin:12px 0 20px}h2{font-size:clamp(23px,4vw,32px);line-height:1.22;margin:0 0 20px}h3{font-size:19px;margin:24px 0 8px}
+nav{background:#e7f0e9;border-bottom:1px solid var(--line);padding:12px 22px}nav>div{display:flex;flex-wrap:wrap;gap:6px 20px}
+a{color:var(--accent);text-underline-offset:.17em}main{padding:0 22px 54px}section{padding:36px 0;border-bottom:1px solid var(--line)}p{margin:0 0 14px}.callout{padding:17px 20px;background:#e5f2e9;border-left:4px solid var(--accent);margin:18px 0}
+figure{margin:16px 0 20px}figcaption,.note{color:var(--muted);font-size:14px;margin-top:8px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:9px}table{width:100%;border-collapse:collapse;background:var(--panel);font-size:14px}th,td{text-align:left;padding:10px 12px;vertical-align:top;border-bottom:1px solid var(--line)}thead{background:#e8f1eb}tbody tr:last-child td,tbody tr:last-child th{border-bottom:0}.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.flow{display:flex;align-items:stretch;gap:8px;margin:16px 0}.stage{flex:1;border:1px solid var(--line);background:#fff;padding:12px;border-radius:8px}.stage small{display:block;color:var(--muted)}.arrow{align-self:center;color:var(--accent)}pre{margin:0;padding:16px 18px;background:#182d28;color:#e7f4ea;border-radius:8px;overflow:auto;font:13px/1.6 ui-monospace,monospace;tab-size:4}p code,td code{background:#e5eee8;padding:0 .2em;border-radius:3px}li{margin:.35em 0}
+@media(max-width:640px){.flow{flex-direction:column}.arrow{transform:rotate(90deg)}th,td{padding:8px}header{padding-top:32px}}
+@media print{body,header,nav{background:white;color:#000}header p,.eyebrow{color:#333}header{padding:12px 22px}nav{display:none}section{padding:20px 0}pre{background:#f0f2f0;color:#000;white-space:pre-wrap}figure,tr{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><div>
+<div class="eyebrow">技术调研 · 2026 年 11 月 14 日</div>
+<h1>Agent Base Model 的 Mid-training</h1>
+<p>公开工业配方、受控实验与 Harbor 验证方案</p>
+<p><strong>公开的 coding-agent 配方支持“混合 CPT → Trace SFT”。</strong> 更准确地说，mid-training 本身就可以包含 trace，并在这些样本上使用与 SFT 相同的 assistant-only loss。阶段之间真正变化的是数据配方、训练预算，以及要得到的 checkpoint。</p>
+</div></header>
+<nav aria-label="报告目录"><div><a href="#recipe">工业配方</a><a href="#results">实验证据</a><a href="#landscape">前沿路线</a><a href="#data">数据与伪代码</a><a href="#harbor">Harbor 实验</a><a href="#sources">文献</a></div></nav>
+<main>
+<section id="recipe">
+<h2>一条可对照的工业配方</h2>
+<p>NVIDIA 在 2026 年 10 月公布的 Nemotron 3.5 研究给出了数据配比，并让带与不带 mid-training 的 checkpoint 接受相同 SFT。相对只披露成品分数的报告，这种对照能回答“加一段 mid-training，输出模型改善多少”。它仍然多用了一段训练算力。<a href="#ref-n">[1]</a></p>
+<figure>
+<div class="flow" aria-label="训练流程">
+<div class="stage"><strong>通用 Base</strong><small>固定起始 checkpoint</small></div><span class="arrow" aria-hidden="true">→</span>
+<div class="stage"><strong>混合 Mid-training</strong><small>自然工程数据、通用回放、长文与 trace</small></div><span class="arrow" aria-hidden="true">→</span>
+<div class="stage"><strong>领域 Base</strong><small>与原始 Base 分别接同一配方</small></div><span class="arrow" aria-hidden="true">→</span>
+<div class="stage"><strong>Agent SFT</strong><small>监督目标动作与回复，随后可接 RL</small></div>
+</div>
+<figcaption>图 1 · CPT 表示从已有权重继续做语言模型训练。Trace SFT 描述监督数据和目标，两者可以出现在同一个混合训练阶段。</figcaption>
+</figure>
+<figure>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Nemotron 3.5 数据桶</th><th scope="col">样本</th><th scope="col" class="num">训练混合占比</th></tr></thead>
+<tbody>
+<tr><td>Issue–PR</td><td>问题描述、修改前仓库、评审与变更</td><td class="num">40.8%</td></tr>
+<tr><td>仓库</td><td>多个相关文件在同一上下文内</td><td class="num">20.0%</td></tr>
+<tr><td>Agent trace</td><td>工具调用、实际观察与后续动作</td><td class="num">10.0%</td></tr>
+<tr><td>Diff</td><td>文件状态及代码变更</td><td class="num">3.0%</td></tr>
+<tr><td>Build / CI 日志</td><td>构建上下文、错误与诊断</td><td class="num">1.2%</td></tr>
+<tr><td>预训练回放</td><td>从预训练语料中重新采样</td><td class="num">20.0%</td></tr>
+<tr><td>长上下文数据</td><td>专门的长样本</td><td class="num">5.0%</td></tr>
+</tbody></table></div>
+<figcaption>表 1 · 论文表 1 的采样配比。轨迹池约 39.4B 唯一 token，500B 运行约读入 50.3B 轨迹 token。输入配比与产生梯度的目标 token 配比是两个量。<a href="#ref-n">[1]</a></figcaption>
+</figure>
+<p>两种模型均使用 256K packed sequence，样本之间隔离注意力。Lightning 和 Super 的峰值学习率分别为 5e−5 和 1e−5，短 warmup 后保持恒定。论文也保留了各自的 multi-token prediction 辅助头。对轨迹只监督 assistant 回合，包括工具调用。PR 和日志也有各自的去噪或目标筛选规则，因此整段训练可以理解为<strong>按数据类型定义目标的混合语言模型训练</strong>。<a href="#ref-n">[1]</a></p>
+</section>
+
+<section id="results">
+<h2>哪些选择有受控证据</h2>
+<figure><div class="table-wrap"><table>
+<thead><tr><th scope="col">对照</th><th scope="col">评测条件</th><th scope="col">原文结果</th></tr></thead>
+<tbody>
+<tr><td>Lightning，有无 500B mid-training</td><td>相同完整 SFT，pass@1</td><td>SWE Verified 60.7 → 64.5<br>SWE Multilingual 55.8 → 62.8<br>SWE Pro 32.0 → 35.5<br>Terminal-Bench 2.0 22.6 → 23.6</td></tr>
+<tr><td>Super，有无 280B mid-training</td><td>相同完整 SFT，pass@1</td><td>DeepSWE 11.7 → 15.7<br>SWE Verified 72.9 → 74.3</td></tr>
+<tr><td>Lightning-8K，CPT 混合中加入 trace</td><td>相同完整 SFT，pass@1</td><td>SWE Verified 60.5 → 63.5<br>Terminal-Bench 2.0 18.5 → 25.1<br>直接 SFT 对照分别为 59.7、22.9</td></tr>
+<tr><td>Lightning-8K，屏蔽轨迹工具返回的 loss</td><td>100B mid-training，接相同早期 SFT 配方</td><td>SWE Verified pass@1 27.5 → 37.8</td></tr>
+</tbody></table></div>
+<figcaption>表 2 · 引用 Nemotron 论文表 2–4、表 9 与 §4.4。每行是独立对照，起点与 SFT 配方随实验变化。数值单位为百分比。<a href="#ref-n">[1]</a></figcaption></figure>
+<p>最直接的结论来自同一轨迹配方的 mask 对照。模型仍然读取工具观察，并用它来预测后续动作，观察本身无需成为生成目标。这个改动在该设置下改善了结果。长日志占用的目标 token、观察的不可预测性以及目标权重如何变化，仍需用额外对照区分。</p>
+<p>用相同 SFT 测 base checkpoint 能直接评估这一阶段对最终模型的贡献。NVIDIA 观察到 LoCoDiff、仓库或轨迹的预测损失等代理指标对最终排序的预测不够稳定。论文的主要比较每个设置仅报告一次训练，且未与等总算力的更长预训练或 SFT 比较。Terminal-Bench 的 1 点变化尤其需要重复验证。<a href="#ref-n">[1]</a></p>
+</section>
+
+<section id="landscape">
+<h2>行业做法、研究前沿与适用范围</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">工作</th><th scope="col">公开做法</th><th scope="col">可以据此判断什么</th></tr></thead>
+<tbody>
+<tr><td>Qwen3-Coder-Next <a href="#ref-q">[2]</a></td><td>Qwen3-Next base 继续在自然代码、仓库、PR、合成 QA、多框架轨迹及少量指令上训练。万亿级输入，其中仓库约 600B。上下文 262,144，使用 next-token 预测、FIM、best-fit packing 和重复片段遮蔽。随后做验证轨迹 SFT。</td><td>展示成熟工业链路。公开报告未给完整数据配比或逐角色 loss 规则。同一 scaffold 内的数据量收益与跨 scaffold 的有限迁移有直接实验。</td></tr>
+<tr><td>GLM-5 <a href="#ref-g">[3]</a></td><td>32K、128K、200K 三阶段分别 1T、500B、50B token。过滤后的 issue–PR 池约 160B 唯一 token。</td><td>展示自然软件工程数据和上下文课程可以同时进入 late pretraining。数据池规模与训练 token 量口径不同。</td></tr>
+<tr><td>Olmo 3 <a href="#ref-o">[4]</a></td><td>Dolmino 从约 2.2T pool 采样 100B 训练 token，包含数学、科学、代码、指令及推理。Longmino 另用约 50B 训练 token，后训练用 Dolci。</td><td>通用 base 路线，适合参考公开语料、checkpoint 和训练阶段的组织方式。</td></tr>
+<tr><td>MidTool <a href="#ref-m">[5]</a></td><td>20.3B token，网页、代码、PDF 桶含基于原文的合成样本，另有 9% 原生 agent 轨迹。4B 和 8B base 接相同 SFT，有可选 RL 对照。</td><td>4B 的 BFCLv3 39.73 → 50.25，τ²-Bench pass@1 8.54 → 12.23。单独加入原生轨迹的消融有时退化，支持比较数据组合与任务迁移。</td></tr>
+<tr><td>PRISM <a href="#ref-p">[6]</a></td><td>跨多种 3B–24B 模型，主要在约 27B token、8K 上比较数学、代码、科学和通用数据组合。</td><td>Granite-3.3-8B 的综合通用分数大致保持，HellaSwag 单项下降约 5 点。保留能力需要分项报告。</td></tr>
+<tr><td>SPT 与 Function-Aware FIM <a href="#ref-s">[7]</a> <a href="#ref-f">[8]</a></td><td>SPT 在多文件技能包上继续做 causal LM，保留说明与引用文件的关系。Function-Aware FIM 从仓库中抽取函数级补全任务。</td><td>可以用结构化文档和代码构造更贴近实际依赖的训练信号。两者的公开结果对应特定数据和后训练设置。</td></tr>
+</tbody></table></div>
+<p>这些工作有三条共同的设计线索。把工程语料组织为跨文件、跨提交或跨回合的上下文。用少量与实际工作流接近的数据补齐工具协议和行动分布。用固定的下游训练检查增量。通用模型还要并行控制知识、数学和代码回归。这里比较的是截至报告日期、公开资料中与问题直接相关的配方，成品榜单无法反推某团队的 mid-training 目标或配比。</p>
+</section>
+
+<section id="data">
+<h2>数据长什么样，模型对什么算 loss</h2>
+<p>用一个本地 CSV 清洗任务说明。示意数据只展示字段和标签，训练方案也省略了分布式实现及具体模型的辅助 loss。</p>
+<figure>
+<pre><code>{"kind":"document","text":"CSV row counts exclude the header. Treat empty value cells as missing."}
+{"kind":"repo","files":[{"path":"README.md","text":"Export cleaned rows to out.csv."},
+                        {"path":"tests/test_clean.py","text":"assert len(clean(rows)) == 2"}]}
+{"kind":"issue_patch","issue":"Drop rows with empty values","before":"return rows",
+ "after":"return [row for row in rows if row['value']]"}
+{"kind":"trace","task_id":"demo-csv-01","env_version":"demo-v1",
+ "messages":[{"role":"user","content":"Clean sample.csv and write out.csv."},
+             {"role":"assistant","tool_call":{"name":"inspect_csv","path":"sample.csv"}},
+             {"role":"tool","content":"3 rows, 1 empty value"},
+             {"role":"assistant","tool_call":{"name":"filter_csv","input":"sample.csv","output":"out.csv"}},
+             {"role":"tool","content":"Wrote 2 rows to out.csv"},
+             {"role":"assistant","content":"Cleaned CSV written to out.csv."}],
+ "verifier":{"status":"passed","reward":1}}</code></pre>
+<figcaption>图 2 · 四种示意样本。Issue–patch 训练从问题与现有内容推断变更。Trace 保存观察与下一步行动。Verifier、环境版本和任务 ID 留在样本元数据中，用于过滤、审计和切分。</figcaption>
+</figure>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">样本片段</th><th scope="col">混合 CPT 示例</th><th scope="col">Trace SFT 示例</th></tr></thead>
+<tbody>
+<tr><td>技术文档、仓库、issue–patch</td><td>参与训练，可遮蔽重复格式与无价值片段</td><td>本例使用独立的监督轨迹集</td></tr>
+<tr><td>User 请求、工具定义</td><td>轨迹上下文</td><td>轨迹上下文</td></tr>
+<tr><td>工具结果，例如「3 rows, 1 empty value」</td><td>轨迹上下文</td><td>轨迹上下文</td></tr>
+<tr><td>Assistant 调用参数、回复和应生成的结束标记</td><td>轨迹目标</td><td>轨迹目标</td></tr>
+</tbody></table></div>
+<figure>
+<pre><code># Shared decoder-only language model update.
+IGNORE = -100
+
+def encode(record, tokenizer):
+    if record.kind == "trace":
+        ids, assistant_targets = render_chat_and_tokenize(record, tokenizer)
+        return ids, assistant_targets
+    return tokenize_document_and_mark_targets(record, tokenizer)
+
+def train(model, stream, optimizer, token_budget):
+    for records in batches_until_input_budget(stream, token_budget):
+        samples = [encode(record, model.tokenizer) for record in records]
+        batch = pack_with_document_boundaries(samples)
+        targets = batch.target_mask &amp; batch.valid &amp; ~batch.document_start
+        labels = where(targets, batch.ids, IGNORE)
+        logits = model(batch.ids, attention_mask=batch.block_causal_mask)
+        loss = cross_entropy(logits[:, :-1], labels[:, 1:], ignore_index=IGNORE)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+base = load_checkpoint(base_id)
+cpt = mix_by_input_tokens(replay, repos, docs, issue_patch, traces, weights)
+train(base, cpt, cpt_optimizer_with_warmup(base), cpt_input_tokens)
+save_checkpoint(base, "agent-base")
+
+agent = load_checkpoint("agent-base")
+sft = select_verified_traces(sft_pool)
+train(agent, sft, sft_optimizer(agent), sft_input_tokens)
+save_checkpoint(agent, "agent-sft")</code></pre>
+<figcaption>图 3 · 混合 CPT 与轨迹 SFT 复用同一个因果 LM 更新。用 chat template 生成目标位置，shift 后再计算交叉熵。每个样本开头的目标被屏蔽，防止跨样本边界预测。真实训练需用全局有效目标 token 归一化，并记录每个数据桶的输入与目标 token 数。</figcaption>
+</figure>
+<p>如果一条轨迹的大部分长度来自 stdout，按样本数混合会让少量超长轨迹占据大量输入算力。按输入 token 设配比，再单独量化 assistant 目标 token，就能分辨“改变了算力花在哪”和“改变了监督信号花在哪”。若要比较是否训练工具返回，可固定 trace 和输入长度，在同一批数据上只切换观察 mask，同时跟踪有效目标数与梯度权重。</p>
+</section>
+
+<section id="harbor">
+<h2>Harbor 如何验证这笔训练预算</h2>
+<p>以未见任务的真实 verifier 成功率为主指标。先固定一份 Trace SFT，并从同一个 base 建立下面四组。B、C、D 对齐 CPT 输入 token、上下文长度分布、训练步数和算力，C 与 D 使用同一套自然工程数据来源。构建 D 时，从 C 中移出一部分工程数据，用等量的轨迹 token 补足。</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">实验组</th><th scope="col">训练</th><th scope="col">回答的问题</th></tr></thead>
+<tbody>
+<tr><td>A</td><td>直接做固定 Trace SFT</td><td>最小业务基线</td></tr>
+<tr><td>B</td><td>通用 CPT → 固定 Trace SFT</td><td>额外继续训练本身带来多少变化</td></tr>
+<tr><td>C</td><td>通用回放 + 领域文档、仓库、变更与日志 CPT → 同 SFT</td><td>C−B 衡量领域数据配方相对通用数据的增量</td></tr>
+<tr><td>D</td><td>C 的配方中置换部分 token 为 assistant-only 轨迹 → 同 SFT</td><td>D−C 衡量将轨迹提前混入的增量</td></tr>
+</tbody></table></div>
+<p>A 与 D 是固定 SFT 的增量对比。如果要作预算决策，再加一组把额外算力用在更充分的 SFT，并报告 GPU 小时。记录每组训练的 checkpoint、数据哈希、模板、种子及截断率。优先使用按任务族、仓库与环境划分的留出集，隔离同源任务、解法和近重复轨迹。训练轨迹可含真实失败观察与后续有效修复，整条失败且无验证结果的轨迹不作为模仿正例。</p>
+<p>所有组固定评测脚手架、模型生成预算与环境镜像，并用配对任务的置信区间报告差值。另报跨脚手架、长任务、错误恢复、基础代码与指令跟随、推理 token 和墙钟时间。每次 rollout 保留任务 ID、模型和环境版本、原始 reward、verifier 输出与产物索引。环境失败单列并记录分母，按相同规则重跑缺失项。</p>
+<div class="callout"><strong>评审决策。</strong> 算力只够验证一个增量时，若要判断 mid-training 是否值得投入，先比较直接 SFT 与混合 CPT 后的同一 SFT。若已有稳定的领域 CPT，优先比较 C 与 D。扩大训练的门槛由评审提前约定，包括最小成功率提升、通用能力容许回退和 GPU 小时上限。</div>
+<p class="note">本节是待验证的实验设计。本文没有运行 Harbor 训练或评测，公开论文结果不能直接换算成 Harbor 的预期收益。</p>
+</section>
+
+<section id="sources">
+<h2>原始资料</h2>
+<ol>
+<li id="ref-n"><a href="https://arxiv.org/html/2610.22019v1">Singhal et al. · Priming Base Models for Agentic Post-Training · 2026-10</a>，§3–5、附录 B 与 D。</li>
+<li id="ref-q"><a href="https://arxiv.org/html/2603.00729">Qwen3-Coder-Next Technical Report · 2026</a>，§3、§4.1。</li>
+<li id="ref-g"><a href="https://arxiv.org/abs/2602.15763">GLM-5 · From Vibe Coding to Agentic Engineering · 2026</a>，mid-training 部分。</li>
+<li id="ref-o"><a href="https://allenai.org/blog/olmo3">Ai2 · Olmo 3 Model Flow · 2025</a>，Dolma 3 与 Dolci。</li>
+<li id="ref-m"><a href="https://arxiv.org/html/2608.20314">MidTool · Mid-training Data Synthesis for Agentic Tool Use · 2026-08</a>，表 2–6。</li>
+<li id="ref-p"><a href="https://arxiv.org/html/2603.17074">PRISM · Demystifying Retention and Interaction in Mid-Training · 2026</a>，§6–8。</li>
+<li id="ref-s"><a href="https://arxiv.org/abs/2608.26563">SPT · Skills as Pre-Training Data for Agentic Language Models · 2026-08</a>。</li>
+<li id="ref-f"><a href="https://arxiv.org/abs/2607.12463">Function-Aware Fill-in-the-Middle as Mid-Training for Coding Agent Foundation Models · 2026-07</a>。</li>
+<li><a href="https://arxiv.org/html/2510.14865">Midtraining Bridges Pretraining and Posttraining Distributions · 2025</a>，关于数据分布衔接的补充阅读。</li>
+</ol>
+</section>
+</main>
+</body>
+</html>

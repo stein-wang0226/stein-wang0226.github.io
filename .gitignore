@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+_site/
+build/
+dist/
+.automation/backup/*
+!.automation/backup/.gitignore
+.automation/logs/*
+!.automation/logs/.gitignore
+.automation/state/*
+!.automation/state/.gitignore

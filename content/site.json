@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "title": "Yuxiang Wang | Stein's Notes",
+  "url": "https://stein-wang0226.github.io",
+  "blog_url": "/blog/",
+  "navigation": [
+    {"label": "首页", "url": "/"},
+    {"label": "关于", "url": "/about/"},
+    {"label": "论文", "url": "/publications/"},
+    {"label": "博客与笔记", "url": "/blog/"},
+    {"label": "CV", "url": "/cv/"}
+  ],
+  "topics": [
+    {"id": "llm-foundations", "label": "LLM 基础与架构"},
+    {"id": "multimodal", "label": "多模态"},
+    {"id": "rl-post-training", "label": "强化学习与后训练"},
+    {"id": "agent", "label": "Agent"},
+    {"id": "training-inference", "label": "训练与推理工程"},
+    {"id": "diffusion", "label": "扩散模型"}
+  ],
+  "types": [
+    {"id": "principles", "label": "原理讲解"},
+    {"id": "system-guide", "label": "系统指南"},
+    {"id": "practical-guide", "label": "实践指南"},
+    {"id": "quick-reference", "label": "速查手册"},
+    {"id": "interview-bank", "label": "面试题库"},
+    {"id": "frontier-tracker", "label": "前沿追踪"},
+    {"id": "series-tutorial", "label": "系列教程"}
+  ],
+  "kinds": ["post", "series", "chapter", "external"],
+  "origins": ["local", "external"],
+  "statuses": ["published", "draft", "archived"],
+  "review_statuses": ["unreviewed", "needs-review", "reviewed"],
+  "pages": [
+    {"id": "about", "title": "About", "source": "content/pages/about.md", "url": "/about/"},
+    {"id": "cv", "title": "Curriculum Vitae", "source": "content/pages/cv.md", "url": "/cv/"}
+  ],
+  "publications": {
+    "source_glob": "content/publications/*.md",
+    "url_prefix": "/publication/",
+    "featured": ["2026-locality-aware-dlm", "2026-semantic-dlm-plus", "2024-stm-dynamic-graph-fraud"]
+  },
+  "assets": [
+    {"source": "assets/Curriculum_Vitae.pdf", "url": "/assets/Curriculum_Vitae.pdf"},
+    {"source": "assets/site/site.css", "url": "/assets/site/site.css"},
+    {"source": "assets/site/catalog.js", "url": "/assets/site/catalog.js"},
+    {"source": "content/series/dlm-survey/shared.css", "url": "/dlm-survey/shared.css"},
+    {"source": "content/series/dlm-survey/style.css", "url": "/dlm-survey/style.css"}
+  ],
+  "catalog_defaults": {
+    "origin": "local",
+    "status": "published",
+    "exclude_kinds": ["chapter"],
+    "sort": "updated-desc",
+    "unknown_updated_label": "更新时间待确认"
+  }
+}

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>04 · RL、Agent 训练系统与 Harbor 评测</title>
+<meta name="description" content="PPO、GRPO、DAPO、Dr. GRPO、GSPO 与 Agent rollout 系统，verifier 设计及 Harbor A–E 预算对照。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="loop">
+<h2>RL 的核心是采样、执行、评分、更新</h2>
+<p class="lead">训练策略不只复述示范，而是根据真实任务结果调整行动概率。Agent 中一次 rollout 包含多次“动作 → 工具观察”，最终产物由 verifier 检查。语言流畅、调用格式合法和任务完成是三个不同指标。</p>
+<figure>
+<div class="flow" aria-label="Agent强化学习循环">
+<div class="stage"><b>策略采样</b><small>task + history → action<br>保存行为策略版本与 log-prob</small></div>
+<div class="stage"><b>环境执行</b><small>工具 / sandbox → observation<br>限制预算，保留真实错误</small></div>
+<div class="stage"><b>Verifier / reward</b><small>检查最终文件与任务约束<br>记录原始分数、失败和成本</small></div>
+<div class="stage"><b>策略更新</b><small>advantage + 概率比 + 正则<br>新 checkpoint 返回采样</small></div>
+</div>
+<figcaption>环境观察提供条件，不是策略生成的动作。更新应定位到策略生成的 token / 动作；旧策略、参考策略和当前策略各有用途。</figcaption>
+</figure>
+<div class="equation" role="math" aria-label="强化学习概念目标">maximize E[reward(trajectory)]
+optional regularization: − β KL(πθ || πref)
+trajectory = actions + environment observations + final artifacts</div>
+<p>参考策略 <code>πref</code> 用于控制漂移；行为 / old 策略 <code>πold</code> 用于采样与概率比；当前策略 <code>πθ</code> 是正在更新的模型。它们可能起初相同，训练后承担不同角色。把 old log-prob 换成 reference log-prob 会改变算法。</p>
+</section>
+<section id="reward">
+<h2>CSV 示例：验证文件，不只验证回复</h2>
+<p>沿用前三章的 <code>inspect_csv</code> 与 <code>filter_csv</code> 工具。初始输入为3行，其中1行 value为空；正确输出保留表头、顺序和2行有效记录。正式任务应包含数字0、空白、引号、换行、编码等边界，按任务定义处理。</p>
+<pre><code># 示意输入；字符串 "0" 是合法值，不能误删
+id,value
+1,7
+2,
+3,0
+
+# 正确 out.csv
+id,value
+1,7
+3,0
+
+# 教学 verifier，不是 Harbor 的现成 API
+def verify(task_spec, artifacts):
+    output = read_csv(artifacts["out.csv"])
+    checks = {
+        "path": artifacts.has_expected_path,
+        "header": output.header == task_spec.header,
+        "rows": output.rows == task_spec.expected_rows,
+        "input_unchanged": artifacts.input_hash == task_spec.input_hash,
+    }
+    return {
+        "reward": int(all(checks.values())),
+        "checks": checks,
+        "verifier_version": "csv-output-v1",
+    }</code></pre>
+<p>期望输出属于 evaluator，不能给策略作为答案。Verifier 可采用精确断言、单元测试或领域计算，也可包含人工 / 模型 grader；验证器本身必须与任务目标一致。检查文件存在太弱，重复使用训练中公开的测试又可能教会策略只满足少数已知断言。</p>
+<table>
+<thead><tr><th>奖励来源</th><th>适用信号</th><th>需要检查</th></tr></thead>
+<tbody>
+<tr><td>RLVR</td><td>答案、程序测试、文件 / 环境状态的可验证正确性</td><td>测试覆盖、容差、超时、权限与污染</td></tr>
+<tr><td>RLHF / learned reward</td><td>人类偏好、帮助性与交互质量</td><td>偏好一致性、分布外误判和 reward hacking</td></tr>
+<tr><td>Model grader</td><td>部分难以精确判定的任务质量</td><td>提示、模型版本、长度 / 风格偏差和独立校验</td></tr>
+<tr><td>成本 / 过程约束</td><td>工具次数、时间、token、非法动作</td><td>不要把少动作奖励变成提前停止或漏验证</td></tr>
+</tbody>
+</table>
+<p>最终 reward 与过程日志分开保留。成功率是主目标时，可以将成本作为独立约束或明确的组合项；不要在看到实验结果后临时修改 reward 再与旧组比较。</p>
+</section>
+<section id="algorithms">
+<h2>PPO 与 GRPO：谁提供 advantage</h2>
+<p>PPO 用概率比和 clipping 限制更新幅度，常见 RLHF 实现训练一个 value / critic 来估计回报与 advantage。GRPO 对同一任务采样一组回答，用组内相对 reward 构造 advantage，省去独立 critic，但仍需 reward、采样与策略训练。<a href="index.html#ref-18">[18]</a> <a href="index.html#ref-19">[19]</a> <a href="index.html#ref-20">[20]</a></p>
+<div class="equation" role="math" aria-label="PPO的概率比和裁剪目标">rᵢ,t = πθ(aᵢ,t | sᵢ,t) / πold(aᵢ,t | sᵢ,t)
+J_clip = E[min(rᵢ,t Aᵢ,t, clip(rᵢ,t, 1−ε, 1+ε) Aᵢ,t)]
+这是策略项的简化形式；实际实现另有价值项、KL 或其他正则。</div>
+<div class="equation" role="math" aria-label="GRPO的组相对优势">给同一任务采样 G 条轨迹，奖励 R₁ … R_G
+Aᵢ ≈ (Rᵢ − mean(R)) / (std(R) + ε)
+把序列反馈赋给该轨迹的策略 token；具体归一化按算法版本。</div>
+<p>若组内 reward 是 <code>[0,0,1,1]</code>，成功路径获得正相对 advantage，失败路径负相对 advantage。若全0或全1，组内标准化没有可区分的结果信号；此时增大训练步数不会凭空产生正确样本。需检查任务难度、采样预算、协议、奖励或示范起点。</p>
+<p>序列 reward 广播到动作 token 是粗粒度 credit assignment：成功轨迹里也可能有无效动作。若加入过程 reward，需要验证它是否真的与最终质量一致，而不是只奖励某些表面步骤。</p>
+</section>
+<section id="variants">
+<h2>DAPO、Dr. GRPO、GSPO：修改的是哪一部分</h2>
+<table>
+<thead><tr><th>方法</th><th>主要变动</th><th>希望解决的问题</th><th>实现与比较边界</th></tr></thead>
+<tbody>
+<tr><td>PPO <a href="index.html#ref-18">[18]</a></td><td>policy ratio + clip；常配 learned value</td><td>稳定策略更新与 advantage 估计</td><td>value、reference KL、采样批与更新轮数均影响结果</td></tr>
+<tr><td>原 GRPO <a href="index.html#ref-20">[20]</a></td><td>同任务组相对 advantage；不训练独立 critic</td><td>降低 critic 成本，利用组内相对反馈</td><td>组大小、reward方差、长度和难度归一化仍重要</td></tr>
+<tr><td>DAPO <a href="index.html#ref-21">[21]</a></td><td>非对称 clipping、动态采样、token-level loss、超长样本处理</td><td>探索、有效训练信号和长回答的优化</td><td>多项改动共同作用；不能把完整方案收益归于单一 clip参数</td></tr>
+<tr><td>Dr. GRPO <a href="index.html#ref-22">[22]</a></td><td>分析并移除特定响应长度 / reward标准差归一化带来的偏差</td><td>长度偏好与任务难度权重失真</td><td>改变的是目标与归一化；base先验和reward仍可主导表现</td></tr>
+<tr><td>GSPO <a href="index.html#ref-23">[23]</a></td><td>序列平均 log-ratio 后取exp，序列层面 clipping</td><td>序列反馈与优化单位一致性，报告关注训练稳定性</td><td>使用长度归一化概率比，不是原始整序列概率比的原样估计</td></tr>
+</tbody>
+</table>
+<div class="equation" role="math" aria-label="GSPO序列概率比">sᵢ = exp[(1 / |yᵢ|) Σₜ log(πθ(yᵢ,t|prefix) / πold(yᵢ,t|prefix))]
+序列平均 log-ratio → exp → 序列层面 clipping。
+扩展到 Agent 多轮时，应明确 |yᵢ| 只计哪些策略生成 token。</div>
+<p>“用了 GRPO”不足以复现：是按序列还是 token 平均？是否除 reward标准差？KL如何实现？组内全同 reward怎样处理？超长截断怎样打分？这些改变了实际目标。算法名之外应保存配置、代码版本和关键张量统计。</p>
+<p>对新业务，先建立能稳定采样和可靠验证的基线，再对优化变体做控制实验。某个数学 benchmark 上有效的长度处理，不应无验证地搬到带长 stdout 的多轮 Agent。</p>
+</section>
+<section id="systems">
+<h2>Agent 训练系统：把长轨迹变成正确的更新批次</h2>
+<p>与单轮文本不同，Agent rollout 的耗时受工具、环境初始化、错误恢复和长度影响。把所有 GPU 等在最慢任务上会降低吞吐，异步采样能缓解，但会使行为策略落后当前策略。GLM-5 公开了异步 RL 的系统组织；细节可结合既有<a href="../agent-harness-guide.html">Agent Harness 指南</a>。<a href="index.html#ref-3">[3]</a></p>
+<table>
+<thead><tr><th>系统项</th><th>必须保存 / 控制</th><th>错误会造成什么</th></tr></thead>
+<tbody>
+<tr><td>行为策略版本</td><td>rollout model ID、old log-prob、采样参数</td><td>概率比与实际采样分布不一致</td></tr>
+<tr><td>动作 / 观察 mask</td><td>精确 token span、工具与模板、结束标记</td><td>把环境 stdout 当成策略动作更新</td></tr>
+<tr><td>多轮上下文</td><td>历史、截断 / 压缩规则与位置设置</td><td>训练计算的prefix与采样时不同</td></tr>
+<tr><td>环境隔离</td><td>镜像版本、任务初始化、随机种子、资源限制</td><td>状态泄漏、并发干扰或不可复现错误</td></tr>
+<tr><td>奖励与失败</td><td>原始 verifier 输出、超时、环境失败、任务失败</td><td>失败被静默删除，成功率分母改变</td></tr>
+<tr><td>Policy lag</td><td>采样与更新的版本差、延迟、样本年龄</td><td>过旧样本让近似on-policy更新失真</td></tr>
+<tr><td>推理 / 训练一致性</td><td>精度、模板、采样器、工具协议、log-prob口径</td><td>奖励变化与优化错误无法区分</td></tr>
+</tbody>
+</table>
+<p>Importance ratio 与 clipping 不能无限修复任意大的 policy lag。应记录滞后分布，定义可接受窗口及过旧样本处置，监控 ratio、KL、clip fraction、有效目标和 reward分布。异步带来的吞吐收益要与策略效果及丢弃采样成本一起报告。</p>
+<pre><code># 教学版采样记录；实现可用 JSONL / parquet 等格式
+{
+  "task_id": "demo-csv-01",
+  "task_family": "csv-cleaning",
+  "split": "heldout",
+  "policy_checkpoint": "agent-rl-step-100",
+  "behavior_version": 100,
+  "template_version": "tool-template-v1",
+  "environment_version": "csv-env-v1",
+  "verifier_version": "csv-output-v1",
+  "actions_and_observations_ref": "trajectory.json",
+  "policy_token_spans_ref": "spans.json",
+  "behavior_logprobs_ref": "logprobs.bin",
+  "reward_raw": 1,
+  "checks": {"header": true, "rows": true},
+  "failure_type": null,
+  "artifact_index": ["out.csv"],
+  "generated_tokens": 320,
+  "tool_calls": 2,
+  "wall_time_seconds": 4.2
+}</code></pre>
+<p class="note">数字是示例，不是本地结果。评测不需要行为 log-prob 来算成功率；训练记录需要它来追溯概率比。本示例展示一套可贯穿训练与审计的字段。</p>
+</section>
+<section id="harbor">
+<h2>Harbor A–E：分别检验初始化与预算价值</h2>
+<p>本方案延续原调研，尚未执行。目标是验证 Midtraining 是否让固定后训练更有效，以及额外预算应放在哪里。使用同一可恢复 Base、冻结 Trace SFT 池与独立 Harbor 任务族留出集。</p>
+<table>
+<thead><tr><th>组</th><th>训练路径</th><th>回答的问题</th></tr></thead>
+<tbody>
+<tr><td>A</td><td>Base → 固定 Trace SFT</td><td>最小可用基线</td></tr>
+<tr><td>B</td><td>通用 CPT → 同一固定 SFT</td><td>额外继续训练本身的增量</td></tr>
+<tr><td>C</td><td>领域文档 / repo / PR / 日志 + 通用回放 CPT → 同 SFT</td><td>C−B：相同输入预算下的领域配方增量</td></tr>
+<tr><td>D</td><td>从C置换部分输入 token 为 assistant-only trace → 同 SFT</td><td>D−C：将轨迹提前混入的增量</td></tr>
+<tr><td>E</td><td>Base → 更充分的 SFT；额外预算按实测成本尽量匹配</td><td>与A–D共同检验预算投向，不能仅按token声称等算力</td></tr>
+</tbody>
+</table>
+<h3>第一层：冻结下游条件</h3>
+<p>A / B / C / D 使用相同 SFT 数据、更新配置与评测协议；C与D的工程来源相同，D用等量输入 trace替换部分C数据。B / C / D匹配输入token、长度分布、有效batch与计划步数，报告实际FLOPs、GPU小时、目标token与辅助loss。Mask影响目标密度，因此还应检查归一化与每桶目标权重。</p>
+<h3>第二层：控制总预算</h3>
+<p>固定SFT只回答初始化贡献。E将可用的额外训练资源投入SFT，并按硬件、长度、有效目标和吞吐实测匹配；教师生成、预处理、rollout与环境执行成本另列，说明是否计入总预算。若无法精确匹配，报告预算差，不用“等算力”概括。</p>
+<h3>第三层：拆出 mask 与后续 RL 因素</h3>
+<p>如D优于C，可在相同 trace与输入上做观察mask开 / 关对照，固定模板和截断并记录目标数量，区分数据加入和目标改变。再将选定checkpoint接<strong>同一RL方案</strong>，检查长RL后初始化收益是否持续；不能用公开Nemotron的短RL实验代替这一步。</p>
+<div class="callout"><strong>预算不足时的顺序：</strong>先做A与D了解业务增量；已有稳定领域CPT时优先C与D；决定扩大投入前补E和分项回归。把成功率最低增量、能力容许回退与成本上限提前写入实验方案。</div>
+</section>
+<section id="protocol">
+<h2>切分、协议与统计：让结论经得起复查</h2>
+<table>
+<thead><tr><th>维度</th><th>建议固定或报告</th><th>结论边界</th></tr></thead>
+<tbody>
+<tr><td>任务切分</td><td>按任务族、仓库、环境留出；隔离同源解法、模板和近重复轨迹</td><td>随机逐条切分可能只测同源记忆</td></tr>
+<tr><td>模型与训练种子</td><td>checkpoint hash、训练种子、数据hash和配置；预算允许时多个训练种子</td><td>多次评测采样不替代多次独立训练</td></tr>
+<tr><td>Harness与环境</td><td>scaffold、工具、镜像、依赖、模板和verifier版本</td><td>跨scaffold结果必须单列，不能混成同一设置</td></tr>
+<tr><td>生成预算</td><td>每题rollout数、token / 工具步数 / 时间上限、温度和停止规则</td><td>更多测试时采样可提高成功机会但也增加成本</td></tr>
+<tr><td>主指标</td><td>独立verifier任务成功率；固定每题预算</td><td>格式合法率、reward均值和真实成功率不同</td></tr>
+<tr><td>差值与置信区间</td><td>同任务配对比较；配对bootstrap，按任务族聚类时说明单位</td><td>评测CI只反映该评测抽样，不能覆盖训练种子不确定性</td></tr>
+<tr><td>失败分母</td><td>任务失败、环境失败、超时与缺失；固定重跑规则，保留原记录</td><td>静默删除环境失败会抬高成功率</td></tr>
+<tr><td>回归与成本</td><td>通用代码 / 指令 / 长上下文、错误恢复、推理token、墙钟与GPU小时</td><td>综合平均不变可掩盖特定能力退化</td></tr>
+</tbody>
+</table>
+<p>若每题采样 <code>n</code> 次，有 <code>c</code> 次成功，平均单次成功率与“至少一次成功”不同。在可交换采样等前提下，常见 pass@k 估计为 <code>1 − C(n−c,k) / C(n,k)</code>；多轮工具环境与不独立采样时必须说明假设和协议。</p>
+<p>Nemotron报告的SWE每题3次、TB每题8次平均pass@1，不能称为pass@3 / pass@8。评测3个采样种子也不能称为训练3个种子；Function-Aware FIM的数字需要同样区分。</p>
+<details><summary>提前登记决策门槛</summary>
+<p>在跑实验前规定主对照、主指标、最小可接受增量、通用能力最大回退、成本上限以及是否必须跨harness迁移。门槛按业务与任务风险制定，本系列不虚构通用百分点标准。</p>
+<p>报告同时展示所有预登记组与失败，不只展示最好seed或最好checkpoint。若新增探索实验，标记为后续探索，再用独立留出集确认。</p>
+</details>
+</section>
+<section id="diagnosis">
+<h2>结果不理想，先定位哪一层失效</h2>
+<table>
+<thead><tr><th>观察</th><th>优先检查</th><th>下一步对照</th></tr></thead>
+<tbody>
+<tr><td>协议错误多，reward全0</td><td>template、schema、停止标记、工具可用性、cold start</td><td>固定任务补可信SFT；确认环境正确再改RL</td></tr>
+<tr><td>CPT loss降，最终成功率不增</td><td>数据与业务条件差、固定SFT覆盖、harness迁移、目标权重</td><td>领域 / trace置换、mask对照和能力回归</td></tr>
+<tr><td>训练reward升，独立verifier不升</td><td>奖励漏洞、污染、grader偏差与训练测试版本</td><td>隐藏断言、独立verifier、失败轨迹复查</td></tr>
+<tr><td>长任务退化，短任务正常</td><td>截断、位置、上下文压缩、长观察和有效目标</td><td>长度分桶、固定上下文、长数据 / 回放比例</td></tr>
+<tr><td>RL吞吐高但更新不稳定</td><td>policy lag、old log-prob、ratio、KL与精度一致性</td><td>收紧滞后窗口，对照同步 / 异步成本与质量</td></tr>
+<tr><td>平均能力持平，某项明显下降</td><td>分项数据覆盖与遗忘、教师支持范围</td><td>回放、任务权重和对应能力留出集</td></tr>
+</tbody>
+</table>
+<p>失败记录比一个总分更有助于下一轮数据选择。每条失败关联task、轨迹、最终产物、verifier和模型版本，才能判断问题应回到CPT、SFT、奖励设计还是环境系统。</p>
+</section>
+<section id="release">
+<h2>最后交付的是模型与完整执行协议</h2>
+<p>最终模型可能来自RL，也可能再次经拒绝采样SFT或OPD汇总。交付前冻结推理配置，保存能够复现终评的版本；训练集上的reward或教师KL不作为最终质量证明。</p>
+<pre><code>release/
+  model/                       # weights + model config + tokenizer
+  protocol/
+    chat-template.*
+    tools-schema.json
+    generation-config.json
+    environment-manifest.json
+    verifier-manifest.json
+  evidence/
+    training-lineage.json       # Base → CPT → SFT → RL / OPD
+    data-manifest.json
+    compute-accounting.json
+    evaluation-protocol.json
+    task-results.jsonl
+    capability-regressions.json
+    failure-analysis.json</code></pre>
+<p>训练链路的完整性来自这条追溯关系：每个checkpoint对应哪些数据与目标，如何使用环境，经过什么独立评测，预算和失败怎样计算。这样新增一桶数据或更换一种RL算法时，才能知道究竟改变了什么。</p>
+<p class="note">本章的Harbor设计、schema与目录均为待执行建议。没有本地训练、成功率或GPU成本结果；公开论文不能直接换算为Harbor预期提升。</p>
+</section>
+<section id="sources">
+<h2>本章证据与延伸阅读</h2>
+<p>算法：<a href="index.html#ref-18">[18] PPO</a>、<a href="index.html#ref-19">[19] InstructGPT</a>、<a href="index.html#ref-20">[20] GRPO</a>、<a href="index.html#ref-21">[21] DAPO</a>、<a href="index.html#ref-22">[22] Dr. GRPO</a>、<a href="index.html#ref-23">[23] GSPO</a>。工程与评测边界：<a href="index.html#ref-3">[3] GLM-5</a>、<a href="index.html#ref-1">[1] Nemotron</a>、<a href="index.html#ref-2">[2] Coder-Next</a>、<a href="index.html#ref-6">[6] PRISM</a>、<a href="index.html#ref-8">[8] Function-Aware FIM</a>。</p>
+<p>更多算法推导见<a href="../rl-interview-guide.html">RL手册</a>，系统延伸见<a href="../agentic-rl-guide.html">Agentic RL指南</a>与<a href="../agent-harness-guide.html">Agent Harness</a>。本系列使用新增来源复核本章内容，不将既有文章的全部科研事实标记为已核验。</p>
+</section>
+</main>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "note": "Intentional changes after exact recovery. Original migration baseline is unchanged. Hashes fix the reviewed scope; any later mismatch must be reported.",
+  "changes": [
+    {"source":"content/posts/agent-harness-guide/index.html","sha256":"d709280e4c89a3aa1252c9d0f72f80e706850b0c7d0b57e07f5bc2a26fef759e","reason":"Add prerequisites, reading route and key system artifacts."},
+    {"source":"content/posts/agentic-rl-guide/index.html","sha256":"8ee9d3315695e53a8926cb13c428eb22371a08ad7fbabe0ac6d2440299b75b52","reason":"Add prerequisites, reading route and training artifacts."},
+    {"source":"assets/site/catalog.js","sha256":"aba42cd73b0a3e6233f105b0ccf7d10217c3c7a6201cd815e201a055fcc136fa","reason":"Replace old card search with catalog filters, chapter search and URL restoration; valid new filters take precedence over legacy values, unrelated query keys and fragments survive filter edits."},
+    {"source":"assets/site/site.css","sha256":"ced642d730fbf23686ac3995e5871d8c20e00518d5fd43dd7b28e9fa391f6d86","reason":"Add scoped home, catalog and responsive navigation styles."},
+    {"source":"content/pages/about.md","sha256":"aac94711234dd76d99195d23fa2ceafb5606dbf1a42f677be8415f719de522cf","reason":"Remove duplicate publication/notes cards; all personal biography, research interests and news remain. Publication claims also remain in CV/paper records; lists are generated from authority."},
+    {"source":"content/pages/cv.md","sha256":"530c9a23784a4650b4115e35263d6b363cdfd8d087388c2a39d07bab9819f7de","reason":"Replace empty publication placeholder with PDF synchronization note. Personal experience and all research claims remain."},
+    {"source":"content/posts/distributed-training-guide/index.html","sha256":"4997c66c3f01e7ffa87d54fda2fc5d331b7622512fbaaebbda17aac8da0a1ab5","reason":"Add reading preparation; flag uncited 5.3 performance table without changing numbers."},
+    {"source":"content/series/dlm-survey/index.html","sha256":"3422bfd49d0dde941ca0da4f7a8449b368a3d9856e6bf80711b001663fe426d6","reason":"Add series prerequisites, recommended order and fact-review limits; all fourteen chapters unchanged."},
+    {"source":"content/posts/llm-frontier-2026/index.html","sha256":"e63376e3691b6545f3eeb9d842da2bf2b7ba9ffb195190df959ee78f4a4b0ac4","reason":"Add reading preparation and fact-label interpretation; all AUTO markers, entries and last-updated preserved."},
+    {"source":"content/posts/llm-interview-bank/index.html","sha256":"e286d092437e985cbab3cf5386886db17b2aa11b7b8e9f6acc1a556d245f9abe","reason":"Add answer coverage and valid explanatory links; remove one duplicate VLM link; preserve all 470 questions and 95 answers."},
+    {"source":"content/posts/rl-interview-guide/index.html","sha256":"771963fea1e7b5b0d96e34d786de61a3065191d50ccc73c7d2956f6176158649","reason":"Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched."},
+    {"source":"templates/home.html","sha256":"74b3b2ce17434bd802cd0e124f02fd60471a47ab0b57f60aaa3a7b87d2e57906","reason":"Replace duplicated hand-authored cards with template slots generated from profile/catalog/publication records."},
+    {"source":"content/posts/transformer-decoder-flow/index.html","sha256":"0644216340b7b74fa09b7d369926eb52c4656ba9e531535988f17482686d8a1b","reason":"Add prerequisites, data-flow reading route and symbolic shape-tracking exercise."},
+    {"source":"content/posts/vlm-knowledge-interview/index.html","sha256":"c6b5eea1bc0a5a44ea6da2d5ea4dd87da521bb2d0d17f7620deedea9cf33b1a4","reason":"Add prerequisites, architecture/training reading route and fact-review limits."}
+  ]
+}

@@ -1,0 +1,48 @@
+/* Scoped to the training series; existing scientific pages keep their styles. */
+.training-lifecycle{--tl-ink:#172d35;--tl-muted:#52666b;--tl-line:#d6ddd8;--tl-green:#0f766e;--tl-paper:#fcfbf7;box-sizing:border-box;max-width:1100px;margin:24px auto;padding:28px 32px 40px;background:var(--tl-paper);color:var(--tl-ink);font:16px/1.85 system-ui,-apple-system,"PingFang SC",sans-serif}
+.training-lifecycle *{box-sizing:border-box}
+.training-lifecycle section{padding:24px 0;border-bottom:1px solid var(--tl-line)}
+.training-lifecycle section:first-child{padding-top:0}
+.training-lifecycle h2{font-size:clamp(23px,3vw,30px);line-height:1.4;margin:0 0 18px;letter-spacing:-.02em}
+.training-lifecycle h3{font-size:20px;line-height:1.5;margin:24px 0 12px}
+.training-lifecycle p{margin:12px 0}
+.training-lifecycle a{color:var(--tl-green);text-underline-offset:3px}
+.training-lifecycle li{margin:8px 0}
+.training-lifecycle .lead{font-size:18px}
+.training-lifecycle .note,.training-lifecycle figcaption{font-size:14px;color:var(--tl-muted)}
+.training-lifecycle .eyebrow{font-size:12px;letter-spacing:.1em;color:var(--tl-green);text-transform:uppercase}
+.training-lifecycle .callout{padding:18px 20px;background:#e8f2ed;border-left:4px solid var(--tl-green);margin:20px 0}
+.training-lifecycle .caution{background:#faf0de;border-left-color:#ad7319}
+.training-lifecycle .metric-grid,.training-lifecycle .chapter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:22px 0}
+.training-lifecycle .card{padding:20px;border:1px solid var(--tl-line);border-radius:8px;background:#fff}
+.training-lifecycle .card h3{margin:6px 0 12px}
+.training-lifecycle .card p:last-child{margin-bottom:0}
+.training-lifecycle .metric{font-size:28px;line-height:1.3;color:var(--tl-green);display:block}
+.training-lifecycle figure{margin:22px 0}
+.training-lifecycle figcaption{margin-top:12px}
+.training-lifecycle .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.training-lifecycle .flow .stage{border-top:4px solid var(--tl-green);padding:16px;background:#fff;border-radius:6px;box-shadow:0 0 0 1px var(--tl-line)}
+.training-lifecycle .stage b,.training-lifecycle .stage small{display:block}
+.training-lifecycle .stage small{font-size:13px;color:var(--tl-muted);margin-top:8px}
+.training-lifecycle .flow .stage:not(:last-child) b::after{content:" →";color:var(--tl-green)}
+.training-lifecycle table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+.training-lifecycle th,.training-lifecycle td{padding:12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--tl-line);min-width:110px}
+.training-lifecycle thead{background:#eaf1ed}
+.training-lifecycle .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.training-lifecycle .reading-table{border:1px solid var(--tl-line);border-radius:6px;margin:18px 0}
+.training-lifecycle code{font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.training-lifecycle p code,.training-lifecycle li code,.training-lifecycle td code{background:#eaf0eb;padding:2px 4px;border-radius:3px}
+.training-lifecycle pre{padding:20px;background:#183039;color:#eaf4ef;border-radius:8px;line-height:1.7;overflow:auto}
+.training-lifecycle pre code{overflow-wrap:normal}
+.training-lifecycle .equation{padding:16px 20px;background:#eef2ee;border-radius:6px;overflow-x:auto;font:14px/1.9 ui-monospace,Menlo,monospace;white-space:pre}
+.training-lifecycle details{border:1px solid var(--tl-line);padding:16px 20px;border-radius:6px;margin:20px 0;background:#fff}
+.training-lifecycle summary{cursor:pointer;color:var(--tl-green);font-weight:600}
+.training-lifecycle .sources{font-size:14px}
+.training-lifecycle .sources li{margin:12px 0}
+.training-lifecycle .mask-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.training-lifecycle .mask-grid div{border-radius:6px;border:1px solid var(--tl-line);padding:14px;background:#edf0ed}
+.training-lifecycle .mask-grid .target{background:#e3f1e9;border-color:#80b9a4}
+.training-lifecycle .mask-grid b{display:block}
+@media(max-width:800px){.training-lifecycle .flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.training-lifecycle{margin:16px 12px;padding:22px 18px;font-size:15px}.training-lifecycle .chapter-grid,.training-lifecycle .metric-grid,.training-lifecycle .flow,.training-lifecycle .mask-grid{grid-template-columns:1fr}.training-lifecycle .flow .stage:not(:last-child) b::after{content:" ↓"}.training-lifecycle pre{padding:16px}.training-lifecycle th,.training-lifecycle td{padding:10px}.training-lifecycle .callout{padding:14px 16px}}
+@media print{.training-lifecycle{max-width:none;margin:0;padding:0;background:white}.training-lifecycle pre{background:#f0f0f0;color:#111;white-space:pre-wrap}.training-lifecycle .card,.training-lifecycle figure{break-inside:avoid}}

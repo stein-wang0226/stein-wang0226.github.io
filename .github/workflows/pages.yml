@@ -1,0 +1,44 @@
+name: Publish static site
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - run: python scripts/build.py --output "$RUNNER_TEMP/site-build"
+      - run: python scripts/check.py --output "$RUNNER_TEMP/site-build"
+      - name: Verify build did not modify sources
+        run: |
+          git diff --exit-code
+          test -z "$(git ls-files --others --exclude-standard)"
+      - run: python scripts/export.py --output "$RUNNER_TEMP/site-build" --dest "$RUNNER_TEMP/public-site"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/public-site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

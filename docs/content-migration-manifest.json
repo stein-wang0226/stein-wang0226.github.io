@@ -1,0 +1,5787 @@
+{
+  "schema_version": 1,
+  "phase": "pre-migration",
+  "hash_algorithm": "sha256",
+  "baseline_note": "Current uncommitted consolidation, not HEAD; never regenerate after source edits.",
+  "counts": {
+    "local_collections": 9,
+    "root_posts": 8,
+    "series": 1,
+    "chapters": 14,
+    "publications": 4,
+    "external_links": 2
+  },
+  "external_links": [
+    {
+      "id": "mllm-interview-notes",
+      "url": "https://stein-wang0226.github.io/mllm-interview-notes/"
+    },
+    {
+      "id": "llm-study-notes",
+      "url": "https://stein-wang0226.github.io/llm-study-notes/"
+    }
+  ],
+  "files": [
+    {
+      "before": ".nojekyll",
+      "after": ".nojekyll",
+      "action": "retain",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "public_url": "/.nojekyll",
+      "anchors": []
+    },
+    {
+      "before": "404.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "705b300246b78c8bfe4d3d7a15a501761838440f581df213e6403a4c517be7a1",
+      "bytes": 1310,
+      "public_url": "/404.html",
+      "anchors": [
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Page not found"
+        }
+      ],
+      "links": [
+        "/",
+        "https://stein-wang0226.github.io/404.html",
+        "assets/site/site.css",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "notes/index.html",
+        "index.html",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "about.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "4dab22572c2f1cf3faf66981dc5555692f16b66579cb6ea9d319ca7831f6a4e7",
+      "bytes": 495,
+      "public_url": "/about.html",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/about/",
+        "about/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "about/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "dd0e4cbd77f4f3e1f713a6775803dd5f52ac03a808c849963b79f81a87877a30",
+      "bytes": 6169,
+      "public_url": "/about/",
+      "anchors": [
+        "news",
+        "open-source-study-notes-welcome-to-learn",
+        "research-interests",
+        "selected-publications",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Yuxiang Wang"
+        },
+        {
+          "level": 2,
+          "anchor": "research-interests",
+          "text": "Research Interests"
+        },
+        {
+          "level": 2,
+          "anchor": "news",
+          "text": "News"
+        },
+        {
+          "level": 2,
+          "anchor": "selected-publications",
+          "text": "Selected Publications"
+        },
+        {
+          "level": 2,
+          "anchor": "open-source-study-notes-welcome-to-learn",
+          "text": "Open-Source Study Notes — Welcome to Learn!"
+        }
+      ],
+      "links": [
+        "https://stein-wang0226.github.io/about/",
+        "../assets/site/site.css",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "mailto:25210980109@m.fudan.edu.cn",
+        "https://github.com/stein-wang0226",
+        "https://sds.fudan.edu.cn/",
+        "https://www.fudan.edu.cn/",
+        "https://baojian.github.io/",
+        "http://kw.fudan.edu.cn/",
+        "https://zhuoyue.hdu.edu.cn/",
+        "https://www.hdu.edu.cn/",
+        "https://wyxlss.github.io/",
+        "https://arxiv.org/abs/2604.24832",
+        "https://arxiv.org/abs/2604.24832",
+        "https://link.springer.com/chapter/10.1007/978-981-95-3906-2_3",
+        "../cv/index.html",
+        "../assets/Curriculum_Vitae.pdf",
+        "https://stein-wang0226.github.io/mllm-interview-notes/",
+        "../rl-interview-guide.html",
+        "../vlm-knowledge-interview.html",
+        "https://stein-wang0226.github.io/llm-study-notes/",
+        "../notes/index.html",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "agent-harness-guide.html",
+      "after": "content/posts/agent-harness-guide/index.html",
+      "action": "move",
+      "sha256": "944cc605eb9d6d5676947a81b052140acc2b0db5f5c5ca61b3a762f412b77812",
+      "bytes": 79285,
+      "public_url": "/agent-harness-guide.html",
+      "anchors": [
+        "arch",
+        "case",
+        "failures",
+        "frameworks",
+        "frontier",
+        "grpo",
+        "lab",
+        "mapping",
+        "pipeline",
+        "production",
+        "refs",
+        "reward",
+        "rollout",
+        "sandbox",
+        "site-main",
+        "tools",
+        "what"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Agent Harness"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "01 什么是 Agent Harness"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Harness 的五大核心组件"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "02 四层架构设计"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "层间接口设计"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "03 异步 Rollout 引擎"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "为什么需要异步？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "三种异步模式"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "异步数据流"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "04 工具编排系统"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "BaseTool 抽象"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "三种工具 Runtime"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "热插拔机制"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "工具 Scale 到 100+ 的解决方案"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "容错机制"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "05 Sandbox 沙箱设计"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "两阶段隔离策略"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Sandbox Pool 资源管理"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "电商场景的 Sandbox 安全需求"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "06 Reward 工程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "两层 Reward 架构"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "防 Reward Hacking 五重机制"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "稀疏 Reward 的应对策略"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "07 GRPO 算法详解"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "GRPO vs PPO"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "GRPO Loss 完整公式"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "三个 Mask 的工程意义"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Dr. GRPO: 消除长度偏差"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "08 Token-Text 映射问题"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "问题本质"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "解决方案：Generation Mask"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Agent-R1 的 Step-Level MDP 方案"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "09 主流 Harness 框架对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "ROLL vs VERL：编排理念对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "ROLL 与 Ray 的层次关系"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "10 Agent Post-Training Pipeline"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "四阶段训练流水线"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "完整数据流示意"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "11 常见失败模式与对策"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "训练阶段的三段危机"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "生产环境失败模式"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RAGEN 的 Echo Trap 现象"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "12 Agent 生产化关键问题"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "三层 Guardrails 设计"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "可观测性三层"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "13 前沿进展（2024-2026）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Agentic RL 四大流派"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Agent Reasoning vs LLM Reasoning"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "关键论文速查"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "14 实战案例：ProtAgent"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "系统架构"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "关键数据"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "YAML Skill 路由"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "15 课程实验：智能体个体模拟"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "实验概览"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Memory 检索公式"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "四维评估体系（LLM-as-Judge）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "16 参考资源"
+        }
+      ],
+      "links": [
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/agent-harness-guide.html",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "#what",
+        "#arch",
+        "#rollout",
+        "#tools",
+        "#sandbox",
+        "#reward",
+        "#grpo",
+        "#mapping",
+        "#frameworks",
+        "#pipeline",
+        "#failures",
+        "#production",
+        "#frontier",
+        "#case",
+        "#lab",
+        "#refs",
+        "https://arxiv.org/abs/2510.11345",
+        "https://arxiv.org/abs/2509.21009",
+        "https://arxiv.org/abs/2503.20783",
+        "https://arxiv.org/abs/2511.14460",
+        "https://arxiv.org/abs/2504.13837",
+        "https://arxiv.org/abs/2501.12948",
+        "https://arxiv.org/abs/2402.03300",
+        "https://arxiv.org/abs/2409.19256",
+        "https://arxiv.org/abs/2504.20073",
+        "https://arxiv.org/abs/2506.06122",
+        "https://arxiv.org/abs/2511.14460",
+        "https://arxiv.org/abs/2509.01055",
+        "https://arxiv.org/abs/2503.20783",
+        "https://arxiv.org/abs/2502.01456",
+        "https://arxiv.org/abs/2503.19470",
+        "https://github.com/verl-project/verl",
+        "https://github.com/alibaba/ROLL",
+        "https://github.com/alibaba/ROCK",
+        "https://github.com/RAGEN-AI/RAGEN",
+        "https://github.com/AgentR1/Agent-R1",
+        "https://github.com/TIGER-AI-Lab/verl-tool",
+        "https://github.com/AMAP-ML/Tree-GRPO",
+        "https://github.com/NousResearch/atropos",
+        "https://arxiv.org/abs/2501.12948",
+        "https://arxiv.org/abs/2402.03300",
+        "https://arxiv.org/abs/2503.20783",
+        "https://arxiv.org/abs/2502.01456",
+        "https://arxiv.org/abs/2503.19470",
+        "https://arxiv.org/abs/2504.13837",
+        "https://arxiv.org/abs/2412.14135"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "agentic-rl-guide.html",
+      "after": "content/posts/agentic-rl-guide/index.html",
+      "action": "move",
+      "sha256": "447cbf67a64a94aaa07ef1237d71811a20ba46fda4f669095a2b2ea0d2e13799",
+      "bytes": 154704,
+      "public_url": "/agentic-rl-guide.html",
+      "anchors": [
+        "MathJax-script",
+        "algo-2026",
+        "arpo",
+        "backToTop",
+        "coding-agents",
+        "credit",
+        "deepseek-r1",
+        "dpo",
+        "family-tree",
+        "gDPO",
+        "gGRPO",
+        "gPPO",
+        "gae",
+        "gigpo",
+        "github-repos",
+        "glm",
+        "grpo",
+        "gspo",
+        "gui-agents",
+        "infra",
+        "intro",
+        "is",
+        "kimi",
+        "kl",
+        "mdp",
+        "multi-turn",
+        "offpolicy",
+        "opd",
+        "opd-agentic",
+        "opd-compare",
+        "opd-pipeline",
+        "opd-variants",
+        "ortho",
+        "part1",
+        "part2",
+        "part3",
+        "part4",
+        "part5",
+        "part6",
+        "part7",
+        "part8",
+        "pg",
+        "ppo",
+        "progress",
+        "qwen3",
+        "ref",
+        "rlvr-ceiling",
+        "sidebar",
+        "site-main",
+        "steppo",
+        "tool-rl",
+        "training-infra"
+      ],
+      "headings": [
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "目录导航"
+        },
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Agentic RL 全景指南"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "目录"
+        },
+        {
+          "level": 2,
+          "anchor": "intro",
+          "text": "引言：为什么 Agentic RL 成为最热的方向"
+        },
+        {
+          "level": 2,
+          "anchor": "part1",
+          "text": "I 数学基础"
+        },
+        {
+          "level": 3,
+          "anchor": "mdp",
+          "text": "1.1 马尔可夫决策过程（MDP）"
+        },
+        {
+          "level": 3,
+          "anchor": "pg",
+          "text": "1.2 策略梯度定理"
+        },
+        {
+          "level": 3,
+          "anchor": "is",
+          "text": "1.3 重要性采样（Importance Sampling）"
+        },
+        {
+          "level": 3,
+          "anchor": "kl",
+          "text": "1.4 KL 散度与信任域"
+        },
+        {
+          "level": 3,
+          "anchor": "gae",
+          "text": "1.5 广义优势估计（GAE）"
+        },
+        {
+          "level": 2,
+          "anchor": "part2",
+          "text": "II 经典算法族谱"
+        },
+        {
+          "level": 3,
+          "anchor": "ppo",
+          "text": "2.1 PPO 家族（Critic-based）"
+        },
+        {
+          "level": 3,
+          "anchor": "dpo",
+          "text": "2.2 DPO 家族（Preference-based / Offline）"
+        },
+        {
+          "level": 3,
+          "anchor": "grpo",
+          "text": "2.3 GRPO 家族（Group-based / Critic-Free）"
+        },
+        {
+          "level": 3,
+          "anchor": "family-tree",
+          "text": "2.4 族谱总图"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.5 三大家族核心对比"
+        },
+        {
+          "level": 2,
+          "anchor": "part3",
+          "text": "III Agentic RL 核心问题"
+        },
+        {
+          "level": 3,
+          "anchor": "rlvr-ceiling",
+          "text": "3.1 RLVR Ceiling：纯推理 RL 的天花板"
+        },
+        {
+          "level": 3,
+          "anchor": "credit",
+          "text": "3.2 信用分配问题（Credit Assignment）"
+        },
+        {
+          "level": 3,
+          "anchor": "multi-turn",
+          "text": "3.3 多轮 RL（Multi-turn Reinforcement Learning）"
+        },
+        {
+          "level": 3,
+          "anchor": "tool-rl",
+          "text": "3.4 工具调用 RL（Tool-Use RL）"
+        },
+        {
+          "level": 3,
+          "anchor": "offpolicy",
+          "text": "3.5 Off-Policy 优化"
+        },
+        {
+          "level": 2,
+          "anchor": "part4",
+          "text": "IV 前沿算法创新"
+        },
+        {
+          "level": 3,
+          "anchor": "gspo",
+          "text": "4.1 GSPO — Group Sequence Policy Optimization"
+        },
+        {
+          "level": 3,
+          "anchor": "steppo",
+          "text": "4.2 StepPO — Step-Aligned Policy Optimization"
+        },
+        {
+          "level": 3,
+          "anchor": "arpo",
+          "text": "4.3 ARPO — Adaptive Rollout Policy Optimization"
+        },
+        {
+          "level": 3,
+          "anchor": "gigpo",
+          "text": "4.4 GiGPO — Group-in-Group Policy Optimization"
+        },
+        {
+          "level": 3,
+          "anchor": "ortho",
+          "text": "4.5 正交叠加：多维度改进的自由组合"
+        },
+        {
+          "level": 3,
+          "anchor": "algo-2026",
+          "text": "4.6 2026 前沿新算法"
+        },
+        {
+          "level": 2,
+          "anchor": "part5",
+          "text": "V OPD — On-Policy Distillation（在策略蒸馏）"
+        },
+        {
+          "level": 3,
+          "anchor": "opd",
+          "text": "5.1 OPD 原理 — 在策略蒸馏的数学本质"
+        },
+        {
+          "level": 3,
+          "anchor": "opd-compare",
+          "text": "5.2 OPD vs 其他算法族"
+        },
+        {
+          "level": 3,
+          "anchor": "opd-pipeline",
+          "text": "5.3 Sparse-to-Dense 完整 Pipeline"
+        },
+        {
+          "level": 3,
+          "anchor": "opd-variants",
+          "text": "5.4 OPD 前沿变体"
+        },
+        {
+          "level": 3,
+          "anchor": "opd-agentic",
+          "text": "5.5 Agentic OPD 变体（多轮 Agent 蒸馏）"
+        },
+        {
+          "level": 2,
+          "anchor": "part6",
+          "text": "VI 开源大模型 RL 实践"
+        },
+        {
+          "level": 3,
+          "anchor": "deepseek-r1",
+          "text": "6.1 DeepSeek-R1"
+        },
+        {
+          "level": 3,
+          "anchor": "kimi",
+          "text": "6.2 Kimi k1.5 / K2"
+        },
+        {
+          "level": 3,
+          "anchor": "qwen3",
+          "text": "6.3 Qwen3"
+        },
+        {
+          "level": 3,
+          "anchor": "glm",
+          "text": "6.4 GLM-4.5 / GLM-5 / GLM-5.2"
+        },
+        {
+          "level": 2,
+          "anchor": "part7",
+          "text": "VII Agentic 系统与基础设施"
+        },
+        {
+          "level": 3,
+          "anchor": "coding-agents",
+          "text": "7.1 Coding Agent RL 全景"
+        },
+        {
+          "level": 3,
+          "anchor": "training-infra",
+          "text": "7.2 开源 RL 训练框架"
+        },
+        {
+          "level": 3,
+          "anchor": "infra",
+          "text": "7.3 训练基础设施要点"
+        },
+        {
+          "level": 3,
+          "anchor": "github-repos",
+          "text": "7.4 推荐开源 Repo（按 Star 排序）"
+        },
+        {
+          "level": 3,
+          "anchor": "gui-agents",
+          "text": "7.5 GUI / Web / Desktop Agent RL"
+        },
+        {
+          "level": 2,
+          "anchor": "part8",
+          "text": "VIII 面试高频 QA"
+        },
+        {
+          "level": 2,
+          "anchor": "ref",
+          "text": "参考文献"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/agentic-rl-guide.html",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "#intro",
+        "#part1",
+        "#mdp",
+        "#pg",
+        "#is",
+        "#kl",
+        "#gae",
+        "#part2",
+        "#ppo",
+        "#dpo",
+        "#grpo",
+        "#family-tree",
+        "#part3",
+        "#rlvr-ceiling",
+        "#credit",
+        "#multi-turn",
+        "#tool-rl",
+        "#offpolicy",
+        "#part4",
+        "#gspo",
+        "#steppo",
+        "#arpo",
+        "#gigpo",
+        "#ortho",
+        "#algo-2026",
+        "#part5",
+        "#opd",
+        "#opd-compare",
+        "#opd-pipeline",
+        "#opd-variants",
+        "#opd-agentic",
+        "#part6",
+        "#deepseek-r1",
+        "#kimi",
+        "#qwen3",
+        "#glm",
+        "#part7",
+        "#coding-agents",
+        "#training-infra",
+        "#github-repos",
+        "#part8",
+        "#ref",
+        "index.html",
+        "#part1",
+        "#part2",
+        "#part3",
+        "#part4",
+        "#part5",
+        "#part6",
+        "#part7",
+        "#part8",
+        "https://github.com/TsinghuaC3I/Awesome-RL-for-LRMs",
+        "https://github.com/opendilab/awesome-RLVR",
+        "https://cameronrwolfe.substack.com/p/agentic-rl",
+        "https://github.com/ventr1c/Awesome-RL-based-Agentic-Search-Papers",
+        "index.html",
+        "rl-interview-guide.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "assets/Curriculum_Vitae.pdf",
+      "after": "assets/Curriculum_Vitae.pdf",
+      "action": "retain",
+      "sha256": "66b3c0d7c7cf44f23caf4cae80eaaac4e8948373fe39b682fc2111c2735ccde6",
+      "bytes": 2502216,
+      "public_url": "/assets/Curriculum_Vitae.pdf",
+      "anchors": []
+    },
+    {
+      "before": "assets/site/catalog.js",
+      "after": "assets/site/catalog.js",
+      "action": "retain",
+      "sha256": "a532711504028659e381f0f93be7b957e2ac0fff1d3b10387721a656c8620785",
+      "bytes": 1400,
+      "public_url": "/assets/site/catalog.js",
+      "anchors": []
+    },
+    {
+      "before": "assets/site/site.css",
+      "after": "assets/site/site.css",
+      "action": "retain",
+      "sha256": "65e5a9307e373328c330a24be94540d0fb15e15cbadba5c851c26462ef8c0010",
+      "bytes": 3800,
+      "public_url": "/assets/site/site.css",
+      "anchors": []
+    },
+    {
+      "before": "content/about.md",
+      "after": "content/pages/about.md",
+      "action": "move",
+      "sha256": "755b3a885a1d07122488711db2a58554a1fe9aff6dbc628fe32d6fd78fc9d3da",
+      "bytes": 3995,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "content/cv.md",
+      "after": "content/pages/cv.md",
+      "action": "move",
+      "sha256": "8fc87ce332120ee7c63370b7314e6bdd4c31a034d222d6c143c59de5dd1b4568",
+      "bytes": 7771,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "content/notes.json",
+      "after": "content/archive/notes-before-migration.json",
+      "action": "move",
+      "sha256": "884aaf4f2eb9249a51c24159f4e2109f9081be8383795476a615d3b2860d95fa",
+      "bytes": 2191,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "content/publications/2024-stm-dynamic-graph-fraud.md",
+      "after": "content/publications/2024-stm-dynamic-graph-fraud.md",
+      "action": "retain",
+      "sha256": "55af6e2f958932db7fee9177aeb6f96616064a8a09a586afc0a490c2f6abf3f0",
+      "bytes": 1836,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "content/publications/2026-locality-aware-dlm.md",
+      "after": "content/publications/2026-locality-aware-dlm.md",
+      "action": "retain",
+      "sha256": "6fc90c102889981b03d5a26201667ebba966d99f41cfff357d17d841c7bd65f5",
+      "bytes": 2249,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "content/publications/2026-semantic-diffusion-lm.md",
+      "after": "content/publications/2026-semantic-diffusion-lm.md",
+      "action": "retain",
+      "sha256": "a78423d7df8790c0c441900f52590ed8782ec253a0efa3d13cd5115e5fee08fc",
+      "bytes": 1363,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "content/publications/2026-semantic-dlm-plus.md",
+      "after": "content/publications/2026-semantic-dlm-plus.md",
+      "action": "retain",
+      "sha256": "4a7fb97d1289b97338a114995da42e3054d884baf921fb564861abca9ec4eb5d",
+      "bytes": 2264,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "cv/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "a238350e51bdf497c4a4ece1055b06e2adecdbe040d07693232ad11c93320679",
+      "bytes": 10789,
+      "public_url": "/cv/",
+      "anchors": [
+        "education",
+        "honors-awards",
+        "industry-experience",
+        "publications",
+        "research-experience",
+        "site-main",
+        "skills"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Curriculum Vitae"
+        },
+        {
+          "level": 2,
+          "anchor": "education",
+          "text": "Education"
+        },
+        {
+          "level": 2,
+          "anchor": "honors-awards",
+          "text": "Honors & Awards"
+        },
+        {
+          "level": 2,
+          "anchor": "research-experience",
+          "text": "Research Experience"
+        },
+        {
+          "level": 2,
+          "anchor": "industry-experience",
+          "text": "Industry Experience"
+        },
+        {
+          "level": 2,
+          "anchor": "skills",
+          "text": "Skills"
+        },
+        {
+          "level": 2,
+          "anchor": "publications",
+          "text": "Publications"
+        }
+      ],
+      "links": [
+        "https://stein-wang0226.github.io/cv/",
+        "../assets/site/site.css",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "index.html",
+        "../assets/Curriculum_Vitae.pdf",
+        "https://arxiv.org/abs/2604.24832",
+        "https://link.springer.com/chapter/10.1007/978-981-95-3906-2_3",
+        "../publication/2026-semantic-dlm-plus/index.html",
+        "../publication/2026-locality-aware-dlm/index.html",
+        "../publication/2026-semantic-diffusion-lm/index.html",
+        "../publication/2024-stm-dynamic-graph-fraud/index.html",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "distributed-training-guide.html",
+      "after": "content/posts/distributed-training-guide/index.html",
+      "action": "move",
+      "sha256": "ddc445a274c327bfa7bfab2a0bcf5f24a96ff986597b6c2eb9c3ec15d9edf75c",
+      "bytes": 34350,
+      "public_url": "/distributed-training-guide.html",
+      "anchors": [
+        "deepspeed",
+        "example",
+        "fsdp",
+        "megatron",
+        "overview",
+        "refs",
+        "selection",
+        "site-main",
+        "troubleshooting"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "DeepSpeed / FSDP / Megatron-LM"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "01 概述"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "02 DeepSpeed"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.1 ZeRO 三阶段"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.2 安装与配置"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.3 与 HuggingFace 集成"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.4 启动命令"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.5 ZeRO-Offload（CPU/NVMe 卸载）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "03 FSDP"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.1 分片策略"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.2 PyTorch 原生 API"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.3 Accelerate 集成（最简洁）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.4 FSDP2（PyTorch 2.4+）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "04 Megatron-LM"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.1 六大并行策略"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.2 安装"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.3 预训练启动命令"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.4 并行策略详解"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.5 并行策略组合建议"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.6 Checkpoint 转换（HF ↔ Megatron）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.7 Megatron 独有优化"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "05 选型决策"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.1 按模型规模"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.2 按场景选择"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.3 性能对比（参考值）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.4 最佳实践：分阶段组合"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "06 常见问题与排查"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.1 显存 OOM"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.2 训练速度慢"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.3 Loss 不收敛 / NaN"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.4 多机通信问题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "07 完整示例：LLaMA-2 7B LoRA 微调"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "DeepSpeed 配置 (ds_lora_config.json)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "训练脚本"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "08 参考资料"
+        }
+      ],
+      "links": [
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/distributed-training-guide.html",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "#overview",
+        "#deepspeed",
+        "#fsdp",
+        "#megatron",
+        "#selection",
+        "#troubleshooting",
+        "#example",
+        "#refs",
+        "https://www.deepspeed.ai/",
+        "https://arxiv.org/abs/1910.02054",
+        "https://pytorch.org/docs/stable/fsdp.html",
+        "https://huggingface.co/docs/accelerate/usage_guides/fsdp",
+        "https://github.com/NVIDIA/Megatron-LM",
+        "https://arxiv.org/abs/1909.08053",
+        "https://docs.nvidia.com/nemo-framework/user-guide/latest/index.html",
+        "/index.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/generate.py",
+      "after": "content/series/dlm-survey/generate.py",
+      "action": "move",
+      "sha256": "c361352f1bf44447a7fdafbb3560511fe20512689b71031aa70db7749113a815",
+      "bytes": 13741,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "dlm-survey/index.html",
+      "after": "content/series/dlm-survey/index.html",
+      "action": "move",
+      "sha256": "24e9e1356935970b05ec4d75d81f1b774f714445829e916e9bcf805411af0a81",
+      "bytes": 8042,
+      "public_url": "/dlm-survey/",
+      "anchors": [
+        "math-loading",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "扩散语言模型前沿调研"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "目录 基础理论 + 十二大章节"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "DDPM：从变分推断到噪声预测"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "连续时间：ODE、SDE 与 Flow Matching"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "全景概述与四大流派"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "离散空间扩散"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "块扩散与半自回归"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "连续隐空间扩散"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "预测范式大一统"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Scaling Laws"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "投机解码与推理加速"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "ELBO 与 RL 训练"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "商业落地与行业实践"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "综合对比与未来方向"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Looped Transformer 与 Latent Reasoning"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "VAE 原理、发展脉络与 VAE 家族"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s00a_ddpm.html",
+      "after": "content/series/dlm-survey/s00a_ddpm.html",
+      "action": "move",
+      "sha256": "2b7c320fa80591c4970af00e023c8dfdbf5e21bf7ed0d21e67b0c991745c6797",
+      "bytes": 28231,
+      "public_url": "/dlm-survey/s00a_ddpm.html",
+      "anchors": [
+        "appendix",
+        "site-main",
+        "step1",
+        "step2",
+        "step3",
+        "step4",
+        "step5"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "DDPM：从变分推断到噪声预测"
+        },
+        {
+          "level": 3,
+          "anchor": "step1",
+          "text": "第一步：概率模型定义"
+        },
+        {
+          "level": 3,
+          "anchor": "step2",
+          "text": "第二步：优化目标与证据下界 (ELBO)"
+        },
+        {
+          "level": 3,
+          "anchor": "step3",
+          "text": "第三步：$L_{VLB}$ 的数学拆解"
+        },
+        {
+          "level": 3,
+          "anchor": "step4",
+          "text": "第四步：真实后验分布 $q(\\mathbf{x}_{t-1} | \\mathbf{x}_t, \\mathbf{x}_0)$ 的解析推导"
+        },
+        {
+          "level": 3,
+          "anchor": "step5",
+          "text": "第五步：损失函数的等价化简"
+        },
+        {
+          "level": 3,
+          "anchor": "appendix",
+          "text": "附录：算法伪代码"
+        }
+      ],
+      "links": [
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s00a_ddpm.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "#step1",
+        "#step2",
+        "#step3",
+        "#step4",
+        "#step5",
+        "#appendix",
+        "index.html",
+        "s00b_flow_sde.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s00b_flow_sde.html",
+      "after": "content/series/dlm-survey/s00b_flow_sde.html",
+      "action": "move",
+      "sha256": "d1701f663787f1f9ac75437d26219694c32d4ff8b7832f6f89102e3f1abbe2b5",
+      "bytes": 42507,
+      "public_url": "/dlm-survey/s00b_flow_sde.html",
+      "anchors": [
+        "appendix",
+        "sec1",
+        "sec2",
+        "sec3",
+        "sec4",
+        "sec5",
+        "sec6",
+        "sec7",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "连续时间生成模型：ODE、SDE 与 Flow Matching"
+        },
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Flow Matching 与 Diffusion Models：基于连续时间演化的统一视角"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "时间约定声明"
+        },
+        {
+          "level": 2,
+          "anchor": "sec1",
+          "text": "1. 直觉：从噪声到数据的连续演化"
+        },
+        {
+          "level": 2,
+          "anchor": "sec2",
+          "text": "2. 连续时间演化方程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.1 确定性演化：ODE 与连续性方程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.2 随机演化：SDE 与 Fokker–Planck 方程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.3 两种演化的关键关系"
+        },
+        {
+          "level": 2,
+          "anchor": "sec3",
+          "text": "3. 理想路径的构建"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.1 条件路径 $p_t(x|z)$"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.2 边际路径 $p_t(x)$"
+        },
+        {
+          "level": 2,
+          "anchor": "sec4",
+          "text": "4. 向量场的构建：描述路径的动力学"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.1 条件向量场 $u_t(x|z)$"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.2 边际向量场 $u_t(x)$ —— 真正的训练目标"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.3 Score Function 与噪声预测"
+        },
+        {
+          "level": 2,
+          "anchor": "sec5",
+          "text": "5. ODE、SDE 与概率流 ODE 的统一"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.1 核心统一公式"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.2 概率流 ODE（Probability Flow ODE）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.3 最优传输与直线路径（Optimal Transport & Rectified Flow）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.4 DDPM 与 Score-based 模型的统一：从变分推断到 SDE"
+        },
+        {
+          "level": 2,
+          "anchor": "sec6",
+          "text": "6. 训练目标"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.1 Flow Matching 损失"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.2 Score Matching 损失"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.3 核心定理：条件损失与边际损失梯度等价"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.4 DDPM 损失函数的推导"
+        },
+        {
+          "level": 2,
+          "anchor": "sec7",
+          "text": "7. 推理与采样算法"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.1 Flow Matching：ODE 采样"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.2 Score-based Diffusion：SDE 采样"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.3 DDPM 采样（离散时间）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.4 一步或少步采样"
+        },
+        {
+          "level": 2,
+          "anchor": "appendix",
+          "text": "附录"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "附录 A：连续性方程推导"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "附录 B：重参数化技巧（Reparameterization Trick）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "附录 C：标准布朗运动（Wiener Process）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "附录 D：Fokker–Planck 方程推导（验证 SDE 与连续性方程的相容性）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "附录 E：Fokker–Planck 方程的标准推导"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "附录 F：条件/边际损失梯度等价证明"
+        }
+      ],
+      "links": [
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s00b_flow_sde.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "#sec1",
+        "#sec2",
+        "#sec3",
+        "#sec4",
+        "#sec5",
+        "#sec6",
+        "#sec7",
+        "#appendix",
+        "s00a_ddpm.html",
+        "s01_overview.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s01_overview.html",
+      "after": "content/series/dlm-survey/s01_overview.html",
+      "action": "move",
+      "sha256": "b4ddd66d85b21614c6094d9669260c2d720d5115291d5c98e353304262f3715f",
+      "bytes": 11134,
+      "public_url": "/dlm-survey/s01_overview.html",
+      "anchors": [
+        "math-loading",
+        "s1",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s1",
+          "text": "01 扩散语言模型全景概述与四大流派"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "1.1 为什么需要扩散语言模型？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "1.2 四大流派概览"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "1.3 四大流派的关系与演化"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "1.4 阅读路线建议"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s01_overview.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s02_discrete.html",
+        "s05_paradigms.html",
+        "s07_speculative.html",
+        "s03_block.html",
+        "s09_commercial.html",
+        "s06_scaling.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s05_paradigms.html",
+        "s08_elbo_rl.html",
+        "s04_continuous.html",
+        "index.html",
+        "s02_discrete.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s02_discrete.html",
+      "after": "content/series/dlm-survey/s02_discrete.html",
+      "action": "move",
+      "sha256": "8de508533517b7a7da9d2290f70d11d16edb2adff85603fc65717a3add999865",
+      "bytes": 47786,
+      "public_url": "/dlm-survey/s02_discrete.html",
+      "anchors": [
+        "math-loading",
+        "s2",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s2",
+          "text": "02 离散空间扩散 (Discrete Diffusion)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.1 D3PM：离散扩散的开山鼻祖"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.2 MDLM：Mask 机制与扩散的完美结合"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.3 LLaDA：扩散模型走向大模型时代"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.4 LLaDA 2.0 (MoE)：100B 规模的稀疏激活"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.5 Dream 7B：表征对齐的扩散模型"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.6 Seed Diffusion：字节跳动的大规模扩散 LM"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.7 SEDD：第四范式——比率估计"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.8 DiffuLLaMA / DiffuGPT：AR 适配为扩散"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.9 离散扩散演进总结"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "2.10 Diffusion Duality：Uniform ELBO 为什么比 Gaussian 更 tight？ ⭐"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s02_discrete.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "s01_overview.html",
+        "s03_block.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s03_block.html",
+      "after": "content/series/dlm-survey/s03_block.html",
+      "action": "move",
+      "sha256": "a12a955218149e803fe7a4d306e980891fd4423cfe5f4601245d8a84ef09cdc3",
+      "bytes": 26460,
+      "public_url": "/dlm-survey/s03_block.html",
+      "anchors": [
+        "math-loading",
+        "s3",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s3",
+          "text": "03 块扩散与半自回归 (Block / Semi-AR)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.1 BD3LM：AR 与 Diffusion 的精确插值 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.2 SDAR：AR 预训练 → 块扩散适配"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.3 SSD-LM：半自回归扩散的先驱"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.4 Blockwise SFT 与 BlockGen：训练与采样优化"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.5 DFlash：扩散投机解码的里程碑 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.6 NVIDIA Nemotron-Diffusion：三模态统一 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.7 TiDAR：扩散思考 + 自回归说话"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.8 DiffuSpec / DART / PARD：投机解码家族"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.9 Fast-dLLM 系列 (NVIDIA)"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s03_block.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "https://github.com/z-lab/dflash",
+        "s02_discrete.html",
+        "s04_continuous.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s04_continuous.html",
+      "after": "content/series/dlm-survey/s04_continuous.html",
+      "action": "move",
+      "sha256": "716126d867b1de418e5a9ba353ac8dc15c04ec7325fe55e8946e50af9e2a0c13",
+      "bytes": 29448,
+      "public_url": "/dlm-survey/s04_continuous.html",
+      "anchors": [
+        "math-loading",
+        "s4",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s4",
+          "text": "04 连续隐空间扩散 (Continuous DLLM)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.0 Diffusion-LM：连续文本扩散的奠基之作"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.1 COLA：字节跳动的连续隐空间扩散"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.2 Apple CADD：连续增强离散扩散"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.3 何恺明团队：从 Diffusion Loss 到 ELF ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.4 CCDD：连续-离散联合扩散"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.5 LangFlow：连续扩散首次匹敌离散"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.6 TextLDM：视觉 DiT 配方迁移语言"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.7 Plaid：连续 DLM 的首个 Scaling Law ⭐"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s04_continuous.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "s03_block.html",
+        "s05_paradigms.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s05_paradigms.html",
+      "after": "content/series/dlm-survey/s05_paradigms.html",
+      "action": "move",
+      "sha256": "63ade74e5d29488ef90f33ef254c4a7b71c79419bc2d25c92f33c987328cfc2c",
+      "bytes": 16689,
+      "public_url": "/dlm-survey/s05_paradigms.html",
+      "anchors": [
+        "math-loading",
+        "s5",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s5",
+          "text": "05 预测范式 (Prediction Paradigms) 大一统"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.1 连续扩散的三大预测目标"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.2 离散扩散的预测范式"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.3 Discrete Flow Matching：Flow Matching 推广到离散空间 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "5.4 六大范式统一对比"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s05_paradigms.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "s04_continuous.html",
+        "s06_scaling.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s06_scaling.html",
+      "after": "content/series/dlm-survey/s06_scaling.html",
+      "action": "move",
+      "sha256": "b385616cfa4b9485a692dc81d1c7754c209f897c7432a9dec8f4696be2b3f360",
+      "bytes": 24741,
+      "public_url": "/dlm-survey/s06_scaling.html",
+      "anchors": [
+        "math-loading",
+        "s6",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s6",
+          "text": "06 DLM Scaling Laws 与 AR 对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.1 核心发现：DLM vs AR Scaling"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.2 DLM 过拟合的\"反直觉\"优势 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.3 DLM 解码的\"取巧\"行为"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.4 DLM 的超级数据学习能力 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.5 Scaling Laws 的噪声类型依赖性 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.6 \"Masked Diffusion 不是终极范式\""
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "6.7 Scaling Laws 总结表"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s06_scaling.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "s05_paradigms.html",
+        "s07_speculative.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s07_speculative.html",
+      "after": "content/series/dlm-survey/s07_speculative.html",
+      "action": "move",
+      "sha256": "66baebc4b49bb0a964979ebbbd2e22c5f4a9a405912262760ce003aa84a445e5",
+      "bytes": 18216,
+      "public_url": "/dlm-survey/s07_speculative.html",
+      "anchors": [
+        "math-loading",
+        "s7",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s7",
+          "text": "07 DLM 投机解码：DFlash vs MTP 深度分析"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.0 投机解码基础概念"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.1 DFlash vs MTP 对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.2 投机系统中 AR vs DLM 的发散性分析"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.3 Block Diffusion 做投机的精度问题"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.4 投机解码完整时间线"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "7.5 dLLM 加速推理新进展 (2025-2026) ⭐"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s07_speculative.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "s06_scaling.html",
+        "s08_elbo_rl.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s08_elbo_rl.html",
+      "after": "content/series/dlm-survey/s08_elbo_rl.html",
+      "action": "move",
+      "sha256": "91b914a2d7c720d1de7bfca15b51f766bc57a4c3580233d13650d735461ef5ab",
+      "bytes": 39335,
+      "public_url": "/dlm-survey/s08_elbo_rl.html",
+      "anchors": [
+        "math-loading",
+        "s8",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s8",
+          "text": "08 ELBO 问题与 RL 训练 (SPG / GDSD)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.1 ELBO 的根本问题"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.2 让 ELBO 更紧的尝试"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.3 SPG：三明治策略梯度 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.4 GDSD：自蒸馏绕过 ELBO ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.5 d1：首个 dLLM 推理 RL 框架 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.6 DiSPO：扩散状态策略优化"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.7 MDPO：解决训练-推理分布偏移"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.8 DiFFPO：统一的 dLLM RL 框架"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.9 DARE：统一 dLLM 后训练框架"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.10 VRPO：方差约减偏好优化"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.11 Uniform State Diffusion 的后训练：Diffusion Duality 路线 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.12 Uniform ELBO 梯度方差：量化分析"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.13 UDM-GRPO：Uniform 离散扩散上的首个 RL 工作"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "8.14 dLLM RL 技术全景对比"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s08_elbo_rl.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "s07_speculative.html",
+        "s09_commercial.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s09_commercial.html",
+      "after": "content/series/dlm-survey/s09_commercial.html",
+      "action": "move",
+      "sha256": "ed34acd2147cb31848286a8525a5185e985d002a4f486a9783278caf42fdac3e",
+      "bytes": 19187,
+      "public_url": "/dlm-survey/s09_commercial.html",
+      "anchors": [
+        "math-loading",
+        "s9",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s9",
+          "text": "09 商业落地现状与行业实践"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.1 各大厂商布局"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.2 Gemini Diffusion → DiffusionGemma：从闭源实验到开源架构"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.2b DiffusionGemma 技术深潜：Uniform State Diffusion 的工业验证"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.3 Mercury 2：首个商用 dLLM 推理模型"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.4 dLLM 推理吞吐的理论分析 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.5 速度-质量 Pareto 前沿分析 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.6 商业化关键技术指标对比"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "shared.css",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s09_commercial.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "s08_elbo_rl.html",
+        "s10_comparison.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s10_comparison.html",
+      "after": "content/series/dlm-survey/s10_comparison.html",
+      "action": "move",
+      "sha256": "1c804db245a0b4e48dad86fd18eb7eb29da089e489719609d7c1f0bbd0a82a39",
+      "bytes": 16020,
+      "public_url": "/dlm-survey/s10_comparison.html",
+      "anchors": [
+        "math-loading",
+        "s10",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s10",
+          "text": "10 综合对比表与未来方向"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "10.1 核心方法全景对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "10.2 DLM RL 训练方法对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "10.2.1 RL 方法理论深度对比 ⭐"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "10.3 未来方向判断"
+        }
+      ],
+      "links": [
+        "shared.css",
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s10_comparison.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "index.html",
+        "s09_commercial.html",
+        "index.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s11_loop_transformer.html",
+      "after": "content/series/dlm-survey/s11_loop_transformer.html",
+      "action": "move",
+      "sha256": "bce31695f3df487525bfc2bfaafdb26869abebb00fbbc6ba4c52d43b7d5d475a",
+      "bytes": 40159,
+      "public_url": "/dlm-survey/s11_loop_transformer.html",
+      "anchors": [
+        "math-loading",
+        "s11",
+        "s11-1",
+        "s11-10",
+        "s11-2",
+        "s11-3",
+        "s11-4",
+        "s11-5",
+        "s11-6",
+        "s11-7",
+        "s11-8",
+        "s11-9",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s11",
+          "text": "11 Looped Transformer 与 Latent Reasoning"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "本章目录"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-1",
+          "text": "11.1 核心直觉：参数复用 vs 参数堆叠"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-2",
+          "text": "11.2 数学框架与核心理论"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-3",
+          "text": "11.3 复杂度类分析：为什么 CoT 不够"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-4",
+          "text": "11.4 与扩散模型的形式类比"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-5",
+          "text": "11.5 核心论文：Ouro / LoopLM"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-6",
+          "text": "11.6 核心论文：CCDD"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-7",
+          "text": "11.7 扩散语言模型中的 Latent Reasoning（2024–2026）"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-8",
+          "text": "11.8 Looped Transformer 深度解析"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-9",
+          "text": "11.9 核心论文索引"
+        },
+        {
+          "level": 3,
+          "anchor": "s11-10",
+          "text": "11.10 与 dLLM 项目的关联启示"
+        }
+      ],
+      "links": [
+        "shared.css",
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s11_loop_transformer.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "index.html",
+        "#s11-1",
+        "#s11-2",
+        "#s11-3",
+        "#s11-4",
+        "#s11-5",
+        "#s11-6",
+        "#s11-7",
+        "#s11-8",
+        "#s11-9",
+        "#s11-10",
+        "s10_comparison.html",
+        "index.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s12_vae.html",
+      "after": "content/series/dlm-survey/s12_vae.html",
+      "action": "move",
+      "sha256": "86cf2527bb3819f15fe14a634a3d81ab1906158ad73061a57529036843be5546",
+      "bytes": 37495,
+      "public_url": "/dlm-survey/s12_vae.html",
+      "anchors": [
+        "math-loading",
+        "s12",
+        "s12-1",
+        "s12-2",
+        "s12-3",
+        "s12-4",
+        "s12-5",
+        "s12-5-1",
+        "s12-5-2",
+        "s12-5-3",
+        "s12-5-4",
+        "s12-5-5",
+        "s12-6",
+        "s12-7",
+        "s12-7-1",
+        "s12-7-2",
+        "s12-7-3",
+        "s12-7-4",
+        "s12-7-5",
+        "s12-7-6",
+        "s12-7-7",
+        "s12-8",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": "s12",
+          "text": "12 VAE 原理、发展脉络与 VAE 家族"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "本章目录"
+        },
+        {
+          "level": 3,
+          "anchor": "s12-1",
+          "text": "12.1 核心原理与 ELBO"
+        },
+        {
+          "level": 3,
+          "anchor": "s12-2",
+          "text": "12.2 三大关键问题"
+        },
+        {
+          "level": 3,
+          "anchor": "s12-3",
+          "text": "12.3 六阶段发展脉络"
+        },
+        {
+          "level": 3,
+          "anchor": "s12-4",
+          "text": "12.4 VAE 家族：连续路线"
+        },
+        {
+          "level": 3,
+          "anchor": "s12-5",
+          "text": "12.5 VAE 家族：离散量化路线（重点展开）"
+        },
+        {
+          "level": 3,
+          "anchor": "s12-6",
+          "text": "12.6 VAE 家族：层级高性能与先验增强"
+        },
+        {
+          "level": 3,
+          "anchor": "s12-7",
+          "text": "12.7 VAE 在现代生成系统中的角色（重点展开）"
+        },
+        {
+          "level": 3,
+          "anchor": "s12-8",
+          "text": "12.8 核心论文索引"
+        }
+      ],
+      "links": [
+        "shared.css",
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/dlm-survey/s12_vae.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "index.html",
+        "s00a_ddpm.html",
+        "s00b_flow_sde.html",
+        "s01_overview.html",
+        "s02_discrete.html",
+        "s03_block.html",
+        "s04_continuous.html",
+        "s05_paradigms.html",
+        "s06_scaling.html",
+        "s07_speculative.html",
+        "s08_elbo_rl.html",
+        "s09_commercial.html",
+        "s10_comparison.html",
+        "s11_loop_transformer.html",
+        "s12_vae.html",
+        "index.html",
+        "#s12-1",
+        "#s12-2",
+        "#s12-3",
+        "#s12-4",
+        "#s12-5",
+        "#s12-6",
+        "#s12-7",
+        "#s12-8",
+        "#s12-7-5",
+        "s11_loop_transformer.html",
+        "index.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "dlm-survey/s12_vae_summary.md",
+      "after": "content/series/dlm-survey/s12_vae_summary.md",
+      "action": "move",
+      "sha256": "f8151f9541b2b6a9b3fc01df09c4ad5f9b5c395797b36ec151b0b0b7659fa5bf",
+      "bytes": 7860,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "dlm-survey/shared.css",
+      "after": "content/series/dlm-survey/shared.css",
+      "action": "move",
+      "sha256": "f3dac3c69922f07b573502d06c13c043f00c43e2eab1a35a9f2719d05dc7de2c",
+      "bytes": 11031,
+      "public_url": "/dlm-survey/shared.css",
+      "anchors": []
+    },
+    {
+      "before": "dlm-survey/style.css",
+      "after": "content/series/dlm-survey/style.css",
+      "action": "move",
+      "sha256": "1e86703b1fd10e86af4ef824eae5746c35567fa75678151897b0e66a4197a36e",
+      "bytes": 8565,
+      "public_url": "/dlm-survey/style.css",
+      "anchors": []
+    },
+    {
+      "before": "index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "5b32336024199dbd029f2436b6c9b9e274827fbae8b5440aab3effa223431488",
+      "bytes": 23719,
+      "public_url": "/",
+      "anchors": [
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Research &Notes"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Locality-aware Diffusion Language Modeling"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Semantic DLM+"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "STM: Spatio-Temporal Distance Model"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "LLM Frontier · 滚动追踪"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Agentic RL 全景指南"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "扩散语言模型前沿调研"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "LLM & Multimodal 面试复习笔记"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Transformer Decoder 全流程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "强化学习面试速查手册"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Agent Harness 深度解析"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "分布式训练指南"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "LLM 算法岗面试题库"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "NLP & LLM 课程笔记"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "履历与研究经历"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "VLM 算法知识与面经"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "训练 Infra 与分布式系统"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "推理优化与系统设计"
+        }
+      ],
+      "links": [
+        "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>",
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "https://github.com/stein-wang0226",
+        "about/index.html",
+        "publications/index.html",
+        "publication/2026-locality-aware-dlm/index.html",
+        "publication/2026-semantic-dlm-plus/index.html",
+        "publication/2024-stm-dynamic-graph-fraud/index.html",
+        "notes/index.html",
+        "/llm-frontier-2026.html",
+        "/agentic-rl-guide.html",
+        "/dlm-survey/index.html",
+        "https://stein-wang0226.github.io/mllm-interview-notes/",
+        "/transformer-decoder-flow.html",
+        "/rl-interview-guide.html",
+        "/agent-harness-guide.html",
+        "/distributed-training-guide.html",
+        "/llm-interview-bank.html",
+        "https://stein-wang0226.github.io/llm-study-notes/",
+        "cv/index.html",
+        "vlm-knowledge-interview.html",
+        "https://stein-wang0226.github.io/mllm-interview-notes/12-training-infra.html",
+        "https://stein-wang0226.github.io/mllm-interview-notes/10-inference-system.html",
+        "https://github.com/stein-wang0226"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "legacy/rl-interview-guide.html",
+      "after": "content/archive/rl-interview-guide/index.html",
+      "action": "move",
+      "sha256": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "bytes": 176735,
+      "public_url": "/legacy/rl-interview-guide.html",
+      "anchors": [
+        "arr",
+        "arr2",
+        "arr2b",
+        "arr2o",
+        "arrL",
+        "backToTop",
+        "comparison",
+        "core-concepts",
+        "dpo",
+        "ds",
+        "ds2",
+        "ds3",
+        "faq",
+        "gActor",
+        "gCalc",
+        "gCard",
+        "gCritic",
+        "gEnv",
+        "gFinal",
+        "gLoop",
+        "gNum",
+        "gStar",
+        "grpo",
+        "pg-to-ppo",
+        "ppo-detail",
+        "readingProgress",
+        "reward",
+        "rlhf",
+        "rlvr",
+        "score-function-lemma",
+        "sidebarOutline",
+        "site-main",
+        "symbols"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "强化学习面试速查手册"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "📑 目录"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "1. 符号系统完全手册"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第一层：环境与交互基础"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第二层：回报（Return）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第三层：价值函数"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第四层：策略相关"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第五层：PPO 专用"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第六层：RLHF / DPO 专用"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第七层：GRPO 专用"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "符号混淆速查"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "2. 核心概念与公式"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "MDP 五元组"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Bellman 方程"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "3. 策略梯度（Policy Gradient）到 PPO 演进"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "演进路线图"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 1: REINFORCE（Williams, 1992 — 蒙特卡洛策略梯度）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 2: 引入 Baseline → Advantage"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 3: Actor-Critic（演员-评论家方法）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 4: TRPO（Trust Region Policy Optimization，信任域策略优化）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 5: PPO（Proximal Policy Optimization，近端策略优化）— 用 Clip 替代 KL"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "4. PPO（Proximal Policy Optimization）完全详解"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Clip 机制逐情况分析"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "GAE：Advantage 的实用计算方法"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "PPO 完整训练循环"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "PPO 总目标函数"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "PPO 在 RLHF 中的应用"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "5. GRPO（Group Relative Policy Optimization，组相对策略优化）详解"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "动机：PPO 在 LLM 中的痛点"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "GRPO 核心做法"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "GRPO vs PPO 对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "DeepSeek-R1 中的实践"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "6. RLHF（Reinforcement Learning from Human Feedback，人类反馈强化学习）完整流程"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "7. RLVR（Reinforcement Learning with Verifiable Rewards，可验证奖励强化学习）范式详解"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "什么是 RLVR？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 在整体知识体系中的位置"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "为什么 RLVR 突然火了？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 的标志性发现（DeepSeek-R1）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 的 Reward 设计"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 的适用边界"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR vs RLHF 完整对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 的进阶话题"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "面试中怎么讲 RLVR"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "8. DPO（Direct Preference Optimization，直接偏好优化）公式推导"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "核心洞察"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "推导过程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "为什么一个损失同时完成\"打分+优化\"？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "梯度的直觉"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "9. Reward 设计方法论"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Reward 来源的完整谱系"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Reward Shaping 的风险与理论"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "10. 算法对比总结"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "策略优化算法对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "对齐算法对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "如何选择？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "算法数据使用方式对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "演进哲学"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "11. 高频面试问答"
+        }
+      ],
+      "links": [
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js",
+        "../assets/site/site.css",
+        "https://stein-wang0226.github.io/legacy/rl-interview-guide.html",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "#symbols",
+        "#core-concepts",
+        "#pg-to-ppo",
+        "#ppo-detail",
+        "#grpo",
+        "#rlhf",
+        "#rlvr",
+        "#dpo",
+        "#reward",
+        "#comparison",
+        "#faq",
+        "#symbols",
+        "#core-concepts",
+        "#pg-to-ppo",
+        "#ppo-detail",
+        "#grpo",
+        "#rlhf",
+        "#rlvr",
+        "#dpo",
+        "#reward",
+        "#comparison",
+        "#faq",
+        "#score-function-lemma",
+        "#rlhf",
+        "https://www.youtube.com/watch?v=2pWv7GOvuf0",
+        "https://spinningup.openai.com/",
+        "https://lilianweng.github.io/posts/2018-04-08-policy-gradient/",
+        "https://rail.eecs.berkeley.edu/deeprlcourse/"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "licenses/academic-pages-MIT.txt",
+      "after": "licenses/academic-pages-MIT.txt",
+      "action": "retain",
+      "sha256": "eab7e7997cfae100b49258c03a21122f0a23070413e27440efd52fb22fb07224",
+      "bytes": 1078,
+      "public_url": null,
+      "anchors": []
+    },
+    {
+      "before": "llm-frontier-2026.html",
+      "after": "content/posts/llm-frontier-2026/index.html",
+      "action": "move",
+      "sha256": "380af32b26b5d4de2858ac011a358b8199208147ad1220f08a57485aaa57494d",
+      "bytes": 87789,
+      "public_url": "/llm-frontier-2026.html",
+      "anchors": [
+        "agent",
+        "arch",
+        "bench",
+        "changelog",
+        "frontier",
+        "last-updated",
+        "models",
+        "opd",
+        "optimizer",
+        "overview",
+        "protein",
+        "rl",
+        "rumor",
+        "site-main",
+        "sources",
+        "training"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "LLM Frontier"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "00 本期前沿速览"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "01 开源模型最新迭代"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "02 闭源前沿模型全景"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "03 新架构：Loop Transformer 与循环深度"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.1 循环深度潜空间推理（Recurrent Depth）FACT"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "⚠️ 3.2 「GPT-6(Astra) 使用 Looped Transformer」= 传闻 RUMOR"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "3.3 其它架构信号 FACT"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "04 优化器：Muon 与后 Adam 时代"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.1 核心思想 FACT"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.2 规模化与工业落地 FACT"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "4.3 优化器对照"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "05 Agent 最新进展"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "06 RL 算法前沿（GRPO 家族 / RLVR）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "07 OPD（On-Policy Distillation）提要"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "08 训练策略"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "09 Benchmark（含 Terminal-Bench 专项）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.1 Terminal-Bench 专项核查 FACT"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "9.2 推理 / 通用 / Agent 基准对照"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "10 Protein LLM（领域 LLM + Agent 切片）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "10.1 蛋白 / 基因组语言模型 FACT"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "10.2 蛋白 Agent + 工具 + RL"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "11 事实 vs 传闻（分栏存档）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "12 更新日志"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "13 参考来源"
+        }
+      ],
+      "links": [
+        "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>",
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/llm-frontier-2026.html",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "/index.html",
+        "#overview",
+        "#models",
+        "#frontier",
+        "#arch",
+        "#optimizer",
+        "#agent",
+        "#rl",
+        "#opd",
+        "#training",
+        "#bench",
+        "#protein",
+        "#rumor",
+        "#changelog",
+        "#sources",
+        "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+        "https://www.kimi.ai",
+        "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+        "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+        "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B/blob/main/assets/technical_report.pdf",
+        "https://mistral.ai/news/mistral-large-4-oss/",
+        "https://api-docs.deepseek.com/news/news261017/",
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+        "https://huggingface.co/zai-org/GLM-5.3",
+        "https://arxiv.org/abs/2602.15763",
+        "#arch",
+        "https://huggingface.co/zai-org/GLM-5.3-Flash",
+        "https://arxiv.org/abs/2602.15763",
+        "https://huggingface.co/MiniMaxAI/MiniMax-M3",
+        "https://arxiv.org/abs/2606.13392",
+        "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+        "https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512",
+        "https://mistral.ai/news",
+        "https://huggingface.co/moonshotai/Kimi-K3",
+        "https://www.kimi.com/blog/kimi-k3",
+        "https://github.com/MoonshotAI/Kimi-K3",
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf",
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+        "https://api-docs.deepseek.com/news/news260910/",
+        "https://developers.openai.com/api/docs/changelog",
+        "https://www.anthropic.com/claude-opus-5-5",
+        "https://www.anthropic.com/claude-sonnet-5-5",
+        "https://www.anthropic.com/claude-haiku-5-5",
+        "#arch",
+        "/dlm-survey/s11_loop_transformer.html",
+        "https://huggingface.co/zai-org/GLM-5.3-Flash",
+        "https://arxiv.org/abs/2602.15763",
+        "https://qwen.ai/blog?id=qwen3-next",
+        "https://github.com/QwenLM/Qwen3.8-Flash-Next",
+        "https://huggingface.co/blog",
+        "/agent-harness-guide.html",
+        "https://arxiv.org/abs/2505.22954",
+        "https://arxiv.org/abs/2506.10943",
+        "https://arxiv.org/abs/2607.05297",
+        "https://arxiv.org/abs/2609.26457",
+        "/agentic-rl-guide.html",
+        "/rl-interview-guide.html",
+        "/agentic-rl-guide.html",
+        "https://arxiv.org/abs/2606.30406",
+        "https://arxiv.org/abs/2606.30406",
+        "https://arxiv.org/abs/2606.30406",
+        "https://arxiv.org/abs/2606.30406",
+        "https://huggingface.co/papers/2606.30406",
+        "/distributed-training-guide.html",
+        "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+        "https://huggingface.co/moonshotai/Kimi-K3",
+        "https://www.kimi.com/blog/kimi-k3",
+        "https://github.com/MoonshotAI/Kimi-K3",
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+        "https://api-docs.deepseek.com/news/news261017/",
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf",
+        "https://api-docs.deepseek.com/news/news260910/",
+        "https://huggingface.co/moonshotai/Kimi-K2.6",
+        "https://arxiv.org/abs/2602.02276",
+        "https://qwen.ai/blog?id=qwen3.8",
+        "https://the-decoder.com/alibabas-open-weight-qwen3-8-max-takes-on-long-horizon-ai-tasks-with-2-4-trillion-parameters/",
+        "https://arxiv.org/abs/2512.02556",
+        "https://api-docs.deepseek.com/news/news260424/",
+        "https://github.com/zai-org/GLM-5",
+        "https://github.com/MiniMax-AI/MiniMax-M2",
+        "https://huggingface.co/zai-org/GLM-5.3",
+        "https://arxiv.org/abs/2602.15763",
+        "https://huggingface.co/zai-org/GLM-5.3-Flash",
+        "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+        "https://huggingface.co/MiniMaxAI/MiniMax-M3",
+        "https://arxiv.org/abs/2606.13392",
+        "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+        "https://mistral.ai/news/mistral-large-4-oss/",
+        "https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512",
+        "https://openai.com/index/gpt-6-astra/",
+        "https://developers.openai.com/api/docs/changelog",
+        "https://www.anthropic.com/news/claude-opus-5",
+        "https://www.anthropic.com/claude-fable-and-mythos-5-1",
+        "https://www.anthropic.com/claude-opus-5-5",
+        "https://www.anthropic.com/claude-sonnet-5-5",
+        "https://www.anthropic.com/claude-haiku-5-5",
+        "https://deepmind.google/models/model-cards/gemini-3-1-pro/",
+        "https://x.ai/news/grok-4-6",
+        "https://arxiv.org/abs/2502.05171",
+        "https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and",
+        "https://arxiv.org/abs/2502.11089",
+        "https://qwen.ai/blog?id=qwen3-next",
+        "https://github.com/QwenLM/Qwen3.8-Flash-Next",
+        "https://arxiv.org/abs/2405.21060",
+        "https://arxiv.org/abs/2501.00663",
+        "https://arxiv.org/abs/2412.09764",
+        "https://kellerjordan.github.io/posts/muon/",
+        "https://github.com/KellerJordan/modded-nanogpt",
+        "https://arxiv.org/abs/2502.16982",
+        "https://arxiv.org/abs/2507.20534",
+        "https://arxiv.org/abs/2409.20325",
+        "https://arxiv.org/abs/2409.11321",
+        "https://arxiv.org/abs/2405.15682",
+        "https://arxiv.org/abs/2501.12326",
+        "https://arxiv.org/abs/2509.02547",
+        "https://arxiv.org/abs/2502.18449",
+        "https://arxiv.org/abs/2503.14476",
+        "https://arxiv.org/abs/2503.20783",
+        "https://arxiv.org/abs/2507.18071",
+        "https://arxiv.org/abs/2505.22617",
+        "https://thinkingmachines.ai/blog/on-policy-distillation/",
+        "https://arxiv.org/abs/2606.30406",
+        "https://arxiv.org/abs/2505.22954",
+        "https://arxiv.org/abs/2506.10943",
+        "https://arxiv.org/abs/2607.05297",
+        "https://arxiv.org/abs/2609.26457",
+        "https://arxiv.org/abs/2505.09388",
+        "https://arxiv.org/abs/2412.19437",
+        "https://www.tbench.ai/",
+        "https://hub.harborframework.com/datasets/terminal-bench/terminal-bench/4",
+        "https://www.tbench.ai/news/terminal-bench-science-0-1",
+        "https://arxiv.org/html/2601.11868v1",
+        "https://epoch.ai/benchmarks/gpqa-diamond",
+        "https://agi.safe.ai/",
+        "https://arcprize.org/results",
+        "https://arxiv.org/abs/2406.01574",
+        "https://livecodebench.github.io/",
+        "https://epoch.ai/benchmarks/swe-bench-verified",
+        "https://taubench.com/",
+        "https://www.digitalapplied.com/blog/llm-benchmark-methodology-2026-contamination-leaderboard-guide",
+        "https://biohub.org/news/world-model-of-protein-biology/",
+        "https://huggingface.co/biohub/ESMC-6B",
+        "https://doi.org/10.1126/science.ads0018",
+        "https://doi.org/10.1038/s41586-026-10176-5",
+        "https://github.com/google-deepmind/alphafold3",
+        "https://doi.org/10.1039/d4dd00013g",
+        "https://arxiv.org/abs/2605.02937",
+        "https://arxiv.org/abs/2606.02386",
+        "https://arxiv.org/abs/2601.03604",
+        "https://arxiv.org/abs/2510.01571",
+        "https://arxiv.org/abs/2609.05818",
+        "/index.html",
+        "https://github.com/stein-wang0226"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END",
+        "AUTO:INSERT:models",
+        "AUTO:INSERT:frontier",
+        "AUTO:INSERT:arch",
+        "AUTO:INSERT:optimizer",
+        "AUTO:INSERT:agent",
+        "AUTO:INSERT:rl",
+        "AUTO:INSERT:opd",
+        "AUTO:INSERT:training",
+        "AUTO:INSERT:bench",
+        "AUTO:INSERT:protein",
+        "AUTO:INSERT:changelog"
+      ],
+      "last_updated": [
+        "2026-11-10"
+      ]
+    },
+    {
+      "before": "llm-interview-bank.html",
+      "after": "content/posts/llm-interview-bank/index.html",
+      "action": "move",
+      "sha256": "199b0e66af6939bcb685d4f6e8843cf10c421d75d4cec971098ad754342c30ff",
+      "bytes": 234522,
+      "public_url": "/llm-interview-bank.html",
+      "anchors": [
+        "backToTop",
+        "progress",
+        "sec-agent",
+        "sec-agentic-rl",
+        "sec-code",
+        "sec-eval",
+        "sec-frontier",
+        "sec-infra",
+        "sec-llm",
+        "sec-overview",
+        "sec-rag",
+        "sec-rl",
+        "sec-rlhf",
+        "sec-sources",
+        "sec-vlm",
+        "site-main",
+        "toc"
+      ],
+      "headings": [
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "章节导航"
+        },
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "LLM 算法岗面试题库"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "📊题库概览~420 道题"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "使用说明"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "核心准备建议（按优先级排序）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "1LLM 八股~70 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "2RLHF & 对齐~45 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "3RL 算法~40 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "4Agentic RL ⭐~50 题"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "⭐ 重要程度"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "5多模态 / VLM ⭐~70 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "6Agent 智能体~40 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "7RAG 检索增强~30 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "8推理与工程~35 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "9手撕代码~35 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "10评估与系统设计~30 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "11前沿与开放题~25 题"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "📚来源汇总 & 持续更新建议"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "本题库主要参考来源"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "持续更新建议"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "配套学习材料（本仓库内）"
+        }
+      ],
+      "links": [
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js",
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/llm-interview-bank.html",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "#sec-overview",
+        "#sec-llm",
+        "#sec-rlhf",
+        "#sec-rl",
+        "#sec-agentic-rl",
+        "#sec-vlm",
+        "#sec-agent",
+        "#sec-rag",
+        "#sec-infra",
+        "#sec-code",
+        "#sec-eval",
+        "#sec-frontier",
+        "#sec-sources",
+        "rl-interview-guide.html",
+        "vlm-knowledge-interview.html",
+        "https://github.com/AIR-hl/llm-interview-code",
+        "https://github.com/ckd0817/LLM-Interview-Code",
+        "https://github.com/datawhalechina/happy-llm",
+        "https://github.com/datawhalechina/hello-agents",
+        "https://github.com/AIR-hl/llm-interview-code",
+        "https://github.com/ckd0817/LLM-Interview-Code",
+        "https://github.com/adongwanai/AgentGuide",
+        "https://github.com/0voice/Campus_recruitment_interview_questions",
+        "https://github.com/KalyanKS-NLP/LLM-Interview-Questions-and-Answers-Hub",
+        "https://github.com/yang19527/AwesomeInterview",
+        "https://www.cnblogs.com/moonout/",
+        "https://xiaolincoding.com/other/ai.html",
+        "https://01.me/2025/04/llm-interview-questions/",
+        "https://zhuanlan.zhihu.com/p/1981387722473116577",
+        "https://blog.csdn.net/qq_45717425/article/details/160315245",
+        "https://www.cnblogs.com/moonout/p/19749191",
+        "https://www.nowcoder.com/creation/subject/9721c2c563ce480e8c7ba19ee9edcd89",
+        "https://juejin.cn/post/7586892413890936878",
+        "https://developer.aliyun.com/article/1704733",
+        "https://github.com/datawhalechina/hello-agents/blob/main/docs/chapter11/%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0%20Agentic-RL.md",
+        "https://zhuanlan.zhihu.com/p/1902381952998281700",
+        "https://developer.volcengine.com/articles/7560645235202588699",
+        "https://hub.baai.ac.cn/view/49404",
+        "https://zhuanlan.zhihu.com/p/1963658684765833212",
+        "https://blog.csdn.net/v_JULY_v/article/details/145560246",
+        "https://zhuanlan.zhihu.com/p/1954686463947020259",
+        "rl-interview-guide.html",
+        "vlm-knowledge-interview.html",
+        "transformer-decoder-flow.html",
+        "vlm-knowledge-interview.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "notes/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "0dc51bebc723e2a26e5d438df4c134c979ec98da96c93fcec877279b07dbcb0f",
+      "bytes": 5602,
+      "public_url": "/notes/",
+      "anchors": [
+        "no-results",
+        "note-category",
+        "note-count",
+        "note-search",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "研究与学习笔记"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "LLM Frontier · 滚动追踪"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "Agentic RL 全景指南"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "扩散语言模型前沿调研"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "Transformer Decoder 全流程"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "强化学习面试速查手册"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "Agent Harness 深度解析"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "分布式训练指南"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "LLM 算法岗面试题库"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "VLM 算法知识与面经"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "LLM & Multimodal 面试复习笔记"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "NLP & LLM 课程笔记"
+        }
+      ],
+      "links": [
+        "https://stein-wang0226.github.io/notes/",
+        "../assets/site/site.css",
+        "../assets/site/catalog.js",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "../publications/index.html",
+        "index.html",
+        "../cv/index.html",
+        "../llm-frontier-2026.html",
+        "../agentic-rl-guide.html",
+        "../dlm-survey/index.html",
+        "../transformer-decoder-flow.html",
+        "../rl-interview-guide.html",
+        "../agent-harness-guide.html",
+        "../distributed-training-guide.html",
+        "../llm-interview-bank.html",
+        "../vlm-knowledge-interview.html",
+        "https://stein-wang0226.github.io/mllm-interview-notes/",
+        "https://stein-wang0226.github.io/llm-study-notes/",
+        "../legacy/rl-interview-guide.html",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "publication/2024-stm-dynamic-graph-fraud/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "7a8d29620d32d5d1ff0fbede6050914fd978fd95d1cd96117e661d3ec1bc10ed",
+      "bytes": 3303,
+      "public_url": "/publication/2024-stm-dynamic-graph-fraud/",
+      "anchors": [
+        "citation",
+        "method-stm",
+        "motivation",
+        "outcomes",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "STM: Spatio-Temporal Distance and Frame-Based Dynamic Graph Fraud Detection"
+        },
+        {
+          "level": 2,
+          "anchor": "motivation",
+          "text": "Motivation"
+        },
+        {
+          "level": 2,
+          "anchor": "method-stm",
+          "text": "Method — STM"
+        },
+        {
+          "level": 2,
+          "anchor": "outcomes",
+          "text": "Outcomes"
+        },
+        {
+          "level": 2,
+          "anchor": "citation",
+          "text": "Citation"
+        }
+      ],
+      "links": [
+        "https://stein-wang0226.github.io/publication/2024-stm-dynamic-graph-fraud/",
+        "../../assets/site/site.css",
+        "#site-main",
+        "../../index.html",
+        "../../index.html",
+        "../../about/index.html",
+        "../../publications/index.html",
+        "../../notes/index.html",
+        "../../cv/index.html",
+        "https://link.springer.com/chapter/10.1007/978-981-95-3906-2_3",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "publication/2026-locality-aware-dlm/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "417325c1e5196198862f9f77a7ed09580239e1c543de878b1c99f0e213cfecc1",
+      "bytes": 3754,
+      "public_url": "/publication/2026-locality-aware-dlm/",
+      "anchors": [
+        "citation",
+        "controlled-tasks",
+        "key-findings",
+        "methods",
+        "site-main",
+        "summary"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Locality-aware Diffusion Language Modeling"
+        },
+        {
+          "level": 2,
+          "anchor": "summary",
+          "text": "Summary"
+        },
+        {
+          "level": 2,
+          "anchor": "controlled-tasks",
+          "text": "Controlled tasks"
+        },
+        {
+          "level": 2,
+          "anchor": "methods",
+          "text": "Methods"
+        },
+        {
+          "level": 2,
+          "anchor": "key-findings",
+          "text": "Key findings"
+        },
+        {
+          "level": 2,
+          "anchor": "citation",
+          "text": "Citation"
+        }
+      ],
+      "links": [
+        "https://stein-wang0226.github.io/publication/2026-locality-aware-dlm/",
+        "../../assets/site/site.css",
+        "#site-main",
+        "../../index.html",
+        "../../index.html",
+        "../../about/index.html",
+        "../../publications/index.html",
+        "../../notes/index.html",
+        "../../cv/index.html",
+        "https://arxiv.org/abs/2604.24832",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "publication/2026-semantic-diffusion-lm/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "b121dbe89fee6ba557e6d458ac2084f7d8caa5c1e03b63f37f0e3a1e7f93038e",
+      "bytes": 2680,
+      "public_url": "/publication/2026-semantic-diffusion-lm/",
+      "anchors": [
+        "method-semdlm",
+        "result",
+        "site-main",
+        "summary"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Semantic Diffusion Language Modeling"
+        },
+        {
+          "level": 2,
+          "anchor": "summary",
+          "text": "Summary"
+        },
+        {
+          "level": 2,
+          "anchor": "method-semdlm",
+          "text": "Method — SemDLM"
+        },
+        {
+          "level": 2,
+          "anchor": "result",
+          "text": "Result"
+        }
+      ],
+      "links": [
+        "https://stein-wang0226.github.io/publication/2026-semantic-diffusion-lm/",
+        "../../assets/site/site.css",
+        "#site-main",
+        "../../index.html",
+        "../../index.html",
+        "../../about/index.html",
+        "../../publications/index.html",
+        "../../notes/index.html",
+        "../../cv/index.html",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "publication/2026-semantic-dlm-plus/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "d741b2888f038604afd0d5161a1bf146fd2383bd13d4b0bbddfe4c0bbb91ae73",
+      "bytes": 3814,
+      "public_url": "/publication/2026-semantic-dlm-plus/",
+      "anchors": [
+        "citation",
+        "key-findings",
+        "method-semdlm",
+        "site-main",
+        "summary"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Semantic DLM+: Improving Diffusion Language Models through Bias-variance Trade-off in Transition Kernel Design"
+        },
+        {
+          "level": 2,
+          "anchor": "summary",
+          "text": "Summary"
+        },
+        {
+          "level": 2,
+          "anchor": "method-semdlm",
+          "text": "Method — SemDLM+"
+        },
+        {
+          "level": 2,
+          "anchor": "key-findings",
+          "text": "Key findings"
+        },
+        {
+          "level": 2,
+          "anchor": "citation",
+          "text": "Citation"
+        }
+      ],
+      "links": [
+        "https://stein-wang0226.github.io/publication/2026-semantic-dlm-plus/",
+        "../../assets/site/site.css",
+        "#site-main",
+        "../../index.html",
+        "../../index.html",
+        "../../about/index.html",
+        "../../publications/index.html",
+        "../../notes/index.html",
+        "../../cv/index.html",
+        "https://arxiv.org/abs/2606.15327",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "publications/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "d505e2c1db9a7504c9deba76dbb38ac28fe6e6feee7c14aa3d50e5df9194b867",
+      "bytes": 3642,
+      "public_url": "/publications/",
+      "anchors": [
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Publications"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "Semantic DLM+: Improving Diffusion Language Models through Bias-variance Trade-off in Transition Kernel Design"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "Locality-aware Diffusion Language Modeling"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "Semantic Diffusion Language Modeling"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "STM: Spatio-Temporal Distance and Frame-Based Dynamic Graph Fraud Detection"
+        }
+      ],
+      "links": [
+        "https://stein-wang0226.github.io/publications/",
+        "../assets/site/site.css",
+        "#site-main",
+        "../index.html",
+        "../index.html",
+        "../about/index.html",
+        "index.html",
+        "../notes/index.html",
+        "../cv/index.html",
+        "https://scholar.google.com/citations?hl=zh-CN&user=PCoqb3wAAAAJ",
+        "../publication/2026-semantic-dlm-plus/index.html",
+        "../publication/2026-locality-aware-dlm/index.html",
+        "../publication/2026-semantic-diffusion-lm/index.html",
+        "../publication/2024-stm-dynamic-graph-fraud/index.html",
+        "https://github.com/stein-wang0226/stein-wang0226.github.io"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "resume/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "0f1336cd18392bf3bed4511a94e1b3c581c377e0d3ef48890a090e065c435364",
+      "bytes": 492,
+      "public_url": "/resume/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/cv/",
+        "../cv/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "rl-interview-guide.html",
+      "after": "content/posts/rl-interview-guide/index.html",
+      "action": "move",
+      "sha256": "1d7c5b1902742bdc9273d26d8189aa3efddd490c4f382df38114fa7d63ee5766",
+      "bytes": 244631,
+      "public_url": "/rl-interview-guide.html",
+      "anchors": [
+        "MathJax-script",
+        "arr",
+        "arr2",
+        "arr2b",
+        "arr2o",
+        "arrL",
+        "backToTop",
+        "classic-rl",
+        "comparison",
+        "core-concepts",
+        "dpo",
+        "ds",
+        "ds2",
+        "ds3",
+        "faq",
+        "gActor",
+        "gCalc",
+        "gCard",
+        "gCritic",
+        "gEnv",
+        "gFinal",
+        "gLoop",
+        "gNum",
+        "gStar",
+        "grpo",
+        "harness",
+        "opd",
+        "pg-to-ppo",
+        "ppo-detail",
+        "readingProgress",
+        "reward",
+        "rlhf",
+        "rlvr",
+        "score-function-lemma",
+        "sidebarOutline",
+        "site-main",
+        "symbols"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "强化学习面试速查手册"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "📑 目录"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "1. 符号系统完全手册"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第一层：环境与交互基础"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第二层：回报（Return）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第三层：价值函数"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第四层：策略相关"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第五层：PPO 专用"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第六层：RLHF / DPO 专用"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "第七层：GRPO 专用"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "符号混淆速查"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "2. 核心概念与公式"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "MDP 五元组"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Bellman 方程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "On-Policy vs Off-Policy 分类"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "3. 策略梯度（Policy Gradient）到 PPO 演进"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "演进路线图"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 1: REINFORCE（Williams, 1992 — 蒙特卡洛策略梯度）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 2: 引入 Baseline → Advantage"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 3: Actor-Critic（演员-评论家方法）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 4: TRPO（Trust Region Policy Optimization，信任域策略优化）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Step 5: PPO（Proximal Policy Optimization，近端策略优化）— 用 Clip 替代 KL"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "4. PPO（Proximal Policy Optimization）完全详解"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Clip 机制逐情况分析"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "GAE：Advantage 的实用计算方法"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "PPO 完整训练循环"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "PPO 总目标函数"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "PPO 在 RLHF 中的应用"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "5. GRPO（Group Relative Policy Optimization，组相对策略优化）详解"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "动机：PPO 在 LLM 中的痛点"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "GRPO 核心做法"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "GRPO vs PPO 对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "DeepSeek-R1 中的实践"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "6. RLHF（Reinforcement Learning from Human Feedback，人类反馈强化学习）完整流程"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "7. RLVR（Reinforcement Learning with Verifiable Rewards，可验证奖励强化学习）范式详解"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "什么是 RLVR？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 在整体知识体系中的位置"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "为什么 RLVR 突然火了？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 的标志性发现（DeepSeek-R1）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 的 Reward 设计"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 的适用边界"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR vs RLHF 完整对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "RLVR 的进阶话题"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "面试中怎么讲 RLVR"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "8. DPO（Direct Preference Optimization，直接偏好优化）公式推导"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "核心洞察"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "推导过程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "为什么一个损失同时完成\"打分+优化\"？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "梯度的直觉"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "8b. OPD（On-Policy Distillation，在线策略蒸馏）+ OPSD"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "一句话定义"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "OPD 与普通蒸馏（Off-policy KD）的根本区别"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "OPD 的三个核心维度"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "三种 Teacher 信号粒度对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "KL 散度方向：Forward KL vs Reverse KL vs JSD"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "OPD 里程碑论文"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "MOPD（Multi-Teacher OPD）：多教师能力整合"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "OPD 的三类失败模式（Revisiting OPD，2026）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "OPD 成功的两个关键条件（Rethinking OPD，2026）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "OPSD（On-Policy Self-Distillation）— 不需要外部 Teacher"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "OPD 工业落地现状（2025–2026）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "SFT vs RL vs OPD vs OPSD 综合对比"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "9. Reward 设计方法论"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Reward 来源的完整谱系"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Reward Shaping 的风险与理论"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "10. 算法对比总结"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "策略优化算法对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "对齐算法对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "如何选择？"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "算法数据使用方式对比"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "演进哲学"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "11. 经典 RL 算法详解（DQN / DDPG / TD3 / SAC）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "DQN — Deep Q-Network (Mnih et al., 2015)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "DDPG — Deep Deterministic Policy Gradient (Lillicrap et al., 2016)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "TD3 — Twin Delayed DDPG (Fujimoto et al., 2018)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "SAC — Soft Actor-Critic (Haarnoja et al., 2018)"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "四算法对比总结"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "为什么 LLM 对齐用 PPO/GRPO 而不是这些？"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "12. RL Training Harness（训练基础设施）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "13. 高频面试问答"
+        }
+      ],
+      "links": [
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js",
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/rl-interview-guide.html",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "#symbols",
+        "#core-concepts",
+        "#pg-to-ppo",
+        "#ppo-detail",
+        "#grpo",
+        "#rlhf",
+        "#rlvr",
+        "#dpo",
+        "#opd",
+        "#reward",
+        "#comparison",
+        "#classic-rl",
+        "#harness",
+        "#faq",
+        "#symbols",
+        "#core-concepts",
+        "#pg-to-ppo",
+        "#ppo-detail",
+        "#grpo",
+        "#rlhf",
+        "#rlvr",
+        "#dpo",
+        "#opd",
+        "#reward",
+        "#comparison",
+        "#classic-rl",
+        "#harness",
+        "#faq",
+        "#score-function-lemma",
+        "#rlhf",
+        "https://www.youtube.com/watch?v=2pWv7GOvuf0",
+        "https://spinningup.openai.com/",
+        "https://lilianweng.github.io/posts/2018-04-08-policy-gradient/",
+        "https://rail.eecs.berkeley.edu/deeprlcourse/"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "robots.txt",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "4b852b6e3cc01fd4d570e36ba7361cc580e4c37b8b6097d8f275b3847b2af126",
+      "bytes": 77,
+      "public_url": "/robots.txt",
+      "anchors": []
+    },
+    {
+      "before": "sitemap.xml",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "1dbfbc58e2ecc98a13ddbcff498e8b9c1519eb05fc42f22a069fe1c0f3b61288",
+      "bytes": 2777,
+      "public_url": "/sitemap.xml",
+      "anchors": []
+    },
+    {
+      "before": "templates/home.html",
+      "after": "templates/home.html",
+      "action": "retain",
+      "sha256": "c9fc3c217104df82662b51cb13ecdeef25f4839191e3a4d63bad343748fac7b1",
+      "bytes": 23125,
+      "public_url": null,
+      "anchors": [],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Research &Notes"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Locality-aware Diffusion Language Modeling"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Semantic DLM+"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "STM: Spatio-Temporal Distance Model"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "LLM Frontier · 滚动追踪"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Agentic RL 全景指南"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "扩散语言模型前沿调研"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "LLM & Multimodal 面试复习笔记"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Transformer Decoder 全流程"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "强化学习面试速查手册"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Agent Harness 深度解析"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "分布式训练指南"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "LLM 算法岗面试题库"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "NLP & LLM 课程笔记"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "履历与研究经历"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "VLM 算法知识与面经"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "训练 Infra 与分布式系统"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "推理优化与系统设计"
+        }
+      ],
+      "links": [
+        "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>",
+        "https://github.com/stein-wang0226",
+        "about/index.html",
+        "publications/index.html",
+        "publication/2026-locality-aware-dlm/index.html",
+        "publication/2026-semantic-dlm-plus/index.html",
+        "publication/2024-stm-dynamic-graph-fraud/index.html",
+        "notes/index.html",
+        "/llm-frontier-2026.html",
+        "/agentic-rl-guide.html",
+        "/dlm-survey/index.html",
+        "https://stein-wang0226.github.io/mllm-interview-notes/",
+        "/transformer-decoder-flow.html",
+        "/rl-interview-guide.html",
+        "/agent-harness-guide.html",
+        "/distributed-training-guide.html",
+        "/llm-interview-bank.html",
+        "https://stein-wang0226.github.io/llm-study-notes/",
+        "cv/index.html",
+        "vlm-knowledge-interview.html",
+        "https://stein-wang0226.github.io/mllm-interview-notes/12-training-infra.html",
+        "https://stein-wang0226.github.io/mllm-interview-notes/10-inference-system.html",
+        "https://github.com/stein-wang0226"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "transformer-decoder-flow.html",
+      "after": "content/posts/transformer-decoder-flow/index.html",
+      "action": "move",
+      "sha256": "6dc1d13e09a72c6fe809261a079e9ff1a5c88edb1def60cb96f7acd8186e8785",
+      "bytes": 58403,
+      "public_url": "/transformer-decoder-flow.html",
+      "anchors": [
+        "code",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "Transformer Decoder 全流程"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "🎓 一、训练时（并行输入整段序列）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "记号约定"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "输入与嵌入"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "一个 Decoder Block（以第 $i$ 层为例）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "重复 $N$ 个 Decoder Block"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "最终输出 logits"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Loss"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "🚀 二、推理时（自回归 + KV Cache）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "推理专用记号"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Prefill 阶段：预填充 prompt 到 KV Cache"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "Decode 阶段：当前输入"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "一个 Decoder Block（以第 $i$ 层为例）"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "重复 $N$ 个 Decoder Block"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "输出 logits + 采样策略"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "变体：GQA / MQA —— 压缩 KV Cache 的关键"
+        },
+        {
+          "level": 3,
+          "anchor": null,
+          "text": "KV Cache 显存核算（部署关键指标）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "⚖️ 三、训练 vs 推理：核心区别"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "📦 四、全部可学习参数一览（每层）"
+        },
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "💻 五、全套 PyTorch 实现（与公式一一对应）"
+        }
+      ],
+      "links": [
+        "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css",
+        "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js",
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/transformer-decoder-flow.html",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "vlm-knowledge-interview.html",
+      "after": "content/posts/vlm-knowledge-interview/index.html",
+      "action": "move",
+      "sha256": "d06677c5e1e5f22aefff9f1cd6093b42c5baa423517abbd085b295278d5d87c9",
+      "bytes": 38872,
+      "public_url": "/vlm-knowledge-interview.html",
+      "anchors": [
+        "code1",
+        "code2",
+        "code3",
+        "q1",
+        "q10",
+        "q11",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6",
+        "q7",
+        "q8",
+        "q9",
+        "sec1",
+        "sec1-1",
+        "sec1-2",
+        "sec1-3",
+        "sec1-4",
+        "sec1-5",
+        "sec1-6",
+        "sec2",
+        "sec2-1",
+        "sec2-2",
+        "sec2-3",
+        "sec2-4",
+        "sec2-5",
+        "sec3",
+        "sec4",
+        "sec5",
+        "sec6",
+        "site-main"
+      ],
+      "headings": [
+        {
+          "level": 2,
+          "anchor": null,
+          "text": "目录导航"
+        },
+        {
+          "level": 1,
+          "anchor": null,
+          "text": "VLM 算法知识与面经汇总"
+        },
+        {
+          "level": 2,
+          "anchor": "sec1",
+          "text": "一、VLM 核心知识体系"
+        },
+        {
+          "level": 3,
+          "anchor": "sec1-1",
+          "text": "1.1 视觉编码器 (Visual Encoder)"
+        },
+        {
+          "level": 3,
+          "anchor": "sec1-2",
+          "text": "1.2 VLM 主流架构"
+        },
+        {
+          "level": 3,
+          "anchor": "sec1-3",
+          "text": "1.3 视觉-语言对齐 (Visual-Language Alignment)"
+        },
+        {
+          "level": 3,
+          "anchor": "sec1-4",
+          "text": "1.4 训练阶段 (Training Stages)"
+        },
+        {
+          "level": 3,
+          "anchor": "sec1-5",
+          "text": "1.5 分辨率处理 (Resolution Handling)"
+        },
+        {
+          "level": 3,
+          "anchor": "sec1-6",
+          "text": "1.6 Mixture-of-Experts (MoE) 在 VLM 中的应用"
+        },
+        {
+          "level": 2,
+          "anchor": "sec2",
+          "text": "二、2025-2026 最新进展"
+        },
+        {
+          "level": 3,
+          "anchor": "sec2-1",
+          "text": "2.1 重要模型发布"
+        },
+        {
+          "level": 3,
+          "anchor": "sec2-2",
+          "text": "2.2 架构创新"
+        },
+        {
+          "level": 3,
+          "anchor": "sec2-3",
+          "text": "2.3 训练范式变化"
+        },
+        {
+          "level": 3,
+          "anchor": "sec2-4",
+          "text": "2.4 Benchmark 趋势"
+        },
+        {
+          "level": 3,
+          "anchor": "sec2-5",
+          "text": "2.5 新兴研究方向"
+        },
+        {
+          "level": 2,
+          "anchor": "sec3",
+          "text": "三、面试高频问答"
+        },
+        {
+          "level": 3,
+          "anchor": "q1",
+          "text": "Q1: CLIP 和 SigLIP 的核心区别？"
+        },
+        {
+          "level": 3,
+          "anchor": "q2",
+          "text": "Q2: LLaVA 训练流水线详解"
+        },
+        {
+          "level": 3,
+          "anchor": "q3",
+          "text": "Q3: Visual Connector 的作用？为什么 MLP 就够了？"
+        },
+        {
+          "level": 3,
+          "anchor": "q4",
+          "text": "Q4: VLM 如何处理高分辨率图像？"
+        },
+        {
+          "level": 3,
+          "anchor": "q5",
+          "text": "Q5: Visual Grounding 如何实现？"
+        },
+        {
+          "level": 3,
+          "anchor": "q6",
+          "text": "Q6: MoE 如何应用于 VLM？"
+        },
+        {
+          "level": 3,
+          "anchor": "q7",
+          "text": "Q7: 视频理解的核心挑战？"
+        },
+        {
+          "level": 3,
+          "anchor": "q8",
+          "text": "Q8: VLM 的 RLHF/DPO 与纯文本有何不同？"
+        },
+        {
+          "level": 3,
+          "anchor": "q9",
+          "text": "Q9: 如何减少 VLM 幻觉？"
+        },
+        {
+          "level": 3,
+          "anchor": "q10",
+          "text": "Q10: 设计多模态 RAG 系统"
+        },
+        {
+          "level": 3,
+          "anchor": "q11",
+          "text": "Q11: 如何高效部署 VLM？"
+        },
+        {
+          "level": 2,
+          "anchor": "sec4",
+          "text": "四、代码实现题"
+        },
+        {
+          "level": 3,
+          "anchor": "code1",
+          "text": "4.1 实现 Visual Projector"
+        },
+        {
+          "level": 3,
+          "anchor": "code2",
+          "text": "4.2 交错图文输入的 Attention Mask"
+        },
+        {
+          "level": 3,
+          "anchor": "code3",
+          "text": "4.3 图像 Tiling（高分辨率输入）"
+        },
+        {
+          "level": 2,
+          "anchor": "sec5",
+          "text": "五、必知论文清单"
+        },
+        {
+          "level": 2,
+          "anchor": "sec6",
+          "text": "六、面试准备要点总结"
+        }
+      ],
+      "links": [
+        "assets/site/site.css",
+        "https://stein-wang0226.github.io/vlm-knowledge-interview.html",
+        "#site-main",
+        "index.html",
+        "index.html",
+        "about/index.html",
+        "publications/index.html",
+        "notes/index.html",
+        "cv/index.html",
+        "#sec1",
+        "#sec1-1",
+        "#sec1-2",
+        "#sec1-3",
+        "#sec1-4",
+        "#sec1-5",
+        "#sec1-6",
+        "#sec2",
+        "#sec2-1",
+        "#sec2-2",
+        "#sec2-3",
+        "#sec2-4",
+        "#sec2-5",
+        "#sec3",
+        "#q1",
+        "#q2",
+        "#q3",
+        "#q4",
+        "#q5",
+        "#q6",
+        "#q7",
+        "#q8",
+        "#q9",
+        "#q10",
+        "#q11",
+        "#sec4",
+        "#code1",
+        "#code2",
+        "#code3",
+        "#sec5",
+        "#sec6"
+      ],
+      "markers": [
+        "SITE:NAV:START",
+        "SITE:NAV:END"
+      ],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/about.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "7bf44e354e447e6234380844040d6d1c483df11ffce2249432ef78a3773eecf8",
+      "bytes": 504,
+      "public_url": "/wyx0226.github.io/about.html",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/about/",
+        "../about/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/about/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "fc657f07731d03e3d06ff1383f701adcfa500960551886302cc21c938b20c8b8",
+      "bytes": 513,
+      "public_url": "/wyx0226.github.io/about/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/about/",
+        "../../about/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/assets/Curriculum_Vitae.pdf",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "66b3c0d7c7cf44f23caf4cae80eaaac4e8948373fe39b682fc2111c2735ccde6",
+      "bytes": 2502216,
+      "public_url": "/wyx0226.github.io/assets/Curriculum_Vitae.pdf",
+      "anchors": []
+    },
+    {
+      "before": "wyx0226.github.io/cv/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "96f3aeb0bb74228f2b0ce4470a8b86661e4084bc357d93785fe26b78566ed913",
+      "bytes": 501,
+      "public_url": "/wyx0226.github.io/cv/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/cv/",
+        "../../cv/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "7bf44e354e447e6234380844040d6d1c483df11ffce2249432ef78a3773eecf8",
+      "bytes": 504,
+      "public_url": "/wyx0226.github.io/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/about/",
+        "../about/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/publication/2024-stm-dynamic-graph-fraud/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "34161ac2498184a975a1006ebbff9b41d58cd2119f2d4c9f8d5e16e146d3ad46",
+      "bytes": 662,
+      "public_url": "/wyx0226.github.io/publication/2024-stm-dynamic-graph-fraud/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/publication/2024-stm-dynamic-graph-fraud/",
+        "../../../publication/2024-stm-dynamic-graph-fraud/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/publication/2026-locality-aware-dlm/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "0072331f2488ff52a3ee37d09f5f98ad8bac765a1737ec02f0c62a5b79960a52",
+      "bytes": 642,
+      "public_url": "/wyx0226.github.io/publication/2026-locality-aware-dlm/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/publication/2026-locality-aware-dlm/",
+        "../../../publication/2026-locality-aware-dlm/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/publication/2026-semantic-diffusion-lm/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "0489a3a8d9ca70dcf29779f21d07432dcc36f3008ffd247c44f2ed1859de4c66",
+      "bytes": 654,
+      "public_url": "/wyx0226.github.io/publication/2026-semantic-diffusion-lm/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/publication/2026-semantic-diffusion-lm/",
+        "../../../publication/2026-semantic-diffusion-lm/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/publication/2026-semantic-dlm-plus/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "899bdcdc2884ba354626c7a0153e254deeebab6e03ea52388e688a3269f9dbbd",
+      "bytes": 638,
+      "public_url": "/wyx0226.github.io/publication/2026-semantic-dlm-plus/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/publication/2026-semantic-dlm-plus/",
+        "../../../publication/2026-semantic-dlm-plus/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/publications/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "18fcab7d6cceca4bf03a43fd2111d5c5de032b1cc6d3681af1332eef0b4aaac0",
+      "bytes": 541,
+      "public_url": "/wyx0226.github.io/publications/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/publications/",
+        "../../publications/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/resume/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "96f3aeb0bb74228f2b0ce4470a8b86661e4084bc357d93785fe26b78566ed913",
+      "bytes": 501,
+      "public_url": "/wyx0226.github.io/resume/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/cv/",
+        "../../cv/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/rl-interview-guide.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "97dbe2c7979cf127437d6ddfe8c76c23bcf07449ba5e0a4b94528faf5a452e2c",
+      "bytes": 570,
+      "public_url": "/wyx0226.github.io/rl-interview-guide.html",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/legacy/rl-interview-guide.html",
+        "../legacy/rl-interview-guide.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/sitemap/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "4aaf27373589fff921cd4ff84bc43d382e150730b036bbcbb125b208ef82a007",
+      "bytes": 513,
+      "public_url": "/wyx0226.github.io/sitemap/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/notes/",
+        "../../notes/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/vlm-knowledge-interview.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "19353a0cdf5472011b5ec567c276e95b7420f1f0b157683d01e686c85773d053",
+      "bytes": 562,
+      "public_url": "/wyx0226.github.io/vlm-knowledge-interview.html",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/vlm-knowledge-interview.html",
+        "../vlm-knowledge-interview.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "wyx0226.github.io/year-archive/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "4aaf27373589fff921cd4ff84bc43d382e150730b036bbcbb125b208ef82a007",
+      "bytes": 513,
+      "public_url": "/wyx0226.github.io/year-archive/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/notes/",
+        "../../notes/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    },
+    {
+      "before": "year-archive/index.html",
+      "after": null,
+      "action": "remove-generated",
+      "sha256": "7fe9a4e0e4335477b292651b0db847e1a54aafdd10a1d0cdaa8e8b1f8becc346",
+      "bytes": 504,
+      "public_url": "/year-archive/",
+      "anchors": [],
+      "headings": [],
+      "links": [
+        "https://stein-wang0226.github.io/notes/",
+        "../notes/index.html"
+      ],
+      "markers": [],
+      "last_updated": []
+    }
+  ]
+}

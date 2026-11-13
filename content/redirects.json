@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "defaults": {
+    "preserve_query": true,
+    "preserve_fragment": true,
+    "visible_fallback": true
+  },
+  "query_compatibility": {
+    "blog": {
+      "query_key": "q",
+      "topic_key": "topic",
+      "type_key": "type",
+      "legacy_key": "category",
+      "legacy_values": {
+        "前沿追踪": {"type": "frontier-tracker"},
+        "强化学习": {"topic": "rl-post-training"},
+        "扩散模型": {"topic": "diffusion"},
+        "模型架构": {"topic": "llm-foundations"},
+        "Agent": {"topic": "agent"},
+        "训练工程": {"topic": "training-inference"},
+        "面试复习": {"type": "interview-bank"},
+        "多模态": {"topic": "multimodal"},
+        "外部笔记": {"origin": "external"}
+      },
+      "unknown_legacy_value": "clear-filters-with-notice"
+    }
+  },
+  "redirects": [
+    {"from": "/notes/", "to": "/blog/", "query_policy": "blog"},
+    {"from": "/year-archive/", "to": "/blog/", "query_policy": "blog"},
+    {"from": "/about.html", "to": "/about/"},
+    {"from": "/resume/", "to": "/cv/"},
+    {"from": "/wyx0226.github.io/", "to": "/about/"},
+    {"from": "/wyx0226.github.io/about/", "to": "/about/"},
+    {"from": "/wyx0226.github.io/about.html", "to": "/about/"},
+    {"from": "/wyx0226.github.io/cv/", "to": "/cv/"},
+    {"from": "/wyx0226.github.io/resume/", "to": "/cv/"},
+    {"from": "/wyx0226.github.io/publications/", "to": "/publications/"},
+    {"from": "/wyx0226.github.io/year-archive/", "to": "/blog/", "query_policy": "blog"},
+    {"from": "/wyx0226.github.io/sitemap/", "to": "/blog/", "query_policy": "blog"},
+    {"from": "/wyx0226.github.io/rl-interview-guide.html", "to": "/legacy/rl-interview-guide.html"},
+    {"from": "/wyx0226.github.io/vlm-knowledge-interview.html", "to": "/vlm-knowledge-interview.html"},
+    {"from": "/wyx0226.github.io/publication/2024-stm-dynamic-graph-fraud/", "to": "/publication/2024-stm-dynamic-graph-fraud/"},
+    {"from": "/wyx0226.github.io/publication/2026-locality-aware-dlm/", "to": "/publication/2026-locality-aware-dlm/"},
+    {"from": "/wyx0226.github.io/publication/2026-semantic-diffusion-lm/", "to": "/publication/2026-semantic-diffusion-lm/"},
+    {"from": "/wyx0226.github.io/publication/2026-semantic-dlm-plus/", "to": "/publication/2026-semantic-dlm-plus/"}
+  ],
+  "copies": [
+    {"from": "/wyx0226.github.io/assets/Curriculum_Vitae.pdf", "to": "/assets/Curriculum_Vitae.pdf"}
+  ]
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM 训练全链路：Pretraining → CPT / Midtraining → Post-training</title>
+<meta name="description" content="从通用预训练到 Agent midtraining、SFT、两种 RFT、RL 和蒸馏，结合公开工业配方与可验证实验设计。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="overview">
+<p class="eyebrow">Research notes · 2026-11-14</p>
+<h2>先看链路：能力、行为与反馈如何接起来</h2>
+<p class="lead">预训练获得通用知识和生成先验；CPT／Midtraining 调整领域、结构与交互分布；SFT 让模型模仿可靠行为；RL 通过实际结果改进决策。每一步都要说明起始权重、输入数据、优化目标、输出 checkpoint 和验收条件。</p>
+<figure>
+<div class="flow" aria-label="主要训练链路，按顺序阅读">
+<div class="stage"><b>01 · Pretraining</b><small>原始语料 → 治理、分词与打包<br>因果 LM / FIM → 通用 Base</small></div>
+<div class="stage"><b>02 · CPT / Midtraining</b><small>文档、仓库、PR、回放与轨迹<br>混合目标 → 领域 / Agent Base</small></div>
+<div class="stage"><b>03 · SFT / RFT</b><small>示范、验证路径与偏好对<br>监督 / 偏好目标 → 可执行策略</small></div>
+<div class="stage"><b>04 · RL / Distillation</b><small>采样 → 工具环境 → verifier<br>策略更新 / OPD → 交付策略</small></div>
+</div>
+<figcaption>主线用于组织学习。真实训练可以循环和分叉：RL 后返回拒绝采样 SFT；Base 可直接走 RL-Zero；专家策略可蒸馏进统一模型。Qwen3、DeepSeek-R1、Olmo 3 与 V4 提供了这些公开例子。<a href="#ref-12">[12]</a> <a href="#ref-13">[13]</a> <a href="#ref-27">[27]</a> <a href="#ref-10">[10]</a></figcaption>
+</figure>
+<div class="callout"><strong>最关键的术语修正：</strong>CPT 描述“从已有权重继续训练”，Midtraining 描述训练链路中的准备阶段，SFT 描述监督训练方法。Midtraining 内可以对 trace 使用 assistant-only loss；看到相同 loss，不能推断它们是同一阶段。RFT 则必须写全名：拒绝采样微调与强化微调是两种方法。</div>
+</section>
+<section id="read">
+<h2>四章阅读路径</h2>
+<div class="chapter-grid">
+<a class="card" href="s01_pretraining.html"><span class="eyebrow">01 / 通用能力</span><h3>预训练：从数据到 Base</h3><p>数据治理、Causal LM、FIM、训练预算、长上下文课程、分布式训练与 checkpoint 交接。</p></a>
+<a class="card" href="s02_midtraining.html"><span class="eyebrow">02 / 领域与交互准备</span><h3>CPT 与 Agent Midtraining</h3><p>完整整合原调研，复核 Nemotron 配比与消融，比较 Qwen、GLM、Olmo、MidTool、PRISM、SPT 和函数级 FIM。</p></a>
+<a class="card" href="s03_sft_rft.html"><span class="eyebrow">03 / 行为与教师信号</span><h3>SFT、两种 RFT、偏好与蒸馏</h3><p>角色 mask、验证轨迹、拒绝采样、DPO、专家训练与 OPD；解释静态教师数据和在线蒸馏的差别。</p></a>
+<a class="card" href="s04_rl_evaluation.html"><span class="eyebrow">04 / 结果反馈与验收</span><h3>RL、Agent 系统与 Harbor 评测</h3><p>PPO、GRPO、DAPO、Dr. GRPO、GSPO；异步 rollout、policy lag、verifier、预算对照与可追溯交付。</p></a>
+</div>
+<p>已有基础可直接从第二章开始；希望理解算法推导，可配合现有的<a href="../rl-interview-guide.html">强化学习手册</a>。张量流见<a href="../transformer-decoder-flow.html">Transformer Decoder</a>，并行实现见<a href="../distributed-training-guide.html">分布式训练指南</a>，执行环境见<a href="../agent-harness-guide.html">Agent Harness</a>。</p>
+</section>
+<section id="artifacts">
+<h2>沿途究竟交付什么</h2>
+<table>
+<thead><tr><th>环节</th><th>输入与优化对象</th><th>核心产物</th><th>下一步如何检查</th></tr></thead>
+<tbody>
+<tr><td>Pretraining</td><td>文档 / 代码 token；预测后续 token，部分配方含 FIM</td><td>通用 Base、tokenizer、数据与训练状态</td><td>留出损失、通用能力、代码 / 数学、多语言和长上下文</td></tr>
+<tr><td>CPT / Midtraining</td><td>已有 Base；领域与通用回放，结构上下文、QA、masked trace</td><td>领域或 Agent Base；配比、角色目标与回归报告</td><td>固定下游 SFT 的最终增量；并行监测原有能力</td></tr>
+<tr><td>SFT / 拒绝采样 RFT</td><td>可靠示范、采样后通过验证的路径；目标动作交叉熵</td><td>能遵循协议的策略；模板、工具 schema 与监督来源</td><td>工具调用合法性、独立任务成功率、错误恢复与泛化</td></tr>
+<tr><td>DPO / RL</td><td>偏好对或策略 rollout；相对偏好 / reward</td><td>偏好策略或结果驱动策略；参考模型、奖励和采样状态</td><td>独立 verifier、多维能力、成本与失败分布</td></tr>
+<tr><td>OPD / 最终交付</td><td>学生状态上的教师信号；可汇总多个专家</td><td>统一学生模型及推理 / 环境配置</td><td>检查专家能力保留、教师支持范围、同预算终评</td></tr>
+</tbody>
+</table>
+<p>权重文件不能单独定义一个可复现的 Agent。Chat template、工具名称与参数、停止标记、最大上下文、环境镜像、verifier 版本和生成预算，都可能改变同一 checkpoint 的结果。</p>
+</section>
+<section id="findings">
+<h2>本次调研可以支持的结论</h2>
+<div class="metric-grid">
+<div class="card"><b class="metric">24 + 3</b><p>24 篇原论文 / 团队报告，加 3 份官方页面或文档。来源固定到版本，调研截止 2026-11-14。</p></div>
+<div class="card"><b class="metric">4 个学习环节</b><p>用同一个 CSV 清洗任务贯穿文档、代码变更、轨迹、监督目标、reward 与最终产物验证。</p></div>
+</div>
+<p><strong>工业链路正在扩展训练上下文的结构。</strong> 仓库、issue–PR、CI 日志、函数依赖和工具工作流提供了不同信号；它们不能统一简化成“多收集一些长轨迹”。Nemotron 的混合配方有直接受控证据，Qwen 与 GLM 提供工业规模参考，MidTool 和函数级 FIM 提供更小规模的设计实验。<a href="#ref-1">[1]</a> <a href="#ref-2">[2]</a> <a href="#ref-3">[3]</a> <a href="#ref-5">[5]</a> <a href="#ref-8">[8]</a></p>
+<p><strong>固定后训练只能解释初始化贡献。</strong> 相同 SFT 下模型变好，说明这段训练改善了后续起点；要判断它是否比把同样预算投入 SFT 更值得，必须另外对齐总算力。输入 token、有效目标 token、FLOPs 和 GPU 小时是不同口径。<a href="#ref-1">[1]</a></p>
+<p><strong>平均能力保留不等于没有遗忘。</strong> PRISM 的部分配置综合平均略增，但 HellaSwag 或长上下文分项明显下降。需要逐项验收和通用回放，配比通过消融选择。<a href="#ref-6">[6]</a></p>
+<p><strong>后训练已经常见循环、专家化与蒸馏。</strong> 推理 RL 可以产生新的 SFT 数据；专家策略可以在学生状态上提供 OPD 信号。但 V4 与 Ultra 对完整词表 / 采样 token 的结果不同，不能从一个实验选出通用默认方案。<a href="#ref-10">[10]</a> <a href="#ref-11">[11]</a> <a href="#ref-13">[13]</a></p>
+<p class="note">以下数字均为作者报告，本地没有复现模型训练。公开技术报告与预印本不代表独立第三方验证。CSV 示例、mask 伪代码和 Harbor A–E 方案属于教学与待执行建议。</p>
+</section>
+<section id="corrections">
+<h2>对原 Midtraining 调研的修订</h2>
+<table>
+<thead><tr><th>需要澄清的内容</th><th>复核后口径</th></tr></thead>
+<tbody>
+<tr><td>Olmo 3 长上下文预算</td><td>7B 是 50B 训练 token，32B 是 100B；不能统一写成 50B。</td></tr>
+<tr><td>MidTool 的 91% 数据</td><td>Web / PDF / Code 桶均含原始内容及合成增强；9% 是另列的原生 Agent 轨迹，不能把剩余部分称为纯自然数据。</td></tr>
+<tr><td>Function-Aware FIM</td><td>Gemini 3 Flash 生成 rationale 和候选函数体，ground truth 用于 judge 过滤；部分实验从 Instruct 权重起步。</td></tr>
+<tr><td>工具返回 mask 的提升</td><td>27.5 → 37.8 来自 100B midtraining 接早期 SFT 配方；不能拼到 Lightning-LC 的 full SFT 行。</td></tr>
+<tr><td>“单次”评测与成本</td><td>Nemotron SWE 每题 3 次 rollout 平均、TB 每题 8 次平均；单次训练比较不等于每题只尝试一次，也没有证明等总算力更优。</td></tr>
+</tbody>
+</table>
+<p>第二章保留原文的六个主题和锚点，并补齐证据边界；原件在仓库中逐字节保留。完整编号、版本、表格位置与修订理由记录于维护文档 <code>docs/llm-training-research-20261114.md</code>。</p>
+</section>
+<section id="sources">
+<h2>原始资料索引</h2>
+<p class="note">各章引用共用编号。链接固定到本次核对的论文版本；官方动态文档记录为本次访问口径。</p>
+<ol class="sources">
+<li id="ref-1"><a href="https://arxiv.org/html/2610.22019v1">Priming Base Models for Agentic Post-Training</a> · Nemotron 3.5；§3–6、表1–3/9、附录B/D，2026-10-15。</li>
+<li id="ref-2"><a href="https://arxiv.org/html/2603.00729v1">Qwen3-Coder-Next Technical Report</a> · §2–4、附录A.3；仓库、FIM、多框架轨迹与专家蒸馏。</li>
+<li id="ref-3"><a href="https://arxiv.org/html/2602.15763v1">GLM-5: From Vibe Coding to Agentic Engineering</a> · §2.3、3、4.1；长上下文、轨迹 mask 与异步 RL。</li>
+<li id="ref-4"><a href="https://arxiv.org/html/2512.13961v2">Olmo 3</a> · §2.1、3.5–3.6、表5/11；Dolmino、Longmino 与 model flow。</li>
+<li id="ref-5"><a href="https://arxiv.org/html/2608.20314v1">MidTool</a> · §2–3、表2–6；工具数据合成、固定 SFT 与消融。</li>
+<li id="ref-6"><a href="https://arxiv.org/html/2603.17074v3">PRISM</a> · §6、8.1、9、表4/7；数据交互、分项回归与 RL 初始化。</li>
+<li id="ref-7"><a href="https://arxiv.org/html/2608.26563v1">SPT: Skills as Pre-Training Data for Agentic Language Models</a> · 多文件技能包与 Reference Insert。</li>
+<li id="ref-8"><a href="https://arxiv.org/html/2607.12463v3">Function-Aware Fill-in-the-Middle as Mid-Training for Coding Agent Foundation Models</a> · §2–3、表1/2；教师合成与起点核对。</li>
+<li id="ref-9"><a href="https://arxiv.org/html/2510.14865v2">Midtraining Bridges Pretraining and Posttraining Distributions</a> · 采用修订 v2；混合分布、引入时机和比例。</li>
+<li id="ref-10"><a href="https://arxiv.org/html/2606.19348v1">DeepSeek-V4 Technical Report</a> · §4.1–4.2、5.1；32T+、专家训练与完整词表 OPD。</li>
+<li id="ref-11"><a href="https://arxiv.org/html/2606.15007v1">Nemotron 3 Ultra</a> · §2、3.1–3.3、表5、§3.3.5；统一 RLVR 与 MOPD。</li>
+<li id="ref-12"><a href="https://arxiv.org/html/2505.09388v1">Qwen3 Technical Report</a> · §3.2、4；三段预训练与四段后训练。</li>
+<li id="ref-13"><a href="https://arxiv.org/html/2501.12948v1">DeepSeek-R1</a> · §2；RL-Zero、cold start、拒绝采样与蒸馏。</li>
+<li id="ref-14"><a href="https://arxiv.org/html/2203.15556v1">Training Compute-Optimal Large Language Models</a> · 固定训练算力下参数 / token 的选择。</li>
+<li id="ref-15"><a href="https://arxiv.org/html/2207.14255v1">Efficient Training of Language Models to Fill in the Middle</a> · FIM 的因果序列重排。</li>
+<li id="ref-16"><a href="https://arxiv.org/html/2407.21783v1">The Llama 3 Herd of Models</a> · 数据治理、annealing、长上下文、SFT / DPO。</li>
+<li id="ref-17"><a href="https://arxiv.org/html/2305.18290v1">Direct Preference Optimization</a> · 固定 chosen/rejected 偏好对上的优化目标。</li>
+<li id="ref-18"><a href="https://arxiv.org/abs/1707.06347v2">Proximal Policy Optimization Algorithms</a> · 策略概率比与 clipping。</li>
+<li id="ref-19"><a href="https://arxiv.org/html/2203.02155v1">Training Language Models to Follow Instructions with Human Feedback</a> · InstructGPT 的 SFT → reward model → PPO。</li>
+<li id="ref-20"><a href="https://arxiv.org/html/2402.03300v1">DeepSeekMath</a> · GRPO 与组相对 advantage。</li>
+<li id="ref-21"><a href="https://arxiv.org/html/2503.14476v1">DAPO</a> · 非对称 clipping、动态采样、token loss 与超长处理。</li>
+<li id="ref-22"><a href="https://arxiv.org/html/2503.20783v1">Understanding R1-Zero-Like Training</a> · Dr. GRPO 的长度 / 难度归一化分析。</li>
+<li id="ref-23"><a href="https://arxiv.org/html/2507.18071v1">Group Sequence Policy Optimization</a> · 序列平均 log-ratio 后取 exp 与 clipping。</li>
+<li id="ref-24"><a href="https://arxiv.org/abs/2308.01825v2">Scaling Relationship on Learning Mathematical Reasoning</a> · Rejection sampling Fine-Tuning。</li>
+<li id="ref-25"><a href="https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning">OpenAI · Reinforcement fine-tuning</a> · grader 与策略梯度；用于术语定义。</li>
+<li id="ref-26"><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro">DeepSeek-V4-Pro 官方模型卡</a> · 与报告交叉核对训练链路、训练量和上下文。</li>
+<li id="ref-27"><a href="https://allenai.org/blog/olmo3">Ai2 · Olmo 3 Model Flow</a> · 2025-11-20 发布，后有 3.1 更新；多条公开分支。</li>
+</ol>
+</section>
+</main>
+</body>
+</html>
