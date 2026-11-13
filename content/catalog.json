@@ -2,6 +2,90 @@
   "schema_version": 1,
   "entries": [
     {
+      "id": "llm-research-map-2026",
+      "kind": "series",
+      "title": "LLM 研究地图：数据、Agent RL、架构与推理",
+      "summary": "五章连接 Agent 数据与 benchmark、长程 RL、DeepSeek V4.1、扩散推理及 GUI / 科学 Agent；附博客覆盖审计、43 项来源和10份原始报告。",
+      "source": "content/series/llm-research-map-2026/index.html",
+      "url": "/llm-research-map-2026/",
+      "topic": "agent", "type": "series-tutorial",
+      "tags": ["LLM", "Agent", "Data", "Benchmark", "Harbor", "Agentic RL", "DeepSeek V4.1", "Diffusion"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": null, "order": null, "featured": true,
+      "related": ["llm-training-lifecycle", "llm-frontier-2026", "agentic-rl-guide", "dlm-survey"]
+    },
+    {
+      "id": "research-agent-data",
+      "kind": "chapter",
+      "title": "01 · Agent 数据与 benchmark：合成、Harbor 与审计",
+      "summary": "区分轨迹、任务、环境与 benchmark，比较 SWE-smith、NexForge、EvoSyn、ProgramGym；独立 verifier、adapter parity、版本与成本审计。",
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "url": "/llm-research-map-2026/s01_agent_data_bench.html",
+      "topic": "agent", "type": "practical-guide",
+      "tags": ["Agent Data", "Benchmark", "Harbor", "Verifier", "SWE-smith", "NexForge", "EvoSyn", "ProgramGym", "Terminal-Bench"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "llm-research-map-2026", "order": 1, "featured": false,
+      "related": ["agent-harness-guide", "llm-training-midtraining", "research-agentic-rl"]
+    },
+    {
+      "id": "research-agentic-rl",
+      "kind": "chapter",
+      "title": "02 · Agentic RL：目标、信用、异质数据与异步",
+      "summary": "四维 loss 比较 GRPO / GSPO / CISPO；GiGPO、RLDS、KnowGPO、两种 SAPO 和 SAMPO；异质数据、policy lag 与 rollout–trainer 对齐。",
+      "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
+      "url": "/llm-research-map-2026/s02_agentic_rl.html",
+      "topic": "rl-post-training", "type": "system-guide",
+      "tags": ["Agentic RL", "GRPO", "GSPO", "CISPO", "GiGPO", "RLDS", "KnowGPO", "SAPO", "SAMPO", "Async RL"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "llm-research-map-2026", "order": 2, "featured": false,
+      "related": ["agentic-rl-guide", "llm-training-rl-evaluation", "rl-interview-guide", "research-agent-data"]
+    },
+    {
+      "id": "research-base-architecture",
+      "kind": "chapter",
+      "title": "03 · DeepSeek V4.1：CED、CSA2、FP4 与缓存",
+      "summary": "固定 v1 技术报告，拆解因果编码解码、跨层稀疏 Attention、890 bytes/token 与 bounded replay；区分 Engram、Kimi K3 和1017更新。",
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "url": "/llm-research-map-2026/s03_base_architecture.html",
+      "topic": "llm-foundations", "type": "principles",
+      "tags": ["DeepSeek V4.1", "CED", "CSA2", "FP4", "KV Cache", "Engram", "Kimi K3", "MoE"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "llm-research-map-2026", "order": 3, "featured": false,
+      "related": ["transformer-decoder-flow", "distributed-training-guide", "research-inference-diffusion"]
+    },
+    {
+      "id": "research-inference-diffusion",
+      "kind": "chapter",
+      "title": "04 · 推理成本与扩散投机：DFlash、DSpark、AdaFlash",
+      "summary": "扩散并行 drafter、半自回归块内依赖、reverse-KL OPD；验证精确性、non-anticipating admission、并发、吞吐与成功成本。",
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "url": "/llm-research-map-2026/s04_inference_diffusion.html",
+      "topic": "diffusion", "type": "system-guide",
+      "tags": ["DFlash", "DSpark", "AdaFlash", "Speculative Decoding", "DLM", "OPD", "Inference", "Throughput"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "llm-research-map-2026", "order": 4, "featured": false,
+      "related": ["dlm-speculative", "dlm-block", "research-base-architecture", "llm-training-sft-rft"]
+    },
+    {
+      "id": "research-agent-frontiers",
+      "kind": "chapter",
+      "title": "05 · GUI、科学 Agent、Skills 与持续学习",
+      "summary": "OSWorld 2.0、AIRS-Bench、SkillsBench 1.1、Macaron、PARL / MOPD；区分状态恢复、科学验收、memory / skill / 参数更新与并行成本。",
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "url": "/llm-research-map-2026/s05_agent_frontiers.html",
+      "topic": "agent", "type": "practical-guide",
+      "tags": ["GUI Agent", "Scientific Agent", "OSWorld", "AIRS-Bench", "SkillsBench", "Macaron", "Memory", "Continual Learning", "PARL", "MOPD"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "llm-research-map-2026", "order": 5, "featured": false,
+      "related": ["research-agent-data", "research-agentic-rl", "vlm-knowledge-interview", "llm-training-sft-rft"]
+    },
+    {
       "id": "llm-training-lifecycle",
       "kind": "series",
       "title": "LLM 训练全链路：从预训练到 Agent RL",
@@ -14,7 +98,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": null, "order": null, "featured": true,
-      "related": ["agentic-rl-guide", "distributed-training-guide", "agent-harness-guide"]
+      "related": ["llm-research-map-2026", "agentic-rl-guide", "distributed-training-guide", "agent-harness-guide"]
     },
     {
       "id": "llm-training-pretraining",
@@ -42,7 +126,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-training-lifecycle", "order": 2, "featured": false,
-      "related": ["llm-training-pretraining", "llm-training-sft-rft", "llm-training-rl-evaluation"]
+      "related": ["research-agent-data", "llm-training-pretraining", "llm-training-sft-rft", "llm-training-rl-evaluation"]
     },
     {
       "id": "llm-training-sft-rft",
@@ -56,7 +140,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-training-lifecycle", "order": 3, "featured": false,
-      "related": ["agentic-rl-guide", "rl-interview-guide", "llm-training-rl-evaluation"]
+      "related": ["research-agent-frontiers", "agentic-rl-guide", "rl-interview-guide", "llm-training-rl-evaluation"]
     },
     {
       "id": "llm-training-rl-evaluation",
@@ -70,7 +154,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-training-lifecycle", "order": 4, "featured": false,
-      "related": ["agent-harness-guide", "agentic-rl-guide", "distributed-training-guide"]
+      "related": ["research-agentic-rl", "agent-harness-guide", "agentic-rl-guide", "distributed-training-guide"]
     },
     {
       "id": "llm-frontier-2026",
@@ -90,7 +174,7 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["agentic-rl-guide", "agent-harness-guide", "dlm-survey"]
+      "related": ["llm-research-map-2026", "agentic-rl-guide", "agent-harness-guide", "dlm-survey"]
     },
     {
       "id": "agentic-rl-guide",
@@ -110,7 +194,7 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["rl-interview-guide", "agent-harness-guide"]
+      "related": ["research-agentic-rl", "rl-interview-guide", "agent-harness-guide"]
     },
     {
       "id": "dlm-survey",
@@ -130,7 +214,7 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["transformer-decoder-flow", "llm-frontier-2026"]
+      "related": ["research-inference-diffusion", "transformer-decoder-flow", "llm-frontier-2026"]
     },
     {
       "id": "transformer-decoder-flow",
@@ -150,7 +234,7 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["distributed-training-guide", "llm-interview-bank"]
+      "related": ["research-base-architecture", "distributed-training-guide", "llm-interview-bank"]
     },
     {
       "id": "rl-interview-guide",
@@ -170,7 +254,7 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["agentic-rl-guide", "rl-interview-guide-legacy"]
+      "related": ["research-agentic-rl", "agentic-rl-guide", "rl-interview-guide-legacy"]
     },
     {
       "id": "agent-harness-guide",
@@ -190,7 +274,7 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["agentic-rl-guide", "distributed-training-guide"]
+      "related": ["research-agent-data", "research-agentic-rl", "agentic-rl-guide", "distributed-training-guide"]
     },
     {
       "id": "distributed-training-guide",
@@ -210,7 +294,7 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["transformer-decoder-flow", "agent-harness-guide"]
+      "related": ["research-base-architecture", "research-agentic-rl", "transformer-decoder-flow", "agent-harness-guide"]
     },
     {
       "id": "llm-interview-bank",
@@ -250,7 +334,7 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["llm-interview-bank", "mllm-interview-notes"]
+      "related": ["research-agent-frontiers", "llm-interview-bank", "mllm-interview-notes"]
     },
     {
       "id": "mllm-interview-notes",
@@ -370,7 +454,7 @@
       "topic": "diffusion", "type": "principles", "tags": ["Block Diffusion", "Semi-AR"],
       "origin": "local", "status": "published", "review_status": "unreviewed",
       "updated": null, "updated_source": null, "series": "dlm-survey", "order": 5,
-      "featured": false, "related": ["dlm-discrete", "dlm-speculative"]
+      "featured": false, "related": ["research-inference-diffusion", "dlm-discrete", "dlm-speculative"]
     },
     {
       "id": "dlm-continuous",
@@ -418,7 +502,7 @@
       "topic": "diffusion", "type": "principles", "tags": ["Speculative Decoding", "DFlash", "MTP"],
       "origin": "local", "status": "published", "review_status": "unreviewed",
       "updated": null, "updated_source": null, "series": "dlm-survey", "order": 9,
-      "featured": false, "related": ["dlm-block", "transformer-decoder-flow"]
+      "featured": false, "related": ["research-inference-diffusion", "dlm-block", "transformer-decoder-flow"]
     },
     {
       "id": "dlm-elbo-rl",

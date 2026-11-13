@@ -32,6 +32,8 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 | 正文 | `content/posts/<id>/index.html` 或 `index.md` |
 | 扩散系列 14 章 | `content/series/dlm-survey/*.html` |
 | LLM 训练全链路 4 章 | `content/series/llm-training-lifecycle/*.html`；专用样式 `assets/site/training-lifecycle.css` |
+| LLM 研究地图 5 章 | `content/series/llm-research-map-2026/*.html`；数据 / RL / 架构 / 推理 / 场景，与训练全链路交叉引用 |
+| 研究报告原件与引用 | `assets/research/2026-11-14/`；`sources.json` 登记固定版本、来源、许可与 SHA，公开资源登记在 `site.json` |
 | 个人介绍及在线 CV | `content/pages/about.md`、`cv.md` |
 | 论文与精选记录 | `content/publications/*.md`，精选 ID 在 `site.json` |
 | 历史 RL 手册 | `content/archive/rl-interview-guide/index.html` |
@@ -43,6 +45,10 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 不要手改或提交生成 HTML。首页、个人介绍、CV 的论文列表，以及博客搜索和相关文章都从上述记录生成。
 新增命令创建草稿，完成内容并移除空模板标记后，将 `status` 改为 `published`；草稿不进入公开产物。
 日期仅填写有依据的内容更新时间；前沿追踪直接提取正文 `last-updated`。
+
+研究原件保留下载字节，不做文本归一化；`.gitattributes` 将归档PDF标记为二进制，
+并保留官方许可原有换行。添加报告后同步登记来源、署名、许可、长度和SHA，
+以及 `site.json` 的公开资源；不要用下载时间代替论文版本。
 
 ## 检查和发布
 
@@ -68,6 +74,7 @@ Pages Source 应设置为 GitHub Actions；部署作业依赖构建与校验成�
 - [日常维护](docs/maintenance.md)：新增、更新、预览、前沿自动化及线上核对。
 - [内容检查](docs/content-audit.md)：覆盖范围、修订与未完成的事实复核。
 - [训练全链路来源复核](docs/llm-training-research-20261114.md)：27 项原始来源、原 Midtraining 调研修订与实验边界；本地入口 `/llm-training-lifecycle/`。
+- [研究地图与覆盖审计](docs/blog-research-review-20261114.md)：五章机制专题、P0 / P1 / P2增补建议、43项来源与10份原件；公开入口 `/llm-research-map-2026/`。
 - [验收记录](docs/validation.md)：内容保留、浏览器、隔离构建与真实发布状态。
 - [个人资料更新依据](docs/profile-update-20261114.md)：最新简历、项目口径、论文状态、中英文附件与 GitHub Profile 稿。
 - [迁移与地址清单](docs/content-inventory.md)：原始 9 个集合、14 章、4 篇论文的保留基线；当前内容以登记与本次验收为准。

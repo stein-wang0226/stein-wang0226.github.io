@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeepSeek V4.1 架构：CED、CSA2、FP4、缓存与 Engram</title>
+<meta name="description" content="拆解DeepSeek V4.1的因果编码解码、跨层稀疏Attention、FP4 KV和bounded replay，区分存储口径、Engram、Kimi K3路线及1017后训练更新。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="versions">
+<p class="eyebrow">03 · Base architecture · 2026-11-14</p>
+<h2>先固定版本：V4 → V4.1 → 1017</h2>
+<p class="lead">V4.1适合作为当前博客的架构贯通案例：长上下文、多轮工具返回和大量rollout，使prefill计算、KV驻留、跨层复用和缓存IO成为真实Agent成本的一部分。其核心变化是CED、CSA2与KV压缩；后训练同时加强数据生产和执行系统。<a href="index.html#ref-1">[1]</a></p>
+<table>
+<thead><tr><th>来源</th><th>本章采用的口径</th><th>不能混用什么</th></tr></thead>
+<tbody>
+<tr><td>V4报告 <code>2606.19348v1</code></td><td>前序架构与CSA / HCA背景</td><td>V4的缓存、训练量和实验表不能代替V4.1结果</td></tr>
+<tr><td>V4.1发布 / arXiv v1</td><td>09-10官方发布；09-17论文v1；机制按v1引用</td><td>发布日不是arXiv提交日；官方PDF快照另外记录revision</td></tr>
+<tr><td>V4.1-Flash-1017</td><td>官方描述self-feedback RL、端到端项目开发增强</td><td>更新的能力分数不等于v1架构消融；没有由此证明换了架构</td></tr>
+</tbody>
+</table>
+<p>来源：<a href="index.html#ref-2">V4 [2]</a>、<a href="index.html#ref-39">09-10发布 [39]</a>、<a href="index.html#ref-1">V4.1 v1 [1]</a>、<a href="index.html#ref-40">1017 [40]</a>。本地<a href="../assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf">官方PDF</a>来自模型仓库固定revision；许可、字节和哈希见<a href="index.html#archive">归档说明</a>。</p>
+<div class="metric-grid">
+<div class="card"><span class="metric">552B + 196B</span><p>552B backbone，另有196B Engram；不能把两者写成同一个参数口径。§2.1。</p></div>
+<div class="card"><span class="metric">8B / 16B active</span><p>prefill / decode活跃参数；40层由20层causal encoder与20层decoder组成。§2.1。</p></div>
+</div>
+<p class="note">同节另报告1M context与45T多模态预训练。全部为团队报告规格，不是本地测量；活跃参数、总参数、显存和每token FLOPs是不同量。</p>
+</section>
+<section id="ced">
+<h2>CED：长prompt主计算放在哪里</h2>
+<p>CED是<strong>Causal Encoder–Decoder</strong>。Encoder处理因果历史；Decoder的global KV由encoder末层hidden state经过projection得到，因此不必为每个长prompt位置完成传统上半模型的全部全局KV计算。Decode时新token仍通过encoder和decoder。<a href="index.html#ref-1">[1] §2.2</a></p>
+<figure>
+<div class="flow" aria-label="CED的prefill与decode主要路径">
+<div class="stage"><b>长prompt</b><small>causal encoder ×20<br>得到末层hidden states</small></div>
+<div class="stage"><b>Global KV</b><small>hidden states → projection<br>按CSA2跨层共享 / 复用</small></div>
+<div class="stage"><b>Decoder局部状态</b><small>SWA依赖各层历史<br>对尾部进行bounded replay</small></div>
+<div class="stage"><b>逐token生成</b><small>encoder + decoder ×20<br>读global KV与局部SWA</small></div>
+</div>
+<figcaption>概念流程，不是逐算子kernel图。重要限制：prefill不能画成“完全不走decoder”；decoder的SWA局部状态仍需重建。Decode 16B active也不能当作prefill 8B的重复计数。</figcaption>
+</figure>
+<p>学习时应把它接到已有<a href="../transformer-decoder-flow.html">Decoder张量流</a>：普通decoder通常逐层保存自己的KV；CED先改变global KV来源，再通过跨层复用减少存储与重复计算。具体Q、KV、SWA和indexer的所有权要分开画。</p>
+</section>
+<section id="csa2">
+<h2>CSA2：共享KV、重算索引和复用候选是三件事</h2>
+<table>
+<thead><tr><th>层模式</th><th>Global KV / indexer K</th><th>Top-k候选</th><th>仍由每层保留</th></tr></thead>
+<tbody>
+<tr><td>Full</td><td>产生本组共享的KV与indexer K</td><td>执行索引与top-k选择</td><td>本层Q与SWA KV</td></tr>
+<tr><td>Reindex</td><td>复用前面层的KV / indexer K</td><td>重新计算top-k，按本层查询选择</td><td>本层Q与SWA KV</td></tr>
+<tr><td>Reuse</td><td>复用KV / indexer K</td><td>同时复用已有top-k</td><td>本层Q与SWA KV</td></tr>
+</tbody>
+</table>
+<p>CSA2减少跨层冗余，但<strong>共享KV不等于所有层做相同Attention</strong>：各层仍有自己的query和局部SWA。Decoder的hierarchical indexing让后续索引在首层候选池内扫描，第一层仍需扫描全文，不能宣称所有indexing成本变成O(1)。<a href="index.html#ref-1">[1] §2.3</a></p>
+<p>分析算力时至少区分KV projection、候选检索、选中位置的Attention和SWA四部分；“稀疏Attention”一个标签不能说明总复杂度。实现性能还取决于候选大小、跨层计划、内存访问与kernel，而不只取决于理论乘加次数。</p>
+</section>
+<section id="cache">
+<h2>890 bytes/token究竟包括什么</h2>
+<table>
+<thead><tr><th>存储 / 成本对象</th><th>V4.1报告口径</th><th>阅读边界</th></tr></thead>
+<tbody>
+<tr><td>HBM中的global KV</td><td>摘要约890 bytes/token，约V4-Flash的1/4；§2.4含FP4主KV</td><td>不是模型权重，不是总显存，也不包含全部SWA和临时计算</td></tr>
+<tr><td>Persistent cache</td><td>SSD / host缓存约前序的1/8；结合局部状态重建</td><td>不同存储层口径，不能和HBM 1/4相乘成“总显存1/32”</td></tr>
+<tr><td>SWA局部KV</td><td>各层自己的窗口状态，decoder需尾部replay</td><td>窗口与层数成本仍存在；小global KV不代表局部缓存消失</td></tr>
+<tr><td>Weights / Engram / workspace</td><td>独立的参数、放置、通信和临时内存</td><td>不能从KV字节推算模型完整部署容量</td></tr>
+</tbody>
+</table>
+<p>以上固定到报告摘要、§2.4、§3.2。FP4是精度 / 存储设计的一环；压缩后的KV访问与反量化也有计算和带宽成本，需要实际profile。<a href="index.html#ref-1">[1]</a></p>
+<h3>Bounded replay：用计算换存储</h3>
+<p>持久缓存可以保留更紧凑的global表示，恢复时重跑尾部以近似重建decoder局部状态。§3.2.2报告其质量影响小，但这是bounded replay的近似storage–compute trade-off，不能称为bit-exact重建。</p>
+<p>对多轮Agent，缓存命中后往往只有短工具返回，却仍要恢复局部状态；长输入、短输出与大量轮次下，replay、host / SSD IO和排队可能成为显著成本。长prompt的单次prefill加速不能直接替代端到端Agent实验。</p>
+<div class="equation" role="math" aria-label="Agent推理延迟的概念分解">T_episode ≈ Σ_turn (T_prefill_new + T_cache_IO + T_replay + T_decode + T_tool + T_queue)</div>
+<p class="note">这是观测项的概念分解；实际系统可能重叠计算、IO和工具等待，不能把重叠span直接累加。计费去重见<a href="s01_agent_data_bench.html#audit">第01章</a>。</p>
+</section>
+<section id="engram">
+<h2>Engram和Agent memory分别更新什么</h2>
+<p>Engram采用N-gram hashing与context-aware gating，把条件查表记忆引入参数稀疏性。它并非自动记录过去任务的episodic memory，也不是外部RAG系统。V4.1单列196B Engram，让参数总量和每token活跃计算进一步分离。<a href="index.html#ref-3">[3]</a> <a href="index.html#ref-1">[1]</a></p>
+<table>
+<thead><tr><th>“记忆”形式</th><th>所在层与内容</th><th>典型更新 / 失效方式</th></tr></thead>
+<tbody>
+<tr><td>Engram条件参数</td><td>模型内部的可学习查表与门控</td><td>训练更新；部署成本包含参数存储与访问</td></tr>
+<tr><td>KV / prefix cache</td><td>特定权重、token历史和实现下的中间状态</td><td>生成时写入；版本或计算条件变化可能使缓存不适用</td></tr>
+<tr><td>RAG / episodic memory</td><td>外部资料、事件、经验与检索索引</td><td>文档 / 事件写入；需来源、时效和隐私控制</td></tr>
+<tr><td>Skills</td><td>流程说明、代码、资源和工具约束</td><td>维护文件与版本；是否有效通过paired任务评测</td></tr>
+</tbody>
+</table>
+<p>这些层可以协作，但不能相互替代：参数记忆不自动保证事实可追溯，长KV不自动实现跨任务持续学习，skill文件增长不等于参数能力增长。场景验收见<a href="s05_agent_frontiers.html#adaptation">第05章</a>。</p>
+</section>
+<section id="alternatives">
+<h2>另一条基模路线：Kimi K3与Nemotron</h2>
+<table>
+<thead><tr><th>路线</th><th>公开机制</th><th>适合补进博客的比较问题</th></tr></thead>
+<tbody>
+<tr><td>DeepSeek V4.1</td><td>CED、CSA2、FP4、bounded replay、Engram</td><td>跨层冗余和长上下文缓存怎样减少；短轮恢复成本是什么</td></tr>
+<tr><td>Kimi K3 <code>2607.24653v1</code></td><td>2.8T / 104B，KDA、Attention Residuals、Stable LatentMoE；896 routed experts中激活16</td><td>线性 / 混合状态、残差传递与latent专家改变哪类计算；总参数与通信怎样管理</td></tr>
+<tr><td>Nemotron 3 Ultra</td><td>Hybrid Mamba–Transformer / MoE、专家后训练与OPD</td><td>序列状态、Attention和专家整合如何共同影响长程Agent</td></tr>
+</tbody>
+</table>
+<p>K3路线采用固定报告，不替代滚动页的K3.1当前版本快讯。以上都是独立工业例子；没有同硬件、精度、并发和工作负载的本地复现，不画跨模型speedup排名。<a href="index.html#ref-5">[5]</a> <a href="index.html#ref-33">[33]</a></p>
+</section>
+<section id="experiments">
+<h2>待执行：把架构优势放进真实工作负载</h2>
+<p>同一推理实现和checkpoint下，设置长prompt / 短输出、短prompt / 长输出、多轮短工具返回三类负载；每类分低 / 高并发、冷 / 热prefix。若模型或硬件不能保持一致，结果只作系统整体对比，不能归因于单个架构模块。</p>
+<ul>
+<li>记录首token、decode tokens/s、episode P50 / P95、global / SWA / weights / workspace显存、host / SSD字节、缓存命中、replay token与IO时间。</li>
+<li>在开放实现允许时消融缓存 / replay / 索引计划；不把不存在的可配置项假装成已经完成的实验。</li>
+<li>固定工具、题集与总生成预算，同时报告成功率、工具错误、成本和长上下文质量；改变缓存策略后重新验收输出。</li>
+</ul>
+<p>本章仅完成原报告拆解，实验未执行。推理预算和扩散drafter继续见<a href="s04_inference_diffusion.html">下一章</a>；V4.1的任务生产见<a href="s01_agent_data_bench.html#synthesis">第01章</a>，异步训练见<a href="s02_agentic_rl.html#asynchrony">第02章</a>。</p>
+</section>
+</main>
+</body>
+</html>

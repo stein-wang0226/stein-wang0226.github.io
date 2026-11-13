@@ -47,7 +47,20 @@
     {"source": "assets/site/site.css", "url": "/assets/site/site.css"},
     {"source": "assets/site/catalog.js", "url": "/assets/site/catalog.js"},
     {"source": "content/series/dlm-survey/shared.css", "url": "/dlm-survey/shared.css"},
-    {"source": "content/series/dlm-survey/style.css", "url": "/dlm-survey/style.css"}
+    {"source": "content/series/dlm-survey/style.css", "url": "/dlm-survey/style.css"},
+    {"source": "assets/research/2026-11-14/sources.json", "url": "/assets/research/2026-11-14/sources.json"},
+    {"source": "assets/research/2026-11-14/NOTICE.txt", "url": "/assets/research/2026-11-14/NOTICE.txt"},
+    {"source": "assets/research/2026-11-14/DeepSeek-MIT-LICENSE.txt", "url": "/assets/research/2026-11-14/DeepSeek-MIT-LICENSE.txt"},
+    {"source": "assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf", "url": "/assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf"},
+    {"source": "assets/research/2026-11-14/engram-2601.07372v1.pdf", "url": "/assets/research/2026-11-14/engram-2601.07372v1.pdf"},
+    {"source": "assets/research/2026-11-14/dspark-2607.05147v1.pdf", "url": "/assets/research/2026-11-14/dspark-2607.05147v1.pdf"},
+    {"source": "assets/research/2026-11-14/dflash-2602.06036v1.pdf", "url": "/assets/research/2026-11-14/dflash-2602.06036v1.pdf"},
+    {"source": "assets/research/2026-11-14/evosyn-2610.12593v1.pdf", "url": "/assets/research/2026-11-14/evosyn-2610.12593v1.pdf"},
+    {"source": "assets/research/2026-11-14/programgym-2610.13395v1.pdf", "url": "/assets/research/2026-11-14/programgym-2610.13395v1.pdf"},
+    {"source": "assets/research/2026-11-14/rlds-2609.27035v1.pdf", "url": "/assets/research/2026-11-14/rlds-2609.27035v1.pdf"},
+    {"source": "assets/research/2026-11-14/sapo-single-2608.19842v1.pdf", "url": "/assets/research/2026-11-14/sapo-single-2608.19842v1.pdf"},
+    {"source": "assets/research/2026-11-14/arlarena-2602.21534v3.pdf", "url": "/assets/research/2026-11-14/arlarena-2602.21534v3.pdf"},
+    {"source": "assets/research/2026-11-14/swesmith-2504.21798v1.pdf", "url": "/assets/research/2026-11-14/swesmith-2504.21798v1.pdf"}
   ],
   "catalog_defaults": {
     "origin": "local",

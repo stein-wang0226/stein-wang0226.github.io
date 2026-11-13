@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>推理成本与扩散投机：DFlash、DSpark、AdaFlash</title>
+<meta name="description" content="分析Agent推理预算，比较扩散并行drafter、半自回归块内依赖和OPD适配，说明投机验证精确性、并发、吞吐和任务成功成本。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="budget">
+<p class="eyebrow">04 · Inference &amp; diffusion · 2026-11-14</p>
+<h2>推理优化要先选对成本目标</h2>
+<p class="lead">对Agent，单请求decode速度只是成本的一部分。训练时需要大量rollout，部署时还包含长prompt、短工具返回、环境等待和失败重试。一个提高平均接受长度的drafter，未必提高高并发吞吐；一个降低单次延迟的配置，也未必降低完成任务的总成本。</p>
+<table>
+<thead><tr><th>目标</th><th>要一起报告</th><th>容易遗漏</th></tr></thead>
+<tbody>
+<tr><td>单请求交互</td><td>首token、输出速度、整轮延迟、工具等待</td><td>prefill / cache恢复可能比decode更大</td></tr>
+<tr><td>高并发服务</td><td>总tokens/s、请求吞吐、P95、排队、GPU占用</td><td>drafter和target争资源，验证batch不一定高效</td></tr>
+<tr><td>训练rollout</td><td>有效目标token / 秒、完成任务 / 秒、policy lag</td><td>更快返回的短任务改变训练分布</td></tr>
+<tr><td>任务经济性</td><td>总成本、有效成功数、预算内成功率和失败类</td><td>失败与重试也消耗工具、模型和环境资源</td></tr>
+</tbody>
+</table>
+<div class="equation" role="math" aria-label="成功成本与投机解码步成本">cost per success = 全部试验的总成本 / 成功试验数
+T_spec per emitted token ≈ (T_draft(B) + T_verify(B) + T_schedule + T_cache) / E[L_emit]</div>
+<p class="note">概念式未测量；L_emit包含接受与验证后的实际输出。成功数为0时成本指标未定义，应报告总投入和0成功。各时间span可能重叠，分解需遵守实际计时合同。</p>
+</section>
+<section id="methods">
+<h2>DFlash → DSpark → AdaFlash：分别改变哪一层</h2>
+<figure>
+<div class="flow" aria-label="扩散drafter和自回归target的投机流程">
+<div class="stage"><b>Draft一个块</b><small>重计算并行生成多个位置<br>保留proposal条件与分布</small></div>
+<div class="stage"><b>块内依赖 / 长度</b><small>顺序轻量head或长度预测<br>按合法调度选择验证范围</small></div>
+<div class="stage"><b>AR target验证</b><small>接受 / 拒绝与残差采样<br>更新已确认的前缀</small></div>
+<div class="stage"><b>继续或适配</b><small>统计真实接受与成本<br>target反馈训练drafter</small></div>
+</div>
+<figcaption>扩散负责proposal，不意味着最终模型就是standalone DLM；target验证与调度规则决定精确性和实际成本。</figcaption>
+</figure>
+<table>
+<thead><tr><th>工作</th><th>机制</th><th>主要学习价值 / 边界</th></tr></thead>
+<tbody>
+<tr><td>DFlash <code>2602.06036v1</code></td><td>block diffusion并行drafter，AR target验证</td><td>用块并行减少逐token重计算；未证明standalone DLM全面替代AR</td></tr>
+<tr><td>DSpark <code>2607.05147v1</code></td><td>parallel heavy backbone + lightweight sequential head恢复块内依赖；confidence和hardware profile调度验证长度</td><td>依赖、接受率与调度共同设计；non-anticipating admission是精确保分布的关键条件</td></tr>
+<tr><td>AdaFlash <code>2607.19223v1</code></td><td>学生drafter实际rollout上的target feedback，reverse-KL OPD及长度预测</td><td>把proposal分布适配到target和任务域；接受提升不能替代并发吞吐测量</td></tr>
+</tbody>
+</table>
+<p>来源：<a href="index.html#ref-6">DFlash [6]</a>、<a href="index.html#ref-4">DSpark §3 / 附录A [4]</a>、<a href="index.html#ref-7">AdaFlash [7]</a>。需要扩散前向过程、mask、块解码和loss基础时，回到<a href="../dlm-survey/">DLM 14章系列</a>；本章重点是AR target与扩散proposal之间的接口。</p>
+</section>
+<section id="exactness">
+<h2>“精确保留target分布”有条件</h2>
+<p>对同一个合法前缀h，proposal q与target p的单位置标准接受 / 拒绝形式为：</p>
+<div class="equation" role="math" aria-label="标准投机接受与残差分布">x ~ q(· | h)
+accept probability α(x | h) = min(1, p(x | h) / q(x | h))
+reject后：x′ ~ normalize(max(p(· | h) − q(· | h), 0))</div>
+<p>这是概念推导，不是直接可用的批量验证代码。需要使用实际proposal条件分布、匹配的temperature / top-p等采样处理和正确残差分布；块内history、拒绝位置、target bonus token、停止与缓存都要实现一致。若q的条件概率无法准确获得，不能仅靠一个接受公式宣称精确。</p>
+<h3>为什么“看完候选，再决定验证多少”可能出错</h3>
+<p>假设调度器观察未来候选token的性质后才选择验证长度，这个选择本身会改变进入验证的proposal分布。若仍用原先的q做校正，就可能产生selection bias。DSpark §3.2.2与附录A专门区分retrospective选择与non-anticipating admission：不使用尚未获准验证的未来token信息来决定其进入验证，是其精确性论证的重要条件。<a href="index.html#ref-4">[4]</a></p>
+<div class="callout caution"><strong>验收分成两层：</strong>先检查数学 / 采样合同与实现一致，再测延迟和吞吐。只比较生成文本“看起来差不多”或下游平均分接近，不能证明整个target采样分布被精确保留；argmax的贪心一致性也不等于随机采样一致性。</div>
+<p>KV精度、缓存恢复、target实现和量化若发生变化，还要区分“对当前target实现精确”与“对另一精度基准模型精确”。Bounded replay本身是近似状态重建，不能和精确投机验证的结论混为一谈，见<a href="s03_base_architecture.html#cache">第03章</a>。</p>
+</section>
+<section id="opd">
+<h2>OPD：优化接受机会，不等于给最终Agent加reward</h2>
+<p>AdaFlash从drafter自身实际rollout取得target反馈，通过reverse-KL方向对齐proposal，并学习长度预测。它与静态目标文本上的普通SFT不同：学生遇到的状态参与教师监督。<a href="index.html#ref-7">[7]</a></p>
+<p>Reverse-KL的概念方向是 <code>D_KL(q_draft || p_target)</code>；完整方法还取决于状态采样、token / block mask和teacher信号。不要把drafter OPD、Agent任务RL、多个专家到统一学生的MOPD放到同一张loss表里省略目标差异。MOPD研究能力整合；drafter适配研究proposal质量与成本。<a href="index.html#ref-25">[25]</a></p>
+<table>
+<thead><tr><th>对象</th><th>反馈</th><th>应验收的结果</th></tr></thead>
+<tbody>
+<tr><td>Agent策略RL</td><td>环境reward / verifier</td><td>任务成功、泛化、恢复、成本和安全约束</td></tr>
+<tr><td>统一模型OPD / MOPD</td><td>学生状态上的一个或多个教师</td><td>专家能力保留、冲突、通用回归和教师覆盖</td></tr>
+<tr><td>Drafter OPD</td><td>target对proposal状态与token的信号</td><td>接受分布、draft / verify成本、延迟 / 吞吐和采样正确性</td></tr>
+</tbody>
+</table>
+<p>如果验证保持当前target分布，投机过程主要改变执行效率；若target、截断规则或预算改变了最终任务行为，就必须单独评测策略结果。更快生成可能允许更多尝试，报告时需区分固定token与固定wall time。</p>
+</section>
+<section id="experiments">
+<h2>待执行：一张真正能比较解码方案的实验矩阵</h2>
+<table>
+<thead><tr><th>因素</th><th>至少区分</th><th>固定 / 记录什么</th></tr></thead>
+<tbody>
+<tr><td>任务域</td><td>自然语言、代码、工具调用；长prefill与长decode</td><td>target revision、模板、输入样本和输出上限</td></tr>
+<tr><td>系统负载</td><td>低并发 / 高并发；冷cache / 热cache</td><td>硬件、精度、batch策略、KV实现、队列和工具等待</td></tr>
+<tr><td>方法</td><td>AR基线、固定块drafter、依赖建模、合法长度调度、OPD适配</td><td>模块逐项消融；保存实际proposal / target条件</td></tr>
+<tr><td>质量合同</td><td>贪心、随机采样、长程任务</td><td>temperature / top-p、拒绝与停止实现、seed及有效成功</td></tr>
+</tbody>
+</table>
+<ul>
+<li>采样正确性：在可枚举小词表 / 短序列上比较精确概率与生成频率，加入未来token驱动调度的负对照；随机seed配对并给统计误差。</li>
+<li>系统性能：记录block长度、实际输出长度、接受位置分布、drafter / target耗时、验证batch、显存、P50 / P95和总吞吐。</li>
+<li>Agent效果：同预算独立题集、总投入 / 成功数、工具轮次、超时和失败；避免只报接受率或最快的一条请求。</li>
+</ul>
+<p>以上全部待执行。本站尚未产生新的解码或训练曲线；本章提供可复核机制与实验设计。GUI / 科学Agent的预算和有效完成标准见<a href="s05_agent_frontiers.html">下一章</a>。</p>
+</section>
+</main>
+</body>
+</html>

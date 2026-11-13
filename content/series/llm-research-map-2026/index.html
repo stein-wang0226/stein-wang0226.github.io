@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM 研究地图：数据、Agent RL、架构与推理</title>
+<meta name="description" content="截至2026年11月14日的博客覆盖审计与五章研究专题，连接Agent数据、Harbor评测、长程RL、DeepSeek V4.1、扩散推理、GUI和科学Agent。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="overview">
+<p class="eyebrow">Stein’s Notes · Research review · 2026-11-14</p>
+<h2>把前沿快讯接成可验证的研究链路</h2>
+<p class="lead">当前笔记已经有训练全链路、Agentic RL、Harness、Transformer、分布式训练和扩散模型基础。DeepSeek V4.1、1017、Kimi K3.1 也已出现在滚动追踪中。下一步最值得补的是<strong>数据如何成为可靠任务、结果如何变成训练信号、架构如何降低真实 Agent 的执行成本</strong>。</p>
+<div class="callout"><strong>阅读结论：</strong>优先深入 Agent 数据与 benchmark、长程信用分配及异步 RL；用 DeepSeek V4.1 贯通架构、任务生产和后训练系统；用 DFlash / DSpark / AdaFlash 连接已有 DLM 研究；再扩展 GUI、科学 Agent、skills 和持续学习。优先级来自本站覆盖与作者方向的编辑判断，不是论文证明的领域排名。</div>
+<figure>
+<div class="flow" aria-label="研究链路，按顺序阅读">
+<div class="stage"><b>数据与评测</b><small>问题 → 可运行环境 → 独立验证<br>数据集和 benchmark 分开管理</small></div>
+<div class="stage"><b>训练与信用</b><small>采样 → 反馈 → advantage → 更新<br>算法、采样与系统偏差分别检查</small></div>
+<div class="stage"><b>架构与成本</b><small>prefill / decode / cache / IO<br>同预算衡量成功率与吞吐</small></div>
+<div class="stage"><b>场景与迁移</b><small>Terminal / GUI / 科学研究<br>skill、memory、参数各有验收</small></div>
+</div>
+<figcaption>这是一条研究组织路径。实际迭代存在反馈：训练失败会改变数据合成，推理成本会改变 rollout 预算，场景迁移会暴露 verifier 和状态表示的缺口。</figcaption>
+</figure>
+<div class="metric-grid">
+<div class="card"><span class="metric">33 + 10</span><p>33 篇固定版本原论文 / 技术报告，10 项官方或项目合作方文档。引用编号共用本页索引。</p></div>
+<div class="card"><span class="metric">10 份原件</span><p>本地保存 DeepSeek 官方报告与9篇 CC BY 原论文；来源、版本、许可和 SHA-256 可下载核对。</p></div>
+</div>
+<p class="note">调研截止 2026-11-14。论文数字均为作者报告，本次未复现训练或 benchmark；建议实验全部标为待执行。动态文档只代表访问时口径，不把版本不同的榜单拼成同一实验。</p>
+</section>
+<section id="coverage">
+<h2>当前博客怎样补，才能形成清晰分工</h2>
+<table>
+<thead><tr><th>已有入口</th><th>当前定位</th><th>本次补充</th><th>优先级</th></tr></thead>
+<tbody>
+<tr><td><a href="../llm-training-lifecycle/">训练全链路</a></td><td>Pretrain → CPT → SFT / RFT → RL / OPD</td><td>沿训练阶段查基础；本专题沿问题查机制和实验</td><td>P0</td></tr>
+<tr><td><a href="../llm-frontier-2026.html">前沿追踪</a></td><td>版本、出处、增量信号</td><td>快讯链接到机制长文；记录后续修订与证据边界</td><td>P0</td></tr>
+<tr><td><a href="../agent-harness-guide.html">Agent Harness</a></td><td>工具、sandbox、rollout、reward</td><td>独立 verifier、artifact 合同、adapter parity、失败与成本审计</td><td>P0</td></tr>
+<tr><td><a href="../agentic-rl-guide.html">Agentic RL</a> / <a href="../rl-interview-guide.html">RL 手册</a></td><td>基础算法与推导</td><td>四维目标比较、RLDS / KnowGPO / SAPO、异质数据、版本滞后</td><td>P0</td></tr>
+<tr><td><a href="../transformer-decoder-flow.html">Decoder</a> / <a href="../distributed-training-guide.html">分布式训练</a></td><td>张量流与并行框架</td><td>CED / CSA2 / FP4、KDA / LatentMoE、缓存和端到端成本</td><td>P1</td></tr>
+<tr><td><a href="../dlm-survey/">DLM 14章</a></td><td>扩散理论、解码与训练</td><td>扩散 drafter、块内依赖、验证精确性、实际并发条件</td><td>P1</td></tr>
+<tr><td><a href="../vlm-knowledge-interview.html">VLM</a> / <a href="../llm-interview-bank.html">题库</a></td><td>知识与问答</td><td>GUI 恢复、科学任务、skills 和持续学习的正式专题</td><td>P1</td></tr>
+</tbody>
+</table>
+<p>本次审计前为10个公开本地笔记集合、18个系列章节；独立子站和历史材料另计。已有旧文的未知数字和未完成答案仍保留原来的复核标记，本次增补不代表全部旧内容已重新审定。</p>
+</section>
+<section id="chapters">
+<h2>五章阅读路径</h2>
+<div class="chapter-grid">
+<a class="card" href="s01_agent_data_bench.html"><span class="eyebrow">01 / Data &amp; evaluation</span><h3>Agent 数据与 benchmark</h3><p>SWE-smith → NexForge / EvoSyn / ProgramGym；Harbor 任务、独立验证、污染、迁移一致性与榜单审计。</p></a>
+<a class="card" href="s02_agentic_rl.html"><span class="eyebrow">02 / Learning &amp; systems</span><h3>Agentic RL：目标、信用与异步</h3><p>GRPO / GSPO / CISPO，GiGPO / RLDS / KnowGPO / SAPO；异质数据与 rollout–trainer 对齐。</p></a>
+<a class="card" href="s03_base_architecture.html"><span class="eyebrow">03 / Base architecture</span><h3>DeepSeek V4.1 架构拆解</h3><p>CED、CSA2、FP4、bounded replay、Engram；区分 V4.1 v1 与1017更新，并比较 Kimi K3。</p></a>
+<a class="card" href="s04_inference_diffusion.html"><span class="eyebrow">04 / Inference &amp; diffusion</span><h3>推理成本与扩散投机解码</h3><p>DFlash → DSpark → AdaFlash；精确验证、OPD、并发、接受长度与真实任务成本。</p></a>
+<a class="card" href="s05_agent_frontiers.html"><span class="eyebrow">05 / Applications &amp; adaptation</span><h3>GUI、科学 Agent 与持续学习</h3><p>OSWorld 2.0、AIRS-Bench、SkillsBench 1.1、Macaron、PARL / 多教师；连接作者公开研究。</p></a>
+<div class="card"><span class="eyebrow">阅读建议</span><h3>按研究问题进入</h3><p>做 Harbor 任务：01 → 02。做基模 / 推理：03 → 04。做 GUI / 科学 Agent：01 → 05 → 02。基础概念回到已有教程。</p></div>
+</div>
+</section>
+<section id="priorities">
+<h2>后续最值得独立展开的选题</h2>
+<table>
+<thead><tr><th>选题</th><th>独立文章应交付什么</th><th>避免的误判</th></tr></thead>
+<tbody>
+<tr><td>P0 · Harbor 任务质量与合成闭环</td><td>任务 / 环境 / verifier 的合同，oracle、negative controls、审计与固定留出集；比较预算重分配和生成空间扩展</td><td>把“更难”“更多”“能通过 oracle”直接称为有效训练数据</td></tr>
+<tr><td>P0 · 长程 Agent 信用与异质 GRPO</td><td>同基础策略、同工具和预算；改变信用方式，记录零方差组、verifier 分歧和逐域结果</td><td>组内标准化已经平衡任务，或反思直接给出了真实因果贡献</td></tr>
+<tr><td>P0 · 异步训练有效样本率</td><td>完成顺序偏置、版本 lag、目标 token、MoE routing / kernel 对齐分别观测</td><td>GPU 利用率增加就代表学习效率增加</td></tr>
+<tr><td>P1 · 架构服务真实 Agent</td><td>工具轮次、前缀命中、短轮返回、输入输出比、IO、队列和成功成本</td><td>KV 某口径缩小就等于总成本同比缩小</td></tr>
+<tr><td>P1 · GUI 与科学 Agent</td><td>状态与恢复、确定性复现、数据划分、有效提交与科学正确性；绑定公开案例</td><td>最终文件存在或自然语言解释流畅就代表任务完成</td></tr>
+<tr><td>P2 · 优化器、深度和 kernel</td><td>Muon 更新公式与正交化近似、数值精度、吞吐和等算力消融；loop / residual 路线分开对比</td><td>从一则快讯或单一规模实验推断通用最优</td></tr>
+</tbody>
+</table>
+<p>本次完成前五个方向的机制综述和实验设计；Muon / loop / kernel 仍是后续选题，尚未完成独立数学与复现实验专题。新商用模型若没有公开结构和训练细节，只记录官方能力、版本和使用约束，不补猜测参数。</p>
+<details><summary>建议的维护节奏</summary><p>每次快讯登记版本和来源；当一个方向出现不同团队的机制或可运行代码，再更新专题。每月复查 benchmark 与工具版本，过时结果保留快照并说明不可直接横比；每季度选择一个小规模实验，交付配置、原始轨迹、失败归因和成本，而不是只增加模型名称。</p></details>
+</section>
+<section id="archive">
+<h2>技术报告与引用如何保留</h2>
+<p><a href="../assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf">下载 DeepSeek V4.1 官方技术报告</a>。归档来自官方 Hugging Face revision <code>314113f8a7dadb388215396ba5fbee2c610a04d6</code>，未经修改；论文章节引用采用 arXiv <code>2609.19969v1</code>。两种来源分别登记，不宣称文件与 arXiv 逐字节相同。</p>
+<p>全部来源及原件 SHA：<a href="../assets/research/2026-11-14/sources.json">sources.json</a>。转载与署名：<a href="../assets/research/2026-11-14/NOTICE.txt">原件来源 / 许可说明</a>；<a href="../assets/research/2026-11-14/DeepSeek-MIT-LICENSE.txt">DeepSeek 完整 MIT notice</a>。其余9份原件采用 CC BY 4.0，完整作者及题名页保留，来源清单登记署名。只提供链接的论文没有在本站转载原件。</p>
+</section>
+<section id="sources">
+<h2>原始来源索引</h2>
+<p class="note">本系列五章共用编号。论文固定到下列版本；官方 / 合作方页面访问日期均为2026-11-14。标题、作者原显示、使用位置、许可、归档字节与哈希见可下载清单。论文、模型卡和团队发布可以交叉核对，但不能算三个独立复现实验。</p>
+<ol class="sources">
+<li id="ref-1"><a href="https://arxiv.org/html/2609.19969v1">DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression</a> · §2架构、§3.2缓存、§5数据与RL。<a href="../assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf">官方PDF快照</a>。</li>
+<li id="ref-2"><a href="https://arxiv.org/html/2606.19348v1">DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence</a> · V4.1的架构前序。</li>
+<li id="ref-3"><a href="https://arxiv.org/html/2601.07372v1">Conditional Memory via Scalable Lookup</a> · Engram。<a href="../assets/research/2026-11-14/engram-2601.07372v1.pdf">PDF</a>。</li>
+<li id="ref-4"><a href="https://arxiv.org/html/2607.05147v1">DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation</a> · §3、附录A。<a href="../assets/research/2026-11-14/dspark-2607.05147v1.pdf">PDF</a>。</li>
+<li id="ref-5"><a href="https://arxiv.org/html/2607.24653v1">Kimi K3: Open Frontier Intelligence</a> · KDA、Attention Residuals、Stable LatentMoE。</li>
+<li id="ref-6"><a href="https://arxiv.org/html/2602.06036v1">DFlash: Block Diffusion for Flash Speculative Decoding</a>。<a href="../assets/research/2026-11-14/dflash-2602.06036v1.pdf">PDF</a>。</li>
+<li id="ref-7"><a href="https://arxiv.org/html/2607.19223v1">AdaFlash: Adaptive Speculative Decoding via On-Policy Distilled Diffusion Drafters</a> · reverse-KL与长度预测。</li>
+<li id="ref-8"><a href="https://arxiv.org/html/2607.14186v6">NexForge: Scaling Agent Capabilities through Requirement-Driven Task Synthesis for LLMs</a> · §5对照边界。</li>
+<li id="ref-9"><a href="https://arxiv.org/html/2610.12593v1">Know What You Don’t Know: Agentic Data Synthesis by Evolving Generation Space for Closed-Loop Learning</a> · EvoSyn §4–5。<a href="../assets/research/2026-11-14/evosyn-2610.12593v1.pdf">PDF</a>。</li>
+<li id="ref-10"><a href="https://arxiv.org/html/2610.13395v1">ProgramGym: Scaling Training Environments for Long-Horizon Program Reproduction Agents</a>。<a href="../assets/research/2026-11-14/programgym-2610.13395v1.pdf">PDF</a>。</li>
+<li id="ref-11"><a href="https://arxiv.org/html/2611.04399v1">Silent Instrument Errors Reorder Agent Leaderboards</a> · 作者的归档审计，未本地重放。</li>
+<li id="ref-12"><a href="https://arxiv.org/html/2610.34634v1">AgentProofBench: Benchmarking Reusable Verifiers for Web Agents</a> · reuse / rebuild与状态面板。</li>
+<li id="ref-13"><a href="https://arxiv.org/html/2609.27035v1">Reinforcement Learning with Decomposed Subtasks</a> · RLDS、SDAE。<a href="../assets/research/2026-11-14/rlds-2609.27035v1.pdf">PDF</a>。</li>
+<li id="ref-14"><a href="https://arxiv.org/html/2610.22331v1">KnowGPO: Knowledge-Grouped Policy Optimization for Search Agents</a> · reference-conditioned知识条件。</li>
+<li id="ref-15"><a href="https://arxiv.org/html/2608.19842v1">SAPO: Single-Rollout Autoregressive Policy Optimization for Agentic Reinforcement Learning</a>。<a href="../assets/research/2026-11-14/sapo-single-2608.19842v1.pdf">PDF</a>。</li>
+<li id="ref-16"><a href="https://arxiv.org/html/2602.21534v3">ARLArena: A Unified Framework for Stable Agentic Reinforcement Learning</a> · SAMPO、四设计维度、附录A.2.3的另一SAPO。<a href="../assets/research/2026-11-14/arlarena-2602.21534v3.pdf">PDF</a>。</li>
+<li id="ref-17"><a href="https://arxiv.org/html/2505.24298v1">AReaL: A Large-Scale Asynchronous Reinforcement Learning System for Language Reasoning</a> · 2025系统基础。</li>
+<li id="ref-18"><a href="https://arxiv.org/html/2505.10978v3">Group-in-Group Policy Optimization for LLM Agent Training</a> · episode与anchor状态分组。</li>
+<li id="ref-19"><a href="https://arxiv.org/html/2609.11042v1">T1: Terminal Agent Reinforcement Learning for Long-Horizon Tasks</a> · 长程训练与routing replay。</li>
+<li id="ref-20"><a href="https://arxiv.org/html/2507.18071v1">Group Sequence Policy Optimization</a> · 长度归一序列比例。</li>
+<li id="ref-21"><a href="https://arxiv.org/html/2503.14476v1">DAPO: An Open-Source LLM Reinforcement Learning System at Scale</a> · 动态采样、clipping和token聚合。</li>
+<li id="ref-22"><a href="https://arxiv.org/html/2503.20783v1">Understanding R1-Zero-Like Training: A Critical Perspective</a> · Dr. GRPO的长度与标准差归一化分析。</li>
+<li id="ref-23"><a href="https://arxiv.org/html/2504.21798v1">SWE-smith: Scaling Data for Software Engineering Agents</a> · 2025仓库合成基础。<a href="../assets/research/2026-11-14/swesmith-2504.21798v1.pdf">PDF</a>。</li>
+<li id="ref-24"><a href="https://arxiv.org/html/2506.07982v1">τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment</a> · 双主体环境定义。</li>
+<li id="ref-25"><a href="https://arxiv.org/html/2606.30406v1">MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training</a> · 专家能力整合。</li>
+<li id="ref-26"><a href="https://arxiv.org/html/2609.04298v1">Harbor Adapters and Harbor-Index</a> · §2迁移一致性、§3成本与失败、§4困难任务切片。</li>
+<li id="ref-27"><a href="https://arxiv.org/html/2602.06855v3">AIRS-Bench: a Suite of Tasks for Frontier AI Research Science Agents</a> · 有效提交与科学指标。</li>
+<li id="ref-28"><a href="https://arxiv.org/html/2608.09819v1">Macaron-V1: Towards Open Continual Learning with Self-Improvement and Mixture-of-LoRA</a> · §4.3对齐、版本链与未解决的持续增益。</li>
+<li id="ref-29"><a href="https://arxiv.org/html/2602.12670v1">SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks</a> · 初版口径，区别1.1。</li>
+<li id="ref-30"><a href="https://arxiv.org/html/2602.02276v1">Kimi K2.5: Visual Agentic Intelligence</a> · PARL与Agent Swarm。</li>
+<li id="ref-31"><a href="https://arxiv.org/html/2506.13585v1">MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention</a> · CISPO原始出处。</li>
+<li id="ref-32"><a href="https://arxiv.org/html/2610.02039v1">CARM: Cancellation-Aware Response Masking for LLM Reinforcement Learning</a> · log-ratio抵消与mask诊断。</li>
+<li id="ref-33"><a href="https://arxiv.org/html/2606.15007v1">Nemotron 3 Ultra</a> · Hybrid Mamba–Transformer / MoE与专家OPD。</li>
+<li id="ref-34"><a href="https://harbor-index.org/">Introducing Harbor-Index 1.0</a> · 官方困难切片与audit / fix / re-run。</li>
+<li id="ref-35"><a href="https://www.harborframework.com/docs/task-format">Harbor task format</a> · 目录、artifacts、reward输出。</li>
+<li id="ref-36"><a href="https://www.harborframework.com/news/separate-verifier-sandboxes">Verify Harbor tasks in a separate sandbox</a> · 显式产物交接。</li>
+<li id="ref-37"><a href="https://www.tbench.ai/news/terminal-bench-4-0">Terminal-Bench 4.0</a> · 官方major release，19项修复的正文口径。</li>
+<li id="ref-38"><a href="https://snorkel.ai/leaderboard/terminal-bench-4-0/">Terminal-Bench 4.0 — Snorkel</a> · 合作方66 tasks、20 revised；与官方计数分歧保留。</li>
+<li id="ref-39"><a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek V4.1-Flash发布</a> · 09-10发布与09-17 arXiv v1区分。</li>
+<li id="ref-40"><a href="https://api-docs.deepseek.com/news/news261017">DeepSeek V4.1-Flash-1017更新</a> · self-feedback RL和端到端项目开发。</li>
+<li id="ref-41"><a href="https://www.skillsbench.ai/blogs/skillsbench-1-1">SkillsBench 1.1 release</a> · 87 tasks / 8 domains / 18 paired configurations。</li>
+<li id="ref-42"><a href="https://snorkel.ai/leaderboard/os-world-2-0/">OSWorld 2.0 — research partner overview</a> · 108长程任务、31自托管网站、预算口径。</li>
+<li id="ref-43"><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/314113f8a7dadb388215396ba5fbee2c610a04d6/README.md">DeepSeek V4.1官方模型卡</a> · 固定revision、实现与MIT许可。</li>
+</ol>
+</section>
+</main>
+</body>
+</html>

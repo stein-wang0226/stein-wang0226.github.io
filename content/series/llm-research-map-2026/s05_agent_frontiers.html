@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent 新专题：GUI、科学研究、Skills 与持续学习</title>
+<meta name="description" content="以OSWorld 2.0、AIRS-Bench、SkillsBench 1.1、Macaron和PARL组织GUI与科学Agent、工具恢复、版本化记忆和持续学习，连接公开研究与后续实验。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="scope">
+<p class="eyebrow">05 · Agent applications &amp; adaptation · 2026-11-14</p>
+<h2>从工具调用走向可验证的场景能力</h2>
+<p class="lead">GUI和科学Agent值得成为正式研究专题：两者都有长程状态、可恢复执行和多层验收，直接连接本站作者的GUI研究、Harbor科学任务合成与ProtAgent。Skills、memory、参数更新则提供三种不同的适配层，不能用一个“自我改进”概念代替实验。</p>
+<figure>
+<div class="flow" aria-label="场景Agent的任务闭环">
+<div class="stage"><b>理解状态</b><small>屏幕、文件、数据、工具观察<br>记录可控状态和未知因素</small></div>
+<div class="stage"><b>规划与执行</b><small>分解、工具、子Agent<br>预算与权限贯穿过程</small></div>
+<div class="stage"><b>验证与恢复</b><small>终态、科学指标、独立grader<br>诊断偏差并安全重试</small></div>
+<div class="stage"><b>适配与保留</b><small>skill / memory / model更新<br>版本留出与旧任务回归</small></div>
+</div>
+<figcaption>该流程是专题组织框架；每层都需要来源、日志和独立验收，不把生成解释当成成功证据。</figcaption>
+</figure>
+</section>
+<section id="gui">
+<h2>GUI：从单次点击准确率到长程恢复</h2>
+<p>OSWorld 2.0项目合作方介绍108个长程任务、31个自托管网站及150 / 300 / 500 step budgets。Binary success与partial score应在同一版本、同一步数预算下比较；评价最终状态，不能强制所有策略复刻唯一点击序列。以上是合作方公开口径，本地未复现。<a href="index.html#ref-42">[42]</a></p>
+<table>
+<thead><tr><th>研究问题</th><th>具体机制</th><th>应保留的证据</th></tr></thead>
+<tbody>
+<tr><td>Observation / grounding</td><td>屏幕、可访问性树、坐标、窗口焦点和延迟；不同工具提供不同信息</td><td>观察时间、动作前后状态、权限和可见范围</td></tr>
+<tr><td>长程规划</td><td>任务分解、里程碑、状态压缩与预算分配</td><td>各步骤真实进展、遗忘 / 循环、上下文压缩后的状态缺失</td></tr>
+<tr><td>恢复与回退</td><td>误点击、弹窗、登录状态、焦点错误和部分提交后的恢复</td><td>错误类型、可重试性、恢复成功率、额外步数与风险</td></tr>
+<tr><td>验收与复现</td><td>重置环境、固定网站、终态检查与部分完成标准</td><td>环境 / grader版本、预算、终态产物、基础设施失败</td></tr>
+</tbody>
+</table>
+<p>与<a href="../publication/cua-recovery/">CUA-Recovery公开项目</a>相连时，可讲清失败分类和恢复流程；内部环境、未公开规模和未授权结果不放进文章。固定任务与scaffold后比较恢复模块，不能把工具权限或步数增加的收益归因于算法。</p>
+</section>
+<section id="science">
+<h2>科学Agent：能运行、能提交、能支持结论是三层能力</h2>
+<p>AIRS-Bench采用20个research tasks，以problem / dataset / metric定义任务，报告valid submission、normalized performance与不同scaffold。ProgramGym强调程序复现环境；两者共同提醒：文件存在、脚本退出码为0、报告流畅都不是完整科研验收。<a href="index.html#ref-27">[27]</a> <a href="index.html#ref-10">[10]</a></p>
+<table>
+<thead><tr><th>层</th><th>检查</th><th>典型失败</th></tr></thead>
+<tbody>
+<tr><td>执行正确</td><td>依赖、seed、资源、输入版本、脚本和产物</td><td>未读真实数据、硬编码、GPU / 网络故障、无法重跑</td></tr>
+<tr><td>提交有效</td><td>schema、指标实现、split、数值有限性与复现路径</td><td>测试泄漏、错指标、错误join或未按要求提交</td></tr>
+<tr><td>科学支持</td><td>假设、对照、统计不确定性、方法适用条件与证据来源</td><td>把相关性说成因果、重复样本泄漏、只有成功实验、解释超出数据</td></tr>
+</tbody>
+</table>
+<p>科学任务的verifier通常是组合：确定性结构 / 数值检查 + 方法约束 + 专家或经校准的判断。自动judge应保留不确定 / 需人工复核状态，而不是强迫所有回答二元化。跨dataset、论文和任务族划分，避免同一生物样本或同源实验同时进入训练与评测。</p>
+<div class="callout"><strong>作者方向可形成的公开长文：</strong><a href="../publication/protagent/">ProtAgent</a>连接工具使用与step-level RL；<a href="../cv/#autoresearch">Harbor科学任务合成</a>连接环境与验证合同。文章应区分annotation coverage、任务reward和生物学正确性，指标含义以公开论文为准，不把coverage提高解释为所有预测已被证实。</div>
+<p>一个具体GEO / SRA任务的公开案例应交付数据来源、版本、许可、预处理、任务指令、独立verifier、oracle、负对照和失败报告；合成流程与迁移一致性先看<a href="s01_agent_data_bench.html">第01章</a>。</p>
+</section>
+<section id="skills">
+<h2>Skills：把流程文件变成可测的干预</h2>
+<p>SkillsBench初版 <code>2602.12670v1</code>是86 tasks / 11 domains / 7 configurations；1.1官方发布是87 / 8 / 18 paired paper configurations。不要将初版任务数、新版分组和动态leaderboard拼成同一结果。<a href="index.html#ref-29">[29]</a> <a href="index.html#ref-41">[41]</a></p>
+<p>Curated skills在论文设置中的正效应，不意味着self-generated skills必然有效。Skill内容可能通过任务分解、代码模板、工具约束、默认检查改变行为；同时增加token、错误指令和版本依赖。应做paired no-skill / curated / self-generated比较，保留工具与预算一致。</p>
+<table>
+<thead><tr><th>Skill资产应记录</th><th>评测问题</th></tr></thead>
+<tbody>
+<tr><td>来源、版本、适用条件、依赖与权限</td><td>任务变化后是否仍适用；是否意外调用更强工具</td></tr>
+<tr><td>文本、代码、资源、校验流程与token开销</td><td>收益来自更好步骤、预置解法还是更大上下文</td></tr>
+<tr><td>训练 / 测试隔离、相似任务与人工整理过程</td><td>是否泄漏答案、过拟合某题或把测试反馈写回skill</td></tr>
+<tr><td>触发与未触发记录、失败与回退</td><td>无关skill是否干扰；需要时是否真正读到 / 执行</td></tr>
+</tbody>
+</table>
+</section>
+<section id="adaptation">
+<h2>Memory、harness、LoRA：持续学习应分层验收</h2>
+<p>Macaron-V1讨论冻结base、per-turn LoRA routing、模型–harness版本链以及memory / context / parameters的不同更新层。它报告的自改进设置提供方法路线，但长期compounding continual learning与collective intelligence仍是open question，不能写成已经证实的长期复利。<a href="index.html#ref-28">[28]</a></p>
+<table>
+<thead><tr><th>更新层</th><th>改变什么</th><th>最少验收</th></tr></thead>
+<tbody>
+<tr><td>Context / memory</td><td>经验记录、状态摘要、检索与任务历史</td><td>来源与时效、写入污染、相关性、删除 / 回退、token成本</td></tr>
+<tr><td>Skills / harness</td><td>工作流、工具、路由、观察和恢复策略</td><td>固定模型的paired比较；冻结版本，排除权限扩大与测试泄漏</td></tr>
+<tr><td>LoRA / model</td><td>专家参数与routing；真正改变策略分布</td><td>旧能力回归、专家冲突、版本与行为log-prob、任务时间顺序留出</td></tr>
+</tbody>
+</table>
+<p>持续学习实验需要时间线：在第t阶段只使用当时可获得的训练反馈，评估后续新任务与旧任务保留，并保存可回退版本。反复使用同一测试集优化memory / skill会失去独立评测含义；短期重复题收益不能代表长期新任务泛化。</p>
+<p>Engram是模型内部条件参数记忆，KV是计算状态；两者与跨任务memory的边界见<a href="s03_base_architecture.html#engram">第03章</a>。模型–harness同时更新时应留出单独和组合对照，否则无法知道收益来自哪里。</p>
+</section>
+<section id="multiagent">
+<h2>并行Agent与多教师：一个减少关键路径，一个整合能力</h2>
+<p>Kimi K2.5的PARL / Agent Swarm研究orchestrator与subagent分解。比较并行策略要同时报告critical-path wall time与总tokens / GPU / 工具成本，不能只数subagent数量；并行不消除依赖、重复工作与协调失败。<a href="index.html#ref-30">[30]</a></p>
+<p>MOPD在学生rollout状态上整合多教师能力；Nemotron Ultra和DeepSeek公开专家训练与OPD配方。这与推理时同时运行多个Agent不同：前者把教师行为整合进学生参数，后者用运行时协作换取能力或延迟。不同教师、logits范围与mask的结果不能合并成通用蒸馏结论。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-33">[33]</a> <a href="index.html#ref-1">[1]</a></p>
+<table>
+<thead><tr><th>路线</th><th>适合的问题</th><th>应检查的代价</th></tr></thead>
+<tbody>
+<tr><td>并行子Agent</td><td>可分解、相对独立的搜索 / 执行 / 验证子任务</td><td>关键路径、总成本、协调与重复、工具争用、失败恢复</td></tr>
+<tr><td>专家路由 / LoRA</td><td>不同任务分布需要不同策略，但共享base</td><td>路由误差、切换状态、专家覆盖、部署与版本复杂度</td></tr>
+<tr><td>多教师OPD</td><td>希望统一学生保留多个专家能力</td><td>教师冲突、学生状态覆盖、训练成本与通用能力回归</td></tr>
+</tbody>
+</table>
+</section>
+<section id="experiments">
+<h2>待执行：三个与作者方向最贴近的专题</h2>
+<ol>
+<li><strong>GUI恢复案例：</strong>固定OSWorld版本、工具与步数，比较无恢复 / 固定恢复 / 学习恢复；报告binary、partial、失败类型、恢复额外步骤和基础设施错误。</li>
+<li><strong>科学Harbor案例：</strong>公开一个可复现任务族的构建、oracle与负对照；区分执行、提交、科学支持，按数据来源隔离训练和评测，记录人工审计分歧。</li>
+<li><strong>持续适配案例：</strong>固定base，先比较memory / skill；再比较LoRA与harness更新，使用时间顺序新任务和旧任务回归；提供版本链和回退记录。</li>
+</ol>
+<p>以上均为待执行建议。本次没有新增作者实验结果，也没有转载内部数据。可公开的研究与履历来源见<a href="../publications/">论文列表</a>、<a href="../about/">About</a>和<a href="../cv/">CV</a>。</p>
+<p>下一步优先把任务验收与信用分配两个P0方向做成有原始轨迹的小规模实验；并行、持续学习与优化器方向继续按独立证据增补。返回<a href="index.html#priorities">研究地图与后续选题</a>。</p>
+</section>
+</main>
+</body>
+</html>

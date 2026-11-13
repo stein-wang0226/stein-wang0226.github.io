@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agentic RL：目标设计、长程信用、异质数据与异步系统</title>
+<meta name="description" content="用四维目标地图比较GRPO、GSPO、CISPO和SAMPO，分析GiGPO、RLDS、KnowGPO、同名SAPO、异质数据及异步采样与训练对齐。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="map">
+<p class="eyebrow">02 · Agentic RL · 2026-11-14</p>
+<h2>从算法名录转向四个设计维度</h2>
+<p class="lead">Agent RL的目标不仅要区分成功与失败，还要决定长轨迹的哪些动作学习、怎样处理过时采样、不同长度和难度如何计权。ARLArena把目标拆成advantage、ratio / clipping、loss aggregation和sampling / filtering，适合组织同预算比较。<a href="index.html#ref-16">[16]</a></p>
+<table>
+<thead><tr><th>维度</th><th>设计问题</th><th>代表工作</th><th>实现时记录</th></tr></thead>
+<tbody>
+<tr><td>Advantage / 信用</td><td>episode奖励怎样分配到token、turn、状态或知识条件</td><td>GRPO；GiGPO；RLDS；KnowGPO；Single-Rollout SAPO</td><td>奖励来源、分组、baseline、std与过程判断的误差</td></tr>
+<tr><td>Ratio / clipping</td><td>新旧策略比例在哪一级算，梯度怎样限幅</td><td>PPO / GRPO；GSPO；CISPO；soft-clipping SAPO</td><td>行为策略log-prob、目标策略、stop-gradient、clip范围</td></tr>
+<tr><td>Loss aggregation</td><td>按序列平均、全batch目标token平均还是常数分母</td><td>原GRPO；DAPO；Dr. GRPO</td><td>长短轨迹权重、有效mask、全局分母与多卡归约</td></tr>
+<tr><td>Sampling / filtering</td><td>哪些组、轨迹或token进入更新，付出了多少额外采样</td><td>DAPO；SAMPO；CARM；异步staleness控制</td><td>零方差组、过滤原因、lag、采样成本和剩余分布</td></tr>
+</tbody>
+</table>
+<p>换算法时若同时改了组大小、过滤、长度预算与loss分母，就不能把收益归因于算法名。PPO、DPO和GRPO基础推导仍见<a href="../rl-interview-guide.html">RL手册</a>与<a href="../llm-training-lifecycle/s04_rl_evaluation.html">训练链路第04章</a>。</p>
+</section>
+<section id="objectives">
+<h2>GRPO、GSPO、CISPO：三种不同的更新对象</h2>
+<h3>GRPO：同题采样、组内比较</h3>
+<div class="equation" role="math" aria-label="GRPO组内优势及token概率比">Aᵢ = (Rᵢ − mean(R₁…R_G)) / (std(R₁…R_G) + ε)
+ρᵢ,ₜ = exp(log πθ(aᵢ,ₜ | hᵢ,ₜ) − log πold(aᵢ,ₜ | hᵢ,ₜ))
+surrogateᵢ,ₜ = min(ρᵢ,ₜ Aᵢ, clip(ρᵢ,ₜ, 1−εₗ, 1+εᵤ) Aᵢ)</div>
+<p>这里展示最大化的clipped surrogate，省略KL项和聚合分母；训练代码若最小化loss要取负号。h包含合法历史，但优化mask通常只覆盖策略生成的动作 / 回复，不把环境返回当成策略动作。组内baseline省掉独立critic，却不自动获得步骤级信用。</p>
+<p>DAPO调整上下clip范围、动态采样、token级聚合和超长处理；Dr. GRPO讨论reward std与长度归一化的偏差。三者应拆开查看。全batch目标token平均、逐序列平均和固定分母，会给长轨迹不同权重，不能统一标成一种“token loss”。<a href="index.html#ref-21">[21]</a> <a href="index.html#ref-22">[22]</a></p>
+<h3>GSPO：长度归一的序列比例</h3>
+<div class="equation" role="math" aria-label="GSPO序列比例">sᵢ(θ) = exp[(1 / Tᵢ) Σₜ (log πθ(aᵢ,ₜ | hᵢ,ₜ) − log πold(aᵢ,ₜ | hᵢ,ₜ))]
+sequence surrogate = min(sᵢ Aᵢ, clip(sᵢ, 1−εₗ, 1+εᵤ) Aᵢ)</div>
+<p>这是token ratio的几何平均，<strong>不是完整轨迹概率的连乘</strong>。多轮Agent必须说明T指response、turn还是episode及哪些token被mask；环境转移不能混进LM概率。GSPO提供稳定序列级更新的一种设计，没有证明它在所有Agent任务上最优。<a href="index.html#ref-20">[20]</a></p>
+<h3>CISPO：限幅的是IS权重</h3>
+<div class="equation" role="math" aria-label="CISPO概念形式">J_CISPO ∝ Σᵢ,ₜ stopgrad(clip(ρᵢ,ₜ, lower, upper)) · Aᵢ,ₜ · log πθ(aᵢ,ₜ | hᵢ,ₜ)</div>
+<p>概念式省略具体归一化与超参数。CISPO对importance weight限幅并stop-gradient，仍通过log-prob更新；它与PPO的min-clipped surrogate梯度不同。原始出处是MiniMax-M1，不能写成Kimi K2发明。<a href="index.html#ref-31">[31]</a></p>
+</section>
+<section id="credit">
+<h2>长程信用：怎样知道哪一步值得更新</h2>
+<figure>
+<div class="flow" aria-label="长程信用分配的四个环节">
+<div class="stage"><b>最终验收</b><small>结果reward可靠且有失败归因<br>错误grader会污染全部信用</small></div>
+<div class="stage"><b>局部状态 / 条件</b><small>重复状态、子任务、知识集合<br>选择可比较的分组单位</small></div>
+<div class="stage"><b>Advantage构造</b><small>组比较、过程增量或学习值<br>校准判断并防止泄漏</small></div>
+<div class="stage"><b>映射到动作</b><small>token / turn / pivot附近<br>记录mask和信用覆盖率</small></div>
+</div>
+<figcaption>中间判断是学习信号设计，不等于真实因果解释；需通过错误判断审计与受控消融验证。</figcaption>
+</figure>
+<table>
+<thead><tr><th>方法</th><th>具体机制</th><th>依赖与限制</th></tr></thead>
+<tbody>
+<tr><td>GiGPO</td><td>episode组优势 + 重复anchor状态中的局部组优势</td><td>状态必须可比较并可复现；网页和搜索结果变化容易让状态分组碎片化</td></tr>
+<tr><td>RLDS</td><td>固定subtask taxonomy；reflection判断各轴与pivot；SDAE计算子任务组优势并映射到pivot附近token</td><td>反思判断要校准；不是直接把反思文本当reward，也未证明pivot是因果真值</td></tr>
+<tr><td>KnowGPO</td><td>query-specific知识条件；按满足条件集合分组，新增知识作为process reward</td><td>训练条件构造使用reference answer，仍需外部verifier；不能称oracle-free</td></tr>
+<tr><td>Single-Rollout SAPO</td><td>一个causal LM生成动作和值；turn-level GAE与SARSA，减少多rollout分组依赖</td><td>无单独critic网络仍有value learning；值预测、bootstrapping和单轨迹噪声要单独验收</td></tr>
+<tr><td>SAMPO / ARLArena</td><td>组合sequence clipping、细粒度advantage与动态过滤；在统一testbed比较</td><td>组合效果限于论文任务和配方；不能归因于其中单一因素</td></tr>
+</tbody>
+</table>
+<p>机制来源：<a href="index.html#ref-18">GiGPO [18]</a>、<a href="index.html#ref-13">RLDS [13]</a>、<a href="index.html#ref-14">KnowGPO [14]</a>、<a href="index.html#ref-15">Single-Rollout SAPO [15]</a>、<a href="index.html#ref-16">SAMPO [16]</a>。</p>
+<div class="callout caution"><strong>SAPO同名必须写全名。</strong>ARLArena附录A.2.3的<strong>Soft Adaptive Policy Optimization</strong>是soft clipping方案；<code>2608.19842v1</code>的<strong>Single-Rollout Autoregressive Policy Optimization</strong>是共享动作 / 值模型的算法。另有skill方向SAPO，本章不展开。检索或复现不能只靠缩写。</div>
+</section>
+<section id="heterogeneity">
+<h2>异质数据：组内标准化为什么仍会不平衡</h2>
+<p>如果同题每次独立成功概率为p、组大小G，且reward只有0 / 1，则至少包含一个成功和一个失败、从而有非零组方差的概率为：</p>
+<div class="equation" role="math" aria-label="二元奖励的非零方差组概率">P(nonzero group variance) = 1 − pᴳ − (1−p)ᴳ
+G = 8：p = 0.5 → 99.21875%
+G = 8：p = 0.01 或 0.99 → 约7.7255%</div>
+<p class="note">以上是独立Bernoulli假设下的解析计算，不是实测数据；真实rollout相关、多级奖励和动态策略会改变有效组分布。</p>
+<p>非常难与非常容易的任务都可能缺少学习信号。组内std归一化无法平衡学习机会，还可能把低幅噪声放大；除以每题std带来隐式任务权重。任务目标和梯度方向不同、长度和交互成本不同，也不会被一个z-score消除。DAPO的动态采样和Dr. GRPO的归一化分析分别针对其中部分问题。<a href="index.html#ref-21">[21]</a> <a href="index.html#ref-22">[22]</a></p>
+<table>
+<thead><tr><th>需要按域 / 难度查看</th><th>它能解释什么</th></tr></thead>
+<tbody>
+<tr><td>成功率、零方差组、过滤率</td><td>题目是不是极难 / 极易；过滤后训练分布怎样变化</td></tr>
+<tr><td>有效目标token、长度、工具轮次、GPU / 环境时间</td><td>长短任务的优化权重与计算投入是否一致</td></tr>
+<tr><td>Verifier分歧、环境失败、未知失败</td><td>标准化是否正在放大奖励噪声；坏题是否进入更新</td></tr>
+<tr><td>逐域梯度贡献与能力回归</td><td>混合目标是否冲突；总平均是否掩盖遗忘</td></tr>
+</tbody>
+</table>
+<p>建议先分层采样与校准verifier，再比较组内std、batch std及不除std的方案；所有方案同时报告新增采样成本。仅过滤零方差组可能造成课程和覆盖偏移，需要保留过滤前后的域分布。</p>
+</section>
+<section id="asynchrony">
+<h2>异步有两种偏差，推理与训练还有第三种不一致</h2>
+<p>AReaL提供rollout–trainer分离与可控staleness的系统基础；T1和DeepSeek V4.1将问题带到长程terminal / 多轮Agent。吞吐增加后，先确认新增算力确实转成有效目标token和泛化收益。<a href="index.html#ref-17">[17]</a> <a href="index.html#ref-19">[19]</a> <a href="index.html#ref-1">[1]</a></p>
+<table>
+<thead><tr><th>问题</th><th>触发与影响</th><th>控制与观察</th></tr></thead>
+<tbody>
+<tr><td>完成顺序偏置</td><td>短轨迹、容易任务先返回，按到达顺序组成batch会改变训练分布</td><td>per-dataset并发、配额 / 分层batch、早期短样本处理；比较派发与完成分布</td></tr>
+<tr><td>策略过时</td><td>执行期间trainer更新，数据由较旧行为策略生成</td><td>保存行为log-prob与版本，限制派发 / 等待，设lag与stale token mask；记录被丢弃成本</td></tr>
+<tr><td>Rollout–trainer计算不一致</td><td>不同精度、kernel、MoE routing与分段历史，可能使“相同版本”log-prob不一致</td><td>固定参数和输入逐token比对，routing replay，定位template / mask / 数值误差</td></tr>
+</tbody>
+</table>
+<p>V4.1 §5.2.2明确把前两类分开处理；importance ratio不能通用修复完成顺序的分布偏移。§5.2.1 / 5.2.3还有分段routing、token中断与跨checkpoint状态处理，这是作者特定实现，不能据此无条件复用旧权重生成的全部KV。</p>
+<p>Macaron §4.3提供R³、DSA alignment、IcePop-style residual filtering的对齐路线；CARM研究平均log-ratio中正负抵消与response mask。这些提供诊断和待比较方向，没有保证单一过滤器解决全部off-policy偏差。<a href="index.html#ref-28">[28]</a> <a href="index.html#ref-32">[32]</a></p>
+<pre><code># 建议保存的最小训练追踪；不是已运行日志
+dispatch_policy_version, rollout_segment_version, trainer_version
+behavior_log_prob, trainer_log_prob, response_mask, routing_state
+domain, difficulty_bucket, group_id, completion_order, reward
+advantage_scheme, ratio_unit, aggregation_denominator, filter_reason</code></pre>
+</section>
+<section id="experiments">
+<h2>待执行：三个可以形成独立研究笔记的消融</h2>
+<table>
+<thead><tr><th>实验</th><th>固定条件</th><th>只改变什么</th><th>判断指标</th></tr></thead>
+<tbody>
+<tr><td>目标拆解</td><td>base、数据、verifier、工具预算、KL策略与生成token</td><td>依次改变ratio、advantage、分母、filter；组合方案另列</td><td>同预算逐域成功、稳定性、长度、clip比例、额外采样成本</td></tr>
+<tr><td>长程信用</td><td>任务划分、最终reward和固定episode采样</td><td>广播优势、anchor / subtask / knowledge信用、共享value路线</td><td>成功率、判断校准、有效信用覆盖、恢复能力；提供不同seed</td></tr>
+<tr><td>异步分解</td><td>计算资源、任务池和算法</td><td>完成配额、lag上限、routing / precision对齐分别消融</td><td>有效token / 秒、等待 / 丢弃成本、log-prob偏差、成功 / GPU小时</td></tr>
+</tbody>
+</table>
+<p>全部为待执行设计。方法成本差异很大，应同时提供“同采样token”和“同GPU / 环境时间”的结果，不能只挑对自己有利的分母。任务可靠性先看<a href="s01_agent_data_bench.html">第01章</a>；专家策略整合回到<a href="../llm-training-lifecycle/s03_sft_rft.html">SFT / OPD章节</a>及<a href="s05_agent_frontiers.html">第05章</a>。</p>
+</section>
+</main>
+</body>
+</html>

@@ -248,3 +248,47 @@ GitHub Profile README 已发布至 `stein-wang0226/stein-wang0226`，提交
 同时间其他维护线程已提交 `2ad31ae`、`618f66b` 的样式 / 缓存修正；
 上述10文件线上抽查对应 `5801b4e`。后续最终发布提交应以最新Actions与
 线上 `build-info.json` 核对，不将早先快照标成最新版本。
+
+## 2026-11-14 LLM研究地图、原报告与覆盖审计
+
+完成系列 `/llm-research-map-2026/` 的入口与五章正文：Agent数据 / benchmark、
+Agentic RL、DeepSeek V4.1架构、扩散投机推理、GUI / 科学Agent / 持续学习。
+编辑判断、来源与修订边界见 [研究复核](blog-research-review-20261114.md)。
+旧文通过catalog的related接入专题，原科学正文、URL和AUTO标记未修改。
+
+使用 `make check OUTPUT=/tmp/my-blogs-research-build`：
+
+- 65 HTML页 / 98公开文件构建及检查通过；当前11个本地集合、23章、6篇论文、
+  2个独立子站。原件署名说明采用TXT，与PDF和来源JSON一起显式登记。
+- 来源清单43项，编号1–43连续；10份PDF共36,619,952字节，PDF签名、长度与SHA-256
+  全部匹配。DeepSeek为固定官方HF revision；其他原件CC BY 4.0，完整作者校正，
+  完整MIT notice保留。未重写原PDF字节。
+- 归档PDF显式按二进制维护，官方MIT notice保留原CRLF换行；
+  `.gitattributes`记录对应规则，避免Git将PDF流当作源码或改写许可换行。
+- 原始迁移保留检查通过：23项原SHA相同、18项此前变化仍与准确记录一致；
+  299个原始锚点、59个标记保留。原始9集合 / 14章保留，迁移基线未重建。
+- Google Chrome headless实际操作通过81项：24项布局（首页、博客及6个新页面
+  ×390 / 768 / 1440px）、51项导航 / 搜索 / 键盘 / 资源检查、6页无JavaScript阅读。
+  检查五章顺序及前后章、来源锚点、作者项目锚点、关键词与主题重载、
+  旧Harness / DLM关联入口、10份发布PDF字节及许可下载。无页面脚本错误。
+- 已查看桌面入口、手机CED图解、手机信用分配截图；图解保持阅读顺序，
+  长表格和公式在各自容器滚动，无页面横向溢出。
+
+验收使用实际运行的 `http://127.0.0.1:8769/`。证据保存在
+`/tmp/my-blogs-browser-tests/research-series-check.js`、
+`research-series-report.json`、`research-index-1440.png`、
+`research-architecture-390.png`、`research-rl-390.png`。
+全部检查针对同一构建快照；修正验收脚本对CV路由、原生章节列表和生成目录锚点的
+错误假设后，从通过项继续完成剩余检查，不累计重复次数。
+
+该本地快照commit为 `0d04ebfcc0ea81bbb28d5cda6827d2d43f3b8820`、`dirty: true`，
+input digest为 `22187b4b840da1426e715d1bf461e3b88a3e607dec70ec07080c1f0e55aa1ea6`。
+本地检查不能代替线上发布证据，线上核对另列。
+
+论文 / 团队数字未本地复现，建议训练、任务合成和解码实验均未执行。
+TB4官方19项与合作方20项修复的计数分歧、SkillsBench初版 / 1.1口径、
+SAPO同名、V4.1 v1 / 1017区别在正文保留。Muon / loop / kernel为后续独立选题，
+本轮未完成独立公式和复现实验长文。
+
+先前GitHub账号字段设备授权已返回 `expired_token`；
+姓名 / bio / website仍未写入。该授权与主站repo推送是不同权限。

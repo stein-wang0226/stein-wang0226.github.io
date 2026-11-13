@@ -1,0 +1,86 @@
+研究原件来源、署名与许可 · 2026-11-14
+
+本目录保存10份原始PDF，未裁切、改写或修改字节，完整题名与作者页保留。
+sources.json登记原题名、作者、固定版本、canonical URL、许可、下载来源、
+访问日期、字节数与SHA-256。博客综述不代表原作者认可。
+研究地图：https://stein-wang0226.github.io/llm-research-map-2026/
+
+DeepSeek官方报告
+
+DeepSeek-AI
+DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression
+原件：deepseek-v41-2609.19969v1.pdf
+固定下载来源：
+https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/resolve/314113f8a7dadb388215396ba5fbee2c610a04d6/DeepSeek_V41_Tech_Report.pdf
+revision：314113f8a7dadb388215396ba5fbee2c610a04d6
+官方README说明仓库与权重采用MIT，LICENSE覆盖associated documentation。
+完整版权与许可声明见 DeepSeek-MIT-LICENSE.txt。
+章节引用：https://arxiv.org/abs/2609.19969v1
+HF原件与arXiv版本分别登记；未声称两者字节相同。原件修改状态：无。
+
+CC BY 4.0原论文
+
+下列9份原件依来源标注的Creative Commons Attribution 4.0 International分享：
+https://creativecommons.org/licenses/by/4.0/
+各论文完整署名见原件题名页与sources.json中的authors_as_displayed。
+该清单已按原文校正作者姓名，去除机构编号及脚注标记。全部修改状态：无。
+
+1. Conditional Memory via Scalable Lookup: A New Axis of Sparsity for Large Language Models
+   作者：Xin Cheng, Wangding Zeng, Damai Dai, Qinyu Chen, Bingxuan Wang, Zhenda Xie,
+   Kezhao Huang, Xingkai Yu, Zhewen Hao, Yukun Li, Han Zhang, Huishuai Zhang,
+   Dongyan Zhao, Wenfeng Liang
+   https://arxiv.org/abs/2601.07372v1
+   engram-2601.07372v1.pdf
+
+2. DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation
+   作者：Xin Cheng, Xingkai Yu, Chenze Shao, Jiashi Li, Yunfan Xiong, Yi Qian,
+   Jiaqi Zhu, Shirong Ma, Xiaokang Zhang, Jiasheng Ye, Qinyu Chen, Chengqi Deng,
+   Jiping Yu, Damai Dai, Zhengyan Zhang, Yixuan Wei, Yixuan Tan, Wenkai Yang,
+   Runxin Xu, Yu Wu, Zhean Xu, Xuanyu Wang, Muyang Chen, Rui Tian, Xiao Bi,
+   Zhewen Hao, Shaoyuan Chen, Huanqi Cao, Wentao Zhang, Anyi Xu, Huishuai Zhang,
+   Dongyan Zhao, Wenfeng Liang
+   https://arxiv.org/abs/2607.05147v1
+   dspark-2607.05147v1.pdf
+
+3. DFlash: Block Diffusion for Flash Speculative Decoding
+   作者：Jian Chen, Yesheng Liang, Zhijian Liu
+   https://arxiv.org/abs/2602.06036v1
+   dflash-2602.06036v1.pdf
+
+4. Know What You Don’t Know: Agentic Data Synthesis by Evolving Generation Space for Closed-Loop Learning
+   作者：Wei Yang, Qing Ping, Youzhi Luo, Yawei Wang, Abhishek Kumar, Panpan Xu, Jun Huan
+   https://arxiv.org/abs/2610.12593v1
+   evosyn-2610.12593v1.pdf
+
+5. ProgramGym: Scaling Training Environments for Long-Horizon Program Reproduction Agents
+   作者：Chengyi Yang, Renxu Bao, Jue Hou, Zongpei Teng, Ziheng Wang, Yujie Lin,
+   Chengsong Huang, Junnan Zhu, Delai Qiu, Yining Wang, Shengping Liu, Fei Long, Jinsong Su
+   https://arxiv.org/abs/2610.13395v1
+   programgym-2610.13395v1.pdf
+
+6. Reinforcement Learning with Decomposed Subtasks
+   作者：Mattie Terzolo, Mikolaj Sacha, Ayan Sinha, Andrew Rabinovich
+   https://arxiv.org/abs/2609.27035v1
+   rlds-2609.27035v1.pdf
+
+7. SAPO: Single-Rollout Autoregressive Policy Optimization for Agentic Reinforcement Learning
+   作者：Dayang Liang, Lang Feng, Bo An, Yunlong Liu
+   https://arxiv.org/abs/2608.19842v1
+   sapo-single-2608.19842v1.pdf
+
+8. ARLArena: A Unified Framework for Stable Agentic Reinforcement Learning
+   作者：Xiaoxuan Wang, Han Zhang, Haixin Wang, Yidan Shi, Ruoyan Li, Kaiqiao Han,
+   Chenyi Tong, Haoran Deng, Alexander K Taylor, Renliang Sun, Yanqiao Zhu,
+   Jason Cong, Yizhou Sun, Wei Wang
+   https://arxiv.org/abs/2602.21534v3
+   arlarena-2602.21534v3.pdf
+
+9. SWE-smith: Scaling Data for Software Engineering Agents
+   作者：John Yang, Kilian Lieret, Carlos E. Jimenez, Alexander Wettig, Kabir Khandpur,
+   Yanzhe Zhang, Binyuan Hui, Ofir Press, Ludwig Schmidt, Diyi Yang
+   https://arxiv.org/abs/2504.21798v1
+   swesmith-2504.21798v1.pdf
+
+其他来源仅提供外部链接，未在本站转载PDF。
+arXiv perpetual non-exclusive license未被当作普通转载许可。
+原报告实验为作者报告，未在本地复现；文件哈希校验不证明科研结论。

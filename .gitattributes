@@ -1,0 +1,4 @@
+# Keep original report bytes; do not interpret PDF streams as source text.
+assets/research/**/*.pdf binary
+# Preserve the official license's original CRLF line endings.
+assets/research/**/DeepSeek-MIT-LICENSE.txt -text whitespace=cr-at-eol
