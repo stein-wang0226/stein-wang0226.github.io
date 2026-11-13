@@ -24,8 +24,8 @@
 </table>
 <p>桥接分布的研究通过受控实验分析引入时机与混合比例，支持“让预训练和后训练分布更接近”这一设计方向。它没有证明所有模型都必须增加同名阶段，也没有给出普适混合比例。<a href="index.html#ref-9">[9]</a></p>
 </section>
-<section id="recipe">
-<h2>工业配方：Nemotron 的混合 CPT → 固定 SFT</h2>
+<section>
+<h2 id="recipe">工业配方：Nemotron 的混合 CPT → 固定 SFT</h2>
 <p>2026-10-15 的 <em>Priming Base Models for Agentic Post-Training</em> 给出 Nemotron 3.5 的具体数据桶，并比较起始 Base 与经过 Midtraining 的 Base 接受相同 SFT 后的结果。这类实验能解释初始化贡献，同时要承认 Midtraining 组多使用了训练算力。<a href="index.html#ref-1">[1]</a></p>
 <figure>
 <div class="flow" aria-label="Nemotron 的主要对照流程">
@@ -52,8 +52,8 @@
 <p>附录B 的训练设置是 256K packed sequence、global batch size 64、文档间隔离 attention、Adam 与 BF16。Lightning / Super 学习率分别为 <code>5e−5 / 1e−5</code>，短 warmup 后恒定；保留 multi-token prediction 辅助目标，权重分别 <code>0.1 / 0.3</code>。这是该模型的实测配方，不能直接搬成小模型的默认超参数。</p>
 <p>轨迹只监督 assistant 回合，包括工具调用；工具观察留在上下文里。PR、日志与重复内容另有目标筛选规则。整个阶段因此是<strong>按数据类型定义条件与目标的混合 LM 训练</strong>，不是所有输入一律全 token 监督。</p>
 </section>
-<section id="results">
-<h2>受控证据：逐行核对实验条件</h2>
+<section>
+<h2 id="results">受控证据：逐行核对实验条件</h2>
 <table>
 <thead><tr><th>独立对照</th><th>起点 / 下游协议</th><th>作者报告，百分比</th></tr></thead>
 <tbody>
@@ -68,8 +68,8 @@
 <div class="callout caution"><strong>证据边界：</strong>相同 SFT 下的提升没有证明等总算力最优。TB2.0 的1点变化应结合重复训练与不确定性；公开 RL 延伸仅有 Lightning-8K 的短、单种子实验，不足以推断长 RL 后仍保持同样排序。</div>
 <p>作者发现 LoCoDiff、仓库 / trace 预测损失等代理指标对最终排名不够稳定。实践上同时保留代理损失和固定下游验收；不能由此断言所有模型的 perplexity 都无价值。</p>
 </section>
-<section id="landscape">
-<h2>前沿路线：结构、交互与能力保留</h2>
+<section>
+<h2 id="landscape">前沿路线：结构、交互与能力保留</h2>
 <table>
 <thead><tr><th>工作与定位</th><th>公开数据 / 训练</th><th>可支持的判断与边界</th></tr></thead>
 <tbody>
@@ -88,8 +88,8 @@
 <p>收益可能来自结构、数据质量、教师解释或后训练配合。Function-Aware FIM 的教师合成与 Instruct 起点意味着不能把结果解释为“纯自然自监督让 Base 获得 agent 能力”。SPT 的固定预算数据置换也需要与相同预算的其他来源比较。</p>
 </details>
 </section>
-<section id="data">
-<h2>数据与伪代码：一个 CSV 任务的四种视角</h2>
+<section>
+<h2 id="data">数据与伪代码：一个 CSV 任务的四种视角</h2>
 <pre><code>{"kind":"document",
  "text":"CSV row counts exclude the header. Empty value cells are missing."}
 
@@ -180,15 +180,15 @@ save_checkpoint(agent, "agent-sft")</code></pre>
 </ul>
 </details>
 </section>
-<section id="harbor">
-<h2>Harbor：把“值得继续训练吗”变成可检验问题</h2>
+<section>
+<h2 id="harbor">Harbor：把“值得继续训练吗”变成可检验问题</h2>
 <p>从同一 Base 建立 A=直接固定 Trace SFT；B=通用 CPT→同SFT；C=领域+回放 CPT→同SFT；D=从C置换部分输入 token 为 assistant-only trace→同SFT。B / C / D 匹配输入预算和长度分布，再实际核算 FLOPs / GPU 小时。</p>
 <p>A–D 检查初始化增量；C−B 检查领域配方；D−C 检查轨迹提前混入。再加 E，把额外计算用于更充分的 SFT，才更接近业务预算选择。固定输入 token 不能自动证明总算力相等，mask 改变也必须报告有效目标。</p>
 <p>完整的任务切分、verifier、记录 schema、统计与成本控制见<a href="s04_rl_evaluation.html#harbor">第四章 Harbor A–E 方案</a>。原调研的建议在这里保留，并修正“对齐 token 就等算力”的表述。</p>
 <p class="note">尚未运行 Harbor 训练或评测，不预设公开论文分数可迁移为本地收益。</p>
 </section>
-<section id="sources">
-<h2>来源、原件与证据性质</h2>
+<section>
+<h2 id="sources">来源、原件与证据性质</h2>
 <p>主要配方与消融：<a href="index.html#ref-1">[1] Nemotron</a>；工业工程路线：<a href="index.html#ref-2">[2] Qwen3-Coder-Next</a>、<a href="index.html#ref-3">[3] GLM-5</a>。开放流程与回放：<a href="index.html#ref-4">[4] Olmo 3</a>、<a href="index.html#ref-27">[27] 官方流程</a>。研究前沿：<a href="index.html#ref-5">[5] MidTool</a>、<a href="index.html#ref-6">[6] PRISM</a>、<a href="index.html#ref-7">[7] SPT</a>、<a href="index.html#ref-8">[8] Function-Aware FIM</a>、<a href="index.html#ref-9">[9] 分布桥接</a>。</p>
 <p class="note">基于用户提供的 <code>agent-base-mid-training-20261114.html</code> 扩展与修订，六个主题锚点 recipe / results / landscape / data / harbor / sources 保留。原件逐字节保存在仓库 <code>content/archive/agent-base-mid-training-20261114.original.html</code>，只作来源追溯。版本和修订明细见 <code>docs/llm-training-research-20261114.md</code>。</p>
 </section>
