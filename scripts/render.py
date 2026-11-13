@@ -164,7 +164,8 @@ class BuildContext:
                          f'{html.escape(item["label"])}</a>')
         return (f'{START}\n<a class="site-skip" href="#site-main">跳转到正文</a>'
                 '<nav class="site-nav" aria-label="主导航">'
-                f'<a class="site-brand" href="{rel(path, "/")}">Yuxiang Wang / Stein\'s Notes</a>'
+                f'<a class="site-brand" href="{rel(path, "/")}">'
+                '<span class="site-monogram" aria-hidden="true">S.</span>Stein\'s Notes</a>'
                 f'<div class="site-links">{"".join(links)}</div></nav>\n{END}')
 
     def footer(self, path):
@@ -175,7 +176,7 @@ class BuildContext:
         source = self.site.get("repository", "https://github.com/stein-wang0226/stein-wang0226.github.io")
         return ('<footer class="site-footer"><span>Yuxiang Wang · Research &amp; Notes</span>'
                 f'<a href="{html.escape(source, quote=True)}">GitHub · Source</a>'
-                f'<a href="{rel(path, "build-info.json")}">Build {html.escape(label)}</a></footer>')
+                f'<a class="site-build" href="{rel(path, "build-info.json")}">Build {html.escape(label)}</a></footer>')
 
     def page(self, path, title, body, description="", script="", lang="zh-CN"):
         script_tag = (f'<script defer src="{rel(path, script)}"></script>' if script else "")
