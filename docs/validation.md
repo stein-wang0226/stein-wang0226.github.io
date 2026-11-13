@@ -292,3 +292,19 @@ SAPO同名、V4.1 v1 / 1017区别在正文保留。Muon / loop / kernel为后续
 
 先前GitHub账号字段设备授权已返回 `expired_token`；
 姓名 / bio / website仍未写入。该授权与主站repo推送是不同权限。
+
+### 研究地图线上核对
+
+内容提交 `50f9ea62675ae64fd1567db4330b58779b733502` 已推送至 `origin/main`。
+[Validate site](https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43508203740)
+与 [Publish static site](https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43508203729)
+均成功，线上 `build-info.json` 的commit一致、`dirty: false`、
+input digest与上述本地浏览器快照相同，共98个公开文件。
+
+实际下载核对22个线上文件：首页、博客、catalog、系列入口与五章、10份PDF、
+来源JSON、署名TXT及MIT notice；SHA全部与发布清单一致，13项归档资源
+也与仓库原件逐字节相同。catalog推荐为新研究地图，章节order 1–5正确。
+另核对提交中的10份PDF blob均匹配原SHA，官方license原CRLF字节保留。
+证据为 `/tmp/my-blogs-browser-tests/research-release-check.py`、
+`research-release-report.json`。本段记录内容发布快照；后续纯验收文档提交
+不改变该input digest，最终部署commit继续以线上 `build-info.json` 为准。
