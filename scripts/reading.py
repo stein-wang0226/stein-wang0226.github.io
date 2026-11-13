@@ -105,6 +105,6 @@ def decorate(ctx, entry, text):
     end += '<aside class="reading-related" aria-label="关联阅读"><h2>关联阅读</h2><ul>' + "".join(related) + "</ul></aside>"
     body = ctx.navigation(path) + intro + '<div class="reading-content">' + body + "</div>" + end + ctx.footer(path)
     text = text[:body_match.start(2)] + body + text[body_match.end(2):]
-    text = text.replace("</head>", f'<link rel="stylesheet" href="{ctx.rel(path, "/assets/site/site.css")}">\n'
-                        f'<link rel="stylesheet" href="{ctx.rel(path, "/assets/site/reading.css")}">\n</head>', 1)
+    text = text.replace("</head>", f'<link rel="stylesheet" href="{ctx.asset(path, "/assets/site/site.css")}">\n'
+                        f'<link rel="stylesheet" href="{ctx.asset(path, "/assets/site/reading.css")}">\n</head>', 1)
     return text

@@ -3,7 +3,9 @@
   const form = document.querySelector('#catalog-form');
   if (!form) return;
   try {
-    const response = await fetch('catalog.json');
+    const catalog = new URL('catalog.json', location.href);
+    if (form.dataset.catalogVersion) catalog.searchParams.set('v', form.dataset.catalogVersion);
+    const response = await fetch(catalog);
     if (!response.ok) throw new Error('catalog');
     const data = await response.json();
     const fields = Object.fromEntries(['q', 'topic', 'type', 'sort'].map(k => [k, form.elements[k]]));
