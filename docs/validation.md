@@ -223,3 +223,28 @@ SemDLM+明确展示“NeurIPS 2026 Main Conference — Accepted”，并排在�
 最终input digest为 `1980c6a2c5a71f5fbd978011b987d26a8f2312def0bf59d8519386ba9c461a20`，
 commit仍为`2e6bfce94c4825b955d09e680a3722aa9973d71c`、`dirty: true`。
 较早的56项和旧digest保留为初轮记录；最终以本段和`profile-report.json`为准，仍未执行远端写入。
+
+## 2026-11-14 用户授权后的个人资料线上同步
+
+用户随后明确要求同步推送，个人资料提交
+`5801b4ea856c09077639230cffb37554c535a87d` 已推送至主站 `origin/main`。
+Validate site工作流 `43493652355`、Publish static site工作流 `43493652124` 均成功，
+线上 `build-info.json` 提交一致、`dirty: false`。
+
+实际下载首页、About、CV、论文列表、ProtAgent、CUA-Recovery、SemDLM+及
+英文PDF、中文PDF、英文别名，共10个文件，SHA全部与线上发布清单一致；
+三个PDF同时与本地原附件一致。实际浏览器核对首页论文接收状态、
+首页→About→CV导航、当前实习、四项工作与CV项目锚点。
+这是发布后的抽查，未重复计入之前61项本地浏览器验收。
+
+GitHub Profile README 已发布至 `stein-wang0226/stein-wang0226`，提交
+`51246757924db14af2ea9d5b5d6c39c83767991b`；
+通过gh读取远端README，与主站 `docs/github-profile/README.md` 逐字节一致。
+账号姓名、bio、website字段更新仍受当前OAuth缺少 `user` scope阻止，
+没有虚报字段更新；已发起设备授权，等待用户登录完成。
+旧学术仓库仍未归档，旧Pages仍在线；没有删除、归档或停用。
+详细来源、附件SHA及权限返回见 [个人资料更新依据](profile-update-20261114.md)。
+
+同时间其他维护线程已提交 `2ad31ae`、`618f66b` 的样式 / 缓存修正；
+上述10文件线上抽查对应 `5801b4e`。后续最终发布提交应以最新Actions与
+线上 `build-info.json` 核对，不将早先快照标成最新版本。

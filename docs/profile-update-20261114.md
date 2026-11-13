@@ -222,3 +222,44 @@ group-relative下36.50%与58.20%。论文详情已补充此表。
 input digest为 `1980c6a2c5a71f5fbd978011b987d26a8f2312def0bf59d8519386ba9c461a20`。
 61项浏览器报告对应此最终修订。本文较早的56项 / 旧digest是初轮验收记录，不代表最终输入。
 本次没有新增远端写入，预览仍为 `http://127.0.0.1:8768/`。
+
+## 用户授权同步后的实际发布记录
+
+本节记录用户随后要求“github 同步推送”后的真实结果，取代前文仅本地完成时的远端状态描述；
+此前本地检查和历史状态保留，不回写成当时已经发布。
+
+- 唯一主维护目录：`/Users/bytedance/Desktop/my_blogs/site`；
+  `origin` 为 `git@github.com:stein-wang0226/stein-wang0226.github.io.git`，分支 `main`。
+- 个人资料内容提交：
+  `5801b4ea856c09077639230cffb37554c535a87d`，已推送。
+  [Validate site](https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43493652355)
+  与 [Publish static site](https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43493652124)
+  均成功。
+- 实际线上 `build-info.json` 核对提交为 `5801b4e`、`dirty: false`，
+  input digest 为 `8ad74f7a02a071b27e74251f16523783203a7a996d093ff15acb1a991a1e498a`。
+  发布清单登记78个文件，另加清单自身为79个公开文件。
+  实际下载首页、About、CV、论文列表、ProtAgent、CUA-Recovery、SemDLM+及三个中英文PDF
+  路径，共10个文件，SHA全部与发布清单一致；三个PDF同时与本地原附件一致。
+- 实际浏览器从首页进入About，再进入CV：当前字节实习、四项近期工作、中英文下载入口、
+  CV的四个项目锚点均正确。首页SemDLM+显示NeurIPS 2026主会接收；
+  与本地61项验收分别记录，没有将线上抽查计成重复完整验收。
+- GitHub Profile 仓库 `stein-wang0226/stein-wang0226` 提交
+  `51246757924db14af2ea9d5b5d6c39c83767991b` 已推送至 `main`。
+  通过 gh 读取远端README，确认与 `docs/github-profile/README.md` 逐字节一致，
+  SHA-256 为 `05eb45090d7513d04034f6d190df9e9e1474a4acdb25cebd36ede2a3d237fdb1`。
+
+账号 `name` / `bio` / `blog` 的 PATCH 返回HTTP404，并由gh明确提示缺少 `user` scope。
+当前授权为 `gist` / `read:org` / `repo`；随后重新查询，三个字段仍为原值。
+已准备 `docs/github-profile/settings.json` 并发起设备授权，须待用户登录完成授权后再写入。
+浏览器已交由用户操作，不能将授权请求已发起记为授权完成或字段写入成功。
+
+旧学术仓库 `stein-wang0226/wyx0226.github.io` 实测仍未归档，
+legacy Pages从 `master` 根目录提供 `/wyx0226.github.io/`。
+有效内容已迁入主站，旧提交历史仍独立保留；建议迁移旧链接后归档保留。
+GitHub用于显示Profile README的同名仓库 `stein-wang0226/stein-wang0226` 必须保留，
+它是账号展示机制的入口；源稿统一在主站维护不改变这一要求。
+本次没有删除、归档或停用旧仓库。
+
+同步期间另一个维护线程提交了样式 / 缓存修正 `2ad31ae`、`618f66b`；
+它们位于主站内容提交之后。本文的线上SHA和浏览器抽查明确对应 `5801b4e`，
+后续文档提交与最终站点版本以最新Actions及线上 `build-info.json` 为准。
