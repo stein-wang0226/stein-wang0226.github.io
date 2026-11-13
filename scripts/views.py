@@ -176,24 +176,24 @@ def render_blog(ctx):
             f'<span><strong>{len(ctx.site["topics"])}</strong>主题</span></div></div></header>'
             '<form id="catalog-form" class="catalog-controls" action="/blog/" method="get" '
             f'data-catalog-version="{esc(ctx.metadata["input_digest"][:16])}">'
-            '<div class="catalog-search"><label class="search-field">'
+            '<div class="catalog-toolbar"><div class="catalog-search"><label class="search-field">'
             '<span class="visually-hidden">关键词</span>'
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
             '<circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.5"/>'
             '<path d="m16 16 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
             '<input id="filter-q" type="search" name="q" autocomplete="off" '
-            'placeholder="搜索文章与章节：ELBO、PPO…"></label>'
+            'placeholder="搜索笔记、章节或关键词"></label>'
             '<button class="search-submit" type="submit">搜索</button></div>'
-            '<div id="topic-fallback" class="catalog-topic-fallback">' +
-            select("topic", "技术主题", ctx.site["topics"]) + '</div>'
-            f'<div id="topic-chips" class="topic-chips" role="group" aria-label="技术主题" hidden>{chips}</div>'
             '<div class="catalog-secondary">' +
-            select("type", "内容类型", ctx.site["types"]) +
+            select("type", "类型", ctx.site["types"]) +
             '<label class="catalog-field"><span class="catalog-label">排序</span>'
             '<select name="sort" id="filter-sort"><option value="updated-desc">最近更新</option>'
             '<option value="title">标题</option></select></label>'
             '<button type="button" id="clear-filters" hidden>清除条件</button>'
-            '</div></form><p id="catalog-notice" role="status"></p>'
+            '</div></div><div id="topic-fallback" class="catalog-topic-fallback">' +
+            select("topic", "技术主题", ctx.site["topics"]) + '</div>'
+            f'<div id="topic-chips" class="topic-chips" role="group" aria-label="技术主题" hidden>{chips}</div>'
+            '</form><p id="catalog-notice" role="status"></p>'
             '<noscript><p>当前未启用 JavaScript。以下列出全部文章；'
             '系列卡片内可直接浏览章节，筛选需启用 JavaScript。</p></noscript>'
             '<section aria-label="本地文章"><div class="catalog-heading"><h2>全部笔记</h2>'
