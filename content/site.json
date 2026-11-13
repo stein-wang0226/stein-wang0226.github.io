@@ -38,10 +38,12 @@
   "publications": {
     "source_glob": "content/publications/*.md",
     "url_prefix": "/publication/",
-    "featured": ["2026-locality-aware-dlm", "2026-semantic-dlm-plus", "2024-stm-dynamic-graph-fraud"]
+    "featured": ["2026-semantic-dlm-plus", "protagent", "2026-locality-aware-dlm", "cua-recovery"]
   },
   "assets": [
     {"source": "assets/Curriculum_Vitae.pdf", "url": "/assets/Curriculum_Vitae.pdf"},
+    {"source": "assets/Yuxiang-Wang-Resume-zh.pdf", "url": "/assets/Yuxiang-Wang-Resume-zh.pdf"},
+    {"source": "assets/archive/Curriculum_Vitae-before-20261114.pdf", "url": "/assets/archive/Curriculum_Vitae-before-20261114.pdf"},
     {"source": "assets/site/site.css", "url": "/assets/site/site.css"},
     {"source": "assets/site/catalog.js", "url": "/assets/site/catalog.js"},
     {"source": "content/series/dlm-survey/shared.css", "url": "/dlm-survey/shared.css"},

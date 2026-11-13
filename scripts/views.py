@@ -6,7 +6,7 @@ from datetime import date
 from html.parser import HTMLParser
 from string import Template
 
-from render import load_md, md
+from render import load_md, md, publication_date
 
 
 def esc(value):
@@ -114,7 +114,9 @@ def featured_series(ctx, row, path="/blog/"):
 
 def render_home(ctx):
     _, about = load_md(ctx.root / "content/pages/about.md")
-    bio = md(about.split("## Research Interests")[0].strip())
+    bio = md(about.split("## ", 1)[0].strip())
+    selected = re.search(r"(?ms)^## Selected Work\s*\n(.*?)(?=^## |\Z)", about)
+    work = md(selected.group(1).strip()) if selected else ""
     rows = ordered([e for e in ctx.entries if e["origin"] == "local"
                     and e["status"] == "published" and e["kind"] != "chapter"])
     topics = "".join(
@@ -122,10 +124,11 @@ def render_home(ctx):
         for t in ctx.site["topics"])
     papers = "".join(
         '<article class="publication-card"><p class="paper-meta">'
-        f'{esc(p["meta"]["date"])} · {esc(p["meta"]["venue"])}</p>'
+        f'{esc(publication_date(p["meta"]))} · {esc(p["meta"]["venue"])}</p>'
         f'<h2><a href="{ctx.rel("/", p["url"])}">{esc(p["meta"]["title"])}</a></h2>'
         f'<p>{esc(p["meta"]["excerpt"])}</p></article>'
-        for p in ctx.publications if p["slug"] in ctx.site["publications"]["featured"])
+        for slug in ctx.site["publications"]["featured"]
+        for p in ctx.publications if p["slug"] == slug)
     feature = next((e for e in rows if e.get("featured") and e["kind"] == "series"), None)
     recommendations = [e for e in rows if e.get("featured") and e != feature][:2]
     recent = "".join(
@@ -133,13 +136,15 @@ def render_home(ctx):
         f'<h3><a href="{ctx.rel("/", e["url"])}">{esc(e["title"])}</a></h3></article>'
         for e in rows if e["updated"])
     template = Template((ctx.root / "templates/home.html").read_text(encoding="utf-8"))
-    body = template.substitute(bio=bio, topics=topics, papers=papers,
+    body = template.substitute(bio=bio, work=work, topics=topics, papers=papers,
                                count=len(rows),
                                recent=recent,
                                featured=(featured_series(ctx, feature, "/") if feature else "") +
                                "".join(card(ctx, e, "/") for e in recommendations))
     ctx.page("/", "Yuxiang Wang · Research & Notes", body,
-             "Research profile, publications, and study notes on LLMs, agents and diffusion models.")
+             "Yuxiang Wang at Fudan and ByteDance Seed: scientific Harbor tasks, Agentic RL, "
+             "GUI agent environments, and diffusion language models.",
+             styles=("/assets/site/profile.css",))
 
 
 def render_blog(ctx):
@@ -169,7 +174,8 @@ def render_blog(ctx):
             f'<div class="catalog-stats"><span><strong>{len(local)}</strong>笔记集合</span>'
             f'<span><strong>{sum(e["kind"] == "chapter" and e["status"] == "published" for e in rows)}</strong>章节</span>'
             f'<span><strong>{len(ctx.site["topics"])}</strong>主题</span></div></div></header>'
-            '<form id="catalog-form" class="catalog-controls" action="/blog/" method="get">'
+            '<form id="catalog-form" class="catalog-controls" action="/blog/" method="get" '
+            f'data-catalog-version="{esc(ctx.metadata["input_digest"][:16])}">'
             '<div class="catalog-search"><label class="search-field">'
             '<span class="visually-hidden">关键词</span>'
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">'

@@ -46,6 +46,7 @@
     {"from": "/wyx0226.github.io/publication/2026-semantic-dlm-plus/", "to": "/publication/2026-semantic-dlm-plus/"}
   ],
   "copies": [
+    {"from": "/assets/Yuxiang-Wang-Resume-en.pdf", "to": "/assets/Curriculum_Vitae.pdf"},
     {"from": "/wyx0226.github.io/assets/Curriculum_Vitae.pdf", "to": "/assets/Curriculum_Vitae.pdf"}
   ]
 }

@@ -1,15 +1,19 @@
 ---
-title: "STM: Spatio-Temporal Distance and Frame-Based Dynamic Graph Fraud Detection"
+title: "STM: A Spatio-Temporal Model for Dynamic Graph Fraud Detection"
 collection: publications
 permalink: /publication/2024-stm-dynamic-graph-fraud
 excerpt: 'Proposes STM, a dynamic-graph fraud-detection model that combines graph condensation, distance-aware intra-frame aggregation, and difference-aware inter-frame aggregation to fully exploit short- and long-range spatio-temporal information. Achieves SOTA on multiple dynamic-graph benchmarks. Also resulted in an invention patent.'
-date: 2024-08-01
-venue: 'CCF-B venue (Springer)'
+date: 2026-01-02
+venue: 'DASFAA 2025 · Published chapter · First author'
 paperurl: 'https://link.springer.com/chapter/10.1007/978-981-95-3906-2_3'
-citation: 'Yuxiang Wang, et al. "Spatio-Temporal Distance and Frame-Based Dynamic Graph Fraud Detection." Springer, 2024. https://doi.org/10.1007/978-981-95-3906-2_3'
+citation: 'Yuxiang Wang, et al. "STM: A Spatio-Temporal Model for Dynamic Graph Fraud Detection." Database Systems for Advanced Applications (DASFAA 2025), pp. 37–52. Springer, online 2026. https://doi.org/10.1007/978-981-95-3906-2_3'
 ---
 
 ## Motivation
+
+The title, DASFAA 2025 venue, and online publication date (2026-01-02) follow the [publisher DOI record](https://doi.org/10.1007/978-981-95-3906-2_3). The 2023.04–2024.08 dates in my CV describe the research period.
+
+[Public experiment code](https://github.com/stein-wang0226/STM).
 
 Conventional GNN-based fraud detectors struggle to fully exploit the rich spatio-temporal structure present in dynamic graphs, leaving long-range temporal signals and inter-frame discrepancies underused.
 

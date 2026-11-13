@@ -37,7 +37,8 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 | 历史 RL 手册 | `content/archive/rl-interview-guide/index.html` |
 | 旧地址映射 | `content/redirects.json` |
 | 首页布局、共享展示 | `templates/`、`assets/site/`、`scripts/` |
-| CV PDF | `assets/Curriculum_Vitae.pdf`，与在线 CV 分别维护 |
+| 研究简历 PDF | 英文 `assets/Curriculum_Vitae.pdf`，中文 `assets/Yuxiang-Wang-Resume-zh.pdf`；原 CV 保留在 `assets/archive/` |
+| GitHub Profile 介绍稿 | `docs/github-profile/README.md`、`settings.json`；发布顺序见 `DEPLOYMENT.md` |
 
 不要手改或提交生成 HTML。首页、个人介绍、CV 的论文列表，以及博客搜索和相关文章都从上述记录生成。
 新增命令创建草稿，完成内容并移除空模板标记后，将 `status` 改为 `published`；草稿不进入公开产物。
@@ -68,7 +69,8 @@ Pages Source 应设置为 GitHub Actions；部署作业依赖构建与校验成�
 - [内容检查](docs/content-audit.md)：覆盖范围、修订与未完成的事实复核。
 - [训练全链路来源复核](docs/llm-training-research-20261114.md)：27 项原始来源、原 Midtraining 调研修订与实验边界；本地入口 `/llm-training-lifecycle/`。
 - [验收记录](docs/validation.md)：内容保留、浏览器、隔离构建与真实发布状态。
-- [迁移与地址清单](docs/content-inventory.md)：9 个集合、14 章、4 篇论文和历史来源。
+- [个人资料更新依据](docs/profile-update-20261114.md)：最新简历、项目口径、论文状态、中英文附件与 GitHub Profile 稿。
+- [迁移与地址清单](docs/content-inventory.md)：原始 9 个集合、14 章、4 篇论文的保留基线；当前内容以登记与本次验收为准。
 - [迁移与远端切换](MIGRATION.md)：保留旧地址、原仓库与许可。
 
 `mllm-interview-notes`、`llm-study-notes` 仍是独立子站。

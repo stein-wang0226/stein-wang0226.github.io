@@ -107,6 +107,11 @@ def md(text):
     return markdown.markdown(text, extensions=["extra", "sane_lists", "toc"])
 
 
+def publication_date(meta):
+    """Display known publication dates without inventing manuscript dates."""
+    return meta["date"] or meta["date_label"]
+
+
 class BuildContext:
     def __init__(self, root, output, site, entries, publications, metadata, redirects):
         self.root, self.output = Path(root).resolve(), external_output(output, root)
@@ -178,8 +183,15 @@ class BuildContext:
                 f'<a href="{html.escape(source, quote=True)}">GitHub · Source</a>'
                 f'<a class="site-build" href="{rel(path, "build-info.json")}">Build {html.escape(label)}</a></footer>')
 
-    def page(self, path, title, body, description="", script="", lang="zh-CN"):
-        script_tag = (f'<script defer src="{rel(path, script)}"></script>' if script else "")
+    def asset(self, path, target):
+        """Keep presentation resources aligned with the HTML after deployment."""
+        return rel(path, target) + "?v=" + self.metadata["input_digest"][:16]
+
+    def page(self, path, title, body, description="", script="", lang="zh-CN", styles=()):
+        script_tag = (f'<script defer src="{self.asset(path, script)}"></script>' if script else "")
+        style_tags = "".join(
+            f'<link rel="stylesheet" href="{html.escape(self.asset(path, style), quote=True)}">'
+            for style in styles)
         base = '<base href="/"><meta name="robots" content="noindex">' if route_path(path) == "404.html" else ""
         self.write(path, f'''<!DOCTYPE html>
 <html lang="{html.escape(lang, quote=True)}"><head><meta charset="utf-8">
@@ -187,7 +199,7 @@ class BuildContext:
 <title>{html.escape(title)} — Yuxiang Wang</title>{base}
 <meta name="description" content="{html.escape(description or title, quote=True)}">
 <link rel="canonical" href="{self.canonical(path)}">
-<link rel="stylesheet" href="{rel(path, "assets/site/site.css")}">{script_tag}
+<link rel="stylesheet" href="{self.asset(path, "assets/site/site.css")}">{style_tags}{script_tag}
 </head><body class="site-body">
 {self.navigation(path)}
 <main class="site-page" id="site-main" tabindex="-1">{body}</main>

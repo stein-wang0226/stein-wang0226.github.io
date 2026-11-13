@@ -265,7 +265,11 @@ def validate_contract(catalog, site, redirects, baseline):
     if len([e for e in entries if e["origin"] == "external"]) != 2:
         errors.append("baseline external coverage differs from 2")
     publication_ids = {p.stem for p in (ROOT / "content/publications").glob("*.md")}
-    if len(publication_ids) != 4 or not set(site["publications"]["featured"]) <= publication_ids:
+    baseline_publications = {
+        Path(r["after"]).stem for r in baseline["files"]
+        if r["after"] and r["after"].startswith("content/publications/")
+    }
+    if not baseline_publications <= publication_ids or not set(site["publications"]["featured"]) <= publication_ids:
         errors.append("publication coverage or featured ID invalid")
     for row in site["pages"] + site["assets"]:
         if not (ROOT / row["source"]).is_file():
@@ -361,7 +365,9 @@ def verify(allow_content_changes=False, require_clean=False):
     for row in redirects["copies"]:
         old = next((r for r in baseline["files"] if r["public_url"] == row["from"]), None)
         target = next((r for r in baseline["files"] if r["public_url"] == row["to"]), None)
-        if not old or not target or old["sha256"] != target["sha256"]:
+        # New aliases have no historical source. Historical aliases must continue
+        # to share their original target; the target's exact update has a receipt.
+        if old and (not target or old["sha256"] != target["sha256"]):
             errors.append(f"{row['from']}: compatibility copy is not byte-identical")
     if errors:
         print("\n".join(errors))
@@ -380,7 +386,7 @@ def verify(allow_content_changes=False, require_clean=False):
     print(f"Original coverage retained: {baseline['counts']['local_collections']} collections, "
           f"{baseline['counts']['chapters']} chapters")
     print(f"Current coverage: {collections} local collections, {chapters} chapters, "
-          "4 publications, 2 external links")
+          f"{len(list((ROOT / 'content/publications').glob('*.md')))} publications, 2 external links")
     return 0
 
 

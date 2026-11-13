@@ -145,6 +145,21 @@ class PipelineTests(unittest.TestCase):
             build(self.output, self.root)
         self.assertEqual("unrelated", (self.output / "keep.txt").read_text())
 
+    def test_manuscript_date_unknown_requires_label_and_renders_without_fabrication(self):
+        paper = self.root / "content/publications/cua-recovery.md"
+        original = paper.read_text()
+        build(self.output, self.root)
+        page = (self.output / "publication/cua-recovery/index.html").read_text()
+        self.assertIn("Submission date not disclosed", page)
+        self.assertNotIn(">None", page)
+        self.assertNotIn(">null", page)
+        paper.write_text(original.replace("date_label: 'Submission date not disclosed'\n", ""))
+        with self.assertRaisesRegex(ValueError, "unknown date requires"):
+            load_content(self.root)
+        paper.write_text(original.replace("date: null", "date: '2026-02-30'"))
+        with self.assertRaisesRegex(ValueError, "date"):
+            load_content(self.root)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

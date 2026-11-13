@@ -4,12 +4,14 @@ collection: publications
 permalink: /publication/2026-semantic-dlm-plus
 excerpt: 'Analyzes how transition-kernel choices affect diffusion language models via asymptotic bias, exposure bias, and optimization variance. Revives semantic DLM and proposes SemDLM+ with a global transition kernel plus a semantic-frequency penalty to fix the semantic-basin diversity problem. Shows better training dynamics and stronger generation diversity on LM1B and OpenWebText.'
 date: 2026-06-13
-venue: 'arXiv preprint, 2026'
+venue: 'NeurIPS 2026 · Main Conference · Accepted'
 paperurl: 'https://arxiv.org/abs/2606.15327'
 citation: 'Keyue Jiang, Yuxiang Wang, Yanan Zhao, Xiang Yu, Qifang Zhao, Bohan Tang, Baojian Zhou, Yanghua Xiao, Lin Qu, Xiaoxiao Xu. "Semantic DLM+: Improving Diffusion Language Models through Bias-variance Trade-off in Transition Kernel Design." <i>arXiv:2606.15327</i>, 2026.'
 ---
 
 ## Summary
+
+**NeurIPS 2026 Main Conference — Accepted.** Main-conference acceptance was explicitly confirmed by the author on 2026-11-14. The linked [arXiv v1](https://arxiv.org/abs/2606.15327v1) retains preprint metadata. The citation below preserves that public version's author order.
 
 This paper studies how the choice of transition kernel in discrete diffusion language models shapes the bias–variance trade-off across training and sampling. It connects kernel design to three key phenomena:
 

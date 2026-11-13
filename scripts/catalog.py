@@ -233,10 +233,17 @@ def load_content(root):
         try:
             source(path.relative_to(root).as_posix(), "publication:" + path.stem, unique=True)
             meta, body = load_md(path)
-            for field in ("title", "date", "venue", "excerpt"):
-                if not meta.get(field):
+            for field in ("title", "venue", "excerpt"):
+                if not isinstance(meta.get(field), str) or not meta[field].strip():
                     raise ValueError(f"required field {field}")
-            content_date(str(meta["date"]), "publication:" + path.stem + ".date")
+            if "date" not in meta:
+                raise ValueError("required field date (use null when unknown)")
+            meta["date"] = content_date(
+                str(meta["date"]) if meta["date"] is not None else None,
+                "publication:" + path.stem + ".date")
+            if meta["date"] is None and (
+                    not isinstance(meta.get("date_label"), str) or not meta["date_label"].strip()):
+                raise ValueError("unknown date requires a nonempty date_label")
             url = prefix.rstrip("/") + "/" + path.stem + "/"
             if meta.get("permalink") and route_path(meta["permalink"]) != route_path(url):
                 raise ValueError("permalink conflicts with registered publication route")
@@ -244,7 +251,8 @@ def load_content(root):
             publications.append({"meta": meta, "body": body, "slug": path.stem, "url": url})
         except ValueError as exc:
             errors.append(f"publication:{path.stem}: {exc}")
-    publications.sort(key=lambda p: (str(p["meta"]["date"]), p["slug"]), reverse=True)
+    publications.sort(key=lambda p: (p["meta"]["date"] is not None,
+                                     p["meta"]["date"] or "", p["slug"]), reverse=True)
     for slug in config.get("featured", []):
         if slug not in {paper["slug"] for paper in publications}:
             errors.append(f"site.publications.featured: missing publication {slug}")

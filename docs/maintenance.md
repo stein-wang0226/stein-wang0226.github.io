@@ -48,9 +48,15 @@ make preview PORT=8766
 ## 个人资料及 PDF
 
 个人履历只根据作者提供的信息更新。论文 Markdown 是论文列表唯一来源；SemDLM 与 SemDLM+ 是不同记录。
-在线 CV 与 PDF 分别维护。编辑 `content/pages/cv.md` 后单独导出 PDF，比较教育、经历、论文与联系方式，
-确认后再替换 `assets/Curriculum_Vitae.pdf`；构建会生成内容一致的旧下载地址副本。
-现有 PDF 完整保留，不假定与在线 CV 同版本。
+在线 CV 与研究简历 PDF 分别维护。`assets/Curriculum_Vitae.pdf` 为作者提供的英文研究简历，
+`assets/Yuxiang-Wang-Resume-zh.pdf` 为中文研究简历；检查教育、经历、论文与联系方式后替换，
+替换前保存旧版并记录精确 SHA。构建自动生成英文别名与旧下载地址副本。
+`assets/archive/Curriculum_Vitae-before-20261114.pdf` 保留原 CV；在线 CV 标明其历史版本。
+不要把原件附件描述为由在线 CV 自动导出的同一版本。
+
+首页近期工作复用 `about.md` 的 `Selected Work` 分区，详情进入 CV 项目锚点。
+论文允许明确未知的 `date: null`，此时必须填写非空 `date_label`；不能使用编辑日期冒充投稿日期。
+GitHub Profile 的可维护介绍稿和字段建议位于 `docs/github-profile/`，同步顺序见该目录 `DEPLOYMENT.md`。
 
 ## 前沿自动更新
 

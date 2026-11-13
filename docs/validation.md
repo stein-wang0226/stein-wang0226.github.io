@@ -190,3 +190,36 @@ ELBO章、历史RL页和CV PDF，共10个文件，SHA均与线上发布清单一
 
 旧学术仓库与旧Pages仍保留，`/wyx0226.github.io/` 实测仍由旧学术站提供。
 有效个人内容已迁入主站，原提交历史及旧主题保留在旧仓库；没有删除、归档或停用旧Pages。
+
+## 2026-11-14 最新简历与个人资料本地更新
+
+更新首页、About、在线 CV、三条既有论文记录，加入 ProtAgent / CUA-Recovery，
+接入作者原始中英文研究简历，旧 CV / 正文归档保留；GitHub Profile README 和字段稿
+见 `docs/github-profile/`。来源、论文作者差异、实验口径与附件 SHA
+见 [个人资料更新依据](profile-update-20261114.md)。
+
+本轮使用 `/tmp/my-blogs-profile-build` 与实际运行的 `http://127.0.0.1:8768/`：
+
+- 构建 / 检查59 HTML页、79公开文件通过。
+- 7项隔离构建检查均有通过结果；新增未知日期用例修正后单独复验通过。
+- 原始迁移保留检查通过：23项原 SHA 相同、18项后续变化有精确记录，
+  299个原始锚点、59个标记保留，原9集合 / 14章保留。
+- Google Chrome 56项检查通过：33项布局（11条路径 × 390 / 768 / 1440px）、
+  项目 / 稿件 / CV / 键盘 / 搜索导航、真实中英文下载及新旧路径字节、
+  5页无JavaScript阅读与项目跳转；无脚本错误。实际截图已查看。
+
+浏览器快照input digest为 `e09f9b60f0f89ea820d47e39992fdc4d0d5091641514b8433518ce731bda05a8`，
+构建commit为 `2e6bfce94c4825b955d09e680a3722aa9973d71c`，`dirty: true`。
+本次仅完成本地更新；结束时主站remote仍为`2e6bfce`、Profile仍使用旧介绍与旧website。
+没有提交 / 推送 / Profile写入 / 旧Pages切换；以上结果不能描述为已上线。
+
+同轮用户随后提供ProtAgent arXiv链接并确认SemDLM+已被NeurIPS主会接收：
+ProtAgent采用公开正式标题、2026-10-24首发日期与作者顺序；
+SemDLM+明确展示“NeurIPS 2026 Main Conference — Accepted”，并排在首页精选论文首位。
+三个arXiv链接重新核对，ProtAgent公开的三随机种子对照与指标范围补入研究记录。
+
+修订后完整7项隔离构建测试在同一次运行全部通过，
+59 HTML页 / 79公开文件检查通过，浏览器扩展为**61项通过**，保留检查及`git diff --check`通过。
+最终input digest为 `1980c6a2c5a71f5fbd978011b987d26a8f2312def0bf59d8519386ba9c461a20`，
+commit仍为`2e6bfce94c4825b955d09e680a3722aa9973d71c`、`dirty: true`。
+较早的56项和旧digest保留为初轮记录；最终以本段和`profile-report.json`为准，仍未执行远端写入。

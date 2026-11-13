@@ -1,0 +1,17 @@
+/* Profile components only. Research articles retain their own presentation. */
+.site-page .profile-downloads{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}
+.site-page .profile-downloads a{display:inline-flex;align-items:center;padding:10px 14px;border:1px solid var(--site-line,#d6d3cd);border-radius:6px;background:var(--site-card,#fff);font-size:12px;font-weight:650;text-decoration:none;line-height:1.6}
+.site-page .profile-downloads a:hover{border-color:var(--site-dark-teal,#0f766e)}
+.site-page .profile-work-grid,.site-page .profile-paper-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:22px}
+.site-page .profile-work{min-width:0;padding:26px;background:var(--site-card,#fff);border:1px solid var(--site-line,#d6d3cd);border-radius:8px;overflow-wrap:anywhere}
+.site-page .profile-work .profile-work-label{font-family:var(--site-mono,monospace);font-size:10px;letter-spacing:.04em;color:var(--site-dark-teal,#0f766e);margin:0 0 18px;line-height:1.7}
+.site-page .profile-work h3{margin:0 0 16px;font-size:21px;line-height:1.5}
+.site-page .profile-work p{font-size:14px;line-height:1.8;margin:14px 0}
+.site-page .profile-work p:last-child{margin-bottom:0;font-size:12px}
+.site-page .profile-work strong{color:var(--site-ink,#1a1a2e)}
+.site-page .profile-evidence{font-size:11px;color:var(--site-muted,#66615c);line-height:1.7;margin-top:18px;max-width:850px}
+.site-page .profile-paper-grid .publication-card{margin:0;min-width:0;overflow-wrap:anywhere}
+.site-page .profile-jump-links{display:flex;flex-wrap:wrap;gap:10px 20px;font-size:12px;padding:16px 0;border-top:1px solid var(--site-line,#d6d3cd);border-bottom:1px solid var(--site-line,#d6d3cd)}
+.site-page .prose h2[id],.site-page .prose h3[id]{scroll-margin-top:24px}
+.site-page .profile-selected .section-heading{margin-top:40px}
+@media(max-width:600px){.site-page .profile-work-grid,.site-page .profile-paper-grid{grid-template-columns:1fr;gap:16px}.site-page .profile-work{padding:22px}.site-page .profile-work h3{font-size:20px}.site-page .profile-downloads{gap:8px}.site-page .profile-downloads a{font-size:11px;padding:9px 12px}}

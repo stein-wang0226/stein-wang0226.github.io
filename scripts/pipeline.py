@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 
 from catalog import load_content
-from render import BuildContext, DEFAULT_OUTPUT, ROOT, external_output, input_digest, load_md, md, route_path
+from render import BuildContext, DEFAULT_OUTPUT, ROOT, external_output, input_digest, load_md, md, publication_date, route_path
 
 
 def git_metadata(root):
@@ -24,7 +24,7 @@ def git_metadata(root):
 
 
 def render_academic(ctx):
-    cards = []
+    dated_cards, manuscript_cards = [], []
     for paper in ctx.publications:
         meta, body, url = paper["meta"], paper["body"], paper["url"]
         link = (f'<p><a href="{html.escape(meta["paperurl"], quote=True)}">Read the paper ↗</a></p>'
@@ -32,18 +32,25 @@ def render_academic(ctx):
         citation = f'<h2 id="citation">Citation</h2>{md(meta["citation"])}' if meta.get("citation") else ""
         ctx.page(url, meta["title"], '<p class="eyebrow">Publication</p>'
                  f'<h1>{html.escape(meta["title"])}</h1>'
-                 f'<p class="paper-meta">{html.escape(str(meta["date"]))} · '
+                 f'<p class="paper-meta">{html.escape(publication_date(meta))} · '
                  f'{html.escape(meta["venue"])}</p>{link}'
                  f'<article class="prose">{md(body)}{citation}</article>', meta["excerpt"], lang="en")
+        cards = dated_cards if meta["date"] else manuscript_cards
         cards.append('<article class="publication-card">'
-                     f'<p class="paper-meta">{html.escape(str(meta["date"]))} · '
+                     f'<p class="paper-meta">{html.escape(publication_date(meta))} · '
                      f'{html.escape(meta["venue"])}</p>'
                      f'<h2><a href="{ctx.rel("/publications/", url)}">{html.escape(meta["title"])}</a></h2>'
                      f'<p>{html.escape(meta["excerpt"])}</p></article>')
     ctx.page("/publications/", "Publications", '<p class="eyebrow">Research</p><h1>Publications</h1>'
-             '<p class="intro">Diffusion language modeling and dynamic graph learning. '
+             '<p class="intro">Agent post-training, computer-use recovery, diffusion language models, '
+             'and dynamic graph learning. Status follows the latest author-supplied resume; '
+             'individual records distinguish it from public preprint metadata. '
              '<a href="https://scholar.google.com/citations?hl=zh-CN&amp;user=PCoqb3wAAAAJ">'
-             'Google Scholar ↗</a></p>' + "".join(cards), lang="en")
+             'Google Scholar ↗</a></p>'
+             + ('<section><h2>Manuscripts under review</h2>' + "".join(manuscript_cards) + '</section>'
+                if manuscript_cards else "")
+             + '<section><h2>Publications &amp; Preprints</h2>' + "".join(dated_cards) + '</section>',
+             lang="en")
     for record in ctx.site["pages"]:
         meta, body = load_md(ctx.root / record["source"])
         addition = ""
@@ -66,7 +73,8 @@ def render_academic(ctx):
         title = record["title"]
         ctx.page(record["url"], title, f'<p class="eyebrow">{html.escape(title)}</p>'
                  f'<h1>{html.escape(meta.get("title", title))}</h1>'
-                 f'<article class="prose">{md(body)}{addition}</article>', lang="en")
+                 f'<article class="prose">{md(body)}{addition}</article>', lang="en",
+                 styles=("/assets/site/profile.css",))
     ctx.page("404.html", "Page not found", '<p class="eyebrow">404</p><h1>Page not found</h1>'
              '<p>Browse the <a href="/blog/">blog</a> or return to '
              '<a href="/">the homepage</a>.</p>', lang="en")

@@ -1,15 +1,19 @@
 ---
-title: "Locality-aware Diffusion Language Modeling"
+title: "On the Trainability of Masked Diffusion Language Models via Blockwise Locality"
 collection: publications
 permalink: /publication/2026-locality-aware-dlm
 excerpt: 'Studies the trainability of Masked Diffusion Language Models against autoregressive LLMs across structured generation tasks. Proposes two locality-aware blockwise diffusion architectures (Scatter and Jigsaw) bridging AR-style local ordering and Diffusion-style global iterative refinement.'
-date: 2026-03-01
-venue: 'arXiv preprint, 2026'
+date: 2026-04-27
+venue: 'ACL 2027 · Under review · First author'
 paperurl: 'https://arxiv.org/abs/2604.24832'
-citation: 'Yuxiang Wang, et al. "Locality-aware Diffusion Language Modeling." <i>arXiv:2604.24832</i>, 2026.'
+citation: 'Yuxiang Wang, et al. "On the Trainability of Masked Diffusion Language Models via Blockwise Locality." <i>arXiv:2604.24832</i>, 2026.'
 ---
 
 ## Summary
+
+The title, first-author position, and initial public date (2026-04-27) follow [arXiv:2604.24832](https://arxiv.org/abs/2604.24832). ACL 2027 review status is reported in my November 2026 resume; it is not an acceptance claim.
+
+[Public implementation](https://github.com/stein-wang0226/trainable-masked-diffusion).
 
 This paper systematically studies *when* and *why* Masked Diffusion Language Models can be trained effectively, contrasting them with autoregressive LLMs across structured generation tasks. The central question: how does the inductive bias of a generative paradigm interact with the dependency structure of the target task?
 
