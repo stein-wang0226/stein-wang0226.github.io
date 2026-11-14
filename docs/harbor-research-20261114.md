@@ -1,7 +1,50 @@
 # Harbor 评测体系与研究进展：调研依据
 
 日期：2026-11-14。独立专题公开地址 `/harbor-framework-guide/`。
-范围限定 Harbor 框架与团队相关评测工作，不替代通用 Agent / RL 综述。
+范围以 Harbor 框架与团队相关评测工作为主，另单列 scalingX 社区任务资源，不替代通用 Agent / RL 综述。
+
+## scalingX 社区数据补充
+
+按用户提供的 `https://huggingface.co/scalingX` 调研并整合。
+17 套数据集在 2026-11-11 至 11-14 公开；每套固定 HF revision，
+根据文件列表中的 `/task.toml` 统计，共 4,980 个目录。
+其中 14 套 PR-diff 集共 4,769 个目录，按最后一级 owner__repo-PR
+名称去重为 3,688 项；十个生命科学领域共 2,845 个目录、2,550 个 PR 名称。
+这是名称去重，未做内容或语义去重，不能将总目录数称作独立任务数。
+最大 cancer 版本 1,479 目录，660 / 1,000 目标仓库产出。
+
+完整 17 项固定 SHA、API、数据卡、日期、计数与许可证元数据保存在
+`content/posts/harbor-framework-guide/assets/scalingx-datasets.json`。
+来源登记增加 11 项一手证据，Notes 由 44 增至 55 来源，
+团队版由 18 增至 29 来源。Notes 仍为 13 节，团队版仍为 5 节；
+社区资源分别放在覆盖章节和发布进展章节的 `#scalingx` 小节。
+未将 scalingX 写作 Harbor 团队正式发布的评测。
+
+抽查 cell2location-435 固定 ref，公开指令给出三文件 pandas / NumPy
+索引修复步骤；任务元数据为 unverified / generation、
+validation_not_run、空 evidence。默认评分权重
+format / size / file / region / similarity / judge =
+0 / .08 / .12 / .20 / .10 / .50，并有补丁规模等限制；
+缺少 judge 或评分基础设施失败时无有效 reward、标 ungraded。
+该分数不是功能测试通过率。Python slim Dockerfile 不安装科学依赖，
+尚需环境、oracle 和功能测试校准。
+
+科学原型三套为 AgingBench 100、Cell Response 31、闭环 Taskset 80。
+抽查 aging 文本统计任务、Cell Response 根目录 Dockerfile 与 PASS-only
+verifier、uvvis-01 无标准环境 Dockerfile，分别说明科学内容与运行合同边界。
+闭环观测由真实统计量驱动的前向模型模拟生成，非湿实验测量。
+上述判断为样本静态阅读，不能外推全量任务状态。
+数据卡旧“未 push”措辞与实际已公开文件分开说明；
+少数 Apache 元数据不外推第三方代码及输入数据许可。
+本次未运行 Docker、Harbor rollout 或 LLM judge。
+
+本次整合验收：`make check OUTPUT=/tmp/my-blogs-harbor-scalingx-build`
+通过，97 HTML / 192 public files，新增清单已登记资源 allowlist。
+Notes / 团队版在 390 / 768 / 1440 px 共六组浏览器检查通过：
+社区锚点跳转、17 项清单展开、四行团队概览、55 / 29 来源、
+无页面横向溢出、错误或外部资源请求。既有三张链路图与计数图
+仍可读，放大 / Escape 与来源筛选通过，无 JavaScript 时图与正文可读。
+团队单文件为 33,864 bytes，复制到 `/tmp` 独立验证，无脚本或资源加载依赖。
 
 ## 来源与版本
 

@@ -1,6 +1,6 @@
 {
   "snapshot": "2026-11-14",
-  "scope": "Harbor Framework、团队benchmark与代表性case；未运行模型评测或训练",
+  "scope": "Harbor Framework、团队benchmark与代表性case；未运行模型评测或训练；另含 scalingX 社区数据资源，区分生成任务与正式评测",
   "framework_release": {
     "version": "v0.26.0",
     "commit": "3cb627394b95d3ae605f31e0d694edf508cf4b7b",
@@ -563,6 +563,138 @@
       ],
       "historical_used_in": [],
       "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 45,
+      "title": "scalingX · 公开数据集目录",
+      "url": "https://huggingface.co/scalingX",
+      "scope": "发布者目录；17 套数据集的固定 revision、计数与 API 见 scalingx-datasets.json",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 46,
+      "title": "Repo2RLEnv · PR-diff pipeline",
+      "url": "https://huggingface.github.io/Repo2RLEnv/pipelines/pr_diff/",
+      "scope": "上游管线文档；PR 转换与 diff / judge 评分",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 47,
+      "title": "scalingX · ML / RL PR 修复集",
+      "url": "https://huggingface.co/datasets/scalingX/repo2rlenv-ml-rl-bench/blob/e6eb9b291e994877b0439ac0ace6f8ac19ddf499/README.md",
+      "scope": "固定 revision；100 个任务目录",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 48,
+      "title": "scalingX · Cancer SWE 1000repos",
+      "url": "https://huggingface.co/datasets/scalingX/cancer-swe-envs-1000repos/blob/14b05b9e869e750defd7080b780d890c33685985/README.md",
+      "scope": "固定 revision；1,479 个目录，660 / 1,000 仓库产出",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 49,
+      "title": "scalingX · 单细胞 / 空间组学修复集",
+      "url": "https://huggingface.co/datasets/scalingX/lifesci-single-cell-spatial-swe-envs/blob/8e6a1aca6eb97c45e9338895faed4fcae290fdfd/README.md",
+      "scope": "固定 revision；328 个目录，158 / 200 仓库产出",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 50,
+      "title": "scalingX · cell2location-435 task 元数据",
+      "url": "https://huggingface.co/datasets/scalingX/lifesci-single-cell-spatial-swe-envs/blob/8e6a1aca6eb97c45e9338895faed4fcae290fdfd/tasks/BayraktarLab__cell2location-435/task.toml",
+      "scope": "固定源码；unverified / generation，validation_not_run 与空 evidence",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 51,
+      "title": "scalingX · cell2location-435 verifier",
+      "url": "https://huggingface.co/datasets/scalingX/lifesci-single-cell-spatial-swe-envs/blob/8e6a1aca6eb97c45e9338895faed4fcae290fdfd/tasks/BayraktarLab__cell2location-435/tests/verifier.py",
+      "scope": "固定源码；六项权重与 required judge；非功能测试通过率",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 52,
+      "title": "scalingX · cell2location-435 评分入口",
+      "url": "https://huggingface.co/datasets/scalingX/lifesci-single-cell-spatial-swe-envs/blob/8e6a1aca6eb97c45e9338895faed4fcae290fdfd/tasks/BayraktarLab__cell2location-435/tests/test.sh",
+      "scope": "固定源码；judge / verifier 错误不保留 reward，写入 ungraded",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 53,
+      "title": "scalingX · AgingBench",
+      "url": "https://huggingface.co/datasets/scalingX/lifescience_agingbench/blob/071ab45e90e54b3d4c78e3578d24338e78d3f040/README.md",
+      "scope": "固定 revision；100 个目录，文本统计样本需结合实际任务阅读",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 54,
+      "title": "scalingX · Cell Response Bench",
+      "url": "https://huggingface.co/datasets/scalingX/cell-response-bench/blob/c0567cd3ddd339a1fe121cdda075bf023fe17e5f/README.md",
+      "scope": "固定 revision；31 个目录，抽查环境与 reward 接口仍需适配",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 55,
+      "title": "scalingX · Life Sciences Taskset",
+      "url": "https://huggingface.co/datasets/scalingX/life-sciences-taskset/blob/804b91663803854f581f273ba77c6a3cab8d4282/README.md",
+      "scope": "固定 revision；80 个闭环原型，真实统计量驱动模拟观测",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#scalingx"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     }
   ],
   "source_excerpts": [
@@ -1062,5 +1194,24 @@
         "path": "src/widesearch"
       }
     ]
+  },
+  "community_datasets": {
+    "publisher": "scalingX",
+    "inventory_asset": "scalingx-datasets.json",
+    "as_of": "2026-11-14",
+    "dataset_count": 17,
+    "task_directory_sum": 4980,
+    "pr_diff": {
+      "dataset_count": 14,
+      "directory_sum": 4769,
+      "unique_owner_repo_pr_names": 3688
+    },
+    "lifesci_domains": {
+      "dataset_count": 10,
+      "directory_sum": 2845,
+      "unique_owner_repo_pr_names": 2550
+    },
+    "count_method": "逐个固定HF revision的siblings文件列表计数 /task.toml；SWE按最后一级owner__repo-PR目录名去重，非内容或语义去重。",
+    "verification_scope": "17套文件清单与数据卡、12套dataset_stats、PR修复与三类科学样本的静态阅读；未运行Docker、Harbor rollout或LLM judge。"
   }
 }

@@ -518,6 +518,10 @@
   },
   "assets": [
     {
+      "source": "content/posts/harbor-framework-guide/assets/scalingx-datasets.json",
+      "url": "/harbor-framework-guide/assets/scalingx-datasets.json"
+    },
+    {
       "source": "assets/research/serving-design-20261114/capacity-estimates.csv",
       "url": "/assets/research/serving-design-20261114/capacity-estimates.csv"
     },
