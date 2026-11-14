@@ -2140,11 +2140,12 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <h2>5. GRPO（Group Relative Policy Optimization，组相对策略优化）详解</h2>
 <section id="citation-sources-29" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
+    <p>本节先按 DeepSeekMath 解释原始 GRPO，再保留一张面试数值卡。DAPO、Dr. GRPO、GSPO、CISPO 的改动、完整论文配方和训练诊断统一放在<a href="/llm-posttraining/s02_rl_algorithms.html">RLVR 主讲章</a>，避免在速查手册重复展开。</p>
 
     <h3>动机：PPO 在 LLM 中的痛点</h3>
 <section id="citation-sources-30" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
 
-    <p>PPO 需要 Critic 网络估计 $V(s)$。在 LLM 场景中，Critic 和 Actor 一样大（几十亿参数），<strong>显存直接翻倍</strong>。GRPO 的贡献：用一个极简的方法替代 Critic。</p>
+    <p>PPO 需要 Critic 网络估计 $V(s)$。在 LLM 场景中，Critic 往往与 Actor 规模相近，还会增加参数、梯度和优化器状态；具体显存增量取决于是否共享 backbone、分片和精度。GRPO 的核心动机是用同题多次采样形成组相对 baseline，省去显式 learned critic。</p>
 
     <h3>GRPO 核心做法</h3>
 <section id="citation-sources-31" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
@@ -2153,7 +2154,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <div class="step-card">
         <div class="step-number">1</div>
         <h4 style="padding-top:8px">采样一组回答</h4>
-        <p>对同一个 prompt $x$，用当前策略 $\pi_{\theta_{old}}$ 一次采样 $G$ 条回答 $\{y_1, y_2, \ldots, y_G\}$（$G$ 通常 = 64）</p>
+        <p>对同一个 prompt $x$，用当前策略 $\pi_{\theta_{old}}$ 一次采样 $G$ 条回答 $\{y_1, y_2, \ldots, y_G\}$。公开配方中的 $G$ 可为 8、16 或 64，需按有效组率与 rollout 预算选择。</p>
     </div>
 
     <div class="step-card">
@@ -2196,7 +2197,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h4>Clip 和 KL 惩罚的区别与配合</h4>
-    <p>GRPO 同时使用了 clip 和 KL 惩罚——两者解决的是<strong>不同的问题</strong>：</p>
+    <p>DeepSeekMath 的 GRPO 配方同时使用 clip 和 KL 惩罚，两者解决的是<strong>不同的问题</strong>；后续配方可以保留 clip 而将显式 KL 设为 0：</p>
     <table>
         <tr><th></th><th>Clip 截断</th><th>KL 惩罚</th></tr>
         <tr><td><strong>约束对象</strong></td><td>$\pi_\theta$ vs $\pi_{\theta_{old}}$（相邻迭代）</td><td>$\pi_\theta$ vs $\pi_{ref}$（当前策略 vs SFT 参考模型）</td></tr>
@@ -2216,7 +2217,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
         <strong>考试类比：</strong>同一道题让模型答 $G$ 遍，有的答对有的答错。答对的属于"好回答"（$\hat{A}>0$），答错的属于"差回答"（$\hat{A}<0$）。组内均值充当 baseline；公开配方中的 $G$ 有 8、16、64，取决于任务成功率与 rollout 预算。
     </div>
 
-    <h4>GRPO 数值背诵卡：必须带来源</h4>
+    <h4>GRPO 数值背诵卡：只记锚点，完整配方回主讲章</h4>
     <table>
         <tr><th>配方</th><th>G / batch</th><th>LR</th><th>Clip / KL</th><th>生成与更新</th></tr>
         <tr><td><strong>DeepSeekMath 7B</strong></td><td>G=64；training batch=1024（原文未细分单位）</td><td>1e-6</td><td>β=0.04</td><td>max=1024；每次 exploration 后 1 次更新</td></tr>
@@ -2237,18 +2238,19 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
         $$\text{PPO: } A_t = G_t - V(s_t) \quad \longrightarrow \quad \text{GRPO: } \hat{A}_i = r_i - \overline{r}$$
         <div class="formula-annotation">
             <div class="item"><span class="symbol">PPO 的 $V(s_t)$</span>用 Critic 网络估计"平均能得多少分"——需要训练一整个大网络</div>
-            <div class="item"><span class="symbol">GRPO 的 $\overline{r}$</span>用同一 prompt 的多次采样取平均——Monte Carlo 估计同样是 $\mathbb{E}[r|x]$ 的无偏估计</div>
-            <div class="item"><span class="symbol">核心假设</span>LLM 的"状态"就是 prompt $x$（单步 MDP），所以 $V(s) = \mathbb{E}[r|x] \approx \frac{1}{G}\sum r_i$</div>
-            <div class="item"><span class="symbol">标准化（除以 std）</span>让不同 prompt 之间的 advantage 量级一致，稳定训练</div>
+            <div class="item"><span class="symbol">GRPO 的 $\overline{r}$</span>同题样本均值可估计 $\mathbb{E}[r|x]$；但把当前样本也放进 baseline 会引入有限 $G$ 的缩放效应，RLOO 用 leave-one-out 排除自身</div>
+            <div class="item"><span class="symbol">适用口径</span>在序列级 outcome reward 下，组均值近似同一 prompt 条件下的期望回报；token 目标共享序列 advantage。多轮 Agent 仍有中间状态与动作，不能据此断言整个 MDP 只有一步</div>
+            <div class="item"><span class="symbol">标准化（除以 std）</span>可统一组内量级，但也会改变不同题目的隐式权重；Dr. GRPO 因此去掉 group-std 缩放</div>
         </div>
     </div>
 
     <h4>KL 惩罚项 $D_{KL}^{(t)}$ 的展开</h4>
     <div class="formula-box">
-        $$D_{KL}^{(t)} = \frac{\pi_\theta(a_{i,t}|s_{i,t})}{\pi_{ref}(a_{i,t}|s_{i,t})} - \log\frac{\pi_\theta(a_{i,t}|s_{i,t})}{\pi_{ref}(a_{i,t}|s_{i,t})} - 1$$
+        $$r_t = \frac{\pi_{ref}(a_{i,t}|s_{i,t})}{\pi_\theta(a_{i,t}|s_{i,t})}, \qquad \widehat{D}_{KL}^{(t)} = r_t - \log r_t - 1$$
         <div class="formula-annotation">
             <div class="item"><span class="symbol">注意</span>这里的参考模型是 $\pi_{ref}$（SFT 模型），不是 $\pi_{\theta_{old}}$（上一步的策略）</div>
-            <div class="item"><span class="symbol">与 PPO 的区别</span>PPO 通过 clip 隐式约束 $\pi_\theta$ 不偏离 $\pi_{\theta_{old}}$；GRPO 额外加了显式 KL 惩罚约束不偏离 $\pi_{ref}$</div>
+            <div class="item"><span class="symbol">比率方向</span>该非负采样估计器使用 $\pi_{ref}/\pi_\theta$；在 $a\sim\pi_\theta$ 下取期望得到 forward KL。不能把比率方向反写</div>
+            <div class="item"><span class="symbol">与 clip 的区别</span>Clip 约束当前策略相对 behavior / old policy 的单次更新；此项锚定 reference。两者是否同时使用仍由配方决定</div>
             <div class="item"><span class="symbol">为什么要这一项？</span>防止 reward hacking——模型可能找到得高分但语义退化的"捷径"，KL 约束保持语言质量</div>
         </div>
     </div>
@@ -2258,13 +2260,13 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <table>
         <tr><th></th><th><strong>$-\beta\log(\pi_\theta/\pi_{ref})$</strong></th><th><strong>$\text{ratio} - \log(\text{ratio}) - 1$</strong></th></tr>
         <tr><td><strong>来源</strong></td><td>InstructGPT / 标准 RLHF</td><td>GRPO / DeepSeek-R1</td></tr>
-        <tr><td><strong>数学含义</strong></td><td>KL 散度的一阶近似（只取 log 项）</td><td>KL 散度的二阶近似，更准确</td></tr>
-        <tr><td><strong>当 π_θ ≈ π_ref</strong></td><td>log(ratio) 是 KL 的一阶 Taylor 展开主导项</td><td>ratio - log(ratio) - 1 始终 ≥ 0，ratio=1 时 = 0</td></tr>
-        <tr><td><strong>类比</strong></td><td>用一阶导数近似函数变化（简单够用）</td><td>用二阶 Taylor 展开近似（更精确）</td></tr>
+        <tr><td><strong>数学含义</strong></td><td>采样 token 的 log-ratio；在当前策略下取期望得到 forward KL</td><td>令 ratio=$\pi_{ref}/\pi_\theta$ 的非负采样估计器；期望同样对应 forward KL</td></tr>
+        <tr><td><strong>单样本性质</strong></td><td>可正可负，依赖 batch 平均后解释</td><td>始终 ≥ 0，ratio=1 时为 0</td></tr>
+        <tr><td><strong>选择依据</strong></td><td>reward shaping 与既有 RLHF 实现常用</td><td>希望逐 token 非负且控制估计方差时使用</td></tr>
         <tr><td><strong>使用位置</strong></td><td>PPO 的 reward 中（通过梯度传播实现 KL 约束）</td><td>GRPO 的损失函数中（显式 KL 项）</td></tr>
     </table>
     <div class="box-insight">
-        <strong>本质联系：</strong>两种形式都是对 $D_{KL}(\pi_\theta\|\pi_{ref})$ 的近似。当策略变化不大时（π_θ ≈ π_ref），两者效果相近。GRPO 用二阶近似是因为它没有 Critic 网络做精细的优势估计，需要更严格的 KL 约束来防止策略走偏。
+        <strong>本质联系：</strong>两者都用于估计或实现 $D_{KL}(\pi_\theta\|\pi_{ref})$ 约束，差别在单样本形式、方差和插入 reward 还是 loss。不能因为 GRPO 没有 Critic，就推导出它必须使用更强 KL；DAPO、Dr. GRPO 等公开配方把显式 KL 设为 0。
     </div>
 
     <h3>GRPO vs PPO 对比</h3>
@@ -2273,22 +2275,26 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <table>
         <tr><th>维度</th><th>PPO</th><th>GRPO</th></tr>
         <tr><td>Advantage 来源</td><td>Critic 网络估计 $V(s)$（token 级别）</td><td>组内 reward 标准化（序列级别）</td></tr>
-        <tr><td>是否需要 Critic</td><td>是（显存翻倍）</td><td>否（省一半显存）</td></tr>
-        <tr><td>KL 约束方式</td><td>reward 中隐式 KL 惩罚</td><td>损失函数中显式 KL 项</td></tr>
-        <tr><td>采样</td><td>每个 prompt 采 1 条</td><td>每个 prompt 采 $G$ 条（如 64）</td></tr>
+        <tr><td>是否需要 Critic</td><td>通常需要 learned critic；额外显存取决于共享、分片和精度</td><td>不需要显式 critic，但需要同题多条 rollout</td></tr>
+        <tr><td>KL 约束方式</td><td>可在 reward 或 loss 中加入，取决于实现</td><td>原始 DeepSeekMath 有显式 KL；后续配方可设为 0</td></tr>
+        <tr><td>采样</td><td>不要求同题成组，具体条数由系统决定</td><td>每个 prompt 采 $G$ 条；公开配方有 8、16、64</td></tr>
         <tr><td>Advantage 粒度</td><td>每个 token 有不同的 $A_t$</td><td>整条回答共享 $\hat{A}_i$</td></tr>
         <tr><td>计算代价</td><td>Critic 前向/反向 + PPO 更新</td><td>$G$ 次推理 + PPO 更新（无 Critic）</td></tr>
     </table>
 
-    <h3>DeepSeek-R1 中的实践</h3>
+    <h3>DeepSeek-R1-Zero 中的实践</h3>
 <section id="citation-sources-33" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
 
     <table>
         <tr><th>设计选择</th><th>做法</th><th>原因</th></tr>
-        <tr><td>组大小</td><td>$G = 64$</td><td>越大 advantage 估计越稳定</td></tr>
+        <tr><td>组大小</td><td>$G = 16$；每次更新 32 prompts / 512 trajectories</td><td>在有效组率、生成成本和更新 batch 之间折中</td></tr>
         <tr><td>Reward</td><td>规则判定（对/错）</td><td>数学/代码答案可验证，无需 RM</td></tr>
         <tr><td>起点</td><td>直接从 base model 开始</td><td>发现不经 SFT 也能涌现 CoT 推理</td></tr>
     </table>
+    <!-- READING:HISTORY:START --><details data-reading-history><summary>本节两处修订前表述 · 仅供内容保留核验</summary>
+        <p>PPO 需要 Critic 网络估计 $V(s)$。在 LLM 场景中，Critic 和 Actor 一样大（几十亿参数），<strong>显存直接翻倍</strong>。GRPO 的贡献：用一个极简的方法替代 Critic。</p>
+        <p>对同一个 prompt $x$，用当前策略 $\pi_{\theta_{old}}$ 一次采样 $G$ 条回答 $\{y_1, y_2, \ldots, y_G\}$（$G$ 通常 = 64）</p>
+    </details><!-- READING:HISTORY:END -->
 </section>
 
 <!-- ==================== Section 6: RLHF ==================== -->

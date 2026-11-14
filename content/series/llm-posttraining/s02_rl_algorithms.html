@@ -8,6 +8,10 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<section class="integration-overview" id="reading-guide">
+<h2>本章阅读路径：原理、变体、配方、诊断</h2>
+<p>先用策略梯度、PPO / GAE 和 GRPO 建立 baseline、ratio 与信用分配的共同语言；再比较 DAPO、Dr. GRPO、GSPO、CISPO 和单轨迹方法分别改了什么；随后进入论文数值配方，最后用训练曲线与失败案例判断该调数据、奖励、采样还是优化器。面试只需先记参数表中的量级，复现时必须回到对应论文行和固定配置。</p>
+</section>
 <section id="policy-gradient">
 <h2>从最终成败到动作梯度，中间隔着信用分配</h2>
 <p class="lead">Agent episode 包含策略动作和环境观察。模型只控制动作；最后 reward 要转成哪些动作应增加或减少概率的信号，再决定用怎样的概率比、裁剪和分母完成更新。</p>
@@ -122,6 +126,7 @@ df/dρ = 4p(1−p)；ρ=1 时门控为 1
 <section id="rlvr-recipe">
 <h2>RLVR 配方：从配置字段到训练诊断</h2>
 <p>RLVR 是奖励来源，GRPO / RLOO / PPO 是更新算法。一个可复现配方不能只写“RLVR + GRPO”，还要固定模型快照、chat template、任务采样、rollout、verifier、优势、loss 聚合、优化器与评测协议。下表给出跨 TRL、verl 等实现都应能映射的语义字段；具体键名和默认值以所用 commit 为准。<a href="index.html#ref-50">[50]</a> <a href="index.html#ref-58">[58]</a></p>
+<div class="callout"><strong>这一节按使用顺序展开：</strong>先用字段清单防止漏报，再从论文配方选一个可核对的起点；参数表用于理解联动关系，追问卡用于复述，监控表用于训练时定位问题。它们不是四套彼此独立的超参数建议。</div>
 <table>
 <thead><tr><th>配置层</th><th>至少记录</th><th>关键关系与常见误区</th></tr></thead>
 <tbody>
@@ -166,7 +171,9 @@ evaluation: {frozen_checkpoint, decoding_budget, held_out_tasks,
 </table>
 <p class="note">DeepSeek-R1 v2 另在“第一 RL 阶段”写出 clip ratio ε=10；该值与标准 0.2 相差很大，且 R1-Zero 主段没有给 clip。背诵时应按“版本原文如此披露”陈述，不将它改写成通用 GRPO 默认值。<a href="index.html#ref-74">[74]</a></p>
 
-<h3>官方实现示例：可运行字段不等于原论文配方</h3>
+<details>
+<summary>官方实现字段映射：可运行示例不等于原论文配方</summary>
+<p>只有在把论文语义翻译成具体框架配置时才需要展开本表。默认值用于认识字段和约束，不作为跨模型推荐值。</p>
 <table>
 <thead><tr><th>固定来源</th><th>关键默认 / 示例值</th><th>正确用法</th></tr></thead>
 <tbody>
@@ -175,6 +182,7 @@ evaluation: {frozen_checkpoint, decoding_budget, held_out_tasks,
 <tr><td>NeMo RL CISPO example @ 81aa43d <a href="index.html#ref-79">[79]</a></td><td>32 prompts、G=16、async lag=1；ratio_clip_min/max=1/5，即有效 clamp [0,6]；KL=0</td><td>这是 Qwen3-30B-A3B 的高 off-policy 验证配置，不是 MiniMax-M1 原始 recipe；额外 actor-vs-generation correction 与 CISPO clip 是两项机制</td></tr>
 </tbody>
 </table>
+</details>
 
 <h3>参数背诵表：数字、作用与调参方向</h3>
 <table>
@@ -206,7 +214,7 @@ evaluation: {frozen_checkpoint, decoding_budget, held_out_tasks,
 <details><summary>12. 面试中如何在一分钟内讲完整 GRPO recipe？</summary><p>按“数据→采样→奖励→优势→loss→优化→监控”回答：每题 G 条、T/top-p/最大长度；规则 verifier；组内中心化及是否除 std；ratio 单位、clip、KL、分母；global batch、LR、inner epoch；最后给有效组率、entropy/KL、ratio/clip、长度/截断和冻结终评。数字必须注明来自哪篇论文或哪个固定配置。</p></details>
 </section>
 
-<h3>训练曲线不能只看 reward</h3>
+<h3>从数字回到诊断：训练曲线不能只看 reward</h3>
 <table>
 <thead><tr><th>监控项</th><th>异常信号</th><th>优先排查</th></tr></thead>
 <tbody>
