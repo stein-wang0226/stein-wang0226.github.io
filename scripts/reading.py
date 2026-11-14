@@ -107,7 +107,8 @@ def decorate(ctx, entry, text):
             if re.fullmatch(r"\d{2}", inner):
                 inner = f'{target["order"]:02}'
             else:
-                inner = re.sub(r"^(?:第)?\d{2}(?=\s|章|[ ·])", f'{target["order"]:02}', inner)
+                inner = re.sub(r"^(第?)\d{2}(?=\s|章|[ ·])",
+                               lambda m: m[1] + f'{target["order"]:02}', inner)
             return "<a" + attrs + ">" + inner + "</a>"
         fragments = re.split(r'(<!-- READING:HISTORY:START -->.*?<!-- READING:HISTORY:END -->)', body, flags=re.S)
         body = "".join(f if f.startswith("<!-- READING:HISTORY:START -->") else

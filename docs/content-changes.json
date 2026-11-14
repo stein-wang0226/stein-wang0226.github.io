@@ -14,8 +14,8 @@
     },
     {
       "source": "assets/site/catalog.js",
-      "sha256": "eb52273da495612961e8443a1b5b15de99490b056af6dc3b421102cd52b6a12d",
-      "reason": "Preserve catalog filters, chapter search and URL restoration; add progressive topic buttons and matching featured-series markup. Version the catalog request with the HTML build fingerprint to avoid stale data after deployment. Native topic selection and static chapter links remain available if loading fails. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles."
+      "sha256": "6227fbbfbd01bd906b9f70b08be170164ff2690c832731f4ac584699b853706a",
+      "reason": "Preserve catalog filters, chapter search and URL restoration; add progressive topic buttons and matching featured-series markup. Version the catalog request with the HTML build fingerprint to avoid stale data after deployment. Native topic selection and static chapter links remain available if loading fails. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles. Follow-up 2026-11-14: preserve user input and queued submission while the catalog loads; topic/type filters include matching published chapters with a parent-series return link, while the unfiltered view retains collection grouping. Browser reproduction confirms the former input loss and omitted chapters."
     },
     {
       "source": "assets/site/site.css",

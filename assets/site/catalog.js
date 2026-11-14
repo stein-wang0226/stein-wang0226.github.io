@@ -2,6 +2,18 @@
 (async () => {
   const form = document.querySelector('#catalog-form');
   if (!form) return;
+  // Keep edits made before the asynchronous catalog has finished loading.
+  const pendingFields = new Set();
+  const remember = event => {
+    if (event.target.name) pendingFields.add(event.target.name);
+  };
+  const deferSubmit = event => {
+    event.preventDefault();
+    for (const key of ['q', 'topic', 'type', 'sort']) pendingFields.add(key);
+  };
+  form.addEventListener('input', remember);
+  form.addEventListener('change', remember);
+  form.addEventListener('submit', deferSubmit);
   try {
     const catalog = new URL('catalog.json', location.href);
     if (form.dataset.catalogVersion) catalog.searchParams.set('v', form.dataset.catalogVersion);
@@ -15,7 +27,7 @@
     const clear = document.querySelector('#clear-filters');
     const icon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     const esc = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    function restore() {
+    function restore(preserveEdits = false) {
       const params = new URLSearchParams(location.search);
       const legacy = params.get('category');
       notice.textContent = '';
@@ -35,6 +47,7 @@
         params.delete('category');
       }
       for (const [k, field] of Object.entries(fields)) {
+        if (preserveEdits && pendingFields.has(k)) continue;
         const value = params.get(k) || (k === 'sort' ? 'updated-desc' : '');
         field.value = value;
         if (k !== 'q' && field.value !== value) {
@@ -46,7 +59,7 @@
         notice.textContent = '独立子站列在本地文章下方。';
         document.querySelector('#external').scrollIntoView();
       }
-      update(false);
+      update(preserveEdits && pendingFields.size > 0);
     }
     function update(write = true) {
       const state = Object.fromEntries(Object.entries(fields).map(([k, f]) => [k, f.value]));
@@ -60,13 +73,14 @@
         history.replaceState(null, '', location.pathname + (params.size ? '?' + params : '') + location.hash);
       }
       const query = state.q.trim().toLocaleLowerCase();
+      const includeChapters = !!(query || state.topic || state.type);
       const filtered = !!(query || state.topic || state.type || state.sort !== 'updated-desc');
       for (const chip of chips.querySelectorAll('button')) {
         chip.setAttribute('aria-pressed', String(chip.dataset.topic === state.topic));
       }
       clear.hidden = !filtered;
       const rows = data.entries.filter(e => (query ? true : e.origin === 'local' && e.status === 'published')
-        && (query || e.kind !== 'chapter')
+        && (includeChapters || e.kind !== 'chapter')
         && (!state.topic || e.topic === state.topic)
         && (!state.type || e.type === state.type)
         && (!query || e.search.includes(query)));
@@ -80,9 +94,11 @@
       function renderCard(e) {
         const topic = data.topics.find(t => t.id === e.topic).label;
         const type = data.types.find(t => t.id === e.type).label;
+        const parent = e.series && data.entries.find(row => row.id === e.series);
         const children = data.entries.filter(c => c.series === e.id && c.status === 'published').sort((a,b) => a.order-b.order);
         return `<article class="note-card${e.kind === 'series' ? ' series-card' : ''}" data-entry="${esc(e.id)}"><div class="tag"><span>${esc(topic)}</span><span class="note-type">${esc(type)}${e.kind === 'chapter' ? ' · 系列章节' : ''}</span></div>
           <h2><a href="${esc(e.url)}">${esc(e.title)}</a></h2><p>${esc(e.summary)}</p>
+          ${parent ? `<p>所属系列：<a href="${esc(parent.url)}">${esc(parent.title)}</a></p>` : ''}
           <div class="card-bottom"><span class="note-date">${esc(e.updated || '更新时间待确认')}</span>
           <a class="card-open" href="${esc(e.url)}" aria-label="阅读${esc(e.title)}">${e.kind === 'series' ? '浏览系列' : '阅读笔记'}${icon}</a></div>
           ${children.length ? `<details><summary>查看系列章节</summary><ol>${children.map(c=>`<li><a href="${esc(c.url)}">${esc(c.title)}</a></li>`).join('')}</ol></details>` : ''}</article>`;
@@ -116,11 +132,15 @@
       fields.topic.value = chip.dataset.topic;
       update();
     });
-    window.addEventListener('popstate', restore);
-    restore();
+    window.addEventListener('popstate', () => restore());
+    restore(true);
     document.querySelector('#topic-fallback').hidden = true;
     chips.hidden = false;
   } catch {
     document.querySelector('#catalog-notice').textContent = '筛选暂不可用，以下目录和章节链接仍可浏览。';
+  } finally {
+    form.removeEventListener('input', remember);
+    form.removeEventListener('change', remember);
+    form.removeEventListener('submit', deferSubmit);
   }
 })();
