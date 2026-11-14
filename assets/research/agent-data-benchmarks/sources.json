@@ -11,8 +11,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 2,
@@ -21,8 +26,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 3,
@@ -31,8 +41,14 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 4,
@@ -41,8 +57,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 5,
@@ -51,8 +72,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 6,
@@ -61,8 +87,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 7,
@@ -71,8 +103,15 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 8,
@@ -81,8 +120,15 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 9,
@@ -91,8 +137,15 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
+        "/llm-research-map-2026/s05_agent_frontiers.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 10,
@@ -101,8 +154,14 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/agent-data-benchmarks/s01_task_synthesis.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 11,
@@ -111,8 +170,14 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 12,
@@ -121,8 +186,31 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-posttraining/s05_frameworks_async.html#partial-rollout",
+        "/llm-posttraining/s05_frameworks_async.html#three-policy",
+        "/llm-research-map-2026/s01_agent_data_bench.html#distinctions",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
+        "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
+        "/llm-research-map-2026/s03_base_architecture.html#cache",
+        "/llm-research-map-2026/s03_base_architecture.html#ced",
+        "/llm-research-map-2026/s03_base_architecture.html#csa2",
+        "/llm-research-map-2026/s03_base_architecture.html#engram",
+        "/llm-research-map-2026/s03_base_architecture.html#versions",
+        "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s07_architecture_training.html#precision",
+        "/llm-research-map-2026/s07_architecture_training.html#residual"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 13,
@@ -131,8 +219,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 14,
@@ -141,8 +235,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
+        "/llm-research-map-2026/s01_agent_data_bench.html#parity"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 15,
@@ -151,8 +251,15 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science",
+        "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 16,
@@ -161,8 +268,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 17,
@@ -171,8 +284,14 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
+        "/llm-research-map-2026/s01_agent_data_bench.html#parity"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 18,
@@ -181,8 +300,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
+        "/llm-research-map-2026/s01_agent_data_bench.html#parity"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 19,
@@ -191,8 +316,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 20,
@@ -201,8 +332,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#contract",
+        "/llm-research-map-2026/s01_agent_data_bench.html#harbor"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 21,
@@ -211,8 +348,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#contract",
+        "/llm-research-map-2026/s01_agent_data_bench.html#harbor"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 22,
@@ -221,8 +364,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#deepswe",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 23,
@@ -231,8 +380,13 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#deepswe"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 24,
@@ -241,8 +395,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#deepswe",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 25,
@@ -251,8 +411,13 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#deepswe"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 26,
@@ -261,8 +426,13 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#deepswe"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 27,
@@ -271,8 +441,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#aa",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 28,
@@ -281,8 +457,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 29,
@@ -291,8 +472,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 30,
@@ -301,8 +487,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 31,
@@ -311,8 +502,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 32,
@@ -321,8 +517,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 33,
@@ -331,8 +532,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 34,
@@ -341,8 +547,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 35,
@@ -351,8 +562,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 36,
@@ -361,8 +577,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
+        "/llm-research-map-2026/s05_agent_frontiers.html#skills"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 37,
@@ -371,8 +593,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 38,
@@ -381,8 +608,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 39,
@@ -391,8 +623,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 40,
@@ -401,8 +638,14 @@
       "kind": "project_documentation",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
+        "/llm-research-map-2026/s05_agent_frontiers.html#gui"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 41,
@@ -411,8 +654,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 42,
@@ -421,8 +669,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 43,
@@ -431,8 +684,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 44,
@@ -441,8 +699,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 45,
@@ -451,8 +714,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 46,
@@ -461,8 +729,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 47,
@@ -471,8 +744,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 48,
@@ -481,8 +759,14 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science",
+        "/llm-research-map-2026/s05_agent_frontiers.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 49,
@@ -491,8 +775,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 50,
@@ -501,8 +790,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 51,
@@ -511,8 +805,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 52,
@@ -521,8 +820,13 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+      ],
+      "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     }
   ]
 }

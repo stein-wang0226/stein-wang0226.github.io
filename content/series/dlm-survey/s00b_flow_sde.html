@@ -98,6 +98,7 @@ window.MathJax = {
 
 <div class="doc-header">
 <h1>连续时间生成模型：ODE、SDE 与 Flow Matching</h1>
+<div class="card" id="mechanism-review"><h3>机制与验收：路径、时间与求解器</h3><p>本章使用噪声t=0→数据t=1，DDPM章常用数据→噪声；跨章先变换时间与符号。边际速度是条件速度在给定xt下的期望，条件/边际MSE梯度等价要求路径分布不依赖待优化θ且可交换积分/微分。概率流ODE与对应SDE在理想score/正则条件下共享单时刻边际，并非同一随机轨迹。</p><p>直线条件路径也不保证边际流或有限步误差为零。固定模型，比较求解器/NFE/随机性与质量，而非仅比较“步数”。来源：<a href="https://arxiv.org/abs/2011.13456">Score-SDE</a>、<a href="https://arxiv.org/abs/2210.02747">Flow Matching</a>、<a href="https://arxiv.org/abs/2206.00927v3">DPM-Solver</a>；接 <a href="s05_paradigms.html">预测目标</a>。</p></div>
 <div class="doc-subtitle">理论基础 · 第二章</div>
 </div>
 

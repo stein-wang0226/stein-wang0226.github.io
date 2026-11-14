@@ -450,3 +450,35 @@ Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma分别分析，
 `27859a146c91ac073b5058f6ca354ac48bbe1fc620b9f276c91b490700f44db6`。
 对122项manifest文件比较，仅HTML资源查询参数及博客data-catalog-version不同；
 归一化这些缓存版本后全部一致，正文、导航、数据和资源字节没有其他变化。
+
+## 全站目录与正文整合 · 2026-11-14
+
+实施记录见 `organization-integration-20261114.md`。隔离工作树
+`/tmp/my-blogs-organization-release` 从 `e1cfb6b` 开始，保留含同期内容的
+8系列/48章节快照；正式发布前合并最新远端内容，个人事实与 Profile 沿用其独立发布。
+共享工作树没有用于提交，未提交的其它任务内容继续保留。
+
+已实际通过：
+
+- `make governance`、`make inventory`：67 项，8 系列、48 章节、9 篇文章、2 外部入口。
+- `make check OUTPUT=/tmp/my-blogs-organization-build`：96 HTML 页、173 公开文件。
+- `scripts/organization.py check`：65 个源页面、2,744 个原单元、967 源锚点、
+  1,546 公开锚点、来源与 AUTO 标记保留；不可变清单无例外。
+- `scripts/citations.py check`：465 项来源/版本记录，189 项专题来源登记；
+  编号、不同版本、多论文编号、当前/冻结使用位置与原件 SHA/长度核对通过。
+- `docs/verify-content-migration.py --require-clean`：9 项原 SHA 完全匹配、
+  32 项已记录有意变化、299 原锚点、59 原标记、163 注册路由通过。
+  原迁移清单没有重建，当前变化不描述为字节相同。
+- `scripts/test_pipeline.py`：12 项隔离测试通过，含失效引用/先修环/缺锚点/
+  使用位置与版本冲突、源不回写、确定性及失败保留成功产物。
+- Chrome/Playwright：192 项 390/768/1440px 布局与 79 项交互通过；
+  核对全部8系列目录、48章节前后章、主页→主线→章节往返、搜索清除/恢复/空结果、
+  旧锚点展开、引用返回、无 JavaScript 和目录加载失败入口。
+- 实际浏览器再次输入 OPD、GRPO、Harbor、KV、GUI、DLM，
+  首项分别为 OPD 主讲、现代 RL、任务合成、Attention/KV、GUI 前沿、DLM 范式。
+
+截图与机器记录在仓库外 `/tmp/my-blogs-browser-tests/organization-*.png`、
+`organization-report.json`；已查看博客桌面与 DLM 手机最终像素结果。
+额外修正 DLM 自动本文目录的旧小节显示号；旧 `reading-section-*` 链接映射保留。
+以上是结构与阅读验证，专题中的研究复现缺口和待执行实验保持原状态。
+最终部署提交与线上核对以随后发布记录为准。

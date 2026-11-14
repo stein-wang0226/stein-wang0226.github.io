@@ -149,6 +149,10 @@ base-checkpoint/
 <p>下一章将用明确的混合配比和真实消融回答：把软件工程文档、仓库与轨迹放进 Base 的准备阶段，有什么可确认的收益，又有哪些尚不能确认的部分。</p>
 </section>
 <section id="sources">
+<h2 id="architecture-handoff">架构、训练方法与任务来源怎样交接</h2>
+<p>Base checkpoint还需带入模型的head / FFN / 专家 / 状态层计划及位置规格；它们决定后续LoRA目标矩阵、TP可分性、CP历史交换和服务缓存。QKV与标签shift从<a href="../llm-architecture/s01_transformer_foundations.html">架构01</a>检查，KV字节和位置范围从<a href="../llm-architecture/s02_attention_position_cache.html">架构02</a>检查；不能由“70B”标签推断这些对象。</p>
+<p>进入科学Agent准备阶段前，建立文档与任务来源组：正文语料、代码、作者答案表、verifier与held-out是不同数据层。作者差异分析结果可以是许可允许的训练文本，却会污染同研究终评；应保留source lineage并隔离评估。具体边界见<a href="../agent-data-benchmarks/s03_scientific_task_family.html#provenance">科学来源审计</a>。</p>
+<p>优化器重置、可训练参数、重计算和训练状态规模在<a href="s05_training_methods_systems.html">第05章</a>统一登记。本文方案的额外阶段收益只能由同基模 / 同下游及同预算对照确认；公开工业报告不提供本科学任务的预期分数。</p>
 <h2>本章证据与延伸阅读</h2>
 <p>基础目标与预算：<a href="index.html#ref-14">[14] Chinchilla</a>、<a href="index.html#ref-15">[15] FIM</a>。工业数据与课程：<a href="index.html#ref-16">[16] Llama 3</a>、<a href="index.html#ref-12">[12] Qwen3</a>、<a href="index.html#ref-3">[3] GLM-5</a>、<a href="index.html#ref-4">[4] Olmo 3</a>、<a href="index.html#ref-10">[10] V4</a>、<a href="index.html#ref-11">[11] Ultra</a>及<a href="index.html#ref-26">[26] 官方模型卡</a>。</p>
 <p class="note">样本 schema、公式实现提示、目录与交接检查为教学归纳；本章不声称复现了这些团队的训练。</p>

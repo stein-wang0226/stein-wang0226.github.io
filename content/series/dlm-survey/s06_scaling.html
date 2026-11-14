@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
 </nav>
 <div class="container">
 <h2 class="section-title" id="s6"><span class="num">06</span> DLM Scaling Laws 与 AR 对比</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：有效数据与相同计算</h3><p>unique tokens、重复epochs、随机噪声视图和训练FLOPs是不同变量；随机mask提供视图多样性，不产生独立新事实。拟合scaling必须冻结tokenizer、数据去重、loss估计与模型/decoder，并报告拟合区间和残差。AR NLL与扩散ELBO困惑度不能未经校准直接排名。</p><p>RD≈513/32及“数据受限时DLM更高效”保留为原报告条件内假设，非通用定律；新方案用数据量×复用×噪声核消融，再测同成功成本。基础定义见 <a href="index.html#foundations">来源</a>；接 <a href="/llm-training-lifecycle/s01_pretraining.html">数据/算力预算</a>与 <a href="/llm-serving/s03_capacity_cost.html">测量合同</a>。</p></div>
 
 <h3>6.1 核心发现：DLM vs AR Scaling</h3>
 <div class="card purple">

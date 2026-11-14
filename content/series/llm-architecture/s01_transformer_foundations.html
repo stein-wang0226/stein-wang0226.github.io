@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>01 · Transformer 的张量流与训练目标</title><meta name="description" content="从token和embedding走到QKV、causal mask、残差、logits、teacher forcing、标签位移和梯度，逐项解释张量与状态。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
+<body><main class="training-lifecycle">
+<section id="purpose"><h2>把一次语言预测走成可检查的数据流</h2>
+<p class="lead">decoder-only LLM 接收 token ID，经过多层表示变换，在每个位置输出下一个 token 的分布。训练把已知文本作为条件同时计算多个预测；推理把新生成 token 回填，继续下一步。理解两者共享哪些计算、保存哪些状态，是阅读新架构的起点。</p>
+<p>先修：矩阵乘法、softmax 与链式法则。本文默认稠密、causal、pre-norm decoder；不含 cross-attention。原始 Transformer 是 encoder-decoder，本章的现代 decoder 示例依据固定 Llama 实现。<a href="index.html#ref-1">[1]</a><a href="index.html#ref-8">[8]</a></p>
+<div class="equation">B = batch 中序列数；S = 序列长度；d = hidden size；V = 词表大小
+H = query heads；d_h = head dimension（基础例子 d = H·d_h）
+f = FFN intermediate size；L = decoder blocks
+本文用行向量表示：X[B,S,d] @ W[d,out] → [B,S,out]</div>
+</section>
+<section id="tensor-flow"><h2>从 ID 到 logits：各步读写什么</h2>
+<figure><div class="flow">
+<div class="stage"><b>token 与表示</b><small>IDs [B,S]<br>E[V,d] → X[B,S,d]</small></div>
+<div class="stage"><b>序列混合</b><small>Q/K/V [B,H,S,dₕ]<br>causal attention → [B,S,d]</small></div>
+<div class="stage"><b>通道变换</b><small>FFN [B,S,d] → [B,S,f]<br>投影回 d；残差连接</small></div>
+<div class="stage"><b>预测与更新</b><small>head → logits [B,S,V]<br>shift / mask / CE / backward</small></div>
+</div><figcaption>每层重复序列混合与通道变换，最终 head 通常只用一次。图中省略 Norm、位置编码和实现中的张量转置。</figcaption></figure>
+<table><thead><tr><th>对象</th><th>形状/作用</th><th>易错点</th></tr></thead><tbody>
+<tr><td>token ID</td><td>[B,S] 整数；查 embedding 表</td><td>整数大小不表示语义距离；token 不是单字/单词的固定单位</td></tr>
+<tr><td>embedding</td><td>E[V,d] 是可训练参数；查表后得到 X</td><td>查表产生的 X 是激活，不能和参数表的内存混算</td></tr>
+<tr><td>QKV 投影</td><td>MHA 时三组 d×(H·dₕ) 权重</td><td>GQA 的 K/V head 更少；并非所有模型都满足 H·dₕ=d</td></tr>
+<tr><td>Attention 权重</td><td>概念形状 [B,H,S,S]，沿 key 位置归一化</td><td>FlashAttention 不必把整张矩阵写到 HBM</td></tr>
+<tr><td>输出投影</td><td>拼接各 head 后映射回 d</td><td>head 独立关注不同模式，不代表固定人工语义分工</td></tr>
+<tr><td>logits</td><td>[B,S,V]，经 softmax 得条件分布</td><td>logits 与概率不同；训练 CE 常融合 log-softmax</td></tr>
+</tbody></table>
+<p>单 head 的 score 是每个 query 对各个 key 的匹配强度，value 是实际被加权读取的内容。输出仍保留 S 个位置，Attention 没有把整句压成一个向量。FFN 在同一层逐位置共享参数；位置之间的新信息交换主要来自 token mixer。</p>
+</section>
+<section id="attention-mask"><h2>Causal mask 决定允许使用的证据</h2>
+<div class="equation" role="math">Q = XW_Q，K = XW_K，Vv = XW_V
+A = softmax((QKᵀ)/√d_h + M)，O = A Vv
+M[i,j] = 0 if j ≤ i；otherwise −∞
+例子（1表示可见）：[1 0 0 0
+                      1 1 0 0
+                      1 1 1 0
+                      1 1 1 1]</div>
+<p>缩放抑制维度增加时内积尺度增长；它不能保证实际 Q/K 范数稳定。mask 沿 score 的最后一维控制可见 key。位置 i 看得到自身，是因为它要预测位置 i+1；若同时让它看到目标 token，就泄漏了答案。padding、文档边界、prefix-LM 和 FIM 的 mask 需要另外定义。<a href="index.html#ref-1">[1] §3.2</a></p>
+<details><summary>实现中的布尔 mask 与浮点 mask</summary><p>有的接口以 True 表示允许，有的表示屏蔽。浮点 mask 常以 0/负无穷相加；布尔张量的语义必须对照 API。整行没有可见 key 时 softmax 可能产生 NaN，padding query 的处理要和 loss mask 分开。packed 样本还要防止跨样本 attention。</p></details>
+<p>科学 Agent 阅读实验说明时，上下文内的每个位置也受同样约束。能读到文本不代表具备文件权限、事实验证或完整长期记忆；这些由<a href="../agent-harness-guide.html">Harness</a>和<a href="../agent-systems/">Agent 系统</a>处理。</p>
+</section>
+<section id="block"><h2>一个 block 如何保留旧表示并加入新信息</h2>
+<div class="equation" role="math">U = X + Attention(RMSNorm(X))
+Y = U + FFN(RMSNorm(U))
+X、U、Y ∈ R^[B,S,d]；重复 L 次后做最终 Norm 与 output head</div>
+<p>加法要求形状一致。残差提供旧表示的直通路径，模块输出可改变表示；它不是绕过整个模型。Norm 控制进入模块的尺度，FFN 提供通道上的非线性容量。训练稳定性和 mHC 等前沿残差在<a href="s04_residual_norm_stability.html">第04章</a>展开。</p>
+<pre><code># 教学伪代码；行向量约定，不是完整可运行框架
+x = embedding(ids)                         # [B,S,d]
+for block in blocks:
+    x = x + attention(norm1(x), mask, positions)
+    x = x + mlp(norm2(x))
+logits = final_norm(x) @ output_weight     # [B,S,V]
+# embedding 与 output_weight 是否 tied 由模型配置决定</code></pre>
+<p>固定源码中的 <code>LlamaDecoderLayer</code> 依次执行 input_layernorm、self_attn、第一次 residual、post_attention_layernorm、MLP 和第二次 residual。可以按函数名对应上述式子；<code>post_attention_layernorm</code> 的名称不代表整个 block 使用 Post-Norm。<a href="index.html#ref-8">[8] L268起</a></p>
+</section>
+<section id="objective"><h2>Teacher forcing、shift 与目标 mask</h2>
+<p>训练样本中的历史来自真实数据，称为 teacher forcing；并不意味着每步调用一个外部教师模型。causal mask 让多个位置可以同时训练，反向传播仍跨层和允许的历史路径。推理阶段历史来自模型自身，因此错误会进入后续条件分布。</p>
+<pre><code>输入 tokens： [BOS, 读取, 文件, EOS]
+位置 logits：    0     1     2    3
+监督配对：    logits[0]→读取，logits[1]→文件，logits[2]→EOS
+loss = CE(logits[:, :-1], labels[:, 1:])
+# API 内部已 shift 时，调用者不要再 shift
+# labels 与 attention_mask、loss_mask 的含义各不相同</code></pre>
+<div class="equation" role="math">L = − Σ_(b,i) m_(b,i) log pθ(x_(b,i) | x_(b,&lt;i)) / Σ_(b,i) m_(b,i)
+m：该目标 token 是否监督；padding、用户/工具观察可不计 loss
+backward：∂L/∂θ；optimizer 使用梯度和自己的状态更新 θ</div>
+<p>mask 掉用户输入的 loss 仍需要读取它，并可通过它提供的条件影响后续目标。SFT 常只监督 assistant 的动作或输出；CPT 文档通常监督更多位置。loss mask 不能充当访问权限，也不能阻断所有相关前向计算。详见<a href="../llm-training-lifecycle/s02_midtraining.html">CPT 数据与 mask</a>。</p>
+</section>
+<section id="state"><h2>四类状态决定四种不同成本</h2>
+<table><thead><tr><th>类别</th><th>生命周期</th><th>主要数量因子</th></tr></thead><tbody>
+<tr><td>参数</td><td>跨请求共享，训练会更新</td><td>矩阵形状、层数、专家数；tied 参数只计一次</td></tr>
+<tr><td>训练激活</td><td>用于本次 backward，或通过重计算恢复</td><td>batch、序列、hidden、保存策略</td></tr>
+<tr><td>请求 KV/递归状态</td><td>跟随特定历史与权重版本</td><td>KV heads、长度、层数、精度；递归状态另算</td></tr>
+<tr><td>梯度与优化器</td><td>训练更新与恢复使用</td><td>可训练参数、状态精度、分片策略</td></tr>
+</tbody></table>
+<p>相同权重可以服务很多请求，每个请求通常有自己的历史状态。KV 来自当前权重对指定 token 的计算，不能在权重改变后无条件复用。训练常关闭增量 cache；训练的内存压力也不能直接由推理 KV 推出。</p>
+<p>忽略 bias/Norm，MHA Attention 约 4d² 参数；普通两矩阵 FFN 为 2df，三矩阵 SwiGLU 为 3df。总量再乘实际层数、加入 embedding/head 与其他模块。这是规格推导；不同 head dimension、共享权重和 MoE 会改变公式。</p>
+</section>
+<section id="evaluation"><h2>先检查不变量，再设计性能对照</h2>
+<p>最小正确性协议包括：修改未来 token 不改变此前 logits；full forward 与逐步 KV 解码在允许误差内一致；padding 不影响有效目标；shift 不重复；packed 序列不跨边界；推理关闭 dropout。本站未运行这些模型检查，本段是研究与实现验收设计。</p>
+<p>任务评测要另看 held-out loss、生成质量、工具格式、长依赖和科学任务成功率。低 CE 不等于统计设计正确。以<a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学 Harbor 任务</a>为例，模型既要生成合法脚本，也要保留配对供体和正确 contrast；最终由独立 verifier 验收。</p>
+<details><summary>自测：为什么训练同时预测，推理仍逐 token？</summary><p>训练已经知道每个位置的历史，mask 可以并行计算所有条件预测。推理时下一个输入取决于本步采样结果，普通 AR 生成的这条依赖不能靠 batch 消除。投机解码通过候选与验证改变执行方式，但目标分布保持需要额外条件。</p></details>
+<p>下一章从同一 Attention 数学出发，分析 KV 共享、位置编码、压缩与缓存；部署专题再把这些对象放进调度与容量模型。</p>
+</section>
+<section id="sources"><h2>来源与边界</h2><p><a href="index.html#ref-1">[1] Transformer §3</a>、<a href="index.html#ref-8">[8] 固定 Llama 源码</a>支持主要计算结构；现代训练目标连接<a href="../llm-training-lifecycle/s01_pretraining.html#objective">训练章原始来源</a>。本文形状、伪代码与检查协议为解释性归纳；没有新的实测曲线。</p></section>
+</main></body></html>

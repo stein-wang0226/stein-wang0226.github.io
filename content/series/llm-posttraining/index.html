@@ -24,6 +24,9 @@
 </figure>
 <div class="callout"><strong>阅读时抓住五个变量：</strong>状态从谁来，目标 token 是什么，反馈由谁提供，advantage 与 loss 如何聚合，最终如何独立验收。相同算法名不保证相同实验；不同模型报告也不能直接组成性能排行榜。</div>
 </section>
+<section class="integration-overview"><h2>先修、产物与下一步</h2><p>先了解<a href="../llm-training-lifecycle/">训练阶段与checkpoint交接</a>；需要经典策略梯度时查<a href="../rl-interview-guide.html#pg-to-ppo">完整推导</a>。本系列产物是一套明确状态、目标、奖励、教师、版本与预算的训练协议；第六章用代码、科学和GUI案例把协议落到具体任务。</p></section>
+<!-- READING:CHAPTERS -->
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；当前顺序见上方目录</summary>
 <section id="read">
 <h2>六章阅读路径</h2>
 <div class="chapter-grid">
@@ -36,6 +39,7 @@
 </div>
 <p>初学者先读<a href="../llm-training-lifecycle/">训练全链路</a>；算法细节从第二章开始，OPD 从第三章开始。任务合成与评测基础见<a href="../agent-data-benchmarks/">Agent 数据与 Benchmark</a>，运行循环和上下文管理见<a href="../agent-harness-guide.html#codex-loop">Codex Harness 案例</a>。</p>
 </section>
+</details><!-- READING:HISTORY:END -->
 <section id="findings">
 <h2>这轮调研最值得保留的判断</h2>
 <p><strong>OPD 的关键是学生状态，而不只是教师更强。</strong> 静态教师示范覆盖理想路径；学生 rollout 暴露自己的失败 prefix。MOPD2、Guided-OPD 与 TISD 又通过前缀、接管和轨迹分支改变状态覆盖。它们是否“on-policy”，要说明是整条 episode 还是仅新增 continuation。<a href="#ref-30">[30]</a> <a href="#ref-27">[27]</a> <a href="#ref-34">[34]</a> <a href="#ref-35">[35]</a></p>

@@ -31,9 +31,15 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 | 文章、系列章节、独立子站及关联关系 | `content/catalog.json` |
 | 正文 | `content/posts/<id>/index.html` 或 `index.md` |
 | 扩散系列 14 章 | `content/series/dlm-survey/*.html` |
-| LLM 训练全链路 4 章 | `content/series/llm-training-lifecycle/*.html`；专用样式 `assets/site/training-lifecycle.css` |
-| LLM 研究地图 7 章 | `content/series/llm-research-map-2026/*.html`；数据 / RL / DeepSeek / 推理 / 场景 / 多家族架构 / 训练机制 |
-| Agent 任务合成与 Benchmark 2 章 | `content/series/agent-data-benchmarks/*.html`；52项来源、经典与前沿评测；图表在 `assets/research/agent-data-benchmarks/` |
+| LLM 架构基础 6 章 | `content/series/llm-architecture/*.html`；张量、Attention/KV、FFN/MoE、状态、深度 |
+| LLM 训练全链路 5 章 | `content/series/llm-training-lifecycle/*.html`；四阶段与训练工程 |
+| LLM 后训练 6 章 | `content/series/llm-posttraining/*.html`；SFT/RFT、RL、OPD、奖励信用、异步与任务案例 |
+| Agent 系统 3 章 | `content/series/agent-systems/*.html`；检索、规划预算和信任边界 |
+| Agent 任务合成与 Benchmark 4 章 | `content/series/agent-data-benchmarks/*.html`；任务合成、科学任务族、工业训练方案、Benchmark |
+| LLM 服务工程 3 章 | `content/series/llm-serving/*.html`；调度缓存、优化验证、容量成本 |
+| LLM 研究地图 7 章 | `content/series/llm-research-map-2026/*.html`；数据 / RL / 多家族 / DeepSeek / 架构训练 / 推理扩散 / 场景 |
+| 学习与研究路线、概念主讲位置 | `content/site.json`；公开 `/blog/#learning-paths`、`/blog/#research-focus` |
+| 统一文献查阅 | `scripts/citations.py` 从原 HTML 和专题登记生成 `/blog/references/` 与 JSON |
 | 研究报告原件与引用 | `assets/research/2026-11-14/`；`sources.json` 登记固定版本、来源、许可与 SHA，公开资源登记在 `site.json` |
 | 个人介绍及在线 CV | `content/pages/about.md`、`cv.md` |
 | 论文与精选记录 | `content/publications/*.md`，精选 ID 在 `site.json` |
@@ -84,6 +90,7 @@ Pages Source 应设置为 GitHub Actions；部署作业依赖构建与校验成�
 - [研究地图与覆盖审计](docs/blog-research-review-20261114.md)：初版五章及后续七章扩展说明；公开入口 `/llm-research-map-2026/`。
 - [多家族架构调研](docs/architecture-research-20261114.md)：第06–07章版本、机制与证据边界；当前研究地图71项来源、15份原件。
 - [验收记录](docs/validation.md)：内容保留、浏览器、隔离构建与真实发布状态。
+- [全站结构整合](docs/organization-integration-20261114.md)：学习主线、研究路径、章序、冻结原文和引用保留证据。
 - [个人资料更新依据](docs/profile-update-20261114.md)：最新简历、项目口径、论文状态、中英文附件与 GitHub Profile 稿。
 - [迁移与地址清单](docs/content-inventory.md)：原始 9 个集合、14 章、4 篇论文的保留基线；当前内容以登记与本次验收为准。
 - [迁移与远端切换](MIGRATION.md)：保留旧地址、原仓库与许可。

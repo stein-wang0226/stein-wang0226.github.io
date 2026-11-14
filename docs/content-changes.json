@@ -2,23 +2,165 @@
   "schema_version": 1,
   "note": "Intentional changes after exact recovery. Original migration baseline is unchanged. Hashes fix the reviewed scope; any later mismatch must be reported.",
   "changes": [
-    {"source":"content/posts/agent-harness-guide/index.html","sha256":"fd66776824735c00f1ca184ea092d5f67bad877159be4643e62b72e8a51e388e","reason":"Preserve prerequisites, original training formulas/code, cases and anchors; correct the narrow training-only Harness definition and add three source-led Codex sections covering runtime loop, compaction/reset/history-notes and cross-session memory V1/V2. Pin implementation citations to c2c1ebba0a7985ebee065c5492233a843b84c4c6; add responsive diagrams, a short attributed Rust excerpt, native details and an explicitly illustrative walkthrough. Legacy scientific claims remain needs-review."},
-    {"source":"content/posts/agentic-rl-guide/index.html","sha256":"8ee9d3315695e53a8926cb13c428eb22371a08ad7fbabe0ac6d2440299b75b52","reason":"Add prerequisites, reading route and training artifacts."},
-    {"source":"assets/site/catalog.js","sha256":"84ebcfcc1e3f8865ed2a957a656a9f3ae6a22cf8179a74594c42597730c16792","reason":"Preserve catalog filters, chapter search and URL restoration; add progressive topic buttons and matching featured-series markup. Version the catalog request with the HTML build fingerprint to avoid stale data after deployment. Native topic selection and static chapter links remain available if loading fails."},
-    {"source":"assets/site/site.css","sha256":"8ca0a8b53ce630d608224364a1d0a9285bae351a86d44413690bdedba46b1f31","reason":"Restore original Stein's Notes cream, ink and teal identity with local Sora/Literata/JetBrains Mono fonts; refine wordmark, catalog hierarchy, cards and responsive shared shell without changing research article styles. Refine search into one compact input/button control with quiet inline filters and responsive wrapping."},
-    {"source":"content/pages/about.md","sha256":"4824eb65d35910da473b2edb1ff2e2fbd2aa86b0d02d7ca7cd449ab82660efed","reason":"Update from November 2026 resumes: current ByteDance role, completed Alibaba internship, Harbor synthesis, step-level RL, GUI environments and Holon; correct timeline and GPA rank. Add supplied ProtAgent arXiv link and annotation-coverage metric scope; explicitly mark user-confirmed NeurIPS 2026 main-conference acceptance. Previous about source preserved in content/archive/profile-before-20261114/about.md; paper lists remain shared."},
-    {"source":"content/pages/cv.md","sha256":"7c28abbe781275accfd9c2e408906f461fc490f52bb1b661279765fdf44984fe","reason":"Reorganize CV from latest resumes, replace ProtAgent GRPO description with step-level REINFORCE, correct dates and titles, add bilingual PDFs. Add verified ProtAgent preprint and three-seed credit-assignment comparison, distinguish annotation coverage from biological correctness, and confirm NeurIPS main-conference acceptance. Add public task-synthesis and benchmark study links without changing author-reported metrics or status. All prior CV text preserved in content/archive/profile-before-20261114/cv.md and historical PDF."},
-    {"source":"assets/Curriculum_Vitae.pdf","sha256":"1e479455f75403182378dea8282a4bdd685ae5c6d1ea5616e82dde803c59b2f0","reason":"Replace stable English download with exact author-provided November 2026 English research resume (3 pages). Original 2,502,216-byte CV preserved byte-for-byte at assets/archive/Curriculum_Vitae-before-20261114.pdf with original baseline SHA 66b3c0d7c7cf44f23caf4cae80eaaac4e8948373fe39b682fc2111c2735ccde6."},
-    {"source":"content/publications/2024-stm-dynamic-graph-fraud.md","sha256":"e392333ade4e9ccaa649caa4e3fc84408f4d5da29172a1552ac7eefa90095c7d","reason":"Correct official STM title, DASFAA 2025 venue and 2026-01-02 online publication date using publisher DOI metadata; add verified public experiment code; preserve URL, body and archived original source. Research period remains distinct from publication date."},
-    {"source":"content/publications/2026-locality-aware-dlm.md","sha256":"71302c517b53e4b0881f9bb82cd55f4cfb0583858d52445e6fe075eb76b87dbc","reason":"Correct official arXiv title and initial date 2026-04-27; add author-reported ACL 2027 under-review status and verified public implementation; preserve stable ID, URL, methods and archived prior source."},
-    {"source":"content/publications/2026-semantic-dlm-plus.md","sha256":"106fc437fdd659c614d9ad628c7eb685023d436e220742f34fb6899260864d77","reason":"Mark NeurIPS 2026 Main Conference accepted, explicitly confirmed by author in the current conversation; distinguish conference status from arXiv v1 metadata and preserve public citation author order. Prior source preserved in profile archive."},
-    {"source":"content/posts/distributed-training-guide/index.html","sha256":"4997c66c3f01e7ffa87d54fda2fc5d331b7622512fbaaebbda17aac8da0a1ab5","reason":"Add reading preparation; flag uncited 5.3 performance table without changing numbers."},
-    {"source":"content/series/dlm-survey/index.html","sha256":"3422bfd49d0dde941ca0da4f7a8449b368a3d9856e6bf80711b001663fe426d6","reason":"Add series prerequisites, recommended order and fact-review limits; all fourteen chapters unchanged."},
-    {"source":"content/posts/llm-frontier-2026/index.html","sha256":"e63376e3691b6545f3eeb9d842da2bf2b7ba9ffb195190df959ee78f4a4b0ac4","reason":"Add reading preparation and fact-label interpretation; all AUTO markers, entries and last-updated preserved."},
-    {"source":"content/posts/llm-interview-bank/index.html","sha256":"e286d092437e985cbab3cf5386886db17b2aa11b7b8e9f6acc1a556d245f9abe","reason":"Add answer coverage and valid explanatory links; remove one duplicate VLM link; preserve all 470 questions and 95 answers."},
-    {"source":"content/posts/rl-interview-guide/index.html","sha256":"771963fea1e7b5b0d96e34d786de61a3065191d50ccc73c7d2956f6176158649","reason":"Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched."},
-    {"source":"templates/home.html","sha256":"d5f1cb6fc66c9f7a0666b7a127a3ef10b6191f05e2a54b82a6470ecc19252a68","reason":"Preserve shared homepage redesign; add bilingual original resume downloads and selected work generated solely from about.md. Papers and notes still use shared records and retain their entry points."},
-    {"source":"content/posts/transformer-decoder-flow/index.html","sha256":"0644216340b7b74fa09b7d369926eb52c4656ba9e531535988f17482686d8a1b","reason":"Add prerequisites, data-flow reading route and symbolic shape-tracking exercise."},
-    {"source":"content/posts/vlm-knowledge-interview/index.html","sha256":"c6b5eea1bc0a5a44ea6da2d5ea4dd87da521bb2d0d17f7620deedea9cf33b1a4","reason":"Add prerequisites, architecture/training reading route and fact-review limits."}
+    {
+      "source": "content/posts/agent-harness-guide/index.html",
+      "sha256": "6561899b90178498a9b6234552f0b78eb1936429129d035142869a8d5c956639",
+      "reason": "Preserve prerequisites, original training formulas/code, cases and anchors; correct the narrow training-only Harness definition and add three source-led Codex sections covering runtime loop, compaction/reset/history-notes and cross-session memory V1/V2. Pin implementation citations to c2c1ebba0a7985ebee065c5492233a843b84c4c6; add responsive diagrams, a short attributed Rust excerpt, native details and an explicitly illustrative walkthrough. Legacy scientific claims remain needs-review. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/posts/agentic-rl-guide/index.html",
+      "sha256": "4daa89b9bb6b7d88b1d6b3d48a1b93bf793977b4c61e37a4e600790a6b9fbc67",
+      "reason": "Add prerequisites, reading route and training artifacts. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "assets/site/catalog.js",
+      "sha256": "eb52273da495612961e8443a1b5b15de99490b056af6dc3b421102cd52b6a12d",
+      "reason": "Preserve catalog filters, chapter search and URL restoration; add progressive topic buttons and matching featured-series markup. Version the catalog request with the HTML build fingerprint to avoid stale data after deployment. Native topic selection and static chapter links remain available if loading fails. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles."
+    },
+    {
+      "source": "assets/site/site.css",
+      "sha256": "fad6852861529bbf51d976ad4542e0db0835d30ecd81da5bb0c273d0a0d70482",
+      "reason": "Restore original Stein's Notes cream, ink and teal identity with local Sora/Literata/JetBrains Mono fonts; refine wordmark, catalog hierarchy, cards and responsive shared shell without changing research article styles. Refine search into one compact input/button control with quiet inline filters and responsive wrapping. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles."
+    },
+    {
+      "source": "content/pages/about.md",
+      "sha256": "4824eb65d35910da473b2edb1ff2e2fbd2aa86b0d02d7ca7cd449ab82660efed",
+      "reason": "Update from November 2026 resumes: current ByteDance role, completed Alibaba internship, Harbor synthesis, step-level RL, GUI environments and Holon; correct timeline and GPA rank. Add supplied ProtAgent arXiv link and annotation-coverage metric scope; explicitly mark user-confirmed NeurIPS 2026 main-conference acceptance. Previous about source preserved in content/archive/profile-before-20261114/about.md; paper lists remain shared."
+    },
+    {
+      "source": "content/pages/cv.md",
+      "sha256": "7c28abbe781275accfd9c2e408906f461fc490f52bb1b661279765fdf44984fe",
+      "reason": "Reorganize CV from latest resumes, replace ProtAgent GRPO description with step-level REINFORCE, correct dates and titles, add bilingual PDFs. Add verified ProtAgent preprint and three-seed credit-assignment comparison, distinguish annotation coverage from biological correctness, and confirm NeurIPS main-conference acceptance. Add public task-synthesis and benchmark study links without changing author-reported metrics or status. All prior CV text preserved in content/archive/profile-before-20261114/cv.md and historical PDF."
+    },
+    {
+      "source": "assets/Curriculum_Vitae.pdf",
+      "sha256": "1e479455f75403182378dea8282a4bdd685ae5c6d1ea5616e82dde803c59b2f0",
+      "reason": "Replace stable English download with exact author-provided November 2026 English research resume (3 pages). Original 2,502,216-byte CV preserved byte-for-byte at assets/archive/Curriculum_Vitae-before-20261114.pdf with original baseline SHA 66b3c0d7c7cf44f23caf4cae80eaaac4e8948373fe39b682fc2111c2735ccde6."
+    },
+    {
+      "source": "content/publications/2024-stm-dynamic-graph-fraud.md",
+      "sha256": "e392333ade4e9ccaa649caa4e3fc84408f4d5da29172a1552ac7eefa90095c7d",
+      "reason": "Correct official STM title, DASFAA 2025 venue and 2026-01-02 online publication date using publisher DOI metadata; add verified public experiment code; preserve URL, body and archived original source. Research period remains distinct from publication date."
+    },
+    {
+      "source": "content/publications/2026-locality-aware-dlm.md",
+      "sha256": "71302c517b53e4b0881f9bb82cd55f4cfb0583858d52445e6fe075eb76b87dbc",
+      "reason": "Correct official arXiv title and initial date 2026-04-27; add author-reported ACL 2027 under-review status and verified public implementation; preserve stable ID, URL, methods and archived prior source."
+    },
+    {
+      "source": "content/publications/2026-semantic-dlm-plus.md",
+      "sha256": "106fc437fdd659c614d9ad628c7eb685023d436e220742f34fb6899260864d77",
+      "reason": "Mark NeurIPS 2026 Main Conference accepted, explicitly confirmed by author in the current conversation; distinguish conference status from arXiv v1 metadata and preserve public citation author order. Prior source preserved in profile archive."
+    },
+    {
+      "source": "content/posts/distributed-training-guide/index.html",
+      "sha256": "b26c445cc18846a55d92f6f97e2af7bc71b33100f22694e84e05fb9012fe0b22",
+      "reason": "Add reading preparation; flag uncited 5.3 performance table without changing numbers. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/index.html",
+      "sha256": "efdffad3533ef3d8feb0431468a65e66e1751794ab7fede8f0b374c1ce5a7a38",
+      "reason": "Add series prerequisites, recommended order and fact-review limits; all fourteen chapters unchanged. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/posts/llm-frontier-2026/index.html",
+      "sha256": "acb13aabd33ce312e1cf17a1ea961d96885e0289bda4c4d80356607caedb104d",
+      "reason": "Add reading preparation and fact-label interpretation; all AUTO markers, entries and last-updated preserved. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/posts/llm-interview-bank/index.html",
+      "sha256": "fc840cbeb78e71f5a498ac5dd01745bc824533e8640460f91ec89df1a90ff729",
+      "reason": "Add answer coverage and valid explanatory links; remove one duplicate VLM link; preserve all 470 questions and 95 answers. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/posts/rl-interview-guide/index.html",
+      "sha256": "aadfe16d7c1a04c5750dbf9d769b1f0077e9aef022247c4a3127a88b138d2139",
+      "reason": "Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "templates/home.html",
+      "sha256": "735e10ad76f1e1987f1e9de6c7879d71c0413f1bcddfd7fc41d9ddb813a16014",
+      "reason": "Preserve shared homepage redesign; add bilingual original resume downloads and selected work generated solely from about.md. Papers and notes still use shared records and retain their entry points. Use three explicit research recommendations and one learning-mainline entry; retain all personal/publication/PDF sections and existing links."
+    },
+    {
+      "source": "content/posts/transformer-decoder-flow/index.html",
+      "sha256": "7ef30965f49de277a11d40b9cf8538e866197cd14cdb2c97acbff06a343ef456",
+      "reason": "Add prerequisites, data-flow reading route and symbolic shape-tracking exercise. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/posts/vlm-knowledge-interview/index.html",
+      "sha256": "fd68bbd02a53f9ba2058231f49ccdba25400c3faf7070369fdb6be3671df98f8",
+      "reason": "Add prerequisites, architecture/training reading route and fact-review limits. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "sha256": "71cbef50805763a267325a907284c1fe996ffcbc5d10f8557d461cd057768fd5",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s00b_flow_sde.html",
+      "sha256": "9dfa7676d2dd1e3863ca38ca9e269719a5d8cbfe2c7224d0fe913e4f6d9fe6b5",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s01_overview.html",
+      "sha256": "1d6aad7820d1e845f440808ccff8279ca592ced151d36df5161968193f342cd4",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s02_discrete.html",
+      "sha256": "f8793c8ba8472b270cb92534945e6d2ae7623bc64fedc61c8aa193f35ca39bec",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s03_block.html",
+      "sha256": "82f2594ffd39872931af6806216ac546f134df66c7f0ba3ee0dc5479c05c3673",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s04_continuous.html",
+      "sha256": "b112180a33c07d3b2dda64509f0017e67aa641f765a586183fbfe353b86d9278",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s05_paradigms.html",
+      "sha256": "ae4948debc0cece9b6697aa26a8abf14e98033d49422025f36fbc32e6ec15dfb",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s06_scaling.html",
+      "sha256": "3f54f69c0bac710639e0cd438127a21dc1a0c6778afa9248ac9d1fb7440913ad",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s07_speculative.html",
+      "sha256": "470a91184bb72cf3621952228a63909743e9e0e2f1abf12c9f137de72b7cfc8d",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s08_elbo_rl.html",
+      "sha256": "f0f43ce0bf666af4641c04f58d06ca9c2ac49d975bc62ca8f7bd4ea45fdc654b",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s09_commercial.html",
+      "sha256": "8cf23f3ea61e069eb15f1341c7413c9e9b8ca989e790047ad1300bc1392df89c",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s10_comparison.html",
+      "sha256": "03183c60b4f23a442cd99c90acbd2993091e31c775be5ebe185d7b256327fc7a",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s11_loop_transformer.html",
+      "sha256": "a2c716f27c5c0e4357eaf4fa145eb0a199fa78d78fa7a5f25b51cecc6709f03e",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    },
+    {
+      "source": "content/series/dlm-survey/s12_vae.html",
+      "sha256": "9b1df9ee227fbd50408fd2ee0d4bc074a16f10576fdf33fc2e10c712c81d7c7c",
+      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+    }
   ]
 }

@@ -595,6 +595,9 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备">
+<h3 id="system-contract-bridge">同一条轨迹，连接执行、记忆与训练</h3>
+<p>用“确认供体配对→运行差异分析→检查输出合同”的科学任务贯穿：Harness记录工具输入/退出码、文件状态与policy版本；短期context留下未完成步骤和证据定位；长期memory只沉淀稳定规则。压缩摘要不替代原始轨迹、可恢复文件或独立verifier。工具网页与旧memory都属于需核实的数据，不应自动获得系统指令优先级。</p>
+<p>生产门控在执行前验证权限、参数、路径、预算；训练导出时保留observation作为条件，但不把环境token当作策略动作。固定reference用于KL锚定，采样behavior/old policy用于重要性比率，两者不能互换。把这三个标识写入trajectory，再接入 <a href="/agent-systems/s03_trust_safety.html">权限隔离</a>、<a href="/agent-systems/s01_rag_retrieval.html">证据检索</a>与 <a href="/agent-data-benchmarks/s03_scientific_task_family.html">输出/verifier合同</a>。</p>
 <h2>阅读准备</h2><p><strong>范围：</strong>理解 Agent 从工具执行到训练的系统链路；先修 Python、LLM 推理和基础 RL。建议先读架构与模块，再读 rollout、隔离环境和 reward，最后看训练集成。只想理解一个实际 Agent，可直接读 <a href="#codex-loop">Codex 运行循环</a> → <a href="#codex-context">上下文管理</a> → <a href="#codex-memory">跨会话记忆</a>；这三节不要求 RL 基础。</p>
 <p><strong>核心链路与产物：</strong>任务输入 → 工具调用与环境反馈 → 多轮轨迹 → reward → 训练样本及评估。正文中的接口和代码是理解实现的示例，部署时还需结合所用框架版本验证。</p>
 </section>
@@ -779,6 +782,8 @@
 
 <!-- ==================== 3. 异步 Rollout ==================== -->
 <section id="rollout">
+    <div class="integration-overview" id="rollout-overview"><h2>异步执行接口与训练对齐</h2><p>Harness负责暂停、恢复、工具返回和轨迹版本；actor更新如何使用近期rollout，由<a href="/llm-posttraining/s05_frameworks_async.html#async">异步后训练章</a>解释。检查行为策略、训练策略与推理logprob的三个版本后，再判断吞吐收益。</p></div>
+    <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前异步rollout讲解 · 2026-11-14；完整数据流保留</summary>
     <h2><span class="num badge-green">03</span> 异步 Rollout 引擎</h2>
     <p class="section-desc">Agent 训练中最核心的工程挑战：工具调用期间 GPU 不能空等。异步 Rollout 是提升 GPU 利用率的关键。</p>
 
@@ -879,9 +884,10 @@
         <div class="hl-title">ROLL Flash 加速</div>
         <p>ROLL Flash（<a href="https://arxiv.org/abs/2510.11345" style="color:var(--accent);">arXiv:2510.11345</a>）通过环境级异步并行 rollout + 异步训练，进一步加速 Agentic Training。RollPacker（<a href="https://arxiv.org/abs/2509.21009" style="color:var(--accent);">arXiv:2509.21009</a>）解决长尾轨迹拖垮整个 batch 的问题。</p>
     </div>
+</details><!-- READING:HISTORY:END -->
 </section>
 
-<!-- ==================== 4. 工具编排 ==================== -->
+<!-- ==================== 4. 工具系统 ==================== -->
 <section id="tools">
     <h2><span class="num badge-orange">04</span> 工具编排系统</h2>
     <p class="section-desc">Registry + Executor 两层抽象是 Agent 工具系统的核心设计模式，实现"热插拔"：新增工具无需改任何已有代码。</p>
@@ -1084,6 +1090,8 @@
         </table>
     </div>
 
+    <p class="integration-overview">Harness保存原始反馈和失败，不自行把PRM、value或最终验收混为一个分数。稀疏奖励、过程监督和信用分配见<a href="/llm-posttraining/s04_environment_reward_credit.html#signal-types">奖励主讲章</a>；本节上方保留接口与reward hacking检查。</p>
+    <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前稀疏奖励策略 · 2026-11-14</summary>
     <h3>稀疏 Reward 的应对策略</h3>
     <div class="highlight-box highlight-purple">
         <div class="hl-title">问题：电商场景大部分对话不产生购买，reward 极度稀疏</div>
@@ -1094,10 +1102,13 @@
             <li><strong>Reward Model 替代</strong>：训练 RM 预测"这段对话最终是否转化"作为 dense signal</li>
         </ol>
     </div>
+</details><!-- READING:HISTORY:END -->
 </section>
 
 <!-- ==================== 7. GRPO ==================== -->
 <section id="grpo">
+    <div class="integration-overview" id="grpo-overview"><h2>训练目标与执行轨迹的边界</h2><p>组内baseline、长度归一、reward标准差和clipping决定实际GRPO目标；完整公式与偏差分析见<a href="/llm-posttraining/s02_rl_algorithms.html#rloo-grpo">RL算法主讲章</a>。Harness要交付准确动作span、观察mask和行为logprob；下一节继续讲token-text映射。</p></div>
+    <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前GRPO与mask讲解 · 2026-11-14；公式完整保留</summary>
     <h2><span class="num badge-purple">07</span> GRPO 算法详解</h2>
     <p class="section-desc">Group Relative Policy Optimization — 用组内相对比较替代 Critic Network 的策略优化算法，是 Agent RL 的主流选择。</p>
 
@@ -1128,7 +1139,7 @@ mask_t[k] = 1  if token k ∈ {Thought, Action}    # LLM 生成
 mask_t[k] = 0  if token k ∈ {Observation, System} # 环境/系统
 
 # Step 3: Clipped Policy Ratio
-ratio = π_θ(token|ctx) / π_ref(token|ctx)
+ratio = π_θ(token|ctx) / π_old(token|ctx)  # 实际采样策略；不是KL reference
 clipped = clip(ratio, 1-ε, 1+ε)
 
 # Step 4: Final Loss
@@ -1154,11 +1165,12 @@ L = -(1/N) Σᵢ Σ_t Σ_k [mask · min(ratio·A_{i,t}, clipped·A_{i,t})]
 
     <div class="highlight-box highlight-blue">
         <div class="hl-title">为什么按步归一化？</div>
-        <p>不同步的 reward 分布不同（第 1 步信息少 → reward 低，最后步有 answer → reward 高）。混合归一化会让早期步永远负 advantage，模型永远不学"怎么开头"。</p>
+        <p>这是额外的step-level设计，需要可比较的状态、步骤奖励及对齐规则。原始GRPO按同一prompt的整条响应奖励构造组优势，不要求每个Agent轮次分别标准化。不同轨迹的第t步可能处于不同语义状态，直接比较可能产生错误信用分配；不能由“早期奖励低”推出早期优势永远为负。</p>
     </div>
 
     <h3>Dr. GRPO: 消除长度偏差</h3>
     <p>论文 <a href="https://arxiv.org/abs/2503.20783" style="color:var(--accent);">arXiv:2503.20783</a> 发现 GRPO 存在<strong>优化偏差会人为膨胀响应长度</strong>（尤其对错误输出）。Dr. GRPO 通过无偏优化变体提升 token 效率，7B 模型在 AIME 2024 上达到 43.3%。</p>
+</details><!-- READING:HISTORY:END -->
 </section>
 
 <!-- ==================== 8. Token Mapping ==================== -->
@@ -1190,6 +1202,8 @@ Loss = -Σ(generation_mask × log_prob × advantage) / Σ(generation_mask)</code
 
 <!-- ==================== 9. 框架对比 ==================== -->
 <section id="frameworks">
+    <div class="integration-overview" id="frameworks-overview"><h2>框架职责与编排关系</h2><p>当前版本、角色进程组与异步一致性见<a href="/llm-posttraining/s05_frameworks_async.html#framework-map">框架主讲章</a>。本页下方保留ROLL、verl与Ray的编排关系，它解释运行器和训练框架的不同职责。</p></div>
+    <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前框架长表 · 2026-11-14；版本冻结</summary>
     <h2><span class="num badge-orange">09</span> 主流 Harness 框架对比</h2>
     <p class="section-desc">2024-2026 年涌现了多个 Agentic RL 训练框架，各有设计哲学和适用场景。</p>
 
@@ -1258,6 +1272,7 @@ Loss = -Σ(generation_mask × log_prob × advantage) / Σ(generation_mask)</code
         </table>
     </div>
 
+    </details><!-- READING:HISTORY:END -->
     <h3>ROLL vs VERL：编排理念对比</h3>
     <div class="compare-grid">
         <div class="vs-box">
@@ -1302,6 +1317,8 @@ Loss = -Σ(generation_mask × log_prob × advantage) / Σ(generation_mask)</code
 
 <!-- ==================== 10. Pipeline ==================== -->
 <section id="pipeline">
+    <div class="integration-overview" id="pipeline-overview"><h2>从执行协议交接到训练阶段</h2><p>阶段定义由<a href="/llm-training-lifecycle/#artifacts">训练全链路</a>统一维护；SFT、RL与蒸馏可以循环和分叉。Harness交接镜像、任务版本、模板、轨迹、奖励与生成预算，具体三类任务见<a href="/llm-posttraining/s06_task_cases_experiments.html">后训练案例</a>。</p></div>
+    <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前训练流水线 · 2026-11-14；历史配方保留</summary>
     <h2><span class="num badge-pink">10</span> Agent Post-Training Pipeline</h2>
     <p class="section-desc">完整的 Agent 训练 pipeline 分为四个阶段：SFT 冷启动 → RL 强化 → Self-Play Bootstrap → DPO 偏好微调。</p>
 
@@ -1350,6 +1367,7 @@ Loss = -Σ(generation_mask × log_prob × advantage) / Σ(generation_mask)</code
         <span class="flow-arrow">→</span>
         <div class="flow-step">最终模型</div>
     </div>
+</details><!-- READING:HISTORY:END -->
 </section>
 
 <!-- ==================== 11. 失败模式 ==================== -->

@@ -45,8 +45,8 @@ make preview PORT=8766
 性能数字注明硬件、版本、配置与测量来源；厂商自报、预印本与推测应区别标注。
 检查记录中的待核实项持续保留，补齐后再调整整理状态；格式统一不代表科学结论已全面验证。
 
-研究地图当前为七章：前五章按数据、RL、DeepSeek、推理和场景组织，
-第06章比较多家族模型，第07章拆解残差、LatentMoE、Muon、精度与递归深度。
+研究地图当前为七章：数据、RL、多家族模型、DeepSeek 专例、架构训练机制、
+推理扩散和 GUI/科学/Skills/持续学习。显示顺序取 catalog `order`，文件名保持不变。
 原1–43引用号保留，新增44–71；更新版本时分别核对论文、发布模型卡与固定config。
 `scripts/architecture_figures.py` 生成架构图及规格CSV / JSON；维度比与层数量不能当性能测量。
 所有SVG保持原始比例并提供放大入口，新增原件须核对许可、原始字节及资源登记。
@@ -88,3 +88,27 @@ GitHub Profile 的可维护介绍稿和字段建议位于 `docs/github-profile/`
 新报告更新对应机制和来源，不在训练全链路重复写长篇正文；旧章保留深入链接。
 修改参考列表时同步公开 `posttraining-20261114/sources.json` 的编号、版本和使用章节；
 案例与实验未运行时保留 `design_only` 和空结果，不填写预期值当作实测。
+
+## 目录、主讲位置与引用
+
+博客 `/blog/#learning-paths` 是完整主线入口，`#research-focus` 展示四条研究路径。
+首页推荐和最近更新分开；非核心参考、追踪、课程子站和历史材料在目录后部。
+修改路线只编辑 `site.json`，修改章序同时核对 `catalog.json` 的标题、先修和分组。
+`reading.py` 统一生成系列目录与前后章；不在正文复制现行全站目录。
+
+重复原理的主讲位置由 `concept_owners` 维护。精炼重复长段时完整原文留在同页
+冻结折叠区，旧链接能展开原段；独有推导、代码、案例与来源保持可读。
+结构保留核验和文献核验均为只读：
+
+```bash
+make check
+python3 scripts/organization.py check --output /tmp/my-blogs-site-build
+python3 scripts/citations.py check
+python3 scripts/test_pipeline.py
+python3 docs/verify-content-migration.py --require-clean
+```
+
+`/blog/references/` 支持关键词、来源类型和版本查询，并返回原引用与原始来源。
+原 HTML bibliography 和专题来源 JSON 仍是权威资料；不直接编辑生成引用数据。
+更新来源登记的使用位置时依据实际链接保留当前/冻结角色，
+不改原报告版本、许可、SHA 或原引用号来消除错误。

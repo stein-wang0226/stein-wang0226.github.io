@@ -1,0 +1,5 @@
+case,status,total_parameter_assumption,layers,kv_heads,head_dim,tp,kv_bytes_per_element,cached_tokens_per_request,weight_bytes_per_rank,kv_bytes_per_token_per_rank,kv_bytes_per_request_per_rank,nominal_device_bytes,reserve_bytes,ideal_capacity_ceiling,metadata_included,performance_measured
+bf16-8k,specification_derivation,70000000000,80,8,128,4,2,8192,35000000000,81920,671088640,80000000000,16000000000,43,false,false
+bf16-16k,specification_derivation,70000000000,80,8,128,4,2,16384,35000000000,81920,1342177280,80000000000,16000000000,21,false,false
+bf16-32k,specification_derivation,70000000000,80,8,128,4,2,32768,35000000000,81920,2684354560,80000000000,16000000000,10,false,false
+one-byte-kv-32k,unverified_format_candidate,70000000000,80,8,128,4,1,32768,35000000000,40960,1342177280,80000000000,16000000000,21,false,false

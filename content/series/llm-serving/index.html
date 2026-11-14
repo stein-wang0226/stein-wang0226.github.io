@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM推理与部署工程：调度、并行与成功成本</title>
+<meta name="description" content="Prefill/decode、continuous batching、KV复用、TP/EP/PD分离、量化与投机，建立容量账本和端到端测量协议。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="purpose"><p class="eyebrow">Serving engineering · 2026-11-14</p><h2>把结构收益转成可测量的服务结果</h2>
+<p class="lead">模型结构决定计算和状态；调度决定哪些请求一起运行；并行和低精度决定如何使用设备；端到端测量决定这些选择是否值得。token吞吐、请求延迟、任务正确性和成功成本必须分别记录。</p>
+<p>先读<a href="../transformer-decoder-flow.html">Decoder流程</a>、<a href="../llm-architecture/s02_attention_position_cache.html">Attention与KV</a>及<a href="../distributed-training-guide.html">通信基础</a>。本系列以固定源码解释工程对象，最新型号、FP4和扩散drafter证据连接研究地图。</p>
+<figure><div class="flow"><div class="stage"><b>模型与状态</b><small>权重、KV、递归状态<br>结构与长度边界</small></div><div class="stage"><b>服务调度</b><small>prefill / decode<br>批处理与cache生命周期</small></div><div class="stage"><b>设备与数值</b><small>TP / DP / EP / PD<br>量化、验证与传输</small></div><div class="stage"><b>任务与成本</b><small>TTFT / ITL / goodput<br>失败、CPU、成功成本</small></div></div><figcaption>不是性能比例图。所有规划值与论文实测、源码支持范围分开呈现。</figcaption></figure></section>
+<!-- READING:CHAPTERS -->
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；当前顺序见上方目录</summary>
+<section id="chapters"><h2>三章主线</h2><div class="chapter-grid">
+<article class="card"><h3><a href="s01_runtime_scheduling.html">01 · 请求调度与缓存生命周期</a></h3><p>continuous batching、分页、prefix、chunked prefill与抢占；vLLM/SGLang固定源码入口。</p></article>
+<article class="card"><h3><a href="s02_parallel_quantization.html">02 · 并行、量化与投机验证</a></h3><p>TP/DP/EP、prefill/decode分离、权重/KV格式、FP4和drafter；区分对象、精度与收益条件。</p></article>
+<article class="card"><h3><a href="s03_capacity_cost.html">03 · 容量、延迟与成功成本</a></h3><p>显存账本、负载测量、长短请求、工业rollout容量；下载CSV规划表与测量协议。</p></article>
+</div></section>
+</details><!-- READING:HISTORY:END -->
+<section id="connections"><h2>连接训练与Agent执行</h2>
+<p>训练池与rollout池通过权重版本、模板和logprob协议衔接。环境worker和verifier的CPU时间可能主导长程任务；高GPU利用率也可能产生大量无效轨迹。<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">128/1024 H100规划</a>是工业规模方案，不是本站实测。</p>
+<p>本文固定实现：vLLM v0.32.0（5df63a7）与SGLang v0.5.23（297e54f）。截至2026-11-14核对，vLLM另有v0.33.0rc3标签，即使release元数据未标prerelease，名称仍是RC，本系列以无RC的v0.32.0作源码基线。新版本与新架构组合需重新检查。</p>
+<p>完整路线与覆盖表见<a href="../llm-research-map-2026/#coverage">研究地图</a>；任务策略归<a href="../agent-systems/">Agent系统</a>，参数更新归<a href="../llm-training-lifecycle/s05_training_methods_systems.html">训练方法</a>。</p>
+</section></main></body></html>

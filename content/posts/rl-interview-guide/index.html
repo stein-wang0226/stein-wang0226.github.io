@@ -728,6 +728,9 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备">
+<h3 id="rl-objective-bridge">四个分布和三个检验</h3>
+<p>先明确当前policy、采样behavior/old policy、KL reference、蒸馏teacher；PPO重要性比率分母是behavior，reference进入KL，teacher提供监督。DPO是偏好对上的优化目标；OPD描述学生在策略采样与教师反馈的蒸馏流程，两者不是同一维度的算法标签。</p>
+<p>用科学任务检查：verifier失败是否策略导致？奖励是否被文件名/空结果投机满足？统计提升是否伴随更多rollout和更长轨迹？<a href="/llm-training-lifecycle/s03_sft_rft.html">SFT/RFT定义</a> → <a href="/llm-training-lifecycle/s04_rl_evaluation.html">RL归一化与loss</a> → <a href="/agent-data-benchmarks/s04_cluster_training_evaluation.html">同任务同预算对照</a>形成实际阅读路径。来源：<a href="https://arxiv.org/abs/1707.06347">PPO</a>、<a href="https://arxiv.org/abs/2305.18290">DPO</a>；历史OPD实例的型号与性能保持待逐项核实。</p>
 <h2>阅读准备</h2><p><strong>范围与先修：</strong>策略梯度、PPO / GRPO、RLHF / RLVR、DPO 和蒸馏。需要条件概率、期望、梯度与语言模型 loss 基础。</p>
 <p><strong>阅读路线：</strong>策略梯度与 advantage → PPO / GRPO → RLHF / RLVR → DPO → 算法对比 → 高频问答。复习时分别说清采样数据、reward、advantage、损失和更新后模型；不要混用“离线偏好优化”和“在线 rollout”。</p>
 </section>
@@ -2656,6 +2659,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
 <!-- ==================== Section 8b: OPD (On-Policy Distillation) ==================== -->
 <section id="opd">
+    <div class="integration-overview" id="opd-overview"><h2>OPD与自蒸馏：回到学生状态</h2><p>本手册保留经典数学、符号与推导。现代OPD以学生rollout暴露的prefix为条件，具体目标、完整词表/采样信号、多教师、接管和能力保留见<a href="/llm-posttraining/s03_opd_self_distillation.html">OPD主讲章</a>；需要对照旧配方时展开下方全文。</p></div>
+    <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前OPD/OPSD完整参考 · 2026-11-14；原公式、分类与来源</summary>
     <h2>8b. OPD（On-Policy Distillation，在线策略蒸馏）+ OPSD</h2>
 
     <p>OPD 是 2025–2026 年最火的 LLM 后训练范式之一，已被 <strong>Qwen3、DeepSeek-V4、GLM-5、MiMo-V2-Flash、Nemotron-Cascade 2</strong> 等主流模型纳入生产流水线。核心思想：<strong>让学生模型自己生成回答（on-policy rollout），再由教师模型在这些学生轨迹上提供密集的 token 级监督信号</strong>，从而解决传统蒸馏（Off-policy KD）的 Exposure Bias 问题。</p>
@@ -3152,6 +3157,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
         ❌ 不能（black-box，只有 API）：GAD（判别器 reward）、OmniOPD（推测验证）<br/>
         ❌ 没有 teacher：OPSD（自蒸馏）、SDFT（自我教学持续学习）
     </div>
+</details><!-- READING:HISTORY:END -->
 </section>
 
 <!-- ==================== Section 8: Reward ==================== -->
@@ -3483,6 +3489,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
 <!-- ==================== Section 12: RL Training Harness ==================== -->
 <section id="harness">
+    <div class="integration-overview" id="harness-overview"><h2>运行状态与现代训练系统</h2><p>执行循环、工具返回、上下文和跨会话memory见<a href="/agent-harness-guide.html#codex-loop">Harness主讲页</a>；actor、rollout、reference、critic与异步偏差见<a href="/llm-posttraining/s05_frameworks_async.html">后训练系统</a>。保存准确的行为概率和动作mask，才能把执行轨迹用于策略更新。</p></div>
+    <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前Training Harness参考 · 2026-11-14</summary>
     <h2>12. RL Training Harness（训练基础设施）</h2>
 
     <div class="box-insight">
@@ -3593,6 +3601,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
         <p>A: (1) <strong>Dynamic batching</strong>：不按固定 batch 分，而是按 token 总数分 micro-batch → 避免短 trajectory 浪费 padding；(2) <strong>Packing</strong>：多条短 trajectory 拼接成一条长序列（加 attention mask 隔离）；(3) <strong>Async completion</strong>：先完成的 trajectory 先进入 reward 计算，不等最慢的 → 管道式处理减少等待。</p>
     </div>
 
+</details><!-- READING:HISTORY:END -->
 </section>
 
 <!-- ==================== Section 13: FAQ ==================== -->

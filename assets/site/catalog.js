@@ -65,7 +65,7 @@
         chip.setAttribute('aria-pressed', String(chip.dataset.topic === state.topic));
       }
       clear.hidden = !filtered;
-      const rows = data.entries.filter(e => e.origin === 'local' && e.status === 'published'
+      const rows = data.entries.filter(e => (query ? true : e.origin === 'local' && e.status === 'published')
         && (query || e.kind !== 'chapter')
         && (!state.topic || e.topic === state.topic)
         && (!state.type || e.type === state.type)
@@ -73,10 +73,11 @@
       rows.sort((a, b) => state.sort !== 'title' && (a.updated || b.updated) && a.updated !== b.updated
         ? (b.updated || '').localeCompare(a.updated || '')
         : (a.title < b.title ? -1 : a.title > b.title ? 1 : a.id.localeCompare(b.id)));
-      container.innerHTML = rows.map(e => {
-        if (!filtered && e.id === data.featured_id) {
-          return document.querySelector('#catalog-feature').innerHTML;
-        }
+      const owners = new Set((data.concept_owners || []).filter(o =>
+        `${o.key} ${o.label}`.toLowerCase().includes(query)).map(o => o.entry));
+      if (query) rows.sort((a, b) => Number(owners.has(b.id)) - Number(owners.has(a.id))
+        || Number(b.reading_role === 'core') - Number(a.reading_role === 'core'));
+      function renderCard(e) {
         const topic = data.topics.find(t => t.id === e.topic).label;
         const type = data.types.find(t => t.id === e.type).label;
         const children = data.entries.filter(c => c.series === e.id && c.status === 'published').sort((a,b) => a.order-b.order);
@@ -85,7 +86,20 @@
           <div class="card-bottom"><span class="note-date">${esc(e.updated || '更新时间待确认')}</span>
           <a class="card-open" href="${esc(e.url)}" aria-label="阅读${esc(e.title)}">${e.kind === 'series' ? '浏览系列' : '阅读笔记'}${icon}</a></div>
           ${children.length ? `<details><summary>查看系列章节</summary><ol>${children.map(c=>`<li><a href="${esc(c.url)}">${esc(c.title)}</a></li>`).join('')}</ol></details>` : ''}</article>`;
-      }).join('');
+      }
+      if (query) {
+        container.innerHTML = '<div class="note-grid">' + rows.map(renderCard).join('') + '</div>';
+      } else {
+        const groups = data.topics.map(t => ({
+          label: t.label, entries: rows.filter(e => e.topic === t.id && e.reading_role === 'core')
+        }));
+        groups.push({label: '推导、代码与自测参考', entries: rows.filter(e => e.reading_role === 'reference')});
+        groups.push({label: '滚动追踪', entries: rows.filter(e => e.reading_role === 'tracker')});
+        container.innerHTML = groups.filter(g => g.entries.length).map(g =>
+          `<section class="catalog-group"><h3>${esc(g.label)}</h3><div class="note-grid">${g.entries.map(renderCard).join('')}</div></section>`).join('');
+      }
+      for (const section of document.querySelectorAll('.supplemental')) section.hidden = !!query;
+      for (const section of document.querySelectorAll('.learning-paths, .research-focus')) section.hidden = !!(query || state.topic || state.type);
       document.querySelector('#result-count').textContent = `${rows.length} 项匹配内容`;
       document.querySelector('#no-results').hidden = !!rows.length;
     }

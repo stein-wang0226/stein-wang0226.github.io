@@ -574,6 +574,10 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备">
+<h3 id="multi-task-bridge">把算法选择放回任务、采样与系统</h3>
+<p>科学Agent的动作是模型生成的分析/工具参数，工具输出是下一步观测；隐藏环境状态使其更接近POMDP，而非“完整对话即充分状态”的自动保证。同一个prompt的G条轨迹组成GRPO组；语义不同的步骤不能仅按“第t轮”拼组。环境超时要独立标记，不能当成科学结论错误混入奖励。</p>
+<p>二值成功奖励、独立采样时，有差异组的概率为 <code>1−p^G−(1−p)^G</code>；G=8、p=0.01约7.7%，p=0.5约99.2%。这是教学推导，真实采样相关时需直接统计。组内标准化不会平衡任务占比，也不会解决梯度冲突；监控每类任务的成功率、有效组、目标token数、策略版本年龄和长短轨迹权重。</p>
+<p><strong>定义与证据：</strong><a href="https://arxiv.org/abs/2402.03300">DeepSeekMath / GRPO</a>、<a href="https://arxiv.org/abs/2503.20783">Dr.GRPO</a>、<a href="https://arxiv.org/abs/2503.14476">DAPO</a>。阶段边界在 <a href="/llm-training-lifecycle/s04_rl_evaluation.html">训练第04章</a>；最新路线在 <a href="/llm-research-map-2026/s02_agentic_rl.html">研究地图</a>；工业规模对照与诊断在 <a href="/agent-data-benchmarks/s04_cluster_training_evaluation.html">科学任务第04章</a>。本页历史性能和全部新算法归属仍需逐项复核。</p>
 <h2>阅读准备</h2><p><strong>范围：</strong>从单轮策略优化到多轮 Agent 后训练。先修语言模型训练、概率与策略梯度；基础不足时先读 <a href="rl-interview-guide.html">RL 速查手册</a>。</p>
 <p><strong>阅读路线：</strong>算法目标 → rollout 与反馈 → reward / advantage → 策略更新 → 工程实现与评估。把每个算法的数据来源、损失、参考策略和训练产物分别对应起来，再比较 PPO、DPO、GRPO 与 OPD。</p>
 </section>
@@ -667,6 +671,8 @@
             <p>2026 年的范式共识：<strong>Agent = Model + Harness</strong>。RL 不再只优化"生成什么"，而是优化"如何与环境交互"——包括何时调用工具、如何规划多步行动、怎样从失败中恢复。这使得 Agentic RL 成为大厂基模组面试的核心考察方向。</p>
         </div>
 
+        <section class="integration-overview" id="math-overview"><h2>数学先修与现代训练目标</h2><p>MDP、策略梯度、重要性采样、KL与GAE的完整推导统一查<a href="/rl-interview-guide.html#pg-to-ppo">RL数学手册</a>；现代Agent更新对象见<a href="/llm-posttraining/s02_rl_algorithms.html#policy-gradient">后训练目标</a>。本页重点保留Agent问题分类、算法关系、工业案例与QA。</p></section>
+        <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前数学先修 · 2026-11-14；完整公式保留</summary>
         <!-- ======================= Part I ======================= -->
         <h2 class="section-title" id="part1"><span class="num">I</span> 数学基础</h2>
 
@@ -781,11 +787,14 @@
             <p>GAE 是 PPO 能稳定训练的关键组件之一。但 GRPO 等 Critic-Free 方法绕过了 GAE，用组内相对奖励来计算优势——这正是下一节的核心话题。</p>
         </div>
 
+        </details><!-- READING:HISTORY:END -->
         <!-- ======================= Part II ======================= -->
         <h2 class="section-title" id="part2"><span class="num">II</span> 经典算法族谱</h2>
 
         <p>当前 LLM RL 训练算法可分为三大家族：<strong>PPO（Critic-based）</strong>、<strong>DPO（Preference-based）</strong>、<strong>GRPO（Group-based / Critic-Free）</strong>。每个家族都有多个变体，针对不同的训练挑战做了针对性改进。</p>
 
+        <div class="integration-overview" id="algorithm-overview"><p>PPO、DPO与GRPO分别依赖critic、偏好对和组内baseline；具体分布、ratio、mask与loss分母由<a href="/llm-posttraining/s02_rl_algorithms.html">后训练算法章</a>主讲，偏好优化见<a href="/llm-posttraining/s01_supervision_preference.html#preference">SFT与偏好章</a>。下方族谱和对比保留本页的分类视角。</p></div>
+        <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前三类算法讲解 · 2026-11-14；原公式与例子</summary>
         <!-- PPO -->
         <h3 id="ppo">2.1 PPO 家族（Critic-based）</h3>
 
@@ -893,6 +902,7 @@
             </div>
         </div>
 
+        </details><!-- READING:HISTORY:END -->
         <!-- Family Tree -->
         <h3 id="family-tree">2.4 族谱总图</h3>
 
@@ -1134,7 +1144,7 @@
         <!-- ======================= Part IV ======================= -->
         <h2 class="section-title" id="part4"><span class="num">IV</span> 前沿算法创新</h2>
 
-        <p>2025-2026 年涌现了大量对 GRPO/PPO 的改进。这些改进大多<strong>正交</strong>——分别从不同维度解决不同问题，可以自由组合。</p>
+        <p>GRPO/PPO改进可作用于采样、优势、ratio、loss聚合和系统执行等不同位置；位置不同不代表严格正交或可以无条件组合，需要联合检查采样分布、估计偏差与权重。</p>
 
         <!-- GSPO -->
         <h3 id="gspo">4.1 GSPO — Group Sequence Policy Optimization</h3>
@@ -1189,7 +1199,7 @@
         <h3 id="ortho">4.5 正交叠加：多维度改进的自由组合</h3>
 
         <div class="box-insight">
-            <p>2025-2026 年的一个重要共识是：RL 算法的各个改进维度是<strong>正交的</strong>，可以自由组合。以下是四个主要维度和代表算法：</p>
+            <p>以下按四个工程维度整理组合候选；“正交”仅作模块划分的直觉，不是理论可交换或无交互的证明。</p>
         </div>
 
         <table>
@@ -1209,7 +1219,7 @@
             <span class="label">推荐组合</span>
             <p><strong>Agentic RL 最优组合（2026 前沿）</strong>：</p>
             $$\text{ARPO (adaptive rollout)} + \text{GiGPO (双层 advantage)} + \text{GSPO (seq-level ratio)} + \text{DAPO (解耦 clip)} + \text{StarPO (稳定化)}$$
-            <p>这五个改进分别作用于不同维度，理论上可以完全叠加。实际训练中需要根据任务复杂度调整各组件的超参数。</p>
+            <p>组合前检查动态采样改变任务分布、优势归一化改变权重、sequence ratio改变估计单位、长度聚合改变梯度贡献；通过单组件和联合消融证明收益，不能假定完全叠加。</p>
         </div>
 
         <!-- 2026 New Algorithms -->
@@ -1293,6 +1303,8 @@
         <!-- ======================= Part V: OPD ======================= -->
         <h2 class="section-title" id="part5"><span class="num">V</span> OPD — On-Policy Distillation（在策略蒸馏）</h2>
 
+        <div class="integration-overview" id="opd-overview"><p>OPD在学生访问的状态上学习教师条件分布；“on-policy”首先说明状态来自谁。完整词表、采样token、KL方向和多教师/自蒸馏路线见<a href="/llm-posttraining/s03_opd_self_distillation.html">OPD主讲章</a>。本页继续保留Sparse-to-Dense流程和多轮Agent变体的分类。</p></div>
+        <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前OPD定义与算法比较 · 2026-11-14</summary>
         <h3 id="opd">5.1 OPD 原理 — 在策略蒸馏的数学本质</h3>
 
         <div class="card teal">
@@ -1337,6 +1349,7 @@
             </table>
         </div>
 
+        </details><!-- READING:HISTORY:END -->
         <h3 id="opd-pipeline">5.3 Sparse-to-Dense 完整 Pipeline</h3>
 
         <div class="card teal">
@@ -1653,6 +1666,8 @@
             </table>
         </div>
 
+        <div class="integration-overview" id="framework-overview"><p>训练框架应按actor、rollout、reference、critic和环境职责比较；并行吞吐还要控制policy lag与训练/推理概率一致性。当前版本和固定源码见<a href="/llm-posttraining/s05_frameworks_async.html">异步框架主讲章</a>；本页保留任务生态、仓库与GUI实例。</p></div>
+        <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前框架与训练要点 · 2026-11-14；版本冻结</summary>
         <!-- Training Frameworks -->
         <h3 id="training-infra">7.2 开源 RL 训练框架</h3>
 
@@ -1729,6 +1744,7 @@
             </tbody>
         </table>
 
+        </details><!-- READING:HISTORY:END -->
         <!-- GitHub Repos -->
         <h3 id="github-repos">7.4 推荐开源 Repo（按 Star 排序）</h3>
 

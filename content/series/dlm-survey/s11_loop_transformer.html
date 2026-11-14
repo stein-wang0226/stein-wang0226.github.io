@@ -54,6 +54,7 @@ window.MathJax = {
 
 <!-- ==================== Section 11 ==================== -->
 <h2 class="section-title" id="s11"><span class="num">11</span> Looped Transformer 与 Latent Reasoning</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：参数复用与计算深度</h3><p>循环块ht+1=Fθ(ht,x)复用θ，减少独立参数不代表同等计算更少；循环次数、停止规则和状态缓存决定实际开销。Latent循环、文本CoT与diffusion去噪可以类比迭代，却有不同训练目标/状态/输出概率。理论表达力依赖精度、步数和资源假设，不能直接说明现实模型推理更忠实。</p><p>中间答案一致率36.1%说明输出变化，不能单独证明真实思考或否定CoT。固定计算预算与中间状态干预，比较深度、停止、质量/延迟。最新原始来源复用 <a href="/llm-research-map-2026/s07_architecture_training.html">递归深度与机制</a>；接 <a href="/agent-systems/s02_planning_compute.html">推理预算</a>。</p></div>
 
 <p>本章聚焦于一条与扩散语言模型深度交叉的新兴路线：<strong>循环 Transformer（Looped Transformer）</strong>。其核心思想是让少量 Transformer 层反复执行多次，在不增加参数的前提下实现动态计算深度，从而在隐空间中完成"latent reasoning"（隐式推理）。覆盖 30+ 篇论文（2019&ndash;2026）。</p>
 

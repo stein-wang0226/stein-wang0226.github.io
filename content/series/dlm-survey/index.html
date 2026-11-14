@@ -43,8 +43,14 @@ window.MathJax = {
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="系列阅读准备">
 <h2>系列阅读准备</h2><p><strong>范围与先修：</strong>14 章涵盖生成模型基础、语言扩散路线及训练 / 解码应用。先修概率、KL、变分推断、微分方程与 Transformer；相关基础可先查 <a href="../transformer-decoder-flow.html">Decoder 数据流</a>。</p>
+<p><strong>主线：</strong>领域地图 → 预测对象 → 离散 / 块 / 连续路线 → Scaling → 投机解码 → ELBO / RL → 综合判断与研究问题。Looped Transformer是研究扩展；DDPM、Flow/SDE与VAE为按需推导，商业材料最后查阅。十四章全部保留。</p>
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前阅读建议 · 2026-11-14</summary>
 <p><strong>推荐顺序：</strong>DDPM → ODE / SDE / Flow → 全景概述 → 离散 / 块 / 连续扩散 → 预测范式 → Scaling → 投机解码 → ELBO / RL → 落地与对比；Looped Transformer 和 VAE 可按兴趣补充。章节目录和前后章导航依照统一登记顺序生成。</p>
+</details><!-- READING:HISTORY:END -->
 <p><strong>阅读方法：</strong>逐章对应前向噪声过程、预测对象、训练 loss、采样步骤与生成产物。公式、代码及图表保留；模型规格、性能比较和论文归属仍需逐项结合原始来源复核。</p>
+<h3 id="foundations">本轮基础复核与贯通路径</h3>
+<p>基础推导按 <a href="https://arxiv.org/abs/2006.11239">DDPM</a>、<a href="https://arxiv.org/abs/2011.13456">Score-SDE</a>、<a href="https://arxiv.org/abs/2210.02747">Flow Matching</a>、<a href="https://arxiv.org/abs/2107.03006">D3PM</a>、<a href="https://arxiv.org/abs/2406.07524">MDLM</a>和 <a href="https://arxiv.org/abs/1312.6114">VAE</a>的原始定义补充条件。第08章SPG/GDSD的公式分别对照固定v1方法段修订；各章新增“机制与验收”说明，不代表历史全部型号/数字已核实。</p>
+<p>把DLM看作训练目标、生成路径与系统实现的组合：<a href="/llm-architecture/s05_hybrid_architectures.html">架构状态</a> → 本系列去噪/ELBO → <a href="/llm-research-map-2026/s04_inference_diffusion.html">DFlash/DSpark/AdaFlash最新证据</a> → <a href="/llm-serving/s02_parallel_quantization.html">target验证与量化</a> → <a href="/llm-serving/s03_capacity_cost.html">同质量成功成本</a>。实验均为设计方案。</p>
 </section>
 <div id="site-main" tabindex="-1"></div>
 <div id="math-loading">
@@ -60,6 +66,9 @@ window.MathJax = {
 
 <div class="container">
 
+  <!-- READING:CHAPTERS -->
+  <p>每章对应前向噪声、预测对象、loss、采样与产物；综合对比章连接<a href="../blog/#research-diffusion-language">个人扩散语言模型研究</a>。需要变分或连续时间基础时，从本章先修入口返回完整推导。</p>
+  <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；旧编号保留供对照</summary>
   <h2 class="section-title"><span class="num">目录</span> 基础理论 + 十二大章节</h2>
 
   <div class="index-grid">
@@ -164,6 +173,7 @@ window.MathJax = {
 
   </div>
 
+  </details><!-- READING:HISTORY:END -->
   <footer style="text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text2); font-size: 0.85em;">
     <p>扩散语言模型前沿调研 &middot; 涵盖 70+ 篇核心论文 &middot; 2013&ndash;2026</p>
   </footer>

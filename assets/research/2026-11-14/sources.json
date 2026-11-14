@@ -24,7 +24,30 @@
       "download_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/resolve/314113f8a7dadb388215396ba5fbee2c610a04d6/DeepSeek_V41_Tech_Report.pdf",
       "bytes": 1809802,
       "sha256": "ba68e2e40408125ae6d2f63a9a241b61c73910691c74ec1a2a7023c851eac08d",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-posttraining/s05_frameworks_async.html#partial-rollout",
+        "/llm-posttraining/s05_frameworks_async.html#three-policy",
+        "/llm-research-map-2026/s01_agent_data_bench.html#distinctions",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
+        "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
+        "/llm-research-map-2026/s03_base_architecture.html#cache",
+        "/llm-research-map-2026/s03_base_architecture.html#ced",
+        "/llm-research-map-2026/s03_base_architecture.html#csa2",
+        "/llm-research-map-2026/s03_base_architecture.html#engram",
+        "/llm-research-map-2026/s03_base_architecture.html#versions",
+        "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s07_architecture_training.html#precision",
+        "/llm-research-map-2026/s07_architecture_training.html#residual"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 2,
@@ -42,7 +65,23 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Architecture baseline for V4.1; distinguish CSA/HCA from CSA2.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-research-map-2026/s03_base_architecture.html#versions",
+        "/llm-training-lifecycle/#findings",
+        "/llm-training-lifecycle/#overview",
+        "/llm-training-lifecycle/s01_pretraining.html#budget",
+        "/llm-training-lifecycle/s01_pretraining.html#sources",
+        "/llm-training-lifecycle/s03_sft_rft.html#industry",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 3,
@@ -77,7 +116,12 @@
       "download_url": "https://arxiv.org/pdf/2601.07372v1",
       "bytes": 1409701,
       "sha256": "90bf37b36cf5b507705c53d54f6e8142870fba23955f82a6a3b0aa1a983193a3",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-research-map-2026/s03_base_architecture.html#engram"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 4,
@@ -131,7 +175,13 @@
       "download_url": "https://arxiv.org/pdf/2607.05147v1",
       "bytes": 1055890,
       "sha256": "522036b0cc16ad4678bd7c278dd0a0ab4da31170af7b97c2041067cc09a8289a",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-research-map-2026/s04_inference_diffusion.html#exactness",
+        "/llm-research-map-2026/s04_inference_diffusion.html#methods"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 5,
@@ -149,7 +199,19 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY-NC-ND 4.0",
       "used_for": "KDA, Attention Residuals, Stable LatentMoE; do not present K3 as the latest K3.1 checkpoint.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s03_base_architecture.html#alternatives",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#kimi",
+        "/llm-research-map-2026/s06_architecture_landscape.html#state",
+        "/llm-research-map-2026/s07_architecture_training.html#latent-moe",
+        "/llm-research-map-2026/s07_architecture_training.html#muon",
+        "/llm-research-map-2026/s07_architecture_training.html#residual",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 6,
@@ -173,7 +235,12 @@
       "download_url": "https://arxiv.org/pdf/2602.06036v1",
       "bytes": 435740,
       "sha256": "d44fabf907b17766915c7e064f7a6cecf46bc717bcf0c0d2f65e4031f56cae74",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-research-map-2026/s04_inference_diffusion.html#methods"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 7,
@@ -192,7 +259,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Reverse-KL OPD drafter adaptation and length prediction; not a universal speedup guarantee.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s04_inference_diffusion.html#methods",
+        "/llm-research-map-2026/s04_inference_diffusion.html#opd"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 8,
@@ -217,7 +290,14 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Requirement-driven task construction; §5 downstream evaluation has scaffold-confounded published baselines.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 9,
@@ -245,7 +325,14 @@
       "download_url": "https://arxiv.org/pdf/2610.12593v1",
       "bytes": 6168024,
       "sha256": "6084dc82f1bafe25f2dc9673726693008eabcd547dd9c382629db4580e78a55f",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 10,
@@ -279,7 +366,14 @@
       "download_url": "https://arxiv.org/pdf/2610.13395v1",
       "bytes": 15200896,
       "sha256": "d1c4e4c3b39c90f6702c7dd8403b128dffdb3c3c13c597f960001ef8c93d044c",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
+        "/llm-research-map-2026/s05_agent_frontiers.html#science"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 11,
@@ -297,7 +391,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Four reported silent scoring/cost/logging/version errors; findings are author audit, not local reproduction.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s01_agent_data_bench.html#audit"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 12,
@@ -318,7 +417,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Verifier reuse/rebuild and deployment-state panels; limited scope.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s01_agent_data_bench.html#audit"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 13,
@@ -343,7 +447,13 @@
       "download_url": "https://arxiv.org/pdf/2609.27035v1",
       "bytes": 836445,
       "sha256": "15bb088aaeae730807da6cd41895af0be5a6f6210185ace9ad335f729273ae8b",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
+        "/llm-research-map-2026/s02_agentic_rl.html#credit"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 14,
@@ -373,7 +483,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Knowledge-state grouping with reference-conditioned conditions and external verifier; not oracle-free.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
+        "/llm-research-map-2026/s02_agentic_rl.html#credit"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 15,
@@ -398,7 +514,14 @@
       "download_url": "https://arxiv.org/pdf/2608.19842v1",
       "bytes": 461278,
       "sha256": "7c71b61820ab37694ac9b0f73c1d0533b2311b30a006b7ee25fd8bf645c45288",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#single-rollout",
+        "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
+        "/llm-research-map-2026/s02_agentic_rl.html#credit"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 16,
@@ -433,7 +556,14 @@
       "download_url": "https://arxiv.org/pdf/2602.21534v3",
       "bytes": 5712510,
       "sha256": "f50eeaea6b4ca43b6e8519e2ca26b250dd98d50c5a4559da4c6e8b0000be97e4",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#single-rollout",
+        "/llm-research-map-2026/s02_agentic_rl.html#credit",
+        "/llm-research-map-2026/s02_agentic_rl.html#map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 17,
@@ -463,7 +593,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY-NC-ND 4.0",
       "used_for": "Asynchronous rollout/trainer separation and bounded staleness; foundation from 2025, not a new 2026 algorithm.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 18,
@@ -484,7 +619,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Episode and anchor-state group advantages; recurrence/fragmentation limits.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s02_agentic_rl.html#credit"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 19,
@@ -508,7 +648,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY 4.0",
       "used_for": "Long-horizon terminal training, loss masks and rollout routing replay.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 20,
@@ -526,7 +671,16 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Length-normalized sequence ratio, not the full trajectory likelihood product.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 21,
@@ -542,7 +696,18 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Clip-Higher, dynamic sampling, token-level aggregation and overlong shaping.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
+        "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 22,
@@ -567,7 +732,18 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY 4.0",
       "used_for": "Length and reward-standard-deviation normalization biases.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
+        "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 23,
@@ -598,7 +774,13 @@
       "download_url": "https://arxiv.org/pdf/2504.21798v1",
       "bytes": 3529666,
       "sha256": "15321ed2d58b1ae263a1b0ddad8a5a20f7062a776be850a3acf9dd7323833afd",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 24,
@@ -620,7 +802,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY 4.0",
       "used_for": "Dual-control conversational environment; historical v1 defines the mechanism, not current roster.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 25,
@@ -650,7 +837,14 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "Multi-teacher capability integration under student rollouts.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-research-map-2026/s04_inference_diffusion.html#opd",
+        "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 26,
@@ -668,7 +862,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "§2 adapters and parity; §3 harness/cost/failure analysis; §4 hard-task index.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
+        "/llm-research-map-2026/s01_agent_data_bench.html#parity"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 27,
@@ -722,7 +922,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY-NC-SA 4.0",
       "used_for": "§4 task/metric contracts; §5 valid submissions and normalized scores; scientific research is broader than code runs.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science",
+        "/llm-research-map-2026/s05_agent_frontiers.html#science"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 28,
@@ -740,7 +946,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY 4.0",
       "used_for": "Versioned model-harness pairs, specialist LoRAs and bounded RSI; compounding improvement remains unproved.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
+        "/llm-research-map-2026/s05_agent_frontiers.html#adaptation"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 29,
@@ -797,7 +1009,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY 4.0",
       "used_for": "Historical v1 only; primary release 1.1 used for current roster claims.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s05_agent_frontiers.html#skills"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 30,
@@ -815,7 +1032,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY-NC-ND 4.0",
       "used_for": "PARL, orchestrator/subagent decomposition and wall-clock vs total-compute budgets.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 31,
@@ -833,7 +1055,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "arXiv.org perpetual non-exclusive license",
       "used_for": "MiniMax-M1 original clipped-IS objective and stop-gradient; not Kimi K2 origin.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 32,
@@ -855,7 +1083,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "CC BY-SA 4.0",
       "used_for": "Cancellation-aware response masks; emerging method, no universal preference over other filters.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 33,
@@ -877,7 +1110,27 @@
       "download_url": "https://arxiv.org/pdf/2606.15007v1",
       "bytes": 3973681,
       "sha256": "66afad9d2e1bbcab2431af59396f681a5e1546f0a6aff8fcd999f7151b87821c",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-research-map-2026/s03_base_architecture.html#alternatives",
+        "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
+        "/llm-research-map-2026/s07_architecture_training.html#precision",
+        "/llm-research-map-2026/s07_architecture_training.html#sources",
+        "/llm-training-lifecycle/#findings",
+        "/llm-training-lifecycle/s01_pretraining.html#budget",
+        "/llm-training-lifecycle/s01_pretraining.html#sources",
+        "/llm-training-lifecycle/s03_sft_rft.html#industry",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 34,
@@ -891,7 +1144,13 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "82 tasks from 6,627 candidates; a hard-task index, not a general capability scale.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
+        "/llm-research-map-2026/s01_agent_data_bench.html#parity"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 35,
@@ -905,7 +1164,13 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "Instruction, environment, solution and verifier; artifact and reward paths.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#contract",
+        "/llm-research-map-2026/s01_agent_data_bench.html#harbor"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 36,
@@ -919,7 +1184,13 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "Explicit artifact handoff; full running-process state is not transferred.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#contract",
+        "/llm-research-map-2026/s01_agent_data_bench.html#harbor"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 37,
@@ -933,7 +1204,13 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "Breaking dataset/resource change; release prose says 19 tasks fixed.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
+        "/llm-research-map-2026/s01_agent_data_bench.html#parity"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 38,
@@ -947,7 +1224,12 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "66 tasks; partner page says 20 revised. Do not silently merge counts.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s01_agent_data_bench.html#parity"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 39,
@@ -961,7 +1243,14 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "Release date is distinct from arXiv submission and model revisions.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-frontier-2026.html#models",
+        "/llm-frontier-2026.html#sources",
+        "/llm-research-map-2026/s03_base_architecture.html#versions"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 40,
@@ -975,7 +1264,14 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "Self-feedback RL for end-to-end project development; not a new architecture report.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-frontier-2026.html#models",
+        "/llm-frontier-2026.html#sources",
+        "/llm-research-map-2026/s03_base_architecture.html#versions"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 41,
@@ -989,7 +1285,13 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "87 tasks, 8 domains, 18 paired paper configurations; distinguish from arXiv v1.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
+        "/llm-research-map-2026/s05_agent_frontiers.html#skills"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 42,
@@ -1003,7 +1305,13 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "108 long-horizon tasks; binary and partial scores with 150/300/500-step budgets.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
+        "/llm-research-map-2026/s05_agent_frontiers.html#gui"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 43,
@@ -1017,7 +1325,10 @@
       "source_type": "official-documentation",
       "evidence": "publisher-report; dynamic page",
       "used_for": "MIT repository including associated documentation; reference encoding and inference implementation.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 44,
@@ -1033,7 +1344,13 @@
       "evidence": "author/provider report; not locally reproduced",
       "license": "link only; redistribution not assumed",
       "used_for": "Architecture disclosure and measurement boundaries.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#qwen"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 45,
@@ -1091,7 +1408,15 @@
       "official_repository_revision": "69885871a64393807d988b27b1b5e380e8f28526",
       "official_report_url": "https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/69885871a64393807d988b27b1b5e380e8f28526/tech_report.pdf",
       "official_report_sha256": "04f263446d74a35cb7cea368574e0c561f3b05c133be2c777ac884404063655d",
-      "official_report_note": "Downloaded outside repository to inspect; no redistribution license assumed. Official report cover date 2026-08-26 differs from arXiv v1 submission 2026-08-31."
+      "official_report_note": "Downloaded outside repository to inspect; no redistribution license assumed. Official report cover date 2026-08-26 differs from arXiv v1 submission 2026-08-31.",
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#qwen",
+        "/llm-research-map-2026/s07_architecture_training.html#muon",
+        "/llm-research-map-2026/s07_architecture_training.html#residual",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 46,
@@ -1110,7 +1435,12 @@
       "license": "qwen-community-1.0",
       "config_sha256": "889658f2508e8c61d409b02e70e0d78d8d4452ec65aaafbe129805d213d2e74b",
       "used_for": "Pinned checkpoint dimensions, attention schedule, serving defaults and disclosed capabilities.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#qwen"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 47,
@@ -1129,7 +1459,13 @@
       "license": "kimi-k3.1-pro",
       "config_sha256": "d95037631e3f23bf527a9f476f25209b231b46853a84877b9c56d5672b8d1202",
       "used_for": "Pinned checkpoint dimensions, attention schedule, serving defaults and disclosed capabilities.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#kimi"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 48,
@@ -1207,7 +1543,12 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://creativecommons.org/licenses/by-nc-nd/4.0/",
       "used_for": "KDA versus scalar-gated DeltaNet; finite recurrent state and chunkwise execution.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#state"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 49,
@@ -1232,7 +1573,16 @@
       "download_url": "https://arxiv.org/pdf/2412.06464v3",
       "bytes": 442953,
       "sha256": "55f84f2ae9c4e52ff494bfa699499867f5e9e17514994ac71de43888363a5fb9",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-architecture/s05_hybrid_architectures.html#gated-delta",
+        "/llm-architecture/s05_hybrid_architectures.html#purpose",
+        "/llm-architecture/s05_hybrid_architectures.html#sources",
+        "/llm-architecture/s05_hybrid_architectures.html#ssm",
+        "/llm-research-map-2026/s06_architecture_landscape.html#state"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 50,
@@ -1251,7 +1601,13 @@
       "license": "openmdw-1.1",
       "config_sha256": "8f92735a43afae0d94b73fb9e658910ed548818a188eb2fc51513e88c9e689cd",
       "used_for": "Pinned checkpoint dimensions, attention schedule, serving defaults and disclosed capabilities.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#nemotron"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 51,
@@ -1289,7 +1645,14 @@
       "download_url": "https://arxiv.org/pdf/2601.18089v1",
       "bytes": 3575198,
       "sha256": "8308307d9519455b7332ae81debbde5af931fb5a20aa9053046875e1361f5515",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
+        "/llm-research-map-2026/s07_architecture_training.html#latent-moe",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 52,
@@ -1497,7 +1860,25 @@
       "download_url": "https://arxiv.org/pdf/2602.15763v1",
       "bytes": 6177891,
       "sha256": "4a97eab759d4576b8a93cac0cdf8e25b8fc4c01d71c61f759548eab6796e6ac7",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s01_supervision_preference.html#recovery",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#glm",
+        "/llm-training-lifecycle/#findings",
+        "/llm-training-lifecycle/s01_pretraining.html#curriculum",
+        "/llm-training-lifecycle/s01_pretraining.html#sources",
+        "/llm-training-lifecycle/s02_midtraining.html",
+        "/llm-training-lifecycle/s03_sft_rft.html#sft",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#systems"
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 53,
@@ -1516,7 +1897,13 @@
       "license": "mit",
       "config_sha256": "bb8f01c42cb92a52ca72e65afb4d5bd8d11aef083cd210e8de25dfb904f23e9f",
       "used_for": "Pinned checkpoint dimensions, attention schedule, serving defaults and disclosed capabilities.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#glm",
+        "/llm-research-map-2026/s07_architecture_training.html#residual"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 54,
@@ -1551,7 +1938,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
       "used_for": "GQA-group block selection, indexer training, H800 attention-kernel experiment on 109B model.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#minimax"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 55,
@@ -1570,7 +1963,12 @@
       "license": "minimax-community",
       "config_sha256": "df6a3668e2de5b8dc0e883e3767495ad17af7e4d69fabe9683088be015fda9ab",
       "used_for": "Pinned checkpoint dimensions, attention schedule, serving defaults and disclosed capabilities.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#minimax"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 56,
@@ -1737,7 +2135,24 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
       "used_for": "SWA/global architecture, visual/audio encoders, diffusion draft and Muown transition.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#mopd2",
+        "/llm-posttraining/s04_environment_reward_credit.html#gar",
+        "/llm-posttraining/s05_frameworks_async.html#compute",
+        "/llm-posttraining/s05_frameworks_async.html#partial-rollout",
+        "/llm-posttraining/s05_frameworks_async.html#three-policy",
+        "/llm-posttraining/s06_task_cases_experiments.html#code-case",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#mimo",
+        "/llm-research-map-2026/s07_architecture_training.html#muon",
+        "/llm-research-map-2026/s07_architecture_training.html#precision",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 57,
@@ -1970,7 +2385,16 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
       "used_for": "SWA/global architecture, Muon precision, expert collapse and training disclosure.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#step",
+        "/llm-research-map-2026/s07_architecture_training.html#muon",
+        "/llm-research-map-2026/s07_architecture_training.html#precision",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 58,
@@ -1989,7 +2413,12 @@
       "license": "apache-2.0",
       "config_sha256": "8d740ba5819e574b7a606ea7aa6d7d381142ed5cc77cab96dde2892c10414042",
       "used_for": "Pinned checkpoint dimensions, attention schedule, serving defaults and disclosed capabilities.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#step"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 59,
@@ -2312,7 +2741,13 @@
       "download_url": "https://arxiv.org/pdf/2607.02770v1",
       "bytes": 786864,
       "sha256": "c3928186251a3f33caf7412f1a8fe7486e8350a7eeecf4146766a183ba22074a",
-      "archive_changes": "none; original bytes"
+      "archive_changes": "none; original bytes",
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#gemma"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 60,
@@ -2367,7 +2802,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://creativecommons.org/licenses/by-nc-nd/4.0/",
       "used_for": "Attention over depth and block approximation.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s07_architecture_training.html#residual",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 61,
@@ -2404,7 +2845,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
       "used_for": "Doubly stochastic residual mixing and finite Sinkhorn approximation.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s07_architecture_training.html#residual",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 62,
@@ -2450,7 +2897,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://creativecommons.org/licenses/by-nc-nd/4.0/",
       "used_for": "Scalable matrix orthogonalization and shape-dependent learning-rate scaling.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s07_architecture_training.html#muon",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 63,
@@ -2637,7 +3090,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://creativecommons.org/licenses/by-nc-nd/4.0/",
       "used_for": "MuonClip precursor; separate from K3 per-head orthogonalization.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-research-map-2026/s07_architecture_training.html#muon"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 64,
@@ -2664,7 +3123,13 @@
       "evidence": "author-report; not locally reproduced",
       "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
       "used_for": "Recurrent depth with shared weights; no inference about closed-model architecture.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s07_architecture_training.html#depth",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 65,
@@ -2680,7 +3145,13 @@
       "evidence": "author/provider report; not locally reproduced",
       "license": "link only; redistribution not assumed",
       "used_for": "Architecture disclosure and measurement boundaries.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#glm"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 66,
@@ -2696,7 +3167,12 @@
       "evidence": "author/provider report; not locally reproduced",
       "license": "link only; redistribution not assumed",
       "used_for": "Architecture disclosure and measurement boundaries.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#glm"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 67,
@@ -2712,7 +3188,12 @@
       "evidence": "author/provider report; not locally reproduced",
       "license": "link only; redistribution not assumed",
       "used_for": "Architecture disclosure and measurement boundaries.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#closed"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 68,
@@ -2728,7 +3209,12 @@
       "evidence": "author/provider report; not locally reproduced",
       "license": "link only; redistribution not assumed",
       "used_for": "Architecture disclosure and measurement boundaries.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#closed"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 69,
@@ -2744,7 +3230,12 @@
       "evidence": "author/provider report; not locally reproduced",
       "license": "link only; redistribution not assumed",
       "used_for": "Architecture disclosure and measurement boundaries.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#closed"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 70,
@@ -2760,7 +3251,10 @@
       "evidence": "author/provider report; not locally reproduced",
       "license": "link only; redistribution not assumed",
       "used_for": "Architecture disclosure and measurement boundaries.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "number": 71,
@@ -2779,7 +3273,13 @@
       "license": "apache-2.0",
       "config_sha256": "3ae7fa89c2f7d1354096418ddaf1331e9e0898a8ca11e804fb6dbaa087efb7da",
       "used_for": "Pinned checkpoint dimensions, attention schedule, serving defaults and disclosed capabilities.",
-      "local_asset": null
+      "local_asset": null,
+      "used_in": [
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#qwen"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     }
   ]
 }

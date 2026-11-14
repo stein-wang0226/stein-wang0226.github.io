@@ -209,6 +209,24 @@ def validate(output=DEFAULT_OUTPUT, root=ROOT, content=None):
             check_data(json.loads(path.read_text(encoding="utf-8")), path)
         except ValueError as exc:
             errors.append(f"{path.relative_to(output)}: invalid JSON: {exc}")
+    from citations import derive
+    citation_data, citation_errors = derive(root, (site, entries, publications, redirects))
+    errors.extend(citation_errors)
+    derived = output / "blog/references.json"
+    if not derived.is_file() or json.loads(derived.read_text()) != citation_data:
+        errors.append("references: derived source/usage index differs from current HTML")
+    from organization import check as check_organization
+    errors.extend(check_organization(root, output))
+    for entry in entries:
+        if entry["kind"] != "series" or entry["status"] != "published":
+            continue
+        text = (output / route_path(entry["url"])).read_text()
+        chapters = sorted((e for e in entries if e["series"] == entry["id"]
+                           and e["status"] == "published"), key=lambda e: e["order"])
+        expected_chapters = [e["id"] for e in chapters]
+        actual_chapters = re.findall(r'data-chapter="([^"]+)"', text)
+        if actual_chapters != expected_chapters:
+            errors.append(f"reading: {entry['id']} directory differs from catalog order")
     return errors, len(docs)
 
 

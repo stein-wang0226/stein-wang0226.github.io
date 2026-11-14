@@ -174,6 +174,10 @@
 <section class="content-guide" aria-label="阅读准备">
 <h2>阅读准备</h2><p><strong>范围与先修：</strong>Decoder-only 模型的训练及自回归推理；需要矩阵乘法、softmax 和张量维度基础。先沿输入 token → embedding → decoder block → logits / loss 阅读，再看推理时的 KV Cache。</p>
 <p><strong>练习：</strong>为 batch、序列长度、隐藏维度分别设定符号，跟踪 Q / K / V、attention 输出及 logits 的形状；比较 prefill 与单 token decode 的缓存增长。正文图解展示核心数据流，具体实现需核对模型的 head 数与位置编码。</p>
+<h3 id="architecture-bridge">从张量图走向模型与部署</h3>
+<p>本页代码是教学用 MHA Decoder，不能直接代替任一 Llama/Qwen checkpoint。以 <code>B=2,S=128,d=4096,hq=32,hkv=8,dh=128</code> 为形状练习：Q 为 <code>[2,32,128,128]</code>，K/V 为 <code>[2,8,128,128]</code>；repeat/broadcast 只服务于 attention 计算，持久缓存应保持8个KV头。logits仍为 <code>[2,128,V]</code>，shift后的有效标签数由padding与角色mask决定。</p>
+<p>缓存字节数 <code>2×L×B×S×hkv×dh×bytes</code> 是未分片、无压缩的历史K/V；MLA、CED、state mixer需要各自状态公式。单步decode的attention读取随历史长度线性增长，prefill的密集attention算术随长度平方增长；FFN、QKV投影、并行通信也有成本，不能由这两项直接推出整体加速倍数。</p>
+<p><strong>来源与去向：</strong><a href="https://arxiv.org/abs/1706.03762v7">Attention原论文</a>、<a href="https://arxiv.org/abs/2305.13245v3">GQA</a>；继续读 <a href="/llm-architecture/s01_transformer_foundations.html">逐层实现</a> → <a href="/llm-architecture/s02_attention_position_cache.html">位置与KV结构</a> → <a href="/llm-serving/s03_capacity_cost.html">容量估算</a>，再用题库LLM第9/12/18题检验。</p>
 </section>
 <div id="site-main" tabindex="-1"></div>
 <div class="container">

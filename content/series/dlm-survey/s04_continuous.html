@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
 </nav>
 <div class="container">
 <h2 class="section-title" id="s4"><span class="num">04</span> 连续隐空间扩散 (Continuous DLLM)</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：先拆重建与生成误差</h3><p>文本→encoder latent→加噪/流→latent decoder→文本，必须分别验收编码重建与生成。离散rounding或decoder会改变概率/语义，连续MSE降低不自动等于token CE或任务成功提升。固定tokenizer与长度，在oracle latent重建、真实采样和AR基线上比较，避免把压缩损失归为扩散损失。</p><p>来源：<a href="https://arxiv.org/abs/2205.14217">Diffusion-LM</a>、<a href="https://arxiv.org/abs/1312.6114">VAE</a>。旧模型归属/约20×差距限原条件，未统一复核；接 <a href="s12_vae.html">latent接口</a>、<a href="/llm-serving/s03_capacity_cost.html">成本边界</a>。</p></div>
 
 <p>这一派认为，既然图像领域的连续扩散（如 DiT）已经成熟，只要把离散文字变成连续向量，即可套用视觉大模型架构。核心问题是<strong>如何桥接离散文本和连续空间</strong>。根据"在哪里做扩散"，可细分为三条路线：</p>
 

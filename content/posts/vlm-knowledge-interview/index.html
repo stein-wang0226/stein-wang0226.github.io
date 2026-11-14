@@ -310,6 +310,9 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备">
+<h3 id="vlm-agent-bridge">视觉token如何进入GUI Agent链路</h3>
+<p>图像/视频经patch或tile编码，connector把视觉特征映射到LLM接口；视觉token数量、分辨率和帧采样同时影响上下文、prefill和定位精度。CLIP的batch对比softmax与SigLIP的pairwise sigmoid是训练损失区别，不能由损失名字直接推出任意模型下游更好；LLaVA的投影/指令训练只代表其具体版本。</p>
+<p>GUI案例按“截图→坐标/元素动作→新截图→任务验收”记录。缩放、坐标系、窗口状态、动作后等待和不可逆操作门控要随轨迹保存；文字回答正确不等于GUI任务完成。token不能只按文本计数，版本与多模态状态也影响prefix复用。来源：<a href="https://arxiv.org/abs/2103.00020">CLIP</a>、<a href="https://arxiv.org/abs/2303.15343">SigLIP</a>、<a href="https://arxiv.org/abs/2304.08485">LLaVA</a>；接 <a href="/agent-data-benchmarks/s02_benchmark_map.html">OSWorld/WebArena评测</a>、<a href="/agent-systems/s03_trust_safety.html">动作权限</a>和 <a href="/llm-serving/s01_runtime_scheduling.html">请求调度</a>。原2025–2026型号列表仍需逐项核实。</p>
 <h2>阅读准备</h2><p><strong>范围与先修：</strong>视觉编码器、视觉语言连接、分辨率处理及面试实现题；需要 Transformer、对比学习和图像 patch 基础。</p>
 <p><strong>阅读路线：</strong>视觉 tokens → projector / connector → LLM → 对齐与指令训练 → 问答和代码。模型规格及“最新进展”依赖版本与日期，既有论断尚未逐项全面复核；阅读时结合末尾论文与官方资料确认。</p>
 </section>

@@ -92,6 +92,8 @@ assistant: Cleaned CSV written to out.csv.
 </details>
 </section>
 <section id="preference">
+<div class="integration-overview"><h2>偏好阶段的输入与产物</h2><p>输入是同prompt的可靠chosen/rejected，产物是相对参考策略更符合偏好的checkpoint。CSV清洗例子必须按文件结果形成标签；DPO、SimPO、ORPO与KTO的目标差别见<a href="../llm-posttraining/s01_supervision_preference.html#preference">偏好主讲章</a>。</p></div>
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前DPO讲解 · 2026-11-14；公式与CSV例子</summary>
 <h2>DPO：固定偏好对上的优化</h2>
 <p>对同一 prompt，数据提供 chosen 与 rejected。DPO 用参考策略消除一个显式 reward model 的中间求解，将偏好转化成直接策略目标；标准离线 DPO 不必在每步运行工具环境。<a href="index.html#ref-17">[17]</a></p>
 <div class="equation" role="math" aria-label="DPO损失">L_DPO = − log σ(β [log πθ(y+|x)/πref(y+|x)
@@ -99,6 +101,7 @@ assistant: Cleaned CSV written to out.csv.
 y+：chosen；y−：rejected；β 控制相对参考策略的尺度。</div>
 <p>CSV 的 chosen 可以是通过产物验证的有效轨迹，rejected 是同任务下会误删合法行或未完成写入的轨迹。偏好标签应来自可靠检查，不能只根据回复口吻。多轮 Agent 轨迹的概率与动作 mask、工具观察和序列化要定义清楚；整段字符串概率不能不加区分地包含环境生成的观察。</p>
 <p>DPO 适合有稳定偏好对的任务，但离线数据可能覆盖不到当前策略的新错误。在线收集偏好可以缓解分布漂移，那是额外的数据更新过程。它仍不能被自动视为 PPO / GRPO 的同义词。Llama 3 的 SFT / DPO 链路是公开偏好后训练参考。<a href="index.html#ref-16">[16]</a></p>
+</details><!-- READING:HISTORY:END -->
 </section>
 <section id="reinforcement">
 <h2>强化 RFT：转到结果反馈循环</h2>
@@ -107,6 +110,8 @@ y+：chosen；y−：rejected；β 控制相对参考策略的尺度。</div>
 <p>InstructGPT 的经典 RLHF 路线是 SFT→人类偏好 reward model→PPO；RLVR 使用可验证答案或执行测试作为奖励来源。<strong>RLHF / RLVR 描述反馈来源，PPO / GRPO 描述优化算法。</strong> 两条轴不能混为一张单线阶段列表。<a href="index.html#ref-19">[19]</a> <a href="index.html#ref-20">[20]</a></p>
 </section>
 <section id="distillation">
+<div class="integration-overview"><h2>教师信号的阶段交接</h2><p>静态教师轨迹交给SFT，学生状态上的教师信号交给OPD。保存教师支持范围、可用logits或采样接口、专家路由和学生独立验收；V4与Ultra对信号粒度的分歧及多教师细节见<a href="../llm-posttraining/s03_opd_self_distillation.html#industry-mopd">OPD主讲章</a>。</p></div>
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前蒸馏机制与工业对照 · 2026-11-14；原图、表与来源</summary>
 <h2>蒸馏：静态教师答案与 OPD 的条件分布不同</h2>
 <p>离线蒸馏可让教师预生成高质量解法，再用学生 SFT。它省去每步教师评分，却让学生主要学习教师访问过的路径。OPD 则让学生自己采样，教师在学生实际遇到的 prefix 或状态上给出信号，减少只学理想教师路径的偏移。</p>
 <figure>
@@ -132,6 +137,7 @@ y+：chosen；y−：rejected；β 控制相对参考策略的尺度。</div>
 </table>
 <div class="callout caution"><strong>保留分歧：</strong>V4 与 Ultra 的公开实验对完整词表 / sampled-token 给出不同偏好。应先对齐教师可用信号、状态支持、目标实现、采样与预算，做小规模对照；本系列不把任一结果写成普适优劣。</div>
 <p>多教师还需要任务路由或权重设计。一个教师会做数学，不代表它在任意 shell 状态下可靠；专家的相互冲突、超出支持范围的状态、学生长轨迹上的误导都可能影响结果。最终必须用独立 verifier 检查学生，而不是用“更像教师”作为唯一成功标准。</p>
+</details><!-- READING:HISTORY:END -->
 </section>
 <section id="industry">
 <h2>把公开后训练方案放回全链路</h2>
@@ -167,6 +173,10 @@ y+：chosen；y−：rejected；β 控制相对参考策略的尺度。</div>
 </section>
 <section id="sources">
 <div class="callout"><strong>继续深入：</strong><a href="../llm-posttraining/s01_supervision_preference.html">SFT、恢复训练与偏好路线</a>；<a href="../llm-posttraining/s03_opd_self_distillation.html">OPD 的完整词表/采样梯度、多教师和自蒸馏</a>。新专题保留本章术语，并扩展到最新报告和具体任务。</div>
+<h2 id="admission-bridge">轨迹准入与教师接口：成功不是唯一条件</h2>
+<p>SFT科学轨迹需同时满足artifact验收、公共任务与许可、版本 / 模板一致、真实工具输出和准确token spans。不能仅按最终成功给整条历史所有assistant动作监督；可保留可验证的修复路径，但误删输入或无依据猜测应单独审查。<a href="../agent-data-benchmarks/s03_scientific_task_family.html#trajectories">科学轨迹schema</a>将动作状态、观察和artifact关联起来。</p>
+<p>OPD还需教师在学生实际prefix上提供兼容概率或评分：完整词表KL要求词表 / token化及条件支持可对应；API只给最终答案或少数top logprobs不能直接实现完整词表reverse KL。教师对“从学生错误状态继续”的覆盖和成本另评估，不能把离线教师答案SFT称为OPD。已有V4 / Ultra的不同报告保留在<a href="#distillation">蒸馏节</a>。</p>
+<p>全参数与LoRA / QLoRA是更新选择，不改变SFT / RL反馈来源的定义。其状态和合并限制见<a href="s05_training_methods_systems.html#peft">训练05</a>；同预算科学对照见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">sci-posttrain方案</a>。</p>
 <h2>本章证据与延伸阅读</h2>
 <p>术语与经典流程：<a href="index.html#ref-24">[24] 拒绝采样 RFT</a>、<a href="index.html#ref-25">[25] 强化 RFT</a>、<a href="index.html#ref-17">[17] DPO</a>、<a href="index.html#ref-19">[19] InstructGPT</a>。循环与蒸馏：<a href="index.html#ref-12">[12] Qwen3</a>、<a href="index.html#ref-13">[13] R1</a>、<a href="index.html#ref-2">[2] Coder-Next</a>、<a href="index.html#ref-3">[3] GLM-5</a>、<a href="index.html#ref-10">[10] V4</a>、<a href="index.html#ref-11">[11] Ultra</a>。</p>
 </section>

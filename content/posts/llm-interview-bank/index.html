@@ -455,7 +455,7 @@
 
         /* Answer blocks */
         .q-answer {
-            display: none;
+            display: block;
             margin: 4px 0 12px 40px;
             padding: 14px 18px;
             background: linear-gradient(135deg, #f0fdfa, #f8faf8);
@@ -466,6 +466,9 @@
             color: var(--gray-700);
         }
         .q-answer.show { display: block; }
+        .answers-ready .q-answer { display: none; }
+        .answers-ready .q-answer.show { display: block; }
+        .answers-ready .q-toggle { display: inline-block; }
         .q-answer strong { color: var(--primary-dark); }
         .q-answer ul, .q-answer ol { margin: 6px 0 6px 18px; }
         .q-answer li { margin-bottom: 3px; }
@@ -483,7 +486,7 @@
             margin: 8px 0;
         }
         .q-toggle {
-            display: inline-block;
+            display: none;
             margin-left: 40px;
             margin-top: 2px;
             padding: 2px 10px;
@@ -517,7 +520,8 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备与答案覆盖">
-<h2>阅读准备与答案覆盖</h2><p><strong>范围：</strong>跨 LLM、RLHF、VLM、Agent、RAG 和推理工程的复习清单；先理解对应原理，再用题目检验。现有 470 道题中 95 道有内联答案，375 道尚无内联答案；配套材料提供部分主题解释，不代表每道题已解答。</p>
+<h2>阅读准备与答案覆盖</h2><p><strong>范围：</strong>跨 LLM、RLHF、VLM、Agent、RAG 和推理工程的复习清单；先理解对应原理，再用题目检验。470 道题中155道有内联答案，315道尚无内联答案。本轮补60题：LLM12、Agent10、RAG10、推理工程10、评测10、Agentic RL8；原95题解保留，其中历史型号与绝对化结论仍需继续复核。</p>
+<p><strong>学习路径：</strong><a href="/llm-research-map-2026/#coverage">原理→实现→实验覆盖表</a>。新增题解都链接具体专题或原始来源；无脚本时答案直接展示，有脚本时可以逐题展开。能解释原理后，再回答“哪个失败证据会推翻我的方案”。</p>
 <p><strong>答案查找：</strong><a href="transformer-decoder-flow.html">Decoder 与 KV Cache 数据流</a>；
 <a href="rl-interview-guide.html#ppo-detail">PPO</a>、<a href="rl-interview-guide.html#dpo">DPO</a>；
 <a href="vlm-knowledge-interview.html#q1">CLIP / SigLIP</a>、<a href="vlm-knowledge-interview.html#q2">LLaVA 训练</a>；
@@ -561,7 +565,7 @@
             </header>
 
             <section id="sec-overview">
-                <h2><span class="section-num">📊</span>题库概览<span class="section-count">~420 道题</span></h2>
+                <h2><span class="section-num">📊</span>题库概览<span class="section-count">470 道题 · 155 题解</span></h2>
 
                 <div class="intro-card">
                     <h3>使用说明</h3>
@@ -604,23 +608,41 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>为什么多头：</strong><ul><li>不同 head 用不同的线性投影 → 在不同子空间学习不同的关注模式</li><li>例：某些 head 学局部依赖（相邻词），某些学长距离关系（指代），某些学句法结构</li><li>多头 = 并行学习多种关系模式 → 比单头表达能力更强</li></ul><strong>切多头的具体做法：</strong>$$\text{MultiHead}(Q,K,V) = \text{Concat}(head_1,...,head_h)W^O$$$$head_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)$$每个 head 的维度 $d_k = d_{model} / h$，总参数量不变。<br><br><strong>多头之间参数共享吗：</strong>标准 MHA 中各 head 的 $W^Q_i, W^K_i, W^V_i$ 完全独立不共享。但 MQA 让所有 head 共享 K/V 投影（只 Q 不同），GQA 是分组共享。</div>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">介绍 QKV 计算。如果在 Encoder 中去掉 K，变成 QQV 会有什么问题？<span class="q-tags"><span class="q-tag hard">🧠</span><span class="q-tag bytedance">字节</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-4"><strong>Q/K/V：</strong>Q表示检索条件，K表示匹配特征，V表示返回内容。令K=Q会使未加mask的单头score成为QQᵀ、对称且半正定，限制可学习的匹配关系；softmax后的权重仍未必对称。它可以训练，并非“不能用”，但失去独立Q/K投影的表达自由度。<a href="/llm-architecture/s01_transformer_foundations.html">张量与投影</a>。</div>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">MHA / MQA / GQA / MLA 四种 Attention 的区别是什么？KV Cache 怎么变化？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag deepseek">DS</span><span class="q-tag bytedance">字节</span></span></div></li>
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><ul><li><strong>MHA</strong>：每个 head 独立 QKV，KV Cache = $2 \times n_{heads} \times d_{head} \times seq$</li><li><strong>MQA</strong>：所有 head 共享一组 KV，Cache 减为 $1/n_{heads}$，但表达力损失</li><li><strong>GQA</strong>：将 heads 分组（如 8 组），组内共享 KV → 平衡效率和表达力（LLaMA-2 70B）</li><li><strong>MLA (DeepSeek)</strong>：用低秩投影将 KV 压缩到 latent space，只缓存压缩向量 → Cache 极小</li></ul><strong>演进动力：</strong>MHA Cache 太大 → MQA 表达力损失 → GQA 折中 → MLA 用压缩替代共享。</div>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">Transformer 为什么能替代 RNN？核心优势？又有什么劣势？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-6"><strong>优势：</strong>训练时序列位置可并行，任意两位置经attention直接交互，矩阵运算适合加速器。RNN存在逐步状态依赖。代价是密集attention的平方算术和长上下文KV；Transformer自回归生成仍逐token进行。SSM/混合模型保留递归状态是新的取舍。<a href="/llm-architecture/s05_hybrid_architectures.html">Attention与状态模型</a>。</div>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">详细介绍 Encoder-Only / Decoder-Only / Encoder-Decoder 三种架构及擅长任务。<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><table style="width:100%;font-size:13px;"><tr><th>架构</th><th>代表模型</th><th>训练目标</th><th>擅长任务</th></tr><tr><td>Encoder-Only</td><td>BERT, RoBERTa</td><td>MLM（双向上下文）</td><td>分类、NER、句子相似度等理解任务</td></tr><tr><td>Decoder-Only</td><td>GPT, LLaMA, Qwen</td><td>CLM（自回归）</td><td>文本生成、对话、推理、few-shot</td></tr><tr><td>Encoder-Decoder</td><td>T5, BART</td><td>Seq2Seq（条件生成）</td><td>翻译、摘要、输入输出明确映射的任务</td></tr></table><br><strong>为什么 Decoder-Only 胜出成为 LLM 主流：</strong><ul><li>CLM 训练目标简单统一 → 容易 scale up</li><li>自回归生成天然适合对话/续写等应用</li><li>随规模涌现 few-shot/zero-shot 能力（GPT-3）</li><li>工程链路简洁：预训练 → SFT → RLHF 一条线</li></ul></div>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">Transformer 是 Encoder-Decoder，GPT 是 Decoder-only，为什么会演变成这种形式？生成式任务为什么要舍弃 Encoder？<span class="q-tags"><span class="q-tag alibaba">阿里</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-8"><strong>统一接口：</strong>Decoder-only用next-token目标训练连续文本，再把任务写成prefix/completion，减少单独encoder与cross-attention的接口。生成任务并不必须舍弃encoder；翻译、摘要与多模态仍可用encoder-decoder。流行路线反映数据、规模与工程取舍，不能推出架构定理。<a href="/llm-architecture/s01_transformer_foundations.html">三类架构</a>。</div>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">Decoder 中的 Causal Mask 是怎么实现的？为什么必须用？训练时和推理时有何不同？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-9"><strong>实现：</strong>对位置j&gt;i的score加−∞再softmax，阻止训练时读取未来标签；padding和packed样本隔离是另两种mask。prefill保留三角mask；单token decode的cache只含历史与当前位置，可不额外遮未来。多token decode/投机验证仍需正确位置和causal mask。<a href="/llm-architecture/s01_transformer_foundations.html">mask与shift</a>。</div>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">Cross-Attention 和 Self-Attention 的区别？哪些场景用 Cross-Attention？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-10"><strong>来源不同：</strong>self-attention的Q/K/V来自同一序列；cross-attention的Q来自当前decoder状态，K/V来自encoder或其它条件特征。长度分别为Sq/Sk，score为[Sq,Sk]。翻译和视觉条件生成常用它；图文串成统一token序列也可只用self-attention。<a href="/llm-architecture/s01_transformer_foundations.html">计算接口</a>。</div>
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">如何降低 Transformer 的计算复杂度？常见稀疏注意力变体有哪些（Longformer、BigBird、Sliding Window）？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-11"><strong>分清对象：</strong>窗口attention将每token连接限制到w个，算术约O(Swd)；Longformer结合局部/全局，BigBird增加随机连接。稀疏图会改变信息路径和模型能力。FlashAttention主要减少IO/中间存储，不改变密集attention的平方算术；GQA主要减KV。<a href="/llm-architecture/s02_attention_position_cache.html">注意力、IO与缓存</a>。</div>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">分析 Transformer 训练过程中的显存占用和计算复杂度。<span class="q-tags"><span class="q-tag huawei">华为</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-12"><strong>拆开计算：</strong>L层的投影/FFN约O(LBSd²)，密集attention约O(LBS²d)。显存包括参数、梯度、优化器、保存激活和临时通信buffer。常见混合精度Adam的16N bytes仅为一种静态状态近似；ZeRO/TP改变每rank分布，checkpoint以重算换激活。<a href="/llm-training-lifecycle/s05_training_methods_systems.html">状态与并行</a>。</div>
                     <li class="q-item"><span class="q-num">13</span><div class="q-text">FlashAttention 解决了什么问题？核心思想是什么？v1/v2/v3 区别？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag bytedance">字节</span></span></div></li>
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>解决的问题：</strong>标准 Attention 的 $N \times N$ 中间矩阵需写入 HBM，是 memory-bound 瓶颈。<br><br><strong>核心思想：</strong>IO-aware 分块计算。利用 SRAM（快 10× 但小 1000×）做 Tiling，避免存完整注意力矩阵。关键技术：Online Softmax（维护 running max/sum 实现分块 softmax）+ 反向时重算。<br><br><strong>版本区别：</strong><ul><li><strong>v1</strong>：Tiling + Online Softmax + 不存中间矩阵</li><li><strong>v2</strong>：减少非 matmul 操作 + 序列维度并行 + 优化 warp 分工 → 加速约 2×</li><li><strong>v3</strong>：H100 专属：Warp Specialization + TMA + FP8 + Pingpong Scheduling</li></ul><strong>关键：</strong>计算复杂度不变（$O(N^2d)$），改变的是 IO 复杂度。</div>
                     <li class="q-item"><span class="q-num">14</span><div class="q-text">Transformer 的 FFN 为什么逐渐演变成 MoE 层？MoE 怎么训练？<span class="q-tags"><span class="q-tag deepseek">DS</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-14"><strong>条件计算：</strong>router为每token选top-k专家，组合其FFN输出，使总参数容量增长而单token只激活部分专家。训练仍反传task loss，并管理路由均衡、容量、丢token和all-to-all。路由与专家数会增加通信及优化难度，Dense仍有价值。<a href="/llm-architecture/s03_ffn_moe_routing.html">MoE路由与工程</a>。</div>
                     <li class="q-item"><span class="q-num">15</span><div class="q-text">MoE 的负载均衡（Load Balance）怎么做？Aux Loss / 偏置项 b 怎么更新？<span class="q-tags"><span class="q-tag hard">🧠</span><span class="q-tag deepseek">DS</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-15"><strong>两类：</strong>aux loss用实际分派比例与平均router概率惩罚集中；动态bias提升欠载专家、压低过载专家的选择score。V3路线的bias主要控制选择，不能默认也加入专家输出权重。需核对全局/序列均衡、更新速率及容量，并测max/mean负载与drop率。<a href="/llm-architecture/s03_ffn_moe_routing.html">均衡公式与报告边界</a>。</div>
                 </ol>
                 <div class="tip"><strong>考点提示</strong>：第 2 题答 $\sqrt{d_k}$ 时要从"防止内积过大→Softmax 饱和→梯度消失"这条因果链讲，必要时写出方差分析（QK 内积方差 $= d_k$，除以 $\sqrt{d_k}$ 后归一化）。</div>
 
@@ -633,7 +655,11 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>原理：</strong>对 Q/K 向量的每对相邻维度应用旋转变换 $q'_m = q_m e^{im\theta}$，其中 $\theta_i = 10000^{-2i/d}$。<br><br><strong>关键性质：</strong>$\langle q'_m, k'_n \rangle$ 只依赖相对位置 $m-n$（旋转差），不依赖绝对位置。<br><br><strong>为什么能外推：</strong>位置信息编码为连续旋转角度，超出训练长度时旋转角度自然延伸（配合频率缩放如 NTK-Aware 可进一步增强）。<br><br><strong>vs 绝对 PE：</strong><ul><li>优：相对位置、可外推、无额外参数、兼容 KV Cache</li><li>劣：实现稍复杂（需分组旋转）、需专门的外推策略</li></ul></div>
                     <li class="q-item"><span class="q-num">18</span><div class="q-text">RoPE 的旋转矩阵推导一下？为什么是分组旋转？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-18"><strong>二维块：</strong>R(mθ)=[[cos(mθ),−sin(mθ)],[sin(mθ),cos(mθ)]]，各维度对使用不同θ。Q′m=RmQm、K′n=RnKn，所以内积为QmᵀR(n−m)Kn。相对位置来自旋转部分，内容Q/K仍随输入变化；相邻配对与半维配对需匹配实现/checkpoint。<a href="/llm-architecture/s02_attention_position_cache.html">RoPE与缓存</a>。</div>
                     <li class="q-item"><span class="q-num">19</span><div class="q-text">长度外推有哪些方案？NTK-Aware / YaRN / LongRoPE 各自原理？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-19"><strong>频率调整：</strong>NTK-aware类方法改变RoPE基频/各维频率，YaRN结合分频段插值与attention温度调整，LongRoPE搜索非均匀缩放并渐进扩展/恢复短上下文。配置能输入长序列不保证有效检索或推理，应测不同长度/证据位置以及短文本回退。<a href="https://arxiv.org/abs/2309.00071v3">YaRN</a>、<a href="https://arxiv.org/abs/2402.13753v1">LongRoPE</a>。</div>
                     <li class="q-item"><span class="q-num">20</span><div class="q-text">LayerNorm 和 BatchNorm 的区别？为什么 LLM 都用 LN 而不用 BN？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>区别：</strong><ul><li><strong>BN</strong>：沿 batch 维度归一化（同一特征维度跨样本），依赖 batch 统计</li><li><strong>LN</strong>：沿特征维度归一化（同一样本跨特征），每条样本独立</li></ul><strong>LLM 不用 BN 的原因：</strong><ol><li>变长序列：batch 内不同位置的统计意义不同，BN 统计不稳定</li><li>自回归推理时 batch=1，BN 无法正常工作</li><li>BN 依赖 running mean/var，分布式训练时跨 GPU 同步成本高</li></ol></div>
@@ -641,6 +667,8 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>RMSNorm：</strong>去掉 LayerNorm 中的均值中心化，只做缩放：$$\text{RMSNorm}(x) = \frac{x}{\sqrt{\frac{1}{n}\sum x_i^2 + \epsilon}} \cdot \gamma$$<br><strong>优势：</strong><ul><li>省去计算均值和减均值的操作 → 减少约 5-10% 计算量</li><li>实验表明 re-centering（减均值）对 LLM 性能影响极小，缩放是核心</li><li>所有主流 LLM（LLaMA/Qwen/Mistral）均采用 RMSNorm + Pre-Norm</li></ul></div>
                     <li class="q-item"><span class="q-num">22</span><div class="q-text">Pre-Norm 和 Post-Norm 区别？为什么现代 LLM 都用 Pre-Norm？训练稳定性差异？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-llm-22"><strong>位置：</strong>Pre为x+F(Norm(x))，Post为Norm(x+F(x))。Pre保留较直接的残差梯度路径；Post在原分析条件下对初始化与warmup更敏感。不存在“所有现代模型都用Pre”的结论，残差缩放、DeepNorm/mHC等改变取舍。<a href="/llm-architecture/s04_residual_norm_stability.html">梯度与残差</a>。</div>
                     <li class="q-item"><span class="q-num">23</span><div class="q-text">DeepNorm 解决了什么问题？</div></li>
                 </ol>
 
@@ -969,13 +997,23 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>演进链路：</strong><ol><li><strong>RLHF</strong>：用人类偏好训练 RM → PPO 优化。解决"什么是好回答"，但 RM 可被 hack、人工标注贵</li><li><strong>RLVR</strong>：用可验证规则替代 RM（数学对错/代码测试通过）。解决 reward hacking + 标注成本，但只适用于有标准答案的任务</li><li><strong>Agentic RL</strong>：在多轮、工具调用、长程任务中做 RL。扩展了 RLVR 的思路到 Agent 场景 — verifiable reward = 任务完成度（PR 合并 / 测试通过 / 网页任务完成）</li></ol><strong>关系总结：</strong><ul><li>RLHF → 对齐（偏好），RLVR → 能力提升（推理），Agentic RL → 行为决策（Agent）</li><li>Reward 来源：人类 → 规则 → 环境反馈</li><li>轨迹长度：单轮 → 单轮 → 多轮长程</li></ul></div>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">Agentic RL 的 MDP 怎么建模？action space 是什么？(token / tool call / function args)</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agentic-rl-5"><strong>层次：</strong>环境状态含文件/工具状态，观测含可见结果；模型输出token组成分析与工具名/参数，工具执行形成转移。若存在隐藏状态应按POMDP或历史条件策略表述；token/turn级粒度影响概率与信用分配。工具返回不是模型动作。<a href="/llm-training-lifecycle/s04_rl_evaluation.html">动作与mask</a>。</div>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">为什么经典 RLHF 不适合 Agent 训练？(单步 reward / 短轨迹 / 静态环境)</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agentic-rl-6"><strong>需要扩展而非完全不适用：</strong>PPO/奖励模型仍可用于Agent；单轮prompt-response pipeline缺多轮环境执行、动作mask、长程信用分配与超时归因。把harness和轨迹合同补齐，再选结果/过程奖励。RLHF与RLVR描述反馈来源，Agentic描述交互形式，不是必然演进阶段。<a href="/llm-training-lifecycle/s04_rl_evaluation.html">反馈与算法</a>。</div>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">什么是 Verifiable Reward？哪些 Agent 任务可以构造 verifiable reward？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agentic-rl-7"><strong>可独立检验：</strong>程序测试、可执行数学答案、数据库状态和有冻结参考/容差的科学输出可构造反馈。检查器应与Agent隔离、检查schema/数值/语义并防投机；仅文件存在不算科学正确。奖励可靠性取决于合同与覆盖，不是“能写程序就是真值”。<a href="/agent-data-benchmarks/s03_scientific_task_family.html">独立verifier</a>。</div>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">DeepSeek-R1 的 RL 训练流程是什么？冷启动 + R1-Zero + 蒸馏的三阶段？<span class="q-tags"><span class="q-tag high-freq">🔥</span><span class="q-tag deepseek">DS</span></span></div></li>
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>三阶段流程：</strong><ol><li><strong>R1-Zero</strong>：直接从 base model 出发，用 GRPO + verifiable reward（数学正确性）做 RL → 涌现出 CoT 推理能力（aha moment）</li><li><strong>冷启动 SFT</strong>：用 R1-Zero 生成的高质量 CoT 数据做 SFT → 稳定格式和可读性</li><li><strong>正式 RL + 蒸馏</strong>：在 SFT 模型上继续 GRPO 训练 → 然后蒸馏到小模型（1.5B~70B）</li></ol><strong>关键创新：</strong><ul><li>证明纯 RL（无 SFT）就能涌现推理能力</li><li>Reward 极简：只用"答案对不对"（math_verify / code_test）</li><li>Format Reward 保证输出结构化（&lt;think&gt;...&lt;answer&gt;...）</li></ul></div>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">R1-Zero 为什么能 work？为什么不需要 SFT 冷启动？aha moment 是什么？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agentic-rl-9"><strong>证据范围：</strong>强基模已有可采样的解题能力，结果奖励对成功轨迹增加概率，R1-Zero展示无需预先SFT也能强化某些推理行为；并不保证任意模型/任务都能启动。aha moment是原报告示例观察，不是普遍机制证明。正式R1仍使用冷启动及后续训练。<a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1</a>。</div>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">Kimi K1.5 的 RL 方案和 DeepSeek-R1 有什么不同？Long Context CoT 怎么处理？<span class="q-tags"><span class="q-tag moonshot">Moonshot</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agentic-rl-10"><strong>报告侧重：</strong>k1.5强调长上下文RL扩展、策略优化和long2short，多模态也在范围内；R1突出R1-Zero、冷启动、推理/通用RL与蒸馏。长CoT要管理长度课程、截断、rollout吞吐与短回答迁移，不能单由更长推断更好。两者数据/预算不同，非控制实验。<a href="https://arxiv.org/abs/2501.12599v4">k1.5</a>。</div>
                 </ol>
 
                 <div class="subgroup-label">4.2 Tool Use RL</div>
@@ -984,8 +1022,14 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>核心思想：</strong>不通过 SFT 硬编码"何时用工具"，而是通过 RL 让模型自己发现"用工具能获得更高 reward"。<br><br><strong>典型流程：</strong><ol><li>模型在推理时可以选择：直接回答 or 调用工具（搜索/计算器/代码执行）</li><li>工具返回结果嵌入 context → 模型继续推理</li><li>Reward = 最终答案正确性（RLVR）</li><li>GRPO/PPO 训练 → 模型学会在需要时主动调工具</li></ol><strong>为什么能自主决定：</strong><ul><li>如果直接回答就能对 → reward 一样高 → 不需要工具 → 不会多调</li><li>如果需要外部知识/精确计算才能对 → 用工具的 trajectory reward 更高 → 策略收敛到"该用就用"</li></ul><strong>关键论文：</strong>Search-R1（搜索）、ReTool（计算器）、ARTIST（多工具 self-improving）</div>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">Search-R1 / R1-Searcher 怎么训练？Reward 怎么设计？为什么只用最终答案对错作 reward 就能学会用搜索？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agentic-rl-12"><strong>反馈闭环：</strong>生成query→执行检索→观察证据→回答，以结果反馈更新模型动作；R1-Searcher采用两阶段outcome RL，具体阶段奖励不同，不能概括成所有方法只用答案奖励。最终奖励能强化有效搜索需初始探索有成功差异，否则有效组不足；也可能学到不搜索的捷径。<a href="/agent-systems/s01_rag_retrieval.html">Search-R1路线</a>、<a href="https://arxiv.org/abs/2503.05592v2">R1-Searcher</a>。</div>
                     <li class="q-item"><span class="q-num">13</span><div class="q-text">ReTool 的设计思路？什么时候选择"先思考还是先调工具"？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agentic-rl-13"><strong>交替策略：</strong>用合成代码增强长推理做冷启动，再在实时代码执行环境中按任务结果RL，学习何时/如何调用工具。调用时机由当前不确定性、工具能力与预算决定，不是固定先后规则。迁移到科学Agent还要加入权限、方法有效性和输出合同。<a href="https://arxiv.org/abs/2504.11536v2">ReTool</a>。</div>
                     <li class="q-item"><span class="q-num">14</span><div class="q-text">ToolRL 中工具结果嵌入 trajectory 时，loss mask 怎么打？工具返回的 token 要算 loss 吗？<span class="q-tags"><span class="q-tag hard">🧠</span><span class="q-tag bytedance">字节</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agentic-rl-14"><strong>先核对论文任务：</strong>ToolRL侧重工具选择/参数奖励，并非所有实时执行harness的统一实现。通用Agent策略loss只覆盖模型生成动作；system/user/tool观察不做动作loss，但作为attention条件影响后续输出。按来源token span打mask并处理截断，不能用文本字符替换猜来源。辅助环境预测需独立目标。<a href="https://arxiv.org/abs/2504.13958v1">ToolRL</a>、<a href="/agent-harness-guide.html#mapping">generation mask</a>。</div>
                     <li class="q-item"><span class="q-num">15</span><div class="q-text">Tool Use 训练中怎么处理工具异常（API failure）？要不要给负 reward？</div></li>
                     <li class="q-item"><span class="q-num">16</span><div class="q-text">如果工具是确定性的（计算器）vs 随机的（搜索），训练时怎么处理 reward 噪声？</div></li>
                     <li class="q-item"><span class="q-num">17</span><div class="q-text">ARTIST 框架的 self-improving 机制？Agent 怎么从自己的 trace 中学习？</div></li>
@@ -1233,19 +1277,39 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>ReAct = Reasoning + Acting 交替执行</strong><br><br><strong>循环流程：</strong><ol><li><strong>Thought</strong>：LLM 思考当前状态和下一步该做什么（自然语言推理）</li><li><strong>Action</strong>：执行具体操作（调用工具/搜索/代码执行）</li><li><strong>Observation</strong>：获取外部环境反馈（工具返回结果）</li><li>重复直到任务完成或达到最大步数</li></ol><strong>vs 纯 CoT：</strong>CoT 只思考不行动 → 无法获取外部信息；ReAct 能实时获取环境反馈纠正推理。<br><strong>vs 纯 Action：</strong>没有显式推理 → 决策不透明且容易出错。</div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">ReAct 和 Plan-and-Execute / Reflexion 各自适用场景？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-3"><strong>取舍：</strong>ReAct随观察交替行动，适合未知环境；计划执行先拆依赖再执行，适合步骤较稳定的工作；Reflexion利用失败反馈生成语言反思以改进后续尝试。三者可组合，反思也可能错误。同预算比较完成率、恢复能力和工具成本。<a href="/agent-systems/s02_planning_compute.html">规划与反馈</a>。</div>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">Agent 的 Planning 能力有哪些实现方式？(CoT / ToT / GoT / LLM+PDDL)</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-4"><strong>层次：</strong>CoT生成一条推理，ToT展开并选择候选，GoT允许合并/回看图节点；PDDL把可形式化的前置条件与效果交给规划器。工具任务的候选必须附环境snapshot，否则“搜索分支”可能污染同一文件状态。预算含候选、评估器与工具执行。<a href="/agent-systems/s02_planning_compute.html">搜索与环境分支</a>。</div>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">什么是 Agent 的 self-reflection？Reflexion 论文的核心机制？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-5"><strong>机制：</strong>由任务反馈形成文字反思，存入后续尝试可读取的记忆，使策略在不更新权重时调整行动。反馈可能来自任务规则、评估器或自评；自评并不是真值。科学任务应保留verifier错误码与证据，避免把猜测反思写成稳定规则。<a href="https://arxiv.org/abs/2303.11366v1">Reflexion</a>。</div>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">在构建一个复杂的 Agent 时，最大的挑战是什么？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-6"><strong>可靠闭环：</strong>状态是否真实、工具是否成功、恢复是否保留必要文件、目标是否被独立验收。长链单步可靠率的累积只是粗略直觉，相关失败更复杂。先列失败分类、轨迹字段和权限边界，再设计计划与记忆；用同预算任务成功检验。<a href="/agent-data-benchmarks/s03_scientific_task_family.html">具体合同</a>。</div>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">怎么确保 Agent 的行为安全可控？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-7"><strong>多层控制：</strong>外部文本按数据处理；执行前按可信policy检查工具/路径/参数；sandbox限制实际资源；不可逆操作使用独立确认与最小权限。过滤提示词不能替代执行控制。评测同时报告clean utility、attacked utility及成功攻击分母。<a href="/agent-systems/s03_trust_safety.html">权限与攻击评测</a>。</div>
                 </ol>
 
                 <div class="subgroup-label">6.2 Memory 系统</div>
                 <ol class="q-list" start="8">
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">怎么为 Agent 设计短期记忆和长期记忆？分别用什么存储？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-8"><strong>职责：</strong>短期含当前目标、最近观察和未完成步骤，驻留context及任务状态；长期含稳定偏好/规则/经验，以文档或数据库持久化并检索。运行日志和文件是独立证据层。每条长期记录带来源、时间、范围、权限和纠正版本，摘要不是完整备份。<a href="/agent-harness-guide.html#codex-memory">Codex记忆实例</a>。</div>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">长期记忆如何存？向量数据库 + 知识图谱组合方案？<span class="q-tags"><span class="q-tag alibaba">阿里</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-9"><strong>组合：</strong>原文/结构字段为事实源，向量索引找语义候选，图存实体关系与可追溯边；按实体、权限和有效期过滤再重排。图关系也可能是模型误抽取，需保留原证据并处理撤回/冲突。关系简单时文档+元数据已足够，不必默认建图。<a href="/agent-systems/s01_rag_retrieval.html">证据与索引</a>。</div>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">历史记录量非常大时，怎么优化查询效率？怎么做记忆衰退？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-10"><strong>查询：</strong>按用户/项目/版本分区，元数据预过滤，ANN取候选再精排；冷热分层和查询缓存减少成本。衰退优先降低过时记录的检索权重，稳定事实不按年龄自动删除。撤回、来源失效和隐私删除应同步原文/索引/缓存，并测召回与访问权限。<a href="/agent-systems/s01_rag_retrieval.html">检索生命周期</a>。</div>
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">MemGPT / Letta 的 OS-style memory 方案是什么？working memory 和 archival memory 怎么调度？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-11"><strong>虚拟上下文：</strong>模型通过工具在有限主context与外部记忆间移动信息，利用系统警告/中断管理控制流；主context保留高频任务信息，archive持久存较长材料，recall用于历史查询。是OS启发的应用调度，不是硬件虚拟内存。Letta当前API需另核对版本。<a href="https://arxiv.org/abs/2310.08560v2">MemGPT</a>。</div>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">Agent 多轮对话时，怎么压缩历史 context？Summary / Sliding Window 怎么选？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-agent-12"><strong>混合：</strong>滑窗保留最近原文，摘要留下目标/约束/已试方法/错误/文件与证据定位；重要规则另固定，长工具输出按需检索。摘要可能漏信息，保留可重读日志并用恢复后的下一步正确性测试。compaction与新窗口重装状态是不同操作。<a href="/agent-harness-guide.html#codex-context">压缩与换窗</a>。</div>
                 </ol>
 
                 <div class="subgroup-label">6.3 Tool Use / Function Calling</div>
@@ -1308,9 +1372,17 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>完整流程：</strong><ol><li><strong>索引构建</strong>：文档 → Chunking → Embedding → 存入向量数据库</li><li><strong>检索</strong>：用户 query → Embedding → 向量相似度搜索 → 召回 top-K 文档片段</li><li><strong>增强生成</strong>：将召回文档作为 context 注入 prompt → LLM 基于上下文生成答案</li></ol><strong>vs 微调的优势：</strong><ul><li>无需重训模型 → 知识可实时更新</li><li>可溯源 → 回答可追溯到原始文档</li><li>减少幻觉 → 有事实依据约束生成</li><li>领域适应快 → 换文档库即换领域</li></ul><strong>局限：</strong>受限于检索质量、chunk 粒度、context 长度。</div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">RAG 与传统"检索 + 模型生成"的本质区别？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-2"><strong>术语边界：</strong>广义RAG本来就是用检索材料增强生成，没有必然的新“本质”。原始RAG论文联合学习retriever与generator，并对检索文档做概率边际化；工业检索→prompt流水线也常称RAG。应描述检索、融合与训练接口，而非按名字判断优劣。<a href="https://arxiv.org/abs/2005.11401v4">原始RAG</a>。</div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">标准 RAG 的最大瓶颈是什么？(检索质量 / chunk 切分 / context noise)<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-3"><strong>逐层定位：</strong>先看知识库是否有答案，再测候选Recall@k、rerank排序、上下文证据覆盖、引用正确和最终任务成功。缺文档、chunk断表格、语言embedding失配、噪声与模型忽略证据是不同故障。用gold evidence替换检索结果的oracle对照可定位检索/生成瓶颈。<a href="/agent-systems/s01_rag_retrieval.html">分层评测</a>。</div>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">把 RAG 做成 Agent（Agentic RAG）有什么好处？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-4"><strong>主动策略：</strong>根据观察改写query、补检索、验证冲突并决定停止，适合多跳或缺失证据问题。代价是更多token/工具请求和循环风险。与单次RAG在相同时间/预算下比较证据覆盖和完成率；query数增加不是收益。<a href="/agent-systems/s01_rag_retrieval.html">Search-R1至PROGRESS</a>。</div>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">什么是 "Lost in the Middle" 问题？怎么缓解？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-5"><strong>现象：</strong>长上下文中证据位于中间时，某些模型任务表现下降。可先精排/去重、压缩无关上下文、显式定位来源或分步检索；把证据移到头尾只是候选策略。评测控制长度、干扰文档及证据位置，不能仅测needle或把窗口长度当利用能力。<a href="https://arxiv.org/abs/2307.03172">Lost in the Middle</a>。</div>
                 </ol>
 
                 <div class="subgroup-label">7.2 切块 & Embedding</div>
@@ -1319,15 +1391,27 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>切分维度：</strong><ul><li><strong>大小</strong>：通常 256-1024 tokens。太小则缺乏上下文；太大则噪声多、检索精度低</li><li><strong>重叠</strong>：相邻 chunk 重叠 50-200 tokens → 避免切断完整语义</li><li><strong>分隔符优先级</strong>：段落 > 句子 > 固定长度 → 保持语义完整</li></ul><strong>高级方案：</strong><ul><li><strong>Semantic Chunking</strong>：用 embedding 相似度判断语义断点（相邻句 embedding 相似度骤降处切分）</li><li><strong>Agentic Chunking</strong>：用 LLM 判断每段是否自包含</li><li><strong>层次切分</strong>：小 chunk 用于检索精度 + 大 chunk 用于上下文完整性（parent-child）</li></ul></div>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">怎么选 Embedding 模型？评估指标？(MTEB / C-MTEB)<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-7"><strong>先匹配任务：</strong>语言、领域、query/document模板、长度、维度、许可和服务成本。MTEB/C-MTEB含多类任务，平均分不能代替目标检索；冻结版本，在去重测试集测Recall@k、MRR/nDCG和最终证据支持率，同时测延迟/索引体积。<a href="/agent-systems/s01_rag_retrieval.html">检索模型验收</a>。</div>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">BGE / E5 / GTE / Conan-Embedding 各自特点？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-8"><strong>按具体checkpoint比较：</strong>BGE家族覆盖中英/多语及不同接口，E5强调query/passage前缀的对比训练，GTE包含不同架构与语言版本；Conan类模型需核对中文目标和难负例训练。名称不能决定当前排名。逐模型核对model card、指令模板、最大长度、归一化与目标领域测试；此处不补未核实的新版规格。<a href="/agent-systems/s01_rag_retrieval.html">选择与对照表</a>。</div>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">Embedding 模型和 Rerank 模型用法上有什么区别？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-9"><strong>两阶段：</strong>bi-encoder分别编码query/document，文档可离线索引，适合大规模召回；cross-encoder联合读取候选对，通常更精细但不能廉价遍历全库。rerank无法补回候选集外的证据；先测Recall@k再测排序与延迟。<a href="/agent-systems/s01_rag_retrieval.html">召回与重排</a>。</div>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">动态更新知识库时，全量重嵌入 vs 增量处理怎么选？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-10"><strong>版本化：</strong>内容hash和chunk ID定位变更，只重算受影响文档并删除旧chunk；更换embedding/维度/模板会改变向量空间，通常要重建或并行索引迁移。知识库快照、index版本和检索日志关联，切换时检查权限、删除传播、召回和回滚。<a href="/agent-systems/s01_rag_retrieval.html">索引合同</a>。</div>
                 </ol>
 
                 <div class="subgroup-label">7.3 检索增强技术</div>
                 <ol class="q-list" start="11">
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">除了基础向量检索，还有哪些 RAG 检索提升技术？(HyDE / Multi-Query / Hybrid Search)<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-11"><strong>候选路线：</strong>HyDE生成假设文档后嵌入，multi-query改写多个查询合并召回，hybrid结合BM25精确词与dense语义，rerank再筛证据。假设文档和改写可能引入错误，必须返回真实来源并比较额外成本；消融时每次改一个模块。<a href="/agent-systems/s01_rag_retrieval.html">混合检索路线</a>。</div>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">BM25 + 向量混合检索（Hybrid Search）怎么融合分数？RRF 算法？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-rag-12"><strong>RRF：</strong>score(d)=Σj 1/(k+rankj(d))，未入榜该项为0；按排名融合避开BM25与cosine尺度不可比。k调节头部优势，必须冻结调参/测试切分。直接加分需校准或归一化，跨语言/领域也要验收；融合不替代去重与权限过滤。<a href="/agent-systems/s01_rag_retrieval.html">RRF示例</a>。</div>
                     <li class="q-item"><span class="q-num">13</span><div class="q-text">Rerank 模型在 RAG 中起什么作用？什么场景需要？<span class="q-tags"><span class="q-tag bytedance">字节</span></span></div></li>
                     <li class="q-item"><span class="q-num">14</span><div class="q-text">什么场景下用知识图谱（GraphRAG）增强或替代向量数据库？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
                     <li class="q-item"><span class="q-num">15</span><div class="q-text">RAG + 知识图谱 Agent 系统中，知识图谱更新机制？</div></li>
@@ -1375,11 +1459,23 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><strong>解决的问题：</strong>传统 KV Cache 需为每个请求预分配最大长度的连续显存 → 严重的内存碎片和浪费（实测浪费 60-80%）。<br><br><strong>类比：</strong>操作系统的虚拟内存 + 分页（Paging）。<ul><li>KV Cache 不再需要连续物理显存</li><li>将 KV Cache 分成固定大小的 Block（如 16 tokens 一块）</li><li>用 Block Table（类似页表）映射逻辑位置到物理显存块</li><li>按需分配、用完释放 → 显存利用率接近 100%</li></ul><strong>附加好处：</strong>支持 prefix sharing（共享 system prompt 的 KV block）、beam search 的 copy-on-write。</div>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">Continuous Batching（动态批处理）相比静态 batch 优势？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-4"><strong>迭代调度：</strong>请求结束即可移出，新请求加入后续迭代，缓解静态batch等待最长请求的空槽。batch包含不同进度和长度，scheduler受token与KV预算限制。吞吐提升可能伴随排队/尾延迟，需同arrival workload测TTFT、TPOT与SLO goodput。<a href="/llm-serving/s01_runtime_scheduling.html">调度循环</a>。</div>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">Prefix Caching / RadixAttention 怎么工作？什么场景适合？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-5"><strong>复用KV：</strong>对完全兼容的token前缀/模型状态复用prefill结果，radix树支持前缀匹配和回收。共享系统提示与多分支任务适合；字符串相似不等于token前缀一致，adapter、位置和多模态状态也必须一致。租户隔离和引用计数影响可复用范围。<a href="/llm-serving/s01_runtime_scheduling.html">固定SGLang源码</a>。</div>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">Chunked Prefill 是什么？为什么能提升吞吐？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-6"><strong>分块：</strong>把长prompt的prefill拆入多个调度迭代，允许与decode交错，控制单轮计算与token预算。可减少长prefill阻塞已有decode；但块过小会增加调度/launch成本和首token等待，不保证所有负载吞吐更高。按长度分布扫chunk/token预算。<a href="/llm-serving/s01_runtime_scheduling.html">TTFT与TPOT</a>。</div>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">vLLM / SGLang / TensorRT-LLM / LMDeploy 各自定位和优势？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-7"><strong>按支持矩阵选：</strong>vLLM侧重通用模型服务与调度，SGLang结合结构化执行与prefix复用，TensorRT-LLM深度结合NVIDIA执行优化，LMDeploy提供部署/量化与服务链路。具体优势依赖版本、架构、kernel和硬件；在同模型/质量/arrival下测，不按star排名。<a href="/llm-serving/">部署三章</a>。</div>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">Speculative Decoding (投机解码) 原理？draft model 怎么选？接受率影响因素？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-8"><strong>精确采样：</strong>draft按q生成，target按p并行验证，以min(1,p/q)接受，拒绝后从归一化max(p−q,0)重采样。需要完整条件分布及一致采样变换；贪心匹配是另一协议。draft看每个accepted token总成本，领域失配、长度/temperature和验证batch影响收益。<a href="/llm-serving/s02_parallel_quantization.html">验证与成本</a>。</div>
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">Medusa / EAGLE / Lookahead decoding 各自原理？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-9"><strong>草稿对象不同：</strong>Medusa多预测头形成候选树；EAGLE预测隐藏特征并结合提前一位置的token；Lookahead用Jacobi迭代收集/验证n-gram，不需要独立draft。typical acceptance与精确分布协议不能混用，训练是否修改backbone也影响基线。<a href="https://arxiv.org/abs/2401.10774v3">Medusa</a>、<a href="https://arxiv.org/abs/2401.15077v3">EAGLE</a>、<a href="https://arxiv.org/abs/2402.02057v1">Lookahead</a>。</div>
                 </ol>
 
                 <div class="subgroup-label">8.2 量化 & 压缩</div>
@@ -1388,9 +1484,17 @@
                     <button class="q-toggle">查看答案 ▼</button>
                     <div class="q-answer"><ul><li><strong>INT8</strong>：8位整数量化。精度损失小，速度提升~2×。LLM.int8() 方案对 outlier 做混合精度</li><li><strong>INT4</strong>：4位整数量化。精度损失明显 → 需要 GPTQ/AWQ 等校准算法补偿</li><li><strong>FP8 (E4M3/E5M2)</strong>：8位浮点，H100+ 硬件原生支持。兼顾动态范围和精度 → 用于训练+推理</li><li><strong>NF4 (Normal Float 4)</strong>：QLoRA 提出。假设权重近似正态分布 → 4bit 量化点按正态分位数分配 → 信息论最优</li></ul><strong>选择指南：</strong><ul><li>推理部署：INT4 (GPTQ/AWQ) 最常用，内存减 75%</li><li>训练：BF16 主流，FP8 新趋势</li><li>微调：QLoRA 用 NF4 量化 base model + LoRA 适配器</li></ul></div>
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">GPTQ / AWQ / SmoothQuant / GGUF 各自原理？什么场景用？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-11"><strong>对象：</strong>GPTQ用校准/Hessian近似减少权重量化误差，AWQ用激活信息保护重要权重；SmoothQuant把激活outlier的难度通过等价缩放迁移到权重，服务W8A8。GGUF是模型文件/元数据格式，可容纳不同量化，不能与算法同列。<a href="/llm-serving/s02_parallel_quantization.html">精度与执行</a>。</div>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">权重量化和激活量化区别？为什么激活量化更难？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-12"><strong>静态/动态：</strong>权重可离线校准打包，激活随输入与层变化，outlier及长程累积使scale选择更难。粒度包括tensor/channel/token/group，细粒度降低误差但增加元数据/kernel成本。KV是持久状态的另一个对象；权重INT4不等于计算或KV都INT4。<a href="/llm-serving/s02_parallel_quantization.html">量化对象</a>。</div>
                     <li class="q-item"><span class="q-num">13</span><div class="q-text">QAT（量化感知训练）和 PTQ（训后量化）区别？精度损失对比？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-13"><strong>流程：</strong>PTQ在已训练权重上用校准/变换量化，成本低；QAT在训练中模拟量化/scale，使权重适应误差，常用STE近似梯度。QAT并非任何模型都精度更好，数据、位宽、训练成本与部署kernel需要一致。验收任务质量、长上下文、工具格式和实际延迟。<a href="/llm-serving/s02_parallel_quantization.html">量化验收</a>。</div>
                     <li class="q-item"><span class="q-num">14</span><div class="q-text">FP8 训练为什么开始流行？相比 BF16 优势？(H100 / B200)</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-infra-14"><strong>低精度矩阵：</strong>支持FP8的tensor core可降低操作数带宽并提高矩阵吞吐；但scale、累加、敏感层和优化器常保留更高精度。H100/B200的格式/kernel能力需按实际版本核对，峰值算力不是训练吞吐。监控amax、溢出、loss/梯度和同预算质量。<a href="/llm-research-map-2026/s07_architecture_training.html">低精度机制</a>。</div>
                     <li class="q-item"><span class="q-num">15</span><div class="q-text">量化后理解能力下降怎么办？怎么做精度补偿？</div></li>
                     <li class="q-item"><span class="q-num">16</span><div class="q-text">车载/低端设备的 LLM 推理加速方案？</div></li>
                     <li class="q-item"><span class="q-num">17</span><div class="q-text">模型剪枝 / 蒸馏在 LLM 上效果怎么样？(MiniLM / DistilBERT)</div></li>
@@ -1510,19 +1614,39 @@
                 <div class="subgroup-label">10.1 LLM 评估</div>
                 <ol class="q-list">
                     <li class="q-item"><span class="q-num">1</span><div class="q-text">传统 NLP 指标（BLEU / ROUGE）评估 LLM 的局限性？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-1"><strong>重叠指标：</strong>BLEU偏n-gram精确率，ROUGE常评重叠召回；同义答案可能低分，错误文本可能高重叠。开放生成需补事实支持、任务约束、人工或校准judge；代码/科学Agent优先执行与输出合同。保留tokenization、参考答案和聚合口径。<a href="/agent-data-benchmarks/s02_benchmark_map.html">评测对象</a>。</div>
                     <li class="q-item"><span class="q-num">2</span><div class="q-text">主流 LLM 基准：MMLU / GSM8K / HumanEval / MATH / GPQA / IFEval 各自侧重？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-2"><strong>任务：</strong>MMLU多学科选择，GSM8K小学应用题，HumanEval函数生成与测试，MATH更复杂数学，GPQA研究生级科学选择，IFEval可程序检验的指令约束。数学答对未必证明过程忠实，代码pass@k不等于单次成功；记录版本、prompt、采样与预算。<a href="/agent-data-benchmarks/s02_benchmark_map.html">经典基准地图</a>。</div>
                     <li class="q-item"><span class="q-num">3</span><div class="q-text">中文基准 C-Eval / CMMLU / SuperCLUE 评估有什么注意点？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-3"><strong>可比条件：</strong>C-Eval/CMMLU以中文多学科测试为主，SuperCLUE包含不同评测套件，不能把名称视为唯一固定指标。核对公开/隐藏split、类别权重、few-shot、选项解析、污染及judge。选择题知识分不能代替中文开放生成、检索和Agent能力。<a href="/agent-data-benchmarks/s02_benchmark_map.html">版本与限制</a>。</div>
                     <li class="q-item"><span class="q-num">4</span><div class="q-text">什么是 LLM-as-a-Judge？优点和潜在偏见？怎么减少偏见？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-4"><strong>评分器：</strong>以明确rubric让模型评答案或成对偏好，可扩展但有顺序、长度、风格与自偏好。交换答案顺序、隐藏身份、冻结judge版本、与人工/规则校准并报告一致率和不确定性。judge可能受被评文本注入；科学真值应由独立规则验收。<a href="/agent-data-benchmarks/s02_benchmark_map.html">judge与verifier</a>。</div>
                     <li class="q-item"><span class="q-num">5</span><div class="q-text">MT-Bench / AlpacaEval / Arena-Hard 各自方法？为什么 Chatbot Arena 是金标准？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-5"><strong>不能称普适金标准：</strong>MT-Bench测多轮并用judge，AlpacaEval测指令成对偏好，Arena-Hard用较难问题和自动成对评价；Chatbot Arena汇集人类偏好，价值在真实选择，但仍受用户/题目分布、风格与统计不确定性影响。冻结版本及长度控制，分开偏好、真值和任务完成。<a href="/agent-data-benchmarks/s02_benchmark_map.html">评价协议</a>。</div>
                     <li class="q-item"><span class="q-num">6</span><div class="q-text">怎么评估 LLM 的"事实性 / 推理能力 / 安全性"？分别用什么 benchmark？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-6"><strong>组合：</strong>事实性测可查证声明与证据支持，如TruthfulQA/长文事实检验；推理用数学/代码/GPQA并记录预算；安全测有害请求、正常请求误拒绝和Agent注入/权限。单一总分会掩盖风险，按语言/难度/场景分组并对漂移复测。<a href="/agent-data-benchmarks/s02_benchmark_map.html">任务地图</a>、<a href="/agent-systems/s03_trust_safety.html">Agent安全</a>。</div>
                     <li class="q-item"><span class="q-num">7</span><div class="q-text">什么是 contamination（数据污染）？怎么检测？怎么避免？<span class="q-tags"><span class="q-tag hard">🧠</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-7"><strong>泄漏：</strong>题面、解答或近重复进入训练/检索/合成teacher，使测试不再代表独立泛化。用hash、近重复和语义/代码相似审计，按study/repo/任务族切分，冻结数据谱系并保留新鲜隐藏测试。改写题面不能自动去污染，检测未命中也不是无污染证明。<a href="/agent-data-benchmarks/s03_scientific_task_family.html">科学任务切分</a>。</div>
                     <li class="q-item"><span class="q-num">8</span><div class="q-text">什么是红队测试（Red Teaming）？在发现安全漏洞和偏见中扮演什么角色？</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-8"><strong>对抗发现：</strong>围绕明确攻击者能力，设计越权、数据泄漏、提示注入和有害输出尝试。记录攻击入口/预算、目标权限、成功规则、clean基线和复现环境；发现失败用于修复后回归。有限攻击集通过只说明测试覆盖内结果，不能证明系统免疫。<a href="/agent-systems/s03_trust_safety.html">威胁模型与分母</a>。</div>
                 </ol>
 
                 <div class="subgroup-label">10.2 Agent 评估</div>
                 <ol class="q-list" start="9">
                     <li class="q-item"><span class="q-num">9</span><div class="q-text">为什么 Agent 评估比 LLM 评估更难？多了哪些维度？<span class="q-tags"><span class="q-tag high-freq">🔥</span></span></div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-9"><strong>动态系统：</strong>输出还包含动作、工具反馈和环境状态；相同模型因harness、权限、超时或版本不同而表现不同。要保存初始snapshot、轨迹、文件产物、独立verifier、预算/成本与失败归因。多次尝试报告单次/pass@k，不能混为完成率。<a href="/agent-data-benchmarks/s04_cluster_training_evaluation.html">评测记录</a>。</div>
                     <li class="q-item"><span class="q-num">10</span><div class="q-text">Agent 评估的过程指标有哪些？(完成率 / 步数 / 工具调用准确率 / 错误恢复)</div></li>
+                    <button class="q-toggle">查看答案 ▼</button>
+                    <div class="q-answer" id="answer-eval-10"><strong>分母明确：</strong>完成率=通过独立验收的任务/纳入任务；工具schema合法、工具执行成功、语义正确是三个指标。恢复率只在可恢复故障子集中算；步数同时看成功/失败分布。另记越权、重试、token、wall/GPU时间和每成功成本，避免靠长轨迹换高分。<a href="/agent-data-benchmarks/s04_cluster_training_evaluation.html">失败与成本schema</a>。</div>
                     <li class="q-item"><span class="q-num">11</span><div class="q-text">SWE-Bench / WebArena / OSWorld / GAIA / AgentBench 各自怎么评？</div></li>
                     <li class="q-item"><span class="q-num">12</span><div class="q-text">怎么评估 Agent 的成本（cost-aware evaluation）？</div></li>
                 </ol>
@@ -1680,13 +1804,19 @@
         backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
         // Toggle answers
-        document.querySelectorAll('.q-toggle').forEach(btn => {
+        document.querySelectorAll('.q-toggle').forEach((btn, index) => {
+            const answer = btn.nextElementSibling;
+            if (!answer.id) answer.id = 'answer-existing-' + index;
+            btn.setAttribute('aria-controls', answer.id);
+            btn.setAttribute('aria-expanded', 'false');
             btn.addEventListener('click', () => {
                 const answer = btn.nextElementSibling;
                 answer.classList.toggle('show');
                 btn.textContent = answer.classList.contains('show') ? '收起答案 ▲' : '查看答案 ▼';
+                btn.setAttribute('aria-expanded', String(answer.classList.contains('show')));
             });
         });
+        document.documentElement.classList.add('answers-ready');
 
         // Sidebar scroll-spy
         const sections = document.querySelectorAll('section[id]');

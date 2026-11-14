@@ -84,6 +84,7 @@ def render_artifact(ctx):
     # These modules own presentation only; source loading and output writes stay here.
     from reading import decorate
     from views import render_blog, render_home
+    from citations import render_citations
 
     for asset in ctx.site["assets"]:
         ctx.copy(ctx.root / asset["source"], asset["url"])
@@ -123,6 +124,7 @@ def render_artifact(ctx):
                     ctx.copy(asset, target)
     render_home(ctx)
     render_blog(ctx)
+    render_citations(ctx)
     defaults = ctx.redirects.get("defaults", {})
     for item in ctx.redirects["redirects"]:
         ctx.redirect(item["from"], item["to"],

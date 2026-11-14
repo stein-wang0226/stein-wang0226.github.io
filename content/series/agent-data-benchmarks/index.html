@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agent 任务合成与 Benchmark：从训练数据到可靠评测</title>
-<meta name="description" content="两章连接可执行任务合成、独立验证与Agent评测；深入Terminal-Bench、HarborIndex、DeepSWE、SWE-bench和AA，并分类总结经典代码、Web、GUI和科学benchmark。">
+<meta name="description" content="四章连接可执行任务合成、Benchmark、公开RNA-seq科学合同和工业SFT/RL方案；提供独立验证、schema、失败与成功成本口径。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
@@ -13,12 +13,18 @@
 <h2>合成什么数据，才能测到真正的 Agent 能力</h2>
 <p class="lead">数据生产的单位可能是文本、task、environment或trajectory；评测的对象可能是模型、agent系统或完整工作产物。先固定对象，再讨论规模、训练收益和榜单。本系列把任务工程接到CPT / SFT / RL，并把经典与前沿benchmark放进同一张能力地图。</p>
 <div class="callout"><strong>核心判断：</strong>可运行环境、独立验收、受控校准和固定留出集，是任务合成与评测共有的基础。更多任务、更高通过率或更长轨迹，都需要结合覆盖、预算和验证器质量解释。</div>
+<p>阅读主线按任务生命周期展开：可执行任务 → 科学统计合同 → 训练准入与对照 → 独立Benchmark。先修<a href="../agent-harness-guide.html#codex-loop">执行状态与工具环境</a>；最终产物是任务、verifier、切分、轨迹和失败记录。</p>
+<!-- READING:CHAPTERS -->
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录与阅读建议 · 2026-11-14；旧编号保留供对照</summary>
 <div class="chapter-grid">
 <a class="card" href="s01_task_synthesis.html"><span class="eyebrow">01 / Synthesis</span><h3>可执行任务与训练数据合成</h3><p>SWE-Gym、R2E-Gym、SWE-smith、SWE-Universe、daVinci、CoderForge、NexForge、EvoSyn、ProgramGym、ScienceIDE与critic；连接Harbor及GUI履历。</p></a>
 <a class="card" href="s02_benchmark_map.html"><span class="eyebrow">02 / Benchmark map</span><h3>经典与前沿 Agent 评测地图</h3><p>Terminal-Bench / Science / Challenges、HarborIndex、DeepSWE、SWE-bench和AA；代码、通用Agent、Web／GUI、科学任务分类速查。</p></a>
+<a class="card" href="s03_scientific_task_family.html"><span class="eyebrow">03 / Scientific contract</span><h3>科学任务族与独立验证</h3><p>GSE52778 / airway的count层、配对统计、完整输出schema、来源冲突、研究切分与训练轨迹准入。</p></a>
+<a class="card" href="s04_cluster_training_evaluation.html"><span class="eyebrow">04 / Training &amp; evaluation</span><h3>工业SFT / RL对照与成本</h3><p>128 / 1024 H100规划、sci-posttrain A–E、异质GRPO、policy lag、分层统计、失败分类与成功成本。</p></a>
 </div>
 <p>想做任务生产：01的合同 → 科学校准 → 训练准入 → 02的留出与评分。想读榜单：02的版本表 → 指标定义 → 领域速查。架构关联见<a href="../llm-research-map-2026/s03_base_architecture.html">DeepSeek V4.1 CED / CSA2 / FP4</a>；训练背景见<a href="../llm-training-lifecycle/">训练全链路</a>。</p>
-<p class="note">来源访问截止2026-11-14。论文数字、团队发布、个人简历陈述分别标注；本次没有执行任务合成、模型训练或benchmark。两章共用本页52项引用，编号独立于《LLM研究地图》。</p>
+</details><!-- READING:HISTORY:END -->
+<p class="note">来源访问截止2026-11-14。前两章共用本页52项引用，编号独立于《LLM研究地图》；新增科学与集群两章分别记录来源。研究设计、论文数字和个人简历陈述分开；没有执行科学任务、任务合成、训练或benchmark。</p>
 </section>
 <section id="boundaries">
 <h2>读之前先分清四类对象</h2>

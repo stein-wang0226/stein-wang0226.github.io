@@ -189,6 +189,10 @@ save_checkpoint(agent, "agent-sft")</code></pre>
 </section>
 <section>
 <h2 id="sources">来源、原件与证据性质</h2>
+<h3 id="science-bridge">从工程轨迹迁到科学轨迹：保留数据角色</h3>
+<p>科学任务的研究文档、统计代码、工具stdout、gene artifact和verifier不能都串成同一“高质量文本桶”。计数语义 / 配对 / 对比是可学习知识；工具观察是条件；assistant工具参数和有效修复是动作；私有reference与held-out答案必须隔离。GSE52778 / airway候选链路见<a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学合同</a>。</p>
+<p>对照应同时保存输入token、assistant目标token、归一化方式与任务来源组。mask观察会改变目标密度，按全局token均值与按桶均值加权不是同一个优化目标。来源变体进入同一split，通用能力回放单独验收；不能用教师生成和作者答案规模证明下游可迁移。</p>
+<p>原CPT初始化A–E保留；另一个<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html#design">sci-posttrain A–E</a>研究SFT后的反馈，日志不得省略命名空间。工业资源方案见<a href="s05_training_methods_systems.html#cluster">训练05</a>，均为待执行设计。</p>
 <p>主要配方与消融：<a href="index.html#ref-1">[1] Nemotron</a>；工业工程路线：<a href="index.html#ref-2">[2] Qwen3-Coder-Next</a>、<a href="index.html#ref-3">[3] GLM-5</a>。开放流程与回放：<a href="index.html#ref-4">[4] Olmo 3</a>、<a href="index.html#ref-27">[27] 官方流程</a>。研究前沿：<a href="index.html#ref-5">[5] MidTool</a>、<a href="index.html#ref-6">[6] PRISM</a>、<a href="index.html#ref-7">[7] SPT</a>、<a href="index.html#ref-8">[8] Function-Aware FIM</a>、<a href="index.html#ref-9">[9] 分布桥接</a>。</p>
 <p class="note">基于用户提供的 <code>agent-base-mid-training-20261114.html</code> 扩展与修订，六个主题锚点 recipe / results / landscape / data / harbor / sources 保留。原件逐字节保存在仓库 <code>content/archive/agent-base-mid-training-20261114.original.html</code>，只作来源追溯。版本和修订明细见 <code>docs/llm-training-research-20261114.md</code>。</p>
 </section>

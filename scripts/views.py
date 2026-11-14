@@ -23,8 +23,14 @@ class Headings(HTMLParser):
     def __init__(self):
         super().__init__()
         self.level, self.text, self.items = None, [], []
+        self.history = 0
 
     def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == "details" and (self.history or "data-reading-history" in attrs):
+            self.history += 1
+        if self.history:
+            return
         if tag in {"h2", "h3"}:
             self.level, self.text = tag, []
 
@@ -33,6 +39,9 @@ class Headings(HTMLParser):
             self.text.append(data)
 
     def handle_endtag(self, tag):
+        if tag == "details" and self.history:
+            self.history -= 1
+            return
         if tag == self.level:
             self.items.append(" ".join("".join(self.text).split()))
             self.level = None
@@ -45,7 +54,7 @@ def public_entries(ctx):
             continue
         row = {key: entry[key] for key in (
             "id", "kind", "title", "summary", "url", "topic", "type", "tags",
-            "origin", "status", "updated", "series", "order"
+            "origin", "status", "updated", "series", "order", "reading_role", "chapter_group"
         )}
         headings = Headings()
         if entry["origin"] == "local":
@@ -55,6 +64,68 @@ def public_entries(ctx):
                                   *headings.items]).casefold()
         result.append(row)
     return result
+
+
+def route_stages(ctx, route):
+    items = []
+    for node in route["stages"]:
+        entry = ctx.by_id[node["entry"]]
+        url = ctx.rel("/blog/", entry["url"]) + ("#" + node["anchor"] if node.get("anchor") else "")
+        text = f'<a href="{esc(url)}">{esc(entry["title"])}</a>'
+        if node.get("question"):
+            text += f'<p>{esc(node["question"])}</p><small>阅读产物：{esc(node["output"])}</small>'
+        if entry.get("prerequisites") and node.get("question"):
+            text += '<small>按需先修：' + "、".join(
+                f'<a href="{ctx.rel("/blog/", ctx.by_id[p["entry"]]["url"])}'
+                f'{"#" + esc(p["anchor"]) if p.get("anchor") else ""}">'
+                f'{esc(ctx.by_id[p["entry"]]["title"])}</a>' for p in entry["prerequisites"]) + "</small>"
+        items.append("<li>" + text + "</li>")
+    return '<ol class="route-stages">' + "".join(items) + "</ol>"
+
+
+def learning_routes(ctx):
+    routes = ctx.site.get("learning_paths", [])
+    if not routes:
+        return ""
+    main, *branches = routes
+    body = '<section id="learning-paths" class="learning-paths"><div class="section-heading"><h2>完整学习主线</h2>' \
+           '<a href="references/">文献查阅</a></div>' \
+           f'<p>{esc(main["summary"])}</p>{route_stages(ctx, main)}'
+    body += '<p>生成模型研究分支：<a href="../dlm-survey/">扩散语言模型</a>。基础推导、完整代码和自测题可在后部参考入口按需查阅。</p>'
+    body += '<div class="route-branches">' + "".join(
+        f'<details><summary>{esc(route["label"])}</summary><p>{esc(route["summary"])}</p>'
+        f'{route_stages(ctx, route)}</details>' for route in branches) + "</div></section>"
+    body += '<section id="research-focus" class="research-focus"><h2>重点研究路径</h2><div class="research-paths">'
+    for route in ctx.site.get("research_paths", []):
+        links = []
+        if route.get("cv_url"):
+            links.append(f'<a href="{ctx.rel("/blog/", route["cv_url"].split("#")[0])}#{esc(route["cv_url"].split("#")[1])}">研究经历</a>')
+        for slug in route.get("publication_ids", []):
+            paper = next(p for p in ctx.publications if p["slug"] == slug)
+            links.append(f'<a href="{ctx.rel("/blog/", paper["url"])}">{esc(paper["meta"]["title"])}</a>')
+        body += f'<article id="research-{esc(route["id"])}"><h3>{esc(route["label"])}</h3><p>{esc(route["summary"])}</p>' \
+                + route_stages(ctx, route) + '<p class="research-records">' + " · ".join(links) + "</p></article>"
+    body += "</div></section><details class=\"concept-index\"><summary>按核心概念查主讲位置</summary><ul>"
+    for owner in ctx.site.get("concept_owners", []):
+        entry = ctx.by_id[owner["entry"]]
+        url = ctx.rel("/blog/", entry["url"]) + ("#" + owner["anchor"] if owner.get("anchor") else "")
+        body += f'<li><a href="{esc(url)}">{esc(owner["label"])}</a>：{esc(entry["title"])}</li>'
+    return body + "</ul></details>"
+
+
+def grouped_catalog(ctx, rows):
+    groups = []
+    for topic in ctx.site["topics"]:
+        entries = [e for e in rows if e["topic"] == topic["id"] and e["reading_role"] == "core"]
+        if entries:
+            groups.append(f'<section class="catalog-group"><h3>{esc(topic["label"])}</h3><div class="note-grid">'
+                          + "".join(card(ctx, e, chapters=True) for e in entries) + "</div></section>")
+    for role, label in (("reference", "推导、代码与自测参考"), ("tracker", "滚动追踪")):
+        entries = [e for e in rows if e["reading_role"] == role]
+        if entries:
+            groups.append(f'<section class="catalog-group"><h3>{label}</h3><div class="note-grid">'
+                          + "".join(card(ctx, e, chapters=True) for e in entries) + "</div></section>")
+    return "".join(groups)
 
 
 def card(ctx, row, path="/blog/", chapters=False):
@@ -129,18 +200,16 @@ def render_home(ctx):
         f'<p>{esc(p["meta"]["excerpt"])}</p></article>'
         for slug in ctx.site["publications"]["featured"]
         for p in ctx.publications if p["slug"] == slug)
-    feature = next((e for e in rows if e.get("featured") and e["kind"] == "series"), None)
-    recommendations = [e for e in rows if e.get("featured") and e != feature][:2]
+    recommendations = [ctx.by_id[i] for i in ctx.site.get("home_recommendations", [])]
     recent = "".join(
         f'<article class="recent-note"><span class="note-date">{esc(e["updated"])}</span>'
         f'<h3><a href="{ctx.rel("/", e["url"])}">{esc(e["title"])}</a></h3></article>'
-        for e in rows if e["updated"])
+        for e in [r for r in rows if r["updated"]][:6])
     template = Template((ctx.root / "templates/home.html").read_text(encoding="utf-8"))
     body = template.substitute(bio=bio, work=work, topics=topics, papers=papers,
                                count=len(rows),
                                recent=recent,
-                               featured=(featured_series(ctx, feature, "/") if feature else "") +
-                               "".join(card(ctx, e, "/") for e in recommendations))
+                               featured="".join(card(ctx, e, "/") for e in recommendations))
     ctx.page("/", "Yuxiang Wang · Research & Notes", body,
              "Yuxiang Wang at Fudan and ByteDance Seed: scientific Harbor tasks, Agentic RL, "
              "GUI agent environments, and diffusion language models.",
@@ -158,9 +227,6 @@ def render_blog(ctx):
                 f'<select name="{name}" id="filter-{name}"><option value="">全部</option>' +
                 "".join(f'<option value="{esc(o["id"])}">{esc(o["label"])}</option>'
                         for o in options) + "</select></label>")
-    feature = next((e for e in local if ctx.by_id[e["id"]].get("featured")
-                    and e["kind"] == "series"), None)
-    feature_html = featured_series(ctx, feature) if feature else ""
     chips = ('<button type="button" class="topic-chip" data-topic="" aria-pressed="true">'
              '全部</button>' + "".join(
                  f'<button type="button" class="topic-chip" data-topic="{esc(t["id"])}" '
@@ -171,6 +237,8 @@ def render_blog(ctx):
             '<div class="catalog-intro"><h2>博客与研究笔记</h2>'
             '<p>从原理推导到训练工程，记录 LLM、Agent 与扩散模型的学习和实践。'
             '选一个主题，或从感兴趣的问题开始。</p>'
+            '<p><a href="#learning-paths">完整学习主线</a> · '
+            '<a href="#research-focus">重点研究路径</a> · <a href="references/">文献查阅</a></p>'
             f'<div class="catalog-stats"><span><strong>{len(local)}</strong>笔记集合</span>'
             f'<span><strong>{sum(e["kind"] == "chapter" and e["status"] == "published" for e in rows)}</strong>章节</span>'
             f'<span><strong>{len(ctx.site["topics"])}</strong>主题</span></div></div></header>'
@@ -196,10 +264,10 @@ def render_blog(ctx):
             '</form><p id="catalog-notice" role="status"></p>'
             '<noscript><p>当前未启用 JavaScript。以下列出全部文章；'
             '系列卡片内可直接浏览章节，筛选需启用 JavaScript。</p></noscript>'
-            '<section aria-label="本地文章"><div class="catalog-heading"><h2>全部笔记</h2>'
+            + learning_routes(ctx) +
+            '<section aria-label="本地文章" id="all-notes"><div class="catalog-heading"><h2>按主题浏览笔记</h2>'
             f'<p id="result-count" aria-live="polite">{len(local)} 个笔记集合</p></div>'
-            '<div id="catalog-results" class="note-grid">' +
-            "".join(feature_html if e == feature else card(ctx, e, chapters=True) for e in local) +
+            '<div id="catalog-results" class="catalog-groups">' + grouped_catalog(ctx, local) +
             '</div><p id="no-results" class="no-results" hidden>没有匹配内容。'
             '<a href="/blog/">清除条件，查看全部文章</a></p></section>'
             '<section id="external" class="supplemental"><h2>独立子站</h2><p>课程笔记与面试复习材料。</p>'
@@ -209,10 +277,10 @@ def render_blog(ctx):
             "".join(card(ctx, e) for e in archived) + "</div></section>"
             '<p class="catalog-footnote">日期表示内容更新时间，未知日期保留为待确认。'
             '科研材料的逐项事实复核仍在进行。</p>'
-            f'<template id="catalog-feature">{feature_html}</template>')
+            )
     data = {"entries": rows, "topics": ctx.site["topics"], "types": ctx.site["types"],
             "compatibility": ctx.redirects.get("query_compatibility", {}).get("blog", {}),
-            "featured_id": feature["id"] if feature else None}
+            "concept_owners": ctx.site.get("concept_owners", [])}
     ctx.write("/blog/catalog.json", json.dumps(data, ensure_ascii=False, indent=2) + "\n")
     ctx.page("/blog/", "博客与笔记", body, "分类目录、关键词搜索与系列章节。",
              script="/assets/site/catalog.js")

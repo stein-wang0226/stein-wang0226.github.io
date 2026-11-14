@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>推理并行、量化与投机验证</title>
+<meta name="description" content="TP/DP/EP和PD分离、KV传输、权重/KV/激活精度、FP4与投机验证，分析Dense/MoE/混合状态的兼容边界。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="overview"><p class="eyebrow">Parallelism &amp; precision · 2026-11-14</p><h2>先说明切分和压缩什么，再讨论加速</h2>
+<p class="lead">TP切矩阵，DP复制服务，EP分配专家，PD分离不同阶段；量化可作用于权重、激活或KV；投机用便宜候选减少昂贵目标模型的串行步数。这些选择可组合，也可能增加通信、格式转换和验证开销。</p>
+<p>先读<a href="s01_runtime_scheduling.html">调度与缓存</a>、<a href="../llm-architecture/s03_ffn_moe_routing.html">MoE路由</a>。新架构的具体报告见<a href="../llm-research-map-2026/s03_base_architecture.html">V4.1</a>与<a href="../llm-research-map-2026/s06_architecture_landscape.html">型号全景</a>。</p>
+<figure><div class="flow"><div class="stage"><b>结构对象</b><small>Dense / 专家 / 混合层<br>权重、KV、递归状态</small></div><div class="stage"><b>设备映射</b><small>TP / 副本 / EP<br>节点拓扑与PD传输</small></div><div class="stage"><b>格式与计算</b><small>weight / activation / KV<br>kernel、scale与转换</small></div><div class="stage"><b>验证与选择</b><small>目标分布或贪心<br>延迟、质量、成功成本</small></div></div><figcaption>每条优化都有对象和前提。总参数、激活参数和历史状态分别影响容量、计算与通信。</figcaption></figure></section>
+<section id="parallel"><h2>TP、服务副本和EP不能混乘</h2>
+<table><thead><tr><th>方式</th><th>主要对象</th><th>收益与成本</th></tr></thead><tbody>
+<tr><td>TP</td><td>同一模型的矩阵/head通道</td><td>装入更大模型、分摊计算；每层collective，小batch通信可能主导</td></tr>
+<tr><td>Serving DP</td><td>完整或同构TP组副本，各接不同请求</td><td>增加吞吐和隔离；权重复制、流量均衡与prefix局部性</td></tr>
+<tr><td>EP</td><td>专家分配，各token路由到所选专家</td><td>降低每rank专家存储；dispatch/combine、负载倾斜、跨节点网络</td></tr>
+<tr><td>PP</td><td>层/stage</td><td>容量扩展；decode串行路径、microbatch和pipeline效率要测</td></tr>
+</tbody></table>
+<p>MoE激活参数少不代表全部权重不需常驻。EP和DP常在同一rank集合中重组；服务框架的逻辑并行域与训练MCore域不一定相同，不能套用训练公式当启动命令。固定训练分组推导见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#parallel">训练方法</a>。</p>
+<p>若KV heads少于TP ranks，实现可能复制KV heads，或要求特别分组；不能总用KV/TP。本文MoE基线Qwen3-235B有4个KV heads，TP8路线需要明确复制/分片约定。Dense基线8KV heads在TP4中可均匀分为2个/rank。所有方案仍要核对具体kernel与模型adapter。</p>
+</section>
+<section id="disaggregation"><h2>Prefill/decode分离：干扰减少，状态传输增加</h2>
+<p>DistServe<a href="#ref-distserve">[1]</a>将prefill和decode分配到不同GPU，为TTFT与TPOT分别选资源和并行。它改善goodput的报告依赖网络、放置、模型与SLO；小负载或长KV传输时，分離可能不划算。</p>
+<div class="equation" role="math" aria-label="KV传输时间下界">KV transfer lower bound ≈ bytes_to_transfer / effective_link_bandwidth
+实际还包括：序列化、scale、分片重排、协议、同步、排队和目标分配
+部署收益需比较：减少的prefill/decode干扰 − 新增传输/资源开销</div>
+<p>KV发送方和接收方必须一致理解层布局、dtype/scales、位置、模型版本和block映射。PD两侧TP大小不同，还需重排；跨节点以可用带宽和并发测量，不用NIC标称速度代替端到端吞吐。混合模型可能还需递归/卷积状态，V4.1压缩共享cache也有独特结构。</p>
+<p>本文工业规划先比较共置TP服务，再将PD或EP列为独立消融，避免一次改变所有变量。工具CPU、retrieval与verifier不属于PD两阶段，依然计入Agent墙钟和成本。</p>
+</section>
+<section id="precision"><h2>量化必须写对象、格式和计算dtype</h2>
+<div class="equation" role="math" aria-label="量化和反量化">对称示意：q = clip(round(x/s), qmin, qmax)，x̂ = s·q
+非对称示意：x̂ = s·(q−z)
+存储量 = 数据bit + scale/zero-point + padding + 未量化部分</div>
+<table><thead><tr><th>对象 / 路线</th><th>作用</th><th>限制与验证</th></tr></thead><tbody>
+<tr><td>Weight-only INT4/INT8，GPTQ / AWQ</td><td>减权重容量与带宽；计算可能反量化到更高精度</td><td>分组/校准/outlier、未量化层、kernel形状与batch；INT4不是所有GEMM都4-bit</td></tr>
+<tr><td>W8A8 / FP8</td><td>权重和激活参与低精度计算</td><td>格式、静态/动态scale、累积精度、硬件；记录Norm/router保留项</td></tr>
+<tr><td>FP4 / MXFP4 / NVFP4</td><td>低bit浮点及block scales，可能减容量和提高矩阵计算</td><td>格式和scale层级不同；FP4训练、自带FP4 checkpoint与PTQ不能混称</td></tr>
+<tr><td>KV量化，KIVI等</td><td>减历史状态容量和读取</td><td>K/V统计、按channel/token分组、近期残差段、scale、长程质量与kernel支持</td></tr>
+<tr><td>QLoRA NF4</td><td>冻结底座量化存储用于adapter训练</td><td>不是普适FP4服务配方；merge/requant需另测，见训练05</td></tr>
+</tbody></table>
+<p>GPTQ用近似二阶信息作post-training权重量化；AWQ利用激活信息保护重要权重通道；KIVI分析K按channel、V按token的不对称分组。<a href="#ref-quant">[2–4]</a> 论文中的总峰值显存或吞吐下降不能只按bit比例反算，因为权重、cache、临时区的占比不同。</p>
+<p>低精度不仅验perplexity，还要验工具JSON、长上下文引用、科学design和独立任务成功。量化后目标模型分布改变，即使投机验证对该量化目标精确，也不保证与BF16目标相同。前沿FP4训练/推理对象分拆见<a href="../llm-research-map-2026/s07_architecture_training.html">研究地图07</a>。</p>
+</section>
+<section id="speculation"><h2>投机解码的精确性取决于验证协议</h2>
+<p>draft提出多个候选，target并行验证，使目标模型一次前向处理更多位置。drafter可以是小AR、MTP头、树候选或diffusion；目标仍可能是AR。收益取决于接受长度、draft耗时、验证和状态恢复，而不是只看drafter单步速度。</p>
+<div class="equation" role="math" aria-label="投机采样的接受和纠正">经典采样协议：draft分布q，target分布p，候选x~q
+接受概率 = min(1, p(x)/q(x))
+拒绝后从 normalize(max(p−q,0)) 重采样，继续按相应协议
+条件：同前缀、可得到兼容p/q、正确重采样与随机协议</div>
+<p>Leviathan等<a href="#ref-spec">[5]</a>给出保留target采样分布的协议。只保留与target argmax一致的最长前缀，是贪心等价的另一类协议；不能以贪心一致证明temperature采样分布精确。近似接受、只看confidence或忽略draft分布的实现需要单独证明/测量。</p>
+<p>2026 DFlash → DSpark → AdaFlash路线的diffusion候选、OPD训练与服务证据由<a href="../llm-research-map-2026/s04_inference_diffusion.html">研究地图推理/扩散章</a>维护。这里提供判断框架：模型版本、target采样规则、验证协议、接受率分母、拒绝后的cache恢复、并发与端到端成功成本。</p>
+<details><summary>为什么MTP不等于独立draft模型，也不必然等于精确投机？</summary><p>MTP是多token预测训练/头设计；可用于辅助训练或提供候选。候选如何被target验证才决定贪心一致或采样分布保留。训练目标名称不能替代推理协议。</p></details>
+</section>
+<section id="plans"><h2>工业服务方案和待执行对照</h2>
+<table><thead><tr><th>规划基线</th><th>初始路线</th><th>逐项消融和阻塞</th></tr></thead><tbody>
+<tr><td>Dense约70B，64 rollout H100</td><td>16个TP4副本，BF16；同模型/模板和受限长度</td><td>prefix、KV格式、W-only、drafter；显存/通信和logprob一致性待测</td></tr>
+<tr><td>235B级MoE，512 rollout H100</td><td>TP8为容量/兼容基线；EP为另一条路线</td><td>4KV heads复制、专家负载、跨节点、PD和FP格式支持待测</td></tr>
+<tr><td>Hybrid / 压缩共享cache新型号</td><td>先核对层计划、状态布局与框架adapter</td><td>prefix恢复、量化、spec rollback与connector，不能假定同Dense接口</td></tr>
+</tbody></table>
+<p>这些是<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">训练/rollout方案</a>的一部分，无测量吞吐。对照一次改变并行、格式或drafter之一，冻结质量/SLO要求。所有副本、教师与失败成本纳入下一章。</p>
+<details><summary>权重4-bit后，KV也会变成4-bit吗？</summary><p>不会。权重和KV是不同对象，由独立格式、scale和kernel管理。低bit权重反而可能让KV成为更大容量瓶颈。</p></details>
+</section>
+<section id="sources"><h2>来源与范围</h2><ol class="sources">
+<li id="ref-distserve">Zhong等，<a href="https://arxiv.org/abs/2401.09670v3">DistServe</a>：PD分离、网络放置与SLO goodput。</li>
+<li id="ref-quant">Frantar等，<a href="https://arxiv.org/abs/2210.17323v1">GPTQ</a>；Lin等，<a href="https://arxiv.org/abs/2306.00978v1">AWQ</a>：post-training权重方法。</li>
+<li id="ref-kivi">Liu等，<a href="https://arxiv.org/abs/2402.02750v2">KIVI</a>：KV不对称量化与报告负载。</li>
+<li id="ref-formats"><a href="../llm-research-map-2026/s03_base_architecture.html">DeepSeek V4.1固定报告</a>、<a href="../llm-research-map-2026/s07_architecture_training.html">低精度机制来源</a>：沿用该处格式/型号证据，不重复自报数字。</li>
+<li id="ref-spec">Leviathan等，<a href="https://arxiv.org/abs/2211.17192v1">Fast Inference from Transformers via Speculative Decoding</a>：接受与重采样的target分布保证。</li>
+</ol><p class="note">截止2026-11-14。固定服务源码版本见<a href="s01_runtime_scheduling.html#implementation">上一章</a>；未运行模型、量化或服务benchmark。</p></section>
+</main></body></html>

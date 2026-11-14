@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAG与Agentic检索：从文档到可核实的证据</title>
+<meta name="description" content="版本与权限、chunk、BM25/dense融合、rerank、Agentic检索、Search-R1与2026前沿，分别评估检索、引用与任务成功。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
+<body><main class="training-lifecycle">
+<section id="overview"><p class="eyebrow">Retrieval &amp; evidence · 2026-11-14</p><h2>RAG的输出应该是一组可追溯的证据</h2>
+<p class="lead">RAG把当前任务需要的外部信息放入模型上下文。检索器找候选，reranker缩小候选，生成器解释证据；Agentic RAG进一步让策略选择何时检索、改写哪个查询、何时结束。它不能自动解决来源错误、权限泄露或引用不支持结论的问题。</p>
+<p>先修：<a href="../agent-harness-guide.html">上下文与memory</a>、<a href="../llm-architecture/s02_attention_position_cache.html">窗口和历史访问</a>。本章维护检索原理；规划预算与安全分别见<a href="s02_planning_compute.html">02</a>、<a href="s03_trust_safety.html">03</a>。</p>
+<figure><div class="flow"><div class="stage"><b>可信语料入口</b><small>快照、许可、ACL<br>解析、chunk、索引</small></div><div class="stage"><b>候选与重排</b><small>BM25 + dense<br>融合、rerank、去重</small></div><div class="stage"><b>证据组织</b><small>原文span与出处<br>冲突、支持和缺口</small></div><div class="stage"><b>回答或续查</b><small>生成、引用、拒答<br>预算内选择下一查询</small></div></div><figcaption>查询先受权限约束；引用绑定原文与快照。摘要可以压缩上下文，不能代替可核对的来源。</figcaption></figure>
+</section>
+<section id="objects"><h2>知识库、会话摘要与长期memory保存不同对象</h2>
+<table><thead><tr><th>对象</th><th>来源与作用</th><th>正确性约束</th></tr></thead><tbody>
+<tr><td>检索知识库</td><td>文档、代码、数据库；提供事实和方法</td><td>版本、权限、原文位置、有效期与删除传播</td></tr>
+<tr><td>会话摘要</td><td>本次运行历史；恢复目标、已做动作和未决问题</td><td>压缩会丢细节；关键artifact和失败证据需可重新读取</td></tr>
+<tr><td>跨会话memory</td><td>筛选后的偏好、经验、可复用流程</td><td>是候选背景；不能覆盖当前指令或冒充独立科学证据</td></tr>
+<tr><td>模型参数</td><td>训练形成的分布与能力</td><td>通常不能逐句给出处；更新不等于更新文档索引</td></tr>
+</tbody></table>
+<p>把失败的科学结论写入memory，再当作RAG证据检索，会把一次误判变成持续污染。应把“当时认为”“官方原文”“后来修正”分开存储。memory实现由<a href="../agent-harness-guide.html#codex-memory">Codex案例</a>维护。</p>
+</section>
+<section id="ingestion"><h2>索引之前：版本、权限与语义边界</h2>
+<p>文档记录至少包含document_id、source_url、revision、content_hash、访问时间、许可、ACL、页/节/span和解析器版本。网页更新时间不是论文版本；同论文的HTML、PDF与博客转述不是三份独立证据。代码要固定commit，科学数据要固定对象与处理层。</p>
+<p>chunk太小会截断定义、否定、表头和适用条件；太大会稀释相关内容、增加重排及生成成本。本文建议按标题/段落/表格语义切分，以短chunk检索、父段落补上下文；overlap保留连续性，但应按源span去重。chunk长度、overlap和embedding模板是需在真实语料上消融的参数，不设通用最优数字。</p>
+<p>权限需要在候选生成和最终引用时检查。只在回答前隐藏文档，可能已让reranker、日志、缓存或生成器看到敏感内容。按租户/权限域分索引或先使用可见ID集合，再做检索；权限更新需使旧缓存失效。语料删除也要传播到向量、原文、摘要和prefix缓存。</p>
+<details><summary>科学案例中的证据记录（本文设计，未下载数据）</summary>
+<pre><code>{
+  "document_id": "airway-count-object",
+  "revision": "airway 1.32.0 / Bioconductor 3.23",
+  "claim": "冻结计数对象有8样本；GEO Series有16样本",
+  "span": "对象文档与vignette data(airway)输出",
+  "source_hash": null,
+  "conflict": "vignette重生成中间表的处理标签待逐GSM核对",
+  "authority": "evidence_only"
+}</code></pre>
+<p>hash未知就保留null；不能把页面说明变成已审计的实际fixture。完整来源冲突见<a href="../agent-data-benchmarks/s03_scientific_task_family.html#provenance">科学来源审计</a>。</p></details>
+</section>
+<section id="retrieval"><h2>BM25、dense、融合与rerank分别解决什么</h2>
+<div class="equation" role="math" aria-label="BM25与倒数排名融合">BM25(q,d) ∝ Σt IDF(t) · tf(t,d)(k₁+1) /
+             [tf(t,d)+k₁(1−b+b·|d|/avgdl)]
+dense(q,d) = similarity(Eq(q), Ed(d))
+RRF(d) = Σlist 1/(c + ranklist(d))</div>
+<p>BM25利用词项匹配和长度归一化，对accession、函数名、错误代码等精确对象常有价值。dense学习语义匹配，但近邻不保证包含答案，embedding相似度也不是事实正确概率。cosine通常要求明确归一化；内积会受向量范数影响。不同模型的分数不能直接相加。</p>
+<p>RRF按各候选表排名融合，避开不兼容的原始分数尺度；它不证明所有查询都应使用相同权重。cross-encoder reranker联合读query与chunk，通常比单向量更能辨认细节，但每个候选都要计算；先召回再重排，把昂贵计算放在较小候选集。还需按来源、版本和span去重，并保留少量相互矛盾的权威证据。</p>
+<table><thead><tr><th>步骤</th><th>优化对象</th><th>容易遗漏的失败</th></tr></thead><tbody>
+<tr><td>BM25 / dense</td><td>在可见语料中取得相关候选</td><td>tokenization、版本错误、ANN漏召回、查询分布偏移</td></tr>
+<tr><td>RRF / weighted fusion</td><td>合并候选排序</td><td>同文档重复、多路高度相关、未经校准的分数混合</td></tr>
+<tr><td>rerank</td><td>判别候选对问题的局部相关性</td><td>把流畅转述排在官方原文前；长文截断丢失条件</td></tr>
+<tr><td>context packing</td><td>窗口内覆盖关键证据</td><td>相关但不充分；相同事实重复占用预算；表头与单位丢失</td></tr>
+</tbody></table>
+<details><summary>固定Faiss实现入口：向量检索只返回邻居</summary>
+<pre><code># Faiss v1.12.0，MIT；官方1-Flat.py的核心调用
+index = faiss.IndexFlatL2(d)
+index.add(xb)             # float32 vectors；另存ID、原文、版本和ACL
+D, I = index.search(xq, k) # L2距离与行号；不是引用，也不是答案置信度</code></pre>
+<p>固定<a href="https://github.com/facebookresearch/faiss/blob/e8234e563f1ecef5f036e83c3cfee366d3f1fbca/tutorial/python/1-Flat.py">e8234e5</a>。这里是exact Flat L2；改成IVF/HNSW/PQ就要分别评估近似召回、训练索引与压缩误差。没有运行本例，版本用于明确接口证据。</p></details>
+<p>基础RAG联合retriever与generator的经典形式见Lewis等<a href="#ref-rag">[1]</a>；整条pipeline的组合消融见<a href="#ref-practices">[2]</a>。其中最优chunk或reranker只适用于报告条件。</p>
+</section>
+<section id="agentic"><h2>Agentic RAG：检索是可学习的行动</h2>
+<p>单轮RAG执行一次固定query；多跳流程按预设步骤拆题；Agentic RAG根据观察决定是否改写、拆分、换来源或结束。查询、浏览、证据选择与最终回答都形成轨迹。工具返回文本是观察，策略生成的查询是动作，两者在SFT/RL中使用不同mask。</p>
+<table><thead><tr><th>路线与固定来源</th><th>改变的对象</th><th>证据边界与本文分析</th></tr></thead><tbody>
+<tr><td>Self-RAG，2310.11511v1</td><td>学习reflection tokens，控制检索与生成/批评</td><td>不等于给任意模型加“再检查”提示；自评分仍需独立引用评测</td></tr>
+<tr><td>Search-R1，2503.09516v5</td><td>多轮查询、检索观察mask和结果奖励</td><td>固定QA语料/检索器中的报告；搜索观察不是模型action token</td></tr>
+<tr><td>Agentic-R，2601.11888v1</td><td>局部query-passage相关性与全局答案正确性共同衡量utility，迭代更新retriever和agent</td><td>retriever从静态相似度走向轨迹效用；需独立研究切分防止答案/检索器共适应</td></tr>
+<tr><td>Search-R1++，2602.19526v1</td><td>解耦prompt、reward、policy optimizer；分析answer avoidance与稳定性</td><td>其REINFORCE/PPO/GRPO比较不是跨任务定律；先控制模板和奖励，再比较算法</td></tr>
+<tr><td>PROGRESS，2608.00969v1</td><td>冻结教师生成必要子查询，以覆盖奖励指导分解</td><td>教师覆盖是代理目标；相似query不保证证据正确或科学合同通过</td></tr>
+</tbody></table>
+<p>本文判断：检索训练有三种不同目标——找到相似文档、找到当前决策有用的证据、让完整任务通过。它们可能不一致。科学任务最有价值的检索有时是发现元数据矛盾并拒绝继续，而不是尽快产出答案。前沿原文<a href="#ref-search">[4–7]</a>；本章不外推作者QA收益到RNA-seq。</p>
+<pre><code># 本文设计的控制流程，不是上述框架API
+while budget.remaining() and not evidence.sufficient(contract):
+    query = policy.choose_query(unresolved_claims, evidence)
+    hits = retrieve(query, allowed_documents, frozen_index_version)
+    evidence.add(rerank_and_extract(hits), with_source_spans=True)
+    unresolved_claims = check_support_and_conflicts(evidence)
+return answer_with_citations(evidence) or explicit_unresolved_report()</code></pre>
+<p>“sufficient”需根据任务合同定义，不能直接由模型一句自信回答确定。若新增检索没有带来新证据、重复访问同页或预算耗尽，应停止并报告缺口。预算与失败恢复见下一章。</p>
+</section>
+<section id="evaluation"><h2>分别评估检索、生成和完整任务</h2>
+<div class="equation" role="math" aria-label="检索和引用评测">Recall@k = |相关证据 ∩ top-k| / |标注相关证据|
+MRR = mean(1 / 第一条相关结果的排名)
+引用支持率 = 有原文支持的已核对引用 / 已核对引用
+成功成本 = 全部尝试成本 / 独立验收成功数</div>
+<p>multi-hop需要多条证据联合，单文档recall不能完整描述充分性；nDCG需要相关性等级标注。引用正确性检查出处是否支持该句，引用完整性检查应被支持的重要结论是否缺引用。事实正确、引用支持和工具任务成功是不同指标；LLM judge要用人工/规则子集校准，不能作为自动真值。</p>
+<table><thead><tr><th>待执行对照</th><th>冻结变量</th><th>能区分什么</th></tr></thead><tbody>
+<tr><td>BM25 / dense / hybrid</td><td>语料、版本、ACL、query、候选预算</td><td>候选覆盖与近似索引损失</td></tr>
+<tr><td>无rerank / rerank / oracle证据</td><td>候选与generator</td><td>重排失误、证据组织与生成使用能力</td></tr>
+<tr><td>单轮 / 多轮 / RL检索</td><td>模型起点、总token/工具预算、测试研究</td><td>策略价值与单纯增加计算的差异</td></tr>
+<tr><td>冲突 / 无答案 / 权限负例</td><td>证据快照、攻击位置、合法目标</td><td>拒答是否恰当、引用欺骗与越权</td></tr>
+</tbody></table>
+<p>索引只纳入允许的训练/公开文档，test答案、verifier参考输出和其他研究标签隔离。查询轨迹按研究切分；同研究不同chunk或改写不能分到train/test两侧。科学方案见<a href="../agent-data-benchmarks/s03_scientific_task_family.html">合同与切分</a>，后训练mask见<a href="../llm-training-lifecycle/s03_sft_rft.html">SFT/RFT</a>。</p>
+</section>
+<section id="self-check"><h2>理解检查</h2>
+<details><summary>向量相似度很高，为什么仍不能引用？</summary><p>相似度只描述embedding关系；文档可能版本错误、没有支持结论、属于不可见权限域或把否定条件截断。引用要回到原文span。</p></details>
+<details><summary>增加检索轮数必然提高正确性吗？</summary><p>更多轮也会引入冲突、冗余、注入和成本。需要同预算对照及可执行的停止规则；检索行动次数不是学习效果。</p></details>
+<p>下一章<a href="s02_planning_compute.html">规划与预算</a>；自测见<a href="../llm-interview-bank.html#sec-rag">题库RAG节</a>。</p></section>
+<section id="sources"><h2>原始来源与版本</h2><ol class="sources">
+<li id="ref-rag">Lewis等，<a href="https://arxiv.org/abs/2005.11401v4">Retrieval-Augmented Generation</a>：retriever/generator与知识密集任务。</li>
+<li id="ref-practices">Wang等，<a href="https://arxiv.org/html/2407.01219v1">Searching for Best Practices in RAG</a>，§3–4：chunk、融合、rerank与组合消融。</li>
+<li id="ref-self">Asai等，<a href="https://arxiv.org/abs/2310.11511v1">Self-RAG</a>：reflection tokens及推理控制。</li>
+<li id="ref-search">Jin等，<a href="https://arxiv.org/abs/2503.09516v5">Search-R1</a>：多轮工具、观察mask与奖励。v1/v5报告数字不同，本章不混用。</li>
+<li id="ref-agentic-r">Liu等，<a href="https://arxiv.org/abs/2601.11888v1">Agentic-R</a>：局部/全局passage utility与双向迭代。</li>
+<li id="ref-plus">Xu等，<a href="https://arxiv.org/abs/2602.19526v1">How to Train Your Deep Research Agent?</a>：三轴消融与Search-R1++。</li>
+<li id="ref-progress">Paul等，<a href="https://arxiv.org/abs/2608.00969v1">PROGRESS</a>：teacher-guided覆盖奖励。</li>
+<li id="ref-faiss"><a href="https://github.com/facebookresearch/faiss/blob/e8234e563f1ecef5f036e83c3cfee366d3f1fbca/tutorial/python/1-Flat.py">Faiss v1.12.0</a>，Meta，MIT：精确L2接口。源码已核对，未运行检索。</li>
+</ol><p class="note">访问截止2026-11-14；原论文机制与近年方案分别标版本。权限、科学应用和对照为本文设计，无本站训练/检索实测。</p></section>
+</main></body></html>

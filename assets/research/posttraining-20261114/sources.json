@@ -13,8 +13,17 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Proximal Policy Optimization Algorithms · Schulman 等；§3–5，概率比与 clipped surrogate。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#ppo-gae",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s04_rl_evaluation.html#algorithms",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 2,
@@ -25,8 +34,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman 等；§3，TD residual、GAE 与偏差/方差。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#ppo-gae"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 3,
@@ -37,8 +51,19 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "DeepSeekMath · DeepSeek；§4，GRPO baseline 与原始序列平均目标。",
       "used_in": [
+        "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
+        "/llm-posttraining/s02_rl_algorithms.html#rloo-grpo",
+        "/llm-training-lifecycle/s03_sft_rft.html#reinforcement",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s04_rl_evaluation.html#algorithms",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 4,
@@ -49,8 +74,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs · Ahmadian 等；RLOO、采样 baseline 与 RLHF 对照。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#rloo-grpo"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 5,
@@ -61,8 +91,19 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "DAPO: An Open-Source LLM Reinforcement Learning System at Scale · ByteDance / 合作团队；§3，四项训练设计。",
       "used_in": [
+        "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
+        "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 6,
@@ -73,8 +114,19 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Understanding R1-Zero-Like Training: A Critical Perspective · Liu 等；归一化分析与 Dr. GRPO。",
       "used_in": [
+        "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
+        "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 7,
@@ -85,8 +137,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Group Sequence Policy Optimization · Qwen；§3，几何平均 ratio、序列 clipping。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#ratio-methods"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 8,
@@ -97,8 +154,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MiniMax-M1 · MiniMax；CISPO 的 detached clipped importance weights。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 9,
@@ -109,8 +172,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Soft Adaptive Policy Optimization · Qwen / 合作团队；软门控及正负优势温度。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#ratio-methods"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 10,
@@ -121,9 +189,16 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Single-Rollout Autoregressive Policy Optimization · SAPO；共享自回归 policy/value、turn GAE 与 SARSA；同名不同方法。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#single-rollout",
+        "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
+        "/llm-research-map-2026/s02_agentic_rl.html#credit"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html",
         "/llm-posttraining/s04_environment_reward_credit.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 11,
@@ -134,9 +209,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning · SAO；外部 critic、skip-observation GAE、严格 IS mask。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#single-rollout",
+        "/llm-posttraining/s04_environment_reward_credit.html#long-credit"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html",
         "/llm-posttraining/s04_environment_reward_credit.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 12,
@@ -147,8 +228,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov 等；§4，偏好目标。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#preference"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 13,
@@ -159,8 +245,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "SimPO: Simple Preference Optimization with a Reference-Free Reward · Meng 等；长度归一化、margin。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#preference"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 14,
@@ -171,8 +262,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "ORPO: Monolithic Preference Optimization without Reference Model · Hong 等；SFT 与 odds-ratio preference。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#preference"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 15,
@@ -183,8 +279,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "KTO: Model Alignment as Prospect Theoretic Optimization · Ethayarajh 等；非成对好/坏标签与参考 KL。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#preference"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 16,
@@ -195,9 +296,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "ReTerm: Recovery Training for Self-Improving Terminal Agents · §3.1–3.2，教师恢复 token 的 SFT、另列 ReTerm-GRPO。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#recovery",
+        "/llm-posttraining/s06_task_cases_experiments.html#code-case"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 17,
@@ -208,8 +315,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "OpenAI · Reinforcement Fine-Tuning Cookbook · Theophile Sautory，2025-05-23；生命科学短答案、exact/fuzzy/model graders。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#reinforcement-rft",
+        "/llm-posttraining/s01_supervision_preference.html#taxonomy"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 18,
@@ -220,8 +333,20 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "DeepSeek-R1 · DeepSeek；§2，cold start、推理 RL、拒绝采样、SFT 与最终 RL。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s01_supervision_preference.html#rejection",
+        "/llm-posttraining/s01_supervision_preference.html#taxonomy",
+        "/llm-training-lifecycle/#findings",
+        "/llm-training-lifecycle/#overview",
+        "/llm-training-lifecycle/s03_sft_rft.html#industry",
+        "/llm-training-lifecycle/s03_sft_rft.html#rejection",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 19,
@@ -232,8 +357,18 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Qwen3 Technical Report · Qwen；§4，四阶段后训练。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-training-lifecycle/#overview",
+        "/llm-training-lifecycle/s01_pretraining.html#curriculum",
+        "/llm-training-lifecycle/s01_pretraining.html#sources",
+        "/llm-training-lifecycle/s03_sft_rft.html#industry",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 20,
@@ -244,8 +379,17 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "The Llama 3 Herd of Models · Meta；§4，SFT / DPO 与迭代数据。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-training-lifecycle/s01_pretraining.html#data",
+        "/llm-training-lifecycle/s01_pretraining.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s03_sft_rft.html#preference"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 21,
@@ -256,8 +400,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Kimi K2: Open Agentic Intelligence · Moonshot；Agent 数据、环境、SFT / RL。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-research-map-2026/s07_architecture_training.html#muon"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 22,
@@ -268,8 +418,26 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "GLM-5: From Vibe Coding to Agentic Engineering · Z.ai；§3–4，轨迹筛选与异步 Agent RL。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s01_supervision_preference.html#recovery",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#glm",
+        "/llm-training-lifecycle/#findings",
+        "/llm-training-lifecycle/s01_pretraining.html#curriculum",
+        "/llm-training-lifecycle/s01_pretraining.html#sources",
+        "/llm-training-lifecycle/s02_midtraining.html",
+        "/llm-training-lifecycle/s03_sft_rft.html#sft",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#systems"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 23,
@@ -280,8 +448,21 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Qwen3-Coder-Next Technical Report · Qwen；§3–4，多 scaffold、专家与蒸馏。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-training-lifecycle/#findings",
+        "/llm-training-lifecycle/s02_midtraining.html",
+        "/llm-training-lifecycle/s02_midtraining.html#definitions",
+        "/llm-training-lifecycle/s03_sft_rft.html#quality",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources",
+        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 24,
@@ -292,9 +473,25 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "DeepSeek-V4 Technical Report · DeepSeek；§5.1.2，专家与完整词表 OPD。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-research-map-2026/s03_base_architecture.html#versions",
+        "/llm-training-lifecycle/#findings",
+        "/llm-training-lifecycle/#overview",
+        "/llm-training-lifecycle/s01_pretraining.html#budget",
+        "/llm-training-lifecycle/s01_pretraining.html#sources",
+        "/llm-training-lifecycle/s03_sft_rft.html#industry",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 25,
@@ -305,10 +502,33 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "DeepSeek-V4.1 Technical Report · DeepSeek；§5.2.1–5.2.4，异步对齐、调度、40+ 教师 OPD；归档原件。",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
+        "/agent-data-benchmarks/s01_task_synthesis.html#routes",
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-posttraining/s05_frameworks_async.html#partial-rollout",
+        "/llm-posttraining/s05_frameworks_async.html#three-policy",
+        "/llm-research-map-2026/s01_agent_data_bench.html#distinctions",
+        "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
+        "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
+        "/llm-research-map-2026/s03_base_architecture.html#cache",
+        "/llm-research-map-2026/s03_base_architecture.html#ced",
+        "/llm-research-map-2026/s03_base_architecture.html#csa2",
+        "/llm-research-map-2026/s03_base_architecture.html#engram",
+        "/llm-research-map-2026/s03_base_architecture.html#versions",
+        "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s07_architecture_training.html#precision",
+        "/llm-research-map-2026/s07_architecture_training.html#residual"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 26,
@@ -319,9 +539,29 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Nemotron 3 Ultra · NVIDIA；§3.3.5，sampled-token MOPD 与 preliminary full/top-k 对照；归档原件。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-research-map-2026/s03_base_architecture.html#alternatives",
+        "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
+        "/llm-research-map-2026/s07_architecture_training.html#precision",
+        "/llm-research-map-2026/s07_architecture_training.html#sources",
+        "/llm-training-lifecycle/#findings",
+        "/llm-training-lifecycle/s01_pretraining.html#budget",
+        "/llm-training-lifecycle/s01_pretraining.html#sources",
+        "/llm-training-lifecycle/s03_sft_rft.html#industry",
+        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [
+        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+      ],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 27,
@@ -332,12 +572,29 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement · Xiaomi；§4.1 / 4.3.2、5.6、6.3–6.4，GAR、MOPD2、调度与算力构成。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s01_supervision_preference.html#industry",
+        "/llm-posttraining/s03_opd_self_distillation.html#mopd2",
+        "/llm-posttraining/s04_environment_reward_credit.html#gar",
+        "/llm-posttraining/s05_frameworks_async.html#compute",
+        "/llm-posttraining/s05_frameworks_async.html#partial-rollout",
+        "/llm-posttraining/s05_frameworks_async.html#three-policy",
+        "/llm-posttraining/s06_task_cases_experiments.html#code-case",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s06_architecture_landscape.html#mimo",
+        "/llm-research-map-2026/s07_architecture_training.html#muon",
+        "/llm-research-map-2026/s07_architecture_training.html#precision",
+        "/llm-research-map-2026/s07_architecture_training.html#sources"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s04_environment_reward_credit.html",
         "/llm-posttraining/s05_frameworks_async.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 28,
@@ -348,8 +605,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "On-policy Distillation of Language Models: Learning from Self-Generated Mistakes · Agarwal 等；GKD，多种 divergence 与生成分布。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#why-on-policy"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 29,
@@ -360,8 +622,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MiniLLM: Knowledge Distillation of Large Language Models · Gu 等；reverse-KL 与 policy-gradient 蒸馏。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#why-on-policy"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 30,
@@ -372,9 +639,18 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "On-Policy Distillation · Kevin Lu / Thinking Machines Lab，2025-10-27；sampled-token、即时蒸馏反馈。",
       "used_in": [
+        "/llm-frontier-2026.html#sources",
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s03_opd_self_distillation.html#sampled-gradient",
+        "/llm-posttraining/s03_opd_self_distillation.html#why-on-policy",
+        "/llm-posttraining/s06_task_cases_experiments.html#code-case"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 31,
@@ -385,8 +661,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models · OPSD；特权解法上下文、no-grad teacher、KL/JSD。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#self-distillation"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 32,
@@ -397,8 +678,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Reinforcement Learning via Self-Distillation · SDPO；环境文本反馈、成功 sibling 与 logit 蒸馏。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s03_opd_self_distillation.html#self-distillation"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 33,
@@ -409,8 +696,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Self-Distilled Policy Gradient · SDPG；局部梯度推导、正优势 gate、schedule 与参考正则。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#full-vocabulary",
+        "/llm-posttraining/s03_opd_self_distillation.html#self-distillation"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 34,
@@ -421,9 +714,16 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "On-Policy Distillation with Curriculum Turn-level Guidance for Multi-turn Agents · Guided-OPD；teacher 接管课程、student reverse / teacher forward KL。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s03_opd_self_distillation.html#guided-intervention",
+        "/llm-posttraining/s06_task_cases_experiments.html#gui-case"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 35,
@@ -434,8 +734,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "TISD: On-Policy Self-Distillation with Trajectory Intervention · KAIST；失败轨迹 KL 峰值处分支、后缀重采样与不同预算口径。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s03_opd_self_distillation.html#guided-intervention"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 36,
@@ -446,8 +752,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "OPDArena: Understanding Learning and Forgetting in On-Policy Distillation · Microsoft Research / 合作团队；五个 Qwen Base、Top-16 approximation、目标/分布外能力。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s03_opd_self_distillation.html#forgetting"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 37,
@@ -458,8 +770,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Let’s Verify Step by Step · Lightman 等；PRM800k、过程监督与推理时选择。",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#prm"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 38,
@@ -470,8 +787,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "The Lessons of Developing Process Reward Models in Mathematical Reasoning · Qwen；步骤正确性、MC 标注与评测分歧。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s04_environment_reward_credit.html#prm"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 39,
@@ -482,8 +805,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Stop Summation: Min-Form Credit Assignment Is All Process Reward Model Needs for Reasoning · PURE；最差步骤目标与奖励投机。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s04_environment_reward_credit.html#pure-cliff"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 40,
@@ -494,8 +823,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Cliff: Learning Process Rewards from the First Mistake · AWS / 合作团队；首个 pitfall 边界、坏教师回退与附录误判。",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#pure-cliff"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 41,
@@ -506,9 +840,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Group-in-Group Policy Optimization for LLM Agent Training · GiGPO；episode 与重复 anchor-state 信用。",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
+        "/llm-posttraining/s06_task_cases_experiments.html#gui-case"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 42,
@@ -519,8 +859,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Reinforcement Learning with Decomposed Subtasks · RLDS；子任务优势和反思定位；归档原件。",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
+        "/llm-research-map-2026/s02_agentic_rl.html#credit"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 43,
@@ -531,8 +877,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Knowledge-Guided Credit Assignment for Multi-Turn Agentic Reinforcement Learning · KnowGPO；知识条件 baseline、训练信息与部署边界。",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
+        "/llm-research-map-2026/s02_agentic_rl.html#credit"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 44,
@@ -543,8 +895,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "ARLArena: A Unified Framework for Stable Agentic Reinforcement Learning · SAMPO；统一 testbed 的组合设计，非单组件因果证据；归档原件。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#single-rollout",
+        "/llm-research-map-2026/s02_agentic_rl.html#credit",
+        "/llm-research-map-2026/s02_agentic_rl.html#map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 45,
@@ -555,8 +914,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "AReaL: A Large-Scale Asynchronous Reinforcement Learning System for Language Reasoning · inclusionAI；解耦 PPO、策略延迟。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#async"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 46,
@@ -567,8 +931,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Relax: An Asynchronous Reinforcement Learning Engine for Omni-Modal Post-Training at Scale · 服务隔离与 TransferQueue；版本号与文内日期不一致，采用固定版本定位。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#async"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 47,
@@ -579,8 +948,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Agent Lightning v1.0: Towards Harnessed Agentic RL · Microsoft；Trainer / API Gateway / Rollout Controller、真实调用和 token-prefix 合并。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map",
+        "/llm-posttraining/s05_frameworks_async.html#partial-rollout"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 48,
@@ -591,8 +966,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Agent Lightning: Train ANY AI Agents with Reinforcement Learning · Microsoft，2025；原 LightningRL，不能代替 v1.0 实现说明。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#partial-rollout"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 49,
@@ -603,9 +983,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "TRL · SFT Trainer · assistant-only loss、template generation tags、packing；动态 main 文档。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#sft-objective",
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 50,
@@ -616,9 +1002,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "TRL · GRPO Trainer · reward scaling、loss type、ratio 粒度；动态 main 文档。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html",
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 51,
@@ -629,8 +1021,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "verl · Fully Async Policy Trainer · 2026-05-25 更新说明；queue、参数同步、backlog 配额、partial rollout。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s05_frameworks_async.html#async"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 52,
@@ -641,8 +1039,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "verl · Rollout Correction · 三策略概率、bypass 与截断校正。",
       "used_in": [
+        "/llm-posttraining/#findings",
+        "/llm-posttraining/s05_frameworks_async.html#three-policy"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 53,
@@ -653,9 +1057,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Harbor · Task Overview · 任务布局、环境、顶层 artifacts 与 verifier 模式。",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#harbor",
+        "/llm-posttraining/s06_task_cases_experiments.html#science-case"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 54,
@@ -666,9 +1076,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Harbor · Verifier · reward 文件、独立 verifier sandbox、选定产物交接。",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#harbor",
+        "/llm-posttraining/s06_task_cases_experiments.html#science-case"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 55,
@@ -679,8 +1095,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "slime · OPD advantage 源码 · Apache-2.0；同 SHA 的 OPD 文档与教师评分入口。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#slime-opd"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 56,
@@ -691,8 +1112,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "slime · README @ 79aa41a · Megatron / SGLang、rollout 接口；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 57,
@@ -703,8 +1129,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "AReaL · README @ 11b6fb0 · Megatron / FSDP2 / Archon，SGLang / vLLM；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 58,
@@ -715,8 +1146,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "verl · README @ 61adb0c · FSDP / Megatron 与 rollout 后端；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 59,
@@ -727,8 +1163,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "OpenRLHF · README @ 2649449 · Ray / vLLM / DeepSpeed ZeRO-3、async / partial / hybrid；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 60,
@@ -739,9 +1180,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "NeMo RL · README @ bb9ed78 · AutoModel / Megatron Bridge、多教师与不同 tokenizer 路线；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#sampled-gradient",
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 61,
@@ -752,8 +1199,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "ROLL · README @ 7c0ded3 · 多角色 Ray、FSDP2 / Megatron、各 pipeline 支持边界；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 62,
@@ -764,8 +1216,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "RLinf · README @ 6a7dcbd · v0.4、文本 / 视觉 / 机器人、多硬件；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 63,
@@ -776,8 +1233,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "SkyRL · README @ 3e8700f · skyrl-train / skyrl-tx 与异步；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 64,
@@ -788,8 +1250,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Agent Lightning · README @ 2070bad · v1 当前重写实现；MIT。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map",
+        "/llm-posttraining/s05_frameworks_async.html#partial-rollout"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 65,
@@ -800,8 +1268,13 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "TRL · README @ 8ad18ec · trainer 体系；Apache-2.0，动态文档另列。",
       "used_in": [
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     },
     {
       "id": 66,
@@ -812,8 +1285,15 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · 多教师能力整合，区别于 MiMo-V2.6 的 Multi-Prefix MOPD2 扩展。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-research-map-2026/s04_inference_diffusion.html#opd",
+        "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
+      ],
+      "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
-      ]
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
     }
   ]
 }

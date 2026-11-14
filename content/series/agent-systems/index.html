@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent 系统与推理策略：证据、规划与信任</title>
+<meta name="description" content="RAG与Agentic检索、规划搜索与推理预算、信任边界与安全评测；连接Codex Harness、科学合同、训练和部署。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
+<body><main class="training-lifecycle">
+<section id="purpose"><p class="eyebrow">Agent systems · 2026-11-14</p><h2>让行动有证据、有预算、有权限</h2>
+<p class="lead">模型生成下一步，Harness执行并保存状态；系统策略决定该查什么、该继续还是停止、哪些行动被允许。这三层共同决定Agent能否完成任务。一个正确的回答，也可能来自错误的数据版本、泄露的答案或无法重放的工具环境。</p>
+<p>本系列先修是<a href="../agent-harness-guide.html">Harness运行循环、上下文与memory</a>。三章分别解释知识访问、决策策略和系统约束；参数怎样更新归<a href="../llm-training-lifecycle/">训练全链路</a>，最新Agentic RL方法归<a href="../llm-research-map-2026/s02_agentic_rl.html">研究地图</a>。</p>
+<figure><div class="flow"><div class="stage"><b>证据</b><small>来源、版本、权限<br>检索、引用和冲突</small></div><div class="stage"><b>决策</b><small>计划、搜索、验证<br>预算与停止规则</small></div><div class="stage"><b>执行约束</b><small>工具、文件与网络<br>可用能力和隔离</small></div><div class="stage"><b>验收与学习</b><small>合同、轨迹、失败<br>SFT / RL准入</small></div></div><figcaption>概念流程。权限控制贯穿每次读取和行动，不只在最终输出时检查。</figcaption></figure>
+</section>
+<!-- READING:CHAPTERS -->
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；当前顺序见上方目录</summary>
+<section id="chapters"><h2>三章主线</h2><div class="chapter-grid">
+<article class="card"><h3><a href="s01_rag_retrieval.html">01 · RAG与Agentic检索</a></h3><p>从文档版本、chunk和权限到BM25/dense、融合、rerank、多轮检索和引用；拆开检索与生成的错误。</p></article>
+<article class="card"><h3><a href="s02_planning_compute.html">02 · 规划、搜索与推理预算</a></h3><p>ReAct、计划执行、BoN/beam/MCTS、过程验证、分支环境、停止和失败恢复；预算包含工具和验证。</p></article>
+<article class="card"><h3><a href="s03_trust_safety.html">03 · 信任边界、权限与安全评测</a></h3><p>非可信内容、工具门控、sandbox、数据流隔离与攻击评测；区分模型遵循与系统强制。</p></article>
+</div></section>
+</details><!-- READING:HISTORY:END -->
+<section id="case"><h2>贯穿案例：RNA-seq分析怎样形成可靠交付</h2>
+<p>在<a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学任务合同</a>中，Agent先确认count对象、供体配对与处理；检索官方说明来解决来源冲突，规划分析与输出artifact，在受限环境中执行，最后由独立verifier检查。报告不是只给差异基因列表，还要给版本、设计式、contrast与失败解释。</p>
+<table><thead><tr><th>系统问题</th><th>具体检查</th><th>学习与评测出口</th></tr></thead><tbody>
+<tr><td>查到的是正确证据吗</td><td>GSE52778的16样本与冻结airway对象的8样本分开</td><td>检索召回、引用支持、冲突处理</td></tr>
+<tr><td>多算几次值得吗</td><td>优先核对配对和count层，再分支比较统计方法</td><td>同预算成功率、有效分支与停止</td></tr>
+<tr><td>执行是否符合权限</td><td>输入只读、输出目录受限、无答案文件与任意外发</td><td>安全负例、污染与独立验收</td></tr>
+</tbody></table>
+<p>这是方案说明，没有执行科学分析或模型训练。集群资源与对照见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">工业后训练方案</a>；服务预算见<a href="../llm-serving/">推理部署</a>。三条路线在<a href="../llm-research-map-2026/#learning-paths">统一阅读入口</a>维护。</p>
+</section></main></body></html>

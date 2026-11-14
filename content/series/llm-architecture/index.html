@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM 基础与前沿架构：从张量流到系统设计</title>
+<meta name="description" content="六章从Transformer张量流、Attention与KV、SwiGLU与MoE、残差稳定性讲到混合状态架构和前沿模型比较，连接训练、部署、Agent与研究地图。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
+<body><main class="training-lifecycle">
+<section id="purpose"><p class="eyebrow">Architecture · 2026-11-14</p>
+<h2>先理解模型怎样计算，再理解新结构改变什么</h2>
+<p class="lead">LLM 架构可以拆成六个问题：token 怎样成为表示，位置之间怎样交换信息，每个位置怎样做非线性变换，信息怎样穿过深度，历史怎样保存，以及这些选择怎样影响训练和服务。本系列从可追踪的张量出发，逐步连接最新公开机制。</p>
+<p>基础 Transformer 使用注意力读历史、FFN 变换通道、残差承载表示。现代模型可能让 KV 共享或压缩，让专家稀疏激活，让递归状态替代部分完整历史，再用低精度与调度实现工程收益。结构的名字只描述其中一部分；质量、计算、通信和状态要分别分析。</p>
+<figure><div class="flow">
+<div class="stage"><b>输入与目标</b><small>token → embedding → logits<br>因果关系、标签位移</small></div>
+<div class="stage"><b>序列与通道</b><small>Attention / 递归状态<br>FFN / 专家路由</small></div>
+<div class="stage"><b>深度与更新</b><small>残差、Norm、数值稳定<br>梯度与优化器</small></div>
+<div class="stage"><b>系统与验收</b><small>训练并行、KV、服务<br>固定预算下的任务表现</small></div>
+</div><figcaption>概念关系图，不表示四部分耗时相等。各机制的实测依据、配置推导与待执行对照分开标注。</figcaption></figure>
+<div class="callout"><strong>阅读起点：</strong>只需线性代数、概率和基本反向传播。快速预览可先读<a href="../transformer-decoder-flow.html">Decoder 全流程</a>；更广泛的基础课程保留在<a href="https://stein-wang0226.github.io/llm-study-notes/">LLM Study Notes</a>。本系列负责把底层计算与当前架构机制连起来。</div>
+</section>
+<!-- READING:CHAPTERS -->
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；当前顺序见上方目录</summary>
+<section id="chapters"><h2>六章主线</h2><div class="chapter-grid">
+<article class="card"><h3><a href="s01_transformer_foundations.html">01 · Transformer 的张量流与训练目标</a></h3><p>从矩阵形状走完 token、QKV、mask、残差、logits、shift 与 loss；区分参数、激活、KV 和优化器状态。</p></article>
+<article class="card"><h3><a href="s02_attention_position_cache.html">02 · Attention、位置与历史缓存</a></h3><p>MHA/MQA/GQA/MLA、RoPE、SWA 与稀疏检索；分清数学、FlashAttention 算法和 PagedAttention 存储。</p></article>
+<article class="card"><h3><a href="s03_ffn_moe_routing.html">03 · FFN、MoE 与专家通信</a></h3><p>SwiGLU、top-k、负载与容量；专家派发、EP 和 LatentMoE；总参数与激活参数分别算账。</p></article>
+<article class="card"><h3><a href="s04_residual_norm_stability.html">04 · 残差、归一化与稳定性</a></h3><p>Pre-/Post-Norm、RMSNorm、梯度路径；初始化、QK 尺度、AttnRes 与 mHC 的约束边界。</p></article>
+<article class="card"><h3><a href="s05_hybrid_architectures.html">05 · 线性 Attention、状态空间与混合架构</a></h3><p>从外积状态推导遗忘和 delta 更新；解释 GDN、Mamba、全局召回和跨层信息的不同对象。</p></article>
+<article class="card"><h3><a href="s06_model_comparison.html">06 · 前沿模型比较与设计取舍</a></h3><p>统一表示、历史、专家、深度、精度与部署维度；连接公开型号证据，设计有解释力的消融。</p></article>
+</div></section>
+</details><!-- READING:HISTORY:END -->
+<section id="connections"><h2>把架构放回完整链路</h2>
+<table><thead><tr><th>问题</th><th>主要维护位置</th><th>本系列提供的基础</th></tr></thead><tbody>
+<tr><td>知识和行为怎样学来</td><td><a href="../llm-training-lifecycle/">训练全链路</a></td><td>条件预测、参数更新、数据与状态</td></tr>
+<tr><td>具体新模型采用了什么</td><td><a href="../llm-research-map-2026/s06_architecture_landscape.html">研究地图 · 型号全景</a></td><td>统一的机制比较维度</td></tr>
+<tr><td>新残差和优化器的证据</td><td><a href="../llm-research-map-2026/s07_architecture_training.html">研究地图 · 架构与训练</a></td><td>梯度、矩阵对象与数值边界</td></tr>
+<tr><td>服务为什么快或慢</td><td><a href="../llm-serving/">推理与部署</a></td><td>权重、KV、状态、计算和通信</td></tr>
+<tr><td>如何形成可靠 Agent</td><td><a href="../agent-systems/">Agent 系统</a>、<a href="../agent-data-benchmarks/">任务与评测</a></td><td>窗口能力、状态恢复与执行预算</td></tr>
+</tbody></table>
+<p>完整的“原理 → 实现 → 实验”覆盖表及三条阅读路线在<a href="../llm-research-map-2026/index.html#coverage">研究地图</a>统一维护。这里的公式和配置推导不是新训练结果；本站没有执行本轮模型训练或 benchmark。</p>
+</section>
+<section id="sources"><h2>基础来源与实现版本</h2>
+<ol class="sources">
+<li id="ref-1"><a href="https://arxiv.org/abs/1706.03762v7">Attention Is All You Need</a>，§3：原始 encoder-decoder、scaled dot-product、multi-head 与 FFN。decoder-only 改造不归给原论文的全部实验。</li>
+<li id="ref-2"><a href="https://arxiv.org/abs/2305.13245v3">GQA</a>；<a href="https://arxiv.org/abs/1911.02150v1">MQA</a>：共享 KV 的结构与质量/服务取舍。</li>
+<li id="ref-3"><a href="https://arxiv.org/abs/2104.09864v5">RoFormer / RoPE</a>：旋转位置编码与相对位置内积。</li>
+<li id="ref-4"><a href="https://arxiv.org/abs/2205.14135v2">FlashAttention</a>：IO-aware exact attention；exact 描述算法，浮点舍入仍可能不同。</li>
+<li id="ref-5"><a href="https://arxiv.org/abs/2002.05202v1">GLU Variants</a>；<a href="https://arxiv.org/abs/2101.03961v3">Switch Transformers</a>：门控 FFN、稀疏专家与训练工程。</li>
+<li id="ref-6"><a href="https://arxiv.org/abs/2002.04745v2">On Layer Normalization</a>；<a href="https://arxiv.org/abs/1910.07467v1">RMSNorm</a>：归一化位置、尺度与初始化分析。</li>
+<li id="ref-7"><a href="https://arxiv.org/abs/2312.00752v2">Mamba</a>；<a href="https://arxiv.org/abs/2405.21060v1">Mamba-2 / SSD</a>；<a href="https://arxiv.org/abs/2412.06464v3">Gated Delta Networks</a>：状态递推、并行训练与混合模型。</li>
+<li id="ref-8"><a href="https://github.com/huggingface/transformers/blob/8cb5963cc22174954e7dca2c0a3320b7dc2f4edc/src/transformers/models/llama/modeling_llama.py">Transformers v4.57.1 · Llama 实现</a>，固定提交 <code>8cb5963</code>：本系列核对 QKV 形状、repeat_kv、MLP、RMSNorm 与残差。它是明确版本的示例，不能代替所有工业模型源码。</li>
+</ol>
+<p class="note">来源访问日 2026-11-14。基础定义由原论文与固定实现交叉检查；每个新模型的自报规格仍属于该团队的单组证据。型号报告和许可沿用<a href="../llm-research-map-2026/index.html#sources">研究地图的固定引用</a>，本系列不重复保存原件。</p>
+</section></main></body></html>

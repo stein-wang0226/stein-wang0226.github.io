@@ -35,3 +35,21 @@
  .reading-content .container{max-width:100%;box-sizing:border-box}
  .reading-content .diagram,.reading-content .flow-diagram,.reading-content .flowchart{max-width:100%;overflow-x:auto}
 }
+/* Directory and original-reference controls stay within the reading layer. */
+.reading-chapters{max-width:1080px;margin:2rem auto;padding:0 1.2rem}
+.reading-chapters>h2{font-size:1.5rem}
+.reading-chapter-group h3{font-size:1.05rem;color:#0f766e;margin:1.6rem 0 .8rem}
+.reading-chapter-group ol{list-style:none;padding:0;margin:0}
+.reading-chapter-group li{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.8rem;border-top:1px solid #d6d3cd;padding:.9rem 0}
+.reading-chapter-group p{margin:.3rem 0;font-size:.92rem;color:#706b65;line-height:1.7}
+.reading-prerequisites{margin:1rem 0;line-height:1.75}
+.reading-owner{font-size:.9rem;color:#0f766e}
+.reading-content details[data-reading-history]{margin:1rem 0;border:1px solid #d6d3cd;border-radius:4px;padding:.7rem 1rem}
+.reading-content details[data-reading-history]>summary{cursor:pointer;color:#706b65;line-height:1.7;font-size:.9rem}
+.reading-content .integration-overview{margin:1rem 0;padding:1rem;border-left:3px solid #0d9488;background:#f7f5f0}
+.reading-content .integration-overview p{margin:.4rem 0}
+.reading-transition{max-width:1080px;margin:1.5rem auto;padding:0 1rem;color:#706b65}
+.reading-anchor{scroll-margin-top:6rem}
+.reading-chapter-bar{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem auto;padding:1rem;max-width:1080px}
+.reading-chapter-bar a{padding:.4rem .6rem;border:1px solid #d6d3cd;border-radius:4px;text-decoration:none}
+.reading-chapter-bar a[aria-current]{background:#0f766e;color:#fff}

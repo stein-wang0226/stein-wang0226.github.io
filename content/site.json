@@ -3,6 +3,103 @@
   "title": "Yuxiang Wang | Stein's Notes",
   "url": "https://stein-wang0226.github.io",
   "blog_url": "/blog/",
+  "home_recommendations": ["scientific-task-family", "llm-posttraining", "dlm-survey"],
+  "learning_paths": [
+    {
+      "id": "complete", "label": "完整学习主线",
+      "summary": "从模型计算、训练信号与状态执行，走到任务验证和服务交付。",
+      "stages": [
+        {"entry": "llm-architecture", "question": "模型怎样计算和保存历史？", "output": "张量流、参数/激活/KV账本"},
+        {"entry": "llm-training-lifecycle", "question": "知识、行为与反馈怎样交接？", "output": "数据、目标与checkpoint交接表"},
+        {"entry": "llm-posttraining", "question": "怎样用示范、结果和教师更新策略？", "output": "SFT/RL/OPD目标与训练协议"},
+        {"entry": "agent-harness-guide", "anchor": "codex-loop", "question": "一次任务怎样运行、恢复和记忆？", "output": "执行循环、上下文与memory状态"},
+        {"entry": "agent-systems", "question": "怎样查证据、规划并守住权限？", "output": "检索、预算和信任边界"},
+        {"entry": "agent-data-benchmarks", "question": "怎样生产任务并独立检验成功？", "output": "任务合同、verifier、切分与失败报告"},
+        {"entry": "llm-serving", "question": "怎样在容量与成本约束内交付？", "output": "延迟、吞吐与成功成本账本"}
+      ]
+    },
+    {
+      "id": "model-training", "label": "模型与训练",
+      "summary": "把基础机制、数据阶段、参数更新和新架构证据接起来。",
+      "stages": [
+        {"entry": "llm-architecture"}, {"entry": "llm-training-pretraining"},
+        {"entry": "llm-training-midtraining"}, {"entry": "llm-posttraining"},
+        {"entry": "training-methods-systems"}, {"entry": "research-architecture-landscape"},
+        {"entry": "dlm-survey"}
+      ]
+    },
+    {
+      "id": "agent-research", "label": "Agent 研究",
+      "summary": "从状态与证据走到科学合同、信用分配、教师信号和独立评测。",
+      "stages": [
+        {"entry": "agent-harness-guide", "anchor": "codex-context"},
+        {"entry": "agent-systems"}, {"entry": "agent-task-synthesis"},
+        {"entry": "scientific-task-family"}, {"entry": "posttraining-rewards"},
+        {"entry": "posttraining-opd"}, {"entry": "agent-benchmark-map"}
+      ]
+    },
+    {
+      "id": "engineering-evaluation", "label": "工程与评测",
+      "summary": "分开记录通信资源、策略概率、服务预算和科学验收的分母。",
+      "stages": [
+        {"entry": "distributed-training-guide"}, {"entry": "training-methods-systems"},
+        {"entry": "posttraining-frameworks"}, {"entry": "llm-serving"},
+        {"entry": "cluster-training-evaluation"}, {"entry": "agent-benchmark-map"}
+      ]
+    }
+  ],
+  "research_paths": [
+    {
+      "id": "harbor-science", "label": "Harbor 与科学任务合成",
+      "summary": "重点读任务族、统计合同、Solver/Verifier、轨迹准入与训练对照；可执行方案仍保持待执行状态。",
+      "cv_url": "/cv/#autoresearch",
+      "stages": [{"entry": "agent-task-synthesis"}, {"entry": "scientific-task-family"}, {"entry": "cluster-training-evaluation"}, {"entry": "posttraining-cases"}]
+    },
+    {
+      "id": "agentic-rl-opd", "label": "Agentic RL 与 OPD",
+      "summary": "目标、奖励、长程信用、多教师、自蒸馏和异步实现，以 ProtAgent 与科学任务检验具体选择。",
+      "publication_ids": ["protagent"],
+      "stages": [{"entry": "posttraining-algorithms"}, {"entry": "posttraining-rewards"}, {"entry": "posttraining-opd"}, {"entry": "posttraining-frameworks"}, {"entry": "posttraining-cases"}, {"entry": "agent-harness-guide", "anchor": "case"}]
+    },
+    {
+      "id": "gui-agents", "label": "GUI Agents",
+      "summary": "视觉先修、工具状态、信任边界与持久化结果验证；区分动作成功和完整任务成功。",
+      "cv_url": "/cv/#gui-agent", "publication_ids": ["cua-recovery"],
+      "stages": [{"entry": "agent-harness-guide", "anchor": "codex-loop"}, {"entry": "vlm-knowledge-interview"}, {"entry": "agent-trust"}, {"entry": "research-agent-frontiers"}, {"entry": "posttraining-cases"}]
+    },
+    {
+      "id": "diffusion-language", "label": "扩散语言模型",
+      "summary": "预测对象、离散/块/连续路线、Scaling、解码与RL，连接个人论文和可检验研究问题。",
+      "publication_ids": ["2026-semantic-dlm-plus", "2026-locality-aware-dlm"],
+      "stages": [{"entry": "dlm-overview"}, {"entry": "dlm-paradigms"}, {"entry": "dlm-block"}, {"entry": "dlm-scaling"}, {"entry": "dlm-speculative"}, {"entry": "dlm-elbo-rl"}, {"entry": "dlm-comparison"}]
+    }
+  ],
+  "concept_owners": [
+    {"key": "token-tensor-loss", "label": "token、张量与训练目标", "entry": "architecture-transformer", "anchor": "tensor-flow"},
+    {"key": "attention-rope-kv", "label": "Attention、RoPE与KV", "entry": "architecture-attention", "anchor": "head-sharing"},
+    {"key": "ffn-moe", "label": "FFN与MoE", "entry": "architecture-moe", "anchor": "routing"},
+    {"key": "residual-norm", "label": "残差与归一化", "entry": "architecture-residual", "anchor": "norm-position"},
+    {"key": "hybrid-state", "label": "混合状态架构", "entry": "architecture-hybrid", "anchor": "linear"},
+    {"key": "pretrain-cpt", "label": "预训练与CPT阶段", "entry": "llm-training-lifecycle", "anchor": "artifacts"},
+    {"key": "sft-rft-preference", "label": "SFT、RFT与偏好", "entry": "posttraining-supervision", "anchor": "taxonomy"},
+    {"key": "classic-policy-gradient", "label": "经典策略梯度推导", "entry": "rl-interview-guide", "anchor": "pg-to-ppo"},
+    {"key": "modern-rl", "label": "现代RL目标、GRPO与异质数据", "entry": "posttraining-algorithms", "anchor": "policy-gradient"},
+    {"key": "opd-self-distillation", "label": "OPD与自蒸馏", "entry": "posttraining-opd", "anchor": "why-on-policy"},
+    {"key": "reward-credit", "label": "奖励、PRM与长程信用", "entry": "posttraining-rewards", "anchor": "signal-types"},
+    {"key": "async-frameworks", "label": "异步、policy lag与框架", "entry": "posttraining-frameworks", "anchor": "three-policy"},
+    {"key": "harness-context-memory", "label": "Harness、上下文与memory", "entry": "agent-harness-guide", "anchor": "codex-context"},
+    {"key": "rag-evidence", "label": "RAG与证据检索", "entry": "agent-rag", "anchor": "retrieval"},
+    {"key": "planning-budget", "label": "规划与推理预算", "entry": "agent-planning", "anchor": "budget"},
+    {"key": "trust-permissions", "label": "信任边界与权限", "entry": "agent-trust", "anchor": "threat-model"},
+    {"key": "task-synthesis", "label": "Harbor任务合成与验证", "entry": "agent-task-synthesis"},
+    {"key": "science-contract", "label": "科学统计合同", "entry": "scientific-task-family"},
+    {"key": "benchmark-protocol", "label": "Benchmark定义与口径", "entry": "agent-benchmark-map"},
+    {"key": "gui-agents", "label": "GUI环境与任务状态验证", "entry": "research-agent-frontiers", "anchor": "gui"},
+    {"key": "serving-cost", "label": "容量与成功成本", "entry": "serving-capacity"},
+    {"key": "dlm-objective", "label": "DLM范式与目标", "entry": "dlm-paradigms"},
+    {"key": "diffusion-speculation", "label": "DLM投机解码", "entry": "dlm-speculative"},
+    {"key": "vlm-foundations", "label": "视觉语言模型基础", "entry": "vlm-knowledge-interview"}
+  ],
   "navigation": [
     {"label": "首页", "url": "/"},
     {"label": "关于", "url": "/about/"},
@@ -41,6 +138,9 @@
     "featured": ["2026-semantic-dlm-plus", "protagent", "2026-locality-aware-dlm", "cua-recovery"]
   },
   "assets": [
+    {"source": "assets/research/serving-design-20261114/capacity-estimates.csv", "url": "/assets/research/serving-design-20261114/capacity-estimates.csv"},
+    {"source": "assets/research/serving-design-20261114/capacity-plan.json", "url": "/assets/research/serving-design-20261114/capacity-plan.json"},
+    {"source": "assets/research/serving-design-20261114/measurement-protocol.md", "url": "/assets/research/serving-design-20261114/measurement-protocol.txt"},
     {"source": "assets/research/posttraining-20261114/sources.json", "url": "/assets/research/posttraining-20261114/sources.json"},
     {"source": "assets/research/posttraining-20261114/group-signal.csv", "url": "/assets/research/posttraining-20261114/group-signal.csv"},
     {"source": "assets/research/posttraining-20261114/mimo-compute.csv", "url": "/assets/research/posttraining-20261114/mimo-compute.csv"},
@@ -49,6 +149,16 @@
     {"source": "assets/research/posttraining-20261114/mimo-compute.svg", "url": "/assets/research/posttraining-20261114/mimo-compute.svg"},
     {"source": "assets/research/posttraining-20261114/case-contracts.json", "url": "/assets/research/posttraining-20261114/case-contracts.json"},
     {"source": "assets/research/posttraining-20261114/experiment-matrix.csv", "url": "/assets/research/posttraining-20261114/experiment-matrix.csv"},
+    {"source": "assets/research/scientific-agent-design-20261114/README.md", "url": "/assets/research/scientific-agent-design-20261114/README.txt"},
+    {"source": "assets/research/scientific-agent-design-20261114/study-audit.json", "url": "/assets/research/scientific-agent-design-20261114/study-audit.json"},
+    {"source": "assets/research/scientific-agent-design-20261114/instruction-draft.md", "url": "/assets/research/scientific-agent-design-20261114/instruction-draft.txt"},
+    {"source": "assets/research/scientific-agent-design-20261114/serialization-contract.md", "url": "/assets/research/scientific-agent-design-20261114/serialization-contract.txt"},
+    {"source": "assets/research/scientific-agent-design-20261114/output.schema.json", "url": "/assets/research/scientific-agent-design-20261114/output.schema.json"},
+    {"source": "assets/research/scientific-agent-design-20261114/trajectory.schema.json", "url": "/assets/research/scientific-agent-design-20261114/trajectory.schema.json"},
+    {"source": "assets/research/scientific-agent-design-20261114/cluster-plan.json", "url": "/assets/research/scientific-agent-design-20261114/cluster-plan.json"},
+    {"source": "assets/research/scientific-agent-design-20261114/experiment-plan.json", "url": "/assets/research/scientific-agent-design-20261114/experiment-plan.json"},
+    {"source": "assets/research/scientific-agent-design-20261114/failure-taxonomy.json", "url": "/assets/research/scientific-agent-design-20261114/failure-taxonomy.json"},
+    {"source": "assets/research/scientific-agent-design-20261114/cost-record.schema.json", "url": "/assets/research/scientific-agent-design-20261114/cost-record.schema.json"},
     {"source": "assets/research/architecture-20261114/history-paths.svg", "url": "/assets/research/architecture-20261114/history-paths.svg"},
     {"source": "assets/research/architecture-20261114/hybrid-layer-counts.svg", "url": "/assets/research/architecture-20261114/hybrid-layer-counts.svg"},
     {"source": "assets/research/architecture-20261114/latent-moe-paths.svg", "url": "/assets/research/architecture-20261114/latent-moe-paths.svg"},

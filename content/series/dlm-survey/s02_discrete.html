@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
 </nav>
 <div class="container">
 <h2 class="section-title" id="s2"><span class="num">02</span> 离散空间扩散 (Discrete Diffusion)</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：噪声核决定什么</h3><p>行向量约定下q(xt|x0)=x0·Q̄t；masked核增加吸收态，uniform核在词表内替换。后验需归一化 q(x[t−1]|xt,x0)∝q(xt|x[t−1])q(x[t−1]|x0)。网络预测x0、反向transition和最终文本概率是三个对象。检查toy词表的每行和为1，再比较mask比例、有效目标和采样。</p><p>Uniform更紧的界与更低梯度方差不能由词表基数单独证明。下文“uniform独享100×”涉及特定对偶/蒸馏条件，未证实为普适排他结论；1024→8是128倍步数减少，也不是实测100倍延迟。来源：<a href="https://arxiv.org/abs/2107.03006">D3PM</a>、<a href="https://arxiv.org/abs/2406.07524">MDLM</a>；接 <a href="s08_elbo_rl.html">RL概率边界</a>。</p></div>
 
 <p>离散扩散坚持文本的离散本质，通过状态转移概率（变成其他词或 [MASK]）进行加噪和去噪，不碰连续高斯噪声。</p>
 

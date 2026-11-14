@@ -13,6 +13,7 @@ import unittest
 from datetime import date, timedelta
 
 from catalog import load_content
+from citations import derive, source_identity
 from check import validate
 from new_post import create
 from pipeline import build
@@ -93,6 +94,74 @@ class PipelineTests(unittest.TestCase):
             build(self.output, self.root)
         self.assertEqual(before, tree(self.output))
         self.assertEqual(sources, tree(self.root))
+
+    def test_reading_routes_reject_missing_anchors_and_prerequisite_cycles(self):
+        path = self.root / "content/site.json"
+        original = path.read_bytes()
+        site = json.loads(original)
+        site["learning_paths"][0]["stages"][0]["anchor"] = "fixture-missing-anchor"
+        path.write_text(json.dumps(site, ensure_ascii=False))
+        with self.assertRaisesRegex(ValueError, "learning_paths.*missing #fixture"):
+            load_content(self.root)
+        path.write_bytes(original)
+        def cycle(entries):
+            a, b = entries[:2]
+            a["prerequisites"] = [{"entry": b["id"], "reason": "Fixture"}]
+            b["prerequisites"] = [{"entry": a["id"], "reason": "Fixture"}]
+        self.catalog(cycle)
+        with self.assertRaisesRegex(ValueError, "required reading cycle"):
+            load_content(self.root)
+
+    def test_citations_keep_multiple_papers_versions_and_historical_usage(self):
+        source = self.root / "content/posts/agentic-rl-guide/index.html"
+        fixture = (
+            '<section id="fixture-current"><a href="#ref-fixture">[fixture]</a></section>'
+            '<details data-reading-history><summary>Fixture</summary>'
+            '<section id="fixture-history"><a href="#ref-fixture">[fixture]</a></section></details>'
+            '<ol><li id="ref-fixture">'
+            '<a href="https://arxiv.org/abs/9901.12345v1">Fixture A</a>'
+            '<a href="https://arxiv.org/html/9901.12346v2">Fixture B</a></li></ol>')
+        source.write_text(source.read_text().replace("</body>", fixture + "</body>"))
+        before = tree(self.root)
+        data, errors = derive(self.root)
+        self.assertEqual([], errors)
+        self.assertEqual(before, tree(self.root))
+        for key in ("arxiv:9901.12345@v1", "arxiv:9901.12346@v2"):
+            row = next(s for s in data["sources"] if s["source_key"] == key)
+            self.assertEqual({"current", "historical"}, {u["role"] for u in row["used_in"]})
+            self.assertTrue(row["local_references"][0]["url"].endswith("#ref-fixture"))
+        self.assertEqual(source_identity("https://arxiv.org/abs/9901.12345v1")[0],
+                         source_identity("https://arxiv.org/pdf/9901.12345v1")[0])
+        self.assertNotEqual(source_identity("https://arxiv.org/abs/9901.12345v1")[0],
+                            source_identity("https://arxiv.org/abs/9901.12345v2")[0])
+
+    def test_dangling_citation_fails_without_replacing_previous_artifact(self):
+        build(self.output, self.root)
+        artifact = tree(self.output)
+        source = self.root / "content/posts/agentic-rl-guide/index.html"
+        source.write_text(source.read_text().replace("</body>",
+                          '<a href="#ref-fixture-missing">[missing]</a></body>'))
+        before = tree(self.root)
+        with self.assertRaisesRegex(ValueError, "unresolved bibliography"):
+            build(self.output, self.root)
+        self.assertEqual(artifact, tree(self.output))
+        self.assertEqual(before, tree(self.root))
+
+    def test_source_registry_usage_and_version_conflicts_are_reported(self):
+        path = self.root / "assets/research/posttraining-20261114/sources.json"
+        original = path.read_bytes()
+        data = json.loads(original)
+        data["sources"][0]["used_in"] = ["/fixture-stale-usage.html"]
+        path.write_text(json.dumps(data, ensure_ascii=False))
+        _, errors = derive(self.root)
+        self.assertTrue(any("stale used_in" in error for error in errors))
+        data = json.loads(original)
+        data["sources"][0]["version"] = "1707.06347v999"
+        path.write_text(json.dumps(data, ensure_ascii=False))
+        before = tree(self.root)
+        _, errors = derive(self.root)
+        self.assertTrue(any("version conflict" in error for error in errors))
+        self.assertEqual(before, tree(self.root))
 
     def test_registered_csv_and_embedded_chart_targets_are_checked(self):
         build(self.output, self.root)

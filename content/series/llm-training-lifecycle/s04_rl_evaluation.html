@@ -66,6 +66,8 @@ def verify(task_spec, artifacts):
 </table>
 <p>最终 reward 与过程日志分开保留。成功率是主目标时，可以将成本作为独立约束或明确的组合项；不要在看到实验结果后临时修改 reward 再与旧组比较。</p>
 </section>
+<div class="integration-overview"><h2>策略更新的交接条件</h2><p>当前策略在固定环境采样，verifier提供结果，算法把baseline、ratio、mask与聚合分母变成梯度。现代PPO/GRPO与DAPO、Dr.GRPO、GSPO细节由<a href="../llm-posttraining/s02_rl_algorithms.html">后训练算法章</a>主讲。本章继续保留CSV结果验证、轨迹JSON、Harbor预算对照和交付协议。</p></div>
+<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前RL目标与变体 · 2026-11-14；公式完整保留</summary>
 <section id="algorithms">
 <h2>PPO 与 GRPO：谁提供 advantage</h2>
 <p>PPO 用概率比和 clipping 限制更新幅度，常见 RLHF 实现训练一个 value / critic 来估计回报与 advantage。GRPO 对同一任务采样一组回答，用组内相对 reward 构造 advantage，省去独立 critic，但仍需 reward、采样与策略训练。<a href="index.html#ref-18">[18]</a> <a href="index.html#ref-19">[19]</a> <a href="index.html#ref-20">[20]</a></p>
@@ -96,6 +98,7 @@ Aᵢ ≈ (Rᵢ − mean(R)) / (std(R) + ε)
 <p>“用了 GRPO”不足以复现：是按序列还是 token 平均？是否除 reward标准差？KL如何实现？组内全同 reward怎样处理？超长截断怎样打分？这些改变了实际目标。算法名之外应保存配置、代码版本和关键张量统计。</p>
 <p>对新业务，先建立能稳定采样和可靠验证的基线，再对优化变体做控制实验。某个数学 benchmark 上有效的长度处理，不应无验证地搬到带长 stdout 的多轮 Agent。</p>
 </section>
+</details><!-- READING:HISTORY:END -->
 <section id="systems">
 <h2>Agent 训练系统：把长轨迹变成正确的更新批次</h2>
 <p>与单轮文本不同，Agent rollout 的耗时受工具、环境初始化、错误恢复和长度影响。把所有 GPU 等在最慢任务上会降低吞吐，异步采样能缓解，但会使行为策略落后当前策略。GLM-5 公开了异步 RL 的系统组织；细节可结合既有<a href="../agent-harness-guide.html">Agent Harness 指南</a>。<a href="index.html#ref-3">[3]</a></p>
@@ -217,6 +220,10 @@ Aᵢ ≈ (Rᵢ − mean(R)) / (std(R) + ε)
 </section>
 <section id="sources">
 <div class="callout"><strong>继续深入：</strong><a href="../llm-posttraining/s02_rl_algorithms.html">RL 算法和归一化</a>、<a href="../llm-posttraining/s04_environment_reward_credit.html">环境、过程奖励与长程信用</a>、<a href="../llm-posttraining/s05_frameworks_async.html">训练框架与异步对齐</a>，以及<a href="../llm-posttraining/s06_task_cases_experiments.html">三类完整任务案例</a>。</div>
+<h2 id="heterogeneity-bridge">异质任务与工业系统：算法之外的四份记录</h2>
+<p>按任务族分别记录有效reward组、归一化 / clipping / token聚合、policy lag / 行为logprob、环境与verifier故障。对二元独立采样，组内奖励有差异的概率为<code>1−p^G−(1−p)^G</code>；极难或极易题均可能没有相对学习信号。组内标准化不自动平衡难度和梯度，长程工具执行也不由token均值充分描述。</p>
+<p>DAPO动态采样、Dr.GRPO的归一化分析与GSPO序列比率改变不同环节，须保留本章<a href="#variants">方法区分</a>；前沿信用方案连接<a href="../llm-research-map-2026/s02_agentic_rl.html">研究地图02</a>。训练 / 采样的精度、mask与routing差异也会影响logprob；重新算新策略概率不能替代保存原行为概率。</p>
+<p>本章Harbor A–E研究初始化 / CPT；<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html#design">sci-posttrain A–E</a>另研究SFT后的结果奖励、步骤信用、OPD和预算。它连接<a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学合同</a>与<a href="s05_training_methods_systems.html#parallel">Megatron普通 / 专家进程组</a>，不声称这些训练已执行。</p>
 <h2>本章证据与延伸阅读</h2>
 <p>算法：<a href="index.html#ref-18">[18] PPO</a>、<a href="index.html#ref-19">[19] InstructGPT</a>、<a href="index.html#ref-20">[20] GRPO</a>、<a href="index.html#ref-21">[21] DAPO</a>、<a href="index.html#ref-22">[22] Dr. GRPO</a>、<a href="index.html#ref-23">[23] GSPO</a>。工程与评测边界：<a href="index.html#ref-3">[3] GLM-5</a>、<a href="index.html#ref-1">[1] Nemotron</a>、<a href="index.html#ref-2">[2] Coder-Next</a>、<a href="index.html#ref-6">[6] PRISM</a>、<a href="index.html#ref-8">[8] Function-Aware FIM</a>。</p>
 <p>更多算法推导见<a href="../rl-interview-guide.html">RL手册</a>，系统延伸见<a href="../agentic-rl-guide.html">Agentic RL指南</a>与<a href="../agent-harness-guide.html">Agent Harness</a>。本系列使用新增来源复核本章内容，不将既有文章的全部科研事实标记为已核验。</p>

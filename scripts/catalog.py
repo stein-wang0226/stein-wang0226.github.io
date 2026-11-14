@@ -119,7 +119,8 @@ def load_content(root):
                 except ValueError as exc:
                     errors.append(f"site.navigation: {exc}")
 
-    for path in ("/", "/blog/", "/publications/", "/404.html",
+    for path in ("/", "/blog/", "/blog/catalog.json", "/blog/references/",
+                 "/blog/references.json", "/publications/", "/404.html",
                  "/build-info.json", "/sitemap.xml", "/robots.txt", ".nojekyll"):
         claim(path, "generated:" + path)
     entries = copy.deepcopy(catalog.get("entries"))
@@ -156,6 +157,16 @@ def load_content(root):
                 errors.append(f"{label}.{field}: expected unique strings")
         if "featured" in entry and not isinstance(entry["featured"], bool):
             errors.append(f"{label}.featured: expected boolean")
+        entry.setdefault("reading_role", "historical" if entry.get("status") == "archived"
+                         else "reference" if entry.get("origin") == "external" else "core")
+        entry.setdefault("chapter_group", "main")
+        entry.setdefault("prerequisites", [])
+        if entry["reading_role"] not in {"core", "reference", "tracker", "historical"}:
+            errors.append(f"{label}.reading_role: invalid role")
+        if entry["chapter_group"] not in {"main", "extension", "prerequisite", "reference"}:
+            errors.append(f"{label}.chapter_group: invalid group")
+        if not isinstance(entry["prerequisites"], list):
+            errors.append(f"{label}.prerequisites: expected a list")
         path = None
         if entry.get("origin") == "local":
             path = source(entry.get("source"), label, unique=True)
@@ -192,6 +203,23 @@ def load_content(root):
             errors.append(str(exc))
 
     series_orders = {}
+    def target(value, label):
+        if not isinstance(value, dict):
+            errors.append(f"{label}: expected entry/anchor object")
+            return
+        row = by_id.get(value.get("entry"))
+        if not row or row.get("status") == "draft":
+            errors.append(f"{label}.entry: missing public entry {value.get('entry')}")
+            return
+        if value.get("anchor"):
+            if row.get("origin") != "local":
+                errors.append(f"{label}.anchor: expected a local target")
+            else:
+                path = root / str(row.get("source", ""))
+                if path.is_file() and value["anchor"] not in re.findall(
+                        r'\bid=["\']([^"\']+)', path.read_text(encoding="utf-8")):
+                    errors.append(f"{label}.anchor: missing #{value['anchor']} in {row['id']}")
+        return row
     external_urls = set()
     for entry in entries:
         if not isinstance(entry, dict):
@@ -204,6 +232,12 @@ def load_content(root):
         for related in entry.get("related", []) if isinstance(entry.get("related", []), list) else []:
             if related not in by_id or related == entry.get("id"):
                 errors.append(f"{label}.related: invalid ID {related}")
+        for prereq in entry["prerequisites"] if isinstance(entry["prerequisites"], list) else []:
+            row = target(prereq, label + ".prerequisites")
+            if row and row["id"] == entry["id"]:
+                errors.append(f"{label}.prerequisites: self prerequisite")
+            if not isinstance(prereq, dict) or not prereq.get("reason"):
+                errors.append(f"{label}.prerequisites: reason is required")
         if entry.get("kind") == "chapter":
             parent = by_id.get(entry.get("series"))
             order = entry.get("order")
@@ -220,6 +254,51 @@ def load_content(root):
                 orders.add(order)
         elif entry.get("series") is not None or entry.get("order") is not None:
             errors.append(f"{label}.series/order: only chapters may have a series/order")
+    for series, orders in series_orders.items():
+        if orders != set(range(1, len(orders) + 1)):
+            errors.append(f"catalog[{series}].order: chapter orders must be continuous")
+    visiting, visited = set(), set()
+    def visit(identifier):
+        if identifier in visiting:
+            errors.append(f"catalog[{identifier}].prerequisites: required reading cycle")
+            return
+        if identifier in visited:
+            return
+        visiting.add(identifier)
+        for item in by_id[identifier].get("prerequisites", []):
+            if isinstance(item, dict) and item.get("entry") in by_id:
+                visit(item["entry"])
+        visiting.remove(identifier)
+        visited.add(identifier)
+    if all(isinstance(e.get("prerequisites"), list) for e in by_id.values()):
+        for identifier in by_id:
+            visit(identifier)
+    for field in ("learning_paths", "research_paths"):
+        seen_paths = set()
+        for route in site.get(field, []):
+            if not route.get("id") or route["id"] in seen_paths or not route.get("label"):
+                errors.append(f"site.{field}: unique id and label are required")
+            seen_paths.add(route.get("id"))
+            nodes = set()
+            for node in route.get("stages", []):
+                target(node, f"site.{field}[{route.get('id')}]")
+                key = (node.get("entry"), node.get("anchor"))
+                if key in nodes:
+                    errors.append(f"site.{field}[{route.get('id')}]: duplicate stage")
+                nodes.add(key)
+            if not nodes:
+                errors.append(f"site.{field}: empty route")
+    for node in site.get("concept_owners", []):
+        target(node, f"site.concept_owners[{node.get('key')}]")
+    owners = [o.get("key") for o in site.get("concept_owners", [])]
+    if len(owners) != len(set(owners)):
+        errors.append("site.concept_owners: duplicate concept key")
+    recommended = site.get("home_recommendations", [])
+    if not isinstance(recommended, list) or len(recommended) != len(set(recommended)):
+        errors.append("site.home_recommendations: expected unique IDs")
+    else:
+        for identifier in recommended:
+            target({"entry": identifier}, "site.home_recommendations")
 
     for page in site.get("pages", []):
         claim(page["url"], "page:" + page["id"])

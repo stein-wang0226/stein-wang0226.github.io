@@ -208,3 +208,35 @@ body.site-body{margin:0;background:#f7f5f0}
   .site-page .home-recent{gap:0}.site-page .publication-card h2{font-size:20px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation:none!important;transition:none!important}}
+/* Routes encode a sequence; reference material follows the core topics. */
+.site-page .learning-paths,.site-page .research-focus{margin:3rem 0;padding-top:1.5rem;border-top:1px solid #d6d3cd}
+.site-page .route-stages{padding-left:1.7rem;margin:1.2rem 0}
+.site-page .learning-paths>.route-stages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem 2.5rem}
+.site-page .route-stages li{padding-left:.4rem;line-height:1.65}
+.site-page .route-stages li::marker{color:#0f766e;font-weight:600}
+.site-page .route-stages p{margin:.25rem 0;color:#706b65}
+.site-page .route-stages small{display:block;color:#706b65}
+.site-page .route-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem;margin-top:1.5rem}
+.site-page .route-branches details{border-top:1px solid #d6d3cd;padding-top:.8rem;min-width:0}
+.site-page .route-branches summary{font-weight:600;cursor:pointer;padding:.4rem 0}
+.site-page .research-paths{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem 2.5rem}
+.site-page .research-paths article{border-top:1px solid #d6d3cd;min-width:0}
+.site-page .research-paths h3{font-size:1.18rem;margin:1.2rem 0 .6rem}
+.site-page .research-paths p{line-height:1.75}
+.site-page .research-records{font-size:.88rem}
+.site-page .catalog-group{margin:1.75rem 0 2.5rem}
+.site-page .catalog-group>h3{font-size:1.1rem;margin-bottom:1rem}
+.site-page .home-recommendations>.note-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.site-page .reference-controls{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.5rem 0}
+.site-page .reference-controls input,.site-page .reference-controls select{font:inherit;padding:.6rem;border:1px solid #d6d3cd;border-radius:4px;background:#fff;max-width:100%}
+.site-page .reference-controls label{display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.site-page .reference-list{list-style:none;padding:0}
+.site-page .reference-list>li{border-top:1px solid #d6d3cd;padding:1.1rem 0;overflow-wrap:anywhere}
+.site-page .reference-list h2{font-size:1.05rem;margin:0 0 .4rem}
+.site-page .reference-list p{margin:.35rem 0}
+.site-page .reference-list small{color:#706b65}
+@media(max-width:768px){
+  .site-page .learning-paths>.route-stages,.site-page .route-branches,
+  .site-page .research-paths,.site-page .home-recommendations>.note-grid{grid-template-columns:1fr}
+  .site-page .learning-paths,.site-page .research-focus{margin:2rem 0}
+}
