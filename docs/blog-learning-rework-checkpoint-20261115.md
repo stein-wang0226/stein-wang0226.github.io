@@ -245,5 +245,23 @@ latest diagnostic `learning-final-math.json`尚余约31个长式需逐式处理�
 正文既有事实复核状态与实验边界保持原口径。
 
 预览：`http://127.0.0.1:8771/blog/#learning-paths`。
-当前构建基于 `e35a4c06a418f119310722e468ae9e520e30ae27`，dirty=true。
-本地工作已完成；尚未提交、推送或发布。
+上述本地验收快照基于 `e35a4c06a418f119310722e468ae9e520e30ae27`，当时 dirty=true。
+
+## 同步发布与线上复查
+
+学习重编已提交为 `f21039b809efb2d594f40ee124cabd1a996f805d` 并推送到 `main`。
+GitHub Actions 的 [Validate site](https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43638724107)
+和 [Publish static site](https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43638724145)
+均成功；线上 `build-info.json` 的 commit 与该提交一致、dirty=false，
+input_digest 与本地最终验收完全一致。
+
+Chrome 上线复查通过：九条公开路由、六个阅读组件的精确 SHA；
+架构、训练、后训练三页×手机/桌面，共六项公式与排版检查，无公式错误、
+超宽公式、整页溢出或 pageerror。外部 CDN 被阻断，本地 MathJax 正常加载。
+旧算法章节保留 query 并定位、展开面试卡；GRPO 搜索首次点击通过。
+原稿集合有74个下载入口，抽查 RL 原件的公开字节 SHA 与冻结原稿一致。
+
+入口：[完整学习主线](https://stein-wang0226.github.io/blog/#learning-paths)。
+线上原始复查结果为 `/tmp/my-blogs-browser-tests/learning-release-report.json`，
+稳定统计与发布链接已写入 `docs/blog-learning-validation-20261115.json`。
+此次发布没有追加训练或论文性能复现实验。

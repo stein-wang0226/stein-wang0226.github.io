@@ -1,7 +1,31 @@
 {
   "date": "2026-11-15",
-  "status": "local-acceptance-passed",
-  "published": false,
+  "status": "published-and-verified",
+  "published": true,
+  "publication": {
+    "content_commit": "f21039b809efb2d594f40ee124cabd1a996f805d",
+    "validation_workflow": "https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43638724107",
+    "pages_workflow": "https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43638724145",
+    "validation_result": "success",
+    "pages_result": "success",
+    "live_build_commit_matches": true,
+    "live_input_digest_matches_local_acceptance": true,
+    "live_build_dirty": false,
+    "online_smoke": {
+      "result": "passed",
+      "public_routes": 9,
+      "component_hash_matches": 6,
+      "reading_page_screen_checks": 6,
+      "math_errors": 0,
+      "overwide_formulas": 0,
+      "page_errors": 0,
+      "old_fragment_preserves_query_and_opens_target": true,
+      "search_first_click": true,
+      "mainline_topics": 7,
+      "published_originals": 74,
+      "sampled_rl_original_sha_matches": true
+    }
+  },
   "source_head": "e35a4c06a418f119310722e468ae9e520e30ae27",
   "input_digest": "56909057df0eb905402a894a4c6ddee2160441cb0e138a6aa135f4a1bea162d0",
   "scope": {
