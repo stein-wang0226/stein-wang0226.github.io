@@ -8,8 +8,10 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>推理提速：接受率怎样经过系统成本变成加速</figcaption><ol class="mechanism-chain"><li><b>固定目标质量与负载</b><small>模型、采样、长度、batch 和硬件</small></li><li><b>并行草稿 / 迭代生成</b><small>记录候选数与额外前向</small></li><li><b>验证 / 修正 / 提交</b><small>区分精确分布和启发式输出</small></li><li><b>端到端质量与延迟</b><small>计入调度、KV、通信与拒绝成本</small></li></ol><p class="mechanism-return">↶ 提交新 prefix 后继续；接受长度、模型前向次数和墙钟加速是三个指标。</p></figure>
 <section id="budget">
-<p class="eyebrow">04 · Inference &amp; diffusion · 2026-11-14</p>
+<p class="eyebrow">Inference &amp; diffusion · 2026-11-14</p>
 <h2>推理优化要先选对成本目标</h2>
 <p class="lead">对Agent，单请求decode速度只是成本的一部分。训练时需要大量rollout，部署时还包含长prompt、短工具返回、环境等待和失败重试。一个提高平均接受长度的drafter，未必提高高并发吞吐；一个降低单次延迟的配置，也未必降低完成任务的总成本。</p>
 <table>
@@ -21,12 +23,17 @@
 <tr><td>任务经济性</td><td>总成本、有效成功数、预算内成功率和失败类</td><td>失败与重试也消耗工具、模型和环境资源</td></tr>
 </tbody>
 </table>
-<div class="equation" role="math" aria-label="成功成本与投机解码步成本">cost per success = 全部试验的总成本 / 成功试验数
-T_spec per emitted token ≈ (T_draft(B) + T_verify(B) + T_schedule + T_cache) / E[L_emit]</div>
-<p class="note">概念式未测量；L_emit包含接受与验证后的实际输出。成功数为0时成本指标未定义，应报告总投入和0成功。各时间span可能重叠，分解需遵守实际计时合同。</p>
+<div class="reading-math" role="math" aria-label="投机周期成本">\[
+\bar t_{\rm token}\approx
+\frac{\mathbb E[T_{\rm cycle}]}{\mathbb E[L_{\rm emit}]}.
+\]</div>
+<p>\(T_{\rm cycle}\)是一次draft→verify→提交的实际墙钟时间，已处理重叠；\(L_{\rm emit}\)包含真正提交的token。该式用于稳定重复周期的长期平均。<strong>教学例：</strong>90 ms一周期、平均提交5 token，得到18 ms/token；若AR为15 ms/token，即使接受长度提高，仍会更慢。</p>
+<p>成功成本沿用<a href="../llm-serving/s03_capacity_cost.html#cost">服务主讲</a>的全部投入/成功数定义；成功数为0时未定义。上述时间未实测。</p>
 </section>
 <section id="methods">
 <h2>DFlash → DSpark → AdaFlash：分别改变哪一层</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2602.06036v1" title="DFlash: Block Diffusion for Flash Speculative Decoding · Chen, Jian, Liang, Yesheng, Liu, Zhijian · 2026/02/05 · 2602.06036v1">DFlash: Block Diffusion for Flash Speculative Decoding</a>；<a href="https://arxiv.org/abs/2607.05147v1" title="DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation · Cheng, Xin, Yu, Xingkai, Shao, Chenze 等 · 2026/07/06 · 2607.05147v1">DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation</a>；<a href="https://arxiv.org/abs/2607.19223v1" title="AdaFlash: Adaptive Speculative Decoding via On-Policy Distilled Diffusion Drafters · Qian, Yu-Yang, Wu, Hao-Cong, Chen, Chen 等 · 2026/07/21 · 2607.19223v1">AdaFlash: Adaptive Speculative Decoding via On-Policy Distilled Diffusion Drafters</a>。</p></section>
+
 <figure>
 <div class="flow" aria-label="扩散drafter和自回归target的投机流程">
 <div class="stage"><b>Draft一个块</b><small>重计算并行生成多个位置<br>保留proposal条件与分布</small></div>
@@ -44,24 +51,28 @@ T_spec per emitted token ≈ (T_draft(B) + T_verify(B) + T_schedule + T_cache) /
 <tr><td>AdaFlash <code>2607.19223v1</code></td><td>学生drafter实际rollout上的target feedback，reverse-KL OPD及长度预测</td><td>把proposal分布适配到target和任务域；接受提升不能替代并发吞吐测量</td></tr>
 </tbody>
 </table>
-<p>来源：<a href="index.html#ref-6">DFlash [6]</a>、<a href="index.html#ref-4">DSpark §3 / 附录A [4]</a>、<a href="index.html#ref-7">AdaFlash [7]</a>。需要扩散前向过程、mask、块解码和loss基础时，回到<a href="../dlm-survey/">DLM 14章系列</a>；本章重点是AR target与扩散proposal之间的接口。</p>
+<p>来源：<a href="index.html#ref-6">DFlash [6]</a>、<a href="index.html#ref-4">DSpark §3 / 附录A [4]</a>、<a href="index.html#ref-7">AdaFlash [7]</a>。扩散mask与块内恢复在<a href="../dlm-survey/">DLM连续主题</a>展开；这里主讲proposal与target之间的研究接口。</p>
 </section>
 <section id="exactness">
 <h2>“精确保留target分布”有条件</h2>
-<p>对同一个合法前缀h，proposal q与target p的单位置标准接受 / 拒绝形式为：</p>
-<div class="equation" role="math" aria-label="标准投机接受与残差分布">x ~ q(· | h)
-accept probability α(x | h) = min(1, p(x | h) / q(x | h))
-reject后：x′ ~ normalize(max(p(· | h) − q(· | h), 0))</div>
-<p>这是概念推导，不是直接可用的批量验证代码。需要使用实际proposal条件分布、匹配的temperature / top-p等采样处理和正确残差分布；块内history、拒绝位置、target bonus token、停止与缓存都要实现一致。若q的条件概率无法准确获得，不能仅靠一个接受公式宣称精确。</p>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2302.01318" title="Accelerating Large Language Model Decoding with Speculative Sampling · Chen, Charlie, Borgeaud, Sebastian, Irving, Geoffrey 等 · 2023/02/02 · 2302.01318">Speculative Sampling</a>；<a href="https://arxiv.org/abs/2211.17192" title="Fast Inference from Transformers via Speculative Decoding · Leviathan, Yaniv, Kalman, Matan, Matias, Yossi · 2022/11/30 · 2211.17192">Speculative Decoding</a>。</p></section>
+
+<p>标准接受/拒绝和残差还原target的证明在<a href="../llm-serving/s02_parallel_quantization.html#speculation">投机主讲</a>展开。DLM drafter的关键额外问题是：<strong>验证时能否取得实际proposal条件分布</strong>，以及调度是否改变了它。</p>
+<ul><li><strong>条件一致：</strong>逐位置prefix、块内history、temperature/top-p与proposal定义相符。</li><li><strong>提交一致：</strong>拒绝位置、bonus token、停止与KV写入遵守同一采样合同。</li><li><strong>概率可得：</strong>若无法准确获得q，不能只套标准接受式宣称精确。</li></ul>
 <h3>为什么“看完候选，再决定验证多少”可能出错</h3>
-<p>假设调度器观察未来候选token的性质后才选择验证长度，这个选择本身会改变进入验证的proposal分布。若仍用原先的q做校正，就可能产生selection bias。DSpark §3.2.2与附录A专门区分retrospective选择与non-anticipating admission：不使用尚未获准验证的未来token信息来决定其进入验证，是其精确性论证的重要条件。<a href="index.html#ref-4">[4]</a></p>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2302.01318" title="Accelerating Large Language Model Decoding with Speculative Sampling · Chen, Charlie, Borgeaud, Sebastian, Irving, Geoffrey 等 · 2023/02/02 · 2302.01318">Speculative Sampling</a>；<a href="https://arxiv.org/abs/2211.17192" title="Fast Inference from Transformers via Speculative Decoding · Leviathan, Yaniv, Kalman, Matan, Matias, Yossi · 2022/11/30 · 2211.17192">Speculative Decoding</a>。</p></section>
+
+<p>调度器若先观察未来候选，再决定是否验证，进入验证的分布就可能改变。DSpark §3.2.2与附录A区分retrospective选择与non-anticipating admission；后者不靠尚未获准候选的未来信息决定其准入。<a href="index.html#ref-4">[4]</a></p>
+<p><strong>负对照算例：</strong>令p=q，两个token A/B各占1/2。错误调度丢弃B并重新抽草稿，直到A才验证，却仍沿用原q；因为p/q=1，每次都接受A，最终A概率变成1。被改变的是准入分布，接受率100%不能证明输出分布正确。此例只解释选择偏差，不是DSpark的实现。</p>
 <div class="callout caution"><strong>验收分成两层：</strong>先检查数学 / 采样合同与实现一致，再测延迟和吞吐。只比较生成文本“看起来差不多”或下游平均分接近，不能证明整个target采样分布被精确保留；argmax的贪心一致性也不等于随机采样一致性。</div>
-<p>KV精度、缓存恢复、target实现和量化若发生变化，还要区分“对当前target实现精确”与“对另一精度基准模型精确”。Bounded replay本身是近似状态重建，不能和精确投机验证的结论混为一谈，见<a href="s03_base_architecture.html#cache">第03章</a>。</p>
+<p><strong>Target边界：</strong>对当前量化target精确，不等于对另一精度模型精确；本页<a href="s03_base_architecture.html#cache">bounded replay</a>又是近似状态恢复，不能继承精确投机的结论。</p>
 </section>
 <section id="opd">
 <h2>OPD：优化接受机会，不等于给最终Agent加reward</h2>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2606.30406v1" title="MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · Ma, Wenhan, Wei, Jianyu, Zhao, Liang 等 · 2026/06/29 · 2606.30406v1">MOPD</a>；<a href="https://arxiv.org/abs/2609.34745" title="No Pain, More Gain: Iterative Merging for Effective Multi-Teacher On-Policy Distillation · Kim, Seonghyeon, Jang, Chaeyun, Lee, Noah 等 · 2026/09/28 · 2609.34745">IM-MOPD</a>。</p></section>
+
 <p>AdaFlash从drafter自身实际rollout取得target反馈，通过reverse-KL方向对齐proposal，并学习长度预测。它与静态目标文本上的普通SFT不同：学生遇到的状态参与教师监督。<a href="index.html#ref-7">[7]</a></p>
-<p>Reverse-KL的概念方向是 <code>D_KL(q_draft || p_target)</code>；完整方法还取决于状态采样、token / block mask和teacher信号。不要把drafter OPD、Agent任务RL、多个专家到统一学生的MOPD放到同一张loss表里省略目标差异。MOPD研究能力整合；drafter适配研究proposal质量与成本。<a href="index.html#ref-25">[25]</a></p>
+<p>Reverse-KL方向为 \(D_{\rm KL}(q_{\rm draft}\Vert p_{\rm target})\)，还需固定状态采样、token/block mask和teacher接口。<strong>Drafter适配测proposal质量与成本；MOPD测能力整合。</strong>梯度机制在OPD主讲展开。<a href="index.html#ref-25">[25]</a></p>
 <table>
 <thead><tr><th>对象</th><th>反馈</th><th>应验收的结果</th></tr></thead>
 <tbody>
@@ -72,8 +83,25 @@ reject后：x′ ~ normalize(max(p(· | h) − q(· | h), 0))</div>
 </table>
 <p>如果验证保持当前target分布，投机过程主要改变执行效率；若target、截断规则或预算改变了最终任务行为，就必须单独评测策略结果。更快生成可能允许更多尝试，报告时需区分固定token与固定wall time。</p>
 </section>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>投机推理：并发改变加速收益，接受长度不等于速度</h2>
+<p><a href="https://arxiv.org/html/2607.19223v1">AdaFlash v1，Table 1</a>在 Qwen3-8B、SGLang、贪心解码（T=0）、block size 16 下报告相对 AR 的平均加速倍数。在线训练器使用独立 GPU；此表未完整给出可迁移的硬件与全系统资源口径，不能忽略 trainer 后解释为同总成本优势。</p>
+<table><thead><tr><th>方法</th><th>并发 1</th><th>并发 32</th><th>并发 64</th><th>并发 128</th></tr></thead><tbody>
+<tr><td>DFlash</td><td>3.53×</td><td>1.54×</td><td>1.01×</td><td>0.76×</td></tr>
+<tr><td>OSD</td><td>3.95×</td><td>1.70×</td><td>1.12×</td><td>0.83×</td></tr>
+<tr><td>AdaFlash</td><td>4.06×</td><td>1.74×</td><td>1.33×</td><td>1.15×</td></tr>
+</tbody></table>
+<p><a href="https://arxiv.org/html/2607.05147v1">DSpark v1，Table 1</a>则固定非 thinking Qwen3-8B、T=1、block size 7，使用同训练数据（1.3M PerfectBlend）与 10 epochs 重训 drafter，比较平均接受长度 τ（含 bonus token）：</p>
+<table><thead><tr><th>方法</th><th>GSM8K τ</th><th>MT-Bench τ</th></tr></thead><tbody>
+<tr><td>EAGLE3</td><td>5.30</td><td>2.66</td></tr>
+<tr><td>DFlash</td><td>5.33</td><td>3.11</td></tr>
+<tr><td>DSpark</td><td>6.17</td><td>3.72</td></tr>
+</tbody></table>
+<ul><li><strong>收益会反转：</strong>DFlash从并发1的3.53×降到128的0.76×，后者在该设置下更慢。</li><li><strong>τ不是速度：</strong>6.17/5.30只比较接受长度，缺draft、verify与调度时间。</li><li><strong>跨表不排名：</strong>温度、块长和指标不同；峰值显存、FLOPs、trainer费用与同SLO吞吐仍需<a href="../llm-serving/s03_capacity_cost.html#protocol">服务测量协议</a>补齐。</li></ul>
+</section>
 <section id="experiments">
 <h2>待执行：一张真正能比较解码方案的实验矩阵</h2>
+<details><summary>展开采样正确性、负载与Agent质量对照</summary>
 <table>
 <thead><tr><th>因素</th><th>至少区分</th><th>固定 / 记录什么</th></tr></thead>
 <tbody>
@@ -88,8 +116,11 @@ reject后：x′ ~ normalize(max(p(· | h) − q(· | h), 0))</div>
 <li>系统性能：记录block长度、实际输出长度、接受位置分布、drafter / target耗时、验证batch、显存、P50 / P95和总吞吐。</li>
 <li>Agent效果：同预算独立题集、总投入 / 成功数、工具轮次、超时和失败；避免只报接受率或最快的一条请求。</li>
 </ul>
+</details>
 <p>以上全部待执行。本站尚未产生新的解码或训练曲线；本章提供可复核机制与实验设计。GUI / 科学Agent的预算和有效完成标准见<a href="s05_agent_frontiers.html">下一章</a>。</p>
 </section>
+<div class="course-review"><p><strong>面试短答：</strong>并行drafter减少串行重计算，但不省去target验证。自适应长度要满足采样准入条件；性能要看周期时间/实际输出，不能从接受长度推导加速，更不能忽略在线trainer成本。</p></div>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

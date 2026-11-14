@@ -11,23 +11,15 @@
 <section id="overview">
 <p class="eyebrow">Stein’s Notes · Data &amp; evaluation · 2026-11-14</p>
 <h2>合成什么数据，才能测到真正的 Agent 能力</h2>
-<p class="lead">数据生产的单位可能是文本、task、environment或trajectory；评测的对象可能是模型、agent系统或完整工作产物。先固定对象，再讨论规模、训练收益和榜单。本系列把任务工程接到CPT / SFT / RL，并把经典与前沿benchmark放进同一张能力地图。</p>
+<p class="lead">沿一条任务生命周期学习：生产可执行任务，明确科学操作，筛选训练轨迹，最后在独立任务上评测。本页既讲合同与统计原理，也保留来源和实验边界。</p>
 <div class="callout"><strong>核心判断：</strong>可运行环境、独立验收、受控校准和固定留出集，是任务合成与评测共有的基础。更多任务、更高通过率或更长轨迹，都需要结合覆盖、预算和验证器质量解释。</div>
-<p>阅读主线按任务生命周期展开：可执行任务 → 科学统计合同 → 训练准入与对照 → 独立Benchmark。先修<a href="../agent-harness-guide.html#codex-loop">执行状态与工具环境</a>；最终产物是任务、verifier、切分、轨迹和失败记录。</p>
-<!-- READING:CHAPTERS -->
-<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录与阅读建议 · 2026-11-14；旧编号保留供对照</summary>
-<div class="chapter-grid">
-<a class="card" href="s01_task_synthesis.html"><span class="eyebrow">01 / Synthesis</span><h3>可执行任务与训练数据合成</h3><p>SWE-Gym、R2E-Gym、SWE-smith、SWE-Universe、daVinci、CoderForge、NexForge、EvoSyn、ProgramGym、ScienceIDE与critic；连接Harbor及GUI履历。</p></a>
-<a class="card" href="s02_benchmark_map.html"><span class="eyebrow">02 / Benchmark map</span><h3>经典与前沿 Agent 评测地图</h3><p>Terminal-Bench / Science / Challenges、HarborIndex、DeepSWE、SWE-bench和AA；代码、通用Agent、Web／GUI、科学任务分类速查。</p></a>
-<a class="card" href="s03_scientific_task_family.html"><span class="eyebrow">03 / Scientific contract</span><h3>科学任务族与独立验证</h3><p>GSE52778 / airway的count层、配对统计、完整输出schema、来源冲突、研究切分与训练轨迹准入。</p></a>
-<a class="card" href="s04_cluster_training_evaluation.html"><span class="eyebrow">04 / Training &amp; evaluation</span><h3>工业SFT / RL对照与成本</h3><p>128 / 1024 H100规划、sci-posttrain A–E、异质GRPO、policy lag、分层统计、失败分类与成功成本。</p></a>
-</div>
-<p>想做任务生产：01的合同 → 科学校准 → 训练准入 → 02的留出与评分。想读榜单：02的版本表 → 指标定义 → 领域速查。架构关联见<a href="../llm-research-map-2026/s03_base_architecture.html">DeepSeek V4.1 CED / CSA2 / FP4</a>；训练背景见<a href="../llm-training-lifecycle/">训练全链路</a>。</p>
-</details><!-- READING:HISTORY:END -->
+<ul><li><strong>生产：</strong>来源、输入、环境、任务合同与独立verifier。</li><li><strong>理解：</strong>生物学重复、配对NB模型、contrast、BH与可复算产物。</li><li><strong>比较：</strong>研究组切分、单因素实验、配对差异、pass@k和失败分母。</li></ul>
 <p class="note">来源访问截止2026-11-14。前两章共用本页52项引用，编号独立于《LLM研究地图》；新增科学与集群两章分别记录来源。研究设计、论文数字和个人简历陈述分开；没有执行科学任务、任务合成、训练或benchmark。</p>
 </section>
 <section id="boundaries">
-<h2>读之前先分清四类对象</h2>
+<h2>先分清生产与测量对象</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>。</p></section>
+
 <table><thead><tr><th>对象</th><th>实例</th><th>适合回答</th><th>不能直接推出</th></tr></thead><tbody>
 <tr><td>训练资源 / 环境</td><td>SWE-Gym、R2E-Gym、CoderForge、ScienceIDE</td><td>怎样获得任务、reward与可学习轨迹</td><td>等量任务具有同样难度，或所有报告数据均已公开</td></tr>
 <tr><td>固定或滚动benchmark</td><td>SWE-bench、TB、DeepSWE、LiveCodeBench</td><td>固定协议下的成功、泛化与成本</td><td>脱离版本、harness、预算后的纯模型排名</td></tr>
@@ -36,10 +28,17 @@
 </tbody></table>
 <p>“DeepSWE”是特别需要拆开的名字：Datacurve的v1.1是benchmark；Together / Agentica的DeepSWE-Preview是RL模型与配方。两者分别见<a href="s02_benchmark_map.html#deepswe">第02章</a>。</p>
 </section>
+<figure class="mechanism-map"><figcaption>对象关系：采样次数与任务覆盖分开计数</figcaption><ol class="mechanism-chain"><li><b>来源与环境</b><small>来源支撑输入；环境可承载多个任务</small></li><li><b>任务合同与verifier</b><small>固定目标、可见性、产物和验收</small></li><li><b>同任务多条轨迹</b><small>一次尝试一条episode；每条有动作、成本和结果</small></li><li><b>独立benchmark</b><small>留出任务按固定协议测系统，不能回流训练</small></li></ol></figure>
+<!-- READING:COURSE -->
+<section id="mastery"><h2>读完应能做到</h2><ul>
+<li><strong>写出合同：</strong>可见输入、输出、合理路径、独立验收与坏控制。</li>
+<li><strong>复算统计：</strong>offset和配对design、对比方向、BH四检验例。</li>
+<li><strong>解释结果：</strong>pass@k与pass^k、研究组切分、配对胜负和成本分母。</li>
+<li><strong>定位失败：</strong>任务歧义、数据语义、科学设计、verifier、环境和预算。</li></ul></section>
 <section id="sources">
 <h2>来源索引与维护方式</h2>
 <p>论文采用下列明确版本，项目页采用访问快照。引用支持的是机制、规格或团队报告，不代表独立复现。经典速查优先引用原论文；滚动benchmark以官方当前split说明为准。<a href="../assets/research/agent-data-benchmarks/sources.json">下载来源清单</a>；图表数值见<a href="../assets/research/agent-data-benchmarks/figure-data.json">规格JSON</a>。</p>
-<ol class="sources">
+<details><summary>52项原始来源与固定版本</summary><ol class="sources">
 <li id="ref-1"><a href="https://arxiv.org/html/2412.21139v2">SWE-Gym: Training Software Engineering Agents and Verifiers</a> · 可执行真实issue及outcome verifier。</li>
 <li id="ref-2"><a href="https://arxiv.org/html/2504.07164v1">R2E-Gym: Reinforcement Learning Environments for Real-World Code Agents</a> · SweGen、F2P与execution / critic。</li>
 <li id="ref-3"><a href="https://arxiv.org/html/2504.21798v1">SWE-smith: Scaling Data for Software Engineering Agents</a> · 缺陷注入。<a href="../assets/research/2026-11-14/swesmith-2504.21798v1.pdf">归档PDF</a>。</li>
@@ -92,7 +91,7 @@
 <li id="ref-50"><a href="https://arxiv.org/abs/2110.14168">GSM8K</a> · 多步数学文字题。</li>
 <li id="ref-51"><a href="https://arxiv.org/abs/2311.07911">IFEval</a> · 可程序验证的指令遵循。</li>
 <li id="ref-52"><a href="https://arxiv.org/abs/2311.12022">GPQA</a> · 专家级科学问答。</li>
-</ol>
+</ol></details>
 </section>
 </main>
 </body>

@@ -4,7 +4,7 @@ title: Trainable DLLM：生成顺序与块局部性
 
 <p><a href="../">My Work 目录</a> · <a href="full-report.html">完整技术报告：理论、原图与结果</a></p>
 
-## 研究问题：生成顺序也是训练变量
+## 先记住：调度、可见性、监督分开控制
 
 这项工作研究相同预测任务在不同生成顺序下的训练动力学。AR 为每个输出建立稳定的左到右条件，masked diffusion 在随机缺失状态中恢复 token；Scatter 和 Jigsaw 进一步改变块间调度、块内访问和提交时机。目标是定位依赖结构与学习难度的关系，而不是仅比较最终生成速度。[1](#ref-1)
 
@@ -29,12 +29,23 @@ title: Trainable DLLM：生成顺序与块局部性
 
 ## 目标函数与条件可见性
 
-```text
-AR:  pθ(x_1:L) = ∏_i pθ(x_i | x_<i)
-MDM: x_(τ,i) = [MASK] with probability τ, otherwise x_i
-L_MDM = E[ (1/τ) Σ_i 1[x_(τ,i)=[MASK]] · −log pθ(x_i | x_τ) ]
-Block-Diff: pθ(x) = ∏_k pθ(block_k | earlier clean blocks)
-```
+<div class="reading-math">\[
+p_\theta(x_{1:L})=\prod_i p_\theta(x_i\mid x_{\lt i})
+\]</div>
+
+线性吸收噪声在时间 τ 以概率 τ 掩码，否则保留原 token。只在 masked 位置计算带时间权重的 CE：
+
+<div class="reading-math">\[
+\begin{aligned}
+\ell_i&=-\log p_\theta(x_i\mid x_\tau)\\
+L_{\rm MDM}
+&=\mathbb E\left[
+\frac1\tau\sum_i
+\mathbf1\{x_{\tau,i}=m\}\ell_i\right]\\
+p_\theta(x)
+&=\prod_k p_\theta(x^{(k)}\mid x^{(\lt k)})
+\end{aligned}
+\]</div>
 
 AR 的 teacher forcing 与因果 mask 为每个位置规定固定预测上下文。MDM 共享模型处理许多随机掩码状态，双向上下文允许从后向前恢复答案，但某些训练状态会缺少关键局部绑定信息。Block-Diff 在块间保持因果顺序、块内去噪，让局部双向建模与前缀提交结合。[1](#ref-1)
 
@@ -107,7 +118,16 @@ multi_target_prefix:
 
 ### 熵选块为什么不等于选出正确块
 
-给未提交块 b 的位置分布 p，平均预测熵可记为 `H_b = −mean_i Σ_v p_(i,v) log p_(i,v)`；Jigsaw 选择当前 H_b 最低的候选块。低熵表示模型更确信，不等于预测正确；错误但自信的块一旦提交，也会约束后续生成。probe forward 和正式提交均有计算成本。
+给未提交块 b 的位置分布 p，先计算每个位置的熵，再取块内均值并选最小：
+
+<div class="reading-math">\[
+\begin{aligned}
+H_b&=-\frac1{|b|}\sum_{i\in b}\sum_v p_{i,v}\log p_{i,v}\\
+b^*&=\arg\min_{b\in U}H_b
+\end{aligned}
+\]</div>
+
+U 是未提交块集合。**低熵表示确信，未必正确**；错误块提交后会影响后续条件。probe 与正式提交都计入计算预算。
 
 因此一个充分的消融应固定 backbone、attention、supervised token 数及实际 forward 预算，再比较固定块顺序与熵选择。prefix/fixed/multi 的监督密度不同，只有同时记录 loss 分母、target block 数和重复视图才能解释其差异。[3](#ref-3)[4](#ref-4)
 
@@ -119,8 +139,16 @@ multi_target_prefix:
 | 星图 Pathfinding | 置乱边列表、start/goal → 完整路径 | 第一跳需利用反向依赖 | 节点准确率与整条路径匹配 |
 | Sudoku | 9×9 题面 → 全部棋格答案 | 行/列/宫的全局约束 | 空格 cell accuracy 与整盘准确率 |
 
-ICL 每个序列共用一个潜在向量 `w`。在高斯噪声模型下，演示后验均值可写作
-`μ=(X_PᵀX_P+σ²I)⁻¹X_Pᵀy_P`，查询的平方误差最优预测是 `X_R μ`。不同顺序仍可表达相同 Bayes 目标；实验研究的是如何通过训练学到该目标，而不是证明 AR 与扩散有不同统计最优解。[1](#ref-1)
+ICL 每个序列共用潜在向量 w，先由演示估计 w，再预测查询。标准高斯先验与噪声下：
+
+<div class="reading-math">\[
+\begin{aligned}
+\mu&=(X_P^\top X_P+\sigma^2I)^{-1}X_P^\top y_P\\
+\widehat y_R&=X_R\mu
+\end{aligned}
+\]</div>
+
+完整报告展开平方项配方与不可识别子空间。不同顺序可以表达同一 Bayes 目标；实验比较**训练是否学得到**。[1](#ref-1)
 
 ICL 主要设置 P=20、R=20、d∈{10,15,20}；AR 最稳定，Jigsaw 缩小高维差距，随机 mask 与 Scatter 的部分设置保留更高残差。有限数据 E1/E10 对照需区分 seen-sample 次数与独立任务数，重复训练样本不能被当作新增数据。[1](#ref-1)
 
@@ -146,7 +174,7 @@ Gen-PPL 比较必须记录 checkpoint、top-p、requested T、first-hitting、�
 
 ### 三种常见指标不能互相替代
 
-PPL 是 `exp(平均 NLL)`；平均时使用什么 tokenizer、哪些 token 和什么估计器决定其可比性。Test-PPL 对留出数据的建模，Gen-PPL 对生成文本的外部评分，二者不可直接排序。扩散的留出似然可能通过上界或估计得到，不能默认它与 AR 精确 NLL 的计算过程一致。
+**PPL=exp(平均 NLL)**，须固定 tokenizer、目标 token 与估计器。Test-PPL 测留出建模，Gen-PPL 由外部模型评生成；两者不能直接排序。扩散留出似然可能通过上界或估计得到，不能默认等同 AR 精确 NLL。
 
 Sudoku 的 cell accuracy 统计棋格正确比例，整盘准确率要求所有目标空格和约束通过；高 cell accuracy 仍可能有大量无效棋盘。Pathfinding 的节点准确率与完整路径匹配也有相同差别。NFE 则只是网络前向次数：不同序列长度、probe、缓存和硬件条件下，每次 forward 的成本不同。
 
@@ -166,6 +194,14 @@ Sudoku 的 cell accuracy 统计棋格正确比例，整盘准确率要求所有�
 
 先读 [离散扩散目标](../../dlm-survey/s02_discrete.html)和[块扩散](../../dlm-survey/s03_block.html)，再看 [扩散方法比较](../../dlm-survey/s10_comparison.html)。注意力实现可接着复习 [Attention、位置编码与 KV cache](../../llm-architecture/s02_attention_position_cache.html)。通用理论和本项目实验记录应分别阅读。
 <!-- WORK:REVIEW:END -->
+
+## 五道项目面试追问
+
+1. **同一生成顺序能确定 attention 吗？** 不能；调度决定提交先后，mask 决定可见性，loss mask 决定监督，分别查代码。
+2. **输入含 x0 就泄漏吗？** 看目标能否沿允许的 attention 路径读到自己的 gold；loss 为零不阻止上下文传播。
+3. **Jigsaw multi 增加 K 个视图是 K 倍数据吗？** 是同一 x0 的重复条件视图；独立数据与监督量分开计。
+4. **Scatter T sweep 能解释算力规律吗？** 先固定 top-p、first-hitting、checkpoint 和真实 NFE；主表混有不同 top-p。
+5. **较低训练 loss 能证明推理更强吗？** 用留出任务、整路径/整盘成功、预算与 seed 检查；不把 smoke 当主实验复现。
 
 ## 代码框架与复现状态
 

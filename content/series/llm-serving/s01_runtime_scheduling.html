@@ -3,12 +3,17 @@
 <title>LLM请求调度与缓存生命周期</title>
 <meta name="description" content="Prefill/decode、continuous batching、PagedAttention/RadixAttention、prefix与chunked prefill、抢占和隔离，核对固定vLLM/SGLang源码。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>服务调度：Prefill 与 Decode 的状态交接</figcaption><ol class="mechanism-chain"><li><b>请求进入队列</b><small>长度、优先级与剩余 KV 容量</small></li><li><b>Prefill 计算前缀</b><small>处理输入；分配或复用 KV 页</small></li><li><b>Decode 生成 token</b><small>读取已有 KV；追加当前 K/V</small></li><li><b>结束与资源回收</b><small>释放页面；更新调度和缓存</small></li></ol><p class="mechanism-return">↶ 未完成请求进入下一 Decode 批次；TTFT 与 TPOT 分别衡量两个阶段。</p></figure>
 <section id="overview"><p class="eyebrow">Runtime &amp; scheduling · 2026-11-14</p><h2>每次调度分配的是token计算与状态空间</h2>
+<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>。</p></section>
+
 <p class="lead">请求输入长度不同、输出何时结束未知。服务系统要在有限token计算预算与缓存空间内，让已有请求继续，并让新请求进入。PagedAttention管理状态位置，continuous batching管理参与计算的请求，chunked prefill管理长输入的计算粒度。</p>
-<p>先修<a href="../transformer-decoder-flow.html">Decoder prefill/decode</a>与<a href="../llm-architecture/s02_attention_position_cache.html">KV公式</a>。本章解释调度；多设备通信和低精度见<a href="s02_parallel_quantization.html">下一章</a>。</p>
-<figure><div class="flow"><div class="stage"><b>排队与准入</b><small>长度、优先级、租户<br>可用token/状态预算</small></div><div class="stage"><b>匹配已有前缀</b><small>模型版本与权限域<br>命中部分 / 未命中部分</small></div><div class="stage"><b>调度一次前向</b><small>prefill块 + decode<br>分配物理cache blocks</small></div><div class="stage"><b>提交与释放</b><small>输出、结束、取消<br>保留可复用prefix或回收</small></div></div><figcaption>每轮更新完成token数和可用block。投机解码与混合状态可能让一轮推进多个token或维护额外状态。</figcaption></figure>
+<p><strong>每轮同时受计算和状态预算约束。</strong>有空闲GPU计算槽，也可能因KV不足而不能接收新请求。</p>
 </section>
 <section id="phases"><h2 id="reading-section-2">Prefill 与 decode 的计算负载不同</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2005.11401" title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks · Lewis, Patrick, Perez, Ethan, Piktus, Aleksandra 等 · 2020/05/22 · 2005.11401">RAG</a>。</p></section>
+
 <p>prefill处理新输入的多个位置，建立各层历史状态；decode使用已有状态生成后续位置。prefill的矩阵批量通常更大，decode低batch常受权重/KV读取和层间launch影响；这只是常见瓶颈，不是“prefill永远compute-bound、decode永远memory-bound”的定律。长度、并发、MoE、kernel、精度和网络会改变瓶颈。</p>
 <p>TTFT包含排队、输入预处理、prefix查找、prefill及首token产生；ITL描述输出token之间的间隔。一个长prefill占用设备，会干扰已有decode的尾延迟；过度偏向decode又可能让新请求等待。调度需定义SLO和公平性。</p>
 <table><thead><tr><th>批处理方式</th><th>行为</th><th>局限</th></tr></thead><tbody>
@@ -17,17 +22,31 @@
 <tr><td>Chunked prefill</td><td>长输入拆成多个前向片段，与decode交错</td><td>切块过小增加调度/launch，TTFT可能变长；不是文本chunk/RAG</td></tr>
 <tr><td>PD分离</td><td>不同设备分别承担prefill/decode</td><td>新增状态传输、路由与资源闲置，详见下一章</td></tr>
 </tbody></table>
+<table><caption>连续批处理的教学时间轴：每轮输出一token，忽略实际耗时差别</caption><thead><tr><th>轮次</th><th>A还需1token</th><th>B还需3token</th><th>C新请求</th></tr></thead><tbody>
+<tr><td>1</td><td>decode → 完成，释放槽</td><td>decode → 余2</td><td>排队</td></tr>
+<tr><td>2</td><td>已退出</td><td>decode → 余1</td><td>准入，做prefill或其片段</td></tr>
+<tr><td>3</td><td>已退出</td><td>decode → 完成</td><td>decode</td></tr></tbody></table>
+<p>静态批次可能等B结束才接C；连续批处理每轮重组。<strong>混合prefill与decode是调度选择，表格并不保证它们一轮耗时相等。</strong></p>
 </section>
 <section id="paging"><h2>PagedAttention解决物理存储，数学仍读取逻辑历史</h2>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2205.14135" title="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness · Dao, Tri, Fu, Daniel Y., Ermon, Stefano 等 · 2022/05/27 · 2205.14135">FlashAttention</a>；<a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>。</p></section>
+
 <p>连续为最大长度预留KV会浪费空间；逐请求扩容也容易产生碎片。PagedAttention把逻辑历史分block，由block table指向非连续物理页，kernel按映射访问。它降低外部碎片和重复分配，不把完整attention改成稀疏attention。最后一页仍可能有内部浪费，元数据、预留与临时区也存在。</p>
-<div class="equation" role="math" aria-label="分页KV存储">请求有T个已保存token，block size为B：
-逻辑block数 = ceil(T/B)
-实际分配token槽 = B·ceil(T/B)，末页浪费 &lt; B
-共享prefix时：按唯一物理block核算，不能把每请求逻辑长度直接相加</div>
+<div class="reading-math">\[
+n_{\rm block}=\left\lceil\frac TB\right\rceil,\qquad
+w=B\left\lceil\frac TB\right\rceil-T,\qquad 0\le w&lt;B.
+\]</div>
+<p>教学取\(T=35,B=16\)：3页共48槽，末页13槽空闲。这里只是整数槽计数，不含metadata、预留和workspace。</p>
+<table><caption>非连续物理页保持逻辑token顺序</caption><thead><tr><th>逻辑页</th><th>token位置</th><th>物理页ID（教学）</th></tr></thead><tbody>
+<tr><td>0</td><td>0–15</td><td>7</td></tr><tr><td>1</td><td>16–31</td><td>2</td></tr><tr><td>2</td><td>32–34；余13槽</td><td>11</td></tr></tbody></table>
+<p>block table为\([7,2,11]\)，kernel依据映射读取完整逻辑历史；<strong>分页不删除token，也不改变Attention公式。</strong></p>
 <p>prefix共享可让多个请求读取相同不可变block；写入共享尾页时需要copy-on-write或等价机制。物理分页与FlashAttention的IO-aware计算不同，两者可组合。原论文<a href="#ref-paged">[1]</a>的吞吐收益是其模型、硬件、负载和延迟条件，不是当前vLLM的统一倍数。</p>
+<p><strong>共享算例：</strong>两请求各35token，前32token完全相同。B=16时，共享2个满页，各有1个私有尾页，共4页64槽；独立分配需6页96槽。部分尾页共享要按具体copy-on-write实现核算，不能只相加逻辑长度。</p>
 </section>
 <section id="prefix"><h2>Prefix复用与RadixAttention</h2>
-<p>共享系统提示、文档或多轮历史的请求可以复用已计算prefix。复用通常依赖完全匹配的token前缀以及模型权重、adapter、位置/模板、多模态内容和cache格式；语义相似或最后一句相同不能直接复用。此前缀是数值状态，不是知识库。</p>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
+
+<ul><li><strong>命中条件：</strong>相同token前缀及权重、adapter、位置/模板、多模态内容与格式；语义相似不足以复用。</li><li><strong>生命周期：</strong>请求结束可保留prefix；正在使用的节点受引用保护，内存压力下回收未锁节点。</li><li><strong>隔离：</strong>租户、权限和版本入命名空间；命中时延也可能泄露信息，是否共享依威胁模型确定。</li></ul>
 <p>SGLang的RadixAttention以树组织不同请求的共享前缀，按匹配部分减少重算。固定v0.5.23实现中的<code>match_prefix</code>、<code>evict</code>与<code>inc_lock_ref/dec_lock_ref</code>分别负责匹配、回收与正在使用的节点保护。<a href="#ref-sglang">[2]</a> <a href="#ref-code">[3]</a></p>
 <details><summary>源码入口和“已结束”不等于“立即删除”</summary>
 <pre><code># 本文对SGLang radix_cache.py的概念摘录，不是可直接调用的API
@@ -38,9 +57,11 @@ dec_lock_ref(matched_node)
 evict_unlocked_nodes_under_pressure()
 # 请求结束后，prefix可留给未来请求；取消和策略换版另行清理。</code></pre>
 <p>固定<a href="https://github.com/sgl-project/sglang/blob/297e54fd105e974cdf401e5b4d20253a22c16f90/python/sglang/srt/mem_cache/radix_cache.py#L364">匹配L364</a>、<a href="https://github.com/sgl-project/sglang/blob/297e54fd105e974cdf401e5b4d20253a22c16f90/python/sglang/srt/mem_cache/radix_cache.py#L552-L610">回收与引用L552–610</a>，Apache-2.0；这里只解释生命周期。</p></details>
-<p>权限域、租户和模型版本必须纳入cache命名空间。跨租户共享即使不直接暴露KV，也可能通过命中时延形成侧信号；是否允许共享应在威胁模型中明确。policy更新后，旧权重KV通常不能直接沿用为新策略的状态。</p>
+<p><strong>换权重需重新检查缓存。</strong>旧策略KV通常不能直接作为新策略状态；长期memory和KV数值缓存是不同对象。</p>
 </section>
 <section id="implementation"><h2>vLLM V1：统一按进度和token预算调度</h2>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></section>
+
 <p>vLLM v0.32.0固定源码在scheduler中用<code>num_computed_tokens</code>和目标token数跟踪请求进度，每轮有<code>token_budget</code>；代码注释明确不依赖一个单独的prefill/decode阶段标签。缓存空间不足时有抢占和归还本轮预算的逻辑，不能把论文示意直接当当前状态机。</p>
 <table><thead><tr><th>固定入口</th><th>本文核对</th><th>未验证的组合</th></tr></thead><tbody>
 <tr><td>scheduler.py，L591起</td><td>schedule、running请求、token预算、进度、抢占</td><td>具体SLO、connector、graph与新模型的联合行为</td></tr>
@@ -52,7 +73,10 @@ evict_unlocked_nodes_under_pressure()
 <section id="mixed"><h2>长短请求、工具暂停与混合状态</h2>
 <p>工具Agent在生成与CPU工具执行之间停顿。如果持续保留全部KV，会占用大量容量；如果回收，下一步需要prefix命中或重算。要测工具等待时间、cache保留时长、重算token和复用收益，不能只报运行中batch size。</p>
 <p>Hybrid模型可能同时维护全局KV、SWA、卷积状态和递归矩阵。全局KV可按token页管理；递归状态通常是累计状态，不能默认在任意前缀处裁剪或复制。当前vLLM KV manager包含Mamba共享prefix checkpoint相关分支，说明恢复对象需专门支持，不证明所有混合架构兼容。基础机制见<a href="../llm-architecture/s05_hybrid_architectures.html">状态递推</a>。</p>
-<p>本文建议长短任务分桶、设置准入和排队上限，比较混合池与独立池；限流避免环境迟缓的长程请求无限积累。TP/EP、PD和异步rollout在后两章共同算账。</p>
+<table><thead><tr><th>症状</th><th>先查</th><th>调整后验证</th></tr></thead><tbody>
+<tr><td>新请求TTFT高，已有decode稳定</td><td>准入排队、prefill配额与长输入</td><td>chunk或配额调整后TTFT和decode尾延迟一起看</td></tr>
+<tr><td>工具暂停导致KV长期占满</td><td>等待时长、保留策略、prefix命中和重算</td><td>回收后的容量增量与恢复重算成本</td></tr>
+<tr><td>频繁抢占、吞吐下降</td><td>真实KV预算、长度、分片/复制与workspace</td><td>抢占率、重算token、goodput和OOM</td></tr></tbody></table>
 </section>
 <section id="evaluation"><h2>调度对照与理解检查</h2>
 <p>冻结硬件、模型版本、精度和真实输入/输出分布，对照prefix开关、chunk大小、并发和长短请求比例。分别报冷/热cache、TTFT、ITL/P95、goodput、抢占、重算、取消和端到端任务成功。若提升prefix命中是因为测试请求复制训练答案，需要先排除污染。</p>
@@ -65,4 +89,6 @@ evict_unlocked_nodes_under_pressure()
 <li id="ref-sglang">Zheng等，<a href="https://arxiv.org/abs/2312.07104v2">SGLang</a>：程序控制与RadixAttention。</li>
 <li id="ref-code">vLLM v0.32.0 commit5df63a7203cdb9328d824a27b682e77c7b9928be；SGLang v0.5.23 commit297e54fd105e974cdf401e5b4d20253a22c16f90，均Apache-2.0。核对范围是上述文件/调用，不代表运行所有功能。</li>
 </ol><p class="note">截止2026-11-14；没有服务性能实测。论文收益、当前实现和本文方案不互换。</p></section>
+<section id="frontier-evidence" data-frontier-audit="20261114"><h2>负载改变投机收益</h2><p>AdaFlash 的并发对照与 DSpark 的接受长度说明调度实验须记录并发、块长、采样温度及 trainer 资源。<a href="../llm-research-map-2026/s04_inference_diffusion.html#frontier-comparison">查看原论文与数据</a>；外部报告不替代本地服务测量。</p></section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>

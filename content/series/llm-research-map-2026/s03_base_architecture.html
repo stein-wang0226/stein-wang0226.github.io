@@ -8,11 +8,13 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
 <section id="versions">
-<p class="eyebrow">03 · Base architecture · 2026-11-14</p>
+<p class="eyebrow">Base architecture · 2026-11-14</p>
 <h2>先固定版本：V4 → V4.1 → 1017</h2>
+<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2606.19348v1" title="DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence · DeepSeek-AI, Xu, Anyi, Lin, Bangcai 等 · 2026/04/26 · 2606.19348v1">DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence</a>。</p></section>
+
 <p class="lead">V4.1适合作为当前博客的架构贯通案例：长上下文、多轮工具返回和大量rollout，使prefill计算、KV驻留、跨层复用和缓存IO成为真实Agent成本的一部分。其核心变化是CED、CSA2与KV压缩；后训练同时加强数据生产和执行系统。<a href="index.html#ref-1">[1]</a></p>
-<div class="callout"><strong>架构专题已扩展：</strong>本章继续专门拆解DeepSeek。多家族比较见<a href="s06_architecture_landscape.html">第06章：Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma</a>；残差、LatentMoE、Muon、低精度和递归深度见<a href="s07_architecture_training.html">第07章</a>。</div>
 <table>
 <thead><tr><th>来源</th><th>本章采用的口径</th><th>不能混用什么</th></tr></thead>
 <tbody>
@@ -40,9 +42,13 @@
 </div>
 <figcaption>概念流程，不是逐算子kernel图。重要限制：prefill不能画成“完全不走decoder”；decoder的SWA局部状态仍需重建。Decode 16B active也不能当作prefill 8B的重复计数。</figcaption>
 </figure>
-<p>学习时应把它接到已有<a href="../transformer-decoder-flow.html">Decoder张量流</a>：普通decoder通常逐层保存自己的KV；CED先改变global KV来源，再通过跨层复用减少存储与重复计算。具体Q、KV、SWA和indexer的所有权要分开画。</p>
+<p><strong>核心区别：</strong>普通decoder逐层生成自己的KV；CED改变global KV来源，CSA2再跨层复用。下面沿张量所有权追踪这两步。</p>
 <h3>张量来源：global C / Z 与本层 Q / SWA</h3>
-<p>Hidden维度为5120。Decoder的Full层从末层encoder表示 <code>H₂₀</code>生成global latent <code>Cₗ = H₂₀ Wₗᴷⱽ</code> 与压缩权重 <code>Zₗ = H₂₀ Wₗᶻ</code>；本层query和SWA KV仍由本层hidden产生。C / Z是压缩表示及其权重，不能画成传统独立K和V两份等长缓存。主Attention有64个query heads、512 channels，query compression维度1280；indexer有32个query heads、128 channels。<a href="index.html#ref-1">[1] §2.2–2.3</a></p>
+<p>Hidden维度5120。Decoder的Full层用encoder末层表示生成global latent与压缩权重：<a href="index.html#ref-1">[1] §2.2–2.3</a></p>
+<div class="reading-math" role="math">\[
+C_l=H_{20}W_l^{KV},\qquad Z_l=H_{20}W_l^Z.
+\]</div>
+<ul><li><strong>Global来源：</strong>C/Z是压缩表示与权重，不能按两份传统K/V重复计费。</li><li><strong>Local来源：</strong>本层query与SWA KV仍读取本层hidden。</li><li><strong>规格：</strong>主Attention为64 query heads、512 channels、query compression 1280；indexer为32 query heads、128 channels。</li></ul>
 <figure>
 <object class="research-chart wide" type="image/svg+xml" data="../assets/research/agent-data-benchmarks/ced-path.svg" aria-label="CED global缓存与局部SWA张量来源图"><p>图示内容：长prompt → 20层encoder → decoder global投影；尾部encoder输出重放产生decoder SWA；新token通过完整encoder与decoder。</p></object>
 <figcaption>按报告张量所有权整理。Prefill主计算使用encoder，不必对整个长prefix执行完整decoder；尾部decoder replay仍存在。图中连线表示依赖，不表示GPU调度顺序。</figcaption>
@@ -68,10 +74,12 @@
 <p class="figure-links"><a href="../assets/research/agent-data-benchmarks/csa2-layer-plan.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
 </figure>
 <h3>Hierarchical indexer：先选block，再在池内重排</h3>
-<p>在<strong>decode中的decoder</strong>，首个Full仍对全局历史扫描，把位置按8个一组组成block，按block内最高indexer score筛出最多2048组，得到最多16384位置的候选池。后续4个Reindex按各层query在该池内选top-512；Reuse沿用所选位置。SWA独立处理最近128位置。首扫描仍随历史N增长；后层扫描受候选池上限约束，不能把整体写成O(1)。这一decode优化在post-training引入，报告强调训练与推理采用一致流程。<a href="index.html#ref-1">[1] §2.3.2</a></p>
-<div class="equation" role="math" aria-label="hierarchical indexing候选规模">first global scan: O(N)
-candidate pool ≤ 2048 blocks × 8 positions = 16384
-later Reindex: select 512 from this pool; Reuse: no new index selection</div>
+<ol><li><strong>首次扫描：</strong>decode中的decoder Full按8位置/block，使用block内最高score筛选最多2048组。</li><li><strong>后层重排：</strong>4个Reindex在候选池中按本层query选top-512；Reuse沿用选择。</li><li><strong>局部读取：</strong>SWA独立读最近128位置；该decode优化在post-training引入，并保持训练/推理流程一致。<a href="index.html#ref-1">[1] §2.3.2</a></li></ol>
+<div class="reading-math" role="math" aria-label="hierarchical indexing候选规模">\[
+N_{\rm pool}\le2048\times8=16384,\qquad
+T_{\rm first}=O(N).
+\]</div>
+<p><strong>算例：</strong>历史N=1,000,000时，首层仍扫描全文；后层候选最多16,384，最后选512。候选上限约束的是后层检索，整体成本不变成常数。</p>
 </section>
 <section id="cache">
 <h2>890 bytes/token究竟包括什么</h2>
@@ -96,10 +104,16 @@ later Reindex: select 512 from this pool; Reuse: no new index selection</div>
 </table>
 <p>本节讲<strong>KV存储</strong>。不能据此声称全模型权重、GEMM或所有激活已变成FP4。NVIDIA标准NVFP4还使用per-tensor FP32 scale；DeepSeek省略该级，布局并非完全相同。格式补充来源：<a href="https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf">OCP MX v1.0规范</a>、<a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">NVIDIA NVFP4格式说明（2025-06-24）</a>。</p>
 <h3>890 B/token的逐项推导</h3>
-<div class="equation" role="math" aria-label="890 bytes每token推导">main + indexer = 288 + 68 = 356 B/entry
-encoder: 3 cache groups × (1 entry / 2 tokens) = 1.5 entries/token
-decoder: 1 shared cache × (1 entry / token) = 1 entry/token
-global total = (1.5 + 1) × 356 = 890 B/token</div>
+<div class="reading-math" role="math" aria-label="890 bytes每token推导">\[
+\begin{aligned}
+b_{\rm entry}&=288+68=356\ \mathrm{B},\\
+e_{\rm enc}&=3\times\tfrac12=1.5\ \mathrm{entry/token},\\
+e_{\rm dec}&=1\ \mathrm{entry/token},\\
+b_{\rm global}&=(1.5+1)\times356\\
+&=890\ \mathrm{B/token}.
+\end{aligned}
+\]</div>
+<p>先算entry字节，再乘每token产生的entry数；decoder的五个计算组共享一份global cache，因此只计1 entry/token。以100万token粗估global约890 MB（十进制），其余对象另计。</p>
 <figure>
 <object class="research-chart wide" type="image/svg+xml" data="../assets/research/agent-data-benchmarks/global-kv-bytes.svg" aria-label="890 bytes每token的四组缓存组成柱状图"><p>三个encoder缓存组各178 B/token，加一个decoder共享缓存组356 B/token，总890 B/token。</p></object>
 <figcaption><strong>规格推导值</strong>与报告摘要890相符，图中没有GPU实测值。采用长序列近似，未计尾部block、alignment、allocator、SWA、weights、Engram、workspace及分片复制；不是完整显存预算。</figcaption>
@@ -120,23 +134,21 @@ global total = (1.5 + 1) × 356 = 890 B/token</div>
 <p class="figure-links"><a href="../assets/research/agent-data-benchmarks/bounded-replay.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
 </figure>
 <p>对多轮Agent，缓存命中后往往只有短工具返回，却仍要恢复局部状态；长输入、短输出与大量轮次下，replay、host / SSD IO和排队可能成为显著成本。长prompt的单次prefill加速不能直接替代端到端Agent实验。</p>
-<div class="equation" role="math" aria-label="Agent推理延迟的概念分解">T_episode ≈ Σ_turn (T_prefill_new + T_cache_IO + T_replay + T_decode + T_tool + T_queue)</div>
-<p class="note">这是观测项的概念分解；实际系统可能重叠计算、IO和工具等待，不能把重叠span直接累加。计费去重见<a href="s01_agent_data_bench.html#audit">第01章</a>。</p>
+<table><thead><tr><th>短轮缓存命中后的剩余成本</th><th>测量位置</th></tr></thead><tbody>
+<tr><td>新输入prefill与输出decode</td><td>新增token及各计算span</td></tr>
+<tr><td>Cache IO与bounded replay</td><td>host/SSD读取、重放token与状态写入</td></tr>
+<tr><td>工具、排队与恢复</td><td>episode关键路径；重叠span不重复累加</td></tr>
+</tbody></table>
 </section>
 <section id="engram">
 <h2>Engram和Agent memory分别更新什么</h2>
+<section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2005.11401" title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks · Lewis, Patrick, Perez, Ethan, Piktus, Aleksandra 等 · 2020/05/22 · 2005.11401">RAG</a>。</p></section>
+
 <p>Engram采用N-gram hashing与context-aware gating，把条件查表记忆引入参数稀疏性。它并非自动记录过去任务的episodic memory，也不是外部RAG系统。V4.1单列196B Engram，让参数总量和每token活跃计算进一步分离。<a href="index.html#ref-3">[3]</a> <a href="index.html#ref-1">[1]</a></p>
-<table>
-<thead><tr><th>“记忆”形式</th><th>所在层与内容</th><th>典型更新 / 失效方式</th></tr></thead>
-<tbody>
-<tr><td>Engram条件参数</td><td>模型内部的可学习查表与门控</td><td>训练更新；部署成本包含参数存储与访问</td></tr>
-<tr><td>KV / prefix cache</td><td>特定权重、token历史和实现下的中间状态</td><td>生成时写入；版本或计算条件变化可能使缓存不适用</td></tr>
-<tr><td>RAG / episodic memory</td><td>外部资料、事件、经验与检索索引</td><td>文档 / 事件写入；需来源、时效和隐私控制</td></tr>
-<tr><td>Skills</td><td>流程说明、代码、资源和工具约束</td><td>维护文件与版本；是否有效通过paired任务评测</td></tr>
-</tbody>
-</table>
-<p>这些层可以协作，但不能相互替代：参数记忆不自动保证事实可追溯，长KV不自动实现跨任务持续学习，skill文件增长不等于参数能力增长。场景验收见<a href="s05_agent_frontiers.html#adaptation">第05章</a>。</p>
+<p><strong>记忆边界：</strong>Engram随训练更新参数；KV是当前计算状态；外部memory/skill是运行资产。完整运行机制在Harness，研究对照见本页<a href="s05_agent_frontiers.html#adaptation">持续适配</a>。</p>
 <h3>MoE、mHC与Engram的实现规格</h3>
+
+
 <table>
 <thead><tr><th>模块</th><th>报告规格与机制</th><th>直接影响与限制</th></tr></thead>
 <tbody>
@@ -150,6 +162,9 @@ global total = (1.5 + 1) × 356 = 890 B/token</div>
 </section>
 <section id="alternatives">
 <h2>与其他架构路线怎样对照</h2>
+<details><summary>展开家族对照与报告版本</summary>
+<section id="citation-sources-13" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>；<a href="https://arxiv.org/abs/2404.19737" title="Better &amp; Faster Large Language Models via Multi-token Prediction · 2024/04/30 · 2404.19737">Multi-Token Prediction</a>；<a href="https://arxiv.org/abs/2607.24653v1" title="Kimi K3: Open Frontier Intelligence · Kimi Team, Bai, Tongtong, Bai, Yifan 等 · 2026/07/27 · 2607.24653v1">Kimi K3: Open Frontier Intelligence</a>。</p></section>
+
 <table>
 <thead><tr><th>路线</th><th>公开机制</th><th>适合补进博客的比较问题</th></tr></thead>
 <tbody>
@@ -160,8 +175,9 @@ global total = (1.5 + 1) × 356 = 890 B/token</div>
 <tr><td>MiMo / Step / Gemma</td><td>SWA / global混合、drafter / MTP、多模态与KV sharing</td><td>小窗口、投机执行、端侧输入怎样服务真实任务</td></tr>
 </tbody>
 </table>
+</details>
 <p>K3路线采用固定报告，不替代滚动页的K3.1当前版本快讯。以上都是独立工业例子；没有同硬件、精度、并发和工作负载的本地复现，不画跨模型speedup排名。<a href="index.html#ref-5">[5]</a> <a href="index.html#ref-33">[33]</a></p>
-<p>新增家族的版本、完整层数量和引用依据见<a href="s06_architecture_landscape.html#families">第06章模型表</a>；GR / AttnRes / mHC、LatentMoE及矩阵优化对照见<a href="s07_architecture_training.html">第07章</a>。这些机制各有实验口径，不能与本章890B/token拼成统一速度榜。</p>
+<p>版本与层数量见本页<a href="s06_architecture_landscape.html#families">模型家族表</a>，残差与优化器见<a href="s07_architecture_training.html">训练机制</a>。这些实验不能与890 B/token规格拼成统一速度榜。</p>
 </section>
 <section id="experiments">
 <h2>待执行：把架构优势放进真实工作负载</h2>
@@ -171,8 +187,11 @@ global total = (1.5 + 1) × 356 = 890 B/token</div>
 <li>在开放实现允许时消融缓存 / replay / 索引计划；不把不存在的可配置项假装成已经完成的实验。</li>
 <li>固定工具、题集与总生成预算，同时报告成功率、工具错误、成本和长上下文质量；改变缓存策略后重新验收输出。</li>
 </ul>
-<p>本章仅完成原报告拆解，实验未执行。推理预算和扩散drafter继续见<a href="s04_inference_diffusion.html">下一章</a>；V4.1的任务生产见<a href="../agent-data-benchmarks/s01_task_synthesis.html#industrial">任务合成专题</a>，benchmark版本与验收口径见<a href="../agent-data-benchmarks/s02_benchmark_map.html">评测地图</a>，异步训练见<a href="s02_agentic_rl.html#asynchrony">第02章</a>。</p>
+<p>本节只拆解原报告，实验未执行。应用条件连接本页的<a href="s04_inference_diffusion.html">扩散drafter</a>与<a href="s02_agentic_rl.html#asynchrony">异步对齐</a>；任务生产的独有流程归任务主讲。</p>
 </section>
+<section id="frontier-evidence" data-frontier-audit="20261114"><h2>缓存规格与能力对照分开</h2><p><a href="../llm-architecture/s02_attention_position_cache.html#frontier-comparison">Kimi Linear 同 token 能力实验</a>用于比较结构；本章 V4.1 字节规格是另一模型和存储口径，不能与该成绩表拼成统一排名。</p></section>
+<div class="course-review"><p><strong>面试短答：</strong>890 B/token只计global cache；它来自entry格式、encoder压缩比和跨层共享。SWA、权重、Engram及workspace另计。Bounded replay用额外计算恢复近似局部状态，必须同时验收质量与短轮延迟。</p></div>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

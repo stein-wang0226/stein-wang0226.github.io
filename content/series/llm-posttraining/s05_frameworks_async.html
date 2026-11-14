@@ -8,6 +8,7 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
 <section id="roles">
 <h2>后训练是多个服务的循环，不只是一次 backward</h2>
 <section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
@@ -102,25 +103,34 @@ domain, difficulty_bucket, completion_order
 accepted_token_count, rejected_token_count, retry_reason</code></pre>
 </section>
 <section id="three-policy">
+<figure class="mechanism-map"><figcaption>异步RL的四个策略角色</figcaption><ol class="mechanism-chain">
+<li><b>behavior μ采样</b><small>实际token、模板、温度与版本</small></li><li><b>old πold计算基线</b><small>训练侧旧快照；不一定等于μ</small></li><li><b>current πθ更新</b><small>重算同一token；核对两段ratio</small></li><li><b>reference πref约束</b><small>独立KL锚点，不替代采样分母</small></li>
+</ol><p class="mechanism-return">↶ trainer 发布权重给 rollout；监控版本差、ratio、有效样本和墙钟成功成本。</p></figure>
 <h2>三类偏移：策略版本、数值实现、完成顺序</h2>
 <section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>。</p></section>
 
-<div class="equation" role="math" aria-label="三策略校正">μ：实际rollout行为分布
-πold：训练侧旧策略；πθ：训练侧当前策略
-πθ/μ = (πθ/πold) · (πold/μ)
-       策略更新比       训练/采样分布校正</div>
+<div class="reading-math" role="math" aria-label="三策略校正">\[
+\frac{\pi_\theta(a\mid h)}{\mu(a\mid h)}
+=\underbrace{\frac{\pi_\theta(a\mid h)}{\pi_{\rm old}(a\mid h)}}_{\text{训练更新比}}
+\underbrace{\frac{\pi_{\rm old}(a\mid h)}{\mu(a\mid h)}}_{\text{训练与采样分布校正}}.
+\]</div>
 <p>策略版本延迟使 rollout 用旧权重；同版本差异还来自精度、kernel、MoE routing、template、截断与采样温度。相同 checkpoint SHA 不能保证 log-prob 完全一致。verl 的三策略路线与 bypass 路线分别处理不同假设，需要按 recipe 解释。<a href="index.html#ref-52">[52]</a></p>
 <p>教学 token 的 μ=0.20、πold=0.22、πθ=0.24，更新比为 1.091、实现校正比为 1.10，总比为 1.20。若只看 πθ/πold，就漏掉采样与训练的差异；这个算例不代表真实框架误差大小。</p>
 <div class="callout caution"><strong>重要性采样不能创造缺失支持。</strong>behavior log-prob 必须对应实际 token IDs、模板和采样分布。top-k / top-p 会截掉部分支持，temperature 改变分布；未采到或被彻底排除的动作，不能仅靠一个有限 ratio 恢复。</div>
 <p>长 trajectory 的 ratio 乘积容易高方差；几何平均、clip、mask 或 residual filter 改变目标与样本利用。它们是稳定训练的近似，不应自动称“完全无偏校正”。</p>
 <h3>完成顺序偏移不属于 token ratio</h3>
 <p>短代码任务先返回，长科学任务还在跑；如果训练持续吃“先到的样本”，科学域占比会下降。即使所有 token 的 log-prob 完全准确，也不会自动补回缺失的域。V4.1 将完成顺序和数值对齐分开讨论；MiMo 用域预算、时长和接受率调节并发。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-27">[27]</a></p>
-<div class="equation" role="math" aria-label="域并发预算示意">MiMo调度关系示意：
-域资源预算 ∝ 目标batch量 Bᵢ × 平均耗时 tᵢ / 接受率ᵢ
-长任务或高拒绝率域，需要更多并发才能维持目标准入占比。</div>
+<div class="reading-math" role="math" aria-label="域并发预算示意">\[
+C_i\propto\frac{B_i\,t_i}{a_i}.
+\]</div>
+<p>\(B_i\) 是目标准入量、\(t_i\) 是平均任务耗时、\(a_i\) 是接受率；这是并发资源关系示意。目标量相同，某域耗时为另一域4倍、接受率只有其一半，维持同准入量约需8倍并发资源；实际还受队列、GPU与环境容量约束。</p>
+<div class="course-review"><p><strong>追问：importance ratio能消除所有异步偏差吗？</strong>它校正有支持的概率分布差异；不会自动恢复没进入batch的长任务，也不能修复错误token/template的log-prob。</p></div>
 <p>同时统计 dispatch、完成、接受和实际训练四层域占比。dynamic sampling、lag filter 和基础设施重试都会改变接受率；拒绝和等待成本算入总预算。</p>
 </section>
 <section id="partial-rollout">
+<figure class="mechanism-map"><figcaption>Partial rollout：暂停的是同一条任务历史</figcaption><ol class="mechanism-chain">
+<li><b>动作生成到边界</b><small>记录 prefix、环境状态、行为版本</small></li><li><b>暂停与保存</b><small>KV / token 历史 / 工具执行进度</small></li><li><b>恢复继续生成</b><small>确认权重与 KV 一致性；按实现处理变化</small></li><li><b>完成轨迹后训练</b><small>逐段保留采样信息与截断原因</small></li>
+</ol><p class="mechanism-note">KV 是某份参数下的计算结果；保存 KV 不等于自动解决跨版本概率校正。</p></figure>
 <h2>Partial rollout 与上下文压缩：旧 KV 不能默认跨权重复用</h2>
 <p>长任务可以中断生成、等待工具、继续 rollout；期间模型参数可能更新。常见 continuation 需重新 prefill 当前历史来重建 KV。V4.1 披露专门的跨 checkpoint 状态处理，MiMo 讨论 re-prefill；这不是所有框架通用的“缓存一直有效”。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-27">[27]</a></p>
 <p>KV 来自旧权重的投影和历史层状态。换权重后复用可能造成模型函数混合，是否可接受取决于特定算法与实现。记录每段策略版本、历史、重算和缓存来源，才能判断概率计算对应哪个真实分布。</p>
@@ -150,6 +160,17 @@ for i, adv in enumerate(advantages):
 # 具体值、模型路径和并行资源由对应文档/recipe确定。</code></pre>
 <p>SGLang teacher 路线对 exact input IDs 评分，使用 <code>max_new_tokens=0</code> 取得条件概率；teacher 与 student tokenizer 必须相容。这说明集成 OPD 需要真实概率信号，不能拿一个只返回答案文本的普通 API 代替同样算法。</p>
 </section>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>AReaL：同一实验中的异步耗时与质量</h2>
+<p><a href="https://arxiv.org/html/2505.24298v2">AReaL v2，Table 1、§7.1</a>比较同步与异步训练，使用每节点 8 张 H800。模型为 R1-Distilled-Qwen，表内各规模固定节点数和 PPO 步数。数学为 AIME 2024，代码为 LiveCodeBench（2024-08-01 至 2025-02-01），最长生成 32K，每题采样 32 次、报告平均 pass@1（%）；耗时为小时。</p>
+<table><thead><tr><th>规模 / 节点 / steps</th><th>指标</th><th>同步→异步成绩</th><th>同步→异步耗时</th></tr></thead><tbody>
+<tr><td>1.5B / 16 / 1000</td><td>AIME</td><td>42.0→42.2</td><td>41.0→14.8 h</td></tr>
+<tr><td>7B / 24 / 1000</td><td>AIME</td><td>63.0→63.1</td><td>57.7→25.4 h</td></tr>
+<tr><td>14B / 32 / 320</td><td>LiveCodeBench</td><td>56.7→58.1</td><td>48.8→21.9 h</td></tr>
+<tr><td>32B / 48 / 240</td><td>LiveCodeBench</td><td>61.2→61.0</td><td>51.1→31.1 h</td></tr>
+</tbody></table>
+<p>固定节点下缩短墙钟时间说明该实验更快；若按全时独占所有卡计费，GPU-hours 也按同一比例下降，这是由节点数×8×小时计算的推导，不是实际账单。32B 质量略降，且表中没有重跑波动、峰值显存和能耗，不能据此证明所有规模质量完全相等，也不能排出 verl、slime、NeMo RL 的跨框架通用名次。</p>
+</section>
 <section id="compute">
 <h2>算力构成：教师、grader、重试和拒绝样本都计入</h2>
 <figure>
@@ -169,6 +190,7 @@ for i, adv in enumerate(advantages):
 <!-- READING:HISTORY:START --><details data-reading-history><summary>框架表扩展前的冻结说明</summary>
 <p>小预算算法学习先确保能精确检查 token / loss；工业大模型再匹配 Megatron / FSDP、rollout 引擎、环境并发与同步方案。已有复杂 harness 则优先保留真实 API 调用语义，避免为训练把整段运行重新拼成一个不存在的 prompt。</p>
 </details><!-- READING:HISTORY:END -->
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

@@ -2,15 +2,30 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>04 · 残差、归一化与稳定性</title><meta name="description" content="解释Pre/Post-Norm、RMSNorm、梯度直通、初始化与QK尺度，区分AttnRes和mHC的对象、约束与稳定性证据。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>Pre-Norm 残差块：保留主干，学习增量</figcaption><ol class="mechanism-chain"><li><b>输入状态 x</b><small>一支保留作 residual</small></li><li><b>Norm(x) → 子层 F</b><small>归一化后做 Attention 或 FFN</small></li><li><b>增量 F(Norm(x))</b><small>初始化与尺度影响数值范围</small></li><li><b>x + 增量 → 下一层</b><small>主干与分支共同传播梯度</small></li></ol><p class="mechanism-return">旁路：x 直接进入加法节点。Post-Norm 在相加之后归一化；两种位置不能互换描述。</p></figure>
 <section id="purpose"><h2>稳定性来自一条完整数值路径</h2>
+<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
+
 <p class="lead">深层网络既要传递表示，也要把梯度送回前层。残差、Norm、初始化和优化器共同控制尺度；任一机制的局部性质都不能独立保证大模型训练稳定。前沿残差改变信息读取方式，需要连同激活保存、通信和数值误差评估。</p>
 <p>先修：<a href="s01_transformer_foundations.html#block">decoder block</a>与链式法则。基础结论来自归一化论文和固定实现，前沿机制的具体报告见<a href="../llm-research-map-2026/s07_architecture_training.html#residual">研究地图第07章</a>。</p></section>
 <section id="norm-position"><h2>Pre-Norm 与 Post-Norm 的梯度路径</h2>
-<div class="equation" role="math">Pre-Norm：y = x + F(N(x))
-∂y/∂x = I + J_F(N(x)) J_N(x)
-Post-Norm：y = N(x + F(x))
-∂y/∂x = J_N(x+F(x)) [I + J_F(x)]
-深层反向传播包含各层 Jacobian 的连乘</div>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1607.06450" title="Layer Normalization · Ba, Jimmy Lei, Kiros, Jamie Ryan, Hinton, Geoffrey E. · 2016/07/21 · 1607.06450">LayerNorm</a>。</p></section>
+
+<p>令 \(N\) 为Norm，\(F\) 为子层，\(J\) 表示局部Jacobian。按链式法则，Pre-Norm先归一再进入F，而直接相加的x导数为单位矩阵；Post-Norm对相加后的所有分支再作用同一个Norm Jacobian。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+y_{\rm pre}&=x+F(N(x)),\\
+J_{\rm pre}&=I+J_F(N(x))J_N(x),\\
+y_{\rm post}&=N(x+F(x)),\\
+J_{\rm post}&=J_N(x+F(x))(I+J_F(x)).
+\end{aligned}
+\]</div>
+<div class="reading-math" role="math">\[
+\nabla_{x_\ell}L=J_\ell^\top\nabla_{x_{\ell+1}}L,\qquad
+\frac{\partial x_L}{\partial x_0}=J_{L-1}\cdots J_1J_0.
+\]</div>
+<p><strong>方向例：</strong>LayerNorm对所有分量同时加常数不敏感，\(N(x+c\mathbf1)=N(x)\)，所以 \(J_N(x)\mathbf1=0\)。Pre-Norm中该方向仍可经显式残差传播。取 \(F(x)=ax\)，Post-Norm的输入均值方向则经Norm被消去。它解释路径差异，不意味着任意损失、方向或完整网络都不衰减。</p>
 <p>Pre-Norm 的残差分支给出了显式 I 路径，但完整 Jacobian 仍可能因其它项放大/衰减。Post-Norm 的所有路径经过 Norm 的 Jacobian。Xiong 等在均值场与初始化条件下分析了输出附近梯度和 warm-up，并报告其任务中的 Pre-LN 实验；不能推成“所有 Pre-Norm 都不需要 warm-up”。<a href="index.html#ref-6">[6] On Layer Normalization</a></p>
 <figure><div class="flow">
 <div class="stage"><b>残差主路</b><small>x 直接参与相加<br>给表示/梯度短路径</small></div>
@@ -20,9 +35,14 @@ Post-Norm：y = N(x + F(x))
 </div><figcaption>稳定性检查的依赖链。图不表示这些因素可以分别带来确定比例的收益。</figcaption></figure>
 <p>现代模型可能采用 residual scaling、额外 Norm、深度相关初始化、多路残差与融合 kernel。阅读 config 时需找出真实的运算顺序，不能只按参数名称判断。</p></section>
 <section id="rmsnorm"><h2>RMSNorm 保留均值，主要调整幅度</h2>
-<div class="equation" role="math">LayerNorm(x) = γ ⊙ (x−mean(x))/√(var(x)+ε) + β
-RMSNorm(x) = γ ⊙ x/√(mean(x²)+ε)
-归一化轴通常是单个 token 的 hidden 维度；不是 batch 统计</div>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
+
+<div class="reading-math" role="math">\[
+\mu=\frac1d\sum_i x_i,\quad \sigma^2=\frac1d\sum_i(x_i-\mu)^2,\qquad
+\operatorname{LN}(x)=g\odot\frac{x-\mu\mathbf1}{\sqrt{\sigma^2+\varepsilon}}+b,\quad
+\operatorname{RMSNorm}(x)=g\odot\frac{x}{\sqrt{\frac1d\sum_i x_i^2+\varepsilon}}.
+\]</div>
+<p><strong>数值例：</strong>\(x=[1,3]\)，取scale=1、bias=0，教学例忽略epsilon。LN均值2、方差1，输出[−1,1]；RMS的平方均值5，输出约[0.4472,1.3416]。两者都规范幅度，只有LN显式中心化。实际epsilon必须保留以处理零向量。</p>
 <p>RMSNorm 不显式减均值，计算较简洁；它不是 BatchNorm，也不意味着所有激活标准正态。ε、γ、统计累积精度和输出精度都影响行为。固定 Llama 源码先转 FP32、求平方均值、用 rsqrt，再转回输入 dtype；这说明低精度主干仍可能保留高精度统计。<a href="index.html#ref-6">[6] RMSNorm</a><a href="index.html#ref-8">[8] L53–67</a></p>
 <pre><code># 摘录自固定 Transformers v4.57.1 LlamaRMSNorm；Apache-2.0
 input_dtype = hidden_states.dtype
@@ -52,8 +72,16 @@ return self.weight * hidden_states.to(input_dtype)
 <p>因此本文分析建议：既看 gradient/loss，也看保存激活、重算、PP 传输和约束误差；不能把减少某个映射的 traffic 改写成整个训练时间同比下降。</p></section>
 <section id="evaluation"><h2>把结构、配方和故障来源拆开对照</h2>
 <p>先固定数据、token、主干和精度，再分别改变 Norm/残差；各方案需要有合理学习率与初始化，而不是用未经调参的单点证明胜负。等 token 与等总计算预算都要记录。对深度选择机制还要测激活占用、重算与 optimizer step 时间；此处为待执行设计。</p>
-<p>一次 loss spike 的归因可沿“样本/mask → 逐层激活 → QK/gate → 梯度 → optimizer → 通信/恢复”排查。坏数据、数值溢出和同步错误产生的表象相似；恢复 checkpoint 时要保留 optimizer、scheduler、RNG 与数据游标，避免换状态后将不可比结果当作修复成功。</p>
+<ol><li><strong>先查输入：</strong>坏样本、mask、长度与packing边界。</li><li><strong>再查数值：</strong>逐层激活→QK/gate→梯度→optimizer更新。</li><li><strong>最后查系统：</strong>通信、同步与恢复；checkpoint应包含optimizer、scheduler、RNG和数据游标，才能比较恢复前后。</li></ol>
 <details><summary>自测：RMSNorm 为什么不能消除所有训练不稳定？</summary><p>它主要规范局部输入尺度，没有固定所有矩阵范数、QK 最大值、非线性 Jacobian、optimizer 更新和数据分布。它是配方的一部分，局部归一化不等于全网稳定证明。</p></details>
 <p>下一章转向历史状态：递归模型压缩的是序列信息，AttnRes/mHC 处理的是深度信息，两条轴要明确区分。</p></section>
 <section id="sources"><h2>来源</h2><p><a href="index.html#ref-6">[6] Pre/Post-LN 与 RMSNorm 原论文</a>、<a href="index.html#ref-8">[8] 固定源码</a>；前沿残差与优化器引用<a href="../llm-research-map-2026/s07_architecture_training.html#sources">固定报告索引</a>。检查协议为本文建议，没有实测失稳率。</p></section>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>mHC：稳定约束的同预算能力对照</h2>
+<p><a href="https://arxiv.org/html/2512.24880v1">mHC v1，Table 4</a>在 27B、262B 训练 tokens 下比较 Baseline、HC、mHC，使用 AdamW、序列长度 4096，HC/mHC 扩展率 n=4。成绩为作者报告的 %，非本站重训结果。</p>
+<table><thead><tr><th>残差连接</th><th>BBH</th><th>GSM8K</th><th>MATH</th></tr></thead><tbody>
+<tr><td>Baseline</td><td>43.8</td><td>46.7</td><td>22.0</td></tr><tr><td>HC</td><td>48.9</td><td>53.2</td><td>26.4</td></tr><tr><td>mHC</td><td>51.0</td><td>53.8</td><td>26.0</td></tr></tbody></table>
+<p>mHC 的 BBH、GSM8K 高于 HC，MATH 略低；稳定性还需结合混合矩阵约束与训练轨迹，不能由成绩直接证明。相同 token 不等于相同 FLOPs，额外 stream、投影与 kernel 的开销需另量；该表未提供峰值显存与完整费用。优化器资源比较见<a href="../llm-research-map-2026/s07_architecture_training.html#muon">训练架构优化器专题</a>。</p>
+</section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>

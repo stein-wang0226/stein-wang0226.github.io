@@ -53,6 +53,17 @@
       ]
     },
     {
+      "id": "rl-detailed",
+      "label": "RL 从详细推导到训练实践",
+      "summary": "先读原有详细 RL 手册的符号、推导与图解，再看现代 RLVR 配方、Agent 信用分配和 OPD。",
+      "stages": [
+        {"entry": "rl-interview-guide", "anchor": "pg-to-ppo", "question": "策略梯度怎样走到 PPO？", "output": "逐项公式、直觉与原有推导图"},
+        {"entry": "posttraining-algorithms", "anchor": "rloo-grpo", "question": "GRPO 怎样采样、比较和更新？", "output": "数值例子、论文配方与训练诊断"},
+        {"entry": "posttraining-rewards", "anchor": "long-credit", "question": "多步任务的成败怎样归因？", "output": "过程信号、状态分组与信用分配"},
+        {"entry": "posttraining-opd", "anchor": "why-on-policy", "question": "教师怎样纠正学生的实际路径？", "output": "同状态评分、蒸馏梯度与独立验收"}
+      ]
+    },
+    {
       "id": "model-training",
       "label": "模型与训练",
       "summary": "把基础机制、数据阶段、参数更新和新架构证据接起来。",
@@ -253,32 +264,32 @@
     {
       "key": "token-tensor-loss",
       "label": "token、张量与训练目标",
-      "entry": "architecture-transformer",
-      "anchor": "tensor-flow"
+      "entry": "llm-architecture",
+      "anchor": "architecture-transformer--tensor-flow"
     },
     {
       "key": "attention-rope-kv",
       "label": "Attention、RoPE与KV",
-      "entry": "architecture-attention",
-      "anchor": "head-sharing"
+      "entry": "llm-architecture",
+      "anchor": "architecture-attention--head-sharing"
     },
     {
       "key": "ffn-moe",
       "label": "FFN与MoE",
-      "entry": "architecture-moe",
-      "anchor": "routing"
+      "entry": "llm-architecture",
+      "anchor": "architecture-moe--routing"
     },
     {
       "key": "residual-norm",
       "label": "残差与归一化",
-      "entry": "architecture-residual",
-      "anchor": "norm-position"
+      "entry": "llm-architecture",
+      "anchor": "architecture-residual--norm-position"
     },
     {
       "key": "hybrid-state",
       "label": "混合状态架构",
-      "entry": "architecture-hybrid",
-      "anchor": "linear"
+      "entry": "llm-architecture",
+      "anchor": "architecture-hybrid--linear"
     },
     {
       "key": "pretrain-cpt",
@@ -289,38 +300,38 @@
     {
       "key": "sft-rft-preference",
       "label": "SFT、RFT与偏好",
-      "entry": "posttraining-supervision",
-      "anchor": "taxonomy"
+      "entry": "llm-posttraining",
+      "anchor": "posttraining-supervision--taxonomy"
     },
     {
       "key": "classic-policy-gradient",
       "label": "经典策略梯度推导",
-      "entry": "rl-interview-guide",
-      "anchor": "pg-to-ppo"
+      "entry": "llm-posttraining",
+      "anchor": "posttraining-algorithms--policy-gradient"
     },
     {
       "key": "modern-rl",
       "label": "现代RL目标、GRPO与异质数据",
-      "entry": "posttraining-algorithms",
-      "anchor": "policy-gradient"
+      "entry": "llm-posttraining",
+      "anchor": "posttraining-algorithms--rloo-grpo"
     },
     {
       "key": "opd-self-distillation",
       "label": "OPD与自蒸馏",
-      "entry": "posttraining-opd",
-      "anchor": "why-on-policy"
+      "entry": "llm-posttraining",
+      "anchor": "posttraining-opd--why-on-policy"
     },
     {
       "key": "reward-credit",
       "label": "奖励、PRM与长程信用",
-      "entry": "posttraining-rewards",
-      "anchor": "signal-types"
+      "entry": "llm-posttraining",
+      "anchor": "posttraining-rewards--signal-types"
     },
     {
       "key": "async-frameworks",
       "label": "异步、policy lag与框架",
-      "entry": "posttraining-frameworks",
-      "anchor": "three-policy"
+      "entry": "llm-posttraining",
+      "anchor": "posttraining-frameworks--three-policy"
     },
     {
       "key": "harness-context-memory",
@@ -331,25 +342,26 @@
     {
       "key": "rag-evidence",
       "label": "RAG与证据检索",
-      "entry": "agent-rag",
-      "anchor": "retrieval"
+      "entry": "agent-systems",
+      "anchor": "agent-rag--retrieval"
     },
     {
       "key": "planning-budget",
       "label": "规划与推理预算",
-      "entry": "agent-planning",
-      "anchor": "budget"
+      "entry": "agent-systems",
+      "anchor": "agent-planning--budget"
     },
     {
       "key": "trust-permissions",
       "label": "信任边界与权限",
-      "entry": "agent-trust",
-      "anchor": "threat-model"
+      "entry": "agent-systems",
+      "anchor": "agent-trust--threat-model"
     },
     {
       "key": "task-synthesis",
       "label": "Harbor任务合成与验证",
-      "entry": "agent-task-synthesis"
+      "entry": "agent-data-benchmarks",
+      "anchor": "agent-task-synthesis--contract"
     },
     {
       "key": "harbor-framework",
@@ -360,33 +372,38 @@
     {
       "key": "science-contract",
       "label": "科学统计合同",
-      "entry": "scientific-task-family"
+      "entry": "agent-data-benchmarks",
+      "anchor": "scientific-task-family--statistics"
     },
     {
       "key": "benchmark-protocol",
       "label": "Benchmark定义与口径",
-      "entry": "agent-benchmark-map"
+      "entry": "agent-data-benchmarks",
+      "anchor": "agent-benchmark-map--metrics"
     },
     {
       "key": "gui-agents",
       "label": "GUI环境与任务状态验证",
-      "entry": "research-agent-frontiers",
-      "anchor": "gui"
+      "entry": "llm-research-map-2026",
+      "anchor": "research-agent-frontiers--gui"
     },
     {
       "key": "serving-cost",
       "label": "容量与成功成本",
-      "entry": "serving-capacity"
+      "entry": "llm-serving",
+      "anchor": "serving-capacity--cost"
     },
     {
       "key": "dlm-objective",
       "label": "DLM范式与目标",
-      "entry": "dlm-paradigms"
+      "entry": "dlm-survey",
+      "anchor": "dlm-paradigms--parameterization"
     },
     {
       "key": "diffusion-speculation",
       "label": "DLM投机解码",
-      "entry": "dlm-speculative"
+      "entry": "dlm-survey",
+      "anchor": "dlm-speculative--system-role"
     },
     {
       "key": "vlm-foundations",
@@ -527,6 +544,54 @@
     ]
   },
   "assets": [
+    {
+      "source": "assets/research/codex-memory-20261115/sources.json",
+      "url": "/assets/research/codex-memory-20261115/sources.json"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/user-notes-original.txt",
+      "url": "/assets/research/codex-memory-20261115/user-notes-original.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/compaction-prompt.txt",
+      "url": "/assets/research/codex-memory-20261115/compaction-prompt.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/phase1-system-v1.txt",
+      "url": "/assets/research/codex-memory-20261115/phase1-system-v1.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/phase1-input.txt",
+      "url": "/assets/research/codex-memory-20261115/phase1-input.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/phase2-consolidation-v1.txt",
+      "url": "/assets/research/codex-memory-20261115/phase2-consolidation-v1.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/memory-read-v1.txt",
+      "url": "/assets/research/codex-memory-20261115/memory-read-v1.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/ad-hoc-instructions.txt",
+      "url": "/assets/research/codex-memory-20261115/ad-hoc-instructions.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/phase2-consolidation-v2.txt",
+      "url": "/assets/research/codex-memory-20261115/phase2-consolidation-v2.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/memory-read-v2.txt",
+      "url": "/assets/research/codex-memory-20261115/memory-read-v2.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/LICENSE-openai.txt",
+      "url": "/assets/research/codex-memory-20261115/LICENSE-openai.txt"
+    },
+    {
+      "source": "assets/research/codex-memory-20261115/NOTICE-openai.txt",
+      "url": "/assets/research/codex-memory-20261115/NOTICE-openai.txt"
+    },
     {
       "source": "assets/research/my-work/sources.json",
       "url": "/assets/research/my-work/sources.json"

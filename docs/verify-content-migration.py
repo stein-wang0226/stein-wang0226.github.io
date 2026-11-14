@@ -294,7 +294,7 @@ def validate_contract(catalog, site, redirects, baseline):
     return errors, targets | seen
 
 
-def verify(allow_content_changes=False, require_clean=False):
+def verify(allow_content_changes=False, require_clean=False, output=None):
     baseline = read_json(MANIFEST)
     receipts_path = ROOT / "docs/content-changes.json"
     receipts = {r["source"]: r for r in read_json(receipts_path)["changes"]} if receipts_path.exists() else {}
@@ -305,6 +305,24 @@ def verify(allow_content_changes=False, require_clean=False):
     verified, changed, anchors, markers = 0, [], 0, 0
     content_sources = {e["source"] for e in catalog["entries"] if e["origin"] == "local"}
     source_urls = {e["source"]: e["url"] for e in catalog["entries"] if e["origin"] == "local"}
+    longform = {e["id"] for e in catalog["entries"] if e.get("reading_mode") == "longform"}
+    reworked = {e["source"]: e for e in catalog["entries"]
+                if e["origin"] == "local" and
+                (e.get("reading_revision") == "learning-20261115"
+                 or e["id"] in longform or e.get("series") in longform)}
+    rendered_routes = set()
+    if output:
+        output = output.resolve()
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from check import validate
+        from organization import check as organization_check
+        build_errors, _ = validate(output, ROOT)
+        errors.extend(build_errors)
+        errors.extend(organization_check(ROOT, output))
+        info_path = output / "build-info.json"
+        if info_path.is_file():
+            rendered_routes = {normalize_url("/" + p) for p in read_json(info_path)["files"]}
+            rendered_routes.add("/build-info.json")
     moved = {r["before"]: r["after"] for r in baseline["files"] if r["action"] == "move"}
     for record in baseline["files"]:
         old, new = record["before"], record["after"]
@@ -335,10 +353,33 @@ def verify(allow_content_changes=False, require_clean=False):
             verified += 1
         if new.endswith(".html"):
             doc = document(data)
+            revised = reworked.get(new)
+            if revised:
+                # Approved reassembly is authorized only with exact receipts and
+                # a checked build. Both immutable baselines remain untouched.
+                receipt = receipts.get(new, {})
+                if receipt.get("sha256") != current or not receipt.get("reason"):
+                    errors.append(f"{new}: rework requires exact current SHA and review reason")
+                if not output:
+                    errors.append(f"{new}: rework requires --output for public compatibility verification")
+                else:
+                    path = output / revised["url"].lstrip("/")
+                    path = path / "index.html" if revised["url"].endswith("/") else path
+                    if path.is_file():
+                        doc = document(path.read_bytes())
+                    else:
+                        errors.append(f"{new}: missing rendered compatibility page")
             missing = set(record["anchors"]) - set(doc.anchors)
             if missing:
                 errors.append(f"{new}: lost anchors {sorted(missing)}")
-            if Counter(record.get("markers", [])) != Counter(doc.markers):
+            prior_markers = record.get("markers", [])
+            current_markers = doc.markers
+            if revised:
+                # Navigation is generated from the shared renderer. AUTO insert
+                # markers remain an exact source contract.
+                prior_markers = [m for m in prior_markers if "AUTO:INSERT:" in m]
+                current_markers = [m for m in document(data).markers if "AUTO:INSERT:" in m]
+            if Counter(prior_markers) != Counter(current_markers):
                 errors.append(f"{new}: changed automation/navigation markers")
             anchors += len(record["anchors"])
             markers += len(record.get("markers", []))
@@ -350,13 +391,16 @@ def verify(allow_content_changes=False, require_clean=False):
                     if parsed.scheme or parsed.netloc:
                         continue
                     target = normalize_url(urljoin(public_url, link))
-                    if target not in routes:
+                    if target not in routes and not (revised and target in rendered_routes):
                         errors.append(f"{new}: unregistered local target {link} ({target})")
                     if parsed.fragment:
                         candidate = next((r for r in baseline["files"] if r["public_url"] and
                                           normalize_url(r["public_url"]) == target), None)
                         if candidate and candidate["after"] and candidate["after"].endswith(".html"):
-                            path = ROOT / candidate["after"]
+                            path = (output / candidate["public_url"].lstrip("/") if revised and output
+                                    else ROOT / candidate["after"])
+                            if revised and candidate["public_url"].endswith("/"):
+                                path = path / "index.html"
                             if path.is_file() and unquote(parsed.fragment) not in document(path.read_bytes()).anchors:
                                 errors.append(f"{new}: missing linked anchor {link}")
     for e in baseline["external_links"]:
@@ -377,7 +421,7 @@ def verify(allow_content_changes=False, require_clean=False):
         print("LATER CONTENT CHANGES (not a claim of byte-identical preservation):")
         print(json.dumps(changed, indent=2))
     print(f"PASS: {verified} exact SHA matches; {len(changed)} documented later changes; "
-          f"{anchors} original source anchors; {markers} original markers; "
+          f"{anchors} original anchors checked in source or public compatibility; {markers} baseline markers audited; "
           f"{len(routes)} registered public routes")
     entries = catalog["entries"]
     collections = sum(e["origin"] == "local" and e["status"] == "published" and
@@ -396,12 +440,13 @@ def main():
     parser.add_argument("--allow-content-changes", action="store_true",
                         help="Report later catalog HTML body SHA changes; still require original anchors/markers")
     parser.add_argument("--require-clean", action="store_true", help="Reject obsolete source/output copies")
+    parser.add_argument("--output", type=Path, help="Check a built site for approved learning reassembly")
     args = parser.parse_args()
     try:
         if args.snapshot:
             snapshot()
             return 0
-        return verify(args.allow_content_changes, args.require_clean)
+        return verify(args.allow_content_changes, args.require_clean, args.output)
     except (KeyError, ValueError, TypeError, OSError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1

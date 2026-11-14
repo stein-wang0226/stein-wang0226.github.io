@@ -203,6 +203,8 @@ def load_content(root):
             errors.append(str(exc))
 
     series_orders = {}
+    from course import anchors as course_anchors
+    anchor_cache = {}
     def target(value, label):
         if not isinstance(value, dict):
             errors.append(f"{label}: expected entry/anchor object")
@@ -216,8 +218,9 @@ def load_content(root):
                 errors.append(f"{label}.anchor: expected a local target")
             else:
                 path = root / str(row.get("source", ""))
-                if path.is_file() and value["anchor"] not in re.findall(
-                        r'\bid=["\']([^"\']+)', path.read_text(encoding="utf-8")):
+                if path.is_file() and row["id"] not in anchor_cache:
+                    anchor_cache[row["id"]] = course_anchors(root, row, entries)
+                if path.is_file() and value["anchor"] not in anchor_cache[row["id"]]:
                     errors.append(f"{label}.anchor: missing #{value['anchor']} in {row['id']}")
         return row
     external_urls = set()
@@ -225,6 +228,10 @@ def load_content(root):
         if not isinstance(entry, dict):
             continue
         label = f"catalog[{entry.get('id')}]"
+        if entry.get("reading_mode") not in {None, "longform"}:
+            errors.append(f"{label}.reading_mode: expected longform or omitted")
+        if entry.get("reading_mode") and entry.get("kind") != "series":
+            errors.append(f"{label}.reading_mode: only series can assemble a course")
         if entry.get("origin") == "external":
             if entry.get("url") in external_urls:
                 errors.append(f"{label}.url: duplicate external URL")

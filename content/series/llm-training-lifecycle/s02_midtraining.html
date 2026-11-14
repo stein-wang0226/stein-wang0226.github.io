@@ -9,6 +9,10 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>Midtraining 的归因实验：两条起点接受相同 SFT</figcaption><ol class="mechanism-chain mechanism-compare">
+<li><b>固定 Base checkpoint</b><small>统一后训练配方、评测任务与推理预算</small></li><li><b>对照：直接 SFT</b><small>Base → 相同 SFT → 留出评测</small></li><li><b>实验：先 Midtraining</b><small>Base → 混合训练 → 相同 SFT → 评测</small></li><li><b>对比与算力账本</b><small>报告初始化收益，也报告额外训练预算</small></li>
+</ol><p class="mechanism-note">两条支路用于归因，不能把不同模型、SFT 版本或预算的结果拼成受控对照。</p></figure>
 <section id="definitions">
 <h2>阶段名称与训练目标要分开看</h2>
 <p class="lead">CPT（Continued Pretraining）强调从已有模型继续训练；Midtraining 强调通用训练与任务后训练之间的能力准备。工业报告里的 late pretraining、annealing、领域 CPT 与 Midtraining 有交叠，不能仅根据阶段名猜测数据和 loss。</p>
@@ -26,6 +30,8 @@
 </section>
 <section>
 <h2 id="recipe">工业配方：Nemotron 的混合 CPT → 固定 SFT</h2>
+
+
 <p>2026-10-15 的 <em>Priming Base Models for Agentic Post-Training</em> 给出 Nemotron 3.5 的具体数据桶，并比较起始 Base 与经过 Midtraining 的 Base 接受相同 SFT 后的结果。这类实验能解释初始化贡献，同时要承认 Midtraining 组多使用了训练算力。<a href="index.html#ref-1">[1]</a></p>
 <figure>
 <div class="flow" aria-label="Nemotron 的主要对照流程">
@@ -69,8 +75,10 @@
 <p>作者发现 LoCoDiff、仓库 / trace 预测损失等代理指标对最终排名不够稳定。实践上同时保留代理损失和固定下游验收；不能由此断言所有模型的 perplexity 都无价值。</p>
 </section>
 <section>
-<h2 id="landscape">前沿路线：结构、交互与能力保留</h2>
-<table>
+<h2 id="landscape">前沿路线：先看结构与能力保留</h2>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1905.07830" title="HellaSwag: Can a Machine Really Finish Your Sentence? · Zellers, Rowan, Holtzman, Ari, Bisk, Yonatan 等 · 2019/05/19 · 1905.07830">HellaSwag</a>。</p></section>
+
+<details><summary>展开七条路线的论文配方、数值与退化结果</summary><table>
 <thead><tr><th>工作与定位</th><th>公开数据 / 训练</th><th>可支持的判断与边界</th></tr></thead>
 <tbody>
 <tr><td>Qwen3-Coder-Next<br><a href="index.html#ref-2">[2]</a> 工业 coding agent</td><td>Qwen3-Next Base；万亿级 Midtraining，约600B仓库 token、370种语言；262,144 上下文。自然代码、repo、PR、合成QA、多框架轨迹和少量指令；NTP、FIM、best-fit packing、重复片段 mask。</td><td>后接验证轨迹 SFT与专家训练 / 蒸馏。报告有同 scaffold 收益和跨 scaffold 迁移实验；未公开完整混合比及逐角色 loss，不能套用 Nemotron mask。</td></tr>
@@ -82,7 +90,7 @@
 <tr><td>Function-Aware FIM<br><a href="index.html#ref-8">[8]</a> 函数依赖补全</td><td>968 Python仓库、约400K样本、2.6B token；Gemini3Flash 生成 rationale 与候选函数体，ground truth用作judge过滤。部分起点是Qwen2.5-Coder-Instruct。</td><td>固定R2E-Gym：7B15.0 → 17.8、14B26.2 → 29.2 Verified。Qwen3+SWE-Lego31.8 → 35.0，但pipeline也改变；不能与不同的官方报告基线直接求差，3评测种子不等于3训练种子。</td></tr>
 </tbody>
 </table>
-<p>三个设计方向值得实验：按<strong>跨文件 / 跨提交 / 跨回合</strong>组织输入；把 API 和工作流的约束放入条件；用通用回放与分项回归控制遗忘。这些方向有不同来源支持，但“更多合成 trace 必然更好”没有得到支持。</p>
+</details><ul><li><strong>结构：</strong>按跨文件、跨提交、跨回合组织输入。</li><li><strong>条件：</strong>提供实际API和工作流约束，避免引用文件不可见。</li><li><strong>保留：</strong>通用回放与逐项回归；更多合成trace未必更好。</li></ul>
 <details><summary>为什么函数级任务与技能包可能有用</summary>
 <p>随机文件切片可能缺少实际补全所需的依赖。函数级样本有机会选择签名、调用者、相关定义和测试；技能包则把主说明引用的脚本或规范插到可读位置，减少引用落空。模型从中学习上下文关系，而不是仅学习一个长文档的局部续写。</p>
 <p>收益可能来自结构、数据质量、教师解释或后训练配合。Function-Aware FIM 的教师合成与 Instruct 起点意味着不能把结果解释为“纯自然自监督让 Base 获得 agent 能力”。SPT 的固定预算数据置换也需要与相同预算的其他来源比较。</p>
@@ -90,6 +98,8 @@
 </section>
 <section>
 <h2 id="data">数据与伪代码：一个 CSV 任务的四种视角</h2>
+<figure class="mechanism-map"><figcaption>同一任务在数据层逐步增加可学习关系</figcaption><ol class="mechanism-chain">
+<li><b>文档：空值语义</b><small>读取CSV，保留合法的0</small></li><li><b>仓库：文件依赖</b><small>README、实现与测试同时可见</small></li><li><b>修改：前后变化</b><small>issue→bug→有效patch</small></li><li><b>轨迹：行动与反馈</b><small>读取→修改→测试→交付</small></li></ol></figure>
 <pre><code>{"kind":"document",
  "text":"CSV row counts exclude the header. Empty value cells are missing."}
 
@@ -165,9 +175,13 @@ save_checkpoint(agent, "agent-sft")</code></pre>
 <section id="mixture">
 <h2>配比、回放和目标权重是三个独立选择</h2>
 <p>按样本数混合容易被超长 stdout 改变输入预算。按输入 token 设配比更便于记账，但目标 token 与梯度权重仍需单独计量。一条 10,000-token trace 若只有500 assistant目标，其输入占用与监督贡献不同。</p>
-<div class="equation" role="math" aria-label="数据桶有效目标占比">输入配比：wₖ = bucket_input_tokens / total_input_tokens
-目标配比：qₖ = bucket_target_tokens / total_target_tokens
-加权目标：L = Σₖ αₖ Lₖ；αₖ 是否显式设定必须记录。</div>
+<p>令桶 \(k\) 的输入占比为 \(w_k\)，目标密度为 \(\rho_k=N_{{\rm target},k}/N_{{\rm input},k}\)。桶内平均损失为 \(L_k\)。全局目标token平均的权重由实际目标数决定：</p>
+<div class="reading-math" role="math">\[
+q_k=\frac{w_k\rho_k}{\sum_jw_j\rho_j},\qquad
+L_{\rm global}=\sum_kq_kL_k,\qquad
+L_{\rm bucket}=\sum_k\alpha_kL_k.
+\]</div>
+<p><strong>1000-token例：</strong>文档900token全监督，trace100token只监督5个assistant目标。输入占比为90%/10%，目标数为900/5，因此trace在全局token平均下的权重 \(5/905\approx0.55\%\)。若显式按桶设 \(\alpha_{\rm trace}=10\%\)，就是另一个目标；“输入10%trace”不能背成“梯度权重10%”。</p>
 <p>如果所有目标直接汇总做全局 token 平均，目标密度高的数据桶贡献较多。若先按每桶均值再加权，效果又不同。比较观察 mask 时，应固定相同轨迹与输入长度，同时报告有效目标、归一化方式和 assistant 梯度权重，避免误把目标重加权解释为单一语义因素。</p>
 <p>回放用于缓解遗忘，但比例取决于模型、目标、预算与接受的回归。PRISM 的分项下降说明不能只看综合平均。建议先冻结通用、领域、长上下文与指令基线，定期评估；再比较配比、训练时长和数据质量，保留可回退 checkpoint。<a href="index.html#ref-6">[6]</a></p>
 <details><summary>继续训练前的决策清单</summary>
@@ -196,6 +210,8 @@ save_checkpoint(agent, "agent-sft")</code></pre>
 <p>主要配方与消融：<a href="index.html#ref-1">[1] Nemotron</a>；工业工程路线：<a href="index.html#ref-2">[2] Qwen3-Coder-Next</a>、<a href="index.html#ref-3">[3] GLM-5</a>。开放流程与回放：<a href="index.html#ref-4">[4] Olmo 3</a>、<a href="index.html#ref-27">[27] 官方流程</a>。研究前沿：<a href="index.html#ref-5">[5] MidTool</a>、<a href="index.html#ref-6">[6] PRISM</a>、<a href="index.html#ref-7">[7] SPT</a>、<a href="index.html#ref-8">[8] Function-Aware FIM</a>、<a href="index.html#ref-9">[9] 分布桥接</a>。</p>
 <p class="note">基于用户提供的 <code>agent-base-mid-training-20261114.html</code> 扩展与修订，六个主题锚点 recipe / results / landscape / data / harbor / sources 保留。原件逐字节保存在仓库 <code>content/archive/agent-base-mid-training-20261114.original.html</code>，只作来源追溯。版本和修订明细见 <code>docs/llm-training-research-20261114.md</code>。</p>
 </section>
+<details><summary>自测：同SFT下Midtraining组更好，证明了什么？</summary><p>支持这套额外训练改善了下游初始化；还未证明相同总预算投在Midtraining最值得。需要与更充分SFT、教师/数据生产成本及能力回归对照。</p></details>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

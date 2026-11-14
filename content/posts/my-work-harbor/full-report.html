@@ -305,30 +305,39 @@
 </div>
 
 <div class="tldr">
-  <strong>TL;DR</strong>&nbsp;&nbsp;我们设计了一条"LLM 角色接力 + 落盘产物驱动"的自动化评测任务产线，能将公开 GEO/SRA 研究批量转化为确定性判分的生物信息学 benchmark 任务。核心洞察是把“出题”拆成候选发现、深审、造题、静态门禁、盲测、评审与 Harbor package 验收的可追溯链路。当前本地已有 <strong>740</strong> 个可生产任务（ready：原始数据完整、通过深审、可进入生产闭环）和 <strong>413</strong> 个完成任务包（done）；核心生产成功率是 <strong>ready → done</strong>，已从早期约 <strong>10%</strong> 提升到保守 <strong>70%+</strong>（成熟闭环验证镜像读数 91.0%）。费用按 <strong>GPT-5.6-Sol 单价口径</strong>低估测算，当前单位 done 约 <strong>$13–27</strong>；实际生产可混用 GPT-5.6-Terra 与 GPT-5.5，成本还有下探空间。
+  <strong>核心方法</strong>
+  <ul>
+    <li><strong>角色接力：</strong>把 GEO/SRA 研究转成题面、环境、参考路径、判分器和校准证据。</li>
+    <li><strong>分开治理：</strong>题面保留科学选择空间；冻结校准约束合法路径和错误路径。</li>
+    <li><strong>分开验收：</strong>生产入库、判分正确、独立难度与科学质量分别举证。历史规模和费用集中见后文。</li>
+  </ul>
 </div>
 
-<h2>Motivation</h2>
+<h2 id="problem">1. 研究问题：怎样规模化构造科学任务</h2>
 
-<p>当前 AI agent 在生物信息学领域的能力评测面临一个根本矛盾：高质量的评测任务需要领域专家花费大量时间手工构造（一道好题可能需要一位博士生一周的时间），但规模化评测却需要数百道覆盖不同分析轴的任务。这使得评测集的构建成为 benchmark 迭代的瓶颈。</p>
+<p>科学任务构造需要同时完成<strong>数据核验、问题定义、参考计算和独立判分</strong>。规模化的难点是使每道题都有这些证据，同时保留方法选择空间。</p>
 
 <div class="glossary"><em>术语约定：GEO（Gene Expression Omnibus）是 NCBI 的公开组学数据仓库，每条研究以 GSE 编号标识；docker/podman 是当前本地隔离执行 solver / verifier 的沙箱口径；Terminal-Bench 3（简称 TB3）是 Harbor 框架的标准化评测任务格式；Codex CLI 是以非交互模式调用 LLM 的命令行工具。</em></div>
 
-<p>现有方法的不足在于：人工出题无法保证判分的确定性和可复现性；简单的"答案查表比对"容易被 reward hacking 绕过；题面过度指定统计方法则会退化为"翻译题"——agent 仅需机械编程而无需科学判断。我们需要一条能批量产出"难度来自科学而非体积"的任务的自动化链路。</p>
+<ul>
+  <li><strong>题面过细：</strong>直接给出归一化、检验和阈值，主要考实现指定配方。</li>
+  <li><strong>判分过窄：</strong>隐藏唯一答案会误拒其他合法分析。</li>
+  <li><strong>判分过松：</strong>字段可拼凑、固定答案可通过时，测到的可能是投机能力。</li>
+</ul>
 
-<h2>Key Insight</h2>
+<h2 id="roles">2. 核心机制：信息隔离与工件交接</h2>
 
-<p>我们的核心观察是：评测任务的构造本身可以被建模为一条信息逐步丰富、逐步冻结的流水线——类似于工业装配线上的"站位"设计。每个站位（LLM 角色）只接收它需要的信息、只产出结构化的落盘产物，而站位之间的信息隔离恰好构成了题目安全性的天然屏障。</p>
+<p>每个角色只接收完成当前判断所需的材料，把结论写成下一角色能核验的工件。<strong>信息隔离依赖实际工作区和权限</strong>：solver 看公开数据与题面，隐藏 tests、solution 和 authoring；在 prompt 中要求“不看答案”不足以完成隔离。</p>
 
-<p>用一个类比：这像是一家出版社的编辑流程——选题编辑（explorer）筛选稿件，审稿人（auditor）做深度评审，作者（author）撰写正文，校对员（gates）做格式检查，匿名审稿人（solver）盲审，终审编辑（judger）下最终结论。每个环节看到的材料不同、权限不同，但产物环环相扣。</p>
+<p>explorer 发现候选，auditor 核查数据与科学问题，author 构造任务，gates 检查包契约，solver 留下盲测轨迹，judger 根据轨迹与判分证据裁决。角色名称只是接口；可复放工件和可验证隔离才是机制。</p>
 
-<h2>Approach</h2>
+<h2 id="pipeline">3. 方法与判分：先冻结，再盲测</h2>
 
 <h3>方法总览</h3>
 
 <p>GEO-Harbor-Bench 将 NCBI GEO 公开研究转化为 Terminal-Bench 3 风格任务。核心原则只有三条：角色隔离、静态门禁前置、跨模型评审。</p>
 
-<div class="figure-box">
+<div class="figure-box work-mechanism" data-reading-plot-zoom>
   <svg viewBox="0 0 700 785" style="width:100%;max-width:680px;height:auto;">
     <defs>
       <marker id="arr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
@@ -506,6 +515,22 @@
 
 <p><strong>为什么前置门禁重要？</strong> 零 token 门禁在沙箱前拦截结构错误、配方泄漏和依赖缺失，避免无效盲测。</p>
 
+<h3 id="joint-path">开放方法为何仍能确定性判分</h3>
+<p>把合法解法登记成<strong>完整输出路径</strong>，并对每条路径的排名、方向、统计量与元数据做联合检查。令第 k 条路径的接受集合为 \(\mathcal A_k\)，最终接受集合是这些集合的并：</p>
+<div class="reading-math">\[
+\begin{aligned}
+\mathcal A&=\bigcup_{k=1}^{K}\mathcal A_k,\\
+V(y)&=\mathbf 1\{y\in\mathcal A\}.
+\end{aligned}
+\]</div>
+<p>教学例：路径 A 允许输出 (1,10)，路径 B 允许 (2,20)。逐字段“取任一路径都可”会误收 (1,20)；完整路径校验要求两个字段来自同一合法计算。实际科学任务还需校准数值容差、并列、缺失和排序边界。</p>
+<ul>
+  <li><strong>正控制：</strong>合法路径真实执行并通过，覆盖题面允许的选择。</li>
+  <li><strong>负控制：</strong>known-wrong、固定答案和混拼输出执行后必须被拒绝。</li>
+  <li><strong>冻结：</strong>题面、fixture、verifier、校准结果绑定同一包指纹；修改后重新校准。</li>
+</ul>
+<p>这是一套可检验的准入条件。有限校准无法证明已经覆盖所有合法解或所有投机路径。</p>
+
 <h3>交付产物：task package 目录结构</h3>
 
 <p>最终交付的是自包含 Harbor task package。核心原则很简单：<strong>考生只看题面和公开数据；答案、判分器和出题证据随包保存，但在盲测时物理隔离。</strong></p>
@@ -526,7 +551,7 @@
 
 <p>导出时丢弃逐轮草稿、盲测留档和临时探针；保留题面、运行环境、判分器、参考解法与 authoring 证据链。这样上游既能直接运行任务，也能复核“这道题为什么成立”。</p>
 
-<h2>Case Study: CRISPR-MHC-II-Screen 合成任务示例</h2>
+<h2 id="crispr">4. CRISPR-MHC-II-Screen：从计数矩阵到任务包</h2>
 
 <p>这个 case 主要展示流水线最终合成出的 Harbor 任务长什么样：它不是论文复述，也不是固定代码配方，而是把真实 GEO 研究转化为可盲测、可判分、可复核的任务包。</p>
 
@@ -568,7 +593,7 @@ solver 可以自行选择合理的归一化、效应量估计和统计检验方�
 <h3>合成过程只保留关键转折</h3>
 <p>候选审计确认原始计数矩阵可得；早版题面因方法写得过细被门禁拦截；修订版只保留科学目标、输入输出契约和判分边界，并登记多条合法解法路径。最终任务通过盲测、verifier 复算与评审闭环，形成自包含 Harbor package。</p>
 
-<h2>Preliminary Results</h2>
+<h2 id="historical-results">5. 历史生产记录：分母与版本先于数字</h2>
 
 <p>结果口径直接看生产转化：<strong>ready → done</strong>。ready = 原始数据完整、通过深审、可进入生产闭环；done = 通过验证并完成 Harbor package 自包含验收。</p>
 
@@ -577,29 +602,29 @@ solver 可以自行选择合理的归一化、效应量估计和统计检验方�
   <tr>
     <th>指标</th>
     <th>数值</th>
-    <th>意义</th>
+    <th>适用口径与限制</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>可生产任务（ready）规模</td>
     <td><strong>740</strong> 个去重后的 GEO 可生产任务；其中当前批次 <strong>668</strong> 个</td>
-    <td>已经进入 700+ 级别的生产供给池</td>
+    <td>原稿的跨批次库存；668 是其中一个批次，须先核对时间窗。</td>
   </tr>
   <tr>
     <td>完成任务包（done）库存</td>
     <td><strong>413</strong> 个规范 GSE done 任务；413/413 已完成自包含 Harbor package</td>
-    <td>已通过验证、完成 package 验收并登记入库</td>
+    <td>原稿 package 库存记录；不能用 413/740 代替匹配批次成功率。</td>
   </tr>
   <tr class="highlight-row">
     <td>ready → done 成功率</td>
     <td>从早期约 <strong>10%</strong> 提升到保守 <strong>70%+</strong>；成熟闭环验证阶段镜像读数 <strong>91.0%</strong></td>
-    <td>这是最核心的生产效率提升</td>
+    <td>来自不同阶段读数；批次、尝试定义和分母本次未复核，不能据此归因某项优化。</td>
   </tr>
   <tr>
     <td>成功率提升</td>
     <td>约 <strong>+60</strong> 个百分点</td>
-    <td>无效闭环和返工显著减少，单位 done 成本同步下降</td>
+    <td>约 10% 与约 70% 的算术差；不是已复核的受控效果。</td>
   </tr>
   <tr>
     <td>候选 → ready 出池率</td>
@@ -609,15 +634,21 @@ solver 可以自行选择合理的归一化、效应量估计和统计检验方�
   <tr>
     <td>基础设施损耗</td>
     <td><strong>3.6%</strong> 基础设施错误率</td>
-    <td>失败主因已从基础设施转向可解释的科学/校准路由</td>
+    <td>原稿错误率；需要错误类别计数和共同分母才能比较失败构成。</td>
   </tr>
   </tbody>
 </table>
 
-<p>单题 demo 的价值在于定位瓶颈：数据预热、依赖预装、verifier 复算和批量调度，比单纯更换模型更关键。</p>
+<p><strong>批次成功率</strong>应固定同一准入批次、截止时间和终态定义。尚未结束的任务需单列，不能悄悄从分母删掉；按任务计数与按尝试计数也要分开。</p>
+<div class="reading-math">\[
+p_{\rm task}=
+\frac{N_{\rm done\ in\ cohort}}
+{N_{\rm admitted\ in\ cohort}}.
+\]</div>
 
-<h2>Related Work &amp; Positioning</h2>
+<h2 id="positioning">6. 方法定位与优化选择</h2>
 
+<details><summary>展开原稿的 benchmark 对比表（研究线索）</summary>
 <table>
   <thead>
   <tr>
@@ -661,35 +692,10 @@ solver 可以自行选择合理的归一化、效应量估计和统计检验方�
   </tbody>
 </table>
 
-<p>GEO-Harbor-Bench 与已有生信 benchmark 的核心差异在于 <strong>将"出题"本身自动化</strong>——不是自动做题，而是自动出题并验证题目质量。这使得评测集能以远低于人工成本的速度扩展，同时通过三级防御（门禁 + 盲测 + 跨模型评审）维持题目质量。</p>
+</details>
+<p>本项目关注<strong>任务构造与质量检查的自动化</strong>。模型解题能力仍需独立测量；门禁、盲测和跨模型评审构成可追踪检查链，无法自动提供难度保证。</p>
 
-<h2>Production Pipeline Update：解决双端矛盾并提高有效产出</h2>
-
-<div class="tldr">
-  <strong>更新结论</strong>&nbsp;&nbsp;最新生产链路已经从“单题修补”升级为“ready → done”的连续产线。ready 指原始数据完整、通过深审、可进入生产闭环；done 指完成验证和 Harbor package 自包含验收。当前本地已有 700+ ready 任务和 413 个 done package；ready→done 成功率从早期约 10% 提升到保守 <strong>70%+</strong>。
-</div>
-
-<h3>当前新链路：从候选发现到 ready/done 沉淀</h3>
-
-<p>新链路拆成六步：候选供给、审计筛选、Author 造题、校准覆盖、闭环验证、交付登记。题面只写科学目标，不泄漏统计配方。</p>
-
-<div class="artifact-block"><pre>GEO/SRA 候选
-  → 审计筛选：数据可得、科学问题成立、输出可判
-  → Author 造题：只写目标，不泄漏方法配方
-  → 校准覆盖：合法路径接受，错误路径拒绝
-  → 闭环验证：docker/podman 中 verifier 复算 + 证据链复核
-  → ready 池：原始数据完整、通过深审、可进入生产闭环
-  → done 入库：Harbor package 自包含验收通过</pre></div>
-
-<p>关键变化：每步都有可复核证据；失败能定位到数据、题面、校准、verifier、基础设施或科学设计，而不是笼统归因给模型。</p>
-
-<h3>主要卡点：双端矛盾如何解决</h3>
-
-<p>最大卡点是双端矛盾：题面要开放，verifier 又要确定性判分。写太细会变成配方翻译题；写太开放又会导致校准覆盖不足。</p>
-
-<p>解决方式是拆开治理：题面保留合理自由度，校准登记可执行路径。reference、accepted、known-wrong 与边界 case 一起约束 verifier，既保住科学难度，也避免隐藏唯一答案。</p>
-
-<h3>真正有效的优化</h3>
+<h3>可复用的工程选择</h3>
 
 <table>
   <thead><tr><th>优化点</th><th>怎么改</th><th>为什么有效</th></tr></thead>
@@ -702,19 +708,17 @@ solver 可以自行选择合理的归一化、效应量估计和统计检验方�
   </tbody>
 </table>
 
-<h3>链路优化效果：成功率与单位成本</h3>
+<h2 id="cost">7. 单位成功成本：真实账本与假设估算</h2>
+<p>真实单位成功成本以<strong>全部尝试资源除以最终成功数</strong>，包含重试、失败、校准和 adjudication。若每次尝试成本固定为 c、成功概率为 p，且每次独立同分布，则尝试次数的期望为 1/p：</p>
+<div class="reading-math">\[
+\begin{aligned}
+C_{\rm measured}&=\frac{\sum_i c_i}{N_{\rm done}},\\
+\mathbb E[C_{\rm geometric}]&=\frac{c}{p}.
+\end{aligned}
+\]</div>
+<p>教学例：每次 100 tokens，p 从 0.1 变为 0.7，则单位成功期望从 1000 降到 142.86 tokens，下降约 <strong>85.7%</strong>。这只说明固定成本假设下的算术关系；实际每次成本和任务难度可能一起变化。</p>
 
-<table>
-  <thead><tr><th>指标</th><th>当前读数</th><th>解释</th></tr></thead>
-  <tbody>
-    <tr><td>可生产任务（ready）规模</td><td><strong>668</strong> 个当前批次 ready；跨批次去重后 <strong>740</strong> 个 GEO ready。</td><td>原始数据完整、通过深审、可进入生产闭环。</td></tr>
-    <tr><td>done 库存</td><td><strong>413</strong> 个规范 GSE done；413/413 package complete。</td><td>已通过 Harbor package 自包含验收。</td></tr>
-    <tr><td>主成功率口径</td><td><strong>ready → done</strong> 从早期约 <strong>10%</strong> 提升到保守 <strong>70%+</strong>；成熟闭环验证镜像读数 <strong>91.0%</strong>。</td><td>这是本报告最核心的生产效率指标。</td></tr>
-    <tr><td>候选出池率</td><td><strong>26.3%</strong> 候选→ready 出池率；审计放行率 <strong>28.9%</strong>。</td><td>这是前端供给筛选效率，不是 ready→done 成功率。</td></tr>
-    <tr><td>基础设施损耗</td><td>基础设施错误率 <strong>3.6%</strong>。</td><td>失败主要不再由不可控基础设施主导，便于恢复与复跑。</td></tr>
-  </tbody>
-</table>
-
+<details><summary>展开原稿 usage、tokens 与费用估算（分母及价格待核）</summary>
 <p>成本按本地 <strong>4,601</strong> 条 usage 记录粗估；下表采用偏低估的典型主链路口径，不把所有重试和 adjudication 全额摊入。</p>
 
 <table>
@@ -723,7 +727,7 @@ solver 可以自行选择合理的归一化、效应量估计和统计检验方�
     <tr><td>单次主生产尝试</td><td><strong>约 1.0–2.0M</strong></td><td><strong>约 20–30K</strong></td><td>偏低估口径；用于汇报典型成本，不作为预算上限。</td></tr>
     <tr><td>早期单位 done</td><td><strong>约 10–20M</strong></td><td><strong>约 0.20–0.30M</strong></td><td>按 ready→done 约 10% 折算：每个 done 约 10 次主尝试。</td></tr>
     <tr><td>当前单位 done</td><td><strong>约 1.4–2.9M</strong></td><td><strong>约 29–43K</strong></td><td>按 ready→done 70%+ 折算：每个 done 约 1.4 次主尝试。</td></tr>
-    <tr><td>相对改善</td><td colspan="2"><strong>约 79% token 成本下降</strong></td><td>主要来自成功率提升与零 token 门禁减少无效盲测。</td></tr>
+    <tr><td>原稿相对改善</td><td colspan="2"><strong>约 79% token 成本下降</strong></td><td>原稿数值。本次未取得对应全尝试账本；仅用10%→70%固定成本关系算出的是85.7%，二者不可混用或因果化。</td></tr>
   </tbody>
 </table>
 
@@ -738,19 +742,25 @@ solver 可以自行选择合理的归一化、效应量估计和统计检验方�
   </tbody>
 </table>
 
-<p>注：金额按 Sol input/output 计价；预算预留可按 2–4M input + 30–60K output 放大，实际混合模型生产会更低。</p>
+<p>注：金额按原稿 Sol input/output 计价；原稿预算预留为 2–4M input + 30–60K output。混合模型的单价、token 用量和成功率需分别核验，才能比较单位成功成本。</p>
+</details>
 
 <h3>解释边界</h3>
 
-<p>这些数字说明生产链路效率，不等同于最终 benchmark 难度认证；正式交付仍需独立难度测量。</p>
+<ul>
+  <li><strong>历史库存：</strong>可用于说明当时产物形态；不能替代当前状态检查。</li>
+  <li><strong>费用估算：</strong>原稿价格与尝试覆盖未复核；不能当实际账单。</li>
+  <li><strong>科学难度：</strong>需要冻结包上的跨模型盲测、失败归因和独立复核。</li>
+</ul>
 
-<h2>Takeaway：这次应重点展示的链路价值</h2>
-
-<div class="tldr">
-  <strong>汇报口径</strong>&nbsp;&nbsp;新链路的价值不是“多写 prompt”或“多堆模型调用”，而是把开放科学问题与确定性判分拆开治理：题面保留真实分析自由度，校准与 verifier 负责覆盖合法路径和拒绝错误路径。这个结构性优化把 ready→done 成功率从早期约 10% 提升到保守 70%+；费用表按 GPT-5.6-Sol 单价估算，实际生产若混用 GPT-5.6-Terra / GPT-5.5，成本还有进一步下降空间。
-</div>
-
-<p>后续只需补充：跨模型难度测量、批次状态刷新和交付包质量抽检；候选清单、阈值争论和沙箱日志留在附录。</p>
+<h2 id="interview">8. 面试复述与追问</h2>
+<ul>
+  <li><strong>怎样做到开放且可判？</strong>冻结多条完整合法路径，联合校验输出，执行正负控制；追问：容差为何合理？</li>
+  <li><strong>为什么多角色？</strong>明确工件职责和可见材料；追问：怎样证明 solver 实际无法读 tests？</li>
+  <li><strong>失败后先做什么？</strong>按八类归因路由，区分规格、verifier、科学难点和资源故障；追问：修包后哪些证据失效？</li>
+  <li><strong>如何报告规模与效率？</strong>库存、匹配批次任务率和尝试率分别统计；追问：pending 和 retry 是否进入分母？</li>
+  <li><strong>Refinement 已证明有效吗？</strong>当前冻结记录的难度 drop=0、accepted child=0；需要规格与独立难度门共同通过，不能用产线库存代替。</li>
+</ul>
 
 </div></body>
 </html>

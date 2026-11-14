@@ -3,16 +3,24 @@
 <title>LLM 服务容量、延迟与任务成本</title>
 <meta name="description" content="权重/KV/递归状态/激活/临时区显存账本，TTFT/ITL/goodput和长程Agent成本；下载规划CSV、JSON与测量协议。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>容量账本：显存与负载怎样影响成功成本</figcaption><ol class="mechanism-chain"><li><b>权重 + KV + 工作区</b><small>模型、精度、长度和并发决定容量</small></li><li><b>承载请求与排队</b><small>不足时等待、拒绝或换出</small></li><li><b>吞吐与尾部延迟</b><small>同负载测 TTFT / TPOT / p95</small></li><li><b>每个成功任务成本</b><small>计入重试、失败与空闲资源</small></li></ol><p class="mechanism-return">↶ 修改并发或模型后重测同一负载；tokens/s 不能独立代表任务交付效率。</p></figure>
 <section id="overview"><p class="eyebrow">Capacity &amp; cost · 2026-11-14</p><h2 id="reading-section-1">从服务容量到每个成功任务的总成本</h2>
 <p class="lead">“模型装得下”只说明权重和最低运行状态可放入设备。服务还要为并发历史、prefill激活、临时工作区、graph、通信、碎片和峰值留空间。Agent多轮重算与失败尝试也应纳入成本。</p>
-<p>先修<a href="s01_runtime_scheduling.html">调度与cache</a>、<a href="s02_parallel_quantization.html">并行与精度</a>。本章提供规格推导和待执行测量协议；没有GPU运行、真实价格或训练结果。</p>
-<figure><div class="flow"><div class="stage"><b>静态容量</b><small>权重、adapter、固定buffer<br>实际分片与复制</small></div><div class="stage"><b>动态容量</b><small>KV、状态、激活<br>并发、长度与cache保留</small></div><div class="stage"><b>服务表现</b><small>队列、TTFT、ITL<br>吞吐、P95与goodput</small></div><div class="stage"><b>任务成本</b><small>GPU、CPU、网络<br>所有尝试 / 独立成功</small></div></div><figcaption>容量上界不能作为可投产并发。工作集与SLO仍需实际负载测量。</figcaption></figure>
+<p><strong>本节为规格推导和测量协议。</strong>没有GPU运行、真实价格或训练结果；容量上界需再经峰值和SLO验证。</p>
 </section>
 <section id="ledger"><h2>按对象建立显存账本</h2>
-<div class="equation" role="math" aria-label="服务显存账本">Mpeak = Mweights + Madapters + MKV + Mrecurrent_state
-      + Mactivations + Mworkspace + Mcommunication + Mgraph + Mallocator
-MKV = Σlayer Σunique_token_blocks (nKV,local · dhead · [bytesK+bytesV])
-递归状态示意：每request每层 dv×dk×bytes + 卷积/辅助状态</div>
+<div class="reading-math">\[
+\begin{aligned}
+M_{\rm peak}&amp;=M_{\rm weights}+M_{\rm adapters}\\
+&amp;\quad+M_{\rm KV}+M_{\rm state}+M_{\rm activations}\\
+&amp;\quad+M_{\rm workspace}\\
+&amp;\quad+M_{\rm communication}\\
+&amp;\quad+M_{\rm graph}+M_{\rm allocator},\\
+M_{\rm KV}&amp;=\sum_l T_l h_l d_l(b_{K,l}+b_{V,l}).
+\end{aligned}
+\]</div>
+<p>各项按同一时刻、互不重复的分配口径计账；若框架workspace已含通信buffer，不再次相加。式中 \(T_l\) 为第l层的唯一物理token槽数，\(h_l\) 为本rank保存的KV头数；分页未用槽、共享和窗口策略均在 \(T_l\) 中，scale等另计。递归矩阵单层单请求可按\(d_vd_kb\)估算，再加卷积和辅助状态。</p>
 <p>全局KV随历史长度增长；SWA按有效窗口和实际保留策略核算；递归矩阵通常不随T线性增长，但branch/checkpoint会增加副本。共享cache按唯一物理block算；TP下按本地KV heads及是否复制算。MLA、CED/CSA2和混合模型必须用真实状态布局，不能硬套普通GQA公式。</p>
 <table><thead><tr><th>对象</th><th>已知时可估算</th><th>仍需测量</th></tr></thead><tbody>
 <tr><td>权重</td><td>tensor形状×dtype/scales，按rank实际分片</td><td>未量化/未分片层、加载双份、adapter与通信buffer</td></tr>
@@ -24,12 +32,23 @@ MKV = Σlayer Σunique_token_blocks (nKV,local · dhead · [bytesK+bytesV])
 </section>
 <section id="example"><h2>70B、TP4、32K历史的可复算例子</h2>
 <p>结构取公开Qwen2.5-72B的80层、8KV heads、128head维度；权重参数数用N=70B做理想近似，不是精确checkpoint参数量。本文选TP4、BF16、名义80×10⁹ bytes/rank容量，16×10⁹ bytes/rank预留，假设KV均匀分片、无prefix共享。长度是已缓存输入+已生成token总和，32,768不超过该config原生位置上限。<a href="#sources">来源</a>。</p>
-<div class="equation" role="math" aria-label="70B服务容量推导">全模型KV/token = 80×8×128×(2+2) = 327,680 bytes = 320 KiB
-TP4本地KV/token = 81,920 bytes = 80 KiB（8heads可整分）
-32,768 token/request：本地KV = 2,684,354,560 bytes = 2.5 GiB
-BF16权重/rank ≈ 70×10⁹×2/4 = 35×10⁹ bytes
-规划KV预算 = 80×10⁹ − 35×10⁹ − 16×10⁹ = 29×10⁹ bytes
-理想并发上界 = floor(29×10⁹ / 2,684,354,560) = 10</div>
+<p>记\(m\)为全模型每token的KV字节，\(m_{\rm loc}\)为本地每token字节，\(M_{\rm req}\)为单请求本地KV，\(W_{\rm loc}\)为本地权重，\(B_{\rm KV}\)为本地KV预算。</p>
+<div class="reading-math">\[
+\begin{aligned}
+m&amp;=80\times8\times128\times(2+2)\\
+&amp;=327{,}680\ \text{bytes}=320\ \text{KiB},\\
+m_{\rm loc}&amp;=m/4=81{,}920\ \text{bytes},\\
+M_{\rm req}&amp;=32{,}768\,m_{\rm loc}\\
+&amp;=2{,}684{,}354{,}560\ \text{bytes}\\
+&amp;=2.5\ \text{GiB},\\
+W_{\rm loc}&amp;\approx70\times10^9\times2/4\\
+&amp;=35\times10^9\ \text{bytes},\\
+B_{\rm KV}&amp;=(80-35-16)\times10^9\\
+&amp;=29\times10^9\ \text{bytes},\\
+C_{\rm ideal}&amp;=\left\lfloor B_{\rm KV}/M_{\rm req}\right\rfloor=10.
+\end{aligned}
+\]</div>
+<p><strong>单位：</strong>\(1\ \text{GB}=10^9\)bytes，\(1\ \text{GiB}=2^{30}\)bytes。TP4可把8个KV heads分成每rank2个；若head复制或层/状态未分片，不能直接除TP。</p>
 <p>选择8请求/TP4组时，理想权重+KV+预留约72.47GB/rank（十进制）。这只是本文容量候选，8请求是否满足时延、峰值和框架cache预算仍未知。名义80GB不是实机可用字节；32K时总输入+输出不得超原生上限，不能输入32K再额外生成无限token。</p>
 <table><thead><tr><th>每请求缓存长度</th><th>本地KV（BF16）</th><th>理想上界（同29GB预算）</th><th>含义</th></tr></thead><tbody>
 <tr><td>8,192</td><td>0.625GiB</td><td>43</td><td>容量界；不保证43请求的ITL</td></tr>
@@ -50,19 +69,26 @@ BF16权重/rank ≈ 70×10⁹×2/4 = 35×10⁹ bytes
 </tbody></table>
 <p>closed-loop固定并发会在服务变慢时自动降低提交率，可能掩盖排队；open-loop按固定到达过程测试超载和尾延迟，但需限流与报告未完成请求。两种协议分别命名。冷cache/热cache、warm-up、request timeout和输出长度分布都要公开。</p>
 <p>比较不同系统必须固定checkpoint、模板、tokenizer、精度、采样、长度、硬件/驱动、版本、cache策略和请求集。MoE同时记录专家负载和dispatch；spec同时记录draft成本、接受token分母与target调用数。没有这些条件，单个tokens/s没有充分可比性。</p>
+<p><strong>教学时间例：</strong>提交时刻0秒，三个输出token分别在1.0、1.2、1.5秒到达。TTFT=1.0秒，ITL为0.2和0.3秒，TPOT=\((1.5-1.0)/(3-1)=0.25\)秒。端到端至少1.5秒，若工具或收尾还需时间则更长；全测量窗吞吐必须另算。</p>
 </section>
 <section id="rollout"><h2>从服务容量到长程Agent rollout</h2>
-<div class="equation" role="math" aria-label="Little定律与有效轨迹">稳定区间Little定律：系统内平均任务L = 到达率λ × 平均完成时间W
-有效轨迹/小时 = 满足科学/权限/版本准入的轨迹数 / 全部墙钟小时
-训练准入率 = 可用轨迹数 / 全部采样尝试数</div>
+<div class="reading-math">\[
+L=\lambda W.
+\]</div>
+<p>同一稳定系统边界下，\(L\)为平均在途任务数（排队加服务），\(\lambda\)为平均到达/完成率，\(W\)为平均停留时间。它不要求Poisson到达，但需长期流量与平均值存在、统计边界一致；持续过载不能套稳定等式。</p>
+<p><strong>教学算例：</strong>每秒2任务、平均完成30秒，在途平均60任务。工具等待使时间增至60秒且吞吐仍能稳定保持2/s，在途需120；只有80个槽时就不能同时满足这两个假设。有效轨迹/小时另按科学、权限和版本准入后的轨迹计数。</p>
 <p>工具等待使W增加，系统同时持有更多任务；KV若一直保留，会进一步降低GPU准入。CPU环境、存储、网络、检索与verifier需单独测队列。异步rollout可增加重叠，也增加policy lag，不能把过期/不可验证轨迹计作有效更新。</p>
 <p>Dense64卡rollout池规划16个TP4组；若每组候选并发8，理论活跃生成上限128不是端到端每秒完成数。MoE512卡池、TP8和EP路线需重新核算模型与KV复制，不能用Dense每组并发直接乘64。完整128/1024卡集群规划在<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">科学后训练方案</a>。</p>
 </section>
 <section id="cost"><h2 id="reading-section-6">每个成功任务的成本：计入失败尝试和各类资源</h2>
-<div class="equation" role="math" aria-label="成功成本">Ctotal = Σ GPU-hours·GPU-price + CPU-hours·CPU-price
-       + memory/storage/network + verifier/teacher + 重试与失败成本
-Csuccess = Ctotal / N独立验收成功
-若N成功=0：成本/成功未定义或无穷；保留全部成本，不填0</div>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
+
+<div class="reading-math">\[
+C_{\rm total}=\sum_r u_r\,v_r,\qquad
+C_{\rm success}=\frac{C_{\rm total}}{N_{\rm success}}\quad(N_{\rm success}&gt;0).
+\]</div>
+<p>\(u_r\)为互不重复的资源用量，\(v_r\)为对应单价；模型、CPU、存储、网络、teacher和verifier按统一边界计入全部尝试。失败成本已在资源账中，不重复加一份“失败费”。价格未知时分别报资源向量。</p>
+<p><strong>教学算例：</strong>10次尝试共用8 GPU-hours、20 CPU-hours，4次独立成功；每成功为2 GPU-hours和5 CPU-hours。假设教学单价分别2与0.1成本单位/小时，总成本18、每成功4.5。单价非实际报价；零成功时比值未定义，保留总用量与0成功，不能填0成本。</p>
 <p>同时报GPU-hours/成功、CPU-hours/成功等无需价格的资源指标；价格未知保留null。预算包含教师、reference、PPO critic、神经reward，以及失败环境和闲置预留。共享GPU按可解释分摊规则报告，不能因共置就称额外模型免费。</p>
 <p>BoN要计所有候选与selector，Agent要计每轮prefill/重算和工具，训练方案要同时给训练/采样成本与固定预算终评。训练成本与推理成本分开，若计算摊销需写明部署任务量。收益按研究组置信区间与失败类别报告，不虚构采购价格或吞吐。</p>
 </section>
@@ -77,4 +103,6 @@ Csuccess = Ctotal / N独立验收成功
 <li><a href="https://arxiv.org/abs/2309.06180v1">PagedAttention</a>：block与共享；<a href="https://arxiv.org/abs/2401.09670v3">DistServe</a>：TTFT/TPOT与SLO goodput；<a href="https://arxiv.org/abs/2402.02750v2">KIVI</a>：KV量化对象。</li>
 <li><a href="s01_runtime_scheduling.html#implementation">固定vLLM/SGLang源码</a>：版本、token/cache预算；模型组合和容量仍待实测。</li>
 </ol><p class="note">截至2026-11-14；N=70B、80GB名义容量、16GB预留和并发8均为本文选择。CSV/JSON是规格推导，未申请GPU、训练或运行benchmark。</p></section>
+<section id="frontier-evidence" data-frontier-audit="20261114"><h2>容量规划与外部实测分开</h2><p><a href="../llm-research-map-2026/s04_inference_diffusion.html#frontier-comparison">推理专题的并发加速数据</a>是外部作者报告；本章容量 CSV 与测量模板仍是规划，不能用外部加速比填入本地 TTFT、ITL、显存或价格。</p></section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>

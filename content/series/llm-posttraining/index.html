@@ -24,30 +24,18 @@
 </figure>
 <div class="callout"><strong>阅读时抓住五个变量：</strong>状态从谁来，目标 token 是什么，反馈由谁提供，advantage 与 loss 如何聚合，最终如何独立验收。相同算法名不保证相同实验；不同模型报告也不能直接组成性能排行榜。</div>
 </section>
-<section class="integration-overview"><h2>先修、产物与下一步</h2><p>先了解<a href="../llm-training-lifecycle/">训练阶段与checkpoint交接</a>；需要经典策略梯度时查<a href="../rl-interview-guide.html#pg-to-ppo">完整推导</a>。本系列产物是一套明确状态、目标、奖励、教师、版本与预算的训练协议；第六章用代码、科学和GUI案例把协议落到具体任务。</p></section>
-<!-- READING:CHAPTERS -->
-<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；当前顺序见上方目录</summary>
-<section id="read">
-<h2>六章阅读路径</h2>
-<div class="chapter-grid">
-<a class="card" href="s01_supervision_preference.html"><span class="eyebrow">01 / 可靠行为</span><h3 id="reading-section-3">SFT、RFT 与偏好优化</h3><p>角色 mask、恢复轨迹、数据分布、DPO / SimPO / ORPO / KTO，连接 Qwen、Kimi、GLM、DeepSeek 与 MiMo 工业链路。</p></a>
-<a class="card" href="s02_rl_algorithms.html"><span class="eyebrow">02 / 策略更新</span><h3>RL 目标与主流算法</h3><p>PPO / GAE、RLOO、GRPO、DAPO、Dr. GRPO、GSPO、CISPO、两种 SAPO 与 SAO，拆解 ratio、baseline、分母和信用。</p></a>
-<a class="card" href="s03_opd_self_distillation.html"><span class="eyebrow">03 / 教师与自蒸馏</span><h3>OPD：分布、梯度与前沿路线</h3><p>完整词表与采样梯度、MOPD / MOPD2、OPSD / SDPO / SDPG、Guided-OPD / TISD，分析工业分歧与能力遗忘。</p></a>
-<a class="card" href="s04_environment_reward_credit.html"><span class="eyebrow">04 / 反馈与信用</span><h3>RL 环境、奖励与过程监督</h3><p>独立 verifier、PRM / value / advantage 的差别，PURE / Cliff / GiGPO / RLDS / KnowGPO，代码与科学任务的奖励漏洞。</p></a>
-<a class="card" href="s05_frameworks_async.html"><span class="eyebrow">05 / 训练系统</span><h3 id="reading-section-7">后训练框架：分布式执行、异步更新与训练偏差</h3><p>TRL、verl、slime、AReaL、OpenRLHF、NeMo RL、ROLL、RLinf、SkyRL、Agent Lightning；策略延迟、调度和固定源码。</p></a>
-<a class="card" href="s06_task_cases_experiments.html"><span class="eyebrow">06 / 完整任务案例</span><h3>从任务输入到训练与交付</h3><p>代码修复、Harbor 科学分析和 GUI 状态修改三条链路；可下载轨迹契约、对照矩阵、训练诊断与成本口径。</p></a>
-</div>
-<p>初学者先读<a href="../llm-training-lifecycle/">训练全链路</a>；算法细节从第二章开始，OPD 从第三章开始。任务合成与评测基础见<a href="../agent-data-benchmarks/">Agent 数据与 Benchmark</a>，运行循环和上下文管理见<a href="../agent-harness-guide.html#codex-loop">Codex Harness 案例</a>。</p>
-</section>
-</details><!-- READING:HISTORY:END -->
+<section class="integration-overview" id="read"><h2>本页怎样学、怎样复习</h2>
+<p>先修只需条件概率、softmax与反向传播。本页从示范损失开始，完整推导策略梯度、GAE、PPO、GRPO与蒸馏，再接回任务、系统和诊断；无需打开另一本手册补齐原理。</p>
+<ul><li><strong>快速复习：</strong>看各节重点、比较表和追问短答，区分状态、信号、更新对象。</li><li><strong>深入理解：</strong>顺着默认展开的推导和算例复算；配方、配置长表按需展开。</li><li><strong>读完产物：</strong>能解释一条轨迹怎样进入SFT、RL或OPD，并写出数据、mask、版本、分母和独立验收协议。</li></ul></section>
+<!-- READING:COURSE -->
 <section id="findings">
-<h2>这轮调研最值得保留的判断</h2>
+<h2>掌握检查：能否解释四个边界</h2>
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
 
-<p><strong>OPD 的关键是学生状态，而不只是教师更强。</strong> 静态教师示范覆盖理想路径；学生 rollout 暴露自己的失败 prefix。MOPD2、Guided-OPD 与 TISD 又通过前缀、接管和轨迹分支改变状态覆盖。它们是否“on-policy”，要说明是整条 episode 还是仅新增 continuation。<a href="#ref-30">[30]</a> <a href="#ref-27">[27]</a> <a href="#ref-34">[34]</a> <a href="#ref-35">[35]</a></p>
-<p><strong>稠密反馈不等于更可信。</strong> PRM、文本反馈、特权答案和教师 logits 可以提供比二值成败更丰富的信号，也会引入步骤误判、泄漏、奖励投机和偏离真实任务。最终评分仍应来自独立产物或状态验证。<a href="#ref-32">[32]</a> <a href="#ref-38">[38]</a> <a href="#ref-39">[39]</a></p>
-<p><strong>异步吞吐要和有效学习一起核算。</strong> 样本的策略版本延迟、同版本训练与推理数值差异、完成顺序导致的任务偏移是三类问题。importance ratio 主要处理概率分布差异，不能自动补回调度中消失的长任务。<a href="#ref-25">[25]</a> <a href="#ref-51">[51]</a> <a href="#ref-52">[52]</a></p>
-<p><strong>工业报告有实质分歧，应通过实验判断。</strong> DeepSeek V4 / V4.1 使用完整词表 OPD，Nemotron Ultra 报告其部分 Agent 实验更偏好 sampled-token。OPDArena 又提醒教师保留能力和目标任务增益不总是同步。这里保留配置、来源和失败解释，而不宣布通用赢家。<a href="#ref-24">[24]</a> <a href="#ref-25">[25]</a> <a href="#ref-26">[26]</a> <a href="#ref-36">[36]</a></p>
+<ul><li><strong>状态边界：</strong>能区分学生访问、教师接管和新增continuation，并说明各自监督位置。<a href="#ref-30">[30]</a><a href="#ref-34">[34]</a><a href="#ref-35">[35]</a></li>
+<li><strong>反馈边界：</strong>能区分PRM、critic、verifier，解释稠密信号的误判、泄漏与投机。<a href="#ref-32">[32]</a><a href="#ref-38">[38]</a><a href="#ref-39">[39]</a></li>
+<li><strong>系统边界：</strong>能区分版本lag、数值偏差和完成顺序偏移，解释ratio不能补回未准入的长任务。<a href="#ref-25">[25]</a><a href="#ref-51">[51]</a><a href="#ref-52">[52]</a></li>
+<li><strong>证据边界：</strong>能解释full-vocab与sampled-token的不同报告结果，并以同条件实验判断收益和遗忘。<a href="#ref-24">[24]</a><a href="#ref-26">[26]</a><a href="#ref-36">[36]</a></li></ul>
 <p class="note">调研截止 2026-11-14，引用 79 项原论文、团队报告、官方文档或固定源码。数值属于原作者报告、固定官方配置或明确标注的解析推导；本站没有执行 GPU 后训练。三类任务案例与对照矩阵是教学设计，不能当作真实训练日志或性能结果。</p>
 </section>
 <section id="downloads">

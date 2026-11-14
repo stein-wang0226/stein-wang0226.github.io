@@ -4,18 +4,11 @@ title: ProtAgent：蛋白工具智能体与逐步强化学习
 
 <p><a href="../">My Work 目录</a> · <a href="full-report.html">完整技术报告：奖励、实验与配置</a> · <a href="https://arxiv.org/abs/2610.33746">论文</a></p>
 
-## 研究问题与方法路线
+## 先记住：真实工具、逐步信用、独立评价
 
 ProtAgent 研究紧凑蛋白领域智能体能否学习调用真实生物信息工具，并把观察整合成任务答案。主要变量是工具交互的步骤级信用分配：SFT 学习工具调用和输出接口，在线 RL 优化工具选择、停止与证据整合，最后以冻结 checkpoint 在固定评测协议下比较。[1](#ref-1)[2](#ref-2)
 
-```text
-protein + question + skill policy
-  → real tool call → observation → next action / final answer
-  → trajectory admission + task audit
-  → assistant-only SFT
-  → on-policy rollout + step return + actor update
-  → frozen-checkpoint evaluation
-```
+**训练链：真实工具轨迹 → assistant-only SFT → 当前策略 rollout → step return → actor 更新 → 冻结评测。** 下图展示工具交互与反馈的附着位置。
 
 项目负责领域数据、工具、skills、reward 与评分；ROLL 承担分布式训练与 rollout 运行时。真实工具观察、teacher 示范和 gold annotation 是不同资产，不能让模型生成的“工具样文本”替代程序执行。[2](#ref-2)
 
@@ -39,7 +32,14 @@ protein + question + skill policy
 
 ## 工具、轨迹和监督怎样组织
 
-输入通常含 `sample_id`、`instruction`、`sequence`、任务类型和 metadata。策略根据历史 `h_t=(x,q,a_1,o_1,…,a_{t−1},o_{t−1})` 输出动作，环境执行对应工具并返回观察。skill policy 约束可见工具、必要证据、答案形状和不应出现的注释部分。[1](#ref-1)[2](#ref-2)
+输入含 `sample_id`、instruction、sequence、任务类型与 metadata。历史由初始输入、已执行动作和真实观察组成；skill policy 约束可见工具、必要证据及答案形状。[1](#ref-1)[2](#ref-2)
+
+<div class="reading-math">\[
+\begin{aligned}
+h_t&=(x,q,a_1,o_1,\ldots,a_{t-1},o_{t-1})\\
+a_t&\sim\pi_\theta(\cdot\mid h_t)
+\end{aligned}
+\]</div>
 
 | 任务 | 工具或证据重点 | 主要合同 |
 | --- | --- | --- |
@@ -53,9 +53,11 @@ protein + question + skill policy
 
 论文闭环 SFT 使用 987 train / 64 val，训练部分包括 567 action、120 evidence-to-answer 和 300 multi-turn 示例。系统、用户和工具消息作为上下文，只有 assistant 的动作与最终回答进入预测目标：
 
-```text
-L_SFT = − Σ_(u in assistant tokens) log πθ(y_u | context, y_<u)
-```
+<div class="reading-math">\[
+\mathcal L_{\rm SFT}
+=-\sum_{u\in S_{\rm assistant}}
+\log\pi_\theta(y_u\mid c,y_{\lt u})
+\]</div>
 
 这要求 tokenizer、chat template、loss mask 和 next-token label shift 对齐。论文配方为 Qwen3-8B-Instruct、1 epoch、LR `1e−6`、cosine、weight decay `0.01`、长度 8192、bf16；Megatron 使用 TP2/PP2/CP2。局部 batch 和梯度累积为 1×1，不能据此猜测全局 batch。[1](#ref-1)[3](#ref-3)
 
@@ -63,10 +65,12 @@ L_SFT = − Σ_(u in assistant tokens) log πθ(y_u | context, y_<u)
 
 每个 prompt 采样 K=4 条 on-policy 轨迹。相关工具首次成功、重复调用、格式错误、截断和终止答案分别产生局部奖励。主方法是无 critic 的 REINFORCE，按同一轨迹从后向前累加：[1](#ref-1)[3](#ref-3)
 
-```text
-G_t = r_t + γ G_(t+1)                 # 主配方 γ=1
-L = − E[A_(t,u) log πθ(y_(t,u)|h_(t,u))] + β KL(πθ || πref)
-```
+<div class="reading-math">\[
+\begin{aligned}
+G_t&=r_t+\gamma G_{t+1},\quad G_{H+1}=0\\
+\gamma&=1\quad\text{（主配方）}
+\end{aligned}
+\]</div>
 
 源码先按 `traj_id` 分组并按 step 排序，计算 `r_t + gamma × step_lambd × running_return`，随后恢复原样本顺序。主配方 step λ=1；支持 λ 分支不代表主实验使用了所有扩展。return 经配置选择的 normalization 进入 response/token 奖励与 mask，再做 advantage whitening 和 clipping。[4](#ref-4)
 
@@ -85,14 +89,25 @@ identity return normalization 只表示该层不做组相对变换。后续仍�
 
 Step return 不再把第一步的 `+0.25` 分给第二步；它仍保留终止答案对早先证据采集动作的影响。真实更新还经过 normalization、token/response mask 和 clipping，因此该表解释的是原始 return，不能直接当成最终 advantage。
 
-无 critic 的 score-function 恒等式给出 `∇θ E[G] = E[G ∇θ log πθ(action|history)]`。一条动作由多个 token 构成时，动作 log probability 是这些策略 token 的 log probability 之和，工具返回内容不在这个和里。可写成局部 surrogate：
+无 critic 的 REINFORCE 用 score-function 估计；完整轨迹目标的恒等式与实际局部 surrogate 要分开：
 
-```text
-L_actor = −Σ_(t,u) m_(t,u) A_(t,u) log πθ(y_(t,u)|h_(t,u))
-          / configured_denominator + β KL(πθ || πref)
-```
+<div class="reading-math">\[
+\begin{aligned}
+\nabla_\theta\mathbb E_{\tau\sim\pi_\theta}[R(\tau)]
+&=\mathbb E[R(\tau)\nabla_\theta\log p_\theta(\tau)]\\
+\log p_\theta(\tau)
+&=\sum_{t,u\in\text{policy}}\log\pi_\theta(y_{t,u}\mid h_{t,u})\\
+L_{\rm pg}
+&=-\frac{\sum_{t,u}m_{t,u}A_{t,u}
+\log\pi_\theta(y_{t,u}\mid h_{t,u})}{Z}\\
+L_{\rm actor}&=L_{\rm pg}
++\beta D_{\rm KL}(\pi_\theta\Vert\pi_{\rm ref})
+\end{aligned}
+\]</div>
 
-`m` 排除非策略与 padding token；分母按实现固定，不能随意把 token mean 改成 trajectory mean。Group-relative 变换概括为 `(G−mean_group)/(std_group+ε)`，其 group、mean/std 轴由配置确定。Identity 与 group-relative 的区别并不取消后续 whitening；概率比 clipping、优势 clipping 和 KL anchor 也控制不同对象。[4](#ref-4)
+环境转移不依赖策略参数时，工具观察不贡献动作 log probability，但影响后续动作条件。Z 是实现的 reduction 分母；advantage 处理后的 surrogate 不应被宣称为未经变换的无偏梯度。
+
+mask 排除非策略与 padding token；**token mean 与 trajectory mean 不等价**。组相对 return 先减组均值、再除组标准差；组和统计轴以配置为准。Identity 后仍可 whitening；**优势裁剪 ±0.2、概率比 clip、KL anchor 控制不同对象**。[4](#ref-4)
 <!-- WORK:EXAMPLE:END -->
 
 ### Reward 的正确性为什么仍需要独立评价
@@ -135,7 +150,7 @@ PFUA 使用独立 Swiss-Prot 数据、reward、checkpoint 和 ROUGE recall。其
 
 SFT 使用 Megatron；论文 RL actor 使用 FSDP2，rollout 使用 vLLM 并同步 actor 权重。三阶段各 50 updates，学习率 `5e−7 → 5e−8 → 5e−8`，每阶段继承模型权重、重置 optimizer 并更新 reference anchor；并非一个 optimizer state 连续训练 150 步。[1](#ref-1)[3](#ref-3)
 
-复現需绑定模型、数据 split、工具数据库、代码/patch、prompt、模板、解码、checkpoint 和 scorer。补充包不含完整模型权重、全部原始 rollout 与大型工具数据库；“代码能 smoke”不能证明全部主表已经重现。reward hygiene 的旧 on/off 实验也不能与后来的四臂重跑直接求差。[1](#ref-1)[5](#ref-5)
+复现绑定模型、split、工具数据库、代码/patch、prompt、模板、解码、checkpoint 与 scorer。补充包缺完整权重、原始 rollout 与大数据库；smoke 只证明有限路径运行。旧 reward on/off 与四臂重跑的条件不同，不能直接求因果差。[1](#ref-1)[5](#ref-5)
 
 本次对照了报告、论文附录、return 实现和当前状态文件，未重新运行训练或 OOD 评测。优先扩展方向是固定输出的独立生物专家与证据蕴含评审，以及固定起点、预算的跨模型/工具机制实验。
 
@@ -155,6 +170,14 @@ SFT 使用 Megatron；论文 RL actor 使用 FSDP2，rollout 使用 vLLM 并同�
 
 [SFT、RFT 与偏好优化](../../llm-posttraining/s01_supervision_preference.html)解释监督来源；[策略梯度与 RL 算法](../../llm-posttraining/s02_rl_algorithms.html)解释优化目标；[环境奖励与多步信用分配](../../llm-posttraining/s04_environment_reward_credit.html)和[异步后训练系统](../../llm-posttraining/s05_frameworks_async.html)分别连接 return 与分布式执行。
 <!-- WORK:REVIEW:END -->
+
+## 五道项目面试追问
+
+1. **为什么不监督 observation？** 它是环境返回的条件；只监督 assistant 动作与答案，避免模型学会伪造工具输出。
+2. **Step return 给重复调用什么信用？** 保留其局部负奖与后续终止奖，不继承此前首次调用的正奖；数值例还要经过优势处理。
+3. **Identity 是否等于不归一化？** 只在 return 这一层保持原值，后续 masked whitening 与优势裁剪仍可启用。
+4. **61.00 与 61.40 为什么都出现？** 前者是指定 checkpoint；后者是四臂主实验三 seed 均值，不能混为一个终点。
+5. **成功率能否称作生物正确率？** 这里成功要求 annotation token recall 严格大于 0.5；独立证据蕴含、专家正确性另评。
 
 ## 来源与固定版本
 

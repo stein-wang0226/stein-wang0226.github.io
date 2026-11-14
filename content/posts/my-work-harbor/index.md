@@ -4,18 +4,11 @@ title: harbor-task-sync：科学任务合成与证据驱动迭代
 
 <p><a href="../">My Work 目录</a> · <a href="full-report.html">完整 GEO-Harbor 方法报告</a></p>
 
-本项目的主报告为 [GEO-Harbor-Bench-Method-Report.html（Unified-produce）](https://github.com/stein-wang0226/harbor-task-sync/blob/Unified-produce/docs/GEO-Harbor-Bench-Method-Report.html)。完整正文已收录在 My Work 的 harbor-task-sync 目录；本页补充方法路线、实现与实验边界，来源快照版本见末节。
-
-## 项目定位与方法路线
+## 先记住：公开合同、完整路径、独立盲测
 
 harbor-task-sync 将公开组学研究转化为可执行、可复核的 Harbor 科学任务。它把候选发现、来源审计、造题、质量检查、隔离盲测、判分和交付拆成角色与落盘产物。项目研究的对象包括任务产线，以及完成任务后能否通过 refinement 增加真实科学难度。[1](#ref-1)[2](#ref-2)
 
-```text
-public study → candidate discovery → source audit + data scope freeze
-  → task authoring → deterministic gates → isolated Solver
-  → independent Verifier → rubric + failure attribution
-  → self-contained task package → lifecycle + delivery inventory
-```
+**方法链：公开研究 → 来源/输入冻结 → 造题与校准 → 门禁 → 隔离 Solver → 独立判分 → 交付与版本登记。** 下图强调运行时的信息边界。
 
 最关键的设计是分开治理开放科学问题与确定性判分：公共合同保留合理的方法自由度，私有校准记录合法分析路径及错误反例，verifier 对最终输出检查证据。产线能运行、任务完成、打包验收、科学难度认证与训练收益是不同结论。[1](#ref-1)
 
@@ -70,14 +63,22 @@ public study → candidate discovery → source audit + data scope freeze
 <!-- WORK:EXAMPLE:START -->
 ### 为什么逐字段容差不能代表完整科学结果 {#work-example}
 
-设两条合法分析路径产生完整结果向量 `y^(A)`、`y^(B)`。把每个分量单独做上下界，会得到矩形接受域 `Π_j[min(y_j^(A),y_j^(B)), max(y_j^(A),y_j^(B))]`。这个区域包含混用 A、B 分量的向量，即使没有任何合法分析能产生该向量。范围越宽不等于评分越科学。
+设合法结果 A=(1,10)、B=(2,20)。逐字段范围是第一列 [1,2]、第二列 [10,20]，会接受 (1,20)；该向量混用了两条路径。即使每个值都合法，整张结果仍可能不一致。
 
 一种可考虑的设计是围绕**完整路径**建立接受域的并集，或检查科学 invariant：
 
-```text
-admissible output ∈ ⋃_a { y : for every j, distance(y_j, y_j^(a)) ≤ ε_j }
-AND identifiers / units / coordinate system / joint invariants are valid
-```
+<div class="reading-math">\[
+\begin{aligned}
+\mathcal A_{\rm box}
+&=\prod_j[\min_a y_j^{(a)},\max_a y_j^{(a)}]\\
+\mathcal A_{\rm path}
+&=\bigcup_a\mathcal A_a\\
+\mathcal A_a
+&=\{y:\ \forall j,\ d_j(y_j,y_j^{(a)})\le\epsilon_j\}
+\end{aligned}
+\]</div>
+
+完整路径并集之外还检查标识符、单位、坐标和联合 invariant。这里给出接受域思路；容差和距离须由具体科学对象校准。
 
 这只是接受域的数学说明，不是所有任务的通用 scorer；集合输出、排序、稀疏计数和统计估计需要各自的距离或一致性规则。容差 `ε` 必须来自实际合法路径及数值误差，不能围绕某次 Solver 失败任意调大。[3](#ref-3)[4](#ref-4)
 
@@ -106,12 +107,9 @@ AND identifiers / units / coordinate system / joint invariants are valid
 
 Refinement 从已完成任务开始，锁定科学问题、数据和预算，增加可验证的科学判断。流程是 parent 冻结 → 准确性审计 → parent headroom → 定向 operator → child 独立质量检查 → 同条件配对盲测 → 失败归因与接受/停止。[3](#ref-3)
 
-```text
-accept child only if
-  quality preserved
-  AND preregistered difficulty effect observed
-  AND failures attributed to the new scientific bottleneck
-```
+- **先过质量门**：来源、合同、oracle、verifier 与可解性保持。
+- **再看注册效果**：同条件 parent/child，qualification 与正式分母分开。
+- **最后查失败原因**：下降来自新增科学瓶颈，规格或基础设施错误不计为加难。
 
 质量缺陷先走 `repair_required`。质量合格且有测量余量才是 `hardening_candidate`。pass@1 为主，pass@2/4 补充；qualification 筛选与正式样本的分母分开。身份漂移、基础设施无结论和中途换 runner 不产生有效科学证据。[3](#ref-3)
 
@@ -128,9 +126,18 @@ accept child only if
 
 ### pass@k 与难度下降怎样解释
 
-pass@1 是固定预算下单次尝试成功的概率估计；pass@k 表示 k 次机会中至少一次成功。若有 n 次可交换尝试、其中 c 次成功，常用无偏组合估计是 `1−C(n−c,k)/C(n,k)`，前提包括 `n≥k` 及一致的采样协议。真实配对评测有重复与依赖时应按该项目注册协议处理，不可默认所有尝试相互独立。
+pass@k 问 k 次机会中是否至少成功一次。n 次可交换尝试中有 c 次成功，选出 k 次全部失败的比例给出补事件：
 
-难度效应可记为 `Δ = pass_parent − pass_child`，但 Δ>0 还需要质量通过和失败归因支持。把一次规格错误造成的全失败当作“很难”，会奖励不可解的题。parent headroom 用于筛选有下降空间的任务；筛选样本与正式样本混用，会让后续效果带入选择偏差。[3](#ref-3)
+<div class="reading-math">\[
+\begin{aligned}
+\widehat{\mathrm{pass@}k}
+&=1-\frac{\binom{n-c}{k}}{\binom nk},\quad n\ge k\\
+\Delta&=\mathrm{pass}_{\rm parent}
+-\mathrm{pass}_{\rm child}
+\end{aligned}
+\]</div>
+
+例如 n=4、c=1：pass@1=1/4，pass@2=1−3/6=1/2。依赖与配对按注册协议处理；**Δ&gt;0 仍需质量与归因支持**。headroom 筛选样本不能混进正式效果分母。[3](#ref-3)
 
 ## 规模与报告数字怎样阅读
 
@@ -155,6 +162,14 @@ pass@1 是固定预算下单次尝试成功的概率估计；pass@k 表示 k 次
 
 可结合 [Harbor 框架完整介绍](../../harbor-framework-guide/)理解容器和 runner，再看 [可执行任务合成](../../agent-data-benchmarks/s01_task_synthesis.html)、[科学任务族](../../agent-data-benchmarks/s03_scientific_task_family.html)及[评测指标与基准](../../agent-data-benchmarks/s02_benchmark_map.html)。这些页面补通用知识，具体任务合同仍须查任务本身。
 <!-- WORK:REVIEW:END -->
+
+## 五道项目面试追问
+
+1. **题面开放，如何确定性评分？** 冻结输入语义和输出合同，用实际合法路径、错误反例与 invariant 校准 scorer。
+2. **参考解跑通为何不算盲测？** 作者看过答案；盲测须物理排除 solution/tests/authoring，只给公共资产。
+3. **逐字段容差有什么漏洞？** 能接受跨路径混拼的联合结果；检查完整路径与联合约束。
+4. **child 通过率下降就有效吗？** 先排规格、oracle、verifier 与基础设施缺陷；再用同条件配对结果确认科学瓶颈。
+5. **413 done 能算 70% 成功率吗？** 库存与尝试分母不同；先固定批次、去重、资格与完成时间，不能直接除跨批次 ready 库存。
 
 ## 实现入口与复核范围
 

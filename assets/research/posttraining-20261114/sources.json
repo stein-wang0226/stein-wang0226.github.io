@@ -13,17 +13,16 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Proximal Policy Optimization Algorithms · Schulman 等；§3–5，概率比与 clipped surrogate。",
       "used_in": [
-        "/llm-posttraining/s02_rl_algorithms.html#ppo-gae",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+        "/llm-posttraining/s02_rl_algorithms.html#ppo-gae"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s04_rl_evaluation.html#algorithms",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 2,
@@ -39,8 +38,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 3,
@@ -52,18 +53,18 @@
       "source_position_and_scope": "DeepSeekMath · DeepSeek；§4，GRPO baseline 与原始序列平均目标。",
       "used_in": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
-        "/llm-posttraining/s02_rl_algorithms.html#rloo-grpo",
-        "/llm-training-lifecycle/s03_sft_rft.html#reinforcement",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+        "/llm-posttraining/s02_rl_algorithms.html#rloo-grpo"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s04_rl_evaluation.html#algorithms",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s04_cluster_training_evaluation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 4,
@@ -79,8 +80,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 5,
@@ -92,19 +95,22 @@
       "source_position_and_scope": "DAPO: An Open-Source LLM Reinforcement Learning System at Scale · ByteDance / 合作团队；§3，四项训练设计。",
       "used_in": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
+        "/llm-posttraining/s02_rl_algorithms.html#frontier-comparison",
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
-        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s04_cluster_training_evaluation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 6,
@@ -119,16 +125,18 @@
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
-        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s04_cluster_training_evaluation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 7,
@@ -145,8 +153,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 8,
@@ -157,19 +167,23 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MiniMax-M1 · MiniMax；CISPO 的 detached clipped importance weights。",
       "used_in": [
-        "/agentic-rl-guide.html#citation-sources-21",
-        "/agentic-rl-guide.html#citation-sources-32",
-        "/agentic-rl-guide.html#citation-sources-35",
         "/llm-posttraining/s02_rl_algorithms.html#citation-sources-6",
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
+        "/llm-research-map-2026/s02_agentic_rl.html#citation-sources-1",
+        "/llm-research-map-2026/s02_agentic_rl.html#citation-sources-2",
+        "/llm-research-map-2026/s02_agentic_rl.html#citation-sources-5",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 9,
@@ -185,8 +199,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 10,
@@ -205,8 +221,12 @@
         "/llm-posttraining/s02_rl_algorithms.html",
         "/llm-posttraining/s04_environment_reward_credit.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 11,
@@ -224,8 +244,11 @@
         "/llm-posttraining/s02_rl_algorithms.html",
         "/llm-posttraining/s04_environment_reward_credit.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 12,
@@ -241,8 +264,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 13,
@@ -253,13 +278,16 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "SimPO: Simple Preference Optimization with a Reference-Free Reward · Meng 等；长度归一化、margin。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#frontier-comparison",
         "/llm-posttraining/s01_supervision_preference.html#preference"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 14,
@@ -275,8 +303,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 15,
@@ -292,8 +322,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 16,
@@ -304,6 +336,7 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "ReTerm: Recovery Training for Self-Improving Terminal Agents · §3.1–3.2，教师恢复 token 的 SFT、另列 ReTerm-GRPO。",
       "used_in": [
+        "/llm-posttraining/s01_supervision_preference.html#frontier-comparison",
         "/llm-posttraining/s01_supervision_preference.html#recovery",
         "/llm-posttraining/s06_task_cases_experiments.html#code-case"
       ],
@@ -311,8 +344,11 @@
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 17,
@@ -329,8 +365,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 18,
@@ -344,17 +382,18 @@
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-posttraining/s01_supervision_preference.html#rejection",
         "/llm-posttraining/s01_supervision_preference.html#taxonomy",
-        "/llm-training-lifecycle/#findings",
         "/llm-training-lifecycle/#overview",
-        "/llm-training-lifecycle/s03_sft_rft.html#industry",
-        "/llm-training-lifecycle/s03_sft_rft.html#rejection",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+        "/llm-training-lifecycle/s03_sft_rft.html#rejection"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 19,
@@ -368,15 +407,18 @@
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-training-lifecycle/#overview",
         "/llm-training-lifecycle/s01_pretraining.html#curriculum",
-        "/llm-training-lifecycle/s01_pretraining.html#sources",
-        "/llm-training-lifecycle/s03_sft_rft.html#industry",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+        "/llm-training-lifecycle/s01_pretraining.html#sources"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 20,
@@ -395,9 +437,11 @@
         "/llm-posttraining/s01_supervision_preference.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s03_sft_rft.html#preference"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 21,
@@ -414,8 +458,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 22,
@@ -430,22 +477,24 @@
         "/llm-posttraining/s01_supervision_preference.html#recovery",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#glm",
-        "/llm-training-lifecycle/#findings",
         "/llm-training-lifecycle/s01_pretraining.html#curriculum",
         "/llm-training-lifecycle/s01_pretraining.html#sources",
         "/llm-training-lifecycle/s02_midtraining.html",
-        "/llm-training-lifecycle/s03_sft_rft.html#sft",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#systems"
+        "/llm-training-lifecycle/s03_sft_rft.html#quality"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s02_midtraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 23,
@@ -457,20 +506,21 @@
       "source_position_and_scope": "Qwen3-Coder-Next Technical Report · Qwen；§3–4，多 scaffold、专家与蒸馏。",
       "used_in": [
         "/llm-posttraining/s01_supervision_preference.html#industry",
-        "/llm-training-lifecycle/#findings",
         "/llm-training-lifecycle/s02_midtraining.html",
         "/llm-training-lifecycle/s02_midtraining.html#definitions",
-        "/llm-training-lifecycle/s03_sft_rft.html#quality",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+        "/llm-training-lifecycle/s03_sft_rft.html#quality"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s02_midtraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 24,
@@ -484,22 +534,26 @@
         "/llm-posttraining/#findings",
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-research-map-2026/s03_base_architecture.html#citation-sources-1",
         "/llm-research-map-2026/s03_base_architecture.html#versions",
-        "/llm-training-lifecycle/#findings",
         "/llm-training-lifecycle/#overview",
         "/llm-training-lifecycle/s01_pretraining.html#budget",
-        "/llm-training-lifecycle/s01_pretraining.html#sources",
-        "/llm-training-lifecycle/s03_sft_rft.html#industry",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+        "/llm-training-lifecycle/s01_pretraining.html#sources"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 25,
@@ -517,6 +571,7 @@
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
         "/llm-posttraining/s05_frameworks_async.html#partial-rollout",
         "/llm-posttraining/s05_frameworks_async.html#three-policy",
+        "/llm-research-map-2026/#citation-sources-4",
         "/llm-research-map-2026/s01_agent_data_bench.html#distinctions",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
@@ -535,8 +590,21 @@
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 26,
@@ -556,20 +624,26 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
-        "/llm-training-lifecycle/#findings",
         "/llm-training-lifecycle/s01_pretraining.html#budget",
-        "/llm-training-lifecycle/s01_pretraining.html#sources",
-        "/llm-training-lifecycle/s03_sft_rft.html#industry",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+        "/llm-training-lifecycle/s01_pretraining.html#sources"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt"
       ],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 27,
@@ -580,7 +654,6 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement · Xiaomi；§4.1 / 4.3.2、5.6、6.3–6.4，GAR、MOPD2、调度与算力构成。",
       "used_in": [
-        "/llm-posttraining/#findings",
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-posttraining/s03_opd_self_distillation.html#mopd2",
         "/llm-posttraining/s04_environment_reward_credit.html#gar",
@@ -601,8 +674,17 @@
         "/llm-posttraining/s05_frameworks_async.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 28,
@@ -618,8 +700,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 29,
@@ -635,8 +719,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 30,
@@ -657,8 +743,13 @@
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 31,
@@ -674,8 +765,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 32,
@@ -692,8 +785,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 33,
@@ -710,8 +806,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 34,
@@ -730,8 +828,12 @@
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 35,
@@ -748,8 +850,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 36,
@@ -766,8 +871,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 37,
@@ -783,8 +891,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 38,
@@ -801,8 +911,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 39,
@@ -819,8 +932,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 40,
@@ -836,8 +952,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 41,
@@ -855,8 +973,11 @@
         "/llm-posttraining/s04_environment_reward_credit.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 42,
@@ -867,14 +988,18 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Reinforcement Learning with Decomposed Subtasks · RLDS；子任务优势和反思定位；归档原件。",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#frontier-comparison",
         "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 43,
@@ -891,8 +1016,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 44,
@@ -910,8 +1038,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 45,
@@ -922,13 +1053,16 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "AReaL: A Large-Scale Asynchronous Reinforcement Learning System for Language Reasoning · inclusionAI；解耦 PPO、策略延迟。",
       "used_in": [
-        "/llm-posttraining/s05_frameworks_async.html#async"
+        "/llm-posttraining/s05_frameworks_async.html#async",
+        "/llm-posttraining/s05_frameworks_async.html#frontier-comparison"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 46,
@@ -944,8 +1078,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 47,
@@ -962,8 +1098,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 48,
@@ -979,8 +1117,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 49,
@@ -998,8 +1138,11 @@
         "/llm-posttraining/s01_supervision_preference.html",
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 50,
@@ -1018,8 +1161,11 @@
         "/llm-posttraining/s02_rl_algorithms.html",
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 51,
@@ -1036,8 +1182,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 52,
@@ -1054,8 +1203,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 53,
@@ -1073,8 +1225,11 @@
         "/llm-posttraining/s04_environment_reward_credit.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 54,
@@ -1092,8 +1247,11 @@
         "/llm-posttraining/s04_environment_reward_credit.html",
         "/llm-posttraining/s06_task_cases_experiments.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 55,
@@ -1110,8 +1268,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 56,
@@ -1127,8 +1288,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 57,
@@ -1144,8 +1307,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 58,
@@ -1162,8 +1327,11 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 59,
@@ -1179,8 +1347,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 60,
@@ -1199,8 +1369,11 @@
         "/llm-posttraining/s03_opd_self_distillation.html",
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 61,
@@ -1216,8 +1389,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 62,
@@ -1233,8 +1408,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 63,
@@ -1250,8 +1427,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 64,
@@ -1268,8 +1447,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 65,
@@ -1285,8 +1466,10 @@
       "used_in_before_organization": [
         "/llm-posttraining/s05_frameworks_async.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 66,
@@ -1297,17 +1480,26 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · 多教师能力整合，区别于 MiMo-V2.6 的 Multi-Prefix MOPD2 扩展。",
       "used_in": [
+        "/llm-frontier-2026.html#citation-sources-16",
         "/llm-posttraining/s03_opd_self_distillation.html#citation-sources-5",
+        "/llm-posttraining/s03_opd_self_distillation.html#frontier-comparison",
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
         "/llm-posttraining/s05_frameworks_async.html#citation-sources-2",
+        "/llm-research-map-2026/s04_inference_diffusion.html#citation-sources-5",
         "/llm-research-map-2026/s04_inference_diffusion.html#opd",
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s04_inference_diffusion.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 67,
@@ -1321,8 +1513,10 @@
         "/llm-posttraining/s04_environment_reward_credit.html#credit-frontier"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 68,
@@ -1336,8 +1530,10 @@
         "/llm-posttraining/s04_environment_reward_credit.html#credit-frontier"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 69,
@@ -1351,8 +1547,10 @@
         "/llm-posttraining/s04_environment_reward_credit.html#credit-frontier"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 70,
@@ -1366,8 +1564,10 @@
         "/llm-posttraining/s04_environment_reward_credit.html#credit-frontier"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 71,
@@ -1378,12 +1578,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "PyTorch-native Agentic RL抽象；README明确开发暂停并向TorchTitan汇总；BSD-3-Clause。",
       "used_in": [
-        "/agentic-rl-guide.html",
         "/llm-posttraining/s05_frameworks_async.html#framework-map"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 72,
@@ -1394,12 +1596,14 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Agent Reinforcement Trainer；多步Agent接入GRPO、本地/托管训练后端与vLLM/LoRA；Apache-2.0。",
       "used_in": [
-        "/agentic-rl-guide.html",
         "/llm-posttraining/s05_frameworks_async.html#framework-map"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 73,
@@ -1413,8 +1617,10 @@
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 74,
@@ -1428,8 +1634,10 @@
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 75,
@@ -1443,8 +1651,10 @@
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 76,
@@ -1458,8 +1668,10 @@
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 77,
@@ -1473,8 +1685,10 @@
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 78,
@@ -1488,8 +1702,10 @@
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 79,
@@ -1503,8 +1719,10 @@
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
       ],
       "used_in_before_organization": [],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     }
   ]
 }

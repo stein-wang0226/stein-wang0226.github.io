@@ -8,6 +8,7 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
 <section id="status">
 <h2>把同一个任务的输入、动作、反馈与训练目标接起来</h2>
 <p class="lead">下面三个案例是教学设计，未执行 GPU 训练，也没有伪造真实轨迹和成绩。它们说明如何将前五章的目标落实为数据、环境、反馈和可复核交付。</p>
@@ -15,6 +16,8 @@
 </section>
 <section id="code-case">
 <h2>案例 A：修复空输入崩溃，同时保留非空行为</h2>
+
+
 <p>输入是一个小仓库、issue 和工具协议：<code>mean([])</code> 应抛出 <code>ValueError</code>，其他数字列表继续返回平均值；禁止改测试、依赖与无关函数。允许读取、patch、运行测试，输出提交补丁与说明。</p>
 <pre><code># 教学初始实现
 def mean(values):
@@ -35,6 +38,8 @@ def mean(values):
 </tbody>
 </table>
 <h3>同任务怎样进入不同训练方法</h3>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 <table>
 <thead><tr><th>方法</th><th>数据与目标</th><th>会学不到什么</th></tr></thead>
 <tbody>
@@ -48,16 +53,17 @@ def mean(values):
 </table>
 <p>独立终评应覆盖空、单元素、负数、重复值和规定数值类型，检查测试目录没有被改。真实仓库按项目、问题来源和解法簇隔离 train / heldout；同一个模板的不同文件名不应当作全新泛化任务。</p>
 <p>该案例连接 ReTerm 的恢复思路、MiMo 的成功质量信号与 OPD 学生状态；它本身不是这些论文的原始实验。<a href="index.html#ref-16">[16]</a> <a href="index.html#ref-27">[27]</a> <a href="index.html#ref-30">[30]</a></p>
+<figure class="mechanism-map"><figcaption>同一失败prefix，三类目标怎样接上下一动作</figcaption><ol class="mechanism-chain mechanism-options">
+<li><b>实际历史</b><small>错误patch → test失败 → 新prefix h</small></li>
+<li><b>恢复SFT</b><small>可靠教师给修复token y；最小化−log π(y|h)</small></li>
+<li><b>结果RL</b><small>学生继续执行；终评R经baseline形成A</small></li>
+<li><b>OPD</b><small>学生采样a；同状态teacher给log q(a|h)</small></li></ol>
+<p class="mechanism-note">失败观察始终作条件；只对可控动作预测位置计loss。三种信号可组合，但不能混淆来源。</p></figure>
+<p><strong>一个动作token的教学数值：</strong>若示范正确token的学生概率为0.2，SFT损失约1.609；若该token由学生采样、教师概率为0.5，局部OPD上升权重 \(\log(0.5/0.2)\approx0.916\)（未加baseline）。结果RL仍须等独立终评及组/critic估计；不能把0.5教师概率当任务成功率。</p>
 </section>
 <section id="science-case">
 <h2>案例 B：Harbor 科学分析，验证设计和统计产物</h2>
 <p>任务输入为允许公开的 count matrix、样本 metadata 和预先定义的分析要求：在指定统计方法、协变量和 contrast 下，输出基因统计表及 provenance。这里没有假定任何真实生物结论，也不填虚构显著基因数。</p>
-<figure><div class="flow" aria-label="科学分析任务的输入到验收">
-<div class="stage"><b>输入与 ID</b><small>矩阵列 ↔ metadata样本<br>缺失、重复、顺序检查</small></div>
-<div class="stage"><b>固定分析设计</b><small>过滤、design、contrast<br>模型与软件版本</small></div>
-<div class="stage"><b>拟合与产物</b><small>统计量、效应、p / FDR<br>运行参数与输入哈希</small></div>
-<div class="stage"><b>独立复核</b><small>受保护参考与容差<br>方向、字段、完整性</small></div>
-</div><figcaption>任务设计用于串联科学环境、训练信号和独立 verifier；更广的任务来源与 split 讨论见<a href="../agent-data-benchmarks/s01_task_synthesis.html">任务合成专题</a>。</figcaption></figure>
 <table>
 <thead><tr><th>过程</th><th>具体不变量</th><th>可能失败与反馈</th></tr></thead>
 <tbody>
@@ -69,13 +75,13 @@ def mean(values):
 </tbody>
 </table>
 <h3>信号设计：结果、过程和特权信息各有边界</h3>
-<p>Outcome 由独立 verifier 在指定产物上验证。过程信号只奖励预定可检查不变量，例如 ID 对齐与 design 合法性；不奖励“显著基因更多”。数学误差容差按统计方法、数值精度和库版本制定，不能以宽容差掩盖 contrast 错误。</p>
-<p>SFT 数据应来自实际可重放的分析过程；拒绝采样经独立参考筛选；RLDS 可按输入/设计/拟合/验收分子任务，但奖励份额与定位噪声要消融；SDPO 可用 runtime error 或 verifier 文本反馈；OPSD 的参考解法仅供训练教师 context，不能出现在留出任务学生输入。</p>
-<p>受保护 verifier 使用新 sandbox 和选定 artifacts，避免读取全部 Agent 工作区；按 Harbor 固定版本测试任务模式。按研究、数据来源、分析模板和代码谱系切分，避免同一研究不同基因子集分别进入训练和评测。<a href="index.html#ref-53">[53]</a> <a href="index.html#ref-54">[54]</a></p>
-<p>科学失败需区分环境包安装、资源不足、模型方法错误、统计设计错误和生物解释未经证实。前四类可由可执行任务判定；解释的科学真实性还需专业审阅，不能仅由一个 LLM judge 当终评真值。</p>
+<ul><li><strong>奖励：</strong>验证预定不变量与统计产物，不奖励“显著基因更多”。</li><li><strong>信用：</strong>runtime error、ID/设计检查可提供过程反馈；RLDS的阶段份额需独立消融。</li><li><strong>特权信息：</strong>参考解法仅供训练教师，留出学生不可见。</li><li><strong>统计与验收：</strong>方法、contrast、容差和研究级切分在<a href="../agent-data-benchmarks/">任务与科学合同</a>完整展开。<a href="index.html#ref-53">[53]</a> <a href="index.html#ref-54">[54]</a></li></ul>
+<p>包安装、资源、方法、设计与科学解释分别归因；可执行检查通过仍不等于生物结论已经证实。</p>
 </section>
 <section id="gui-case">
 <h2>案例 C：GUI 修改指定草稿事件时间并保存</h2>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>。</p></section>
+
 <p>在可重置的本地测试应用中，将指定 draft 事件 <code>event_id</code> 改为给定时区下的开始时间，保持标题、参与者和结束时长等约束。使用合成测试数据，避免把生产日历或实际发送动作混入教学实验。</p>
 <table>
 <thead><tr><th>阶段</th><th>模型观察 / 动作</th><th>环境与独立验证</th></tr></thead>
@@ -91,6 +97,9 @@ def mean(values):
 <p>训练按应用、任务模板、布局和语言等维度分层，泛化用未见布局/对象和独立状态 oracle。相同页面换颜色不应被包装成广泛 GUI 泛化；截图正确性、权限和任务结果分别统计。</p>
 </section>
 <section id="trajectory">
+<figure class="mechanism-map"><figcaption>一份轨迹同时服务复现、训练和失败定位</figcaption><ol class="mechanism-chain">
+<li><b>任务身份与快照</b><small>task ID、环境、策略版本与预算</small></li><li><b>逐步动作和观察</b><small>工具参数、实际返回、时间与状态</small></li><li><b>奖励和训练字段</b><small>verifier、mask、log-prob、优势</small></li><li><b>留出评测与产物</b><small>成功、失败类型、token / 时间成本</small></li>
+</ol><p class="mechanism-return">↶ 失败记录回到数据或环境修订；先固定切分，避免训练轨迹泄漏到验收任务。</p></figure>
 <h2>训练轨迹契约：精确到每次模型调用和环境状态</h2>
 <pre><code>{
   "execution_status": "design_only",
@@ -119,6 +128,8 @@ def mean(values):
 </section>
 <section id="experiments">
 <h2>待执行矩阵：先可靠 baseline，再一次改变一个关键轴</h2>
+
+
 <table>
 <thead><tr><th>实验组</th><th>固定条件</th><th>改变什么</th><th>关键判断</th></tr></thead>
 <tbody>
@@ -136,6 +147,8 @@ def mean(values):
 </section>
 <section id="diagnosis-cost">
 <h2>诊断和成本：平均 reward 之外必须看到什么</h2>
+<section id="citation-sources-9" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>。</p></section>
+
 <table>
 <thead><tr><th>指标组</th><th>记录什么</th><th>用于判断</th></tr></thead>
 <tbody>
@@ -145,10 +158,7 @@ def mean(values):
 <tr><td>系统与配额</td><td>queue年龄、策略版本、domain四层占比、重试与拒绝</td><td>异步对齐、completion bias、资源瓶颈</td></tr>
 </tbody>
 </table>
-<div class="equation" role="math" aria-label="成功成本">Cost_total = rollout + training + teacher/critic/grader
-           + environment + retry/rejection + synchronization
-成功成本 = 同一评测协议下总推理/环境成本 / 独立通过任务数
-训练收益另报：留出成功增量 / 训练总GPU小时；基线与预算固定</div>
+<ul><li><strong>训练账本：</strong>rollout、更新、教师/critic/grader、环境、拒绝/重试和同步全部计入。</li><li><strong>学习效率：</strong>同生成token与同总资源预算分别比较，基线和留出协议固定。</li><li><strong>交付成本：</strong>按全部评测尝试成本计算；完整容量与成功成本分母在<a href="../llm-serving/">推理服务与成本</a>主讲。</li></ul>
 <p>成功数为零时成本比不可定义，不填 0；pass@k、单次成功、重复运行平均和 time budget 要分别报告。共享基础设施的计费分摊需说明，不能将算力百分比直接换成美元。</p>
 </section>
 <section id="delivery">
@@ -168,6 +178,7 @@ def mean(values):
 <p>最终冻结学生与运行协议，独立重跑终评；教师 KL、训练 reward 和公开测试只作中间证据。公开报告提供路线，自己的实验要回答哪些数据、目标或系统变化实际改善了任务。</p>
 <p class="note">本专题已核对原始来源、公式和实现入口，但三类案例没有执行模型训练。下一步实验不能从教学设计直接推导任何生物结果、模型增益或 GPU 成本。</p>
 </section>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

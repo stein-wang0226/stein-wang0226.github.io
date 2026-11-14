@@ -8,6 +8,7 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
 <section id="environment">
 <h2>RL 环境是任务状态机，也是训练分布的一部分</h2>
 <p class="lead">环境规定模型能观察什么、能做哪些动作、动作如何改变状态、什么时候结束、如何评分。一个好的奖励函数依赖可信环境；环境把答案泄漏或把服务故障当策略失败时，再先进的 RL 目标也会学错。</p>
@@ -29,23 +30,9 @@
 <p>时间预算导致的正常 timeout 与服务故障引起的 timeout 不同；重试不能静默消除失败统计。训练和评测统一明确结束、状态重置、网络可达性与资源限制，才可比较模型。</p>
 </section>
 <section id="harbor">
-<h2>Harbor：把 Agent 工作区与 verifier 分开</h2>
-<p>当前 Harbor 文档的任务含 <code>instruction.md</code>、<code>task.toml</code>、环境、解法和 tests。测试脚本把分数写入 <code>/logs/verifier/reward.txt</code> 或 <code>reward.json</code>；两者都有时 JSON 优先。具体字段与共享/独立模式按固定 Harbor 版本核对。<a href="index.html#ref-53">[53]</a> <a href="index.html#ref-54">[54]</a></p>
-<pre><code># 教学布局；不是已经跑通的Harbor任务包
-scientific-task/
-  instruction.md
-  task.toml
-  environment/Dockerfile
-  solution/solve.sh
-  tests/Dockerfile            # 独立verifier镜像包含受保护的测试
-  tests/test.sh
-  tests/reference/           # 科学参考与容差，不暴露给Agent</code></pre>
-<p>独立 verifier 启动新环境，不继承 Agent 工作区全部文件系统；通过任务声明的 <code>artifacts</code> 交接选定产物。TOML 顶层键需写在各 section 之前，否则可能意外落入前一个表。<code>tests/Dockerfile</code> 或指定镜像包含测试；不要把不同模式的 tests 上传规则混用。</p>
-<pre><code># 教学片段：顶层artifacts放在[environment]等表之前
-artifacts = ["/app/output/result.json", "/app/output/provenance.json"]
-# 其余task.toml字段须按实际Harbor版本生成和验证。</code></pre>
-<p>当前 task init 默认倾向独立模式，但旧任务缺相应配置或 verifier 环境时仍可能是 shared；升级框架不能证明历史任务全已隔离。共享模式尤其需防 Agent 写测试、读取隐藏参考或伪造 reward 文件。</p>
-<p>科学任务对最终统计量和 provenance 重新验证，代码任务对 patch 应用与隐藏回归重新验证，GUI 任务由受保护的持久化状态检查。Agent 的“完成了”、文件存在或按钮点击本身都不是最终成功证据。</p>
+<h2>奖励的可信边界</h2>
+<ul><li><strong>策略负责生成产物，verifier负责判定：</strong>只交接允许的文件或状态；不把“完成了”或文件存在当分数。</li><li><strong>测试与参考受保护：</strong>避免修改测试、读取隐藏答案或伪造reward文件。</li><li><strong>任务版本要固定：</strong>共享/独立模式、artifact规则与超时都会改变训练语义。</li></ul>
+<p>完整Harbor合同、模式和操作集中在<a href="../agent-data-benchmarks/">任务生产与独立评测</a>；这里关注奖励怎样影响梯度。<a href="index.html#ref-53">[53]</a> <a href="index.html#ref-54">[54]</a></p>
 </section>
 <section id="signal-types">
 <h2>五类反馈：名称相近，预测对象不同</h2>
@@ -83,9 +70,11 @@ artifacts = ["/app/output/result.json", "/app/output/provenance.json"]
 <h2>PURE 与 Cliff：稠密奖励也可能强化坏过程</h2>
 <h3>PURE：求和会奖励重复“正确步骤”</h3>
 <p>如果每个看起来正确的小步骤都有正 reward，模型可能把一个步骤拆成很多片、重复安全陈述或拖长推理，以增加总和。PURE 研究以最差后续步骤为中心的目标，抑制此类投机。<a href="index.html#ref-39">[39]</a></p>
-<div class="equation" role="math" aria-label="PURE过程奖励">求和风险：Return = Σᵢ rᵢ，重复高分步骤可能增益
-PURE 转换示意：r*ᵢ = softmax(−rᵢ/T)ᵢ · rᵢ
-T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
+<div class="reading-math" role="math" aria-label="PURE过程奖励">\[
+R_{\rm sum}=\sum_i r_i,\qquad
+w_i=\frac{\exp(-r_i/T)}{\sum_j\exp(-r_j/T)},\qquad r_i^*=w_i r_i.
+\]</div>
+<p><strong>投机算例：</strong>步骤分数[0.9,0.9,0.1]求和为1.9；再重复一次0.9，总和增至2.8而错误未修复。上述转换示意在 \(T\to0\) 时聚焦最低分，\(\gamma=1\) 时回报趋于0.1。实际后缀与聚合规则以PURE原文为准。</p>
 <p>这适合研究逻辑推理的弱链路，但可恢复 terminal Agent 中，前面一个错误动作以后可能被修复。若直接把最差历史步骤当整条任务上限，会惩罚有价值的恢复。迁移需验证是否符合任务的不可逆性假设。</p>
 <h3>Cliff：识别首个 pitfall 边界</h3>
 <section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
@@ -94,6 +83,9 @@ T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
 <p>科学设计若错用 contrast 且未修复，后续步骤会沿错误方向；代码先跑出错误再修好，则不满足“首错后全废”。应按任务分别测试边界质量、恢复率和反事实影响，避免把数学推导的假设自动应用到交互任务。</p>
 </section>
 <section id="long-credit">
+<figure class="mechanism-map"><figcaption>长程信用：同一个成功结果可能包含错误与恢复</figcaption><ol class="mechanism-chain">
+<li><b>读文件 → 错误补丁</b><small>动作产生局部状态变化</small></li><li><b>测试失败 → 观察</b><small>反馈提供错误位置；观察不作动作更新</small></li><li><b>修复 → 测试成功</b><small>终局 R=1，不能据此断定每步都好</small></li><li><b>R → 步骤 / token A</b><small>value、过程监督、状态分组各需额外条件</small></li>
+</ol><p class="mechanism-note">仅广播终局 reward 会同时强化绕路；细化优势要解释监督来源和对齐规则。</p></figure>
 <h2 id="reading-section-8">多步信用分配：重复状态、子任务与知识条件基线</h2>
 <section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>。</p></section>
 
@@ -107,6 +99,7 @@ T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
 </tbody>
 </table>
 <p>GiGPO 的 anchor 要求与决策相关状态等价：相同页面可能有不同隐藏数据库、权限或先前动作；同一 shell 路径可能有不同文件内容。错误判等会将不可比较的动作混成一组。</p>
+<p><strong>信用算例：</strong>一条成功轨迹先作错误补丁，再作恢复，终局仍为1。若估计器给两步同一个episode优势，错误动作也会被强化。假设可信续写估计分别给错误动作 \(Q=0.2,V=0.6\)、恢复动作 \(Q=0.9,V=0.3\)，两步优势变成−0.4/+0.6。这里的Q/V是教学假设，<strong>不能由一条成功轨迹直接读出</strong>，必须来自多次续写、critic或额外过程证据。</p>
 <p>子任务粒度太细，定位成本与噪声增加；太粗又退回 episode 广播。RLDS 的收益随任务不同而变化，支持在自己任务族做 taxonomy、reward share 和定位器的独立消融，不支持承诺通用提升。</p>
 </section>
 <section id="credit-frontier">
@@ -122,7 +115,8 @@ T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
 <tr><td>学习 value / 单轨迹</td><td>turn GAE、single-rollout SAPO、SAO</td><td>critic 预测未来回报，减少每题多条长 rollout</td><td>将生成成本换成 value 训练和偏差；异步时还要处理 policy lag</td></tr>
 </tbody>
 </table>
-<p>GraphGPO 使用任务内 rollout 图和到成功状态的距离构造边级优势；MileGPO 再加入里程碑/陷阱可靠性和同状态分支校准。ReBel 把部分可观测下的 belief 漂移显式化；EFCA 从环境响应提取短期进展和中期重复模式。它们共同说明一个趋势：<strong>优先复用交互中已有的状态、分支、反馈和历史，而不是给每个 token 训练一个通用 PRM</strong>。但“无需额外标注”不等于没有额外假设，状态判等、belief schema、反馈解析和图构建都需要单独验证。</p>
+<ul><li><strong>GraphGPO/MileGPO：</strong>用重复状态和分支图估边级信用；先验证状态判等与图覆盖。</li><li><strong>ReBel：</strong>用显式belief与后续观察检查状态误解；belief格式也改变训练。</li><li><strong>EFCA：</strong>用即时进展与历史重复模式调整信用；先验证反馈解析。</li></ul>
+<p><strong>共同取舍：</strong>复用环境证据减少额外标注，但没有免除状态、schema与反馈质量的假设。</p>
 <div class="callout"><strong>面试选型：</strong>可可靠判等且同题多 rollout 重合多，用图/分支路线；部分可观测且错误来自状态误解，考虑 belief 信号；环境返回可解析反馈，考虑多时间尺度信用；轨迹极贵且重复状态少，评估 critic / 单轨迹路线。最终都保留 terminal verifier 作为任务语义锚点。</div>
 </section>
 <section id="gar">
@@ -130,13 +124,25 @@ T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
 
 
 <p>MiMo-V2.6 §4.3.2 的 Grader-Augmented Reinforcement 为混合成功/失败的代码组提供质量因子：grader 结合任务、仓库、patch、tests 等信息判断成功路径质量，在通过路径的 advantage 上做调整。<a href="index.html#ref-27">[27]</a></p>
-<div class="equation" role="math" aria-label="GAR正优势质量重加权">未截断的教学形式：
-λ = Σ_pass Aᵢ / Σ_pass fᵢ Aᵢ
-A'ᵢ = λ fᵢ Aᵢ（通过样本）
-于是 Σ_pass A'ᵢ = Σ_pass Aᵢ
-实际配方还有λ上限、重中心化和invalid grade回退。</div>
+<div class="reading-math" role="math" aria-label="GAR正优势质量重加权">\[
+\lambda=\frac{\sum_{i\in{\rm pass}}A_i}{\sum_{i\in{\rm pass}}f_iA_i},\qquad
+A_i'=\lambda f_iA_i,\qquad
+\sum_{i\in{\rm pass}}A_i'=\sum_{i\in{\rm pass}}A_i.
+\]</div>
+<p>这是正优势集合、非零分母、无截断的教学形式；实际配方还含 \(\lambda\) 上限、重中心化与无效grade回退。</p>
 <p>例如两条通过轨迹优势均为 1，质量因子为 1 和 0.5，则 λ=4/3，重加权为 4/3 和 2/3，总正优势仍为 2。实际 cap 与 re-centering 会影响这个恒等式，不能把教学算例当完整实现。</p>
 <p>通过与否首先由可靠 grader / verifier 更新 reward 和统计；成功路径质量加权是另一层。grader 偏好“补丁短”可能压制必要重构，偏好“测试多”可能奖励无效测试。需通过独立终评与质量留出标注识别 grader 漏洞。</p>
+</section>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>RLDS：密集信号的收益与每步开销</h2>
+<p><a href="https://arxiv.org/html/2609.27035v1">RLDS v1，Table 1、§5.2</a>使用 Qwen3-4B-Instruct-2507、8 张 H100 80GB，比较 RLVR 与 RLDS。Lift（%）和 ± 沿用原表，不能改写为成功率增加的百分点。奖励收益按固定训练步数报告，论文明确把预算匹配对照留待后续工作。</p>
+<table><thead><tr><th>环境</th><th>RLVR 秒/训练步</th><th>RLDS 秒/训练步</th><th>原表 Lift</th></tr></thead><tbody>
+<tr><td>HotpotQA</td><td>69.5</td><td>157.0</td><td>1.9 ± 5.1%</td></tr>
+<tr><td>ScienceWorld</td><td>294.4</td><td>262.2</td><td>26.7 ± 4.8%</td></tr>
+<tr><td>FrozenLake</td><td>49.8</td><td>119.0</td><td>11.7 ± 3.8%</td></tr>
+<tr><td>DeepResearch</td><td>163.4</td><td>267.9</td><td>0.7 ± 1.7%</td></tr>
+</tbody></table>
+<p>密集评分并非总能提高性价比。原实验使用 best-validation checkpoint，GRPO 组大小 RLVR/RLDS 通常为 10/6，DeepResearch 为 8/6，不能视为严格同 batch 的单因素实验。DeepResearch 的附录另报 267.3 秒，本表保持 Table 1 的 267.9 秒，不把差异静默合并。外部搜索与 judge 调用还产生 API 成本；调用量不是货币成本，需记录实际价格、失败重试和所有尝试。</p>
 </section>
 <section id="cases">
 <h2>三个任务的奖励漏洞与过程检查</h2>
@@ -151,6 +157,10 @@ A'ᵢ = λ fᵢ Aᵢ（通过样本）
 <p>过程检查只针对可验证的中间不变量，不奖励“说做了”。例如科学任务先检查样本 ID 再拟合，比给每句分析解释都打正分更可审计；GUI 等待网络响应是运行环节，不能按等待次数累计策略 reward。</p>
 <p>把硬约束是否通过、结果 reward、过程质量和成本分别记录。权重组合需要事先声明并消融，不能在看到留出结果后调整到最好。完整输入、轨迹和训练对照见<a href="s06_task_cases_experiments.html">第六章</a>。</p>
 </section>
+<section class="course-review" id="credit-review"><h2>信用分配追问</h2>
+<p><strong>PRM能直接当critic吗？</strong>PRM判断步骤质量，critic估计后续回报；正确步骤后可能失败，错误步骤后可能恢复，预测对象不同。</p>
+<p><strong>图式信用何时会失效？</strong>重复状态少或判等错误时，分支不可比较；先查状态规范化、图覆盖与独立终评。</p></section>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

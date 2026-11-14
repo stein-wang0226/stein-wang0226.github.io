@@ -1,0 +1,33 @@
+{
+  "version": "3.2.2",
+  "upstream": "https://registry.npmjs.org/mathjax/-/mathjax-3.2.2.tgz",
+  "package_sha256": "1b9c0a1c44df864e915690558e72adb9cc5203360daefd385084ced3b6c64c09",
+  "license": "Apache-2.0",
+  "files": [
+    {
+      "file": "tex-svg.js",
+      "bytes": 2108580,
+      "sha256": "d4295dc33744836935c1399feece5159577b34c5c8ffb9f1c6324cd82e03a882"
+    },
+    {
+      "file": "LICENSE.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "file": "input/tex/extensions/boldsymbol.js",
+      "bytes": 4056,
+      "sha256": "d6771fee0772db2657796c8d0e20e1878bb3237f6d3ed1e828e1834a4ff743ca"
+    },
+    {
+      "file": "input/tex/extensions/mathtools.js",
+      "bytes": 31845,
+      "sha256": "04272d69a0b64783cd5b66820d6f8220ee510409d0b12c38626404be9ed9689c"
+    },
+    {
+      "file": "input/tex/extensions/braket.js",
+      "bytes": 6729,
+      "sha256": "2abb032ca0eaff9fb2322a28b5d14ba058e7934d3e56974c55f574059e907a4c"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+.reading-content .course-layout { display:grid; grid-template-columns:230px minmax(0,1fr); gap:32px; align-items:start; }
+.reading-content .course-toc { position:sticky; top:24px; max-height:calc(100vh - 48px); overflow:auto; border:1px solid #d6d3cd; padding:14px; background:#f7f5f0; }
+.reading-content .course-toc summary { font-weight:700; cursor:pointer; }
+.reading-content .course-toc ol { padding-left:1.25em; margin:12px 0 0; }
+.reading-content .course-toc li { margin:0 0 12px; line-height:1.6; }
+.reading-content .course-toc a { color:#0f766e; }
+.reading-content .course-toc .course-focus { padding-left:12px; margin:8px 0 16px; border-left:1px solid #d6d3cd; list-style:none; }
+.reading-content .course-toc .course-focus li { margin:6px 0; font-size:.86rem; }
+.reading-content .course-body { min-width:0; }
+.reading-content .course-chapter { border-top:2px solid #d6d3cd; padding-top:24px; margin-bottom:64px; scroll-margin-top:24px; }
+.reading-content .course-chapter > h2 { font-size:1.7rem; line-height:1.5; margin:0 0 24px; color:#0a0a12; }
+.reading-content .course-chapter h3 { font-size:1.35rem; margin:32px 0 14px; line-height:1.55; }
+.reading-content .course-chapter h4 { font-size:1.12rem; margin:24px 0 12px; line-height:1.6; }
+.reading-content .course-chapter p, .reading-content .course-chapter li { line-height:1.9; }
+.reading-content .course-chapter strong { color:#0a0a12; }
+.reading-content .course-chapter section { padding:0; margin:24px 0; }
+.reading-content .course-chapter .citation-source-links { margin:8px 0; color:#706b65; }
+.reading-content .course-extension { padding:16px 0; }
+.reading-content .reading-math { font-family:inherit; white-space:normal; padding:16px 0; margin:16px 0; max-width:100%; overflow-x:auto; background:transparent; color:inherit; }
+.reading-content .reading-math mjx-container[display="true"] { margin:.6em 0; }
+.reading-content .reading-math-status { font-size:.88rem; border-left:3px solid #d6d3cd; padding:8px 12px; }
+.reading-content .course-review { border-left:3px solid #0d9488; padding:4px 18px; margin:24px 0; }
+.reading-content .course-review p { margin:8px 0; }
+.reading-content .course-layout a:focus-visible, .reading-content .course-layout summary:focus-visible { outline:2px solid #0d9488; outline-offset:4px; }
+@media(max-width:900px) {
+  .reading-content .course-layout { display:block; }
+  .reading-content .course-toc { position:relative; top:auto; max-height:none; margin-bottom:24px; }
+  .reading-content .course-chapter > h2 { font-size:1.4rem; }
+}

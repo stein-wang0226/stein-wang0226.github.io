@@ -2,11 +2,27 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>02 · Attention、位置编码与 KV 缓存</title><meta name="description" content="推导MHA/MQA/GQA/MLA与KV字节，解释RoPE、长上下文、SWA、稀疏检索、FlashAttention和分页缓存的不同作用。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>KV Cache：当前 Query 读取过去的 Key / Value</figcaption><ol class="mechanism-chain"><li><b>历史 prefix 的 KV</b><small>按层与 KV head 保存</small></li><li><b>新 token → Q/K/V</b><small>投影与位置变换</small></li><li><b>Q 读取历史与当前 KV</b><small>按 head 共享方式计算 Attention</small></li><li><b>输出并追加 Cache</b><small>保存新 K/V；旧 Q 通常不缓存</small></li></ol><p class="mechanism-return">↶ 序列增长增加 KV 容量；head 共享、窗口与量化各改变不同对象。</p></figure>
 <section id="purpose"><h2>历史保存、历史选择与计算实现分别优化什么</h2>
+<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.13245" title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints · Ainslie, Joshua, Lee-Thorp, James, de Jong, Michiel 等 · 2023/05/22 · 2305.13245">GQA</a>；<a href="https://arxiv.org/abs/1911.02150" title="Fast Transformer Decoding: One Write-Head is All You Need · Shazeer, Noam · 2019/11/06 · 1911.02150">MQA</a>；<a href="https://arxiv.org/abs/2205.14135" title="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness · Dao, Tri, Fu, Daniel Y., Ermon, Stefano 等 · 2022/05/27 · 2205.14135">FlashAttention</a>；<a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>。</p></section>
+
 <p class="lead">Attention 的查询仍是“当前位置读哪些历史表示”。MHA/MQA/GQA 改变 query 与 KV 的共享关系；MLA 压缩历史表示；SWA/稀疏检索限制读取集合；FlashAttention 改变精确计算的 IO；PagedAttention 改变状态分配。这些可以组合，但不产生同一种复杂度或质量保证。</p>
 <p>先修：<a href="s01_transformer_foundations.html#attention-mask">QKV 与 causal mask</a>。本文 B 为并发序列数、T 为保存的历史 token 数、L 为采用该机制的层数、Hq/Hkv 为 query/KV heads、dh 为每个 K/V head 的宽度。K/V 宽度相同只是本节基础假设。</p>
 </section>
+<section id="attention-scaling"><h2>为什么点积要除以 \(\sqrt{d_h}\)</h2>
+<p>先用可计算的近似解释尺度：假设query和key各分量独立、均值0、方差1，且两者相互独立。每项 \(q_\ell k_\ell\) 的均值为0、方差为1；求和 \(d_h\) 项的方差变成 \(d_h\)。</p>
+<div class="reading-math" role="math">\[
+s=q^\top k=\sum_{\ell=1}^{d_h}q_\ell k_\ell,\qquad
+\operatorname{Var}(s)=d_h,\qquad
+\operatorname{Var}\!\left(\frac{s}{\sqrt{d_h}}\right)=1.
+\]</div>
+<p>未缩放的score会随维度变大，使softmax更尖。其Jacobian为 \(\partial p_i/\partial s_j=p_i(\mathbf1[i=j]-p_j)\)，接近0/1的概率会让许多导数变小。缩放缓解该初始化尺度问题；真实Q/K不一定独立或单位方差，还需Norm、初始化与数值监控。</p>
+<p><strong>两候选例：</strong>\(d_h=4\)，score为[2,0]。未缩放权重为[0.8808,0.1192]；除以2后为[0.7311,0.2689]。value为[2,4]时输出分别约2.2384、2.5379。缩放改变读取分布，不能省略后再声称与原Attention等价。<a href="index.html#ref-1">[1] §3.2</a></p>
+</section>
 <section id="head-sharing"><h2>MHA、MQA、GQA：写入头和读取头可以不同</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2104.09864" title="RoFormer: Enhanced Transformer with Rotary Position Embedding · Su, Jianlin, Lu, Yu, Pan, Shengfeng 等 · 2021/04/20 · 2104.09864">RoPE</a>；<a href="https://arxiv.org/abs/2305.13245" title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints · Ainslie, Joshua, Lee-Thorp, James, de Jong, Michiel 等 · 2023/05/22 · 2305.13245">GQA</a>；<a href="https://arxiv.org/abs/1911.02150" title="Fast Transformer Decoding: One Write-Head is All You Need · Shazeer, Noam · 2019/11/06 · 1911.02150">MQA</a>。</p></section>
+
 <table><thead><tr><th>机制</th><th>共享关系</th><th>KV 存储/投影</th><th>边界</th></tr></thead><tbody>
 <tr><td>MHA</td><td>Hkv=Hq，每个 query 对应一组 KV</td><td>独立 KV 较多</td><td>表达容量与内存都较大</td></tr>
 <tr><td>MQA</td><td>Hkv=1，所有 query 共享一组 KV</td><td>KV 存储显著减少</td><td>query 仍多头；质量影响取决于训练</td></tr>
@@ -22,21 +38,42 @@
 </div><figcaption>GQA 的概念流程。kernel 可以在计算中广播 KV，而不实体化 repeat；具体布局由实现决定。</figcaption></figure>
 </section>
 <section id="kv-bytes"><h2>从形状推导缓存字节</h2>
-<div class="equation" role="math">M_KV = B × T × L × Hkv × (dK + dV) × bytes/value
-若 dK=dV=dh：M_KV = 2 B T L Hkv dh b
-bytes/token/request = 2 L Hkv dh b
-本文规划例：L=80，Hkv=8，dh=128，BF16 b=2
-每 token = 327,680 B = 320 KiB；T=32,768 时每请求 = 10 GiB</div>
-<p>上述数值由选定的形状算出，是容量例子，不是某个服务的峰值实测。它排除分页余量、allocator、workspace、临时激活、权重和跨设备复制。TP 理想分片可减少每 rank 的份额，但 Hkv 小于 TP 时可能复制 KV head；必须检查后端布局。</p>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2104.09864" title="RoFormer: Enhanced Transformer with Rotary Position Embedding · Su, Jianlin, Lu, Yu, Pan, Shengfeng 等 · 2021/04/20 · 2104.09864">RoPE</a>。</p></section>
+
+<p>每层的K为 \([B,T,H_{\rm kv},d_K]\)，V为 \([B,T,H_{\rm kv},d_V]\)。元素数分别乘每值字节 \(b\)，再累加层数。宽度相同时得到熟悉的系数2：</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+M_{\rm KV}&=BTLH_{\rm kv}(d_K+d_V)b,\\
+M_{\rm KV}&=2BTLH_{\rm kv}d_hb\quad(d_K=d_V=d_h),\\
+\frac{M_{\rm KV}}{BT}&=2LH_{\rm kv}d_hb.
+\end{aligned}
+\]</div>
+<p><strong>小形状例：</strong>单请求、3个token、2层、2个KV头、每头宽4、每值2B，则K与V各有48个元素，各96B，总192B。query头数量不直接出现在持久KV式中，已经由KV共享关系决定。</p>
+<p>这是状态容量推导，排除分页、workspace、权重和复制；TP的本地布局也可能复制KV头。70B/32K及GB/GiB的完整预算放在<a href="../llm-serving/s03_capacity_cost.html">服务容量章</a>统一维护。</p>
 <p>长上下文不同机制要逐层加总：full KV 随 T 增长，SWA 可按实现截到 window，recursive state 按 state shape 算；训练 SWA 并不保证服务只分配 window 大小。量化还要加 scale、零点、对齐和高精度例外。容量表和完整预算见<a href="../llm-serving/s03_capacity_cost.html">部署第03章</a>。</p>
 <p>MLA 的关键是保存比完整多头 KV 更窄的 latent；RoPE 的位置相关部分常需单独处理，以免破坏投影吸收。DeepSeek V4.1 又使用 CED、CSA2 与缓存共享，其报告的 890 B/token 属于特定压缩/组共享口径，不是所有 MLA 的常数。<a href="../llm-research-map-2026/s03_base_architecture.html#cache">V4.1 分项推导与排除项</a>保留为具体案例。</p>
 </section>
 <section id="position"><h2>RoPE 让内积包含相对位移</h2>
-<div class="equation" role="math">二维分量：R(pθ)[x₁,x₂]ᵀ
-          = [cos(pθ)x₁ − sin(pθ)x₂,
-             sin(pθ)x₁ + cos(pθ)x₂]ᵀ
-q'_i = R(i)q_i，k'_j = R(j)k_j
-(q'_i)ᵀk'_j = q_iᵀ R(j−i) k_j</div>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2104.09864" title="RoFormer: Enhanced Transformer with Rotary Position Embedding · Su, Jianlin, Lu, Yu, Pan, Shengfeng 等 · 2021/04/20 · 2104.09864">RoPE</a>。</p></section>
+
+<p>将head的分量两两配对。对其中一对使用频率 \(\omega\)，位置 \(p\) 对应角度 \(p\omega\)。二维旋转保持长度，旋转矩阵的转置等于反向旋转；两次旋转的角度可以相加。</p>
+<div class="reading-math" role="math">\[
+R(\alpha)=\begin{pmatrix}\cos\alpha&-\sin\alpha\\\sin\alpha&\cos\alpha\end{pmatrix},
+\]</div>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+R(\alpha)^\top&=R(-\alpha),\\
+R(\alpha)R(\beta)&=R(\alpha+\beta).
+\end{aligned}
+\]</div>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+q'_i&=R(i\omega)q_i,\quad k'_j=R(j\omega)k_j,\\
+(q'_i)^\top k'_j&=q_i^\top R(-i\omega)R(j\omega)k_j\\
+&=q_i^\top R((j-i)\omega)k_j.
+\end{aligned}
+\]</div>
+<p><strong>数值例：</strong>令 \(q=k=(1,0)^\top,\omega=\pi/2\)。相同位置的旋转后内积为1；相差一个位置为0；相差两个位置为−1。将两个位置一起平移一个位置，差值不变，内积仍相同。实际head使用多组频率，不能由这一个周期例子推出任意长距离无损外推。</p>
 <p>旋转本身编码绝对位置，QK 内积中的相对旋转取决于 j−i。多频率二维对子让模型处理不同距离；通常作用于 Q/K，不能笼统说把位置向量加到所有输入。不同实现的 interleaving、partial rotary、频率与 scaling 必须与 checkpoint 一致。<a href="index.html#ref-3">[3]</a></p>
 <p>把最大位置调大只允许计算更长位置；未见过的频率/距离仍会产生分布变化。插值、频率缩放与长上下文训练解决不同问题。长上下文验收应包含位置敏感检索、多针冲突、依赖链和真实任务，不能只用一个 needle 成功率证明普遍能力。</p>
 <details><summary>Cache position 与逻辑 position 为什么要分开？</summary><p>cache_position 决定状态写到哪里，position_ids 决定位置编码。padding、prefix 复用、分页、截断和 SWA 可能使物理槽位与逻辑位置不同。复用相同 token prefix 还要求 position、mask、adapter、权重和精度兼容。</p></details>
@@ -51,14 +88,28 @@ q'_i = R(i)q_i，k'_j = R(j)k_j
 <p>少读历史不等于少存历史；索引仍可能依赖完整候选状态。局部层与全局层交替也不能简单按局部比例推算端到端速度。新架构的 indexer、压缩组与层计划应回到<a href="../llm-research-map-2026/s06_architecture_landscape.html">固定模型配置</a>，分别核算。</p>
 </section>
 <section id="implementation"><h2>FlashAttention 和 PagedAttention 的优化对象</h2>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2205.14135" title="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness · Dao, Tri, Fu, Daniel Y., Ermon, Stefano 等 · 2022/05/27 · 2205.14135">FlashAttention</a>；<a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>；<a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></section>
+
 <p>FlashAttention 通过分块和 online softmax 在 SRAM 中累积输出，避免将大规模 score/概率矩阵反复写入 HBM；原算法保留 dense softmax attention 的数学计算。它没有把 full attention 变成线性计算，也不能自动缩小所有 KV。不同融合顺序与浮点格式仍可能导致数值差异。<a href="index.html#ref-4">[4]</a></p>
 <p>PagedAttention 把逻辑 KV 映射到非连续物理块，改善变长请求的碎片与共享；prefix cache 再复用兼容前缀的计算。存储分页不改变 causal mask，命中前缀也没有降低从零 prefill 的内在计算。具体 vLLM/SGLang 调度和源码在<a href="../llm-serving/s01_runtime_scheduling.html">部署第01章</a>维护。</p>
 <div class="callout"><strong>判断一个“提速”：</strong>先写清它改变的是算术次数、HBM IO、持久状态、物理碎片、共享命中、网络传输还是调度等待，再比较相同模型、精度、长度和负载。</div>
 </section>
 <section id="evaluation"><h2>对照方案与自测</h2>
+<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.13245" title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints · Ainslie, Joshua, Lee-Thorp, James, de Jong, Michiel 等 · 2023/05/22 · 2305.13245">GQA</a>。</p></section>
+
 <p>本文建议：固定 checkpoint 时先比较 full forward/KV 解码的一致性，再测同长度同并发的 TTFT、ITL 和峰值内存。改变 MHA/GQA 或窗口属于结构变更，应单独训练或使用有依据的转换配方；不可把未适配模型的质量下降当成机制本身上限。所有这些对照尚未执行。</p>
 <details><summary>自测：为什么 GQA 省 KV，却不把全部 Attention 计算同比减少？</summary><p>query head 仍有 Hq 个，每个仍要与允许的历史计算 score 并聚合 value。K/V 投影与保存量减少，读取可以共享，但 softmax/query 计算、输出投影与 FFN 仍存在；最终收益还受 kernel 和带宽限制。</p></details>
-<p>下一章分析 FFN 和专家计算：节省历史状态与减少每 token 激活参数是不同方向，通信又可能成为新的瓶颈。</p>
+<details><summary>自测：RoPE为什么有相对位置性质，仍需要长上下文训练？</summary><p>相对性质来自旋转矩阵乘积，说明内积如何依赖位移；更长位移对应训练外的频率/距离组合，正确代数不保证模型在新分布上的质量。</p></details>
 </section>
 <section id="sources"><h2>来源</h2><p><a href="index.html#ref-2">[2] MQA/GQA</a>、<a href="index.html#ref-3">[3] RoPE</a>、<a href="index.html#ref-4">[4] FlashAttention</a>、<a href="index.html#ref-8">[8] Llama 固定源码</a>；MLA/V4.1 对照<a href="../llm-research-map-2026/s03_base_architecture.html#versions">报告与缓存规格</a>。字节计算为明确假设下的规格推导。</p></section>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>Kimi Linear：同预训练预算的能力对照</h2>
+<p><a href="https://arxiv.org/html/2510.26692v1">Kimi Linear v1，Table 3</a>比较同 1.4T token 预训练设置的 Base MLA、GDN-H 与 Kimi Linear（%）。这是受控基线实验，不能混入发布模型 5.7T token 的结果。</p>
+<table><thead><tr><th>结构</th><th>MMLU</th><th>MMLU-Pro</th><th>GSM8K</th><th>EvalPlus</th></tr></thead><tbody>
+<tr><td>Base MLA</td><td>71.6</td><td>47.2</td><td>83.7</td><td>59.5</td></tr>
+<tr><td>GDN-H</td><td>72.2</td><td>47.9</td><td>81.7</td><td>63.1</td></tr>
+<tr><td>Kimi Linear</td><td>73.8</td><td>51.0</td><td>83.9</td><td>60.2</td></tr></tbody></table>
+<p>Kimi Linear 的知识与数学成绩高于 Base MLA，EvalPlus 低于 GDN-H，不能概括为每项最优。线性状态与 KV 字节推导是资源机制，不能替代同硬件、长度、并发下的实测显存与吞吐。推理加速随并发变化的例子见<a href="../llm-research-map-2026/s04_inference_diffusion.html#frontier-comparison">推理对照</a>。</p>
+</section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>

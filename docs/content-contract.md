@@ -19,6 +19,7 @@
 | `updated` | 有依据的实质内容日期；未知为 `null` |
 | `updated_source` | 自动追踪文从指定正文元素提取日期，不再手写第二份 |
 | `series`、`order` | 子章的真实父系列与唯一正整数顺序 |
+| `reading_mode` | 系列可设 `longform`，子章按 `series/order` 合入主题页；源文件仍唯一 |
 | `featured` | 是否在当前推荐入口呈现 |
 | `related` | 有效且不重复的其他内容 ID，不自引用 |
 | `reading_role` | `core / reference / tracker / historical`；未填写时沿用状态与来源默认值 |
@@ -110,9 +111,13 @@ Markdown front matter 与 catalog 中重复的标题等字段保持一致；
 
 全站结构整合另有 `docs/organization-audit-20261114.json` 不可变基线，
 记录原正文单元、源锚点、公开锚点、来源链接和自动标记。
-重复长段可以改为概览与主讲页链接，但完整原段留在同页
-`details[data-reading-history]`，由 `READING:HISTORY:START/END` 标记界定。
-原文为冻结参考，保留旧 ID 与引用，不进入默认正文目录。
+2026-11-15起，按用户批准的学习重编要求，重复长段可以改为精简概览。
+改前源稿逐字保留在 `assets/archive/blog-before-learning-rework-20261115/`，
+通过 `/blog/history/` 下载，不再要求把全部重复稿放回同一阅读页面。
+`docs/organization-changes-20261115.json` 记录原单元哈希、改前源SHA、原件SHA与教学去向；
+组织检查确认原单元在现稿或原件实际存在，并验证旧锚点与当前教学位置。
+不可变基线继续保留；这是明确的保留口径变更，不是原“必须留在原源”检查原封不动通过。
+既有 `details[data-reading-history]` 原件可继续保留；新重编优先使用单一归档集合。
 `reading.js` 仅增强深链接展开和焦点，无脚本仍可手动展开。
 核验覆盖关系时不能以字符数、相似度或重建基线代替原单元检查。
 
@@ -123,6 +128,12 @@ Markdown front matter 与 catalog 中重复的标题等字段保持一致；
 原件版本、许可、字节数与 SHA 保留；`used_in` 和 `historical_used_in`
 分别记录实际当前使用位置与冻结原文位置。旧使用字段在更新时保留为历史元数据。
 结构检查不提升科研事实审阅状态。
+
+课程源章使用 `READING:FRAGMENT:START/END` 标记可装配的正文；
+系列引入只维护 `READING:COURSE` 装配位置与本主题引入、收束、参考。
+子章的公开URL由构建生成直接兼容页，旧片段映射到
+`<chapter-id>--<original-id>`。公式统一经本地MathJax 3.2.2排版，
+使用 `\(...\)` / `\[...\]`，真实程序保留代码框。
 
 `review_status` 的证据应能定位到该文的来源/验收记录。只检查格式与链接时，
 不能声称论文事实已经复核。`reviewed` 也不等于每个实验都在本地复现。

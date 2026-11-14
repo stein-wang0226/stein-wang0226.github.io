@@ -5,18 +5,14 @@
 <meta name="description" content="围绕 GSE52778 与 airway 设计 RNA-seq 科学 Harbor 任务族，贯通来源审计、公共输出schema、研究切分、独立verifier和轨迹。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>科学任务：数据来源怎样进入统计结论与验收</figcaption><ol class="mechanism-chain"><li><b>冻结数据与元数据</b><small>对象版本、样本标签、许可与 hash</small></li><li><b>定义统计设计</b><small>对照、协变量、切分与禁止泄漏信息</small></li><li><b>执行分析与输出</b><small>代码、表格、图和方法说明</small></li><li><b>多维 verifier</b><small>结构、数值、统计口径与解释边界</small></li></ol><p class="mechanism-return">↶ 标签或来源冲突回到数据核对；文件存在不能证明分析正确。</p></figure>
 <section id="overview">
 <p class="eyebrow">Scientific agent design · 2026-11-14</p>
 <h2>任务难度来自科学判断，答案由冻结数据支持</h2>
 <p class="lead">以RNA-seq差异表达为贯穿案例：Agent需要识别计数与样本单位、建立配对统计设计、完成归一化 / 多重检验，并交付可复算的结果。来源、公共问题、私有评估与训练数据是四种不同产物；论文结论提供研究动机，不充当答案oracle。</p>
 <div class="callout caution"><strong>交付状态：研究设计。</strong>本章提供合同、schema、来源图与验收方案。未下载FASTQ或计数包、未运行科学分析、未产生reference / oracle / 容差 / 盲测分数，尚不是可发布的Harbor benchmark。</div>
-<p>先修：<a href="s01_task_synthesis.html">任务合成</a>、<a href="s02_benchmark_map.html">评测对象</a>、<a href="../agent-harness-guide.html#codex-loop">执行与状态</a>。下一章将同一合同接到<a href="s04_cluster_training_evaluation.html">工业SFT / RL方案</a>。</p>
-<figure><div class="flow" aria-label="科学数据到训练的完整链路">
-<div class="stage"><b>来源与输入</b><small>研究 → 样本 → runs<br>计数层与注释独立固定</small></div>
-<div class="stage"><b>科学合同</b><small>对比、配对、单位、缺失<br>公开完整输出字段</small></div>
-<div class="stage"><b>独立验证</b><small>复算、合理路径、校准<br>私有答案不进入环境</small></div>
-<div class="stage"><b>轨迹与准入</b><small>动作 / 观察 / artifact<br>SFT监督、RL奖励、终评</small></div>
-</div><figcaption>本文设计图；四个阶段分别版本化。任务构建的未来门槛不由本站HTML构建检查替代。</figcaption></figure>
+<p><strong>统计单位是供体的生物学重复。</strong>同一供体的处理前后有依赖；样本列数、测序run数和独立受试者数不能互换。</p>
 </section>
 <section id="provenance">
 <h2>GSE52778 与 airway：同一研究，输入层并不相同</h2>
@@ -33,12 +29,7 @@
 <p>BioC3.23网页中，按GEO列位置重命名再生成的中间表显示16行且dex全为untrt；同页冻结<code>data(airway)</code>却打印正确8样本与四组配对。这一可见冲突不能靠“官方教程”消除。本文采用冻结对象的文档作为候选范围，未来需核对实际包内<code>sample_table.csv</code>、<code>colData(airway)</code>与逐GSM字段，以字段语义取值，不能照抄位置式解析。</p>
 <p>本轮只观察了网页内容，未运行GEOquery，也未确认冲突的运行根因；“元数据字段变化导致位置解析失效”是待核验解释。</p>
 </details>
-<pre><code>GSE52778 → GSM样本 → SRP033351 / PRJNA229998
-      ├─ FPKM / gene_exp.diff → processed / answer-bearing（私有审计）
-      └─ airway 1.32.0 的 airway 对象（候选8样本gene counts）
-          → 固定样本配对、注释、计数语义与导出变换
-          → counts.tsv + samples.tsv + input-manifest.json
-          → 归一化 / 配对GLM / 多重检验 → 可复算artifact</code></pre>
+<figure class="mechanism-map"><figcaption>同一研究的来源分支，不能混用输入层</figcaption><ol class="mechanism-chain"><li><b>GSE52778 → GSM / SRA</b><small>16样本、原始reads入口；未下载</small></li><li><b>分开来源层</b><small>FPKM与作者差异结果 → 私有审计；airway对象 → 候选8样本count输入</small></li><li><b>冻结fixture</b><small>counts.tsv + samples.tsv + manifest；配对、注释与hash</small></li><li><b>独立计算与验收</b><small>design → contrast → BH → gene_stats与summary</small></li></ol></figure>
 <p>本研究只能支撑特定细胞、处理和时间下的转录表达对比；不能单独验证蛋白功能、临床疗效或跨人群泛化。GSE18508不自动等于pasilla教学子集；GSE26024是相关研究的microarray部分，不列入RNA-seq输入。</p>
 </section>
 <section id="family">
@@ -53,16 +44,63 @@
 </section>
 <section id="statistics">
 <h2 id="reading-section-4">分析要求：先固定比较对象与统计单位</h2>
-<div class="equation" role="math" aria-label="配对RNA-seq统计模型">K_gj ~ NB(μ_gj, α_g)，Var(K_gj)=μ_gj+α_g μ_gj²
-log μ_gj = log s_j + β_g0 + donor效应 + β_g,Dex · I(Dex)
-本合同方向：Dex / untreated；log2FC = β_g,Dex / log(2)
-BH-adjusted pvalue ≤ q 才进入声明的显著集合（本文选择q=0.05）</div>
-<p>配对用<code>~ donor + condition</code>表达，不把八个样本当八名独立受试者。四对样本能够估计共同Dex效应，不能可靠支撑任意供体×处理交互。批次若与处理完全共线，仅加入一个batch项不能恢复不可识别的生物效应。DESeq2与edgeR的NB模型提供原始方法依据。<a href="#ref-deseq">[3]</a> <a href="#ref-edger">[4]</a></p>
+<h3>从count到均值：离散度与offset</h3>
+<div class="reading-math">\[
+K_{gj}\sim\operatorname{NB}(\mu_{gj},\alpha_g),\qquad
+\operatorname{Var}(K_{gj})=\mu_{gj}+\alpha_g\mu_{gj}^2.
+\]</div>
+<p>\(g\)为gene，\(j\)为sample，\(\alpha_g\)为离散度。Poisson方差等于均值；NB允许生物学重复有更大波动。教学取均值100、离散度0.1，方差为\(100+0.1\times100^2=1100\)，标准差约33.2；不能按Poisson标准差10判断同样的数据波动。</p>
+<div class="reading-math">\[
+\mu_{gj}=s_j\exp(x_j^\top\beta_g),\qquad
+\log\mu_{gj}=\log s_j+x_j^\top\beta_g.
+\]</div>
+<p>\(s_j&gt;0\)是方法估计的相对有效库大小，\(\log s_j\)作为已给定的offset、系数固定为1；它不是待自由拟合的处理效应。若样本2的有效库大小为样本1的两倍，即便表达相同，其期望count也两倍。归一化因子不一定等于原始总counts比例。</p>
+<h3>配对design：在同一供体内估计共同处理效应</h3>
+<p>设计<code>~ donor + condition</code>，以供体A、untreated为基线。每个gene有截距、B/C/D供体项和共同Dex项，以下8行×5列：</p>
+<table><thead><tr><th>样本</th><th>截距</th><th>供体B</th><th>供体C</th><th>供体D</th><th>Dex</th></tr></thead><tbody>
+<tr><td>A untreated</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>A Dex</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>B untreated</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>B Dex</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>C untreated</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>C Dex</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>D untreated</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>D Dex</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr></tbody></table>
+<div class="reading-math">\[
+\begin{aligned}
+\log\mu_{gj}&amp;=\log s_j+\beta_{g0}\\
+&amp;\quad+\beta_{gB}I(B)+\beta_{gC}I(C)\\
+&amp;\quad+\beta_{gD}I(D)+\beta_{g,\rm Dex}I(\rm Dex).
+\end{aligned}
+\]</div>
+<p><strong>可识别性：</strong>四对能估计共同效应；若加入每个供体各自的处理交互会耗尽这8行的残差自由度。batch与处理完全共线时，加一列batch也不能分开效应。</p>
+<h3>Contrast：从自然对数系数到log2FC</h3>
+<div class="reading-math">\[
+\begin{aligned}
+\log\frac{\mu_{g,\rm Dex}/s_{\rm Dex}}
+{\mu_{g,\rm untrt}/s_{\rm untrt}}&amp;=\beta_{g,\rm Dex},\\
+\log_2\operatorname{FC}&amp;=\frac{\beta_{g,\rm Dex}}{\log2}.
+\end{aligned}
+\]</div>
+<p>同供体相除使截距和供体项消掉。教学取\(\beta_{\rm Dex}=\log2\)，归一化后FC=2、log2FC=1；若Dex库大小又大两倍，原始期望count比是4。反转contrast则log2FC变为−1。<strong>方向和offset都要核对，不能直接把raw count比当处理效应。</strong>方法依据见DESeq2与edgeR<a href="#ref-deseq">[3]</a><a href="#ref-edger">[4]</a>。</p>
 <p>DESeq2路径可采用size-factor与dispersion估计、Wald对比；edgeR路径可采用TMM、同一设计矩阵和QL F-test。QL不由2009年的两组exact-test文章单独证明，另见2016 workflow及edgeR v4官方方法说明。<a href="#ref-ql">[5]</a> <a href="#ref-v4">[6]</a>。本轮固定候选版本DESeq2 1.52.0、edgeR 4.10.7，但未验证依赖或运行数值结果。</p>
 <p>对未检验、全零、过滤、不可估计基因分别定义状态；缺失p值不置0，也不伪造fold change。LFC收缩值与未收缩估计是不同对象。本合同主字段选择未收缩log2FC；若另交付shrunken LFC，应另列字段 / 版本。输入gene宇宙、预过滤和BH集合必须公开冻结。</p>
+<h3>BH：控制一组声明的错误发现率</h3>
+<p>固定m个参与校正的检验，把p值从小到大排为\(p_{(1)},\ldots,p_{(m)}\)。在阈值q下，找最大的\(k\)满足\(p_{(k)}\le kq/m\)，将前k项声明显著；没有满足项则不声明。adjusted p通过从后往前取累计最小值获得：</p>
+<div class="reading-math">\[
+p^{\rm adj}_{(i)}=\min\left(1,\min_{j\ge i}\frac{m\,p_{(j)}}{j}\right).
+\]</div>
+<table><caption>教学四检验例：m=4，q=0.05，非airway实测</caption><thead><tr><th>排序i</th><th>p值</th><th>i·q/m</th><th>BH padj</th><th>显著</th></tr></thead><tbody>
+<tr><td>1</td><td>0.003</td><td>0.0125</td><td>0.012</td><td>是</td></tr>
+<tr><td>2</td><td>0.020</td><td>0.0250</td><td>0.040</td><td>是</td></tr>
+<tr><td>3</td><td>0.040</td><td>0.0375</td><td>0.0533</td><td>否</td></tr>
+<tr><td>4</td><td>0.200</td><td>0.0500</td><td>0.200</td><td>否</td></tr></tbody></table>
+<p>第三项未校正p&lt;0.05，校正后不显著。<strong>FDR是重复实验中错误发现比例的期望控制，不表示每个显著gene有5%概率错误。</strong>标准BH保证依赖有效p值、独立或适当正依赖条件；任意相关性不能直接套保证。实际过滤、缺失和adjustment集合依公开方法协议冻结。</p>
 </section>
 <section id="contract">
 <h2>完整输出字段公开；数值结果保持未知</h2>
+
+
 <p>候选公共输入为gene×sample非负整数<code>counts.tsv</code>、配对元数据<code>samples.tsv</code>及包含版本 / hash / 计数和注释语义的manifest。输出TSV必须UTF-8、首行字段名、每个gene / sample唯一；<code>NA</code>表示缺失，0表示实测零。JSON用<code>null</code>表示缺失，拒绝NaN / Infinity。可下载schema描述TSV解析后的row对象与summary，跨行 / 科学约束见序列化合同。</p>
 <div class="reading-table"><table><thead><tr><th>产物</th><th>完整字段</th><th>语义和规则</th></tr></thead><tbody>
 <tr><td><code>sample_qc.tsv</code></td><td>sample_id, donor_id, condition, library_assigned_counts, detected_genes, normalization_factor</td><td>每输入sample一行；库大小是assigned gene counts总和；检测量=count&gt;0基因数；factor为方法声明的相对有效库大小，几何均值归一至1</td></tr>
@@ -105,14 +143,14 @@ return independent_unit_scores_and_failure_codes(units)
 </section>
 <section id="trajectories">
 <h2>轨迹把数据、Harness与训练连接起来</h2>
-<p>每次动作记录task / fixture / contract / harness / policy版本、角色、工具参数、观察、exit / timeout、artifact hash、token spans、行为logprob与终止原因。工具输出是条件信息；assistant动作才是策略产生的目标。mask=0不会让模型看不到观察，也不代表上游参数没有梯度。</p>
-<p>SFT准入至少要求科学artifact通过独立验收、模板一致、动作可执行、隐私 / 许可明确，以及逐步监督范围正确。终局成功的轨迹仍可能有错误动作，需区分保留可解释修复和无条件模仿错误。RL准入还要求环境能复现、奖励有区分度、故障可识别、超时政策固定；环境故障不能简单归为负科学reward。</p>
+<ul><li><strong>记录谱系：</strong>task/fixture/contract/harness/policy版本，动作、观察、exit、artifact hash、spans与终止原因。</li><li><strong>SFT：</strong>科学产物通过、动作可执行、许可与mask明确；成功轨迹也可能含应修订的错误动作。</li><li><strong>RL：</strong>reset可复现、reward有区分度、超时政策固定；环境故障单列。</li></ul>
 <p><a href="../assets/research/scientific-agent-design-20261114/trajectory.schema.json" download>轨迹schema设计</a>提供结构，不包含伪造rollout。CPT混合策略见<a href="../llm-training-lifecycle/s02_midtraining.html">Midtraining</a>，角色目标见<a href="../llm-training-lifecycle/s03_sft_rft.html#sft">SFT</a>，结果反馈见<a href="../llm-training-lifecycle/s04_rl_evaluation.html">RL</a>。</p>
 </section>
 <section id="self-check"><h2>理解检查与研究门槛</h2>
 <details><summary>为什么作者差异结果不能直接成为公共输入？</summary><p>它已包含任务想检验的目标判断，容易变成lookup。公共输入应该保留需要Agent自行完成的统计链；论文结果只能作为维护者的待验证研究背景。</p></details>
 <details><summary>两个统计包结果不同，应该放宽同一个容差吗？</summary><p>先固定单位、gene宇宙、方向和方法协议，区分实现错与合法方法差异。无法共同校准的对象分轨评分；没有实测spread时不能编造容差。</p></details>
 <details><summary>一份研究生成千种题面能证明泛化吗？</summary><p>它们共享来源与答案线索，只增加条件表达覆盖。跨研究、物种与assay迁移须另有独立held-out与统计。</p></details>
+<details><summary>Dex的raw count是对照四倍，为什么log2FC可能只有1？</summary><p>raw ratio同时包含有效库大小和生物效应。若size factor比为2，去掉offset后FC为2、log2FC为1；还要在同供体和声明模型下比较。</p></details>
 <p>来源轨迹与当前阻塞项可下载<a href="../assets/research/scientific-agent-design-20261114/study-audit.json" download>study-audit.json</a>。下一步研究方案见<a href="s04_cluster_training_evaluation.html">训练与终评</a>；检索证据和信任边界见<a href="../agent-systems/">Agent系统</a>。</p>
 </section>
 <section id="sources"><h2>一手依据与版本</h2><ol class="sources">
@@ -123,4 +161,5 @@ return independent_unit_scores_and_failure_codes(units)
 <li id="ref-ql">[5] Chen, Lun &amp; Smyth, <a href="https://f1000research.com/articles/5-1438/v2">From reads to genes to pathways</a>，version2，2016；QL与完整统计路径，研究为GSE60450，非本airway结果。</li>
 <li id="ref-v4">[6] <a href="https://bioconductor.org/packages/3.23/bioc/html/edgeR.html">edgeR 4.10.7 / BioC3.23</a>；官方登记当前功能与<a href="https://doi.org/10.1093/nar/gkaf018">edgeR v4（2025）</a>方法引用。未运行该版本。</li>
 </ol><p class="note">科学合同、任务族、split和verifier均为本文设计。没有reference数值、经验容差和盲测分数；本站交互验收不证明科学任务可解或发布就绪。</p></section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>

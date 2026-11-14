@@ -8,6 +8,7 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
 <section id="why-on-policy">
 <h2>OPD 为什么需要学生自己走一遍任务</h2>
 
@@ -20,18 +21,40 @@
 <div class="stage"><b>学生独立执行</b><small>部署不提供答案和教师<br>真实 verifier 与能力回归</small></div>
 </div><figcaption>GKD 支持不同 divergence 和生成混合；MiniLLM 与 TML 给出 reverse-KL 蒸馏路径。并非所有 OPD 都使用同一种 loss。<a href="index.html#ref-28">[28]</a> <a href="index.html#ref-29">[29]</a> <a href="index.html#ref-30">[30]</a></figcaption></figure>
 <p>教学代码任务中，教师通常直接修空输入；学生却可能先改调用方，收到 <code>test_empty_input FAILED</code>。静态教师路径没有这个错误历史；OPD 的教师要在这个 prefix 上指出下一动作的分布。教师必须能理解学生的实际状态，不能悄悄换成一条理想历史。</p>
-<div class="equation" role="math" aria-label="OPD固定rollout分布目标">L_OPD(θ) = E[h ~ d_barθ] D(πθ(·|h), πT(·|h))
-d_barθ：生成本批数据的学生快照所访问的 prefix 分布</div>
+<div class="reading-math" role="math" aria-label="OPD固定rollout分布目标">\[
+L_{\rm OPD}(\theta)=\mathbb E_{h\sim d_{\bar\theta}}
+D\!\left(\pi_\theta(\cdot\mid h),\pi_T(\cdot\mid h)\right).
+\]</div>
+<p>\(\bar\theta\) 是生成本批轨迹的学生快照，\(d_{\bar\theta}\) 是其访问prefix的分布；本批优化把它固定。</p>
 <p>一批样本采完后可用固定快照更新；学生随后再采新批。这是一种 on-policy 数据循环，不表示每个 optimizer step 都即时重采所有状态。异步缓存会进一步引入行为策略与当前策略差异。</p>
 </section>
 <section id="full-vocabulary">
+<figure class="mechanism-map"><figcaption>完整词表 OPD：同一个 prefix 上比较两份分布</figcaption><ol class="mechanism-chain">
+<li><b>学生生成 prefix h</b><small>保留真实错误与工具观察</small></li><li><b>学生 pᵥ / 教师 qᵥ</b><small>同状态、同词表；教师 no-grad</small></li><li><b>Σ pᵥ(log pᵥ−log qᵥ)</b><small>对词表求和，再按预测位置 mask</small></li><li><b>梯度只回到学生</b><small>局部 reverse-KL 目标；记录教师成本</small></li>
+</ol><p class="mechanism-return">↶ 学生更新后访问新的 prefix。固定 prefix 的局部梯度不包含状态访问分布的全部导数。</p></figure>
 <h2>完整词表 reverse-KL：每个 prefix 的局部梯度</h2>
 
 
 <p>令固定 prefix 上的学生概率是 <code>pᵥ</code>、教师概率是 <code>qᵥ</code>，教师分支无梯度。reverse-KL 对学生具有概率的候选施加约束，forward-KL 则按教师概率加权。支持集、温度和词表对齐必须先定义。</p>
-<div class="equation" role="math" aria-label="反向和正向KL">D_reverse = KL(p || q) = Σᵥ pᵥ(log pᵥ − log qᵥ)
-D_forward = KL(q || p) = Σᵥ qᵥ(log qᵥ − log pᵥ)
-若 p = softmax(z)：∂D_reverse/∂zᵥ = pᵥ[(log pᵥ − log qᵥ) − D_reverse]</div>
+<div class="reading-math" role="math" aria-label="反向和正向KL">\[
+D_{\rm reverse}=\sum_v p_v(\log p_v-\log q_v),\qquad
+D_{\rm forward}=\sum_v q_v(\log q_v-\log p_v).
+\]</div>
+<p>softmax给出 \(\partial p_v/\partial z_k=p_v(\mathbf1[v=k]-p_k)\)。令 \(u_v=\log p_v-\log q_v\)，对reverse-KL先求概率导数，再乘softmax Jacobian：</p>
+<div class="reading-math" role="math" aria-label="reverse KL的softmax梯度推导">\[
+\begin{aligned}
+&\frac{\partial D_{\rm reverse}}{\partial z_k}
+ =\sum_v(u_v+1)\frac{\partial p_v}{\partial z_k}\\
+ &=p_k(u_k+1)-p_k\sum_vp_v(u_v+1)\\
+ &=p_k(u_k-D_{\rm reverse}).
+\end{aligned}
+\]</div>
+<p>\(\sum_vp_v=1\) 使两个常数1抵消，出现按学生分布加权的baseline。forward-KL的logits梯度则为 \(p_k-q_k\)，不能直接互换两者。</p>
+<table><thead><tr><th>二候选算例 \(p=(0.8,0.2),q=(0.5,0.5)\)</th><th>候选1</th><th>候选2</th></tr></thead><tbody>
+<tr><td>\(u_v=\log p_v-\log q_v\)</td><td>0.470004</td><td>−0.916291</td></tr>
+<tr><td>\(D_{\rm reverse}=0.192745\)，logits梯度</td><td>0.221807</td><td>−0.221807</td></tr>
+<tr><td>forward-KL logits梯度</td><td>0.3</td><td>−0.3</td></tr></tbody></table>
+<p>梯度下降会降低学生过度偏好的候选1，并提高候选2；梯度和为零符合softmax对所有logits同时平移不变。教师对学生有概率的动作若给零支持，会使reverse-KL发散；温度、数值精度和尾部近似必须明确。</p>
 <p>最后一式既包含“这个候选相对教师是否过多”，也包含对学生分布求导产生的基线项。它解释了为什么把采样 token 的 <code>log p−log q</code> 直接当普通 loss 反传，不自动得到完整 reverse-KL 梯度。</p>
 <pre><code># 固定学生 prefix 上的完整词表教学伪代码
 student_logp = log_softmax(student(prefix_ids).logits, dim=-1)
@@ -48,13 +71,24 @@ loss.backward()</code></pre>
 </details>
 </section>
 <section id="sampled-gradient">
+<figure class="mechanism-map"><figcaption>采样蒸馏：log-ratio 数值怎样变成学习权重</figcaption><ol class="mechanism-chain">
+<li><b>a 从学生 p 采样</b><small>记录当前 prefix 和动作</small></li><li><b>教师给 log q(a)</b><small>在同一 prefix 上评分</small></li><li><b>detach(log q−log p+b)</b><small>构成局部蒸馏优势；b 仅依赖状态</small></li><li><b>−A × log πθ(a|h)</b><small>优势作权重；策略 log-prob 反传</small></li>
+</ol><p class="mechanism-note">若数据来自旧策略，另核对 ratio 与截断；直接反传平均 log p−log q 不自动得到此梯度。</p></figure>
 <h2>采样 token 的蒸馏信号：数值估计和正确梯度是两件事</h2>
 
 
-<div class="equation" role="math" aria-label="采样蒸馏梯度">a ~ p：
-D_reverse = Eₐ[log p(a) − log q(a)]
-局部最小化梯度 = Eₐ[(log p(a) − log q(a) − D_reverse) ∇ log p(a)]
-对应上升优势：A_distill = stopgrad(log q(a) − log p(a) + b(h))</div>
+<div class="reading-math" role="math" aria-label="采样蒸馏梯度">\[
+\begin{aligned}
+&D_{\rm reverse}=\mathbb E_{a\sim p}[u(a)],\quad u(a)=\log p(a)-\log q(a),\\
+&g(a)=\nabla_\theta\log p(a),\\
+&\nabla_\theta D_{\rm reverse}
+ =\mathbb E_{a\sim p}[(u(a)+1)g(a)]\\
+ &=\mathbb E_{a\sim p}[(u(a)-b(h))g(a)],\\
+&A_{\rm distill}=\operatorname{sg}(-u(a)+b(h)).
+\end{aligned}
+\]</div>
+<p>求KL梯度时同时对采样分布 \(p\) 与 \(u\) 求导；score期望为零，因此常数1及任意状态baseline可删。取 \(b=D_{\rm reverse}\) 对应上节logits公式。冻结采样token后直接反传 \(u\)，只得到 \(\nabla\log p\)，遗漏了<strong>采样概率对参数的依赖</strong>。</p>
+<p><strong>复算上一例：</strong>以概率0.8/0.2采样两候选，score对 \(z_1\) 分别为0.2/−0.8。加权期望 \(0.8\times0.470004\times0.2+0.2\times(-0.916291)\times(-0.8)=0.221807\)，与完整词表梯度一致；不加权的score期望为0，说明同一个KL值估计器不自动提供正确梯度。</p>
 <p>当 b 只依赖状态，baseline 不改变这个局部期望。采样 log-ratio 可以估计 KL 数值；更新则需要 score-function / policy-gradient 的处理。直接对冻结样本上的平均 <code>log p−log q</code> 反传，通常只剩 ∇log p，缺失应有的权重。</p>
 <pre><code># 单prefix、on-policy采样的局部教学示意
 sampled_token = sample(student_probability)
@@ -91,7 +125,7 @@ loss = -adv_distill * student_logp
 <tr><td>MOPD 研究 <a href="index.html#ref-66">[66]</a></td><td>多教师 OPD 的能力整合，MiMo-V2.6 另扩展 MOPD2</td><td>需要按任务选择教师、预算和覆盖，不能只增加教师数量</td></tr>
 </tbody>
 </table>
-<p>教师路由可以按任务域选择数学、代码、GUI 专家，也可混合教师分布。简单概率混合 <code>q=Σwⱼqⱼ</code> 与平均多项 KL 并不相同：后者涉及平均 log-prob，前者是 log 的概率混合。报告需明确目标，而不是只写“多教师平均”。</p>
+<p>教师路由可以按任务域选择专家。若概率混合 \(q=\sum_jw_jq_j\)，使用的是 \(\log(\sum_jw_jq_j)\)；若加权多个reverse-KL，使用的是 \(\sum_jw_j\log q_j\)，对应归一化几何混合而非算术混合。两者目标不同，须写清权重与路由条件。</p>
 <p>“大教师更好”也依赖教师对学生访问状态的适应性。教师自己的 task score 很高，仍可能在学生损坏的 shell 状态上给低质量反馈；此时更强信号可能更稳定地推错。终评要看统一学生的目标能力、原有能力和同成本表现。</p>
 </section>
 <section id="mopd2">
@@ -119,11 +153,15 @@ loss = -adv_distill * student_logp
 <tr><td>SDPG <a href="index.html#ref-33">[33]</a></td><td>特权上下文自教师</td><td>outcome PG + 正优势 gate 的 OPD + scheduled β 与 reference UKL</td><td>gate 和 schedule 是实验稳定器，非普遍必需条件</td></tr>
 </tbody>
 </table>
-<div class="equation" role="math" aria-label="SDPG组合结构示意">SDPG 的结构示意：
-L = L_outcome-PG
-  + β(k) · 1[A &gt; 0] · KL(student || privileged-self-teacher)
-  + α · L_reference-UKL
-实际mask、归一化和UKL估计按原文；该式不代替完整算法。</div>
+<p>下式简记特权上下文教师为 \(\pi_p\)，outcome policy-gradient损失为 \(L_{\rm PG}\)，reference UKL项为 \(L_{\rm UKL}\)。</p>
+<div class="reading-math" role="math" aria-label="SDPG组合结构示意">\[
+\begin{aligned}
+&D_{\rm priv}=D_{\rm KL}(\pi_\theta\Vert\pi_p),\\
+&L=L_{\rm PG}+\beta(k)\mathbf1[A&gt;0]D_{\rm priv}\\
+ &+\alpha L_{\rm UKL}.
+\end{aligned}
+\]</div>
+<p>此式仅示意组合结构；真实mask、聚合、schedule与UKL估计按原文核对。</p>
 <p>教学失败反馈 <code>expected ValueError for empty input, got ZeroDivisionError</code> 使同模型在教师分支更清楚错误边界；学生分支只看到普通任务历史。成功 sibling 若使用相同题的正确解法，也属于训练额外信息。必须由独立 verifier 确认解法，且留出题答案不能流入训练。</p>
 <p>文本反馈若含模糊偏好、错 traceback、已泄漏的隐藏测试或错误解法，自蒸馏可能放大误导。teacher no-grad 只防直接梯度环路；若每步立刻使用更新学生当教师，还要评估目标漂移、参考约束和 EMA。</p>
 </section>
@@ -145,6 +183,9 @@ L = L_outcome-PG
 <p class="note">以上为作者报告，本站没有复现。保留这些口径，是为了说明轨迹干预的额外搜索成本如何影响结论，而不是给所有任务预测增益。</p>
 </section>
 <section id="forgetting">
+<figure class="mechanism-map"><figcaption>多教师整合：学会新任务也要守住旧能力</figcaption><ol class="mechanism-chain">
+<li><b>任务域与学生状态</b><small>代码、科学、GUI；记录采样比例</small></li><li><b>匹配教师接口</b><small>同状态分布评分；标明可见特权信息</small></li><li><b>混合 RL / OPD / 回放</b><small>目标权重、教师覆盖、有效 token 分开</small></li><li><b>无教师独立验收</b><small>新域成功率与旧域能力回归同时看</small></li>
+</ol><p class="mechanism-return">↶ 旧域退化时检查采样与目标权重；不能只凭蒸馏 loss 下降判定整合成功。</p></figure>
 <h2>OPDArena：目标能力增加，仍需检查能力保留</h2>
 <section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
 
@@ -190,6 +231,17 @@ evaluation: {student_only_rollout, held_out_verifier, target_domains,
 </tbody>
 </table>
 </section>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>MOPD：多教师是否在每个维度都改善</h2>
+<p><a href="https://arxiv.org/html/2606.30406v1">MOPD v1，Table 2</a>对 Qwen3-30B-A3B 学生报告以下成绩（%）。Teacher 行是原表给出的教师参照；各列任务与教师能力不同，不能理解为同一个教师的统一总分。Mix-RL 与 MOPD 的比较反映论文配方，未在此表证明总算力严格相等。</p>
+<table><thead><tr><th>方法</th><th>AIME 2025</th><th>AIME 2026</th><th>IFBench</th><th>IFEval</th><th>SWE-bench</th></tr></thead><tbody>
+<tr><td>SFT 学生</td><td>45.42</td><td>54.48</td><td>42.69</td><td>84.17</td><td>35.8</td></tr>
+<tr><td>Mix-RL</td><td>52.71</td><td>63.75</td><td>75.00</td><td>94.58</td><td>48.8</td></tr>
+<tr><td>MOPD</td><td>51.46</td><td>65.31</td><td>77.89</td><td>93.84</td><td>50.4</td></tr>
+<tr><td>Teacher 参照</td><td>54.79</td><td>63.65</td><td>78.40</td><td>95.50</td><td>51.2</td></tr>
+</tbody></table>
+<p>MOPD 在 AIME 2026、IFBench、SWE-bench 高于 Mix-RL，在 AIME 2025 和 IFEval 较低。因此多教师收益应逐维讨论，不能以单一“全面超越”概括。教师前向、词表接口与通信都会占用资源；这里没有教师总 GPU-hours、峰值显存和端到端 FLOPs，成本优势仍需按本章配方账本测量。MOPD2 与自蒸馏的结论也不能直接继承这张表。</p>
+</section>
 <section id="recipe">
 <h2>把 OPD 放进代码修复：一个可比较的训练设计</h2>
 <table>
@@ -204,6 +256,11 @@ evaluation: {student_only_rollout, held_out_verifier, target_domains,
 </table>
 <p>教师日志量小不代表成本低；full logits 传输、长 prefix 重算、失败重试和环境恢复都计入。第五章给出<a href="s05_frameworks_async.html#slime-opd">slime 的固定源码</a>，第六章提供<a href="s06_task_cases_experiments.html#experiments">待执行对照矩阵</a>。本章伪代码与案例尚未运行模型训练。</p>
 </section>
+<section class="course-review" id="opd-review"><h2>OPD追问与排查顺序</h2>
+<p><strong>为什么必须用学生状态？</strong>教师理想轨迹没有覆盖学生真实错误；同状态评分修正覆盖偏移，但依赖教师在这些状态仍可靠。</p>
+<p><strong>sampled log-ratio为何不能直接反传？</strong>它能估计KL值；正确局部梯度还要对采样分布求导，形成stop-gradient权重乘score。</p>
+<ul><li><strong>KL降但成功不涨：</strong>先查教师对错误prefix的质量，再查mask、支持与终评。</li><li><strong>混合轨迹好，自主轨迹差：</strong>检查teacher-prefix/接管依赖，单独做无教师验收。</li><li><strong>新域涨、旧域跌：</strong>核对目标尺度、采样/回放与教师路由，按域验证。</li></ul></section>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

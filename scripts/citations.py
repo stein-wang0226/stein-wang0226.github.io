@@ -91,6 +91,8 @@ class Links(HTMLParser):
 def derive(root=ROOT, content=None):
     site, entries, _, _ = content or load_content(root)
     records, references, pending, errors = {}, defaultdict(set), [], []
+    archive_path = root / "docs/organization-changes-20261115.json"
+    archives = {p["id"]: p for p in json.loads(archive_path.read_text())["pages"]} if archive_path.is_file() else {}
 
     def record(url, title):
         key, version, kind = source_identity(url)
@@ -110,6 +112,26 @@ def derive(root=ROOT, content=None):
         source = root / entry["source"]
         text = md(load_md(source)[1]) if source.suffix == ".md" else source.read_text(encoding="utf-8")
         parser.feed(text)
+        archived = archives.get(entry["id"])
+        if archived:
+            original = root / archived["archive"]
+            if not original.is_file():
+                errors.append(f"citation: {entry['id']} missing frozen original")
+            else:
+                original_parser = Links(entry)
+                raw_original = original.read_text(encoding="utf-8")
+                if source.suffix == ".md":
+                    # Archive extension is .txt; the entry still records its
+                    # authoritative input format.
+                    raw_original = md(re.sub(r"^---\n.*?\n---\n", "", raw_original, count=1, flags=re.S))
+                original_parser.feed(raw_original)
+                for link in original_parser.links:
+                    link["role"] = "historical"
+                    link["archive_url"] = "/" + archived["archive"]
+                parser.links.extend(original_parser.links)
+                for identifier, parts in original_parser.text_refs.items():
+                    if identifier not in parser.text_refs:
+                        parser.text_refs[identifier] = parts
         for link in parser.links:
             url = urlsplit(link["url"])
             if url.netloc == "notes.local":
@@ -121,11 +143,16 @@ def derive(root=ROOT, content=None):
                 continue
             value = record(link["url"], link["title"])
             location = entry["url"] + ("#" + link["anchor"] if link["anchor"] else "")
+            if link.get("archive_url"):
+                location = link["archive_url"]
             if link["ref"]:
                 ref_url = entry["url"] + "#" + link["ref"]
                 references[ref_url].add(value["source_key"])
                 number = re.sub(r"^(?:ref|cite)-", "", link["ref"])
                 ref = {"url": ref_url, "label": f'{entry["title"]} [{number}]'}
+                if link.get("archive_url"):
+                    ref["role"] = "historical"
+                    ref["archive_url"] = link["archive_url"]
                 if ref not in value["local_references"]:
                     value["local_references"].append(ref)
             else:
@@ -150,7 +177,7 @@ def derive(root=ROOT, content=None):
             errors.append(f"citation: {entry['id']} unresolved bibliography {target}")
             continue
         for key in references[target]:
-            usage = {"url": entry["url"] + ("#" + link["anchor"] if link["anchor"] else ""),
+            usage = {"url": link.get("archive_url") or entry["url"] + ("#" + link["anchor"] if link["anchor"] else ""),
                      "entry": entry["id"], "title": entry["title"],
                      "role": link["role"], "citation": target}
             if usage not in records[key]["used_in"]:
@@ -189,6 +216,26 @@ def derive(root=ROOT, content=None):
                 elif metadata.get("bytes") is not None and local.stat().st_size != metadata["bytes"]:
                     errors.append(f"citation archive length mismatch: {metadata['local_asset']}")
     for value in records.values():
+        # Keep page-scoped citation identity; expose the unique assembled location.
+        from course import public_target
+        local_by_route = {route_path(e["url"]): e for e in entries if e["origin"] == "local"}
+        def teaching_url(location):
+            parsed = urlsplit(location)
+            row = local_by_route.get(route_path(parsed.path))
+            if not row:
+                return location
+            target, anchor = public_target(row, unquote(parsed.fragment), {e["id"]: e for e in entries})
+            return target + ("#" + anchor if anchor else "")
+        for usage in value["used_in"]:
+            mapped = teaching_url(usage["url"])
+            if mapped != usage["url"]:
+                usage["original_url"] = usage["url"]
+                usage["url"] = mapped
+        for reference in value["local_references"]:
+            mapped = teaching_url(reference["url"])
+            if mapped != reference["url"]:
+                reference["original_url"] = reference["url"]
+                reference["url"] = mapped
         value["used_in"].sort(key=lambda u: (u["role"], u["url"], u["citation"]))
         value["urls"].sort()
         value["local_references"].sort(key=lambda u: u["url"])
@@ -216,9 +263,11 @@ def render_citations(ctx):
                     f'<a href="{ctx.rel("/blog/references/", url.split("#")[0])}'
                     f'{"#" + esc(url.split("#", 1)[1]) if "#" in url else ""}">{esc(title)}</a>'
                     for url, title in sorted(locations)))
-        refs = "；".join(f'<a href="{ctx.rel("/blog/references/", ref["url"].split("#")[0])}'
-                        f'#{esc(ref["url"].split("#")[1])}">{esc(ref["label"])}</a>'
-                        for ref in source["local_references"])
+        refs = "；".join(
+            f'<a href="{ctx.rel("/blog/references/", (ref.get("archive_url") or ref["url"]).split("#")[0])}'
+            f'{"" if ref.get("archive_url") else "#" + esc(ref["url"].split("#")[1])}">'
+            f'{esc(ref["label"])}{" · 改前原稿" if ref.get("archive_url") else ""}</a>'
+            for ref in source["local_references"])
         originals = " · ".join(f'<a href="{esc(url, quote=True)}">原始来源</a>' for url in source["urls"])
         archives = " · ".join(
             f'<a href="{ctx.rel("/blog/references/", m["local_asset"])}">固定版本原件</a>'
@@ -248,9 +297,30 @@ def render_citations(ctx):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["check"])
+    parser.add_argument("command", choices=["check", "refresh-usages"])
     args = parser.parse_args()
     data, errors = derive()
+    if args.command == "refresh-usages":
+        structural = [e for e in errors if not re.search(r"stale (?:historical_)?used_in$", e)]
+        if structural:
+            print("\n".join(structural))
+            return True
+        by_key = {s["source_key"]: s for s in data["sources"]}
+        for name, _, _ in REGISTRIES:
+            path = ROOT / name
+            if not path.is_file():
+                continue
+            registry = json.loads(path.read_text())
+            for source in registry["sources"]:
+                key = source_identity(source.get("canonical_url") or source["url"])[0]
+                uses = by_key[key]["used_in"]
+                if not source.get("usage_as_of"):
+                    continue
+                for field, role in (("used_in", "current"), ("historical_used_in", "historical")):
+                    source[field] = sorted({u.get("original_url", u["url"]) for u in uses if u["role"] == role})
+                source["usage_as_of"] = "2026-11-15"
+            path.write_text(json.dumps(registry, ensure_ascii=False, indent=2) + "\n")
+        _, errors = derive()
     print("\n".join(errors) if errors else f"PASS: {len(data['sources'])} source/version records; local citations, registries and archive SHA/length")
     return bool(errors)
 

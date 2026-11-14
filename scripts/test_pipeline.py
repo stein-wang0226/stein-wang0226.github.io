@@ -5,6 +5,7 @@ sys.dont_write_bytecode = True
 import copy
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -18,6 +19,9 @@ from check import Document, validate
 from new_post import create
 from pipeline import build
 from render import ROOT, input_digest
+from course import Fragment, render_fragment, public_target
+from organization import check as check_organization
+from mathematics import reflow_formula
 
 
 def tree(path):
@@ -26,6 +30,122 @@ def tree(path):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_formula_reflow_preserves_matrix_rows_and_function_arguments(self):
+        pattern = r'(<div class="reading-math">\\\[)(.*?)(\\\]</div>)'
+        matrix = r"\begin{pmatrix}1&2\\3&4\end{pmatrix}"
+        source = '<div class="reading-math">\\[A=' + matrix + r',\quad B=\frac{x+y}{z}\]</div>'
+        result = re.sub(pattern, reflow_formula, source, flags=re.S)
+        self.assertIn(matrix, result)
+        self.assertIn(r"B=\frac{x+y}{z}", result)
+        self.assertIn(r"\begin{aligned}", result)
+        inside = r'<div class="reading-math">\[f(x,\quad y)=\frac{a,\quad b}{c}\]</div>'
+        self.assertEqual(inside, re.sub(pattern, reflow_formula, inside, flags=re.S))
+        continuation = (r'<div class="reading-math">\[\begin{aligned}'
+                        r'A&=x+y\\&\quad+z\end{aligned}\]</div>')
+        self.assertEqual(continuation, re.sub(pattern, reflow_formula, continuation, flags=re.S))
+        self.assertEqual(result, re.sub(pattern, reflow_formula, result, flags=re.S))
+
+    def test_course_namespaces_resources_and_accessible_svg_references(self):
+        entry = {"id": "fixture", "source": "content/fixture.html", "url": "/course/old.html",
+                 "title": "01 · Fixture", "order": 1, "origin": "local", "series": "parent"}
+        parent = {"id": "parent", "url": "/course/", "reading_mode": "longform",
+                  "origin": "local"}
+        path = self.root / entry["source"]
+        path.write_text('<!-- READING:FRAGMENT:START -->'
+                        '<h2 id="topic">Topic</h2><label for="control">Control</label>'
+                        '<input id="control" aria-describedby="topic">'
+                        '<svg aria-labelledby="diagram"><title id="diagram">Diagram</title>'
+                        '<defs><clipPath id="clip"><rect width="2" height="2"/></clipPath></defs>'
+                        '<g clip-path="url(#clip)"><use href="#diagram"/></g></svg>'
+                        '<a href="old.html#topic">Old link</a>'
+                        '<img src="media/example.png" alt="Example">'
+                        '<!-- READING:FRAGMENT:END -->')
+        before = path.read_bytes()
+        result = render_fragment(self.root, entry, parent["url"],
+                                 {"fixture": entry, "parent": parent})
+        doc = Document(Path("fixture.html"))
+        doc.feed(result)
+        self.assertEqual([], doc.errors)
+        self.assertIn('aria-labelledby="fixture--diagram"', result)
+        self.assertIn('for="fixture--control"', result)
+        self.assertIn('clip-path="url(#fixture--clip)"', result)
+        self.assertIn('href="#fixture--diagram"', result)
+        self.assertIn('href="index.html#fixture--topic"', result)
+        self.assertIn('src="media/example.png"', result)
+        self.assertIn('<h3 id="fixture--topic">', result)
+        self.assertEqual(before, path.read_bytes())
+        self.assertEqual(("/course/", "fixture--topic"),
+                         public_target(entry, "topic", {"parent": parent}))
+
+    def test_longform_output_has_one_source_and_resolves_old_fragments(self):
+        build(self.output, self.root)
+        parent = (self.output / "llm-posttraining/index.html").read_text()
+        self.assertEqual(1, parent.count('class="course-toc"'))
+        self.assertEqual(6, parent.count('class="course-chapter"'))
+        self.assertEqual(6, parent.count('class="course-focus"'))
+        self.assertIn('href="#posttraining-algorithms--interview-cards"', parent)
+        self.assertIn('href="#posttraining-algorithms--baseline-proof"', parent)
+        self.assertIn('id="posttraining-algorithms--baseline-proof"', parent)
+        old = (self.output / "llm-posttraining/s02_rl_algorithms.html").read_text()
+        self.assertIn('location.replace(target.href)', old)
+        self.assertIn('target.search=location.search', old)
+        self.assertIn('"policy-gradient": "posttraining-algorithms--policy-gradient"', old)
+        self.assertNotIn("REINFORCE逐步推导", old)
+        catalog = json.loads((self.output / "blog/catalog.json").read_text())
+        self.assertFalse(any(e["id"] == "posttraining-algorithms" for e in catalog["entries"]))
+        course = next(e for e in catalog["entries"] if e["id"] == "llm-posttraining")
+        self.assertEqual(6, len(course["sections"]))
+        self.assertTrue(any("grpo" in s["search"] for s in course["sections"]))
+        self.assertEqual(6, parent.count('class="teaching-diagram"'))
+        self.assertNotIn("K = 3~10", parent)
+        architecture = (self.output / "llm-architecture/index.html").read_text()
+        self.assertEqual(6, architecture.count('class="course-chapter"'))
+        self.assertIn('id="architecture-attention--attention-scaling"', architecture)
+        self.assertNotIn('class="equation"', architecture)
+        training = (self.output / "llm-training-lifecycle/index.html").read_text()
+        self.assertEqual(5, training.count('class="course-chapter"'))
+        self.assertIn('id="training-methods-systems--state-sharding"', training)
+        self.assertNotIn('class="equation"', training)
+        self.assertNotIn('data-reading-history', training)
+        legacy = (self.output / "llm-training-lifecycle/s05_training_methods_systems.html").read_text()
+        self.assertIn('"adamw-example": "training-methods-systems--adamw-example"', legacy)
+        harness = (self.output / "agent-harness-guide.html").read_text()
+        self.assertIn('id="codex-memory-phase1"', harness)
+        self.assertIn('id="codex-prompt-f"', harness)
+        self.assertNotIn('data-reading-history', harness)
+        for slug, count, anchor in (
+                ("agent-systems", 3, "agent-rag--retrieval"),
+                ("agent-data-benchmarks", 4, "scientific-task-family--statistics"),
+                ("llm-serving", 3, "serving-parallel--speculation"),
+                ("llm-research-map-2026", 7, "research-base-architecture--cache")):
+            text = (self.output / slug / "index.html").read_text()
+            self.assertEqual(count, text.count('class="course-chapter"'))
+            self.assertEqual(1, text.count('class="course-toc"'))
+            self.assertIn(f'id="{anchor}"', text)
+            self.assertNotIn('class="equation"', text)
+            self.assertNotIn('data-reading-history', text)
+        scientific = (self.output / "agent-data-benchmarks/s03_scientific_task_family.html").read_text()
+        self.assertIn('"statistics": "scientific-task-family--statistics"', scientific)
+        self.assertNotIn("从count到均值", scientific)
+
+    def test_frozen_original_is_required_and_tampering_is_rejected(self):
+        ledger = json.loads((self.root / "docs/organization-changes-20261115.json").read_text())
+        row = next(p for p in ledger["pages"] if p["id"] == "rl-interview-guide")
+        original = self.root / row["archive"]
+        original_bytes = original.read_bytes()
+        original.unlink()
+        self.assertTrue(any("missing or unsafe archive" in e for e in check_organization(self.root)))
+        original.write_bytes(original_bytes + b"\nchanged\n")
+        self.assertTrue(any("altered archive or baseline evidence" in e for e in check_organization(self.root)))
+        original.write_bytes(original_bytes)
+        self.assertEqual([], check_organization(self.root))
+        sources, errors = derive(self.root)
+        self.assertEqual([], errors)
+        reinforce = next(s for s in sources["sources"] if s["source_key"] == "doi:10.1007/bf00992696")
+        self.assertTrue(any(u["role"] == "current" for u in reinforce["used_in"]))
+        self.assertTrue(any(u["role"] == "historical" and u["url"] == "/" + row["archive"]
+                            for u in reinforce["used_in"]))
+
     def test_document_title_and_accessible_svg_titles(self):
         doc = Document(Path("report.html"))
         doc.feed('<html><head><title>Report</title></head><body>'
@@ -105,7 +225,9 @@ class PipelineTests(unittest.TestCase):
         original = (self.output / "my-work/holon/full-report.html").read_text()
         self.assertNotIn('class="site-page reading-markdown"', original)
         self.assertIn('id="work-study-guide"', original)
-        self.assertIn('href="index.html#ref-3"', original)
+        self.assertIn('class="site-page work-reading-link"', original)
+        self.assertIn('href="index.html"', original)
+        self.assertNotIn('class="site-page work-learning"', original)
         bibliography = json.loads((self.output / "blog/references.json").read_text())
         cited_entries = {u["entry"] for s in bibliography["sources"] for u in s["used_in"]
                          if "#ref-" in u["citation"]}
@@ -113,8 +235,9 @@ class PipelineTests(unittest.TestCase):
             self.assertIn(f"my-work-{project}", cited_entries)
         for slug in ("holon", "protagent", "harbor-task-sync", "trainable-dllm"):
             page = (self.output / f"my-work/{slug}/full-report.html").read_text()
-            for anchor in ("work-knowledge", "work-example", "work-review", "work-report-start"):
+            for anchor in ("work-study-guide", "work-report-start"):
                 self.assertIn(f'id="{anchor}"', page)
+            self.assertNotIn('class="site-page work-learning"', page)
         self.assertFalse(any(Path(p).parts[0] in {
             "content", "scripts", "templates", "docs", ".automation", ".git"
         } for p in first))

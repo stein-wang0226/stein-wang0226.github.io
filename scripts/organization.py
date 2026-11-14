@@ -103,11 +103,18 @@ def snapshot(root, output):
 
 
 def check(root, output=None):
+    root = root.resolve()
+    output = output.resolve() if output else None
     manifest = root / "docs/organization-audit-20261114.json"
     if not manifest.is_file():
         return []
     audit = json.loads(manifest.read_text())
     errors = []
+    change_path = root / "docs/organization-changes-20261115.json"
+    changes = {p["id"]: p for p in json.loads(change_path.read_text())["pages"]} if change_path.is_file() else {}
+    catalog = json.loads((root / "content/catalog.json").read_text())["entries"]
+    by_id = {e["id"]: e for e in catalog}
+    from course import public_target
     exceptions = {(e["id"], e["sha256"]) for e in audit.get("exceptions", [])}
     for page in audit["pages"]:
         path = root / page["source"]
@@ -115,13 +122,35 @@ def check(root, output=None):
             errors.append(f"organization: missing source {page['source']}")
             continue
         doc = evidence(path)
-        for anchor in set(page["source_anchors"]) - set(doc.ids):
+        change = changes.get(page["id"])
+        original = None
+        if change:
+            archive = (root / change["archive"]).resolve()
+            if not archive.is_relative_to(root / "assets/archive") or not archive.is_file():
+                errors.append(f"organization: {page['id']} missing or unsafe archive")
+            elif (hashlib.sha256(archive.read_bytes()).hexdigest() != change["before_sha256"]
+                  or change["archive_sha256"] != change["before_sha256"]
+                  or change["baseline_source_sha256"] != page["source_sha256"]
+                  or change["baseline_units"] != page["units"]):
+                errors.append(f"organization: {page['id']} altered archive or baseline evidence")
+            else:
+                original = evidence(archive)
+                if original.units != change["before_units"]:
+                    errors.append(f"organization: {page['id']} before unit evidence differs")
+                if output and (not (output / change["archive"]).is_file()
+                               or (output / change["archive"]).read_bytes() != archive.read_bytes()):
+                    errors.append(f"organization: {page['id']} published archive differs")
+        source_ids = set(doc.ids) | (set(original.ids) if original else set())
+        source_links = set(doc.links) | (set(original.links) if original else set())
+        for anchor in set(page["source_anchors"]) - source_ids:
             errors.append(f"organization: {page['id']} lost source anchor #{anchor}")
-        for link in set(page["source_links"]) - set(doc.links):
+        for link in set(page["source_links"]) - source_links:
             errors.append(f"organization: {page['id']} lost source URL {link}")
         if Counter(page["markers"]) != Counter(doc.markers):
             errors.append(f"organization: {page['id']} AUTO markers changed")
         retained = Counter(u["sha256"] for u in doc.units)
+        if original:
+            retained |= Counter(u["sha256"] for u in original.units)
         baseline = Counter(u["sha256"] for u in page["units"])
         for value in baseline:
             if retained[value] < baseline[value] and (page["id"], value) not in exceptions:
@@ -130,6 +159,17 @@ def check(root, output=None):
             public = evidence(output / route_path(page["url"]))
             for anchor in set(page["public_anchors"]) - set(public.ids):
                 errors.append(f"organization: {page['id']} lost public anchor #{anchor}")
+            if change:
+                entry = by_id[page["id"]]
+                url, anchor = public_target(entry, "", by_id)
+                target = evidence(output / route_path(url))
+                if anchor and anchor not in target.ids:
+                    errors.append(f"organization: {page['id']} missing current teaching destination")
+                if url != page["url"]:
+                    for identifier in page["public_anchors"]:
+                        _, mapped = public_target(entry, identifier, by_id)
+                        if mapped not in target.ids:
+                            errors.append(f"organization: {page['id']} unresolved old fragment {identifier}")
     return errors
 
 
@@ -147,7 +187,7 @@ def main():
         print(f"Saved baseline: {target}")
     else:
         errors = check(args.root, args.output)
-        print("\n".join(errors) if errors else "PASS: organization source units, anchors, sources and markers retained")
+        print("\n".join(errors) if errors else "PASS: baseline unchanged; units retained in current sources or exact archives; public anchors and teaching destinations verified")
         return bool(errors)
 
 

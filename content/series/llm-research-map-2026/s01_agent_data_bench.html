@@ -8,24 +8,17 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
 <section id="distinctions">
 <p class="eyebrow">01 · Agent data &amp; benchmarks · 2026-11-14</p>
-<h2>先分清：轨迹、任务、环境和 benchmark</h2>
-<p class="lead">Agent 的训练瓶颈往往不在于“有没有更多文本”，而在于能否持续生产可运行、可验证、难度合适且不污染评测的交互任务。DeepSeek V4.1 §5.1 将任务定义为 problem / environment / verification system，并明确沿用 SFT → RL → OPD；它把主要投入放在任务与环境生产。<a href="index.html#ref-1">[1]</a></p>
-<table>
-<thead><tr><th>资产</th><th>包含什么</th><th>训练 / 评测用途</th><th>最容易混淆的点</th></tr></thead>
-<tbody>
-<tr><td>领域材料</td><td>文档、代码、issue–PR、日志、科学资料</td><td>CPT / midtraining 的上下文和知识</td><td>有代码不等于有可执行任务</td></tr>
-<tr><td>任务包</td><td>指令、初始状态、依赖、预算、验证标准</td><td>RL 可重新采样；也能生成示范</td><td>题目描述不能替代环境与grader</td></tr>
-<tr><td>轨迹</td><td>观察、动作、工具结果、版本、reward、产物</td><td>SFT、拒绝采样、离线分析或在线策略更新</td><td>成功轨迹仍可能泄漏答案或包含错误奖励</td></tr>
-<tr><td>训练环境族</td><td>可变化的参数、状态、用户、工具、程序版本</td><td>扩大策略遇到的分布；在线合成课程</td><td>改变seed不必然增加语义覆盖</td></tr>
-<tr><td>Benchmark快照</td><td>固定题集、版本、scaffold、预算、grader、聚合规则</td><td>冻结后衡量泛化与可比较能力</td><td>benchmark转成训练任务后，原题不能继续充当独立留出</td></tr>
-</tbody>
-</table>
-<p>从同一仓库提取多个任务，要按仓库 / 时间 / 任务族隔离数据划分，并检查共享测试、答案、PR 和生成模板。简单地随机切分轨迹可能把近重复题分到训练和评测两侧。</p>
+<h2>数据研究的增量：生成空间与学习反馈</h2>
+<p class="lead"><strong>有更多任务，未必有更多能力覆盖。</strong>DeepSeek V4.1 §5.1把任务定义为 problem / environment / verification system；本节比较不同工作怎样扩大这个空间，以及怎样证明扩展对独立任务有效。<a href="index.html#ref-1">[1]</a></p>
+<ul><li><strong>固定资产角色：</strong>材料、可重采样任务和轨迹分开管理；机制已在<a href="../agent-data-benchmarks/s01_task_synthesis.html#objects">任务主讲</a>展开。</li><li><strong>隔离同源内容：</strong>仓库、时间、任务族与生成模板可能共享答案；随机切分轨迹不足以保证独立。</li><li><strong>先验收再谈难度：</strong>全失败可能来自环境或grader；通过oracle后仍需负对照和指令审计。</li></ul>
 </section>
 <section id="synthesis">
 <h2>四条数据合成路线，分别补什么</h2>
+
+
 <figure>
 <div class="flow" aria-label="可执行Agent任务的生产过程">
 <div class="stage"><b>需求或真实素材</b><small>能力缺口、仓库、研究程序<br>定义目标及合法输出</small></div>
@@ -48,31 +41,17 @@
 <div class="callout"><strong>与 Harbor 合成工作的直接连接：</strong>先把任务包作为主要交付，再产出示范轨迹；把正确性与难度作为两张报告。当前模型全失败的题只有在环境、oracle、指令和grader经过审计后，才能进入困难任务池。</div>
 </section>
 <section id="harbor">
-<h2>Harbor：把输出合同做成可执行验收</h2>
-<p>官方任务格式把 instruction、environment、tests、solution组织成一个任务目录。下面仅展示目录角色，具体字段以固定版本的官方文档为准。<a href="index.html#ref-35">[35]</a></p>
-<pre><code>task/
-├── instruction.md        # Agent能看到的要求与输出合同
-├── task.toml             # 元数据、资源和环境 / verifier配置
-├── environment/          # 可构建、可重置的起始环境
-├── tests/                # verifier与隐藏验收逻辑
-└── solution/             # oracle方案；不暴露给待测Agent</code></pre>
+<h2>独立验证环境带来的迁移问题</h2>
+<p>任务格式、数值容差和负对照在<a href="../agent-data-benchmarks/s01_task_synthesis.html#contract">任务合同</a>展开。这里关注把原benchmark迁入Harbor后，哪些状态会丢失。<a href="index.html#ref-35">[35]</a></p>
 <p><strong>独立 verifier sandbox</strong>把验证过程移到单独环境，只接收显式声明的 artifacts。运行中的进程、未复制的数据库状态和临时目录不会自动转移。官方参数包括 <code>artifacts</code> 与 <code>verifier.environment_mode</code>；不能自行造字段或默认整台环境已经复制。奖励写入 <code>/logs/verifier/reward.txt</code> 或对应JSON输出。<a href="index.html#ref-36">[36]</a> <a href="index.html#ref-35">[35]</a></p>
-<h3>一个科学数据整理任务怎样定义合同</h3>
-<p>以表达矩阵与样本表为例：指令明确ID匹配、重复项规则、允许缺失值、输出路径及统计口径；verifier分别检查结构、内容、不变量和报告的一致性。只检查CSV存在，会奖励空表、硬编码或错误join。</p>
-<table>
-<thead><tr><th>合同层</th><th>检查对象</th><th>建议负对照</th></tr></thead>
-<tbody>
-<tr><td>产物与schema</td><td>指定文件、列名、类型、主键唯一性</td><td>空文件、缺列、错分隔符、重复ID</td></tr>
-<tr><td>数据语义</td><td>样本集合、矩阵方向、join匹配、预定缺失策略</td><td>行列转置、漏样本、错组标签、无条件填零</td></tr>
-<tr><td>数值与不变量</td><td>容差、行数、总量、排序无关比较和边界输入</td><td>同形但数值错误、随机矩阵、仅适配公开例子的输出</td></tr>
-<tr><td>证据与报告</td><td>报告统计与原始数据一致；保留命令和配置</td><td>正确文件配错误结论、把未知样本写成确认类别</td></tr>
-</tbody>
-</table>
-<p class="note">这是教学设计，未生成、运行或测量该Harbor任务。科学任务还需单独判断方法和推断是否合理；可执行检查不自动证明生物学正确。</p>
+<p><strong>迁移算例：</strong>Agent把规范CSV写入声明产物路径，却把SQLite修改留在临时目录。独立verifier能读CSV，不能自动看到数据库变更；原环境“通过”、迁移后“失败”此时属于交接差异。应声明数据库快照或验证可重放导出，不能直接降低grader要求。此例是教学设计，未运行任务。</p>
 </section>
 <section id="parity">
 <h2>迁移一致性：统一格式之后仍要重放</h2>
-<p>Harbor Adapters强调adapter parity：统一执行入口后，初始状态、动作语义、超时、工具和grader应保留原benchmark合同。否则“同一模型的新分数”可能由迁移变化造成。论文分析harness、失败与成本；Harbor-Index v1筛出82个困难任务，来自54个benchmark的6,627个候选，最终涉及29个benchmark。它是困难前沿切片，不能替代通用能力量尺。<a href="index.html#ref-26">[26]</a> <a href="index.html#ref-34">[34]</a></p>
+
+
+<p><strong>Adapter parity：</strong>统一入口后仍要保留初始状态、动作语义、超时、工具与grader；否则分数变化可能来自迁移。<a href="index.html#ref-26">[26]</a></p>
+<p><strong>困难切片：</strong>Harbor-Index v1从54个benchmark、6,627候选筛出82题，最终涉及29个benchmark；它测困难前沿，不能替代通用能力量尺。<a href="index.html#ref-34">[34]</a></p>
 <ul>
 <li>先在原环境与adapter环境重放同一组已知行为，核对观察、动作、终态和reward；oracle与已知失败路径都要比较。</li>
 <li>对不可重放的随机用户 / 外部网页，冻结可控状态或使用重复试验，把随机性与adapter差异分开报告。</li>
@@ -83,7 +62,8 @@
 </section>
 <section id="audit">
 <h2>榜单审计要检查什么</h2>
-<p><em>Silent Instrument Errors</em>对HAL / τ系列归档报告了嵌套span双重计费、部分试验未进入grader、gold replay混入动作日志、evaluator版本重评分等问题。这些是该作者的审计报告，本地未重放确认；可据此建立检查项，不能泛称所有榜单无效。AgentProofBench则研究可重用verifier的reuse / rebuild与deployment-state panels，结论限于其任务族。<a href="index.html#ref-11">[11]</a> <a href="index.html#ref-12">[12]</a></p>
+<p><em>Silent Instrument Errors</em>报告HAL/τ归档中的双重计费、未进入grader、gold replay混入动作日志和evaluator重评分。<strong>这些是作者审计，本地未重放</strong>，可据此设检查项，不能推论所有榜单无效。<a href="index.html#ref-11">[11]</a></p>
+<p>AgentProofBench研究verifier的reuse/rebuild与deployment-state panels；结论限该任务族，不能替代所有场景的验证器验收。<a href="index.html#ref-12">[12]</a></p>
 <pre><code># 建议的审计记录字段；不是实际实验数据或框架配置
 task_id, task_version, split, environment_digest
 model_revision, harness_commit, verifier_commit, seed
@@ -91,10 +71,11 @@ attempt_id, parent_span_id, provider_request_id
 input_tokens, output_tokens, cached_tokens, billed_cost
 entered_grader, reward, artifact_digest
 failure_class, latency, tool_calls, stop_reason</code></pre>
-<p>计费以provider request等实际请求标识去重，父span聚合与子span请求不能一起相加；缓存输入和未缓存输入分别统计。失败类至少区分policy、environment、tool、grader与预算耗尽；无法判断时保留unknown。</p>
+<ul><li><strong>请求去重：</strong>父span已含两个请求费用0.03与0.02时，总费用是0.05；再加父span的0.05会误报0.10。这是计费教学例。</li><li><strong>缓存单列：</strong>缓存输入与未缓存输入分开统计，按实际请求标识核对账单。</li><li><strong>失败保留：</strong>区分policy、environment、tool、grader、预算耗尽与unknown，记录是否进入grader。</li></ul>
 </section>
 <section id="experiments">
 <h2>待执行：从任务验收到合成闭环消融</h2>
+<details><summary>展开四阶段研究方案</summary>
 <table>
 <thead><tr><th>阶段</th><th>固定条件与改变项</th><th>验收产物</th></tr></thead>
 <tbody>
@@ -104,8 +85,12 @@ failure_class, latency, tool_calls, stop_reason</code></pre>
 <tr><td>D · 训练闭环</td><td>冻结独立留出题；训练失败反馈只能用于训练池合成</td><td>泛化、遗忘、有效组 / token、成功成本和各随机seed；保存完整原始日志</td></tr>
 </tbody>
 </table>
+</details>
 <p>这是建议方案，全部待执行；不提供预测增益或伪造benchmark结果。训练阶段与固定SFT对照见<a href="../llm-training-lifecycle/s02_midtraining.html">CPT / Midtraining</a>；把reward转成策略更新见<a href="s02_agentic_rl.html">下一章</a>。</p>
 </section>
+<section id="frontier-evidence" data-frontier-audit="20261114"><h2>合成流水线的定量证据</h2><p><a href="../agent-data-benchmarks/s01_task_synthesis.html#frontier-comparison">EvoSyn 的反馈与设计消融</a>连接分类与最终 SFT 能力；相同候选预算不代表相同有效任务费用。本地科学实验仍待执行。</p></section>
+<div class="course-review"><p><strong>面试短答：</strong>反馈驱动合成要区分“在既有空间重分配预算”和“增加新的交互因素”；收益需要在冻结留出集、同训练与生成预算下验证。环境错误和grader投机必须先排除。</p></div>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

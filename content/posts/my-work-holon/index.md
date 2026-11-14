@@ -4,18 +4,32 @@ title: Holon：蛋白质、文本与结构的统一建模
 
 <p><a href="../">My Work 目录</a> · <a href="full-report.html">完整研究报告：21 节方法与实验</a></p>
 
-## 研究问题与主要结论
+## 先记住：统一接口，分轴验收
 
 Holon 的目标是在同一模型接口中连接蛋白质序列、自然语言与离散结构表示。它以 Qwen2/Qwen3 的文本能力为起点，采用蛋白 tokenizer 和按模态分配参数的 Mixture-of-Transformers（MoT），逐步学习序列先验、蛋白与文本的条件关系及科学任务的输出行为。仓库还保留 dense ProteinQwen3 和 MoE 对照，因此“Holon”应理解为模型、数据、训练和评测组成的研究体系。[1](#ref-1)[2](#ref-2)
 
-项目最有价值的方法链是：**模态参数分工 → 蛋白序列预训练 → 双向继续预训练 → 科学指令微调 → 分层验证条件利用**。序列 loss 降低、文本匹配敏感性增加、结构预测改善分别回答不同问题，不能由其中一个数字替代整体科学能力。[1](#ref-1)
+**学习链：模态参数分工 → 序列先验 → 双向 CPT → 科学 SFT → 分轴评测。** 快速复习时先抓住三点：[1](#ref-1)
+
+- **MoT 分开投影、共享交互**：参数按模态或任务路由，样本内 attention 仍能跨模态。
+- **配方必须落到实际 token**：记录采样比例、输入比例、监督比例与 loss 权重各自登记。
+- **科学能力分开验收**：序列 NLL、正确配对敏感性、结构几何与生物功能不能互相替代。
 
 <!-- WORK:KNOWLEDGE:START -->
 ## 知识讲解：先区分表示、条件与监督 {#work-knowledge}
 
 阅读本项目需要理解三个概念。**Tokenizer** 把氨基酸或文本变成离散编号；它决定序列长度和词表，不能用氨基酸个数直接代替 token 数。**条件建模** 学习“给定描述时哪些蛋白序列更可能”；它不同于把文本和序列各自训练得更流畅。**监督区间** 决定哪些位置产生 loss；一个 token 即使只作上下文，也可能通过注意力影响被监督位置。
 
-P2T 是 `p(text | protein)`，T2P 是 `p(protein | text)`，protein-only 是 `p(protein)`。双向 CPT 共享模型中的部分能力，但两种条件分布不是互为确定性逆函数：相似功能描述可能对应多个序列，同一序列也可能有多种正确描述。结构扩展还要固定 structure codec；codec token、氨基酸残基和三维坐标不是同一层表示。[1](#ref-1)
+P2T 从蛋白预测文本，T2P 从文本预测蛋白，protein-only 学习无文本序列先验：
+
+<div class="reading-math">\[
+\begin{aligned}
+\mathrm{P2T}:&\ p_\theta(t\mid p)\\
+\mathrm{T2P}:&\ p_\theta(p\mid t)\\
+\mathrm{protein\ only}:&\ p_\theta(p)
+\end{aligned}
+\]</div>
+
+双向训练不是确定性求逆：一个功能可以对应多个序列，一个序列也可以有多种描述。结构 codec 的离散 token、氨基酸残基与三维坐标同样要分层理解。[1](#ref-1)
 
 <figure class="work-mechanism">
 <svg viewBox="0 0 840 210" role="img" aria-labelledby="holon-route-title holon-route-desc" xmlns="http://www.w3.org/2000/svg">
@@ -47,11 +61,18 @@ packed sequence + modality indexes
 
 ### 从张量看 MoT 为什么能跨模态交互
 
-设 packed 表示为 `H ∈ R^(T×d)`，`I_und`、`I_gen` 是两类位置的索引。各路径先从 H 取出对应行，计算 `Q_und=H[I_und]W_Q` 和 `Q_gen=H[I_gen]W_Q,gen`，K/V 同理；再把投影结果 scatter 回原来的 T 个位置。多头注意力按头计算：
+设 packed 表示有 T 行、每行 d 维；两类索引分别选出理解侧与生成侧。各路径计算投影，再 scatter 回原序列；K/V 同理。按单个注意力头写成：
 
-```text
-Attention(Q,K,V) = softmax(QKᵀ / √d_head + M) V
-```
+<div class="reading-math">\[
+\begin{aligned}
+H&\in\mathbb R^{T\times d}\\
+Q_{\rm und}&=H[I_{\rm und}]W_{Q,\rm und}\\
+Q_{\rm gen}&=H[I_{\rm gen}]W_{Q,\rm gen}\\
+P&=\operatorname{softmax}
+\left(\frac{QK^\top}{\sqrt{d_h}}+M\right)\\
+O&=PV
+\end{aligned}
+\]</div>
 
 `M` 表示因果与 packed 样本边界等约束。**参数路径分开，不意味着 attention 矩阵按模态彻底断开。** 在合同允许的上下文范围内，蛋白目标仍能使用文本的 K/V。相反，两个不同样本即使拼在同一 batch，也不能因为物理相邻而相互读答案。GQA 的 Q 与 K/V 头数可能不同，上式是每个注意力头的概括，不声称三个矩阵的最后一维完全一致。
 
@@ -81,17 +102,31 @@ P2T: [方向/边界] [序列 tokens] [文本起始] [功能文本] [终止]
      └──────── 条件区 ────────┘ └── 主要监督区 ──┘
 ```
 
-组装顺序是原始配对 → tokenizer → 边界和方向 → packing → 模态索引与 label shift → CE。对监督位置集合 S，平均 CE 可写作 `−Σ_(i∈S) log pθ(y_i|context)/|S|`。若分别平均 text/protein CE 再加权，目标模态的权重与直接对全部监督 token 求平均可能不同；实际 reduction 和权重必须绑定运行配置。**输入 token 比例、监督 token 比例和 loss 权重是三个独立口径。**[1](#ref-1)[4](#ref-4)
+组装顺序是配对 → tokenizer → 方向/边界 → packing → 模态索引与 label shift → CE。对监督位置集合 S：
+
+<div class="reading-math">\[
+\mathcal L_S=-\frac{1}{|S|}
+\sum_{i\in S}\log p_\theta(y_i\mid c_i)
+\]</div>
+
+若分别平均 text/protein CE 再加权，两类目标的贡献可能与全 token 平均不同。例如文本监督 10 tokens、蛋白监督 100 tokens：各模态等权时，两个平均 loss 各占一半；全 token 平均时，文本只占 10/110。**输入比例、监督比例、loss 权重分别核对。**[1](#ref-1)[4](#ref-4)
 
 ## 从目标 token 比例到可执行采样
 
 canonical mixed CPT 声明 `P2T:T2P:protein-only = 1:1:98`。这是目标 token 暴露比例。`PackedDataset` 在记录级选择数据组，再按实际输入长度 packing，因此记录采样权重需要考虑有效样本率和每条样本的 token 产出。[2](#ref-2)[4](#ref-4)
 
-```text
-yield_i = valid_rate_i × mean_valid_packed_length_i
-weight_i ∝ target_token_share_i / yield_i
-corrected_weight_i = old_weight_i × target_share_i / observed_share_i
-```
+令有效率为 a、有效记录均长为 μ、目标份额为 s；单次 fetch 的有效产出为 e。记录采样概率 w 所产生的 token 份额为：
+
+<div class="reading-math">\[
+\begin{aligned}
+e_i&=a_i\mu_i\\
+\widehat s_i&=\frac{w_ie_i}{\sum_jw_je_j}\\
+w_i&=\frac{s_i/e_i}{\sum_js_j/e_j}\\
+w_i'&\propto w_i\frac{s_i}{\widehat s_i}
+\end{aligned}
+\]</div>
+
+最后一行是反馈校准后重新归一化；未观测到某流时先查分片、拒收与抽样，不能除以零。若两流均长为 600/300、目标各半，记录权重应为 1/3 与 2/3；直接各半抽样会产生 2/3 与 1/3 的 token 暴露。
 
 可复现的数据配比包含三层：声明比例的 source YAML、可执行 `weight` 的 resolved YAML、跨 rank 汇总的 `token_mix_observed.json`。零 token 和过长样本被拒绝时会重新抽组，所以它们必须进入产出率估计。序列–结构路线还应区分 `packed_input_tokens` 与真正进入蛋白 CE 的 `supervised_prot_tokens`。[4](#ref-4)
 
@@ -101,7 +136,17 @@ corrected_weight_i = old_weight_i × target_share_i / observed_share_i
 
 仓库用 iso-FLOPs 实验研究模型规模、训练数据、batch 和学习率，并保留 Muon / AdamW、冻结与全参训练、ZeRO 和 checkpoint 的工程记录。预算迁移需要按当前激活的模型路径重新计算每 token FLOPs，再由算力预算解析训练 token 数。总参数与 active 参数是两个量，不能直接互换。[1](#ref-1)[5](#ref-5)
 
-当前 README 的架构感知 C1e20 Muon v3 profile 记录 `N_active=440,401,920`、`M=2,837,839,872 FLOPs/token`、global batch `479,232 tokens`，由 `round(C/M)` 得到约 35.2B 训练 tokens。它是特定 decoder path 的预算解析，不能推广为所有 Holon 规模的通用常数。历史 `S_eff=284` 仍是暂用参考，后续应以 packed telemetry 重新校准。[2](#ref-2)[5](#ref-5)
+当前 C1e20 Muon v3 profile：active 参数 **440,401,920**，每 token **2,837,839,872 FLOPs**，global batch **479,232 tokens**。[2](#ref-2)[5](#ref-5)
+
+<div class="reading-math">\[
+\begin{aligned}
+D&\simeq C/M\\
+&=10^{20}/2.83784{\times}10^9\\
+&\simeq35.2{\times}10^9\ \text{tokens}
+\end{aligned}
+\]</div>
+
+这是特定 decoder path 的预算。总参数不能代替 active path 的计算量；历史有效长度 284 仍需由 packed telemetry 校准。
 
 ## 如何证明模型使用了文本条件
 
@@ -112,22 +157,30 @@ corrected_weight_i = old_weight_i × target_share_i / observed_share_i
 - **泛化范围**：C30、Temporal、OOD-safe 等 split 与来源审计，约束可解释的人群。
 - **结构与科学输出**：结构任务、生成与编辑评测、分类任务，分别采用相应目标和指标。
 
-Negative Ladder v2 的正式 checkpoint×tier 终点为
-`(PSC_L3 − PS8_L3) − (PSC_L0 − PS8_L0)`，报告 `+0.0051416 NLL`，95% CI `[0.0037273, 0.0066557]`，采用 union-component block bootstrap。PS8 的绝对 margin 在 L0、L3 均更高；PSC 的优势是从 L0 到 L3 的敏感性下降较小。这个交互效应不能改写成“PSC 绝对对齐更强”。[6](#ref-6)
+Negative Ladder v2 的注册终点是两 checkpoint 从 L0 到 L3 的变化之差；结果在下面算例中展开。**PS8 的绝对 margin 更高，PSC 的下降较小**，两者回答不同问题。[6](#ref-6)
 
 每种 recipe 只有一个训练 seed，实际 token share 尚无独立审计，expanded pool 也不是 strict protein-OOD。因此支持的是冻结样本上的 checkpoint-level 结论，不支持配方因果效应、多种子稳健性或细粒度生物学理解。完整报告保留这个边界与未执行的 replication 设计。[6](#ref-6)
 
 <!-- WORK:EXAMPLE:START -->
 ### 用真实结果解释交互效应 {#work-example}
 
-Negative Ladder 的 margin 表示 matched 与 null 条件的 NLL 差异，数值越高表示该协议下更偏好正确配对；它不是生物功能正确率。[6](#ref-6)
+Negative Ladder 的 margin 是 **mismatch NLL − matched NLL**；null 条件用于进一步分解信息增益与干扰，不是 margin 的另一端。正 margin 表示该协议下更偏好正确配对，不是生物功能正确率。[6](#ref-6)
 
 | Checkpoint | L0 margin NLL | L3 margin NLL | L3−L0 |
 | --- | ---: | ---: | ---: |
 | PS8，8:0:92 | 0.0981195 | 0.0871261 | −0.0109934 |
 | PSC，4:4:92 | 0.0380793 | 0.0322274 | −0.0058518 |
 
-注册效应就是 `−0.0058518 − (−0.0109934) = +0.0051416`。因此“下降较小”和“绝对 margin 更大”可以同时指向不同 checkpoint。CI 是在冻结样本相关结构下的 block bootstrap 不确定性，不能当成跨训练 seed 的置信区间。
+<div class="reading-math">\[
+\begin{aligned}
+\Delta_c&=m_{c,L3}-m_{c,L0}\\
+\mathrm{DiD}&=\Delta_{\rm PSC}-\Delta_{\rm PS8}\\
+&=-0.0058518-(-0.0109934)\\
+&=+0.0051416\ \mathrm{NLL}
+\end{aligned}
+\]</div>
+
+95% CI **[0.0037273, 0.0066557]** 来自 union-component block bootstrap。它覆盖冻结样本的相关性，不覆盖重新训练 seed 的变化；每配方单 seed、token share 未独立审计、expanded pool 非 strict protein-OOD 的边界继续保留。
 <!-- WORK:EXAMPLE:END -->
 
 <!-- WORK:REVIEW:START -->
@@ -146,6 +199,14 @@ Negative Ladder 的 margin 表示 matched 与 null 条件的 NLL 差异，数值
 
 建议先复习 [Attention 与 KV cache](../../llm-architecture/s02_attention_position_cache.html)，再读 [SFT 与监督 mask](../../llm-posttraining/s01_supervision_preference.html)；训练资源问题可接着看 [优化器与训练系统](../../llm-training-lifecycle/s05_training_methods_systems.html)。这些是通用知识讲解，本页的项目事实仍以固定版本来源为准。
 <!-- WORK:REVIEW:END -->
+
+## 五道项目面试追问
+
+1. **MoT 与 MoE 的区别？** MoT 按模态/任务位置选参数；MoE 通常由学习 router 选专家。参数分工不取消样本内跨模态 attention。
+2. **1:1:98 为什么不能直接作记录权重？** 不同流每次 fetch 的有效 token 产出不同；按目标份额除以有效产出，再归一化。
+3. **protein loss 下降能证明理解文本吗？** 不能；用 matched/null/mismatch、SeqOnly 和独立 split 区分先验、条件收益及干扰。
+4. **PSC 的 DiD 为正为何绝对 margin 更低？** DiD 比较下降幅度，绝对 margin 比较端点；两个量可以给出不同排序。
+5. **结构 codec 重建更好，fold 模型一定更好吗？** 不一定；几何重建与 token 可学习性分轴验收。完整报告保留五臂实验与非劣门限。
 
 ## 实现入口与复核范围
 

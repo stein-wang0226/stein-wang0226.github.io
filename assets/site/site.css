@@ -219,6 +219,9 @@ body.site-body{margin:0;background:#f7f5f0}
 .site-page .route-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem;margin-top:1.5rem}
 .site-page .route-branches details{border-top:1px solid #d6d3cd;padding-top:.8rem;min-width:0}
 .site-page .route-branches summary{font-weight:600;cursor:pointer;padding:.4rem 0}
+.site-page .route-branches [data-reading-route="rl-detailed"]{grid-column:1/-1;border:1px solid #b8cbc3;border-left:4px solid #0f766e;padding:16px 20px;background:#f4f8f5}
+.site-page .route-branches [data-reading-route="rl-detailed"] .route-stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+@media(max-width:768px){.site-page .route-branches [data-reading-route="rl-detailed"] .route-stages{grid-template-columns:1fr}}
 .site-page .research-paths{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem 2.5rem}
 .site-page .research-paths article{border-top:1px solid #d6d3cd;min-width:0}
 .site-page .research-paths h3{font-size:1.18rem;margin:1.2rem 0 .6rem}

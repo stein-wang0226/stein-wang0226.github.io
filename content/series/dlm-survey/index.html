@@ -1,183 +1,29 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>扩散语言模型前沿调研：目录</title>
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$','$'],['\\(','\\)']],
-    displayMath: [['$$','$$'],['\\[','\\]']],
-    ignoreHtmlClass: 'diagram|code-block'
-  },
-  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
-  startup: {
-    pageReady: () => {
-      return MathJax.startup.defaultPageReady().then(() => {
-        document.documentElement.classList.add('mathjax-loaded');
-      });
-    }
-  }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
-<script>
-  // Fallback: if primary CDN fails, try alternate
-  window.addEventListener('error', function(e) {
-    if (e.target && e.target.src && e.target.src.includes('mathjax')) {
-      var s = document.createElement('script');
-      s.src = 'https://unpkg.com/mathjax@3/es5/tex-svg.js';
-      s.async = true;
-      document.head.appendChild(s);
-    }
-  }, true);
-</script>
-<link rel="stylesheet" href="shared.css">
-<link rel="stylesheet" href="../assets/site/site.css">
-<link rel="canonical" href="https://stein-wang0226.github.io/dlm-survey/">
-</head>
-<body>
-<!-- SITE:NAV:START -->
-<a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="../index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="../index.html">首页</a><a href="../about/index.html">关于</a><a href="../publications/index.html">论文</a><a href="../notes/index.html" aria-current="page">笔记</a><a href="../cv/index.html">CV</a></div></nav>
-<!-- SITE:NAV:END -->
-<section class="content-guide" aria-label="系列阅读准备">
-<h2>系列阅读准备</h2><p><strong>范围与先修：</strong>14 章涵盖生成模型基础、语言扩散路线及训练 / 解码应用。先修概率、KL、变分推断、微分方程与 Transformer；相关基础可先查 <a href="../transformer-decoder-flow.html">Decoder 数据流</a>。</p>
-<p><strong>主线：</strong>领域地图 → 预测对象 → 离散 / 块 / 连续路线 → Scaling → 投机解码 → ELBO / RL → 综合判断与研究问题。Looped Transformer是研究扩展；DDPM、Flow/SDE与VAE为按需推导，商业材料最后查阅。十四章全部保留。</p>
-<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前阅读建议 · 2026-11-14</summary>
-<p><strong>推荐顺序：</strong>DDPM → ODE / SDE / Flow → 全景概述 → 离散 / 块 / 连续扩散 → 预测范式 → Scaling → 投机解码 → ELBO / RL → 落地与对比；Looped Transformer 和 VAE 可按兴趣补充。章节目录和前后章导航依照统一登记顺序生成。</p>
-</details><!-- READING:HISTORY:END -->
-<p><strong>阅读方法：</strong>逐章对应前向噪声过程、预测对象、训练 loss、采样步骤与生成产物。公式、代码及图表保留；模型规格、性能比较和论文归属仍需逐项结合原始来源复核。</p>
-<h3 id="foundations">本轮基础复核与贯通路径</h3>
-<p>基础推导按 <a href="https://arxiv.org/abs/2006.11239">DDPM</a>、<a href="https://arxiv.org/abs/2011.13456">Score-SDE</a>、<a href="https://arxiv.org/abs/2210.02747">Flow Matching</a>、<a href="https://arxiv.org/abs/2107.03006">D3PM</a>、<a href="https://arxiv.org/abs/2406.07524">MDLM</a>和 <a href="https://arxiv.org/abs/1312.6114">VAE</a>的原始定义补充条件。第08章SPG/GDSD的公式分别对照固定v1方法段修订；各章新增“机制与验收”说明，不代表历史全部型号/数字已核实。</p>
-<p>把DLM看作训练目标、生成路径与系统实现的组合：<a href="/llm-architecture/s05_hybrid_architectures.html">架构状态</a> → 本系列去噪/ELBO → <a href="/llm-research-map-2026/s04_inference_diffusion.html">DFlash/DSpark/AdaFlash最新证据</a> → <a href="/llm-serving/s02_parallel_quantization.html">target验证与量化</a> → <a href="/llm-serving/s03_capacity_cost.html">同质量成功成本</a>。实验均为设计方案。</p>
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>扩散语言模型：原理、训练与解码</title>
+<style>
+body{margin:0;background:#fff;color:#1a1a2e;font:16px/1.85 system-ui,-apple-system,"PingFang SC",sans-serif}
+.reading-course{box-sizing:border-box;max-width:1100px;margin:0 auto;padding:0 32px}
+.reading-course h2,.reading-course h3{color:#172d35}.reading-course a{color:#0f766e}
+.reading-course table{border-collapse:collapse;width:100%;font-size:.94rem}
+.reading-course th,.reading-course td{text-align:left;vertical-align:top;border-bottom:1px solid #d6d3cd;padding:12px}
+.reading-course summary{cursor:pointer;font-weight:600}.reading-course details{margin:20px 0}
+@media(max-width:600px){.reading-course{padding:0 22px}.reading-course th,.reading-course td{padding:9px}}
+</style></head><body>
+<section id="foundations">
+<p><strong>先记住一条链：</strong>选择扰动过程 → 预测干净信息 → 按采样规则更新状态 → 返回文本。DLM 的关键不是“把 token 同时输出”，而是让模型在不同完整度的上下文中学习重建，并定义从噪声到文本的生成过程。</p>
+<figure class="mechanism-map"><figcaption>训练和生成使用同一个去噪器，但状态来源不同</figcaption><ol class="mechanism-chain"><li><b>训练：干净文本</b><small>采样时刻与扰动，目标已知</small></li><li><b>去噪器</b><small>读部分文本、连续表示或噪声</small></li><li><b>生成：先验状态</b><small>按日程反复预测和更新</small></li><li><b>评测：最终文本</b><small>质量、延迟、显存、成功成本</small></li></ol><p class="mechanism-return">↶ 生成循环需要多次模型调用；训练可直接采一个时刻，通常不必运行整条链。</p></figure>
+<p>本页按<strong>概览与目标 → 离散与块 → 连续接口 → ELBO/RL → 算力与解码 → 综合判断</strong>连续展开。DDPM、连续时间和 VAE 的先修推导，以及循环模型与商业材料，可在后部页内展开；不要求先穿过所有先修才能开始学语言扩散。</p>
+<p>先修仅需条件概率、交叉熵、矩阵与反向传播。每节先给可复述结论，再展开必要公式、算例与追问。所有算例都是教学计算；本页没有本地模型训练或速度实测。</p>
 </section>
-<div id="site-main" tabindex="-1"></div>
-<div id="math-loading">
-  <div class="spinner"></div>
-  正在加载数学公式渲染...
-</div>
-
-<div class="hero">
-  <h1>扩散语言模型前沿调研</h1>
-  <p class="subtitle">从 D3PM 到 LLaDA：离散/连续/块扩散/预测范式四大路线全景、Scaling Laws、投机解码、ELBO/RL 训练、商业落地、Looped Transformer Latent Reasoning 与 VAE 家族深度解析</p>
-  <p class="meta">涵盖 70+ 篇核心论文 &middot; 2013&ndash;2026</p>
-</div>
-
-<div class="container">
-
-  <!-- READING:CHAPTERS -->
-  <p>每章对应前向噪声、预测对象、loss、采样与产物；综合对比章连接<a href="../blog/#research-diffusion-language">个人扩散语言模型研究</a>。需要变分或连续时间基础时，从本章先修入口返回完整推导。</p>
-  <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；旧编号保留供对照</summary>
-  <h2 class="section-title"><span class="num">目录</span> 基础理论 + 十二大章节</h2>
-
-  <div class="index-grid">
-
-    <a class="index-card" href="s00a_ddpm.html" style="border-left: 4px solid var(--yellow);">
-      <span class="num" style="background: var(--yellow); color: var(--bg);">基础 A</span>
-      <h3>DDPM：从变分推断到噪声预测</h3>
-      <p>前向/逆向过程 &rarr; ELBO &rarr; KL 裂项拆解 &rarr; 后验解析 &rarr; $L_{\text{simple}}$，五步严格推导 DDPM 噪声预测损失。</p>
-      <div class="paper-count">前置理论</div>
-    </a>
-
-    <a class="index-card" href="s00b_flow_sde.html" style="border-left: 4px solid var(--yellow);">
-      <span class="num" style="background: var(--yellow); color: var(--bg);">基础 B</span>
-      <h3>连续时间：ODE、SDE 与 Flow Matching</h3>
-      <p>ODE 连续性方程 &rarr; SDE Fokker-Planck &rarr; 概率流 ODE &rarr; 条件/边际损失等价 &rarr; DDPM≡Score≡Flow 统一。</p>
-      <div class="paper-count">前置理论</div>
-    </a>
-
-    <a class="index-card" href="s01_overview.html">
-      <span class="num">01</span>
-      <h3 id="reading-section-6">扩散语言模型概述与主要路线</h3>
-      <p>离散 / 连续 / 块扩散 / 预测范式四大路线总览，梳理扩散语言模型的完整发展脉络与核心范式差异。</p>
-      <div class="paper-count">50+ 论文覆盖</div>
-    </a>
-
-    <a class="index-card" href="s02_discrete.html">
-      <span class="num">02</span>
-      <h3>离散空间扩散</h3>
-      <p>D3PM &rarr; MDLM &rarr; LLaDA &rarr; Dream &rarr; SEDD &rarr; Seed Diffusion，从早期马尔可夫链到现代大规模离散扩散的完整演进。</p>
-      <div class="paper-count">8 核心论文</div>
-    </a>
-
-    <a class="index-card" href="s03_block.html">
-      <span class="num">03</span>
-      <h3>块扩散与半自回归</h3>
-      <p>BD3LM &rarr; SDAR &rarr; DFlash &rarr; Nemotron &rarr; TiDAR &rarr; Fast-dLLM，块级并行采样与半自回归解码加速方案。</p>
-      <div class="paper-count">7 核心论文</div>
-    </a>
-
-    <a class="index-card" href="s04_continuous.html">
-      <span class="num">04</span>
-      <h3>连续隐空间扩散</h3>
-      <p>Diffusion-LM &rarr; COLA &rarr; CADD &rarr; ELF &rarr; LangFlow &rarr; Plaid，在连续嵌入空间上进行扩散生成与流形学习。</p>
-      <div class="paper-count">6 核心论文</div>
-    </a>
-
-    <a class="index-card" href="s05_paradigms.html">
-      <span class="num">05</span>
-      <h3 id="reading-section-10">预测目标与参数化比较</h3>
-      <p>&epsilon; / x&#x2080; / v / ratio / discrete FM 六种预测目标全面对比，统一框架下的理论分析与实验验证。</p>
-      <div class="paper-count">6 核心论文</div>
-    </a>
-
-    <a class="index-card" href="s06_scaling.html">
-      <span class="num">06</span>
-      <h3>Scaling Laws</h3>
-      <p>噪声类型依赖 scaling law、AR vs DLM 对比，揭示扩散语言模型在模型规模与数据规模下的性能规律。</p>
-      <div class="paper-count">4 核心论文</div>
-    </a>
-
-    <a class="index-card" href="s07_speculative.html">
-      <span class="num">07</span>
-      <h3>投机解码与推理加速</h3>
-      <p>DFlash vs MTP、S2D2、SimSD、Trajectory-Level SD，扩散模型作为投机解码器的最新进展与加速比分析。</p>
-      <div class="paper-count">5 核心论文</div>
-    </a>
-
-    <a class="index-card" href="s08_elbo_rl.html">
-      <span class="num">08</span>
-      <h3>ELBO 与 RL 训练</h3>
-      <p>SPG、GDSD、DUEL、TUBE，变分下界优化与强化学习在扩散语言模型训练中的前沿方法。</p>
-      <div class="paper-count">4 核心论文</div>
-    </a>
-
-    <a class="index-card" href="s09_commercial.html">
-      <span class="num">09</span>
-      <h3>商业落地与行业实践</h3>
-      <p>Google / NVIDIA / 字节 / 阿里 / Apple / Mercury 布局，大厂在扩散语言模型上的工程实践与产品化探索。</p>
-      <div class="paper-count">6 核心论文</div>
-    </a>
-
-    <a class="index-card" href="s10_comparison.html">
-      <span class="num">10</span>
-      <h3>综合对比与未来方向</h3>
-      <p>全景对比表 + 四大未来方向，涵盖理论基础、架构设计、训练效率、应用场景的系统性展望。</p>
-      <div class="paper-count">综合性总结</div>
-    </a>
-
-    <a class="index-card" href="s11_loop_transformer.html" style="border-left: 4px solid var(--pink);">
-      <span class="num" style="background: var(--pink); color: #fff;">11</span>
-      <h3>Looped Transformer 与 Latent Reasoning</h3>
-      <p>Ouro/LoopLM &rarr; CCDD &rarr; LoopFormer &rarr; COCONUT &rarr; Huginn &rarr; ChainGPT &rarr; MoDr，循环 Transformer 实现隐式推理的完整技术图谱，以及与扩散模型的深层交叉。</p>
-      <div class="paper-count">30+ 论文覆盖 &middot; 2019&ndash;2026</div>
-    </a>
-
-    <a class="index-card" href="s12_vae.html" style="border-left: 4px solid var(--accent);">
-      <span class="num" style="background: var(--accent); color: #fff;">12</span>
-      <h3 id="reading-section-17">VAE 原理、发展脉络与主要变体</h3>
-      <p>从 Vanilla VAE 到 VQ-VAE &rarr; RQ-VAE &rarr; FSQ &rarr; LFQ &rarr; MAGVIT-v2，18 个 VAE 变体的系统梳理，以及 VAE 在 Stable Diffusion / FLUX / Sora 中的角色。</p>
-      <div class="paper-count">30+ 论文覆盖 &middot; 2013&ndash;2025</div>
-    </a>
-
-  </div>
-
-  </details><!-- READING:HISTORY:END -->
-  <footer style="text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text2); font-size: 0.85em;">
-    <p>扩散语言模型前沿调研 &middot; 涵盖 70+ 篇核心论文 &middot; 2013&ndash;2026</p>
-  </footer>
-
-</div>
-</body>
-</html>
+<!-- READING:COURSE -->
+<section class="course-review" id="mastery"><h2>掌握检查</h2><ul>
+<li><strong>写得出：</strong>吸收核、贝叶斯后验、线性 mask 日程的加权 CE，并说明为什么是 1/t。</li>
+<li><strong>分得清：</strong>预测对象、生成路径、最终文本概率；块间因子化、块内边际化；VP v 与 FM 速度。</li>
+<li><strong>会诊断：</strong>重建误差、去噪误差、采样偏移、估计方差和系统成本分别查什么。</li>
+<li><strong>会比较：</strong>固定数据、训练预算、decoder、采样温度与硬件后，再谈质量和效率。</li>
+</ul></section>
+<details id="source-policy"><summary>来源与原稿</summary>
+<p>核心定义对照 DDPM、Score-SDE、Flow Matching、D3PM、MDLM、LLaDA 和 BD3-LM 原论文；研究结果仅支持其报告条件。原文中的型号表、未经确认的数值与旧推断可从<a href="/blog/history/">改编前完整原稿</a>查证。当前正文不把这些数字作为统一性能排名。</p>
+<p>最新投机实验在<a href="/llm-research-map-2026/s04_inference_diffusion.html">研究地图的固定版本对照</a>维护；本页解释机制与读表方法，避免重复维护同一长表。</p>
+</details>
+</body></html>

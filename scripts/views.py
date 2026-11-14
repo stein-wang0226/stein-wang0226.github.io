@@ -7,6 +7,7 @@ from html.parser import HTMLParser
 from string import Template
 
 from render import load_md, md, publication_date
+from course import parent_of, chapters_of, public_target
 
 
 def esc(value):
@@ -52,6 +53,8 @@ def public_entries(ctx):
     for entry in ctx.entries:
         if entry["status"] == "draft":
             continue
+        if parent_of(entry, ctx.by_id):
+            continue
         row = {key: entry[key] for key in (
             "id", "kind", "title", "summary", "url", "topic", "type", "tags",
             "origin", "status", "updated", "series", "order", "reading_role", "chapter_group"
@@ -60,8 +63,20 @@ def public_entries(ctx):
         if entry["origin"] == "local":
             headings.feed((ctx.root / entry["source"]).read_text(encoding="utf-8"))
         row["headings"] = headings.items
+        row["reading_mode"] = entry.get("reading_mode")
+        row["sections"] = []
+        if entry.get("reading_mode") == "longform":
+            for child in chapters_of(entry, ctx.entries):
+                child_headings = Headings()
+                child_headings.feed((ctx.root / child["source"]).read_text())
+                row["headings"].extend(child_headings.items)
+                row["sections"].append({
+                    "id": child["id"], "title": child["title"],
+                    "url": entry["url"] + "#" + child["id"],
+                    "search": " ".join([child["title"], child["summary"], *child["tags"],
+                                        *child_headings.items]).casefold()})
         row["search"] = " ".join([row["title"], row["summary"], *row["tags"],
-                                  *headings.items]).casefold()
+                                  *row["headings"], *(s["search"] for s in row["sections"])]).casefold()
         result.append(row)
     return result
 
@@ -70,15 +85,19 @@ def route_stages(ctx, route):
     items = []
     for node in route["stages"]:
         entry = ctx.by_id[node["entry"]]
-        url = ctx.rel("/blog/", entry["url"]) + ("#" + node["anchor"] if node.get("anchor") else "")
+        target, anchor = public_target(entry, node.get("anchor", ""), ctx.by_id)
+        url = ctx.rel("/blog/", target) + ("#" + anchor if anchor else "")
         text = f'<a href="{esc(url)}">{esc(entry["title"])}</a>'
         if node.get("question"):
             text += f'<p>{esc(node["question"])}</p><small>阅读产物：{esc(node["output"])}</small>'
         if entry.get("prerequisites") and node.get("question"):
-            text += '<small>按需先修：' + "、".join(
-                f'<a href="{ctx.rel("/blog/", ctx.by_id[p["entry"]]["url"])}'
-                f'{"#" + esc(p["anchor"]) if p.get("anchor") else ""}">'
-                f'{esc(ctx.by_id[p["entry"]]["title"])}</a>' for p in entry["prerequisites"]) + "</small>"
+            prerequisites = []
+            for item in entry["prerequisites"]:
+                prior = ctx.by_id[item["entry"]]
+                target, anchor = public_target(prior, item.get("anchor", ""), ctx.by_id)
+                href = ctx.rel("/blog/", target) + ("#" + anchor if anchor else "")
+                prerequisites.append(f'<a href="{esc(href)}">{esc(prior["title"])}</a>')
+            text += '<small>按需先修：' + "、".join(prerequisites) + "</small>"
         items.append("<li>" + text + "</li>")
     return '<ol class="route-stages">' + "".join(items) + "</ol>"
 
@@ -92,10 +111,11 @@ def learning_routes(ctx):
            '<a href="references/">文献查阅</a></div>' \
            f'<p>{esc(main["summary"])}</p>{route_stages(ctx, main)}'
     body += '<p>生成模型研究分支：<a href="../dlm-survey/">扩散语言模型</a>。基础推导、完整代码和自测题可在后部参考入口按需查阅。</p>'
-    body += '<div class="route-branches">' + "".join(
-        f'<details><summary>{esc(route["label"])}</summary><p>{esc(route["summary"])}</p>'
-        f'{route_stages(ctx, route)}</details>' for route in branches) + "</div></section>"
-    body += '<section id="research-focus" class="research-focus"><h2>重点研究路径</h2><div class="research-paths">'
+    body += "</section>"
+    body += '<details id="research-focus" class="research-focus"><summary>按需研究与复习</summary><div class="research-paths">'
+    body += "".join(
+        f'<details data-reading-route="{esc(route["id"])}"><summary>{esc(route["label"])}</summary><p>{esc(route["summary"])}</p>'
+        f'{route_stages(ctx, route)}</details>' for route in branches)
     for route in ctx.site.get("research_paths", []):
         links = []
         if route.get("cv_url"):
@@ -105,10 +125,11 @@ def learning_routes(ctx):
             links.append(f'<a href="{ctx.rel("/blog/", paper["url"])}">{esc(paper["meta"]["title"])}</a>')
         body += f'<article id="research-{esc(route["id"])}"><h3>{esc(route["label"])}</h3><p>{esc(route["summary"])}</p>' \
                 + route_stages(ctx, route) + '<p class="research-records">' + " · ".join(links) + "</p></article>"
-    body += "</div></section><details class=\"concept-index\"><summary>按核心概念查主讲位置</summary><ul>"
+    body += "</div></details><details class=\"concept-index\"><summary>按核心概念查主讲位置</summary><ul>"
     for owner in ctx.site.get("concept_owners", []):
         entry = ctx.by_id[owner["entry"]]
-        url = ctx.rel("/blog/", entry["url"]) + ("#" + owner["anchor"] if owner.get("anchor") else "")
+        target, anchor = public_target(entry, owner.get("anchor", ""), ctx.by_id)
+        url = ctx.rel("/blog/", target) + ("#" + anchor if anchor else "")
         body += f'<li><a href="{esc(url)}">{esc(owner["label"])}</a>：{esc(entry["title"])}</li>'
     return body + "</ul></details>"
 
@@ -146,8 +167,9 @@ def card(ctx, row, path="/blog/", chapters=False):
     if chapters and row["kind"] == "series":
         children = sorted((e for e in ctx.entries if e["series"] == row["id"]
                            and e["status"] == "published"), key=lambda e: e["order"])
-        body += '<details><summary>查看系列章节</summary><ol>' + "".join(
-            f'<li><a href="{ctx.rel(path, e["url"])}">{esc(e["title"])}</a></li>'
+        body += '<details><summary>查看本页小节</summary><ol>' + "".join(
+            f'<li><a href="{ctx.rel(path, public_target(e, "", ctx.by_id)[0])}'
+            f'{"#" + public_target(e, "", ctx.by_id)[1] if parent_of(e, ctx.by_id) else ""}">{esc(e["title"])}</a></li>'
             for e in children) + "</ol></details>"
     return body + "</article>"
 
@@ -262,9 +284,9 @@ def render_blog(ctx):
             '<p>从原理推导到训练工程，记录 LLM、Agent 与扩散模型的学习和实践。'
             '选一个主题，或从感兴趣的问题开始。</p>'
             '<p><a href="#learning-paths">完整学习主线</a> · '
-            '<a href="#research-focus">重点研究路径</a> · <a href="references/">文献查阅</a></p>'
+            '<a href="#research-focus">按需研究与复习</a> · <a href="references/">文献查阅</a></p>'
             f'<div class="catalog-stats"><span><strong>{len(local)}</strong>笔记集合</span>'
-            f'<span><strong>{sum(e["kind"] == "chapter" and e["status"] == "published" for e in rows)}</strong>章节</span>'
+            f'<span><strong>{sum(e["kind"] == "chapter" and e["status"] == "published" for e in ctx.entries)}</strong>教学小节</span>'
             f'<span><strong>{len(ctx.site["topics"])}</strong>主题</span></div></div></header>'
             '<form id="catalog-form" class="catalog-controls" action="/blog/" method="get" '
             f'data-catalog-version="{esc(ctx.metadata["input_digest"][:16])}">'
@@ -298,7 +320,7 @@ def render_blog(ctx):
             '<div class="note-grid">' + "".join(card(ctx, e) for e in external) +
             '</div></section><section id="archive" class="supplemental"><h2>历史版本</h2>'
             '<p>保留原始内容与旧链接，便于对照阅读。</p><div class="note-grid">' +
-            "".join(card(ctx, e) for e in archived) + "</div></section>"
+            "".join(card(ctx, e) for e in archived) + '</div><p><a href="history/">下载重编前原稿</a></p></section>'
             '<p class="catalog-footnote">日期表示内容更新时间，未知日期保留为待确认。'
             '科研材料的逐项事实复核仍在进行。</p>'
             )

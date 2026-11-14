@@ -95,7 +95,7 @@ body.presentation .work-original-report p{font-size:17px}
 .work-original-report .artifact>summary{font-size:13px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 @media screen and (max-width:760px){.work-original-report .chart-scroll{overflow-x:auto}
-.work-original-report .chart-scroll svg{min-width:610px}}
+.work-original-report .chart-scroll svg{min-width:0}}
 .work-original-report .chart-scroll:focus-visible{outline:2px solid var(--green);outline-offset:2px}
 .work-original-report math{font-family:"STIX Two Math","Latin Modern Math","Cambria Math",math}
 .work-original-report .equation{overflow-x:auto;overflow-wrap:normal;margin:18px 0}
@@ -177,8 +177,16 @@ body.presentation .work-original-report p{font-size:17px}
 <p>本报告将证据分为四类：<strong>本地结果文件/登记表</strong>、<strong>实验报告中的历史验收记录</strong>、<strong>参考稿件数值</strong>、<strong>仅有实现或计划</strong>。前两类也不等于本次重做 GPU 评分。每节附来源和可展开的实际配置、样例、代码或原始表，便于学习后直接定位实现。</p>
 <p class="sources">来源：<a class="cite" href="#src-b33563055168">README.md</a> · <a class="cite" href="#src-7c7f4469375d">docs/archive/PROJECT_ARCHIVE_INDEX_20261111.md</a> · <a class="cite" href="#src-13945fc6ad8f">docs/archive/legacy-branch-review-20261111.md</a></p>
 
+<div data-reading-plot-zoom>
+<p><strong>学习顺序：</strong><a href="#chapter-2">MoT 单层计算</a> → <a href="#holon-loss">监督与聚合</a> → <a href="#chapter-5">实际 token 暴露</a> → <a href="#chapter-6">计算预算</a> → <a href="#holon-ladder-effect">条件利用对照</a> → <a href="#chapter-19">项目复盘</a>。原始宽表和配置按需展开，机制图可放大。</p>
+</div>
 <h3>1.1 项目的技术演进与本报告的阅读顺序</h3>
-<p>项目不是一条从小模型到大模型的单线训练曲线，而是三条交叉的研究链：<strong>序列先验与预算分配</strong>、<strong>文本条件与任务行为</strong>、<strong>结构表示与几何生成</strong>。序列 scaling 给出计算预算的起点；CPT 检查加入文本后是否形成可测条件能力；SFT 调整任务行为并评估遗忘；结构线先解决 codec 和数据合同，再考察 token LM 的可学习性。任一链上的成功都不能自动替代另外两条链的验收。</p>
+<ul>
+<li><strong>序列先验与预算：</strong>scaling 给出起点，迁移到 CPT 后需重新核对实际曝光与超参。</li>
+<li><strong>文本条件与任务行为：</strong>CPT 测条件能力；SFT 测任务收益与遗忘。</li>
+<li><strong>结构表示与几何生成：</strong>先验收 codec 和数据合同，再测 token LM 与端到端任务。</li>
+</ul>
+<p>三条研究链分别需要对照证据。任何一条成功，都不能自动替代另外两条的验收。</p>
 <div class="table-scroll" tabindex="0"><table>
 <thead>
 <tr>
@@ -839,9 +847,23 @@ structure 位于同一样本且 causal 顺序允许，它们就能通过 attenti
  833                  best_idx, best_score = i, score
  834          return best_idx</code></pre></details>
 
-<h3>3.3 Loss 的三层定义</h3>
-<p>第一层是目标位置：<code>sequence_plan.loss</code>、边界监督和 residue mask 决定哪里产生标签；第二层是目标空间：text、AA、structure 各自的输出空间；第三层是聚合：token/sample/长度重加权与 <code>loss_normalization</code>。仅报告 <code>ce_weight=prot_ce_weight=1</code> 不能说明两种模态的总梯度权重相等，因为监督 token 数量不同。</p>
-<p><code>len2weight</code> 提供 token 权重 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn></mrow></math>、sample 权重 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mi>&#x02113;</mi></mrow></math>、square 权重 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><msqrt><mrow><mi>&#x02113;</mi></mrow></msqrt></mrow></math>。packer 生成的权重是否被使用，还取决于 trainer 的 reweighting 开关。当前默认 YAML 未开启两种 reweighting（trainer 默认均 false），因此其 <code>per_token</code> 在两种模态系数均为1时是全部监督token的普通均值；旧文档中的 square 描述不能代替当前有效配置。<code>per_modality</code> 则先分别取文本/蛋白均值再加权相加，模态token数失衡时两者优化目标不同。科学复盘时应保存目标数量、有效权重分母与最终 loss reducer，而非只摘 YAML 的一个系数。</p>
+<h3 id="holon-loss">3.3 Loss 的三层定义：位置、输出空间、聚合</h3>
+<ul>
+<li><strong>目标位置：</strong><code>sequence_plan.loss</code>、边界监督与 residue mask 决定标签。</li>
+<li><strong>输出空间：</strong>text、AA、structure 使用对应输出空间，不能跨词表混算 CE。</li>
+<li><strong>聚合分母：</strong>token 数、sample 权重和模态 reducer 决定最终梯度比例。</li>
+</ul>
+<p>令文本与蛋白监督数分别为 \(n_T,n_P\)，两者平均 CE 为 \(\bar\ell_T,\bar\ell_P\)。在模态系数均为 1、未启用重加权时：</p>
+<div class="reading-math">\[
+\begin{aligned}
+L_{\rm token}&=
+\frac{n_T\bar\ell_T+n_P\bar\ell_P}{n_T+n_P},\\
+L_{\rm modality}&=\bar\ell_T+\bar\ell_P.
+\end{aligned}
+\]</div>
+<p><strong>算例：</strong>2 个文本目标的平均 CE=1，8 个蛋白目标的平均 CE=3。token reducer 得 2.6；模态 reducer 得 4。后者是两个均值相加，不能再默认为除以 2。即使系数相同，两种目标的模态梯度比例仍不同。</p>
+<p><code>len2weight</code> 给出 1、\(1/\ell\)、\(1/\sqrt{\ell}\) 三种逐 token 权重。它们是否生效取决于 trainer 的 reweighting 开关。<strong>当前默认 YAML 未启用两种重加权</strong>（trainer 默认均 false），不能把历史 square 描述当作有效配方。</p>
+<p>复现时保存监督数量、有效 token 权重、分母和 reducer，同时核对是否存在 detach 或冻结。仅看到 <code>ce_weight=prot_ce_weight=1</code> 不足以推断两路等强监督。</p>
 <p class="sources">来源：<a class="cite" href="#src-f1636ebd91ee">data/dataset_base.py</a> · <a class="cite" href="#src-9ab724a923b0">data/data_utils.py</a> · <a class="cite" href="#src-2ebcd7079852">train/token_budget.py</a> · <a class="cite" href="#src-1148dc66f3da">train/pretrain_unified_nebula.py</a> · <a class="cite" href="#src-05568240b72d">train/distributed_checkpoint_state.py</a></p></section><section id="chapter-4"><h2>04 数据全景：来源、模态、监督与容量</h2><p>数据应按其在训练中的作用分类，而不是只列数据集名字。纯序列建立蛋白语言先验；配对语料提供条件；交错论文提供多段语境；结构 release 提供逐残基离散监督；SFT 将这些信息变为任务形式。原始行数、cluster 数、pair slots、单次曝光 tokens 和训练累计 tokens 必须分开。</p>
 <div class="table-scroll" tabindex="0"><table>
 <thead>
@@ -4344,8 +4366,9 @@ token；当前 schema 不能从聚合值反推出该拆分。</p>
 <h4>8. 从均值估算数据集 token 总量和覆盖轮数</h4>
 <p>令 <code>e_i</code> 为 group <code>i</code> 的 <code>effective_tokens_per_fetch</code>，<code>F_i</code> 为使用相同
 抽样与 packing 配置的 fetch 次数，则：</p>
-<pre><code class="language-text">expected_input_tokens_i ≈ F_i × e_i
-</code></pre>
+<div class="reading-math">\[
+\mathbb E[D_i]\approx F_i e_i.
+\]</div>
 <p>若数据集有 <code>R_i</code> 个 outer rows，并把每个 outer row 访问一次，则可用
 <code>R_i × e_i</code> 粗估“一次 outer-row pass”的 token 总量。multipair 数据每次访问
 row 时只随机抽一个对齐 pair，因此这里乘 outer rows，而不是 pair slots。</p>
@@ -4417,17 +4440,21 @@ stratified-files 样本能代表后续 fetch 分布，并沿用相同 tokenizer�
 边界设置和 8,192 上限。对成本敏感的训练应结合 report 中的
 <code>effective_mean_ci95</code> 给出上下界，并以短训练的 observed token 复核。</p>
 <p>若总训练 input-token budget 为 <code>B</code>，目标 token share 为 <code>s_i</code>，则：</p>
-<pre><code class="language-text">target_tokens_i      = B × s_i
-expected_fetches_i   ≈ B × s_i / e_i
-row_equivalent_pass_i ≈ B × s_i / (e_i × R_i)
-</code></pre>
+<div class="reading-math">\[
+\begin{aligned}
+D_i^{\rm target}&=B s_i,\\
+F_i^{\rm expected}&\approx \frac{B s_i}{e_i},\\
+E_i^{\rm row}&\approx \frac{B s_i}{e_iR_i}.
+\end{aligned}
+\]</div>
 <p>最后一个量可以帮助判断 minority dataset 是欠覆盖、约一轮，还是被重复访问很多轮。
 它只是 row-equivalent coverage；multipair 每次访问会重新随机选择 pair，不能把
 <code>2 passes</code> 理解为每个 pair 恰好出现两次。</p>
 <h4>9. 用 token 目标反推数据集 fetch 权重</h4>
 <p>先根据训练目标确定 token ratio，再用校准均值转换成 record-level fetch weight：</p>
-<pre><code class="language-text">weight_i = (r_i / e_i) / sum_j(r_j / e_j)
-</code></pre>
+<div class="reading-math">\[
+w_i=\frac{r_i/e_i}{\sum_j r_j/e_j}.
+\]</div>
 <p>对于相同的 <code>P2T:T2P:protein-only = 1:1:98</code> token 目标，四套报告解析出的
 fetch 概率为：</p>
 <div class="table-scroll" tabindex="0"><table>
@@ -5001,7 +5028,18 @@ registry声明63,662,038个cluster rows、每簇最多100个member；这是源�
 </tbody>
 </table></div>
 <h3>5.2 长度分布与三种暴露分母</h3>
-<p>样本长度分布 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>q</mi><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></math>、输入 token 分布 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x0221D;</mo><mi>&#x02113;</mi><mi>q</mi><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></math>、带 square weighting 的总权重分布 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x0221D;</mo><msqrt><mrow><mi>&#x02113;</mi></mrow></msqrt><mspace width="0.167em" /><mi>q</mi><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></math> 是三个不同对象。只把均长从172调到284，并不能证明长度分布一致，更不能证明物种、功能或家族分布一致。长度拒绝采样用 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo stretchy="false">&#x00028;</mo><mi>k</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>p</mi><mrow><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>k</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mo stretchy="false">[</mo><mi>M</mi><msub><mi>p</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>k</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">]</mo></mrow></math>；目标桶在源中没有支持时无法精确实现，必须报告 unsupported mass。</p>
+<p><strong>长度分母有三种：</strong>样本分布为 \(q(\ell)\)，输入 token 分布正比于 \(\ell q(\ell)\)。仅当每个有效监督位置都启用 \(1/\sqrt{\ell}\) 权重，且监督数等于该长度时，总权重分布才正比于 \(\sqrt{\ell}q(\ell)\)。部分监督任务需用实际 mask 后的目标数计算，当前默认也未启用这种重加权。</p>
+<p>教学例：长 100 与长 400 的样本各一条。样本曝光 1:1，输入 token 曝光 1:4；满足上述条件并启用 square 时，总权重为 10:20，即 1:2。<strong>均长相同也无法证明分布相同</strong>，更无法证明物种和家族覆盖相同。</p>
+<p>长度桶 k 的拒绝采样取以下接受概率，其中 M 足够大以保证概率不超过 1：</p>
+<div class="reading-math">\[
+\begin{aligned}
+a(k)&=\frac{p_{\rm target}(k)}{M p_{\rm source}(k)},\\
+p_{\rm accepted}(k)&\propto
+p_{\rm source}(k)a(k)\\
+&\propto p_{\rm target}(k).
+\end{aligned}
+\]</div>
+<p>这说明乘上接受概率为何能得到目标分布。目标桶在源中没有支持时无法精确实现，必须报告 unsupported mass。</p>
 <p>ratio clip 可提高接受率，但会引入分布偏差。当前文档包含 histogram、CDF、rejection plan 工具；它们尚不是默认训练管线已开启的策略。还发现一个版本差异：长度文档称 TP reader 未应用 max_prot_len，而当前 <code>tp_dataset.py</code> 的普通 <code>_transform_row</code> 已有随机 crop，flexible 路径需另查。报告按当前代码解释，不把历史说明当作所有 reader 的永久行为。</p>
 <p class="sources">来源：<a class="cite" href="#src-cb55cc0a100f">docs/data/training_length_distribution_alignment.md</a> · <a class="cite" href="#src-687d91aacb28">docs/mot/HOLON_MOT_DATA_IMBALANCE_DIAGNOSIS.md</a> · <a class="cite" href="#src-46185edc310b">data/protein_datasets/tp_dataset.py</a></p></section><section id="chapter-6"><h2>06 Scaling Law：算力、模型、数据与超参</h2><h3>6.1 实验设计与计算口径</h3>
 <p>Scaling 研究回答固定计算预算 C 下模型计算量 M 与数据量 D 如何分配，以及 batch 和 LR 如何随预算调整。蛋白序列通常较短，但 packed attention 的实际长度项仍不可忽略。在相应 dense/单路结构假设下，计算预算和每 token 算力为：</p>
@@ -8916,6 +8954,7 @@ faster with compute under Muon.</p>
 <div class="equation" tabindex="0"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>A</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mi>X</mi><msup><mi>X</mi><mrow><mi>&#x1D5B3;</mi></mrow></msup><mo>&#x0002C;</mo><mspace width="1em" /><mi>B</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>4.7750</mn><mi>A</mi><mo>&#x0002B;</mo><mn>2.0315</mn><msup><mi>A</mi><mn>2</mn></msup><mo>&#x0002C;</mo></mtd></mtr><mtr><mtd columnalign="right"><mi>X</mi></mtd><mtd columnalign="left"><mo>&#x02190;</mo><mn>3.4445</mn><mi>X</mi><mo>&#x0002B;</mo><mi>B</mi><mi>X</mi><mo>&#x0002E;</mo></mtd></mtr></mtable></mrow></math></div>
 
 <p>这里归一化使谱范数不超过1，有助于迭代稳定；有限步输出只是近似 polar factor。实现中的 hybrid 版本先8步上述多项式，再2步保守系数(2,−1.5,0.5)；streaming-power 版本另维护子空间状态并处理 Cholesky 失败。<strong>这些 backend 的代码存在，不表示已在本报告主配置中采用或赢得对照</strong>；当前默认 native recipe 选择 <code>standard</code>。</p>
+<p><strong>几何算例：</strong>动量矩阵 \(\operatorname{diag}(3,1)\) 的精确 polar factor 是单位阵，奇异方向上的幅度被均衡。这不表示任意坐标元素都相等；有限步多项式、bf16 和 recipe 尺度会进一步改变实际更新。基础推导见<a href="../../llm-training-lifecycle/#training-methods-systems--muon-mechanism">训练主讲</a>，这里重点核对项目 backend、分组与共同预算。</p>
 <details class="artifact"><summary>实际代码：Newton–Schulz 正交化近似</summary><p class="caption">实际代码节选，用于定位数据与模型接口；片段不单独执行。 <a class="cite" href="#src-0551a9a9ab10">train/muon.py</a> · L17–L42</p><pre><code>  17  @torch.compile
   18  def zeropower_via_newtonschulz5(G, steps):
   19      &quot;&quot;&quot;
@@ -12592,14 +12631,24 @@ z
 </tbody>
 </table></div>
 <blockquote>
-<p><strong>PSC 在难负例上保留了更多 margin，PS8 的绝对 margin 仍更高。</strong> 注册 DiD 为 <strong>+0.0051416 NLL</strong>，95% CI [0.0037273, 0.0066557]。该差值衡量两个 checkpoint 从 L0 到 L3 的下降幅度之差。</p>
+<p><strong>PSC 从 L0 到 L3 的 margin 下降较小；PS8 在两个 tier 的绝对 margin 都更高。</strong> 注册 DiD 为 <strong>+0.0051416 NLL</strong>，95% CI [0.0037273, 0.0066557]。该差值衡量两个 checkpoint 的跨 tier 变化。</p>
 </blockquote>
+<div id="holon-ladder-effect" class="reading-math">\[
+\begin{aligned}
+\Delta_{\rm PS8}&=0.0871261-0.0981195\\
+&=-0.0109934,\\
+\Delta_{\rm PSC}&=0.0322274-0.0380793\\
+&=-0.0058519,\\
+\mathrm{DiD}&=\Delta_{\rm PSC}-\Delta_{\rm PS8}\\
+&\approx+0.0051416.
+\end{aligned}
+\]</div>
+<p>表中已经舍入，直接相减得 −0.0058519；原完整精度结果为 −0.0058518。正 DiD 表示 PSC 的跨 tier 下降较小，<strong>不表示 PSC 的绝对条件判别更强</strong>。block bootstrap 覆盖评测依赖组件，不能代替独立训练 seed。</p>
 <p>这是 single-seed、checkpoint-level route-allocation 结论。后续多 seed 合同保留为 preregistered_not_executed；原记录已经收口，不能因为参考报告提到复现计划就把它写成执行中。expanded pool 的训练暴露与 UniRef member manifest 缺口也不允许 strict protein-OOD claim。</p>
 <details class="artifact"><summary>PS8→PSC 注册对照与收口范围</summary><p class="caption">效应是跨难度保持，而非绝对 margin 优势；多 seed 计划没有执行。 <a class="cite" href="#src-d1ba853912e2">docs/benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_PS8_PSC_RESULT.md</a> · 源文件 L1–L79</p><h4>Negative Ladder v2：PS8→PSC checkpoint×tier 结果</h4>
 <h4>1. 结论</h4>
 <p>冻结的唯一推断终点为：</p>
-<pre><code class="language-text">(PSC_L3 − PS8_L3) − (PSC_L0 − PS8_L0)
-</code></pre>
+<p>冻结终点为上面的 checkpoint×tier DiD，使用未舍入的逐 anchor 结果计算。</p>
 <p>正式结果为 <code>+0.0051416</code> NLL，95% CI <code>[0.0037273, 0.0066557]</code>，2,000 次
 union-component block bootstrap（seed 241）的 two-sided <code>p=0.0009995</code>。区间完全高于 0，
 <code>inferential_claim_allowed=true</code>：在这组冻结 Swiss-Prot leaves 上，PSC checkpoint 相对 PS8 checkpoint
@@ -20528,8 +20577,22 @@ OSS 诊断：<code>dt-relation/dev/AI4S/data/Interleaved/linbin/cpt/MOE_uniref_v
 <p>若以“序列与文本条件能力”为当前交付主题，应突出 full217、C30/Temporal、mismatch/Ladder 与科学 SFT 的分轴表现；若以“三模态统一模型”为交付主题，则必须追加同 checkpoint 下的 fold/invfold/text↔structure 结果、严格数据与模型血缘。两种主题需要的证据不同，不能只改标题。</p>
 <p>优先补充的文档工作是实验总账：每个关键 cell 绑定 checkpoint、父模型、数据 manifest、输入与监督 token、代码、运行时、推理协议、有效分母、原始结果与 claim scope。没有必要为了归档重复大规模下载或启动训练。本报告未运行任何训练、GPU 推理或新评测。</p>
 <h3>19.4 本次深入核对后应修正的汇报重点</h3>
-<p><strong>第一，数据分布需要版本链。</strong> PP的早期尾部估计已被全量实测纠正，tempered的β<em>是等TV解且仅确认数据物化，不能沿用过时的极端长尾描述或宣称模型已受益。</em><em>第二，结构线有完整五臂实验。</em><em> 应呈现codec几何与token LM的权衡，而不只说数据已就绪。</em><em>第三，CPT生成评测已有后续5876条专题表。</em><em> 早期128条表应保留为历史背景，不能充当最新唯一主表。</em><em>第四，训练代码与文档不是永远一致。</em>* crop、loss reweighting、预算profile与native optimizer的版本差异必须明确。</p>
-<p>会议材料也有补充价值。本地已有2026-10-16会议导出，包含项目路线、对齐问题和训练流程复盘；其中计划时间线、主观判断与完成记录混在一起，本次仅用于理解复盘背景，没有当成新增实验结果，也没有把整份会议原文复制进报告。后续请补充你希望采用的会议纪要版本，尤其是实验选择原因、失败决策和最终发布模型的确认记录。</p></section><section id="chapter-20"><h2>20 术语与阅读路径</h2><div class="table-scroll" tabindex="0"><table>
+<ul>
+<li><strong>数据分布：</strong>PP 早期尾部估计已被全量统计纠正；tempered β 是等 TV 解，只确认数据物化，模型收益待训。</li>
+<li><strong>结构实验：</strong>呈现五臂 codec 几何与 token LM 权衡，按任务分别解释。</li>
+<li><strong>生成评测：</strong>采用后续 5,876 条专题表；早期 128 条作为历史背景。</li>
+<li><strong>版本差异：</strong>crop、loss reweighting、预算 profile 和 native optimizer 以固定代码与有效配置为准。</li>
+</ul>
+<p>2026-10-16 会议导出只作为复盘背景。计划时间线与主观判断没有提升为新增实验结果。</p>
+<h3 id="holon-interview">19.5 五个项目追问</h3>
+<ul>
+<li><strong>MoT 如何利用冻结文本分支？</strong>模态投影独立、样本内 attention 联合；前向条件仍能影响蛋白预测。需另查 detach 与 loss 接收者。</li>
+<li><strong>为什么 1:1:98 不直接作为 fetch 权重？</strong>每次读取的有效 token 产出不同；先用有效率、长度和拒收估计 \(e_i\)，再反推 \(r_i/e_i\)。</li>
+<li><strong>为什么相同 CE 系数不代表等模态监督？</strong>目标数量和聚合分母不同；先复述 2 文本/8 蛋白算例。</li>
+<li><strong>PSC 的 DiD 为正能证明什么？</strong>这组 checkpoint 的跨 tier 下降较小；绝对 margin、多 seed 和严格 OOD 是另外的问题。</li>
+<li><strong>三模态能力怎样验收？</strong>同 checkpoint 分别测 codec、token LM、fold/invfold 与文本条件任务，并保存数据和模型血缘。</li>
+</ul>
+</section><section id="chapter-20"><h2>20 术语与阅读路径</h2><div class="table-scroll" tabindex="0"><table>
 <thead>
 <tr>
 <th>术语</th>

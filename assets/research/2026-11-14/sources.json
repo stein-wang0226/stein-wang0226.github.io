@@ -33,6 +33,7 @@
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
         "/llm-posttraining/s05_frameworks_async.html#partial-rollout",
         "/llm-posttraining/s05_frameworks_async.html#three-policy",
+        "/llm-research-map-2026/#citation-sources-4",
         "/llm-research-map-2026/s01_agent_data_bench.html#distinctions",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
@@ -46,8 +47,21 @@
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#residual"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
@@ -91,18 +105,22 @@
         "/llm-posttraining/#findings",
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-research-map-2026/s03_base_architecture.html#citation-sources-1",
         "/llm-research-map-2026/s03_base_architecture.html#versions",
-        "/llm-training-lifecycle/#findings",
         "/llm-training-lifecycle/#overview",
         "/llm-training-lifecycle/s01_pretraining.html#budget",
-        "/llm-training-lifecycle/s01_pretraining.html#sources",
-        "/llm-training-lifecycle/s03_sft_rft.html#industry",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+        "/llm-training-lifecycle/s01_pretraining.html#sources"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt"
       ],
-      "usage_as_of": "2026-11-14",
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/#findings",
         "/llm-posttraining/s01_supervision_preference.html#industry",
@@ -153,8 +171,10 @@
       "used_in": [
         "/llm-research-map-2026/s03_base_architecture.html#engram"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s03_base_architecture.html#engram"
       ]
@@ -213,11 +233,15 @@
       "sha256": "522036b0cc16ad4678bd7c278dd0a0ab4da31170af7b97c2041067cc09a8289a",
       "archive_changes": "none; original bytes",
       "used_in": [
+        "/llm-research-map-2026/s04_inference_diffusion.html#citation-sources-2",
         "/llm-research-map-2026/s04_inference_diffusion.html#exactness",
+        "/llm-research-map-2026/s04_inference_diffusion.html#frontier-comparison",
         "/llm-research-map-2026/s04_inference_diffusion.html#methods"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s04_inference_diffusion.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s04_inference_diffusion.html#exactness",
         "/llm-research-map-2026/s04_inference_diffusion.html#methods"
@@ -242,6 +266,7 @@
       "local_asset": null,
       "used_in": [
         "/llm-research-map-2026/s03_base_architecture.html#alternatives",
+        "/llm-research-map-2026/s03_base_architecture.html#citation-sources-13",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#kimi",
         "/llm-research-map-2026/s06_architecture_landscape.html#state",
@@ -250,8 +275,12 @@
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s03_base_architecture.html#alternatives",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
@@ -287,10 +316,13 @@
       "sha256": "d44fabf907b17766915c7e064f7a6cecf46bc717bcf0c0d2f65e4031f56cae74",
       "archive_changes": "none; original bytes",
       "used_in": [
+        "/llm-research-map-2026/s04_inference_diffusion.html#citation-sources-2",
         "/llm-research-map-2026/s04_inference_diffusion.html#methods"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s04_inference_diffusion.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s04_inference_diffusion.html#methods"
       ]
@@ -314,11 +346,15 @@
       "used_for": "Reverse-KL OPD drafter adaptation and length prediction; not a universal speedup guarantee.",
       "local_asset": null,
       "used_in": [
+        "/llm-research-map-2026/s04_inference_diffusion.html#citation-sources-2",
+        "/llm-research-map-2026/s04_inference_diffusion.html#frontier-comparison",
         "/llm-research-map-2026/s04_inference_diffusion.html#methods",
         "/llm-research-map-2026/s04_inference_diffusion.html#opd"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s04_inference_diffusion.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s04_inference_diffusion.html#methods",
         "/llm-research-map-2026/s04_inference_diffusion.html#opd"
@@ -353,8 +389,11 @@
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
@@ -389,12 +428,16 @@
       "sha256": "6084dc82f1bafe25f2dc9673726693008eabcd547dd9c382629db4580e78a55f",
       "archive_changes": "none; original bytes",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#frontier-comparison",
         "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
@@ -439,8 +482,12 @@
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
         "/llm-research-map-2026/s05_agent_frontiers.html#science"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
@@ -467,8 +514,10 @@
       "used_in": [
         "/llm-research-map-2026/s01_agent_data_bench.html#audit"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s01_agent_data_bench.html#audit"
       ]
@@ -496,8 +545,10 @@
       "used_in": [
         "/llm-research-map-2026/s01_agent_data_bench.html#audit"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s01_agent_data_bench.html#audit"
       ]
@@ -527,11 +578,15 @@
       "sha256": "15bb088aaeae730807da6cd41895af0be5a6f6210185ace9ad335f729273ae8b",
       "archive_changes": "none; original bytes",
       "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#frontier-comparison",
         "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
@@ -570,8 +625,11 @@
         "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
@@ -606,8 +664,12 @@
         "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html#single-rollout",
         "/llm-posttraining/s04_environment_reward_credit.html#long-credit",
@@ -653,8 +715,11 @@
         "/llm-research-map-2026/s02_agentic_rl.html#credit",
         "/llm-research-map-2026/s02_agentic_rl.html#map"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html#single-rollout",
         "/llm-research-map-2026/s02_agentic_rl.html#credit",
@@ -693,8 +758,10 @@
       "used_in": [
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
       ]
@@ -720,18 +787,20 @@
       "used_for": "Episode and anchor-state group advantages; recurrence/fragmentation limits.",
       "local_asset": null,
       "used_in": [
-        "/agentic-rl-guide.html#citation-sources-11",
-        "/agentic-rl-guide.html#citation-sources-19",
-        "/agentic-rl-guide.html#citation-sources-20",
-        "/agentic-rl-guide.html#citation-sources-30",
-        "/agentic-rl-guide.html#citation-sources-33",
-        "/agentic-rl-guide.html#citation-sources-35",
-        "/agentic-rl-guide.html#citation-sources-8",
+        "/agentic-rl-guide.html#part4",
         "/llm-posttraining/s04_environment_reward_credit.html#citation-sources-8",
+        "/llm-posttraining/s06_task_cases_experiments.html#citation-sources-6",
+        "/llm-research-map-2026/s02_agentic_rl.html#citation-sources-1",
+        "/llm-research-map-2026/s02_agentic_rl.html#citation-sources-6",
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
       ]
@@ -762,8 +831,10 @@
       "used_in": [
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
       ]
@@ -787,13 +858,14 @@
       "local_asset": null,
       "used_in": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
-        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s04_cluster_training_evaluation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14",
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives",
@@ -817,16 +889,19 @@
       "local_asset": null,
       "used_in": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
+        "/llm-posttraining/s02_rl_algorithms.html#frontier-comparison",
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
-        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s04_cluster_training_evaluation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14",
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
@@ -864,13 +939,15 @@
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
-        "/llm-research-map-2026/s02_agentic_rl.html#objectives",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
+        "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s04_rl_evaluation.html#variants"
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s04_cluster_training_evaluation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14",
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
@@ -913,8 +990,11 @@
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
@@ -944,8 +1024,10 @@
       "used_in": [
         "/agent-data-benchmarks/s02_benchmark_map.html#classics"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html#classics"
       ]
@@ -980,14 +1062,23 @@
       "used_for": "Multi-teacher capability integration under student rollouts.",
       "local_asset": null,
       "used_in": [
+        "/llm-frontier-2026.html#citation-sources-16",
         "/llm-posttraining/s03_opd_self_distillation.html#citation-sources-5",
+        "/llm-posttraining/s03_opd_self_distillation.html#frontier-comparison",
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
         "/llm-posttraining/s05_frameworks_async.html#citation-sources-2",
+        "/llm-research-map-2026/s04_inference_diffusion.html#citation-sources-5",
         "/llm-research-map-2026/s04_inference_diffusion.html#opd",
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s04_inference_diffusion.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
         "/llm-research-map-2026/s04_inference_diffusion.html#opd",
@@ -1017,8 +1108,12 @@
         "/harbor-framework-guide/#team-map",
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
@@ -1081,8 +1176,11 @@
         "/agent-data-benchmarks/s02_benchmark_map.html#science",
         "/llm-research-map-2026/s05_agent_frontiers.html#science"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html#science",
         "/llm-research-map-2026/s05_agent_frontiers.html#science"
@@ -1109,8 +1207,11 @@
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
         "/llm-research-map-2026/s05_agent_frontiers.html#adaptation"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
         "/llm-research-map-2026/s05_agent_frontiers.html#adaptation"
@@ -1173,10 +1274,15 @@
       "used_for": "Historical v1 only; primary release 1.1 used for current roster claims.",
       "local_asset": null,
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#frontier-comparison",
+        "/llm-research-map-2026/s05_agent_frontiers.html#citation-sources-4",
         "/llm-research-map-2026/s05_agent_frontiers.html#skills"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s05_agent_frontiers.html#skills"
       ]
@@ -1201,8 +1307,10 @@
       "used_in": [
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
       ]
@@ -1225,16 +1333,20 @@
       "used_for": "MiniMax-M1 original clipped-IS objective and stop-gradient; not Kimi K2 origin.",
       "local_asset": null,
       "used_in": [
-        "/agentic-rl-guide.html#citation-sources-21",
-        "/agentic-rl-guide.html#citation-sources-32",
-        "/agentic-rl-guide.html#citation-sources-35",
         "/llm-posttraining/s02_rl_algorithms.html#citation-sources-6",
         "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
+        "/llm-research-map-2026/s02_agentic_rl.html#citation-sources-1",
+        "/llm-research-map-2026/s02_agentic_rl.html#citation-sources-2",
+        "/llm-research-map-2026/s02_agentic_rl.html#citation-sources-5",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives"
@@ -1264,8 +1376,10 @@
       "used_in": [
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony"
       ]
@@ -1301,16 +1415,22 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
-        "/llm-training-lifecycle/#findings",
         "/llm-training-lifecycle/s01_pretraining.html#budget",
-        "/llm-training-lifecycle/s01_pretraining.html#sources",
-        "/llm-training-lifecycle/s03_sft_rft.html#industry",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources"
+        "/llm-training-lifecycle/s01_pretraining.html#sources"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt"
       ],
-      "usage_as_of": "2026-11-14",
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/#findings",
         "/llm-posttraining/s01_supervision_preference.html#industry",
@@ -1345,8 +1465,11 @@
         "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
@@ -1369,8 +1492,11 @@
         "/agent-data-benchmarks/s01_task_synthesis.html#contract",
         "/llm-research-map-2026/s01_agent_data_bench.html#harbor"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html#contract",
         "/llm-research-map-2026/s01_agent_data_bench.html#harbor"
@@ -1393,8 +1519,11 @@
         "/agent-data-benchmarks/s01_task_synthesis.html#contract",
         "/llm-research-map-2026/s01_agent_data_bench.html#harbor"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html#contract",
         "/llm-research-map-2026/s01_agent_data_bench.html#harbor"
@@ -1417,8 +1546,11 @@
         "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
@@ -1440,8 +1572,10 @@
       "used_in": [
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
       ]
@@ -1464,8 +1598,11 @@
         "/llm-frontier-2026.html#sources",
         "/llm-research-map-2026/s03_base_architecture.html#versions"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-frontier-2026.html#models",
         "/llm-frontier-2026.html#sources",
@@ -1490,8 +1627,11 @@
         "/llm-frontier-2026.html#sources",
         "/llm-research-map-2026/s03_base_architecture.html#versions"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-frontier-2026.html#models",
         "/llm-frontier-2026.html#sources",
@@ -1515,8 +1655,11 @@
         "/agent-data-benchmarks/s02_benchmark_map.html#classics",
         "/llm-research-map-2026/s05_agent_frontiers.html#skills"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html#classics",
         "/llm-research-map-2026/s05_agent_frontiers.html#skills"
@@ -1539,8 +1682,11 @@
         "/agent-data-benchmarks/s02_benchmark_map.html#classics",
         "/llm-research-map-2026/s05_agent_frontiers.html#gui"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html#classics",
         "/llm-research-map-2026/s05_agent_frontiers.html#gui"
@@ -1561,7 +1707,7 @@
       "local_asset": null,
       "used_in": [],
       "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": []
     },
     {
@@ -1583,8 +1729,10 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen"
@@ -1653,8 +1801,11 @@
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen",
         "/llm-research-map-2026/s07_architecture_training.html#muon",
@@ -1683,8 +1834,10 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen"
       ]
@@ -1711,8 +1864,10 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#kimi"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#kimi"
@@ -1796,10 +1951,14 @@
       "used_for": "KDA versus scalar-gated DeltaNet; finite recurrent state and chunkwise execution.",
       "local_asset": null,
       "used_in": [
+        "/llm-architecture/s02_attention_position_cache.html#frontier-comparison",
         "/llm-research-map-2026/s06_architecture_landscape.html#state"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s02_attention_position_cache.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#state"
       ]
@@ -1835,8 +1994,11 @@
         "/llm-architecture/s05_hybrid_architectures.html#ssm",
         "/llm-research-map-2026/s06_architecture_landscape.html#state"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s05_hybrid_architectures.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-architecture/s05_hybrid_architectures.html#gated-delta",
         "/llm-architecture/s05_hybrid_architectures.html#purpose",
@@ -1867,8 +2029,10 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron"
@@ -1912,12 +2076,17 @@
       "sha256": "8308307d9519455b7332ae81debbde5af931fb5a20aa9053046875e1361f5515",
       "archive_changes": "none; original bytes",
       "used_in": [
+        "/llm-architecture/s03_ffn_moe_routing.html#frontier-comparison",
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
         "/llm-research-map-2026/s07_architecture_training.html#latent-moe",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s03_ffn_moe_routing.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
         "/llm-research-map-2026/s07_architecture_training.html#latent-moe",
@@ -2136,19 +2305,21 @@
         "/llm-posttraining/s01_supervision_preference.html#recovery",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#glm",
-        "/llm-training-lifecycle/#findings",
         "/llm-training-lifecycle/s01_pretraining.html#curriculum",
         "/llm-training-lifecycle/s01_pretraining.html#sources",
         "/llm-training-lifecycle/s02_midtraining.html",
-        "/llm-training-lifecycle/s03_sft_rft.html#sft",
-        "/llm-training-lifecycle/s03_sft_rft.html#sources",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#sources",
-        "/llm-training-lifecycle/s04_rl_evaluation.html#systems"
+        "/llm-training-lifecycle/s03_sft_rft.html#quality"
       ],
       "historical_used_in": [
-        "/llm-training-lifecycle/s03_sft_rft.html#distillation"
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s02_midtraining.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
       ],
-      "usage_as_of": "2026-11-14",
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-posttraining/s01_supervision_preference.html#recovery",
@@ -2186,8 +2357,11 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#glm",
         "/llm-research-map-2026/s07_architecture_training.html#residual"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#glm",
         "/llm-research-map-2026/s07_architecture_training.html#residual"
@@ -2231,8 +2405,10 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#minimax"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#minimax"
@@ -2259,8 +2435,10 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#minimax"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#minimax"
       ]
@@ -2432,7 +2610,6 @@
       "used_for": "SWA/global architecture, visual/audio encoders, diffusion draft and Muown transition.",
       "local_asset": null,
       "used_in": [
-        "/llm-posttraining/#findings",
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-posttraining/s03_opd_self_distillation.html#mopd2",
         "/llm-posttraining/s04_environment_reward_credit.html#gar",
@@ -2446,8 +2623,17 @@
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/#findings",
         "/llm-posttraining/s01_supervision_preference.html#industry",
@@ -2703,8 +2889,11 @@
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#step",
@@ -2734,8 +2923,10 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#step"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#step"
       ]
@@ -3066,8 +3257,10 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#gemma"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#gemma"
@@ -3131,8 +3324,10 @@
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
@@ -3175,11 +3370,15 @@
       "used_for": "Doubly stochastic residual mixing and finite Sinkhorn approximation.",
       "local_asset": null,
       "used_in": [
+        "/llm-architecture/s04_residual_norm_stability.html#frontier-comparison",
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s04_residual_norm_stability.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
@@ -3232,10 +3431,14 @@
       "local_asset": null,
       "used_in": [
         "/llm-research-map-2026/s07_architecture_training.html#muon",
-        "/llm-research-map-2026/s07_architecture_training.html#sources"
+        "/llm-research-map-2026/s07_architecture_training.html#sources",
+        "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s05_training_methods_systems.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s07_architecture_training.html#muon",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
@@ -3431,8 +3634,11 @@
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-research-map-2026/s07_architecture_training.html#muon"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html#industry",
         "/llm-research-map-2026/s07_architecture_training.html#muon"
@@ -3468,8 +3674,10 @@
         "/llm-research-map-2026/s07_architecture_training.html#depth",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s07_architecture_training.html#depth",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
@@ -3494,8 +3702,10 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#glm"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#glm"
@@ -3519,8 +3729,10 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#glm"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#glm"
       ]
@@ -3543,8 +3755,10 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#closed"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#closed"
       ]
@@ -3567,8 +3781,10 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#closed"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#closed"
       ]
@@ -3591,8 +3807,10 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#closed"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#closed"
       ]
@@ -3614,7 +3832,7 @@
       "local_asset": null,
       "used_in": [],
       "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": []
     },
     {
@@ -3639,8 +3857,10 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14",
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt"
+      ],
+      "usage_as_of": "2026-11-15",
       "used_in_before_organization": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen"

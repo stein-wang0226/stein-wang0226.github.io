@@ -4,9 +4,56 @@ import json
 import re
 from urllib.parse import urljoin, urlsplit
 from render import load_md, route_path
+from course import public_target
 
 GROUPS = {"main": "主线", "extension": "研究扩展",
           "prerequisite": "按需先修与完整推导", "reference": "行业参考"}
+
+
+def split_long_prose(body):
+    """Break dense prose at safe sentence boundaries; retain all source wording."""
+    def paragraph(match):
+        attrs, inner = match[1], match[2]
+        visible = html.unescape(re.sub(r"<[^>]+>", "", inner))
+        if (len(visible.strip()) <= 220 or
+                re.search(r"citation|mechanism-|equation|reading-meta", attrs) or
+                re.search(r"\$|\\\(|\\\[|<svg\b|<script\b", inner)):
+            return match[0]
+        stack, cuts, length = [], [], 0
+        for token in re.finditer(r"<!--.*?-->|<[^>]+>|[^<]+", inner, re.S):
+            value = token[0]
+            if value.startswith("<"):
+                tag = re.match(r"</?([a-zA-Z][\w:-]*)", value)
+                if not tag:
+                    continue
+                name = tag[1].lower()
+                if value.startswith("</"):
+                    if stack and stack[-1] == name:
+                        stack.pop()
+                elif name not in {"br", "img", "wbr", "hr", "input"} and not value.endswith("/>"):
+                    stack.append(name)
+                continue
+            # Entities are kept intact; cuts occur only after literal punctuation.
+            for offset, char in enumerate(value):
+                length += 1
+                if char in "。！？" and not stack and length >= 100:
+                    cuts.append(token.start() + offset + 1)
+                    length = 0
+        cuts = [cut for cut in cuts if inner[cut:].strip()]
+        if not cuts:
+            return match[0]
+        starts, ends = [0] + cuts, cuts + [len(inner)]
+        # Original IDs/attributes belong to the first paragraph only.
+        classes = re.search(r'\bclass=(["\'])(.*?)\1', attrs, re.S)
+        continuation = f' class="{html.escape(classes[2], quote=True)}"' if classes else ""
+        return "\n".join(
+            f'<p{attrs if i == 0 else continuation} data-reading-split="true">{inner[start:end]}</p>'
+            for i, (start, end) in enumerate(zip(starts, ends)))
+    fragments = re.split(r'(<!-- READING:HISTORY:START -->.*?<!-- READING:HISTORY:END -->)',
+                         body, flags=re.S)
+    return "".join(fragment if fragment.startswith("<!-- READING:HISTORY:START -->") else
+                   re.sub(r"<p\b([^>]*)>(.*?)</p>", paragraph, fragment, flags=re.S | re.I)
+                   for fragment in fragments)
 
 
 def project_learning(ctx, entry):
@@ -17,6 +64,13 @@ def project_learning(ctx, entry):
                      if "Personal Project" in ctx.by_id[i].get("tags", [])), None)
     if not overview:
         return ""
+    if entry.get("reading_revision") == "learning-20261115":
+        link = ctx.rel(entry["url"], overview["url"])
+        return ('<span id="work-study-guide" class="reading-anchor"></span>'
+                '<span id="work-report-start" class="reading-anchor"></span>'
+                f'<p class="site-page work-reading-link">快速复习与项目追问：'
+                f'<a href="{link}">{html.escape(overview["title"])}</a>。'
+                '本报告按章节展开方法、实验和复核证据。</p>')
     _, source = load_md(ctx.root / overview["source"])
     link = ctx.rel(entry["url"], overview["url"])
     parts = []
@@ -63,6 +117,9 @@ def chapter_directory(ctx, entry, chapters):
 def decorate(ctx, entry, text):
     path = entry["url"]
     esc = lambda value: html.escape(str(value), quote=True)
+    def reading_target(target, anchor=""):
+        url, fragment = public_target(target, anchor, ctx.by_id)
+        return ctx.rel(path, url) + ("#" + fragment if fragment else "")
     # Replace only the previous generated navigation, not article controls.
     text = re.sub(r"<!-- SITE:NAV:START -->.*?<!-- SITE:NAV:END -->", "", text, flags=re.S)
     text = re.sub(r'<link\b[^>]*href=["\'][^"\']*assets/site/site\.css["\'][^>]*>', "", text)
@@ -73,16 +130,18 @@ def decorate(ctx, entry, text):
     review = {"unreviewed": "科研事实尚未全面复核", "needs-review": "含待补齐或待核实项",
               "reviewed": "已按内容检查记录复核"}[entry["review_status"]]
     intro_id = "reading-intro" if re.search(r'\bid=["\']site-main["\']', text) else "site-main"
+    # The frozen historical document keeps its own h1; the shell is a label.
+    intro_title = (f'<p class="reading-original-title">{esc(entry["title"])}</p>'
+                   if entry["status"] == "archived" else f'<h1>{esc(entry["title"])}</h1>')
     intro = (f'<section class="reading-intro" id="{intro_id}" tabindex="-1">'
              f'<p class="reading-path"><a href="{ctx.rel(path, "/blog/")}">博客与笔记</a> / '
              f'<a href="{ctx.rel(path, "/blog/")}?topic={esc(entry["topic"])}">{esc(topic)}</a></p>'
-             f'<h1>{esc(entry["title"])}</h1><p>{esc(entry["summary"])}</p>'
+             f'{intro_title}<p>{esc(entry["summary"])}</p>'
              f'<p class="reading-meta">{esc(topic)} · {esc(form)} · '
              f'{esc(entry["updated"] or "更新时间待确认")} · {review}</p>')
     if entry.get("prerequisites"):
         intro += '<div class="reading-prerequisites"><strong>先修与按需复习</strong><ul>' + "".join(
-            f'<li><a href="{ctx.rel(path, ctx.by_id[p["entry"]]["url"])}'
-            f'{"#" + esc(p["anchor"]) if p.get("anchor") else ""}">'
+            f'<li><a href="{esc(reading_target(ctx.by_id[p["entry"]], p.get("anchor", "")))}">'
             f'{esc(ctx.by_id[p["entry"]]["title"])}</a>：{esc(p["reason"])}</li>'
             for p in entry["prerequisites"]) + "</ul></div>"
     owner = [o for o in ctx.site.get("concept_owners", []) if o["entry"] == entry["id"]]
@@ -90,6 +149,12 @@ def decorate(ctx, entry, text):
         intro += '<p class="reading-owner">本页主讲：' + "、".join(esc(o["label"]) for o in owner) + "</p>"
     if entry.get("reading_role") == "reference":
         intro += f'<p>作为推导、代码或复习参考，可从<a href="{ctx.rel(path, "/blog/")}#learning-paths">完整学习主线</a>按需返回。</p>'
+    if entry["id"] == "rl-interview-guide-legacy":
+        current = ctx.rel(path, ctx.by_id["rl-interview-guide"]["url"])
+        original = ctx.rel(path, ctx.by_id["rl-interview-guide-legacy"]["url"])
+        intro += (f'<p class="reading-original"><strong>原有详细 RL 博客</strong>：'
+                  f'<a href="{current}">现行复习索引</a> · '
+                  f'<a href="{original}">原学术站完整历史版</a>。</p>')
     chapters = sorted((e for e in ctx.entries if e["series"] == (entry["series"] or entry["id"])
                        and e["status"] == "published"), key=lambda e: e["order"])
     end = ""
@@ -215,6 +280,13 @@ def decorate(ctx, entry, text):
         return re.sub(r'<h([23])([^>]*)>(.*?)</h\1>', heading, fragment, flags=re.S | re.I)
     fragments = re.split(r'(<!-- READING:HISTORY:START -->.*?<!-- READING:HISTORY:END -->)', body, flags=re.S)
     body = "".join(decorate_headings(f, f.startswith("<!-- READING:HISTORY:START -->")) for f in fragments)
+    # Approved rewrites retain old public locations without rendering the old
+    # course again. Explicit revision links give semantic destinations.
+    if entry.get("reading_revision") == "learning-20261115":
+        present = set(re.findall(r'\bid=["\']([^"\']+)', body))
+        body += "".join(f'<span class="reading-anchor" id="{esc(anchor)}"></span>'
+                        for anchor in sorted(set(old.get("public_anchors", [])) - present)
+                        if anchor not in {"site-main", intro_id})
     if entry["kind"] == "chapter":
         text = re.sub(r"<title>.*?</title>", f'<title>{esc(entry["title"])}</title>', text, count=1, flags=re.S)
         if entry["series"] == "dlm-survey":
@@ -251,13 +323,15 @@ def decorate(ctx, entry, text):
         if row["id"] in seen or row["status"] == "draft":
             continue
         seen.add(row["id"])
-        target = row["url"] if row["origin"] == "external" else ctx.rel(path, row["url"])
+        target = row["url"] if row["origin"] == "external" else reading_target(row)
         related.append(f'<li><a href="{esc(target)}">{esc(row["title"])}</a></li>')
         if len(related) == 4:
             break
     end += '<aside class="reading-related" aria-label="关联阅读"><h2>关联阅读</h2><ul>' + "".join(related) + "</ul></aside>"
     # Insert after legacy heading decoration to preserve existing generated anchors.
     body = project_learning(ctx, entry) + body
+    if entry["status"] == "published":
+        body = split_long_prose(body)
     body = ctx.navigation(path) + intro + '<div class="reading-content">' + body + "</div>" + end + ctx.footer(path)
     # Title changes can shift offsets; locate the body again before splicing.
     body_match = re.search(r'(<body\b[^>]*>)(.*)(</body>)', text, re.S | re.I)

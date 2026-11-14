@@ -3,23 +3,71 @@
   "note": "Intentional changes after exact recovery. Original migration baseline is unchanged. Hashes fix the reviewed scope; any later mismatch must be reported.",
   "changes": [
     {
+      "source": "content/posts/my-work-holon/index.md",
+      "sha256": "bab7f9aa7ee2a73c7dced8758f922c9aee26a4c7597c81311e318e2741860a7b",
+      "reason": "逐页审阅：表示→MoT→数据/监督→token校准→预算→Ladder→工作复盘全部审阅。原理与算例：routed Q/attention、CE分母反例、产出校准与两流例、C/M、DiD。精简与证据：修正 margin 为 mismatch−match，保 checkpoint/CI/单seed/OOD边界；五追问，机制图可放大。",
+      "prior_reason": "Approved learning rework: routed attention, CE reduction, yield-adjusted sampling and C/M budget in LaTeX; correct Negative Ladder margin, retain fixed tier/CI scope and five project interview answers. Three-screen strict math and mechanism-zoom checks passed; no model experiment."
+    },
+    {
+      "source": "content/posts/my-work-protagent/index.md",
+      "sha256": "ce0505364f03d02f9409453286ee62c4f4265c4f073dec7e107ca1539759ced2",
+      "reason": "逐页审阅：工具→SFT→return→reward→四臂→主模型→训练全部审阅。原理与算例：assistant mask、轨迹score-function、token surrogate、重复调用信用。精简与证据：区分原始无偏梯度与处理后advantage；保四臂61.4与指定61.0、PFUA独立、recall>0.5；五追问。",
+      "prior_reason": "Approved learning rework: assistant-only SFT, trajectory gradient, step return and processed token surrogate in LaTeX; five interview answers, original diagram and fixed tool/reward/seed/annotation-recall evidence. Three-screen strict math and zoom checks passed; no model experiment."
+    },
+    {
+      "source": "content/posts/my-work-harbor/index.md",
+      "sha256": "9dba0522197e07b81199a8296e3f9b0a1f2cfe39a9040de06cff89bd6767053d",
+      "reason": "逐页审阅：来源→合同→oracle→门禁→refinement→历史规模全部审阅。原理与算例：A=(1,10)/B=(2,20)混拼反例、完整路径集合、pass@k补事件。精简与证据：剪重复链路，用短要点说明接受门；v4反事实与accepted=0保留，历史库存不除作匹配率；五追问。",
+      "prior_reason": "Approved learning rework: full-path acceptance counterexample and pass@k in LaTeX, concise public/private pipeline and refinement gates, five interview answers. Three-screen strict math and zoom checks passed; no task generation or blind run."
+    },
+    {
+      "source": "content/posts/my-work-dllm/index.md",
+      "sha256": "09ad7a2436005a28b3f186a54c0d447690184f1838b4abcff05624716486e825",
+      "reason": "逐页审阅：目标→mask→Jigsaw→任务→LM1B→复现全部审阅。原理与算例：AR/MDM/block目标、熵与ICL终点。精简与证据：保 side/offset具体规则和监督密度、top-p混合与缺日志；五追问。",
+      "prior_reason": "Approved learning rework: AR/MDM/block objective, Jigsaw entropy and ICL endpoint in LaTeX; retain implementation-specific mask and ARR provenance, add five interview answers. Three-screen strict math and zoom checks passed; no language-model experiment."
+    },
+    {
+      "source": "content/posts/my-work-protagent/full-report.html",
+      "sha256": "80667aac07b10abfe75331c8e45ae12ad44b621a6de80008962e853cb80a9fa6",
+      "reason": "逐页审阅：13节全部审阅。原理与算例：对数导数→去过去奖→step return→策略token，reward guard与全样本分母。精简与证据：四臂/配方同义表合并；原3SVG保持比，可放大；逐seed/阈值/γλ/PFUA表及来源保留；不再克隆导读三节。",
+      "prior_reason": "Approved learning rework: review 13 sections, expand policy gradient, step return, token objective, reward guard and scoring denominator; consolidate repeated tables, preserve fixed seed/PFUA/threshold evidence and original SVGs. Strict math, actual SVG width, no-JS and three-screen zoom checks passed; no model or biological reproduction."
+    },
+    {
+      "source": "content/posts/my-work-dllm/full-report.html",
+      "sha256": "598cbfef4a46ed11daafcb53a909de22d2ebd1f9ab10f02855617a4a014e9772",
+      "reason": "逐页审阅：全章节审阅。原理与算例：AR/吸收/块目标；ICL二次型配方、rank风险例；三OR mask；熵与affinity。精简与证据：修概念mask套用LM1B的错误；CLI按需，原3图保持比可放大；ARR表/SEDD差异/smoke范围保留。",
+      "prior_reason": "Approved learning rework: review all sections, expand posterior square completion, rank-risk and threshold FLOPs, correct actual scatdit mask, convert pseudo formulas to LaTeX and fold configs. Preserve ARR figures with zoom and source-cell gaps; strict three-screen math/width/no-JS/zoom checks passed. No model experiment."
+    },
+    {
+      "source": "content/posts/harbor-framework-guide/index.html",
+      "sha256": "d2ad86ce0c5d3d20dd4e559f591713cb0062c587312369f16928196affb29949",
+      "reason": "逐页审阅：13节与scalingX17集全部审阅；版本、计数、源码、canary与未运行状态核对。原理与算例：observed/native/ambient/corrected counts→移除比例/归一误差→oracle gap；误收/误拒净值与分母；reward_valid均值；五个机制追问。精简与证据：删除重复目录与两次同义总结，长版本表按需；科学数学从代码框移到默认正文；Index筛选改机制图；三原执行图默认可见，600px限宽不变形且可放大；真实案例与计数/去重边界保留。",
+      "prior_reason": "Approved learning rework: review all thirteen sections and community-resource slice, retain fixed release/main evidence, source numbering, original diagrams/canary and byte-exact archive. Expand counts/error/oracle gap and valid-reward denominators as LaTeX with clearly labelled examples, expose execution diagram, retain ratio at 600px max and test native zoom, consolidate duplicate directories/summaries and state retry/regrade conditions. Strict three-screen CDN-blocked and no-JS checks passed; no container, model or scientific reproduction."
+    },
+    {
       "source": "content/posts/agent-harness-guide/index.html",
-      "sha256": "6561899b90178498a9b6234552f0b78eb1936429129d035142869a8d5c956639",
-      "reason": "Preserve prerequisites, original training formulas/code, cases and anchors; correct the narrow training-only Harness definition and add three source-led Codex sections covering runtime loop, compaction/reset/history-notes and cross-session memory V1/V2. Pin implementation citations to c2c1ebba0a7985ebee065c5492233a843b84c4c6; add responsive diagrams, a short attributed Rust excerpt, native details and an explicitly illustrative walkthrough. Legacy scientific claims remain needs-review. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "0828314cff253832cbefaf5d9e35f7cb02ed360fb277ee2fcf96db67920bbe4c",
+      "visual_revision_reason": "2026-11-15: add a runtime action/permission/observation loop and scoped Codex anchor spacing below sticky navigation; preserve existing prose, code, formulas and anchors.",
+      "reason": "逐页审阅：runtime、工具、权限、并发恢复、context/换窗、memory与交接全部审阅。原理与算例：两固定源码图；压缩/reset/history与V1/V2流程。精简与证据：修pruning归属/非通用预算；六原模板与用户原稿下载保留；训练配方与无来源性能移出。",
+      "prior_reason": "2026-11-15 user-note integration: expand only Codex context and memory sections with request assembly, session units, versioned extraction/consolidation/read contracts and six native prompt details. Preserve the user attachment byte-for-byte and archive official templates from a9b0815167c27ab13719dd12d13b63e02b70d221 plus two V2 templates from c2c1ebba0a7985ebee065c5492233a843b84c4c6, with provenance, license and SHA/length metadata. Correct the OpenCode pruning attribution, non-universal output budget, V1/V2 differences and developer-instruction injection. Against the immediate pre-integration snapshot, all 46 IDs, 18 pre blocks and 117 href targets are retained; everything before the Codex context section is byte-identical apart from one scoped CSS rule for anchor spacing. Preserve prerequisites, original training formulas/code, cases and anchors; correct the narrow training-only Harness definition and add three source-led Codex sections covering runtime loop, compaction/reset/history-notes and cross-session memory V1/V2. Pin implementation citations to c2c1ebba0a7985ebee065c5492233a843b84c4c6; add responsive diagrams, a short attributed Rust excerpt, native details and an explicitly illustrative walkthrough. Legacy scientific claims remain needs-review. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/posts/agentic-rl-guide/index.html",
-      "sha256": "c16bd46eee33b2a677fbb37600c6ad248f33bc584a221539ac0498bd4c7e7206",
-      "reason": "Add prerequisites, reading route and training artifacts. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified. Follow-up RL audit: constrain the RLVR ceiling claim to the cited study settings; replace framework fact-standard and star-ranking language with capability/version boundaries; record TorchForge's development pause and ART's integration role using fixed README commits."
+      "sha256": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "visual_revision_reason": "2026-11-15: add environment-feedback and same-prefix OPD diagrams; preserve all original scientific units.",
+      "reason": "逐页审阅：问题、改动位置、局部信用、任务差异、研究证据与限制全部审阅。原理与算例：局部优势与重复状态例。精简与证据：GRPO与配置重复归主讲；修同名SAPO、跨prompt归一与规则不可hack等断言。",
+      "prior_reason": "Add prerequisites, reading route and training artifacts. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified. Follow-up RL audit: constrain the RLVR ceiling claim to the cited study settings; replace framework fact-standard and star-ranking language with capability/version boundaries; record TorchForge's development pause and ART's integration role using fixed README commits."
     },
     {
       "source": "assets/site/catalog.js",
-      "sha256": "6227fbbfbd01bd906b9f70b08be170164ff2690c832731f4ac584699b853706a",
-      "reason": "Preserve catalog filters, chapter search and URL restoration; add progressive topic buttons and matching featured-series markup. Version the catalog request with the HTML build fingerprint to avoid stale data after deployment. Native topic selection and static chapter links remain available if loading fails. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles. Follow-up 2026-11-14: preserve user input and queued submission while the catalog loads; topic/type filters include matching published chapters with a parent-series return link, while the unfiltered view retains collection grouping. Browser reproduction confirms the former input loss and omitted chapters."
+      "sha256": "d93cedc112c5565b39a89c2e61a1224ca9aa2ace0867dda4a040e79831a5095d",
+      "reason": "Approved learning rework: catalog search and reading destinations follow unique assembled topics; preserve immutable migration baseline.",
+      "prior_reason": "Preserve catalog filters, chapter search and URL restoration; add progressive topic buttons and matching featured-series markup. Version the catalog request with the HTML build fingerprint to avoid stale data after deployment. Native topic selection and static chapter links remain available if loading fails. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles. Follow-up 2026-11-14: preserve user input and queued submission while the catalog loads; topic/type filters include matching published chapters with a parent-series return link, while the unfiltered view retains collection grouping. Browser reproduction confirms the former input loss and omitted chapters."
     },
     {
       "source": "assets/site/site.css",
-      "sha256": "fad6852861529bbf51d976ad4542e0db0835d30ecd81da5bb0c273d0a0d70482",
+      "sha256": "fa07e976f5ed4727b5a02d77b978b42a3ee1ea2dcddeb8e51e9dad5f3430a057",
+      "visual_revision_reason": "2026-11-15: give the expanded detailed RL learning route a full-width responsive four-step layout. Reviewed the existing e35a4c0 homepage recommendation grid and preserved its mobile fallback; original homepage sections, links and assets remain intact.",
       "reason": "Restore original Stein's Notes cream, ink and teal identity with local Sora/Literata/JetBrains Mono fonts; refine wordmark, catalog hierarchy, cards and responsive shared shell without changing research article styles. Refine search into one compact input/button control with quiet inline filters and responsive wrapping. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles."
     },
     {
@@ -54,29 +102,38 @@
     },
     {
       "source": "content/posts/distributed-training-guide/index.html",
-      "sha256": "b26c445cc18846a55d92f6f97e2af7bc71b33100f22694e84e05fb9012fe0b22",
-      "reason": "Add reading preparation; flag uncited 5.3 performance table without changing numbers. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "visual_revision_reason": "2026-11-15: visualize the cumulative ZeRO state partition stages; preserve original configurations and code.",
+      "reason": "逐页审阅：DeepSpeed/FSDP/Accelerate/MCore、LoRA、状态/通信与诊断全部审阅。原理与算例：固定进程组；分片/完整配置与恢复。精简与证据：删除无出处倍数排名；GPU示例未执行，框架代际与版本保留。",
+      "prior_reason": "Add reading preparation; flag uncited 5.3 performance table without changing numbers. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/index.html",
-      "sha256": "786144c40c80714143a59921258d18da27ff4cf3ae7188eb53543ecdbf19f7d3",
+      "sha256": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
       "title_revision_reason": "2026-11-14 title audit: use descriptive chapter labels for diffusion routes, prediction targets and VAE variants; retain all paragraphs, research units, anchors, links and markers.",
-      "reason": "Add series prerequisites, recommended order and fact-review limits; all fourteen chapters unchanged. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：范围、分类、路径、先修、原稿、装配、掌握清单。原理与算例：训练/生成两支路。精简与证据：移除旧目录、重复路线与厂商速度结论；14节正文在同页，先修/扩展折叠。",
+      "prior_reason": "Add series prerequisites, recommended order and fact-review limits; all fourteen chapters unchanged. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/posts/llm-frontier-2026/index.html",
-      "sha256": "acb13aabd33ce312e1cf17a1ea961d96885e0289bda4c4d80356607caedb104d",
-      "reason": "Add reading preparation and fact-label interpretation; all AUTO markers, entries and last-updated preserved. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "e28b3171d105fdcfb3169a070d9ccb533a5514be17639eb1c8fd6a8680f7a5a1",
+      "visual_revision_reason": "2026-11-15: add source-to-mechanism-to-evidence reading diagram; preserve entries, dates and AUTO markers.",
+      "reason": "逐页审阅：14节含模型、架构、优化器、Agent、RL、OPD、训练、评测、蛋白、证据与日志全部审阅。原理与算例：改动位置→比较条件；五个判断追问；polar有限近似、Clip-Higher与行为校正、教师接口边界。精简与证据：型号/许可证快照与原维护日志按需；收敛Muon/RL/OPD主讲，旧TB排名改历史；移除无共同条件榜单、领域CoT普遍结论，修正百万碱基单位。AUTO标记、原日期、last-updated与原稿逐字归档保持。",
+      "prior_reason": "Approved learning rework: review all frontier sections, retain date/AUTO semantics and byte-exact original, fold dated specifications/logs, consolidate duplicate optimizer/RL/OPD teaching, distinguish behavior correction and clipping, rewrite obsolete benchmark rankings as historical evidence, correct biological unit and unsupported universal claims, add five interview checks. Full current product/benchmark claims were not independently reverified."
     },
     {
       "source": "content/posts/llm-interview-bank/index.html",
-      "sha256": "fc840cbeb78e71f5a498ac5dd01745bc824533e8640460f91ec89df1a90ff729",
-      "reason": "Add answer coverage and valid explanatory links; remove one duplicate VLM link; preserve all 470 questions and 95 answers. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "6e86bd1ebc7b4ba710a79de24aafe6d56614f73e43a3988be496a9b5023df578",
+      "visual_revision_reason": "2026-11-15: native knowledge cards, keyword filtering, explicit answer flow and readable multiline LaTeX; old source archived exactly.",
+      "reason": "逐页审阅：470问的11领域全部审阅：LLM、偏好、RL、Agentic、VLM、Agent、RAG、服务、代码、评测、开放题；155旧答核对口径。原理与算例：90卡全部附短答与追问；KL/DPO关键式，SFT/GQA/Norm/RoPE/LoRA/DPO/PPO/GAE/group/采样完整教学代码，online-softmax与经典算法不变量。精简与证据：合并同义问、删除无来源频率/公司排名；全470原问及旧答逐字归档，旧公开锚点保留；完整PG/GAE/GRPO推导与六论文数值配方归唯一主讲。",
+      "prior_reason": "Approved full learning rewrite: review all 470 question topics and 155 prior answers, consolidate repeated forms into 90 answered cards across 11 domains, preserve original questions/answers/citations in the byte-exact archived source and old public anchors. Expand concise derivation checkpoints and substantive runnable code, link unique full proofs/recipes. Correct PPO hard bounds, RoPE extrapolation guarantees, model-count memory claims, GRPO/RLVR and outdated framework support. CPU teaching-code checks and strict three-screen CDN-blocked/browser/no-JS checks passed; not a GPU performance or scientific reproduction."
     },
     {
       "source": "content/posts/rl-interview-guide/index.html",
-      "sha256": "b26a1686dd7a0031b21511eb171a86208ec09d489086598b0d9de926e13ce50b",
-      "reason": "Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified. Follow-up RL audit: make GRPO group size recipe-dependent, add compact Offline RL/Decision Transformer/planning/self-play/MARL/distributional/model-based coverage, and remove an unsupported blanket ranking of offline LLM RL. Follow-up recipe expansion: add source-labeled GRPO-family numeric cards, correct universal clip/KL claims, distinguish prompt/trajectory/mini-batch and inner epochs, and link the compact interview table to the authoritative post-training chapter. Editorial coherence pass: separate original GRPO derivation from later variants, keep one compact numeric card, correct overgeneralized critic-memory, group-size and single-step-MDP wording, align the later comparison table with the recipe card, and fix the sampled KL-ratio direction and interpretation. Superseded wording remains in a labeled same-page history block for preservation checks."
+      "sha256": "bdc92cc441e8d71f8694511c17e12d2b08080e63a9a01f21401582408b7ab6c4",
+      "visual_revision_reason": "2026-11-15: add a compact learning diagram, restore prominent core-role discovery and current/original links in the shared reading shell; retain all six original SVG diagrams and detailed derivations. Historical source is unchanged.",
+      "reason": "逐页审阅：符号、算法卡、数值卡、参数影响、诊断、短答与历史入口全部审阅。原理与算例：关键目标与作用；完整推导定位后训练。精简与证据：修G/KL方向/显存/epochs矛盾；合并重复长讲，现代RLVR/Agentic/OPD覆盖保留。",
+      "prior_reason": "Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified. Follow-up RL audit: make GRPO group size recipe-dependent, add compact Offline RL/Decision Transformer/planning/self-play/MARL/distributional/model-based coverage, and remove an unsupported blanket ranking of offline LLM RL. Follow-up recipe expansion: add source-labeled GRPO-family numeric cards, correct universal clip/KL claims, distinguish prompt/trajectory/mini-batch and inner epochs, and link the compact interview table to the authoritative post-training chapter. Editorial coherence pass: separate original GRPO derivation from later variants, keep one compact numeric card, correct overgeneralized critic-memory, group-size and single-step-MDP wording, align the later comparison table with the recipe card, and fix the sampled KL-ratio direction and interpretation. Superseded wording remains in a labeled same-page history block for preservation checks."
     },
     {
       "source": "templates/home.html",
@@ -85,91 +142,346 @@
     },
     {
       "source": "content/posts/transformer-decoder-flow/index.html",
-      "sha256": "4abf700d5a681370b44f66cacbda20a4dbfb4ea74f4da3414205b73093d1fb20",
+      "sha256": "8aae16cec2012b6eb607e6d72856cd1f46068306281493bdba56e701a4f43a3b",
+      "visual_revision_reason": "2026-11-15: add explicit training tensor flow and causal/shifted-label explanation; preserve layer formulas and PyTorch code.",
       "title_revision_reason": "2026-11-14 title audit: describe the actual forward-computation and tensor-dimension walkthrough in document title and h1; retain scientific text and interactive content.",
-      "reason": "Add prerequisites, data-flow reading route and symbolic shape-tracking exercise. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：公式/形状、cache/mask、参数账本与完整小模型全部审阅。原理与算例：NLL/attention；整段/逐token/多token缓存等价。精简与证据：修Llama3头型、SwiGLU计数、双shift、初始化/cache/device/mask；PyTorch2.8 CPU实现运行通过，非性能实验。",
+      "prior_reason": "Add prerequisites, data-flow reading route and symbolic shape-tracking exercise. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/posts/vlm-knowledge-interview/index.html",
-      "sha256": "fb0d29d1a2ff7aaea5857a4e42d1e70381c854a96e4759d300af1a31839fd19f",
+      "sha256": "15a3e13e8a83ea0c56d50a0ad63ad14ce205fede675d0516c59687e85ae66da3",
+      "visual_revision_reason": "2026-11-15: teaching chain, spatial transformation flow, worked examples, concise native interview cards and multiline local LaTeX.",
       "title_revision_reason": "2026-11-14 title audit: replace colloquial interview-experience wording with core knowledge and interview questions in title and h1; preserve questions, answers and sources.",
-      "reason": "Add prerequisites, architecture/training reading route and fact-review limits. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：六部分全部审阅：核心表示与目标、前沿路线、11问、3组代码、来源、掌握清单。原理与算例：patch/MLP/query形状与参数；CLIP/SigLIP梯度和两对算例；视觉条件反传；tiling/merge/视频预算；crop坐标；VCD、ColPali MaxSim；完整patch/projector/resampler/mask/tiling。精简与证据：删除跨论文榜单/无出处倍数，代表路线按需；修正336/14=576、SigLIP负例通信/O(N)、MLP最优/统一四阶段、M-RoPE三等分、VCD无图对比、不同图像不可互看及max12却15tiles；精确原稿和全部原链接继续保留。",
+      "prior_reason": "Approved section-by-section VLM rewrite: expand patch/MLP/query shapes, CLIP/SigLIP score gradients, conditional language-loss visual backprop, resolution/video budget, grounding coordinates and ColPali example; keep 11 concise interview answers and complete teaching code. Correct patch count, sigmoid negative communication, universal-stage/MLP claims, M-RoPE equal splits, VCD and invalid tiling output. Archive exact prior source/citations/unverified rankings; preserve old public locations. CPU teaching-code and strict three-screen/no-JS/CDN-blocked checks passed; no model training/performance replication."
     },
     {
       "source": "content/series/dlm-survey/s00a_ddpm.html",
-      "sha256": "71cbef50805763a267325a907284c1fe996ffcbc5d10f8557d461cd057768fd5",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "e553a6a42cb20b1de142f4c02fd5d7e48a3b71fc5ce7f7cb35693f875bae7b7e",
+      "visual_revision_reason": "2026-11-15: add DDPM forward-noise/training/reverse-sampling diagram; retain original derivations and scientific units.",
+      "reason": "逐页审阅：模型→Jensen→裂项→后验→noise loss→采样全部审阅。原理与算例：前向方差递推；t≥2裂项；精度α/β、A14/variance1/14/mean0.89443；固定方差MSE。精简与证据：修正漏α、连续q(x0|x0)=1、有限逆边缘精确Gaussian、simple=ELBO、末步投影数据流形；必要五步推导保留。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s00b_flow_sde.html",
-      "sha256": "9dfa7676d2dd1e3863ca38ca9e269719a5d8cbfe2c7224d0fe913e4f6d9fe6b5",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "909060ff1fb8eb8eb6ea4b7fa7d09053fcd28affc2e680d76a95a74ce306a590",
+      "visual_revision_reason": "2026-11-15: add Flow Matching endpoint/path/velocity/integration diagram with explicit time convention; retain equations.",
+      "reason": "逐页审阅：时间、ODE/SDE、路径、条件/边际、score、PF、OT、DDPM连接、训练、求解器与原附录A–F全部审阅。原理与算例：条件速度；方差分解证明；test-function连续性；Ito/FP；score抵消；VP极限与逆SDE。精简与证据：删除独立配对自动OT、一/少步必然、所有loss/网络等价；明确生成/前向时间、理想边际vs路径、空间无关g条件。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s01_overview.html",
-      "sha256": "75b15ed7d4a5fdd45a1de8c0f5d00c3cc0b419f0d0c5a7d31c70accfe74fadc0",
+      "sha256": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "visual_revision_reason": "2026-11-15: add a language diffusion state-update mechanism diagram; all original research units retained.",
       "title_revision_reason": "2026-11-14 title audit: call the chapter an overview of major diffusion routes; change two classification headings from schools to routes without changing their scientific contents.",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：动机、五分类轴、四token路径、现代路线、追问、来源。原理与算例：AR位置依赖与扩散状态依赖。精简与证据：修正“AR训练串行”“双向保证规划/无reversal”；删除第二课程路径与跨厂商排名。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s02_discrete.html",
-      "sha256": "f8793c8ba8472b270cb92534945e6d2ae7623bc64fedc61c8aa193f35ca39bec",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "6c516ecba1bf7968e6c25e667dd1ca2953f683563d1a18548727770b948a80e7",
+      "visual_revision_reason": "2026-11-15: diagram absorbing mask corruption and iterative fill; distinguish method-specific remasking and kernels.",
+      "reason": "逐页审阅：D3PM、贝叶斯、VLB、MDLM、LLaDA、Dream/Seed/适配、SEDD、对偶全部审阅。原理与算例：行向量Bayes；吸收揭示0.6/0.4；SUBS后验KL→CE→连续权重；t0.25/0.75；对称argmax边际。精简与证据：线性weight修正1/t；可见token梯度、remasking/carry-over与GQA/cache分开；LLaDA原论文配方保留；无条件历史数字与错误CART/CTMC公式移出当前正文。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s03_block.html",
-      "sha256": "82f2594ffd39872931af6806216ac546f134df66c7f0ba3ee0dc5479c05c3673",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "af4bfb35a4ca861365fa985c898680fa58bdefab0f73677908c7fc078a1b179b",
+      "visual_revision_reason": "2026-11-15: diagram prefix/current-block/denoising/commit with inner and outer loops; retain original content.",
+      "reason": "逐页审阅：因子化、插值、训练、cache、SSD-LM、适配、SFT/BlockGen、drafter、混合模式、Fast-dLLM全部审阅。原理与算例：4token两块mask；clean/noisy泄漏；128token/16块/4轮与32块/8轮。精简与证据：删除伪单调定理、虚构simplex Gaussian、重复DFlash数值；精确因子化不等于块边际精确；保留现代路线与cache充分条件。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s04_continuous.html",
-      "sha256": "b112180a33c07d3b2dda64509f0017e67aa641f765a586183fbfe353b86d9278",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "2c3e196d4c3426afc1d9de55e964a4bb3fb8b9fc9c9f5f810b2ca4cf4c4286d7",
+      "visual_revision_reason": "2026-11-15: diagram continuous representation/noise/denoising/text decoding interfaces; preserve original formulas.",
+      "reason": "逐页审阅：三接口、Diffusion-LM、COLA、CADD、ELF、CCDD、LangFlow、TextLDM、Plaid全部审阅。原理与算例：−1→3路径t0.25；两token embedding均值与CE反例；重建/生成/任务三检查。精简与证据：删除一般MSE=CE、任意RAE稳定、全域20x；时间符号统一，型号仅保留研究接口/需核对字段。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s05_paradigms.html",
-      "sha256": "22fe490746756f97a972adf05dea02a73cf2a0d32fad0aeb6885672012bc4e37",
+      "sha256": "58310c27866c2c4cb574221a85ed55ae6b1443ff3dcd513d0ae7d6deb44032c2",
+      "visual_revision_reason": "2026-11-15: diagram alternative prediction targets as branches, distinguishing conversions from loss equivalence.",
       "title_revision_reason": "2026-11-14 title audit: replace grand-unification framing with comparison of prediction targets and parameterizations; keep formulas and assumptions unchanged.",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：连续三目标、score、SEDD、DFM、对照、追问全部审阅。原理与算例：VP旋转/逆变换数值例；MSE时间权重；score条件期望；ratio散度导数；两状态master例。精简与证据：修正epsilon低噪声归零、VP-v=FM、SEDD缺r项/比率softmax；DFM纠错后ID保留；旧错误冻结全文移到原稿。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s06_scaling.html",
-      "sha256": "3f54f69c0bac710639e0cd438127a21dc1a0c6778afa9248ac9d1fb7440913ad",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "26bebb0c43949117fc14ef672ebb6ed75dc7af593b2ec1adb8e770938acb508c",
+      "visual_revision_reason": "2026-11-15: add scaling experiment accounting diagram for data/training/inference budgets and trend boundaries.",
+      "frontier_revision_reason": "2026-11-14: add an evidence-owner link for recent speculative comparisons; keep historical scaling figures marked unverified and preserve all original content.",
+      "reason": "逐页审阅：scaling、过拟合、熵调度、四数据研究、噪声核、Beyond、对照全部审阅。原理与算例：U/D/E/C独立变量；compute约束导数→最优幂；1B×100复用。精简与证据：修正N∝sqrt(D)、宽浅推断与过拟合有益；去513/32通用上限与无来源贡献百分比；原研究入口保留。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s07_speculative.html",
-      "sha256": "0d3609a754a9742332a505c4686b99437739bffb6a42368aa36e382f257fb615",
+      "sha256": "8912d107591acaece896e979a2fe215f32ac2e4711d3df4913aa0fd7dcf87648",
+      "visual_revision_reason": "2026-11-15: add diffusion-draft/AR-validation/prefix-commit feedback diagram; preserve original comparisons.",
+      "frontier_revision_reason": "2026-11-14: link to fixed-version AdaFlash/DSpark comparisons and distinguish speed from acceptance length; preserve original methods, figures, history and anchors.",
       "title_revision_reason": "2026-11-14 title audit: simplify the DFlash/MTP comparison title and chapter heading; preserve evidence and original comparison content.",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：基础、DFlash/MTP、接受率、发散、训练、时间线、轨迹/自身加速全部审阅。原理与算例：尾和期望；a0.8/b4→2.3616；8+25+2ms/5→7ms/token。精简与证据：标准精确校正归服务；原KL/概率乘积/速度上界错误移除；DFlash/DSpark/AdaFlash长结果唯一维护在研究地图。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s08_elbo_rl.html",
-      "sha256": "f0f43ce0bf666af4641c04f58d06ca9c2ac49d975bc62ca8f7bd4ea45fdc654b",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "472d6a9d6401da3ef93b77c8a8ee8dc99b4eb0435ea8717b88a12e62518ff0d9",
+      "visual_revision_reason": "2026-11-15: diagram diffusion rollout/reward/probability-target/update; keep ELBO-versus-exact-probability boundary.",
+      "reason": "逐页审阅：原14节的界、SPG/GDSD、d1、偏好/轨迹/方差、uniform迁移全部审阅。原理与算例：denoiser/path/marginal；Jensen gap；三误差；SPG正负例；指数倾斜0.7311；冻结centered-score目标。精简与证据：保留SPG v1四任务数据；删除与现代修订冲突的重复SPG公式、无条件梯度方差倍率、Gaussian投影精确文本概率、uniform迁移保证；未核实命名/题号明确仅线索。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s09_commercial.html",
-      "sha256": "5c920a790728879dd7351e558e62992c5f11aa86bf9163e3131a6e74b3bd52dc",
+      "sha256": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "visual_revision_reason": "2026-11-15: diagram vendor claim to matched workload, quality/latency and successful-task cost; preserve claim provenance.",
       "title_revision_reason": "2026-11-14 title audit: describe the DiffusionGemma subsection as mechanism and public measurements rather than industrial validation; leave original reported measurements and qualifications intact.",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：厂商、Gemini/DiffusionGemma、Mercury、吞吐/成本、Pareto、部署指标全部审阅。原理与算例：200ms提交100token：500tok/s但首字200ms。精简与证据：产品研究/服务版本分开；去1008/1196/1479/2146跨设备排名、当前商业/授权全称保证与永久速度护城河。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s10_comparison.html",
-      "sha256": "7d3d08191f5f9524ef1ab047617e1651ddae05c6ec3e70dca87142bdc4e9de8d",
+      "sha256": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "visual_revision_reason": "2026-11-15: add representation/objective/decoder/resource comparison diagram without inventing a unified ranking.",
+      "frontier_revision_reason": "2026-11-14: add recent speculative data entry and retain explicit limitations on family-wide ranking and historical unverified numbers.",
       "title_revision_reason": "2026-11-14 title audit: name the chapter by diffusion-method comparison and research directions rather than its table format; preserve tables and all research units.",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：全方法、RL、理论对比、未来四方向全部审阅。原理与算例：五路线收益/成本；五项共同合同；四单轴研究设计；六问短答。精简与证据：删除第三套SPG/GDSD、1/TV速度上界、连续全域更强与跨论文RL百分比；方法细节回同页已有解释。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s11_loop_transformer.html",
-      "sha256": "a2c716f27c5c0e4357eaf4fa145eb0a199fa78d78fa7a5f25b51cecc6709f03e",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "5cc6fea60a3f5d78a8f8d0444d3fd3eeb161061bce4f758d96e1fe79276d83b7",
+      "visual_revision_reason": "2026-11-15: add explicit shared-parameter hidden-state recurrence and stopping loop; preserve all original detail.",
+      "reason": "逐页审阅：原10节直觉/理论/复杂度/扩散类比/Ouro/CCDD/latent/现代架构/索引/启示全部审阅。原理与算例：kP/krF；共享theta梯度和Jacobian乘积；0.5h+1稳定/2h+1发散；8元素结合组合。精简与证据：移除无条件复杂度严格分离、答案变化证明忠实、所有循环上限4–8；路线/失败与研究问题保留，未核实大表回精确原稿。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s12_vae.html",
-      "sha256": "0cc22e99601136779745d731e0e83a3ab2d4339fd89ed2be0d0f109e4885e782",
+      "sha256": "ac353c7b95b87a0b14fb55ec3fae34aa9b93006c137c340739e420345495e9c0",
+      "visual_revision_reason": "2026-11-15: add encoder/reparameterization/decoder/KL diagram with prior-generation branch and VQ boundary.",
       "title_revision_reason": "2026-11-14 title audit: remove repeated VAE wording by naming the chapter principles, development and main variants; preserve subsection details, formulas and sources.",
-      "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "reason": "逐页审阅：ELBO、三失败、发展/18变体、VQ/RQ/FSQ/LFQ、层级、现代系统、ACT、联合训练全部审阅。原理与算例：KL0.81815；重参数梯度；VQ0.8→1两职责；RQ1.3→1.25；25/2^d组合；512图像→latent1/48。精简与证据：修正VQ无法绕过、无码本无退化、RQ同token数、LlamaGen/RQ/Sora/Parti归属和ACT prior均值保证；连续/层级家族表与来源保留。",
+      "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
+    },
+    {
+      "source": "content/posts/my-work-holon/full-report.html",
+      "sha256": "270478cdf12de622d5b8f92fdc7114fbfa41456c45d07b0024396747803e0b16",
+      "reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。"
+    },
+    {
+      "source": "content/posts/my-work-harbor/full-report.html",
+      "sha256": "94ea2681b67a431b6405ef3783e60d36da2a6385da873c9eaf61bf8f50c44350",
+      "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。"
+    },
+    {
+      "source": "content/series/agent-systems/index.html",
+      "sha256": "33f5cb2e59bc7444c044f702f602697943f54e1209c9fa31152df02c26ffcf32",
+      "reason": "逐页审阅：三职责引入、科学关联、掌握清单。原理与算例：证据/决策/执行约束关系。精简与证据：去旧目录与重复路线；父页只装配不复制正文。"
+    },
+    {
+      "source": "content/series/agent-systems/s01_rag_retrieval.html",
+      "sha256": "9c362d8a11c187f403a2462e77a4e572a0944c010db1157830144dcbb2106446",
+      "reason": "逐页审阅：对象、索引、检索、Agentic、分层评测、论文结果、追问、来源全部审阅。原理与算例：BM25饱和/长度项；单位向量与cosine；两路RRF；Recall/MRR。精简与证据：删除第二幅同义总流程；索引经验分点；保留Faiss固定提交与未运行状态、PROGRESS退化/成本边界。"
+    },
+    {
+      "source": "content/series/agent-systems/s02_planning_compute.html",
+      "sha256": "78666e756cc2c7d6478fe1dbc69209c5c451af7f8c37af0055f95889b8c404f5",
+      "reason": "逐页审阅：策略、搜索、验证、环境、预算、对照、论文结果、来源全部审阅。原理与算例：独立失败概率→BoN；selector条件成功；UCT两分支；净收益教学例。精简与证据：去重复总流程和pass@k组合长讲；分支状态与副作用图、停止表替代原则段；保留Search-R1++下降项。"
+    },
+    {
+      "source": "content/series/agent-systems/s03_trust_safety.html",
+      "sha256": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "reason": "逐页审阅：威胁模型、隔离、科学边界、评测、CaMeL、追问与来源全部审阅。原理与算例：clean/attacked utility、全部/条件ASR分母例。精简与证据：六模式表按需；科学约束分点；保留参数门控/TOCTOU边界和论文条件，不提升为部署安全保证。"
+    },
+    {
+      "source": "content/series/llm-serving/index.html",
+      "sha256": "e1dc30773c1645030ab683978b923dafc3f5f466ea7c84e927933e2f47288a76",
+      "reason": "逐页审阅：调度/加速/成本三问题、装配、掌握清单、固定实现。原理与算例：请求计算与状态交接。精简与证据：去旧三章目录与重复研究路线；实现版本说明保留。"
+    },
+    {
+      "source": "content/series/llm-serving/s01_runtime_scheduling.html",
+      "sha256": "98289e08593121bc461d8872c025d4b6d6e9e84a49749c8bbf6a55fde90b20cc",
+      "reason": "逐页审阅：阶段、分页、prefix、实现、混合状态、对照、来源全部审阅。原理与算例：连续批处理三轮；35token/16槽分页；逻辑→物理映射；两请求共享32prefix例。精简与证据：去第二同义总图；prefix条件分点、瓶颈诊断表；固定vLLM/SGLang源码与未运行范围保留。"
+    },
+    {
+      "source": "content/series/llm-serving/s02_parallel_quantization.html",
+      "sha256": "5ce5470b29abb57348705a36f1e514dd73073fc72f051e909b7d3dd0175f9d2c",
+      "reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。"
+    },
+    {
+      "source": "content/series/llm-serving/s03_capacity_cost.html",
+      "sha256": "a425a95662eeb565df0afb83f44d9995bd2d6546a32378592bdd5ffe7b0113a5",
+      "reason": "逐页审阅：账本、70B例、指标、rollout、成本、协议、来源全部审阅。原理与算例：唯一物理槽/本地head账本；70B/TP4/32K逐维；TTFT/ITL/TPOT时间例；Little稳定条件；全部尝试资源/成功。精简与证据：去第二总图；资源不能跨单位直接相加、费用避免重复；CSV/JSON规划不冒充实测。"
+    },
+    {
+      "source": "content/series/llm-posttraining/index.html",
+      "sha256": "64683caf93467927a381f9a276ef04c40cb91219326ee44e592edc2c9d6bbb7e",
+      "reason": "逐页审阅：七主题中的反馈与更新入口、六章装配、掌握清单。原理与算例：原理→变体→配方→诊断。精简与证据：父页只装配唯一片段，删除第二目录与分散阅读路线。"
+    },
+    {
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "sha256": "980cfa1021cb604131bad75c4b0a3c575e02f6420f33f98fcbe3e4b87b89d89f",
+      "reason": "逐页审阅：SFT、模板/packing、恢复、拒绝采样、偏好、反馈与准入全部审阅。原理与算例：mask 梯度；KL 正则最优策略→DPO 分类目标。精简与证据：方法结论分点，保留KTO/恢复训练来源与退化，偏好细讲唯一主讲。"
+    },
+    {
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "sha256": "8689a9045b998642f84e78754ec3a5d9c4b768ec5e71c8e0e60188cfbeff0a3f",
+      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。"
+    },
+    {
+      "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
+      "sha256": "f8ece6ac057b111bf47055cb9a1d8c7fabf6928f40240cf1613401ef521d8721",
+      "reason": "逐页审阅：学生轨迹、局部KL、采样梯度、教师接口、多教师、自蒸馏、引导、遗忘全部审阅。原理与算例：reverse-KL 局部导数；数值估计与梯度估计区别。精简与证据：教师接口/成本和监控分点，保工业路线与退化，OPD原理集中本章。"
+    },
+    {
+      "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
+      "sha256": "e8eb7bdcc00ced28c7828f67c5d246b7ef5bc559de54bf10f930633c8a9a212d",
+      "reason": "逐页审阅：状态机、反馈、过程监督、PURE/Cliff、多步信用、MiMo/RLDS与案例全部审阅。原理与算例：重复正确步骤漏洞；局部优势与credit粒度。精简与证据：保GraphGPO/ReBel/EFCA/MileGPO等区别与因果边界；经验、奖励漏洞与追问分点。"
+    },
+    {
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "sha256": "1265adae0d53670b119a01c42d4f7c14dfa312fddb02f7604e1149f481229359",
+      "reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。"
+    },
+    {
+      "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
+      "sha256": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "reason": "逐页审阅：代码、科学、GUI三任务、反馈、轨迹、实验、诊断与交付全部审阅。原理与算例：输入→动作→产物→反馈→训练目标。精简与证据：GRPO/OPD重复全文归主讲；保独立验收、环境状态、特权信息和未执行实验边界。"
+    },
+    {
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "sha256": "4dda84fd38065700da2ff7b6c15ddc51a7b894dbeae6f242453222e8f4e9824c",
+      "reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。"
+    },
+    {
+      "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
+      "sha256": "6f2a4cf022530d603eedb26e30230ec59fac14d4c3a719244c391b96f17660d5",
+      "reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。"
+    },
+    {
+      "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
+      "sha256": "9a43124fdf1d4934f813b4eee06d75597a306f2d7e85bf1f25bbd1c7dafe04cf",
+      "reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。"
+    },
+    {
+      "source": "content/series/llm-architecture/index.html",
+      "sha256": "0ac970cfe9b74735a078a5b65eea8b992e1500b3c4355f8857268e37db8bfb2f",
+      "reason": "逐页审阅：架构入口、六章装配、状态/计算关系与掌握清单。原理与算例：表示→选择→更新→恢复。精简与证据：删除旧重复目录；源稿分章维护，正文连续阅读。"
+    },
+    {
+      "source": "content/series/llm-architecture/s01_transformer_foundations.html",
+      "sha256": "bcd0704d1db27d065630a795d6201c78ced4c920075d184d197ea8e75515ea4e",
+      "reason": "逐页审阅：条件预测、张量路径、mask、block、teacher forcing、状态成本与不变量全部审阅。原理与算例：NLL/softmax导数；4token causal mask；标签shift。精简与证据：机制展开、结论短卡；修AR训练串行等混淆，原来源和旧定位保留。"
+    },
+    {
+      "source": "content/series/llm-architecture/s02_attention_position_cache.html",
+      "sha256": "89f815f672f7dbaa4c38de171285226285987cb696dc46c3fe9a190f171f5e3c",
+      "reason": "逐页审阅：历史访问、MHA/MQA/GQA、cache、RoPE、稀疏、Flash/Paged与对照全部审阅。原理与算例：点积方差缩放；二维旋转与相对位移；缓存字节算例。精简与证据：型号/框架次表按需；长式分行，原图与共同预算条件保留。"
+    },
+    {
+      "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
+      "sha256": "1eeb32f002ceaf210577183db3d09f34c92b99a4371717f328326c59381d6200",
+      "reason": "逐页审阅：FFN、router、容量、参数/通信、latent专家、EP与消融全部审阅。原理与算例：两/三矩阵计数；top-k门控；容量和负载。精简与证据：规格名录折叠，不能用总参数替代激活参数或真实吞吐。"
+    },
+    {
+      "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
+      "sha256": "3c6272a0d476fc7f61717d5084559f59377dd368d7faa9471348c304247102f3",
+      "reason": "逐页审阅：梯度、Norm、初始化/QK/长上下文、AttnRes/mHC与故障全部审阅。原理与算例：Pre/Post-Norm链式法则；LN/RMS算例。精简与证据：修免warmup绝对化；新残差增量归研究地图，基础与诊断集中本章。"
+    },
+    {
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "sha256": "1cc958c588293503cbd89f1fe73aae04be580700ea402d7c5966552e8efa6df9",
+      "reason": "逐页审阅：外积、衰减/delta、Mamba/SSD、混合层、分支恢复与对照全部审阅。原理与算例：状态外积；遗忘与定向覆盖反例；SSM标量状态。精简与证据：经验精炼，有限状态压缩边界保留，cache与恢复不自动等价。"
+    },
+    {
+      "source": "content/series/llm-architecture/s06_model_comparison.html",
+      "sha256": "e185cf4f9267ef82f9d7dad9d36a37ea6e00e48b01c95345e07b79f789ea79cc",
+      "reason": "逐页审阅：六比较轴、家族、架构/训练/服务、MTP/drafter、科学设计与证据全部审阅。原理与算例：参数、状态、预算、质量独立比较。精简与证据：型号名录按需，删除跨设备排名和重复原理长讲。"
+    },
+    {
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "sha256": "dd16193ad2320e1181342f87c66d9742d7d36f6456387dfd64f01bcc2fd88d1f",
+      "reason": "逐页审阅：生命周期引入、对象职责、正文装配、掌握清单、原始来源。原理与算例：来源/环境/任务/verifier/多轨迹/留出关系。精简与证据：去旧四章目录与第二路线；52引用编号不改、清单按需。"
+    },
+    {
+      "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
+      "sha256": "93f5d4b0975961e5618eb694e02ffc274927dc5830f357e72d160c5d6da3d9be",
+      "reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。"
+    },
+    {
+      "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
+      "sha256": "afb07b2809cc5b7a3cb94d02171154122463d6f4e2b7c376ffa907db84421b8d",
+      "reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。"
+    },
+    {
+      "source": "content/series/llm-research-map-2026/index.html",
+      "sha256": "38557716c4450595f17609292aa552662c18e2ff073a77f86f3cff22da2671bb",
+      "reason": "逐页审阅：研究问题、证据层次、先修、七节装配、选题、归档与来源全部审阅。原理与算例：机制→对照→边界；掌握检查。精简与证据：移除旧覆盖表、三路线和七章重复目录；71原编号、15原件、SHA/许可说明保留；长来源/选题按需。"
+    },
+    {
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "sha256": "7d65251191af8348208d2c6130b5f71b989b99a066b98740149c88b9aa0bdedd",
+      "reason": "逐页审阅：资产、四路线、Harbor交接、迁移、榜单审计、实验、定量入口全部审阅。原理与算例：SQLite临时状态未交接反例；父span/请求0.05与0.10计费例。精简与证据：通用对象/合同表归任务主讲；四路线只讲生成空间区别，长实验按需；82/6627困难切片、19/20修复分歧及未重放状态保留。"
+    },
+    {
+      "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
+      "sha256": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "reason": "逐页审阅：四维目标、三算法、信用五路线、异质性、异步、追踪、消融、证据全部审阅。原理与算例：等派发但有效组99.2/7.7→中等域92.8%例。精简与证据：GRPO/GSPO/CISPO重复公式及有效组概率长推导归后训练；保留RLDS/KnowGPO/GiGPO/SAPO/SAMPO具体差别、反思/因果边界、三种异步偏差。"
+    },
+    {
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "sha256": "1d80fa06b5a7a1fecb73ff19101e8a844a4ad64a8791f9e3a7067abae6b6215e",
+      "reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。"
+    },
+    {
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "sha256": "3966264d9abe13bc59b8e52380a202268ed97d22d8969015fc0064d4952707fa",
+      "reason": "逐页审阅：四成本目标、三drafter、采样合同、准入、OPD角色、两论文表与实验全部审阅。原理与算例：周期90ms/5token=18ms与AR15ms反例；丢弃B后q=p仍全部A的调度反例。精简与证据：标准投机校正与成功成本长式归服务；并发1→128退化保留；温度/块长/τ/加速分开，独立trainer成本及未知硬件不省略。"
+    },
+    {
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "sha256": "6c249ac2f8294a0532b2f9f9b64018c06cd0ae7826fdf38b58754a52a90b30f7",
+      "reason": "逐页审阅：GUI、科学三层、Skills版本、适配、并行/多教师、实验全部审阅。原理与算例：时间t→冻结→新任务→旧回归图；测试标签泄漏反例；20s串行/13s并行但资源20s例。精简与证据：删除第二幅同义总流程；运行memory定义归Harness，研究干预要点分点；所有版本、预算、公开履历与待执行边界保留。"
+    },
+    {
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "sha256": "c746f293d349b6959b25eea64256c061bdb3ff015b2ee8d313533229b205e5f0",
+      "reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。"
+    },
+    {
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "sha256": "9c00695fea8104529da25f68aa1b031063f5cc356e288db0a88bbab9dfb057dc",
+      "reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。"
+    },
+    {
+      "source": "content/series/llm-training-lifecycle/index.html",
+      "sha256": "6d70d9c7a7c84b16782a2f658e12f9b2f24425b3845455c0bc8827f2f554e028",
+      "reason": "逐页审阅：预训练→CPT→SFT→RL/验收→训练方法五章装配。原理与算例：阶段产物与监督接口交接。精简与证据：入口只保一条主线，训练阶段不再重复后训练全文。"
+    },
+    {
+      "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
+      "sha256": "bde3ac18182dba3d5ad9ae1edaa3e0d67e5cd289b28547c10207c62b15092487",
+      "reason": "逐页审阅：数据、CLM/FIM、预算、长上下文、恢复、阶段准入全部审阅。原理与算例：packing边界；6NT前向/反向来由。精简与证据：保真实token/重复/预算区别，工程结论分点、共同预算证据保留。"
+    },
+    {
+      "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
+      "sha256": "ce256f007bc5412f51551d520c0e1d5cc28e39b8da1844c7aff6d9f33744adf3",
+      "reason": "逐页审阅：阶段、工业配方、受控结果、数据/伪代码、配比回放与科学交接全部审阅。原理与算例：CSV四视角；输入比例与目标比例反例。精简与证据：长论文路线表按需；保能力下降与混杂条件，CPT不由名称决定目标。"
+    },
+    {
+      "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
+      "sha256": "0bc9b5742ec1c7252f29bc4045cbe9704d14bd013eb5223af9bc099a295672af",
+      "reason": "逐页审阅：协议策略、角色mask、轨迹准入、拒绝采样、偏好/教师与RL交接全部审阅。原理与算例：mask的直接梯度与条件反传；筛选偏移。精简与证据：DPO/OPD/PPO重复推导归后训练；结论按准入条件与失败信号精简。"
+    },
+    {
+      "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
+      "sha256": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "reason": "逐页审阅：闭环、CSV、批次、训练/交付指标、预算、症状与模型合同全部审阅。原理与算例：产物独立验收；初始化/额外投入两对照。精简与证据：删除重复算法全文，诊断表替代原则长段，实验计划不冒充执行结果。"
+    },
+    {
+      "source": "content/archive/rl-interview-guide/index.html",
+      "sha256": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "reason": "逐页审阅：冻结历史正文，只提供查证入口与统一数学加载。原理与算例：原六张SVG与原推导保留。精简与证据：源正文未重编；现代讲解用带纠错注释的适配图，历史错误不升为现行知识。"
     }
   ]
 }

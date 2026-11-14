@@ -8,6 +8,8 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>Benchmark 分数：版本、环境与预算构成测量条件</figcaption><ol class="mechanism-chain"><li><b>固定任务版本与切分</b><small>原始集、修订集与污染检查</small></li><li><b>固定运行条件</b><small>Agent scaffold、工具、模型与预算</small></li><li><b>执行并验证产物</b><small>保存轨迹、错误与复跑信息</small></li><li><b>成功率及成本报告</b><small>按任务族与失败类型解释指标</small></li></ol><p class="mechanism-note">同名 benchmark 的不同版本或 scaffold 可能改变结果；排名不能脱离运行条件。</p></figure>
 <section id="map">
 <p class="eyebrow">02 · Benchmark map · Snapshot 2026-11-14</p>
 <h2>先按能力与产物选评测，再看分数</h2>
@@ -20,9 +22,36 @@
 </div>
 <p class="note">这是测量对象分类，不是单向能力等级。一个函数题可能非常难，一个GUI任务也可能短；不同环境不可用一个未经校准的总分排序。</p>
 </section>
+<section id="metrics"><h2>先读懂pass@1、pass@k与pass^k</h2>
+<p>令一次成功概率为p。在<strong>独立同分布</strong>尝试的教学假设下，k次全部失败概率是\((1-p)^k\)，k次全部成功是\(p^k\)，所以：</p>
+<div class="reading-math">\[
+\operatorname{pass@}k=1-(1-p)^k,\qquad
+\operatorname{pass}^{k}=p^k.
+\]</div>
+<table><thead><tr><th>指标</th><th>测量对象</th><th>p=0.6，k=3教学例</th></tr></thead><tbody>
+<tr><td>pass@1</td><td>单次成功；多次repeats可平均估计</td><td>0.6</td></tr>
+<tr><td>pass@3</td><td>三条中至少一条成功</td><td>1−0.4³=0.936</td></tr>
+<tr><td>pass³</td><td>三次都成功，重复可靠性</td><td>0.6³=0.216</td></tr>
+<tr><td>Best-of-3</td><td>真实selector选定一条的交付成功</td><td>还取决于误选和验证成本</td></tr></tbody></table>
+<p>工具故障、相同prompt与共享错误前提会使尝试相关，不能直接按独立式外推。<strong>执行3 repeats后平均success，仍在估计pass@1，不是pass@3。</strong></p>
+<h3>有限n条样本：从失败组合数得到估计</h3>
+<p>一题已生成n条，有c条成功。从这n条中等概率、不放回选k条，总组合数为\(\binom nk\)；全部失败必须从n−c条失败中选，组合数为\(\binom{n-c}k\)。因此：</p>
+<div class="reading-math">\[
+\widehat{\operatorname{pass@}k}
+=1-\frac{\binom{n-c}{k}}{\binom nk},\qquad 1\le k\le n.
+\]</div>
+<p>若\(n-c&lt;k\)，失败组合为0、估计为1；c=0则为0。教学n=5、c=2、k=2，得\(1-\binom32/\binom52=1-3/10=0.7\)。从观察比例直接套\(1-(1-2/5)^2=0.64\)会得到不同值：它忽略了有限样本的不放回组合。作为总体pass@k估计的统计解释依赖样本生成条件；相关采样需单独说明。来源为<a href="index.html#ref-28">HumanEval</a>。</p>
+<figure class="mechanism-map"><figcaption>同题五次：存在性、选择与平均成功不同</figcaption><ol class="mechanism-chain"><li><b>固定一题与协议</b><small>每次从同一干净状态reset</small></li><li><b>五条轨迹</b><small>成功、失败、成功、失败、失败 → c=2</small></li><li><b>三个统计对象</b><small>单次估计2/5；两条存在性7/10；selector另测</small></li><li><b>逐题再聚合</b><small>保留每题n/c/k；不同题不可直接混为一组候选</small></li></ol></figure>
+<h3>正确性、有效性与成本分别报告</h3>
+<ul><li><strong>headline：</strong>固定发布题集保留全部任务分母；invalid task、infra/API error、agent/verifier timeout和policy fail分列。</li><li><strong>条件成功：</strong>另报可执行任务上的成功率，不能静默移除失败让headline上涨。</li><li><strong>Rubric / Elo：</strong>固定judge、prompt、anchor和顺序；不同量纲需声明转换，不能直接相加。</li><li><strong>成功成本：</strong>全部候选、工具、验证、构建与重试计入；环境构建按公开摊销口径。零成功保留总成本，比值未定义。</li></ul>
+<p>比较A/B使用同任务、预算、环境和scorer，并按研究组保留依赖结构；配对胜负与区间在前节展开。tokens不是统一美元或FLOPs。</p>
+</section>
+<details class="course-extension"><summary>按需查阅：版本、领域与综合指数的完整名录</summary>
 <section id="versions">
 <div class="callout" id="evaluation-bridge"><strong>把测量对象放回系统：</strong><a href="s03_scientific_task_family.html">科学任务合同</a>定义待校准真值和容差；<a href="s04_cluster_training_evaluation.html">工业对照</a>记录策略/环境/预算/失败；<a href="/agent-systems/s03_trust_safety.html">权限与攻击</a>分clean/attacked；<a href="/llm-serving/s03_capacity_cost.html">部署成本</a>将失败与重试纳入分母。多维指标由任务需要选择，不能用更大的榜单总分替代这些验收。</div>
 <h2>当前版本与定位速查</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
+
 <table><thead><tr><th>名称</th><th>采用的快照</th><th>对象 / 规模</th><th>首要边界</th></tr></thead><tbody>
 <tr><td>Terminal-Bench</td><td><a href="index.html#ref-13">4.1.0，2026-11-03</a></td><td>Full 66任务；CPU-only 63</td><td>全部66项modified，无新增 / 删除；4.0成绩不可直接改标4.1</td></tr>
 <tr><td>Terminal-Bench-Science / TB Sci</td><td><a href="index.html#ref-15">0.1.0，2026-08-26</a></td><td>70任务，5领域</td><td>0.2是roadmap；native harness下测系统表现</td></tr>
@@ -49,6 +78,8 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <p>首版70题覆盖5领域，任务需要在终端使用专业知识完成可执行产物。提案到发布经历920 proposals → 464 approved → 386 PR → 70 release，各门槛不同，不能把approved当入库题量。官方评测采用每模型3 trials及native harness，结果包含模型与执行系统差异。<a href="index.html#ref-15">[15]</a></p>
 <p>科学任务须区分代码可跑、检查通过、复现某结果与产生新科学发现；TB Sci高分不能单独支持最后一项。构建、数据下载、verifier timeout及数值容差可能造成无声误判。下一版0.2在调研日仍是路线规划，不写成已发布版本。</p>
 <h3>Challenges：长时间项目交付，先比正确性与资源</h3>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
+
 <p>首发Rust Compiler Speedup、Inference Engine Codegolf、WASM WebGL Renderer三项挑战，面向day-scale单项目；提交最终repo与完整自主执行logs，按各任务的正确性或性能协议验收。<a href="index.html#ref-16">[16]</a> 没有统一时间和资源上限，就不适合与固定budget的TB成功率直接合并。</p>
 <p>对Challenges应列wall time、tokens / API cost、计算资源、人类介入、完整日志与产物revision；性能优化先过correctness gate，再按同硬件timing。一次项目成功并不估计某个广泛任务分布的pass@1。</p>
 <table><thead><tr><th>首发challenge</th><th>交付与正确性gate</th><th>性能口径</th></tr></thead><tbody>
@@ -70,12 +101,16 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 </section>
 <section id="deepswe">
 <h2>DeepSWE的两个含义，以及SWE-bench家族</h2>
+<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>。</p></section>
+
 <h3>Datacurve DeepSWE v1.1：original tasks + behavioral verifier</h3>
 <p>Benchmark含113 original工程任务，来自91个repo，涉及TypeScript、Go、Python、JavaScript、Rust；采用mini-swe-agent，评估long-horizon工程修改。交付committed diff后，放到干净verifier环境执行行为测试并生成CTRF；不向solver提供future git。<a href="index.html#ref-22">[22]</a></p>
 <p>任务原创新写且不upstream，降低公开旧patch污染风险；“contamination-free”的团队表述不能证明每个模型从未见过全部相关材料。Behavioral tests比匹配参考patch更能接受替代正确实现，但仍会误收 / 误拒；团队的LLM audit不能替代独立真值。版本1.0与1.1的verifier修订要分别看。</p>
 <h3>Together / Agentica DeepSWE-Preview：RL模型 / recipe</h3>
 <p>这是2025-07的Qwen3-32B训练方案，采用约4.5k R2E环境。团队报告42.2% pass@1、71% pass@16、59% hybrid test-time scaling；三个数分别包含不同采样或选择预算。<a href="index.html#ref-23">[23]</a> 不能把它们当Datacurve benchmark成绩，也不能把pass@16写成单次成功率。</p>
 <h3>SWE-bench：真实issue基线与更严格的扩展</h3>
+<section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
+
 <table><thead><tr><th>家族</th><th>对象 / 协议</th><th>适合使用</th><th>局限 / 注意</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-24">SWE-bench Verified / Lite</a></td><td>Verified 500 issues；Lite 300。Repo + issue → patch → tests</td><td>经典repo-agent baseline与训练前后对照</td><td>公开历史patch污染；test completeness；scaffold与budget会影响结果</td></tr>
 <tr><td><a href="index.html#ref-24">Multilingual / Multimodal</a></td><td>各自语言 / 输入形式的独立split</td><td>跨语言或视觉issue泛化</td><td>不是Verified的同难度翻译；勿按名字假定统一题量</td></tr>
@@ -100,6 +135,8 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <section id="classics">
 <h2>经典与常用评测：按测量对象快速定位</h2>
 <h3>代码：从函数到真实库调用</h3>
+<section id="citation-sources-14" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>；<a href="https://arxiv.org/abs/2108.07732" title="Program Synthesis with Large Language Models · Austin, Jacob, Odena, Augustus, Nye, Maxwell 等 · 2021/08/16 · 2108.07732">MBPP</a>。</p></section>
+
 <table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-28">HumanEval</a></td><td>函数补全；unit tests / pass@k</td><td>经典代码生成基线</td><td>小函数 / 已公开题；不代表repo工具执行</td></tr>
 <tr><td><a href="index.html#ref-29">MBPP</a></td><td>自然语言到短Python程序；tests</td><td>基础程序合成与指令理解</td><td>题型较基础；不同prompt / split分别报告</td></tr>
@@ -108,6 +145,8 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <tr><td><a href="index.html#ref-32">BigCodeBench</a></td><td>复杂指令、多库组合；tests</td><td>实用函数与库使用</td><td>Complete / Instruct设置不同；仍不是完整repo生命周期</td></tr>
 </tbody></table>
 <h3>通用Agent：工具、检索、政策与skills</h3>
+<section id="citation-sources-15" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>；<a href="https://arxiv.org/abs/2406.12045" title="$\tau$-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains · Yao, Shunyu, Shinn, Noah, Razavi, Pedram 等 · 2024/06/17 · 2406.12045">τ-bench</a>；<a href="https://arxiv.org/abs/2311.12983" title="GAIA: a benchmark for General AI Assistants · Mialon, Grégoire, Fourrier, Clémentine, Swift, Craig 等 · 2023/11/21 · 2311.12983">GAIA</a>。</p></section>
+
 <table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-33">AgentBench</a></td><td>多类环境交互；各环境success / score</td><td>早期通用Agent能力地图</td><td>领域权重、工具和harness影响aggregate</td></tr>
 <tr><td><a href="index.html#ref-34">GAIA</a></td><td>多步检索、资料和工具；final answer正确性</td><td>现实助理与信息整合</td><td>Web随时间变化；答案正确不直接评估过程可靠性</td></tr>
@@ -115,6 +154,8 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <tr><td><a href="index.html#ref-36">SkillsBench 1.1</a></td><td>87 tasks / 8 domains / 18 paired configurations；有 / 无skill对照</td><td>检验skills是否带来额外能力</td><td>固定模型 / harness / budget；skill曝光与baseline提示强度会影响增益</td></tr>
 </tbody></table>
 <h3>Web与GUI：最终状态、reset与视觉</h3>
+<section id="citation-sources-16" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2307.13854" title="WebArena: A Realistic Web Environment for Building Autonomous Agents · Zhou, Shuyan, Xu, Frank F., Zhu, Hao 等 · 2023/07/25 · 2307.13854">WebArena</a>；<a href="https://arxiv.org/abs/2401.13649" title="VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks · Koh, Jing Yu, Lo, Robert, Jang, Lawrence 等 · 2024/01/24 · 2401.13649">VisualWebArena</a>；<a href="https://arxiv.org/abs/2404.07972" title="OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments · Xie, Tianbao, Zhang, Danyang, Chen, Jixuan 等 · 2024/04/11 · 2404.07972">OSWorld</a>。</p></section>
+
 <table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-37">WebArena</a></td><td>自托管网站，多步操作；functional state / answer checks</td><td>浏览器工具与Web状态</td><td>同站数据及reset一致；DOM-only不能替代视觉任务</td></tr>
 <tr><td><a href="index.html#ref-38">VisualWebArena</a></td><td>网页视觉与文字联合任务；状态 / 答案验收</td><td>视觉定位和Web行动</td><td>截图、渲染与工具可见面改变结果</td></tr>
@@ -125,6 +166,8 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 </section>
 <section id="science">
 <h2>科学评测：问答、代码、实验与研究产物</h2>
+<section id="citation-sources-17" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>。</p></section>
+
 <table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-42">SciCode</a></td><td>科学问题到代码；子问题及主问题tests</td><td>科学知识与程序实现</td><td>单程序成功不证明自主科研流程</td></tr>
 <tr><td><a href="index.html#ref-43">LAB-Bench</a></td><td>文献、图表、数据库与生物实验相关题；answer accuracy</td><td>研究知识与资料理解</td><td>主要题目回答，不能替代真实工具和wet lab执行</td></tr>
@@ -137,30 +180,24 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 </tbody></table>
 <p>按“知识回答 → 程序实现 → 实验迭代 → 研究产物”组织留出集更容易定位缺口。成功提交、数值接近、重现论文结论、提出新问题与验证新发现，是不同层次的验收；不要把它们统一写成“科研成功率”。</p>
 <h3>训练后仍保留基础评测</h3>
+<section id="citation-sources-18" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2009.03300" title="Measuring Massive Multitask Language Understanding · Hendrycks, Dan, Burns, Collin, Basart, Steven 等 · 2020/09/07 · 2009.03300">MMLU</a>；<a href="https://arxiv.org/abs/2110.14168" title="Training Verifiers to Solve Math Word Problems · Cobbe, Karl, Kosaraju, Vineet, Bavarian, Mohammad 等 · 2021/10/27 · 2110.14168">GSM8K</a>；<a href="https://arxiv.org/abs/2311.12022" title="GPQA: A Graduate-Level Google-Proof Q&amp;A Benchmark · Rein, David, Hou, Betty Li, Stickland, Asa Cooper 等 · 2023/11/20 · 2311.12022">GPQA</a>。</p></section>
+
 <p><a href="index.html#ref-49">MMLU</a>用于学科知识、<a href="index.html#ref-50">GSM8K</a>用于基础多步数学、<a href="index.html#ref-51">IFEval</a>用于程序可验证的指令遵循、<a href="index.html#ref-52">GPQA</a>用于专家级科学问答。它们适合检查Agent训练是否损伤基础能力，不能作为tool use、long-horizon执行或GUI成功的证据。HLE-Diamond与CritPt等更前沿知识 / 科学题的具体设置见AA表。</p>
 </section>
-<section id="metrics">
-<h2>Pass@1、pass@k、pass^k和成本测量不同东西</h2>
-<table><thead><tr><th>指标</th><th>含义</th><th>必须同时报告</th></tr></thead><tbody>
-<tr><td>pass@1 / mean success</td><td>一次独立尝试成功的比例；多次repeats可以平均估计它</td><td>Tasks、trials、seed、budget与失败分母</td></tr>
-<tr><td>pass@k</td><td>k个样本至少一个通过，oracle可识别成功</td><td>Sample budget、成功判定及是否可部署选择</td></tr>
-<tr><td>pass^k</td><td>k次都成功，衡量重复可靠性</td><td>用户模拟、环境变化与尝试相关性</td></tr>
-<tr><td>Best-of-k / verifier selection</td><td>部署时由verifier或critic选一个候选</td><td>Selector版本、验证成本、误判；不等于oracle pass@k</td></tr>
-<tr><td>Rubric / Elo</td><td>多个标准或成对偏好</td><td>Judge、prompt、anchor、顺序随机化及幻觉gate</td></tr>
+</details>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>SkillsBench：固定 harness 内比较技能与成本</h2>
+<p><a href="https://arxiv.org/html/2602.12670v1">SkillsBench v1，Table 3 与 Appendix Table 13</a>的配对设置比较同模型、同 harness 下无技能与 curated skills；以下不是后来 SkillsBench 1.1 的榜单。成功率为 %，费用为论文估计的美元/次 trial。</p>
+<table><thead><tr><th>Harness / 模型</th><th>无技能成功率</th><th>Curated 成功率</th><th>自生成技能成功率</th><th>无技能→Curated 估计费用</th></tr></thead><tbody>
+<tr><td>Codex / GPT-5.2</td><td>30.6</td><td>44.7</td><td>25.0</td><td>$1.85→$2.07</td></tr>
+<tr><td>Gemini CLI / Gemini 3 Flash</td><td>31.3</td><td>48.7</td><td>未报告</td><td>$0.54→$0.57</td></tr>
 </tbody></table>
-<div class="equation" role="math" aria-label="pass指标的独立采样近似">If independent identical trials have success probability p:
-pass@k = 1 − (1−p)^k; pass^k = p^k
-finite-sample pass@k estimate = 1 − C(n−c,k) / C(n,k)</div>
-<p>公式第一行依赖独立同分布假设；真实Agent尝试共享prompt、工具或故障，通常相关。最后一行适用于n个独立采样中c个成功且n≥k的组合估计。若已全部执行3 repeats再平均success，它仍是pass@1估计，不是pass@3。</p>
-<h3>把正确性、有效性与运行成本拆开</h3>
-<p>固定发布题集的headline应保留全部任务分母；invalid task、infra fail、API error、agent timeout、verifier timeout与policy fail分别列出。另报告有效任务上的conditional success，用来解释环境影响，不能静默删除失败让headline上涨。修订题集后用新版本全量重跑。</p>
-<div class="equation" role="math" aria-label="成功成本统计定义">cost per successful episode = total cost of all attempts / successful episodes
-cost = model input/output + tools + sandbox + verifier + environment build
-paired comparison: same tasks, policy budget, hardware and scoring</div>
-<p>失败尝试也消耗预算；全部失败时该比值无定义，应报告0成功及总成本。Environment build可按明示规则摊销，并保留冷 / 热成本。输入与缓存token、client span与server span、重试和工具等待要去重；同时提供episode P50 / P95、任务加权bootstrap区间与逐领域结果。跨模型cache计费不同，token数不是统一美元或FLOPs。</p>
+<p>Curated skills 提高这两个设置的成功率，单 trial 费用也增加；Codex 的自生成技能则低于无技能。费用统计只覆盖 token 记录完整的 trial 子集，与全体成功率的分母不同，不能直接用费用÷全体成功率当作精确成功成本，也不是截至今日的服务商价格。跨模型差异同时包含 harness、技能和模型因素；版本、重试与成本分母仍按本章指标协议记录。</p>
 </section>
 <section id="selection">
 <h2>待执行：为任务合成选择一组互补留出</h2>
+<section id="citation-sources-21" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
+
 <table><thead><tr><th>训练目标</th><th>核心留出</th><th>补充诊断</th><th>控制项</th></tr></thead><tbody>
 <tr><td>Repo coding</td><td>SWE-bench Verified + 明确split的Pro / Live + DeepSWE</td><td>EvalPlus / BigCodeBench</td><td>Repo / time去污、diff交接、turns及成本</td></tr>
 <tr><td>Terminal / Harbor</td><td>TB 4.1 + HarborIndex固定revision</td><td>CPU-only另表；逐域及adapter parity</td><td>Full与subset分开，verifier修订、trials</td></tr>
@@ -169,7 +206,10 @@ paired comparison: same tasks, policy budget, hardware and scoring</div>
 <tr><td>工具与工作流</td><td>τ² / SkillsBench paired任务；对应AA额外项</td><td>政策合规、重复可靠性及产物rubric</td><td>用户模拟、skill曝光、SQL / artifact oracle</td></tr>
 </tbody></table>
 <p>这是按作者方向制定的评测建议，未执行。资源有限时选一个核心真实场景、一个不同环境迁移集与一组基础保留性评测；每次增补任务都记录版本和不可比项。任务生产回到<a href="s01_task_synthesis.html">第01章</a>，算法归因与异质数据回到<a href="../llm-research-map-2026/s02_agentic_rl.html">Agentic RL</a>。</p>
+<details><summary>pass@k高，为什么部署仍经常失败？</summary><p>它度量存在成功候选，实际系统还要用可用selector识别并交付。误选、相关失败、执行和验证预算都会改变最终结果。</p></details>
+<details><summary>n=5、c=2、k=2为什么估计是0.7，不是0.64？</summary><p>有限样本估计是从5条中不放回抽2条，全失败组合3/10；0.64是将经验p=0.4代入独立重复试验式，两者统计对象不同。</p></details>
 </section>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

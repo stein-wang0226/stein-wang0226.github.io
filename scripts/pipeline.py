@@ -89,6 +89,8 @@ def render_artifact(ctx):
     from reading import decorate
     from views import render_blog, render_home
     from citations import render_citations
+    from course import parent_of, compatibility, decorate_course
+    from mathematics import decorate_math
 
     for asset in ctx.site["assets"]:
         ctx.copy(ctx.root / asset["source"], asset["url"])
@@ -96,12 +98,28 @@ def render_artifact(ctx):
     explicit_assets = {route_path(asset["url"]) for asset in ctx.site["assets"]}
     for asset in sorted((ctx.root / "assets/site").rglob("*")):
         relative = asset.relative_to(ctx.root).as_posix()
-        if asset.is_file() and asset.suffix.lower() in {".css", ".js", ".woff", ".woff2"}:
+        if asset.is_file() and asset.suffix.lower() in {".css", ".js", ".woff", ".woff2", ".txt"}:
             if relative not in explicit_assets:
                 ctx.copy(asset, relative)
     render_academic(ctx)
+    archive_record = ctx.root / "docs/organization-changes-20261115.json"
+    if archive_record.is_file():
+        history = json.loads(archive_record.read_text())
+        links = []
+        for row in history["pages"]:
+            ctx.copy(ctx.root / row["archive"], row["archive"])
+            entry = ctx.by_id[row["id"]]
+            links.append(f'<li><a download href="{ctx.rel("/blog/history/", "/" + row["archive"])}">'
+                         f'{html.escape(entry["title"])}：重编前原稿</a></li>')
+        ctx.page("/blog/history/", "重编前的原稿", '<h1>重编前的原稿</h1>'
+                 '<p>2026年11月15日重编前的源稿逐字保留为文本下载。当前学习内容请从'
+                 '<a href="../#learning-paths">完整学习主线</a>进入。</p><ul>' +
+                 "".join(links) + '</ul>')
     for record in ctx.entries:
         if record["origin"] != "local" or record["status"] == "draft":
+            continue
+        if parent_of(record, ctx.by_id):
+            compatibility(ctx, record)
             continue
         source = ctx.root / record["source"]
         text = source.read_text(encoding="utf-8")
@@ -114,7 +132,9 @@ def render_artifact(ctx):
                     '<body class="site-body">'
                     f'<main class="site-page reading-markdown"><article class="prose">{md(body)}'
                     '</article></main></body></html>')
-        text = decorate(ctx, record, text)
+        text = (decorate_course(ctx, record, text) if record.get("reading_mode") == "longform"
+                else decorate(ctx, record, text))
+        text = decorate_math(ctx, record, text)
         if not isinstance(text, str):
             raise ValueError(f"reading.decorate must return HTML text for {record['id']}")
         ctx.write(record["url"], text)
@@ -142,6 +162,7 @@ def render_artifact(ctx):
             ".html", ".css", ".js", ".json", ".txt", ".xml", ".svg"
         } else copy_artifact_asset(ctx, source, item["from"])
     redirect_paths = {route_path(item["from"]) for item in ctx.redirects["redirects"]}
+    redirect_paths.update(route_path(e["url"]) for e in ctx.entries if parent_of(e, ctx.by_id))
     urls = sorted({ctx.canonical(path) for path in ctx.generated
                    if path.endswith(".html") and path != "404.html" and path not in redirect_paths
                    and not path.startswith(("wyx0226.github.io/", "legacy/"))})

@@ -16,8 +16,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 2,
@@ -31,8 +33,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 3,
@@ -47,8 +51,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 4,
@@ -62,8 +69,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 5,
@@ -77,8 +86,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 6,
@@ -93,8 +104,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 7,
@@ -110,8 +123,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 8,
@@ -120,6 +136,7 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html#frontier-comparison",
         "/agent-data-benchmarks/s01_task_synthesis.html#industrial",
         "/agent-data-benchmarks/s01_task_synthesis.html#routes",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis"
@@ -127,8 +144,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 9,
@@ -144,8 +164,12 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 10,
@@ -160,8 +184,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 11,
@@ -176,8 +202,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 12,
@@ -193,6 +221,7 @@
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
         "/llm-posttraining/s05_frameworks_async.html#partial-rollout",
         "/llm-posttraining/s05_frameworks_async.html#three-policy",
+        "/llm-research-map-2026/#citation-sources-4",
         "/llm-research-map-2026/s01_agent_data_bench.html#distinctions",
         "/llm-research-map-2026/s01_agent_data_bench.html#synthesis",
         "/llm-research-map-2026/s02_agentic_rl.html#asynchrony",
@@ -209,8 +238,21 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 13,
@@ -227,8 +269,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 14,
@@ -243,8 +288,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 15,
@@ -262,8 +310,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 16,
@@ -278,8 +329,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 17,
@@ -296,8 +349,12 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 18,
@@ -312,8 +369,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 19,
@@ -328,8 +388,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 20,
@@ -344,8 +406,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 21,
@@ -360,8 +425,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s01_task_synthesis.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 22,
@@ -376,8 +444,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 23,
@@ -391,8 +461,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 24,
@@ -407,8 +479,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 25,
@@ -422,8 +496,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 26,
@@ -437,8 +513,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 27,
@@ -453,8 +531,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 28,
@@ -463,16 +543,30 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-14",
         "/agent-data-benchmarks/s02_benchmark_map.html#classics",
-        "/agentic-rl-guide.html#citation-sources-10",
-        "/agentic-rl-guide.html#citation-sources-35",
-        "/agentic-rl-guide.html#citation-sources-4"
+        "/agent-data-benchmarks/s02_benchmark_map.html#metrics",
+        "/agent-data-benchmarks/s04_cluster_training_evaluation.html#citation-sources-6",
+        "/harbor-framework-guide/#citation-sources-32",
+        "/llm-posttraining/s06_task_cases_experiments.html#citation-sources-9"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agent-harness-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s04_cluster_training_evaluation.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s02_discrete.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s03_block.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s09_commercial.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 29,
@@ -481,13 +575,16 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-14",
         "/agent-data-benchmarks/s02_benchmark_map.html#classics"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 30,
@@ -501,8 +598,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 31,
@@ -516,8 +615,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 32,
@@ -531,8 +632,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 33,
@@ -541,13 +644,21 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
-        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-15",
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-17",
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
+        "/harbor-framework-guide/#citation-sources-30",
+        "/harbor-framework-guide/#citation-sources-31"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 34,
@@ -556,13 +667,17 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-15",
         "/agent-data-benchmarks/s02_benchmark_map.html#classics"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 35,
@@ -576,8 +691,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 36,
@@ -592,8 +709,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 37,
@@ -602,15 +722,19 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
-        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
-        "/agentic-rl-guide.html#citation-sources-30",
-        "/agentic-rl-guide.html#citation-sources-34"
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-16",
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/vlm-knowledge-interview/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 38,
@@ -619,13 +743,16 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-16",
         "/agent-data-benchmarks/s02_benchmark_map.html#classics"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 39,
@@ -634,15 +761,23 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-16",
         "/agent-data-benchmarks/s02_benchmark_map.html#classics",
-        "/agentic-rl-guide.html#citation-sources-30",
-        "/agentic-rl-guide.html#citation-sources-34"
+        "/llm-frontier-2026.html#citation-sources-14",
+        "/llm-frontier-2026.html#citation-sources-24",
+        "/llm-frontier-2026.html#citation-sources-4"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/vlm-knowledge-interview/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 40,
@@ -657,8 +792,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 41,
@@ -672,8 +810,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 42,
@@ -687,8 +827,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 43,
@@ -702,8 +844,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 44,
@@ -717,8 +861,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 45,
@@ -732,8 +878,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 46,
@@ -747,8 +895,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 47,
@@ -762,8 +912,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 48,
@@ -778,8 +930,11 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 49,
@@ -788,13 +943,26 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
-        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-18",
+        "/agent-data-benchmarks/s02_benchmark_map.html#science",
+        "/llm-frontier-2026.html#citation-sources-20",
+        "/llm-frontier-2026.html#citation-sources-3"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s02_discrete.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s03_block.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s04_continuous.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s06_scaling.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s09_commercial.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s11_loop_transformer.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 50,
@@ -803,13 +971,22 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-18",
         "/agent-data-benchmarks/s02_benchmark_map.html#science"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s02_discrete.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s06_scaling.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s08_elbo_rl.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s09_commercial.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s11_loop_transformer.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 51,
@@ -823,8 +1000,10 @@
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 52,
@@ -833,13 +1012,26 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
-        "/agent-data-benchmarks/s02_benchmark_map.html#science"
+        "/agent-data-benchmarks/s02_benchmark_map.html#citation-sources-18",
+        "/agent-data-benchmarks/s02_benchmark_map.html#science",
+        "/harbor-framework-guide/#citation-sources-17",
+        "/llm-frontier-2026.html#citation-sources-20",
+        "/llm-frontier-2026.html#citation-sources-3",
+        "/llm-frontier-2026.html#citation-sources-5"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s03_block.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s06_scaling.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s09_commercial.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     }
   ]
 }

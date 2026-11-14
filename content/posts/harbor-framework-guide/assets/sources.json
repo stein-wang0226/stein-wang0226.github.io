@@ -17,8 +17,10 @@
       "used_in": [
         "/harbor-framework-guide/#progress"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 2,
@@ -29,8 +31,10 @@
       "used_in": [
         "/harbor-framework-guide/#architecture"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 3,
@@ -41,8 +45,10 @@
       "used_in": [
         "/harbor-framework-guide/#progress"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 4,
@@ -57,8 +63,10 @@
         "/harbor-framework-guide/#trajectory",
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 5,
@@ -71,8 +79,10 @@
         "/harbor-framework-guide/#team-map",
         "/harbor-framework-guide/#terminal"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 6,
@@ -85,8 +95,11 @@
         "/harbor-framework-guide/#summary",
         "/llm-frontier-2026.html#sources"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 7,
@@ -99,8 +112,10 @@
         "/harbor-framework-guide/#summary",
         "/harbor-framework-guide/#team-map"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 8,
@@ -113,8 +128,10 @@
         "/harbor-framework-guide/#summary",
         "/harbor-framework-guide/#team-map"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 9,
@@ -126,8 +143,10 @@
         "/harbor-framework-guide/#practice",
         "/harbor-framework-guide/#trajectory"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 10,
@@ -139,8 +158,10 @@
         "/harbor-framework-guide/#team-map",
         "/harbor-framework-guide/#terminal"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 11,
@@ -152,8 +173,10 @@
         "/harbor-framework-guide/#science",
         "/harbor-framework-guide/#team-map"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 12,
@@ -164,8 +187,10 @@
       "used_in": [
         "/harbor-framework-guide/#index"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 13,
@@ -179,8 +204,12 @@
         "/harbor-framework-guide/#team-map",
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 14,
@@ -191,8 +220,10 @@
       "used_in": [
         "/harbor-framework-guide/#interaction"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 15,
@@ -203,8 +234,10 @@
       "used_in": [
         "/harbor-framework-guide/#progress"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 16,
@@ -218,8 +251,11 @@
         "/harbor-framework-guide/#team-map",
         "/harbor-framework-guide/#terminal"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 17,
@@ -231,8 +267,10 @@
         "/harbor-framework-guide/#summary",
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 18,
@@ -247,8 +285,11 @@
         "/harbor-framework-guide/#science",
         "/harbor-framework-guide/#team-map"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt",
+        "/assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 19,
@@ -260,8 +301,10 @@
         "/harbor-framework-guide/#challenges",
         "/harbor-framework-guide/#team-map"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 20,
@@ -271,7 +314,7 @@
       "accessed": "2026-11-14",
       "used_in": [],
       "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 21,
@@ -282,8 +325,10 @@
       "used_in": [
         "/harbor-framework-guide/#architecture"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 22,
@@ -294,8 +339,10 @@
       "used_in": [
         "/harbor-framework-guide/#architecture"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 23,
@@ -306,8 +353,10 @@
       "used_in": [
         "/harbor-framework-guide/#architecture"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 24,
@@ -318,8 +367,10 @@
       "used_in": [
         "/harbor-framework-guide/#architecture"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 25,
@@ -330,8 +381,10 @@
       "used_in": [
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 26,
@@ -342,8 +395,10 @@
       "used_in": [
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 27,
@@ -354,8 +409,10 @@
       "used_in": [
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 28,
@@ -366,8 +423,10 @@
       "used_in": [
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 29,
@@ -378,8 +437,10 @@
       "used_in": [
         "/harbor-framework-guide/#trajectory"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 30,
@@ -390,8 +451,10 @@
       "used_in": [
         "/harbor-framework-guide/#trajectory"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 31,
@@ -402,8 +465,10 @@
       "used_in": [
         "/harbor-framework-guide/#progress"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 32,
@@ -414,8 +479,10 @@
       "used_in": [
         "/harbor-framework-guide/#interaction"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 33,
@@ -426,8 +493,10 @@
       "used_in": [
         "/harbor-framework-guide/#interaction"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 34,
@@ -438,8 +507,10 @@
       "used_in": [
         "/harbor-framework-guide/#interaction"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 35,
@@ -450,8 +521,10 @@
       "used_in": [
         "/harbor-framework-guide/#interaction"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 36,
@@ -464,8 +537,10 @@
         "/harbor-framework-guide/#science",
         "/harbor-framework-guide/#team-map"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 37,
@@ -476,8 +551,10 @@
       "used_in": [
         "/harbor-framework-guide/#science"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 38,
@@ -489,8 +566,10 @@
         "/harbor-framework-guide/#index",
         "/harbor-framework-guide/#team-map"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 39,
@@ -501,8 +580,10 @@
       "used_in": [
         "/harbor-framework-guide/#architecture"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 40,
@@ -513,8 +594,10 @@
       "used_in": [
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 41,
@@ -525,8 +608,10 @@
       "used_in": [
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 42,
@@ -537,8 +622,10 @@
       "used_in": [
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 43,
@@ -549,8 +636,10 @@
       "used_in": [
         "/harbor-framework-guide/#verification"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 44,
@@ -561,8 +650,10 @@
       "used_in": [
         "/harbor-framework-guide/#index"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 45,
@@ -573,8 +664,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 46,
@@ -585,8 +678,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 47,
@@ -597,8 +692,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 48,
@@ -609,8 +706,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 49,
@@ -621,8 +720,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 50,
@@ -633,8 +734,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 51,
@@ -645,8 +748,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 52,
@@ -657,8 +762,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 53,
@@ -669,8 +776,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 54,
@@ -681,8 +790,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     },
     {
       "id": 55,
@@ -693,8 +804,10 @@
       "used_in": [
         "/harbor-framework-guide/#scalingx"
       ],
-      "historical_used_in": [],
-      "usage_as_of": "2026-11-14"
+      "historical_used_in": [
+        "/assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt"
+      ],
+      "usage_as_of": "2026-11-15"
     }
   ],
   "source_excerpts": [

@@ -8,8 +8,12 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
 <section id="taxonomy">
 <h2>先分开四条轴：数据、反馈、目标与参数更新方式</h2>
+<!-- READING:RL-DIAGRAM:6 -->
+<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>；<a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>。</p></section>
+
 <p class="lead">“有好答案”不自动决定做哪种后训练。完整动作示范可以做 SFT；同题好坏候选可以做偏好优化；当前策略和 verifier 可以构成 RL；教师条件分布可以构成 OPD。LoRA、全参数和量化则回答更新哪些参数、如何存储，属于另一条轴。</p>
 <table>
 <thead><tr><th>方法</th><th>状态与反馈来源</th><th>目标</th><th>主要适用条件</th></tr></thead>
@@ -24,11 +28,31 @@
 <div class="callout"><strong>RFT 必须写全名。</strong>拒绝采样微调先筛数据再监督；OpenAI 的 Reinforcement Fine-Tuning 指 grader 驱动的强化训练。不能因为两者都会“采样和评分”，就把后续优化目标混为一谈。<a href="index.html#ref-17">[17]</a> <a href="index.html#ref-18">[18]</a></div>
 </section>
 <section id="sft-objective">
+<figure class="mechanism-map"><figcaption>Trace SFT：哪些 token 被预测，哪些只提供条件</figcaption><ol class="mechanism-chain">
+<li><b>验证后的示范轨迹</b><small>用户题面、assistant 动作、工具观察</small></li><li><b>模板与角色 mask</b><small>观察作条件；选择 assistant 预测位置</small></li><li><b>next-token CE</b><small>只在有效监督位置比较示范 token</small></li><li><b>独立任务执行</b><small>检查工具协议、恢复能力与最终成功</small></li>
+</ol><p class="mechanism-return">↶ 失败与恢复路径可重新验证并纳入示范；输入 token 数不等于监督 token 数。</p></figure>
 <h2>SFT：目标 token、条件历史和样本权重</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
+
 <p>令 <code>hᵢ</code> 是预测第 i 个 token 时的历史，<code>mᵢ</code> 是目标 mask。对 Agent，通常学习 assistant 的动作、参数、解释和结束标记；system / user / tool 内容作为条件历史。具体角色边界由真实 chat template 决定。</p>
-<div class="equation" role="math" aria-label="监督损失">L_token = − Σₙ Σᵢ mₙᵢ log πθ(aₙᵢ | hₙᵢ) / Σₙ Σᵢ mₙᵢ
-L_episode = − (1/N) Σₙ [Σᵢ mₙᵢ log πθ(aₙᵢ | hₙᵢ) / Σᵢ mₙᵢ]</div>
+<p>teacher forcing把示范前缀固定，条件概率连乘取负log后变成逐token交叉熵。令 \(N\) 为轨迹数，\(m_{ni}\in\{0,1\}\) 为监督mask，\(N_n\) 为第n条轨迹的有效目标数；仅对 \(N_n&gt;0\) 的轨迹取平均：</p>
+<div class="reading-math" role="math" aria-label="监督损失">\[
+\begin{aligned}
+N_n&=\sum_i m_{ni},\\
+\ell_{ni}&=-\log\pi_\theta(a_{ni}\mid h_{ni}),\\
+L_{\rm token}&=\frac{\sum_n\sum_i m_{ni}\ell_{ni}}{\sum_n N_n},\\
+L_{\rm episode}&=\frac1N\sum_n\frac{\sum_i m_{ni}\ell_{ni}}{N_n}.
+\end{aligned}
+\]</div>
 <p>两个分母并不等价。token-mean 使较长的目标轨迹拥有更多总权重；episode-mean 给每条 episode 相同权重，单 token 的权重随长度下降。长恢复链路与短成功路径混合时，要报告实际采用哪一种，不能只写“assistant-only SFT”。</p>
+<p><strong>mask算例：</strong>输入为“题面 → 工具动作 → 观察 → 修复动作”。两个assistant目标token的正确概率为0.5、0.25，则token平均损失为 \(-(\log0.5+\log0.25)/2\approx1.0397\)。题面和观察不进入分母，却仍被后续动作Attention读取。</p>
+<div class="reading-math" role="math" aria-label="mask对logits的直接梯度">\[
+p_v=\operatorname{softmax}(z)_v,\qquad
+\frac{\partial L}{\partial z_{ni,v}}
+=\frac{m_{ni}}{\sum_{n',i'}m_{n'i'}}
+\left(p_{ni,v}-\mathbf1[v=a_{ni}]\right).
+\]</div>
+<p>mask=0使该预测位置的<strong>直接CE梯度</strong>为零；观察的表示仍可能通过后续有监督位置的计算接收梯度。因此不能把mask解释成删除上下文、断开Attention或冻结对应embedding。</p>
 <figure><div class="mask-grid" aria-label="工具调用训练片段与监督目标">
 <div><b>任务与 schema · mask 0</b>“修复空输入崩溃”；工具说明、文件内容、约束。</div>
 <div class="target"><b>Assistant · mask 1</b>读取实现、运行测试、生成补丁和最终回复。</div>
@@ -36,6 +60,8 @@ L_episode = − (1/N) Σₙ [Σᵢ mₙᵢ log πθ(aₙᵢ | hₙᵢ) / Σᵢ m
 </div><figcaption>mask=0 屏蔽该位置的预测损失，工具观察仍通过 attention 影响后续动作；不等于删除观察或切断全部梯度。</figcaption></figure>
 <p>离线训练使用示范前缀，即 teacher forcing；推理使用学生自己的动作历史。学生一个错误工具参数就可能进入示范没有覆盖的状态，随后持续偏离。这是补恢复数据、在线 RL 和 OPD 的共同动机，但三者提供的目标不同。</p>
 <h3>实现检查：模板、打包和截断</h3>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>。</p></section>
+
 <p>TRL 的 <code>assistant_only_loss</code> 需要模板提供可识别的 generation tags；开关本身不能纠正模板错误。Packing 还要检查不同样本 attention 的隔离语义，不能仅看 padding 节省。截断若切掉最后动作或结束标记，会把“未完成”训练成常见模式。<a href="index.html#ref-49">[49]</a></p>
 <pre><code># 教学检查，不是任意模型可直接运行的完整 recipe
 decode(input_ids)                     # 看清真实模板与工具调用
@@ -48,6 +74,8 @@ audit_truncation_by_role_and_task_family()</code></pre>
 </section>
 <section id="recovery">
 <h2>恢复训练：保留学生失败历史，监督可靠纠正</h2>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 <p>教学任务：函数 <code>mean([])</code> 应抛出明确的 <code>ValueError</code>，非空列表保持原行为。学生第一次只在调用方捕获除零，工具回报单元测试仍失败；教师读真实错误后在函数入口处理空输入，再运行回归。训练要区分“失败状态的上下文价值”和“失败动作是否值得模仿”。</p>
 <table>
 <thead><tr><th>轨迹段</th><th>教学 mask</th><th>原因</th></tr></thead>
@@ -69,17 +97,40 @@ audit_truncation_by_role_and_task_family()</code></pre>
 <div class="stage"><b>筛选与配额</b><small>去重、来源族与难度<br>覆盖成功和恢复</small></div>
 <div class="stage"><b>静态 SFT</b><small>验证动作交叉熵<br>新的留出集验收</small></div>
 </div><figcaption>DeepSeek-R1 在推理 RL 后构建拒绝采样数据，再做包含其他能力的 SFT；这体现循环，不是所有模型统一的阶段顺序。<a href="index.html#ref-18">[18]</a></figcaption></figure>
-<div class="equation" role="math" aria-label="拒绝采样后的任务分布">若每题尝试 K 次、单次通过率为 pₓ：
-至少一个可保留解法的概率 = 1 − (1 − pₓ)^K
-若保留全部成功轨迹：期望条数 = K pₓ</div>
+<div class="reading-math" role="math" aria-label="拒绝采样后的任务分布">\[
+P(\text{至少一个成功}\mid x)=1-(1-p_x)^K,\qquad
+\mathbb E[\text{保留全部成功的条数}\mid x]=Kp_x.
+\]</div>
+<p>独立尝试假设下，\(K=4\)，容易题 \(p_x=0.8\) 约99.84%有成功候选，难题 \(p_x=0.1\) 只有34.39%。筛选后的训练分布因此更偏容易题；增加候选预算不等于覆盖已经均衡。</p>
 <p>同样的 K 会让容易题贡献更多训练条数，难题可能完全消失。只保留每题一条减少条数偏移，却不能救回零成功题；补教师、调整难度、增加预算或放弃任务需要分别记录。弱 verifier 还会筛进投机解法。</p>
 <p>报告候选总 token、执行与判分时间、通过率、去重率和最终监督 token。同样大小的 SFT 数据可能消耗完全不同的搜索算力；与 RL 比较时，仅对齐保留下来的数据量会隐藏差异。</p>
 </section>
 <section id="preference">
 <h2>偏好优化：从 DPO 到无需成对标签的 KTO</h2>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 <p>设 <code>y+</code> 与 <code>y−</code> 是同一任务的偏好轨迹。DPO 将相对于参考策略的对数概率差转成偏好分类，标准离线版本没有每步环境探索。<a href="index.html#ref-12">[12]</a></p>
-<div class="equation" role="math" aria-label="DPO损失">L_DPO = − log σ(β [log πθ(y+|x)/πref(y+|x)
-                         − log πθ(y−|x)/πref(y−|x)])</div>
+<h3 id="dpo-derivation">从KL正则最优策略到偏好分类</h3>
+<p>先对同一prompt \(x\) 的文本候选分布推导。简记 \(p_y=\pi(y\mid x)\)、\(q_y=\pi_{\rm ref}(y\mid x)\)、\(r_y=r(x,y)\)。参考策略在候选支持上概率非零，\(\beta&gt;0\) 控制KL正则；优化期望reward并约束 \(\sum_y p_y=1\)：</p>
+<div class="reading-math" role="math" aria-label="KL正则最优策略">\[
+\begin{aligned}
+\max_p\ &\sum_y p_y r_y-\beta\sum_y p_y\log\frac{p_y}{q_y},\\
+0&=r_y-\beta\left(\log\frac{p_y^*}{q_y}+1\right)+\eta,\\
+p_y^*&=\frac{q_y\exp(r_y/\beta)}{Z(x)},\\
+r_y&=\beta\log\frac{p_y^*}{q_y}+\beta\log Z(x).
+\end{aligned}
+\]</div>
+<p>第二行来自拉格朗日乘子的一阶条件；\(Z(x)\) 将候选概率归一化。Bradley–Terry模型用 \(\sigma(r(x,y^+)-r(x,y^-))\) 表示偏好概率。两候选的prompt相同，\(\beta\log Z(x)\) 相减消掉，再以可训练 \(\pi_\theta\) 参数化隐式reward：</p>
+<div class="reading-math" role="math" aria-label="DPO损失">\[
+\begin{aligned}
+u_\pm&=\log\frac{\pi_\theta(y^\pm\mid x)}{\pi_{\rm ref}(y^\pm\mid x)},\\
+z&=\beta(u_+-u_-),\\
+L_{\rm DPO}&=-\log\sigma(z),\\
+\frac{\partial L}{\partial z}&=\sigma(z)-1.
+\end{aligned}
+\]</div>
+<p><strong>配对算例：</strong>参考对两候选均为0.5，当前策略为0.6/0.4，\(\beta=1\)。则 \(z=\log1.5\approx0.4055\)，偏好概率0.6，损失约0.5108，小于两者相等时的0.6931。DPO提高<strong>相对偏好差</strong>；这不保证chosen的绝对概率单调上升，也不证明能探索未知状态。</p>
+<p>推导依赖偏好模型、参考支持和数据覆盖；\(\beta\) 的含义要与实现约定一致。交互Agent沿历史累加可控动作log-prob时，应明确采用的轨迹代理目标与环境协议，不能把工具观察当成模型采样token。</p>
 <p>教学 chosen 是函数入口检查空输入且回归通过；rejected 是直接把所有异常吞掉、返回 0。标签应反映任务约束，而非回复更礼貌。Agent 的 <code>log π(y|x)</code> 只累计策略生成动作的概率，工具输出作为条件；不能把环境观察也当作模型选择。</p>
 <table>
 <thead><tr><th>方法</th><th>反馈与关键机制</th><th>参考模型</th><th>使用时的边界</th></tr></thead>
@@ -90,18 +141,28 @@ audit_truncation_by_role_and_task_family()</code></pre>
 <tr><td>KTO <a href="index.html#ref-15">[15]</a></td><td>非成对 desirable / undesirable 标签，参考 KL baseline</td><td>需要</td><td>好坏样本比例和权重需要校准，不等于任意二值任务 reward 的在线 RL</td></tr>
 </tbody>
 </table>
-<div class="equation" role="math" aria-label="SimPO概念目标">rθ(x,y) = β / |y| · log πθ(y|x)
-L_SimPO = − log σ(rθ(x,y+) − rθ(x,y−) − γ)</div>
+<div class="reading-math" role="math" aria-label="SimPO概念目标">\[
+\begin{aligned}
+r_\theta(x,y)&=\frac{\beta}{|y|}\log\pi_\theta(y\mid x),\\
+\Delta r_\theta&=r_\theta(x,y^+)-r_\theta(x,y^-),\\
+L_{\rm SimPO}&=-\log\sigma(\Delta r_\theta-\gamma).
+\end{aligned}
+\]</div>
 <p>新策略遇到静态偏好对没有出现的环境状态时，仍可能无法恢复。在线收集偏好可更新数据覆盖，但属于额外过程；不能由此认为离线 DPO 已完成 PPO / GRPO 的探索功能。偏好、执行正确性和成本最好分别报告。</p>
+<div class="course-review"><p><strong>追问：DPO的归一化常数为什么消失？</strong>同一prompt的两候选共享 \(Z(x)\)，reward相减时抵消；不同prompt不能这样相减。</p><p><strong>追问：mask=0是否没有梯度？</strong>该预测位置直接CE为零，但作为后续条件的表示仍可能收到梯度。</p></div>
 </section>
 <section id="reinforcement-rft">
 <h2>强化 RFT：grader 必须对应任务意义</h2>
+<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
 <p>OpenAI Cookbook 用生命科学描述生成短答案，讨论 exact、fuzzy 和 model graders。这个案例说明 grader 的可用形态，不证明字符串相似就能判断科学正确；模型 grader 需要留出标注校准，不能只在训练答案上验收。<a href="index.html#ref-17">[17]</a></p>
 <p>教学代码任务更适合执行测试与变更限制：先判环境是否正常，再判补丁是否正确；错误类型、超时与基础设施故障分别记录。强化 RFT 是反馈循环的称呼，具体采用何种 actor/critic、ratio 或 baseline，要由实现文档说明，不从 API 命名推断。</p>
 <p>RLHF、RLVR 主要区分反馈来源；PPO、GRPO 主要区分优化目标；异步训练描述执行系统。把它们分开，才能判断失败应该改标签、补数据、换算法，还是修运行环境。</p>
 </section>
 <section id="industry">
 <h2 id="reading-section-8">实际后训练流程：不同数据与方法如何组合</h2>
+<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
 <table>
 <thead><tr><th>公开报告</th><th>明确披露的路线</th><th>读者应提取的机制</th></tr></thead>
 <tbody>
@@ -116,11 +177,25 @@ L_SimPO = − log σ(rθ(x,y+) − rθ(x,y−) − γ)</div>
 </table>
 <p>表中只总结披露内容。报告最终分数同时受起始模型、任务、推理预算和 harness 影响，不能证明某阶段单独带来多少增益，也不能推断未公开配比。后续章把这些路线分解成可以单独比较的实验变量。</p>
 </section>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>偏好优化与恢复训练：收益、退化与评测边界</h2>
+<p><a href="https://arxiv.org/html/2405.14734v2">SimPO v2，Table 4 与 Appendix Table 9</a>在 Llama-3-Instruct-8B 设置下报告如下结果（%）。同论文内比较能够看到权衡；不同方法的训练超参数并非完全相同，不能把分数差全部归因于损失函数。</p>
+<table><thead><tr><th>方法</th><th>AlpacaEval 2 LC</th><th>Arena-Hard</th><th>GSM8K 8-shot</th></tr></thead><tbody>
+<tr><td>SFT</td><td>26.0</td><td>22.3</td><td>68.69</td></tr>
+<tr><td>DPO</td><td>40.3</td><td>32.6</td><td>49.81</td></tr>
+<tr><td>KTO</td><td>33.1</td><td>26.4</td><td>57.01</td></tr>
+<tr><td>ORPO</td><td>28.5</td><td>25.8</td><td>64.59</td></tr>
+<tr><td>SimPO</td><td>44.7</td><td>33.8</td><td>50.72</td></tr>
+</tbody></table>
+<p>SimPO 的偏好分数更高，但数学保留能力弱于这里的 SFT；“不需要 reference model”是机制上的资源差异，不能替代峰值显存或训练 FLOPs 实测。</p>
+<p>更近期的<a href="https://arxiv.org/html/2610.18484v1">ReTerm v1，Table 4</a>在作者自己的 Qwen3.5-9B / Terminal-Bench 2.0 harness 中报告 Base 20.2、SFT 25.8、GRPO 28.0、ReTerm 34.8（成功率，%）。它为恢复轨迹训练提供了对照证据，但并非 Terminal-Bench 4.0 的最新榜单，也未在该表提供同成功率的全尝试成本。两组实验不能合并排名。</p>
+</section>
 <section id="handoff">
 <h2>进入 RL 或 OPD 前应交付什么</h2>
 <p>交付 checkpoint、tokenizer、template、工具 schema、训练谱系、数据来源族和独立评测。先确认策略能执行动作、正确使用工具观察、按证据结束；否则大量全失败组可能只反映协议尚未学会。</p>
 <p>下一步读<a href="s02_rl_algorithms.html">RL 目标</a>；若已具备可靠教师，读<a href="s03_opd_self_distillation.html">OPD 与自蒸馏</a>。三类完整任务与预算对照在<a href="s06_task_cases_experiments.html">第六章</a>。</p>
 </section>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

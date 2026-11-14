@@ -3,25 +3,34 @@
 <title>Agent 规划、搜索与推理预算</title>
 <meta name="description" content="ReAct、计划执行、反思、BoN/beam/MCTS、过程与结果验证，分析工具环境分支、预算分配、停止与恢复。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>规划与搜索：扩展、验证与回退</figcaption><ol class="mechanism-chain"><li><b>状态与剩余预算</b><small>目标、工具状态、token / 时间上限</small></li><li><b>生成候选下一步</b><small>单路径、分支或子目标</small></li><li><b>执行 / 验证 / 评分</b><small>真实环境与近似模拟分开记录</small></li><li><b>选择、回退或停止</b><small>保存可恢复状态；依据证据继续</small></li></ol><p class="mechanism-return">↶ 新状态进入下一次决策；多分支收益要与相同总预算的基线比较。</p></figure>
 <section id="overview"><p class="eyebrow">Planning &amp; test-time compute · 2026-11-14</p><h2>规划是选择下一步，搜索是分配备选路径的计算</h2>
 <p class="lead">长程Agent需要在信息不完整时行动。计划给出依赖与检查点，工具观察更新状态，搜索给不同方案机会，verifier提供筛选依据。更多token或分支只有在增加有效信息、修复关键错误或找到更好的方案时才有价值。</p>
-<p>先读<a href="../agent-harness-guide.html#codex-loop">Harness执行循环</a>及<a href="s01_rag_retrieval.html">证据检索</a>。本章讨论策略，不重写Codex的上下文/换窗实现。动作权限和非可信反馈见<a href="s03_trust_safety.html">信任边界</a>。</p>
-<figure><div class="flow"><div class="stage"><b>目标与状态</b><small>合同、已知证据<br>环境与未决问题</small></div><div class="stage"><b>候选下一步</b><small>查证、计算、分支<br>依赖与预期收益</small></div><div class="stage"><b>执行与观察</b><small>隔离的工具环境<br>artifact、exit与反馈</small></div><div class="stage"><b>检查与重规划</b><small>验证、剩余预算<br>继续 / 回退 / 停止</small></div></div><figcaption>重复循环中，每条分支同时具有模型状态和外部环境状态。文字计划不是执行证据。</figcaption></figure>
+<p><strong>两个状态一起更新：</strong>模型的已知信息、工具环境的真实状态。文字计划没有执行证据；分支和恢复必须保留两者。</p>
 </section>
 <section id="strategies"><h2>ReAct、计划执行与反思的分工</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.03629" title="ReAct: Synergizing Reasoning and Acting in Language Models · Yao, Shunyu, Zhao, Jeffrey, Yu, Dian 等 · 2022/10/06 · 2210.03629">ReAct</a>；<a href="https://arxiv.org/abs/2303.11366" title="Reflexion: Language Agents with Verbal Reinforcement Learning · Shinn, Noah, Cassano, Federico, Berman, Edward 等 · 2023/03/20 · 2303.11366">Reflexion</a>。</p></section>
+
 <table><thead><tr><th>策略</th><th>控制方式</th><th>适用与失败</th></tr></thead><tbody>
 <tr><td>ReAct</td><td>reasoning/action/observation交替，根据反馈选择行动</td><td>适合未知环境；可能重复工具、局部贪心、被观察中的注入带偏</td></tr>
 <tr><td>Plan-then-execute</td><td>先列依赖与检查点，再逐项执行</td><td>已知流程便于审阅；错误前提会污染整条计划，必须允许受控重规划</td></tr>
 <tr><td>反思 / Reflexion</td><td>根据失败与反馈生成经验，再尝试</td><td>文本反思不等于参数更新；重复生成理由不能代替新的验证证据</td></tr>
 <tr><td>分层控制</td><td>planner给子目标，executor操作，verifier检查</td><td>职责清晰但接口需定义；多个角色可能共享同一错误来源</td></tr>
 </tbody></table>
-<p>ReAct强调推理与行动协同，Reflexion强调由反馈形成语言经验；原始任务条件见<a href="#ref-react">[1–2]</a>。不是所有Agent都需要展示自由文本思维；工程可记录简短计划、动作理由、输入/输出与检查结果，在不暴露内部思维的情况下保留可审计过程。</p>
-<p>科学案例的计划应把“确认raw count与配对 → 固定design/contrast → 分析 → 输出schema → 独立验收”设成依赖图。未确认count层就跑DESeq2，再用更多分支比较结果，通常只是扩大错误。未知来源冲突是阻塞条件；可以完成不依赖该冲突的审计材料。</p>
+<p><strong>记录可审计对象：</strong>简短计划、动作理由、输入/输出和检查结果即可。Reflexion中的语言经验更新不等于梯度更新。</p>
+<figure class="mechanism-map"><figcaption>分析计划的依赖与回退</figcaption><ol class="mechanism-chain"><li><b>核对count与配对</b><small>失败 → 补来源审计，暂停依赖计算</small></li><li><b>固定design / contrast</b><small>失败 → 修设计，不能靠更多采样修复不可识别性</small></li><li><b>计算与输出</b><small>工具失败 → 从检查点修环境或重试</small></li><li><b>独立验收</b><small>产物不合格 → 定位列、方向或数值问题</small></li></ol></figure>
 </section>
 <section id="search"><h2>BoN、beam与MCTS：候选、评分与展开对象不同</h2>
-<div class="equation" role="math" aria-label="候选成功率与MCTS选择">理想独立采样、有完美oracle时：P(至少一条成功) = 1−(1−p)^N
-实际部署：只输出由可用selector选择的一条；相关采样与评分误差改变收益
-UCT示意：选择 argmaxa [Q(s,a)+c√(ln N(s)/N(s,a))]</div>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.10601" title="Tree of Thoughts: Deliberate Problem Solving with Large Language Models · Yao, Shunyu, Yu, Dian, Zhao, Jeffrey 等 · 2023/05/17 · 2305.10601">Tree of Thoughts</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>；<a href="https://www.cs.utexas.edu/~shivaram/readings/b2hd-KocsisSzepesvari2006.html" title="MCTS / UCT · 官方文档 / 原始出版页">MCTS / UCT</a>。</p></section>
+
+<h3>独立采样的收益：先推存在，再看选择</h3>
+<p>教学假设每条候选独立、单条成功概率均为\(p\)。全部失败需N次失败同时发生，因此：</p>
+<div class="reading-math">\[
+P(\text{全部失败})=(1-p)^N,\qquad
+P(\text{至少一条成功})=1-(1-p)^N.
+\]</div>
+<p>取\(p=0.2,N=4\)，候选集中有成功的概率为\(1-0.8^4=0.5904\)。若有成功时selector只以0.8概率选对，实际交付成功为\(0.5904\times0.8=0.47232\)。这是明确假设的算例，<strong>pass@N是存在性，Best-of-N部署还要测选择器。</strong>共享错误前提会使独立假设失效。</p>
 <p>Best-of-N生成完整候选再选一条；beam维护有限个高分中间前缀；MCTS在部分状态上选择、展开、模拟和回传价值。Tree of Thoughts提供离散thought搜索框架，但自然语言“状态”如何映射到可执行环境，要由系统另行定义。<a href="#ref-tot">[3]</a></p>
 <table><thead><tr><th>方式</th><th>计算花在哪里</th><th>必须评估</th></tr></thead><tbody>
 <tr><td>BoN</td><td>N条完整生成/执行与最终选择</td><td>样本相关、selector错误、所有失败成本；oracle pass@N不是部署准确率</td></tr>
@@ -29,12 +38,21 @@ UCT示意：选择 argmaxa [Q(s,a)+c√(ln N(s)/N(s,a))]</div>
 <tr><td>MCTS</td><td>树访问、rollout、value/verifier</td><td>状态快照、价值校准、探索常数、重复状态和模拟成本</td></tr>
 <tr><td>顺序修订</td><td>基于反馈改一条方案</td><td>反馈是否独立可靠；修订是否引入新错误和更多失败操作</td></tr>
 </tbody></table>
+<h3>UCT：利用当前价值，也给少访问分支机会</h3>
+<div class="reading-math">\[
+a^*=\arg\max_a\left[
+Q(s,a)+c\sqrt{\frac{\log N(s)}{N(s,a)}}\right].
+\]</div>
+<p>\(Q\)是已访问回报的均值，\(N(s)\)是父节点访问次数，\(N(s,a)\)是分支访问次数，\(c\)控制探索，回报尺度变化需重调。未访问动作先探索或定义为无限探索分，不能直接除以0。</p>
+<p><strong>教学算例：</strong>父节点16次；A访问8次、均值0.7，B访问2次、均值0.5，取\(c=0.5\)。A得\(0.7+0.5\sqrt{\log16/8}\approx0.994\)，B得\(0.5+0.5\sqrt{\log16/2}\approx1.089\)，本次选择B探索。一次新回报会更新均值并向父节点回传；过程评分有偏时，UCT并不能把它变成真值。</p>
 <p>二值科学验收难以为每个中间节点打分。过程信号可检查合法count、列对齐、design秩、输出列与工具exit，但这些局部通过不保证最终统计有效。用测试集verifier反复挑选候选，也会把测试变成推理oracle；需要公开的可用反馈与隐藏终评分开。</p>
 <details><summary>pass@k估计和真正选出正确答案之间有什么区别</summary>
-<p>在n个可交换采样中有c个成功，经典估计为 <code>1−C(n−c,k)/C(n,k)</code>（适用时按边界取1）。它估计至少一个成功，不评价选择器是否能找到成功候选。交付一条结果时还需报告selector的top-1成功及选择开销。工具环境不独立、种子相关和缓存复用都要记录。</p></details>
+<p>有限采样的组合估计由任务评测主题逐步推导；本节只记住它估计“候选中至少一个成功”。交付一条时另报selector成功与开销，记录相关采样、工具隔离和缓存复用条件。</p></details>
 </section>
 <section id="verification"><h2>过程验证、结果验证与自评分</h2>
-<p>结果verifier检查最终artifact是否满足合同；过程verifier检查动作和中间状态的合法性；reward model预测偏好/质量；模型自评提供候选信号。它们可信度和成本不同。一个漂亮报告可能掩盖错误contrast，一个低置信度输出也可能满足独立统计检查。</p>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
+<ul><li><strong>结果verifier：</strong>检查最终artifact和合同，是交付判断。</li><li><strong>过程verifier：</strong>检查局部合法性，用于剪枝和诊断；局部通过不保证整体通过。</li><li><strong>reward model / 自评分：</strong>提供近似选择信号，需校准且计成本；自信程度不能替代统计正确性。</li></ul>
 <p>测试时计算研究<a href="#ref-ttc">[4]</a>发现最合适的搜索/修订策略依赖问题难度；其数学任务中的compute-optimal收益不能直接外推到工具Agent。对科学任务，困难可能来自缺失数据、工具环境或不可识别design，而不是需要更长推理。</p>
 <p>2026的<a href="s01_rag_retrieval.html#agentic">Search-R1++与PROGRESS</a>说明模板、reward与搜索监督改变策略；<a href="../llm-research-map-2026/s05_agent_frontiers.html">持续学习与并行Agent</a>提供领域实例。多Agent或更长上下文并非天然获得独立验证：共享同一底座、文档和评分器仍会相关出错。</p>
 </section>
@@ -47,21 +65,41 @@ UCT示意：选择 argmaxa [Q(s,a)+c√(ln N(s)/N(s,a))]</div>
 <tr><td>评分状态</td><td>verifier版本、已消耗预算、可见反馈</td><td>重试后清零预算或遗忘失败会夸大成功率</td></tr>
 </tbody></table>
 <p>Codex固定源码分析见<a href="../agent-harness-guide.html#codex-context">压缩、换窗与状态重装配</a>：模型窗口变化与工作环境持续存在是不同层。这里的分支方案由本文提出，未实现科学任务runner。</p>
+<figure class="mechanism-map"><figcaption>共享不可变输入，隔离可写分支</figcaption><ol class="mechanism-chain"><li><b>共同检查点S₀</b><small>只读fixture + 已知证据 + 剩余预算</small></li><li><b>A / B独立展开</b><small>A → output/A；B → output/B；独立进程、随机态</small></li><li><b>各自执行与验证</b><small>保存轨迹、成本、真实产物及失败</small></li><li><b>选定分支提交</b><small>合并已验证产物；未选分支的副作用仍计账</small></li></ol><p class="mechanism-return">↶ 回退到S₀需恢复环境；已发送的消息或外部写入不能靠恢复prompt撤销。</p></figure>
 </section>
 <section id="budget"><h2>预算、停止与工业rollout容量</h2>
-<div class="equation" role="math" aria-label="测试时预算与收益">总预算包含：生成/重算、检索、环境执行、verifier、排队和失败重试
-期望净收益示意：ΔP(success|state, action)·V − incremental_cost(action)
-继续条件：剩余预算足够 + 新行动能解决未决条件 + 权限允许
-停止条件：合同通过 / 硬阻塞 / 重复无信息 / 预算耗尽</div>
-<p>收益概率未知时不要伪造精确value。本文建议按任务类型、当前证据缺口和错误类别设置可解释规则，再用held-out任务拟合/校准预算策略。超时和停止不是一定失败：拒绝非法统计设计可满足审计类任务合同，但分析类任务需要另报未完成。</p>
-<p>工业集群的G=8训练rollout与部署BoN=8不是同一含义。前者为组内优势产生样本，后者需要可用selector选择交付结果；训练和终评推理预算要明确。长程环境造成尾延迟和policy lag，增加GPU不一定降低CPU工具的瓶颈。128/1024卡方案见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">集群对照</a>，资源测量见<a href="../llm-serving/s03_capacity_cost.html">服务成本</a>。</p>
+<p>预算包括生成、重算、检索、工具、验证、排队与失败重试。若能估计行动a带来的成功概率增量，且收益和成本已换成同一单位，可用教学决策式：</p>
+<div class="reading-math">\[
+\Delta U(a)=V\,\Delta p_a-\Delta C(a).
+\]</div>
+<p>\(\Delta p_a\)表示当前状态下，采取a相比不采取a的成功概率增量。</p>
+<p>教学取成功价值100单位：再查一次预计增量0.05、成本2，净收益3；另一条分支增量0.01、成本3，净收益−2。<strong>概率未知就用可解释停止规则，再在留出任务上校准，不编造精确价值。</strong></p>
+<table><thead><tr><th>条件</th><th>行动</th><th>验证信号</th></tr></thead><tbody>
+<tr><td>仍缺必要证据，预算和权限允许</td><td>针对缺口续查或补计算</td><td>新增原文、解除阻塞、可验产物</td></tr>
+<tr><td>重复访问，无新信息</td><td>换查询/方法或停止</td><td>去重后的证据增量</td></tr>
+<tr><td>合同通过</td><td>交付并记录全部成本</td><td>独立终评结果</td></tr>
+<tr><td>硬阻塞、越权或预算耗尽</td><td>停止并报未决项</td><td>明确原因；审计完成与分析未完成分开</td></tr></tbody></table>
+<p><strong>训练G与部署N分开：</strong>组采样用于产生优势，BoN用于选择交付候选。CPU工具尾延迟、policy lag与服务排队各有不同瓶颈。</p>
 </section>
 <section id="evaluation"><h2>同预算研究方案</h2>
+<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.03629" title="ReAct: Synergizing Reasoning and Acting in Language Models · Yao, Shunyu, Zhao, Jeffrey, Yu, Dian 等 · 2022/10/06 · 2210.03629">ReAct</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
 <p>本文建议冻结基础模型、合同、研究切分、工具环境和终评权限，比较单轨迹ReAct、带检查点的计划执行、BoN+独立selector、有限过程搜索。同时给相同总token/工具调用上限和相同墙钟上限两组报告，避免把并行与资源增加混为算法收益。</p>
 <p>结果应包含任务/研究组成功率、所有尝试成本、验证调用、重复操作、停止原因、环境失败、P95时长与selector误选。分支快照创建和清理也计成本。先分错误来源，再讨论“增加推理是否有用”；不在本轮实际运行。</p>
 <details><summary>反思为什么可能只是重复错误？</summary><p>如果反馈来自同一模型的自评分，没有新的观察或独立验证，反思可能把原错误解释得更流畅。应检查反思是否改变可执行行动以及最终独立验收。</p></details>
 <details><summary>为什么相同token预算仍不完全公平？</summary><p>不同输入长度、prefill重算、工具/CPU时间、verification和并行资源改变成本。还需完整预算和端到端测量边界。</p></details>
+<details><summary>UCT为什么会选当前均值更低的B？</summary><p>少访问分支的探索项更大；它用当前价值和不确定性共同分配计算。成立依赖状态定义和回报质量，不能保证有偏评分器最终选对。</p></details>
 <p>下一章<a href="s03_trust_safety.html">信任与权限</a>；配套<a href="../llm-interview-bank.html#sec-agent">Agent题库</a>。</p>
+</section>
+<section id="frontier-comparison" data-frontier-audit="20261114">
+<h2>Search-R1++：推理节奏、成功率与搜索次数</h2>
+<p><a href="https://arxiv.org/html/2602.19526v1">Search-R1++ v1，Tables 1、4</a>提供同论文内的对照。Table 1 的 Qwen2.5-7B 使用相同 PPO、EM 奖励、E5 top-3，仅比较 slow/fast thinking；EM 按 0–1 记录。Table 4 固定 fast thinking 与 EM 奖励比较算法，两表不能拼成独立因素的因果排序。</p>
+<table><thead><tr><th>Table 1 推理方式</th><th>平均 EM</th><th>HotpotQA</th><th>2Wiki</th></tr></thead><tbody>
+<tr><td>Slow thinking</td><td>0.403</td><td>0.361</td><td>0.386</td></tr>
+<tr><td>Fast thinking</td><td>0.422</td><td>0.427</td><td>0.360</td></tr></tbody></table>
+<table><thead><tr><th>Table 4 算法</th><th>Overall EM</th><th>平均搜索调用数</th></tr></thead><tbody>
+<tr><td>REINFORCE</td><td>0.437</td><td>1.35</td></tr><tr><td>PPO</td><td>0.422</td><td>1.97</td></tr><tr><td>GRPO</td><td>0.433</td><td>1.44</td></tr></tbody></table>
+<p>快思考在平均分和 HotpotQA 上更好，2Wiki 却下降。调用少也不直接等于时延低：还取决于 query 长度、工具响应和生成 token。这些表未给同预算峰值显存、FLOPs 或费用，不能作为所有 Agent 的算法排名。</p>
 </section>
 <section id="sources"><h2>来源与复核范围</h2><ol class="sources">
 <li id="ref-react">Yao等，<a href="https://arxiv.org/abs/2210.03629v1">ReAct</a>：reasoning/action/observation协同。</li>
@@ -71,4 +109,5 @@ UCT示意：选择 argmaxa [Q(s,a)+c√(ln N(s)/N(s,a))]</div>
 <li id="ref-codex"><a href="../agent-harness-guide.html#codex-loop">Codex固定源码分析</a>及<a href="../agent-harness-guide.html#codex-context">上下文案例</a>：commit c2c1ebba0a7985ebee065c5492233a843b84c4c6，源码引用集中维护，实验/托管边界保留。</li>
 <li id="ref-2026"><a href="https://arxiv.org/abs/2602.19526v1">Search-R1++</a>、<a href="https://arxiv.org/abs/2608.00969v1">PROGRESS</a>：2026检索策略与奖励对照，原文机制核对，不外推领域收益。</li>
 </ol><p class="note">截止2026-11-14；环境分支、停止与科学对照是本文设计。没有执行benchmark、rollout或模型训练。</p></section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>

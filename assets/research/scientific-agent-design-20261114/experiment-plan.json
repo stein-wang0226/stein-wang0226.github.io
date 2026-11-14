@@ -3,14 +3,15 @@
   "status": "research_design",
   "executed": false,
   "experiment_namespace": "sci-posttrain",
-  "distinct_from": "training-lifecycle Harbor A-E initialization/CPT comparison",
+  "design_revision": "2026-11-15: paired single-axis comparisons; legacy IDs retained for trace compatibility",
   "groups": [
     {"id": "sci-posttrain-A", "initialization": "fixed public model", "method": "fixed harness baseline"},
     {"id": "sci-posttrain-B", "initialization": "A", "method": "SFT on independently verified eligible trajectories"},
     {"id": "sci-posttrain-C", "initialization": "B", "method": "outcome-reward GRPO"},
-    {"id": "sci-posttrain-D", "initialization": "B", "method": "one chosen credit-assignment or stratified-sampling change", "rule": "factorial or one-factor ablations; no attribution to bundled changes"},
+    {"id": "sci-posttrain-D-credit", "initialization": "B", "baseline": "sci-posttrain-C", "method": "outcome GRPO with one credit-assignment change", "rule": "hold sampling and optimizer fixed"},
+    {"id": "sci-posttrain-D-sampling", "initialization": "B", "baseline": "sci-posttrain-C", "method": "outcome GRPO with one stratified-sampling change", "rule": "hold credit definition and total sampling budget fixed"},
     {"id": "sci-posttrain-E-opd", "initialization": "B", "method": "OPD with teacher compute recorded"},
-    {"id": "sci-posttrain-E-budget", "initialization": "B", "method": "adaptive inference budget under fixed total inference resource"}
+    {"id": "sci-posttrain-E-budget", "initialization": "B", "baseline": "sci-posttrain-B at inference", "checkpoint_updated": false, "method": "adaptive inference budget under fixed total inference resource"}
   ],
   "controls": ["model and tokenizer revision", "study-group source split", "harness and tool schemas", "environment digest", "verifier/oracle version", "action mask and chat template", "decoding and request/task budget", "training and evaluation seeds", "teacher/reference cost", "policy lag and train/serve logprob consistency"],
   "splits": {"unit": "study/BioProject/source lineage group", "counts": null, "same_source_variants_may_cross_split": false, "cross_species_or_assay": "separate stress-test stratum", "airway_public_teaching_data": "contamination-risk stratum, not evidence of unseen pretraining"},

@@ -8,19 +8,12 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>Agent 适应：新经验可以进入不同存储和更新路径</figcaption><ol class="mechanism-chain mechanism-compare"><li><b>执行轨迹与反馈</b><small>保存来源、成功条件与失败证据</small></li><li><b>Memory / Skill</b><small>筛选经验，供后续任务读取或执行</small></li><li><b>SFT / RL / OPD</b><small>数据入库与参数更新另有训练目标</small></li><li><b>新任务独立验收</b><small>区分经验复用与参数变化的收益</small></li></ol><p class="mechanism-note">中间两个节点是不同适应支路；写入 memory 不等于完成参数训练。</p></figure>
 <section id="scope">
-<p class="eyebrow">05 · Agent applications &amp; adaptation · 2026-11-14</p>
+<p class="eyebrow">Agent applications &amp; adaptation · 2026-11-14</p>
 <h2>从工具调用走向可验证的场景能力</h2>
 <p class="lead">GUI和科学Agent值得成为正式研究专题：两者都有长程状态、可恢复执行和多层验收，直接连接本站作者的GUI研究、Harbor科学任务合成与ProtAgent。Skills、memory、参数更新则提供三种不同的适配层，不能用一个“自我改进”概念代替实验。</p>
-<figure>
-<div class="flow" aria-label="场景Agent的任务闭环">
-<div class="stage"><b>理解状态</b><small>屏幕、文件、数据、工具观察<br>记录可控状态和未知因素</small></div>
-<div class="stage"><b>规划与执行</b><small>分解、工具、子Agent<br>预算与权限贯穿过程</small></div>
-<div class="stage"><b>验证与恢复</b><small>终态、科学指标、独立grader<br>诊断偏差并安全重试</small></div>
-<div class="stage"><b>适配与保留</b><small>skill / memory / model更新<br>版本留出与旧任务回归</small></div>
-</div>
-<figcaption>该流程是专题组织框架；每层都需要来源、日志和独立验收，不把生成解释当成成功证据。</figcaption>
-</figure>
 </section>
 <section id="gui">
 <h2>GUI：从单次点击准确率到长程恢复</h2>
@@ -47,14 +40,16 @@
 <tr><td>科学支持</td><td>假设、对照、统计不确定性、方法适用条件与证据来源</td><td>把相关性说成因果、重复样本泄漏、只有成功实验、解释超出数据</td></tr>
 </tbody>
 </table>
-<p>科学任务的verifier通常是组合：确定性结构 / 数值检查 + 方法约束 + 专家或经校准的判断。自动judge应保留不确定 / 需人工复核状态，而不是强迫所有回答二元化。跨dataset、论文和任务族划分，避免同一生物样本或同源实验同时进入训练与评测。</p>
+<ul><li><strong>验收分层：</strong>结构/数值检查、方法约束、专家或经校准judge各有职责；不确定项保留人工复核。</li><li><strong>同源隔离：</strong>按dataset、论文和任务族切分，不能让同一生物样本跨训练/评测。</li><li><strong>反例：</strong>模型把测试标签写入训练CSV，提交文件可以合法、分数可以很高，科学泛化结论仍无效。</li></ul>
 <div class="callout"><strong>作者方向可形成的公开长文：</strong><a href="../publication/protagent/">ProtAgent</a>连接工具使用与step-level RL；<a href="../cv/#autoresearch">Harbor科学任务合成</a>连接环境与验证合同。文章应区分annotation coverage、任务reward和生物学正确性，指标含义以公开论文为准，不把coverage提高解释为所有预测已被证实。</div>
 <p>一个具体GEO / SRA任务的公开案例应交付数据来源、版本、许可、预处理、任务指令、独立verifier、oracle、负对照和失败报告；合成流程与迁移一致性先看<a href="s01_agent_data_bench.html">第01章</a>。</p>
 </section>
 <section id="skills">
 <h2>Skills：把流程文件变成可测的干预</h2>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2602.12670v1" title="SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks · Li, Xiangyi, Chen, Wenbo, Liu, Yimin 等 · 2026/02/13 · 2602.12670v1">SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks</a>。</p></section>
+
 <p>SkillsBench初版 <code>2602.12670v1</code>是86 tasks / 11 domains / 7 configurations；1.1官方发布是87 / 8 / 18 paired paper configurations。不要将初版任务数、新版分组和动态leaderboard拼成同一结果。<a href="index.html#ref-29">[29]</a> <a href="index.html#ref-41">[41]</a></p>
-<p>Curated skills在论文设置中的正效应，不意味着self-generated skills必然有效。Skill内容可能通过任务分解、代码模板、工具约束、默认检查改变行为；同时增加token、错误指令和版本依赖。应做paired no-skill / curated / self-generated比较，保留工具与预算一致。</p>
+<ul><li><strong>干预来源：</strong>任务分解、模板、工具约束与检查流程都可能改变行为。</li><li><strong>额外成本：</strong>读取token、错误指令和版本依赖必须计入。</li><li><strong>比较条件：</strong>no-skill/curated/self-generated做配对比较，工具与预算相同；curated有效不能推得自生成必然有效。</li></ul>
 <table>
 <thead><tr><th>Skill资产应记录</th><th>评测问题</th></tr></thead>
 <tbody>
@@ -67,6 +62,8 @@
 </section>
 <section id="adaptation">
 <h2>Memory、harness、LoRA：持续学习应分层验收</h2>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
+
 <p>Macaron-V1讨论冻结base、per-turn LoRA routing、模型–harness版本链以及memory / context / parameters的不同更新层。它报告的自改进设置提供方法路线，但长期compounding continual learning与collective intelligence仍是open question，不能写成已经证实的长期复利。<a href="index.html#ref-28">[28]</a></p>
 <table>
 <thead><tr><th>更新层</th><th>改变什么</th><th>最少验收</th></tr></thead>
@@ -76,13 +73,17 @@
 <tr><td>LoRA / model</td><td>专家参数与routing；真正改变策略分布</td><td>旧能力回归、专家冲突、版本与行为log-prob、任务时间顺序留出</td></tr>
 </tbody>
 </table>
-<p>持续学习实验需要时间线：在第t阶段只使用当时可获得的训练反馈，评估后续新任务与旧任务保留，并保存可回退版本。反复使用同一测试集优化memory / skill会失去独立评测含义；短期重复题收益不能代表长期新任务泛化。</p>
-<p>Engram是模型内部条件参数记忆，KV是计算状态；两者与跨任务memory的边界见<a href="s03_base_architecture.html#engram">第03章</a>。模型–harness同时更新时应留出单独和组合对照，否则无法知道收益来自哪里。</p>
+<figure class="mechanism-map"><figcaption>持续适配的时间边界</figcaption><ol class="mechanism-chain"><li><b>阶段t：收集训练反馈</b><small>只读当时可得的任务与反馈</small></li><li><b>冻结memory/skill/model版本</b><small>保存独立与组合更新，可回退</small></li><li><b>阶段t+1：新任务验收</b><small>测试反馈不写回当前训练资产</small></li><li><b>旧任务回归</b><small>同时报告新收益、遗忘和费用</small></li></ol></figure>
+<p><strong>反例：</strong>用同一测试题反复修改skill，随后成绩上升，只说明对该反馈的适应；需要后续新题与旧题保留对照，才能讨论持续泛化。</p>
+<p>Engram与KV的边界见本页<a href="s03_base_architecture.html#engram">条件参数与计算状态</a>。模型/harness同时更新要设单独与组合对照，才能判断收益来源。</p>
 </section>
 <section id="multiagent">
 <h2>并行Agent与多教师：一个减少关键路径，一个整合能力</h2>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
+
 <p>Kimi K2.5的PARL / Agent Swarm研究orchestrator与subagent分解。比较并行策略要同时报告critical-path wall time与总tokens / GPU / 工具成本，不能只数subagent数量；并行不消除依赖、重复工作与协调失败。<a href="index.html#ref-30">[30]</a></p>
-<p>MOPD在学生rollout状态上整合多教师能力；Nemotron Ultra和DeepSeek公开专家训练与OPD配方。这与推理时同时运行多个Agent不同：前者把教师行为整合进学生参数，后者用运行时协作换取能力或延迟。不同教师、logits范围与mask的结果不能合并成通用蒸馏结论。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-33">[33]</a> <a href="index.html#ref-1">[1]</a></p>
+<p><strong>训练整合与运行协作是两个轴：</strong>MOPD更新统一学生参数；并行子Agent增加运行时参与者。教师、logits范围和mask不同的结果不能合并为通用蒸馏结论。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-33">[33]</a> <a href="index.html#ref-1">[1]</a></p>
+<p><strong>关键路径算例：</strong>两个独立子任务各10秒，串行20秒、理想并行10秒；若协调增加3秒，总耗时13秒，实际约1.54×。子任务资源时间仍至少20秒，协调费用另计。此例未实测，用来区分墙钟提速与总成本。</p>
 <table>
 <thead><tr><th>路线</th><th>适合的问题</th><th>应检查的代价</th></tr></thead>
 <tbody>
@@ -100,8 +101,9 @@
 <li><strong>持续适配案例：</strong>固定base，先比较memory / skill；再比较LoRA与harness更新，使用时间顺序新任务和旧任务回归；提供版本链和回退记录。</li>
 </ol>
 <p>以上均为待执行建议。本次没有新增作者实验结果，也没有转载内部数据。可公开的研究与履历来源见<a href="../publications/">论文列表</a>、<a href="../about/">About</a>和<a href="../cv/">CV</a>。</p>
-<p>下一步优先把任务验收与信用分配两个P0方向做成有原始轨迹的小规模实验；并行、持续学习与优化器方向继续按独立证据增补。返回<a href="index.html#priorities">研究地图与后续选题</a>。</p>
+<div class="course-review"><p><strong>面试短答：</strong>GUI看终态与恢复，科学Agent还要区分有效提交和结论支持。持续学习按时间冻结反馈与版本；并行看关键路径和总投入；memory、skill和参数更新分别验收。</p></div>
 </section>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

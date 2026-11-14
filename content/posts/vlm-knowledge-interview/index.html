@@ -1,988 +1,284 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VLM 核心知识与面试问答 (2025-2026)</title>
-    <style>
-        :root {
-            --primary: #1a365d;
-            --primary-light: #2b6cb0;
-            --accent: #38b2ac;
-            --accent-light: #81e6d9;
-            --bg: #f7fafc;
-            --card-bg: #ffffff;
-            --text: #2d3748;
-            --text-light: #718096;
-            --border: #e2e8f0;
-            --code-bg: #1a202c;
-            --code-text: #e2e8f0;
-            --highlight: #fefcbf;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.8;
-            font-size: 15px;
-        }
-
-        /* Layout */
-        .container {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Sidebar TOC */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100vh;
-            overflow-y: auto;
-            background: var(--primary);
-            padding: 24px 16px;
-            z-index: 100;
-            transition: transform 0.3s;
-        }
-
-        .sidebar h2 {
-            color: var(--accent-light);
-            font-size: 14px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar ul {
-            list-style: none;
-        }
-
-        .sidebar li {
-            margin-bottom: 4px;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 6px 12px;
-            color: rgba(255,255,255,0.75);
-            text-decoration: none;
-            font-size: 13px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: rgba(255,255,255,0.1);
-            color: var(--accent-light);
-        }
-
-        .sidebar .toc-h2 { font-weight: 600; margin-top: 12px; }
-        .sidebar .toc-h3 { padding-left: 20px; font-size: 12px; }
-
-        /* Main content */
-        .main {
-            margin-left: 280px;
-            padding: 40px 60px;
-            max-width: 900px;
-            width: 100%;
-        }
-
-        /* Header */
-        .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            padding: 48px 40px;
-            border-radius: 16px;
-            margin-bottom: 40px;
-        }
-
-        .hero h1 {
-            font-size: 28px;
-            margin-bottom: 12px;
-        }
-
-        .hero p {
-            opacity: 0.85;
-            font-size: 15px;
-        }
-
-        .hero .tags {
-            margin-top: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .hero .tag {
-            background: rgba(255,255,255,0.15);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-
-        /* Sections */
-        h2 {
-            font-size: 22px;
-            color: var(--primary);
-            margin-top: 48px;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--accent);
-        }
-
-        h3 {
-            font-size: 17px;
-            color: var(--primary-light);
-            margin-top: 32px;
-            margin-bottom: 12px;
-        }
-
-        h4 {
-            font-size: 15px;
-            color: var(--text);
-            margin-top: 20px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        p { margin-bottom: 12px; }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 13px;
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-
-        th {
-            background: var(--primary);
-            color: white;
-            padding: 10px 14px;
-            text-align: left;
-            font-weight: 500;
-        }
-
-        td {
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: #f0f7ff; }
-
-        /* Code blocks */
-        pre {
-            background: var(--code-bg);
-            color: var(--code-text);
-            padding: 20px 24px;
-            border-radius: 10px;
-            overflow-x: auto;
-            margin: 16px 0;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        code {
-            font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
-            font-size: 13px;
-        }
-
-        :not(pre) > code {
-            background: #edf2f7;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: var(--primary-light);
-        }
-
-        /* Lists */
-        ul, ol {
-            padding-left: 24px;
-            margin-bottom: 12px;
-        }
-
-        li { margin-bottom: 6px; }
-
-        /* Cards */
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 24px;
-            margin: 16px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border-left: 4px solid var(--accent);
-        }
-
-        .card.warning {
-            border-left-color: #ed8936;
-            background: #fffaf0;
-        }
-
-        .card.key-point {
-            border-left-color: var(--primary-light);
-            background: #ebf8ff;
-        }
-
-        .card h4 {
-            margin-top: 0;
-            color: var(--primary);
-        }
-
-        /* Diagrams (ASCII art) */
-        .diagram {
-            background: #f8f9fa;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 16px 0;
-            overflow-x: auto;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            line-height: 1.5;
-            white-space: pre;
-        }
-
-        /* Keyword highlight */
-        .keyword {
-            background: linear-gradient(120deg, var(--highlight) 0%, var(--highlight) 100%);
-            padding: 1px 4px;
-            border-radius: 3px;
-        }
-
-        strong { color: var(--primary); }
-
-        /* Mobile responsive */
-        @media (max-width: 1024px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-            .main { margin-left: 0; padding: 20px; }
-            .hero { padding: 32px 24px; }
-            .menu-btn { display: block; }
-        }
-
-        .menu-btn {
-            display: none;
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 200;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        @media (max-width: 1024px) {
-            .menu-btn { display: block; }
-        }
-
-        /* Scrollbar */
-        .sidebar::-webkit-scrollbar { width: 4px; }
-        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
-
-        /* Print */
-        @media print {
-            .sidebar, .menu-btn { display: none; }
-            .main { margin-left: 0; max-width: 100%; }
-            .hero { background: #f0f0f0 !important; color: #333 !important; }
-        }
-    </style>
-<link rel="stylesheet" href="assets/site/site.css">
-<link rel="canonical" href="https://stein-wang0226.github.io/vlm-knowledge-interview.html">
-</head>
-<body>
-<!-- SITE:NAV:START -->
-<a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
-<!-- SITE:NAV:END -->
-<section class="content-guide" aria-label="阅读准备">
-<h3 id="vlm-agent-bridge">视觉token如何进入GUI Agent链路</h3>
-<p>图像/视频经patch或tile编码，connector把视觉特征映射到LLM接口；视觉token数量、分辨率和帧采样同时影响上下文、prefill和定位精度。CLIP的batch对比softmax与SigLIP的pairwise sigmoid是训练损失区别，不能由损失名字直接推出任意模型下游更好；LLaVA的投影/指令训练只代表其具体版本。</p>
-<p>GUI案例按“截图→坐标/元素动作→新截图→任务验收”记录。缩放、坐标系、窗口状态、动作后等待和不可逆操作门控要随轨迹保存；文字回答正确不等于GUI任务完成。token不能只按文本计数，版本与多模态状态也影响prefix复用。来源：<a href="https://arxiv.org/abs/2103.00020">CLIP</a>、<a href="https://arxiv.org/abs/2303.15343">SigLIP</a>、<a href="https://arxiv.org/abs/2304.08485">LLaVA</a>；接 <a href="/agent-data-benchmarks/s02_benchmark_map.html">OSWorld/WebArena评测</a>、<a href="/agent-systems/s03_trust_safety.html">动作权限</a>和 <a href="/llm-serving/s01_runtime_scheduling.html">请求调度</a>。原2025–2026型号列表仍需逐项核实。</p>
-<h2>阅读准备</h2><p><strong>范围与先修：</strong>视觉编码器、视觉语言连接、分辨率处理及面试实现题；需要 Transformer、对比学习和图像 patch 基础。</p>
-<p><strong>阅读路线：</strong>视觉 tokens → projector / connector → LLM → 对齐与指令训练 → 问答和代码。模型规格及“最新进展”依赖版本与日期，既有论断尚未逐项全面复核；阅读时结合末尾论文与官方资料确认。</p>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VLM 核心知识与面试问答</title><link rel="stylesheet" href="/assets/site/training-lifecycle.css">
+<style>.vlm-example{border-left:3px solid #0d9488;background:#f0fdfa;padding:12px 16px;margin:16px 0}.vlm-checks details{margin:10px 0;padding:12px;border:1px solid #d6e5df;border-radius:8px}.vlm-checks summary{font-weight:700;cursor:pointer}</style>
+</head><body><main class="training-lifecycle">
+<p class="lead"><strong>一条学习链：</strong>图像怎样变成 patch 表示，图文目标怎样产生梯度，视觉条件怎样进入 LLM，最后怎样验空间、视频与业务任务。架构原理在本页展开，型号和论文清单按需查看；面试前直接使用<a href="#sec3">短答卡</a>。</p>
+<section id="sec1"><h2>1. 核心链路：视觉表示→对齐→条件生成</h2>
+<figure class="mechanism-map"><figcaption>两种训练目标，汇入同一视觉条件链</figcaption><ol class="mechanism-chain"><li><b>图像 / 帧 → patch</b><small>processor 决定 resize、crop、grid、时间戳</small></li><li><b>视觉编码器</b><small>patch 表示；图文对比可训练双塔</small></li><li><b>Connector / cross-attention</b><small>投影、压缩或独立读取视觉状态</small></li><li><b>文本预测与行动</b><small>回答 loss / 偏好 / 结果奖励，独立验收</small></li></ol><p class="mechanism-note">CLIP 的全局图文匹配与 VLM 的条件生成是不同目标。检索好不自动证明计数、OCR 或空间推理好。</p></figure>
+<h3 id="sec1-1">1.1 从像素到 token：形状与预算</h3>
+<p>设图像经 processor 后为 H×W、C 个通道，patch 边长 P，H/W 可被 P 整除。一个 patch 展平为 CP² 维，经共享线性层变成 dv 维；等价于 kernel=stride=P 的卷积。加空间位置后由 encoder 让 patch 交互。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+N&=(H/P)(W/P),\\
+X_{\rm patch}&\in\mathbb R^{N\times CP^2},\\
+Z_0&=X_{\rm patch}W_p+E_{\rm pos},\\
+W_p&\in\mathbb R^{CP^2\times d_v}.
+\end{aligned}\]</div>
+<div class="vlm-example"><strong>算例：</strong>224×224、P=14 得 16×16=256 patch；336×336 得 24×24=576。CLS 若存在再加 1；给 LLM 的 token 数还要扣掉被舍弃的 CLS，并应用 merge/resampler，不能直接把 encoder patch 数当最终长度。</div>
+<ul><li><strong>CLS / pooling：</strong>汇总全局表征适合分类/图文匹配；patch 级输出保留空间条件，具体取层和归一化由 checkpoint 决定。</li><li><strong>CNN / Swin：</strong>局部性与层级结构提供不同归纳偏置；全局 ViT 更灵活，但不是所有任务都更优。</li><li><strong>预训练目标：</strong>CLIP/SigLIP 对齐图文；MAE 重建 masked 图像；DINO 类自蒸馏学表示；SAM/SAM2 学可提示分割及视频记忆。它们不能用同一“视觉能力分数”代替。</li></ul>
+<p>来源：<a href="https://arxiv.org/abs/2010.11929">ViT</a>、<a href="https://arxiv.org/abs/2103.00020">CLIP</a>。</p>
+<h3 id="clip-siglip">1.2 CLIP：为什么匹配对的相似度会上升？</h3>
+<p>batch 有 N 个配对 (Ii,Ti)。双塔输出向量分别 L2 归一为 vi/uj，learnable scale a=exp(t) 相当于逆温度。相似度 Sij=a·viᵀuj，<strong>这里已经缩放一次，loss 中不要再除温度。</strong></p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+p_{ij}&=\frac{e^{S_{ij}}}{\sum_k e^{S_{ik}}},\qquad
+q_{ij}=\frac{e^{S_{ij}}}{\sum_k e^{S_{kj}}},\\
+L_{\rm CLIP}&=-\frac1{2N}\sum_i
+\bigl(\log p_{ii}+\log q_{ii}\bigr).
+\end{aligned}\]</div>
+<p>每张图在行方向识别自己的文本，每段文本在列方向识别自己的图。将一行当分类 CE，logsumexp 的导数就是 softmax；因此两方向合起来的 score 梯度为：</p>
+<div class="reading-math" role="math">\[
+\frac{\partial L}{\partial S_{ij}}
+=\frac{p_{ij}+q_{ij}-2\mathbf1[i=j]}{2N}.
+\]</div>
+<div class="vlm-example"><strong>两对算例：</strong>S=[[2,0],[0,2]]。正确匹配概率 σ(2)=0.8808，双向平均 loss≈0.1269；每个对角 score 梯度≈−0.0596，非对角≈+0.0596。梯度下降会抬匹配 score、压不匹配 score，但总梯度还要通过 scale、向量归一和两个 encoder。</div>
+<ul><li><strong>负例：</strong>标准单正例 batch 每行有 N−1 个不匹配候选；重复 caption/近重复图像可能形成 false negative。</li><li><strong>zero-shot 分类：</strong>将类别写成文本 prompt，编码后与图像比较；prompt 模板、类别描述和分布决定结果。</li><li><strong>能力边界：</strong>图文全局匹配可能忽略数量、属性、关系与长文本细节。更大 batch 也不保证所有场景更好。</li></ul>
+<h3 id="siglip">1.3 SigLIP：省去 softmax，仍需管理负例</h3>
+<p>令匹配标签 yij∈{−1,+1}，score 变为 Sij=a·viᵀuj+b。每个 pair 用 logistic loss，bias 控制初始正/负类倾向。原论文常见聚合按 N 归一全部 pair；采样负例或改变聚合分母时，要一起改变权重并重新调参。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+\ell(y,S)&=\log(1+e^{-yS})=-\log\sigma(yS),\\
+\frac{\partial\ell}{\partial S}
+&=-y\,\sigma(-yS),\\
+L_{\rm SigLIP}&=\frac1N\sum_{i,j}\ell(y_{ij},S_{ij}).
+\end{aligned}\]</div>
+<div class="vlm-example"><strong>同一 pair：</strong>正例 y=1、S=2，loss≈0.1269、导数≈−0.1192；负例 y=−1、S=2，loss≈2.1269、导数≈+0.8808。负例的错误高相似度会受到较强惩罚；不需要计算所有候选共同的 softmax 分母。</div>
+<table><thead><tr><th>比较轴</th><th>CLIP</th><th>SigLIP</th></tr></thead><tbody>
+<tr><td>pair 耦合</td><td>行/列 softmax 分母耦合候选</td><td>每 pair 独立 logistic 项</td></tr>
+<tr><td>负例与通信</td><td>全局负例通常交换 embedding</td><td>仍可交换负例；可分块累加，不等于无需跨卡</td></tr>
+<tr><td>计算/内存</td><td>N² pair；可优化存储</td><td>全 pair 仍 N²；chunk/采样改变峰值或工作量</td></tr>
+<tr><td>调参</td><td>scale、batch、false negative</td><td>scale/bias、正负数量、聚合权重</td></tr>
+</tbody></table>
+<p>来源：<a href="https://arxiv.org/abs/2303.15343">Sigmoid Loss for Language Image Pre-Training</a>。不同 batch、数据和计算条件下的结果不能推出 SigLIP 永远更稳定。</p>
+<h3 id="sec1-2">1.4 视觉条件进入 LLM 的三种接口</h3>
+<table><thead><tr><th>接口</th><th>状态与计算</th><th>主要取舍</th><th>例子</th></tr></thead><tbody>
+<tr><td>拼接视觉 embedding</td><td>视觉 token 占 decoder 序列和 KV</td><td>统一 self-attention；长视觉输入增加 prefill</td><td>LLaVA、部分 Qwen/InternVL</td></tr>
+<tr><td>独立 cross-attention</td><td>文本 Q 读取视觉 K/V；视觉状态仍占内存</td><td>不占文本 self-attention 长度，增加跨模态模块</td><td>Flamingo</td></tr>
+<tr><td>encoder-decoder / 统一生成</td><td>条件 encoder；或图像离散 token 进入生成目标</td><td>输入/输出目标与融合层分别设计</td><td>PaLI；Chameleon 的早期融合</td></tr>
+</tbody></table>
+<p><strong>“原生”不是精确定义。</strong>有些系统强调联合训练，有些强调统一词表/序列，有些强调端到端多模态能力。说明图像如何编码、在哪里融合、预测什么，才能比较；CoCa 还结合对比和 captioning 目标，不宜只归成普通 PaLI 式 E-D。</p>
+<h3 id="sec1-3">1.5 Connector：维度映射与信息预算</h3>
+<p>MLP 对每 patch 独立映射，保持 N：dv→m→dL。可学习 query 通过 cross-attention 聚合变长视觉输入，输出 M 个语言条件 token。两者改变信息路径和预算，并非谁在所有任务都更优。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+Z_{\rm MLP}&=\operatorname{GELU}(ZW_1+b_1)W_2+b_2,\\
+P_{\rm MLP}&=d_vm+md_L+m+d_L,\\
+Z_{\rm query}&=\operatorname{softmax}
+\left(\frac{QK(Z)^\top}{\sqrt d}\right)V(Z),\\
+Z_{\rm query}&\in\mathbb R^{M\times d},\quad
+Q\in\mathbb R^{M\times d}.
+\end{aligned}\]</div>
+<div class="vlm-example"><strong>参数与长度例：</strong>dv=1024、m=dL=4096 时两层 MLP 共 20,979,712 参数；576 个 patch 仍输出 576 个 token。若 query resampler 输出 64 个 token，语言侧长度缩小 9 倍，但它必须把细节汇入 64 个向量，还增加自身 attention 计算。</div>
+<ul><li><strong>MLP：</strong>映射维度、非线性适配；保 token 适合细节，但长输入昂贵。</li><li><strong>Q-Former / Perceiver：</strong>学固定 query 聚合；BLIP-2 与 Flamingo 的具体层结构/目标不同。</li><li><strong>spatial merge：</strong>按相邻 grid 重组再投影，常见 2×2→1；保局部结构仍可能丢细节。</li><li><strong>判断：</strong>LLaVA-1.5 支持简单 MLP 是有力基线，不能据此宣布连接器全局最优。等 encoder、数据、LLM 与视觉 token 预算做对照。</li></ul>
+<p>来源：<a href="https://arxiv.org/abs/2310.03744">LLaVA-1.5</a>、<a href="https://arxiv.org/abs/2301.12597">BLIP-2</a>、<a href="https://arxiv.org/abs/2204.14198">Flamingo</a>。</p>
+<h3 id="sec1-4">1.6 条件生成 loss：视觉标签被 mask，梯度仍能过去</h3>
+<p>图像 embedding、用户文本和历史观察组成条件 c，assistant 回答为 y。训练目标只在有效回答 token m_t=1 上计算 CE；视觉没有文本 label 不意味着 encoder 没有梯度，<strong>它通过后续回答对视觉条件的依赖接收反传</strong>，除非被冻结/detach。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+\ell_t&=-\log p_\theta(y_t\mid c,y_{\lt t}),\\
+L&=\frac{\sum_t m_t\ell_t}{\sum_t m_t},\\
+\nabla_{\theta_v}L
+&=\frac{\partial L}{\partial Z_{\rm lang}}
+\frac{\partial Z_{\rm lang}}{\partial Z_v}
+\frac{\partial Z_v}{\partial\theta_v}.
+\end{aligned}\]</div>
+<table><thead><tr><th>教学阶段</th><th>目标与数据</th><th>模块与检查</th></tr></thead><tbody>
+<tr><td>连接适配</td><td>caption/图文条件生成，学接口</td><td>可冻结 ViT/LLM，仅训 connector；不是从头预训练两端</td></tr>
+<tr><td>指令微调</td><td>VQA、OCR、图表、多轮、视频</td><td>训练 connector/LLM，ViT 是否解冻按配方</td></tr>
+<tr><td>偏好 / RL</td><td>图像共同条件的 chosen/rejected 或独立结果反馈</td><td>可训练不同参数组；检查视觉忠实与旧文本能力</td></tr>
+<tr><td>分辨率 / 视频扩展</td><td>细节、时序、长期证据</td><td>processor/位置/训练联合适配，可与前阶段交错</td></tr>
+</tbody></table>
+<p><strong>这不是所有 VLM 必须依次完成的四阶段。</strong>LLaVA-1.5 具体配方常见 558K 对齐、665K 指令样本，不能移作任意模型的数据量默认值。一般 SFT/DPO/RL 推导见<a href="/llm-posttraining/">后训练主讲</a>，本页关注视觉条件、标注与验收。</p>
+<h3 id="sec1-5">1.7 分辨率、merge 与视频：逐项数 token</h3>
+<p>tiling 将大图映到若干固定大小 crop，可能另加 thumbnail；native dynamic resolution 让 encoder 读可变 patch grid，并使用适配位置与 merge。<strong>二者都涉及 resize/padding/预算约束</strong>，动态不等于原图信息无损或无限分辨率。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+N_{\rm tiles}&=(n_{\rm crop}+n_{\rm thumb})(R/P)^2,\\
+N_{\rm merge}&=(H/P)(W/P)/r^2,\\
+N_{\rm video}&=\sum_{f=1}^{F}N_f+N_{\rm timestamp}.
+\end{aligned}\]</div>
+<div class="vlm-example"><strong>两个策略例，均不代表官方 processor 默认：</strong>672×336 图像切成 2 个 336px crop，加 1 thumbnail，P=14 且不压缩，给出 3×576=1728 patch。另一图 672×448、P=14，原 grid=48×32=1536，2×2 merge 后为 384。两边长翻倍后 grid token 四倍、全局 attention 的 score 数约 16 倍；window attention 和独立 crop 有不同成本。</div>
+<figure class="mechanism-map"><figcaption>空间可见性与成本同时验收</figcaption><ol class="mechanism-chain"><li><b>原图坐标</b><small>宽高、裁剪区域、像素单位</small></li><li><b>processor 映射</b><small>resize/pad/tile 与 budget</small></li><li><b>grid / merge</b><small>位置轴、视觉 token 总量</small></li><li><b>回答 / bbox</b><small>逆映射到原图再验任务</small></li></ol></figure>
+<p><strong>M-RoPE：</strong>给 RoPE 的不同频率维度绑定时间、高、宽坐标，文本可令三坐标一致；分配比例按模型配置，不一定三等分。Qwen2.5-VL 还处理真实时间和动态帧率；Qwen3-VL 的交错时空与 DeepStack 需按具体报告理解，不等同 Qwen3-Omni。</p>
+<ul><li><strong>视频采样：</strong>均匀、变化/关键帧、分层检索各有遗漏；按任务时长、事件密度和预算选，不存在通用 32/64 帧最好。</li><li><strong>视频评测：</strong>分别测定位、先后、持续时间、因果和长程证据；needle 成功不能代替视频理解。</li><li><strong>服务账本：</strong>encoder 计算、语言 prefill、KV、timestamp 与 padding 分开；增分辨率并不只增加线性成本。</li></ul>
+<p>来源：<a href="https://arxiv.org/abs/2409.12191">Qwen2-VL</a>、<a href="https://arxiv.org/abs/2502.13923">Qwen2.5-VL</a>、<a href="https://arxiv.org/abs/2408.03326">LLaVA-OneVision</a>。</p>
+<h3 id="sec1-6">1.8 MoE、grounding、幻觉与多模态 RAG</h3>
+<p><strong>MoE 的新问题是模态负载。</strong>视觉和文本 token 的数量/分布不同，可能使路由不均。分别测每模态分派、容量/drop、通信、active/total 参数；更多总参数不直接推出更低总服务成本。基础路由推导见<a href="/llm-architecture/">架构主讲</a>。</p>
+<p><strong>grounding：</strong>输出 bbox 的文本数字、离散 bin 或回归值，需要注明坐标范围、原图/处理图、crop 偏移和逆变换。IoU=(交集面积)/(并集面积)；框格式合法与指到正确对象是两个检查。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+x_{\rm orig}&=x_{\rm crop}/s_x+o_x,\\
+y_{\rm orig}&=y_{\rm crop}/s_y+o_y.
+\end{aligned}
+\]</div>
+<div class="vlm-example"><strong>坐标例：</strong>原图 crop 从 x=100 开始，crop resize 放大 2 倍，模型在处理图报 x=40，则原图 x=40/2+100=120。漏 crop offset 会在真实页面点击错误对象。padding 还需先减 padding。</div>
+<p><strong>视觉幻觉：</strong>物体、属性、关系分别评；POPE 的 yes/no 对象存在探测不能覆盖全部。数据去错、grounding 监督、分辨率与偏好训练可改失败率，但 CoT、自检、引用都不保证忠实。</p>
+<details><summary>展开 VCD 的正确对比对象与限制</summary>
+<p>原 VCD 将原图 v 与噪声扰动图 v′ 的 logits 对比，抑制对视觉退化仍过强的先验；同时限制在原图概率足够大的候选中采样。不是单纯减“无图 logits”。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+\tilde z&=(1+\alpha)z(v)\\
+&\quad-\alpha z(v'),\\
+p_v(w)&=p(w\mid v),\\
+M&=\max_u p_v(u),\\
+\mathcal A&=\{w:p_v(w)\ge\eta M\}.
+\end{aligned}\]</div>
+<p>扰动、α 与 plausible 阈值 η 改变解码，另增加图像分支推理；不能继承标准模型原分布或保证零幻觉。来源：<a href="https://arxiv.org/abs/2311.16922">Visual Contrastive Decoding</a>。OPERA 与 DoLa 还有不同对象和假设，不宜写成视觉忠实的通用开关。</p></details>
+<p><strong>多模态 RAG：</strong>query→文本/视觉召回→重排→原页面与元数据→VLM→带证据回答。ColPali 的 late interaction 对每 query token 找最相关 page patch 后求和：</p>
+<div class="reading-math" role="math">\[
+S(q,d)=\sum_{i=1}^{N_q}\max_{j\le N_d}q_i^\top d_j.
+\]</div>
+<div class="vlm-example"><strong>两个 query token：</strong>与三个 patch 的相似度为 [0.8,0.2,0.1] 和 [0.1,0.7,0.6]，MaxSim=0.8+0.7=1.5。相关 patch 可不同，保细粒度匹配；它是检索分数，不能直接当回答正确概率。来源：<a href="https://arxiv.org/abs/2407.01449">ColPali</a>。</div>
 </section>
-<div id="site-main" tabindex="-1"></div>
-
-<button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
-
-<nav class="sidebar">
-    <h2>目录导航</h2>
-    <ul>
-        <li class="toc-h2"><a href="#sec1">一、核心知识体系</a></li>
-        <li class="toc-h3"><a href="#sec1-1">1.1 视觉编码器</a></li>
-        <li class="toc-h3"><a href="#sec1-2">1.2 主流架构</a></li>
-        <li class="toc-h3"><a href="#sec1-3">1.3 视觉-语言对齐</a></li>
-        <li class="toc-h3"><a href="#sec1-4">1.4 训练阶段</a></li>
-        <li class="toc-h3"><a href="#sec1-5">1.5 分辨率处理</a></li>
-        <li class="toc-h3"><a href="#sec1-6">1.6 MoE 应用</a></li>
-        <li class="toc-h2"><a href="#sec2">二、最新进展 (2025-2026)</a></li>
-        <li class="toc-h3"><a href="#sec2-1">2.1 重要模型发布</a></li>
-        <li class="toc-h3"><a href="#sec2-2">2.2 架构创新</a></li>
-        <li class="toc-h3"><a href="#sec2-3">2.3 训练范式变化</a></li>
-        <li class="toc-h3"><a href="#sec2-4">2.4 Benchmark 趋势</a></li>
-        <li class="toc-h3"><a href="#sec2-5">2.5 新兴方向</a></li>
-        <li class="toc-h2"><a href="#sec3">三、面试高频问答</a></li>
-        <li class="toc-h3"><a href="#q1">Q1: CLIP vs SigLIP</a></li>
-        <li class="toc-h3"><a href="#q2">Q2: LLaVA 训练流水线</a></li>
-        <li class="toc-h3"><a href="#q3">Q3: Connector 作用</a></li>
-        <li class="toc-h3"><a href="#q4">Q4: 高分辨率处理</a></li>
-        <li class="toc-h3"><a href="#q5">Q5: Visual Grounding</a></li>
-        <li class="toc-h3"><a href="#q6">Q6: MoE in VLM</a></li>
-        <li class="toc-h3"><a href="#q7">Q7: 视频理解</a></li>
-        <li class="toc-h3"><a href="#q8">Q8: RLHF/DPO for VLM</a></li>
-        <li class="toc-h3"><a href="#q9">Q9: 减少幻觉</a></li>
-        <li class="toc-h3"><a href="#q10">Q10: 多模态 RAG</a></li>
-        <li class="toc-h3"><a href="#q11">Q11: 高效部署</a></li>
-        <li class="toc-h2"><a href="#sec4">四、代码实现题</a></li>
-        <li class="toc-h3"><a href="#code1">4.1 Visual Projector</a></li>
-        <li class="toc-h3"><a href="#code2">4.2 Attention Mask</a></li>
-        <li class="toc-h3"><a href="#code3">4.3 Image Tiling</a></li>
-        <li class="toc-h2"><a href="#sec5">五、必知论文</a></li>
-        <li class="toc-h2"><a href="#sec6">六、面试总结</a></li>
-    </ul>
-</nav>
-
-<main class="main">
-
-<!-- Hero -->
-<div class="hero">
-<h1>VLM 核心知识与面试问答</h1>
-    <p>面向 2025-2026 年 Vision-Language Model 方向求职者的全面复习指南</p>
-    <div class="tags">
-        <span class="tag">架构演进</span>
-        <span class="tag">训练范式</span>
-        <span class="tag">最新进展</span>
-        <span class="tag">面试问答</span>
-        <span class="tag">代码实现</span>
-        <span class="tag">系统设计</span>
-    </div>
-</div>
-
-<!-- Section 1 -->
-<h2 id="sec1">一、VLM 核心知识体系</h2>
-
-<h3 id="sec1-1">1.1 视觉编码器 (Visual Encoder)</h3>
-
-<h4>Vision Transformer (ViT)</h4>
-<ul>
-    <li>将图像切分为固定大小的 patch（通常 14×14 或 16×16 像素）</li>
-    <li>每个 patch 通过线性投影得到一个 token embedding</li>
-    <li>添加位置编码（positional embedding）保留空间信息</li>
-    <li>经过标准 Transformer Encoder 层（Self-Attention + FFN）</li>
-    <li>输出：一组 patch 特征向量（如 224×224 图像 + 14×14 patch = <strong>256 个 token</strong>）</li>
-</ul>
-
-<h4>CLIP Visual Encoder</h4>
-<ul>
-    <li>在 <strong>400M+</strong> 图文对上通过对比学习训练</li>
-    <li>使用 ViT-L/14 架构（304M 参数）</li>
-    <li>Softmax-based InfoNCE Loss：对 batch 中 N 个图文对构建 N×N 相似度矩阵</li>
-    <li>生成与语言语义对齐的视觉特征</li>
-</ul>
-
-<h4>SigLIP (Sigmoid Loss for Image-Language Pre-training)</h4>
-<div class="card key-point">
-    <h4>核心区别</h4>
-    <p>用 <strong>sigmoid 二分类 loss</strong> 替代 softmax 对比 loss。每对图文独立判断是否匹配，无需全局归一化。对 batch size 不敏感，分布式训练更友好。</p>
-    <p>典型架构：SigLIP-SO400M/14。使用模型：PaLI-X, Gemini, LLaVA-1.6+, InternVL2</p>
-</div>
-
-<h4>EVA-CLIP</h4>
-<ul>
-    <li>两阶段：先用 Masked Image Modeling (MIM) 预训练 ViT，再做 CLIP 对比学习</li>
-    <li>EVA-02 使用 RoPE + SwiGLU FFN</li>
-    <li>使用模型：Qwen-VL (EVA-CLIP-14B), InternVL (InternViT-6B)</li>
-</ul>
-
-<h3 id="sec1-2">1.2 VLM 主流架构</h3>
-
-<table>
-    <tr>
-        <th>架构类型</th>
-        <th>代表模型</th>
-        <th>Visual Token 开销</th>
-        <th>LLM 修改</th>
-        <th>优劣势</th>
-    </tr>
-    <tr>
-        <td><strong>Cross-Attention</strong></td>
-        <td>Flamingo, Otter</td>
-        <td>无（独立通道）</td>
-        <td>新增 Cross-Attn 层</td>
-        <td>模块化；不占上下文长度 / 复杂度高</td>
-    </tr>
-    <tr>
-        <td><strong>Decoder-Only + Tokens</strong></td>
-        <td>LLaVA, Qwen-VL, InternVL</td>
-        <td>是（占上下文）</td>
-        <td>无</td>
-        <td>简单高效；2024-2025 主流 / Token 占序列</td>
-    </tr>
-    <tr>
-        <td><strong>Encoder-Decoder</strong></td>
-        <td>PaLI, CoCa</td>
-        <td>编码器输出</td>
-        <td>完整 E-D 结构</td>
-        <td>完整架构 / 不够灵活</td>
-    </tr>
-</table>
-
-<div class="card">
-    <h4>Decoder-Only + Visual Tokens（主流方案）</h4>
-    <pre><code>[BOS] [IMG_1] [IMG_2] ... [IMG_256] [User query tokens] [Response tokens]</code></pre>
-    <p>视觉特征投影到 LLM embedding 空间后与文本 token 拼接，由标准 decoder-only transformer 统一处理。</p>
-</div>
-
-<h3 id="sec1-3">1.3 视觉-语言对齐 (Visual-Language Alignment)</h3>
-
-<h4>连接器模块 (Connector/Projector)</h4>
-
-<table>
-    <tr><th>模块</th><th>机制</th><th>输出 Token 数</th><th>代表模型</th></tr>
-    <tr><td>Linear Projection</td><td>单层线性映射</td><td>与 ViT 输出相同</td><td>LLaVA v1</td></tr>
-    <tr><td><strong>MLP Projector</strong></td><td>2层 MLP + GELU</td><td>与 ViT 输出相同</td><td>LLaVA-1.5, LLaVA-NeXT</td></tr>
-    <tr><td>Q-Former</td><td>32 可学习 query + 交叉注意力</td><td>固定 32</td><td>BLIP-2, InstructBLIP</td></tr>
-    <tr><td>Perceiver Resampler</td><td>latent tokens + 交叉注意力</td><td>固定 64/128</td><td>Flamingo, Idefics</td></tr>
-    <tr><td>C-Abstractor</td><td>卷积 + 注意力压缩</td><td>可配置</td><td>Honeybee</td></tr>
-    <tr><td>Spatial Merge</td><td>相邻 2×2 token 合并</td><td>1/4 输入</td><td>Qwen2-VL</td></tr>
-</table>
-
-<div class="card key-point">
-    <h4>关键结论 (LLaVA-1.5)</h4>
-    <p>当视觉编码器和 LLM 都足够强时，<strong>简单的 MLP projector 即可达到最优效果</strong>。过度设计的连接器（如 Q-Former）可能形成信息瓶颈。</p>
-</div>
-
-<h3 id="sec1-4">1.4 训练阶段 (Training Stages)</h3>
-
-<table>
-    <tr><th>阶段</th><th>目标</th><th>数据</th><th>可训练模块</th></tr>
-    <tr><td><strong>Stage 1:</strong> 预训练</td><td>跨模态对齐</td><td>大规模图文对 (CC3M, LAION)</td><td>仅 Connector</td></tr>
-    <tr><td><strong>Stage 2:</strong> 指令微调</td><td>多模态指令跟随</td><td>高质量指令数据 (665K)</td><td>Connector + LLM</td></tr>
-    <tr><td><strong>Stage 3:</strong> RLHF/DPO</td><td>减少幻觉，提升对齐</td><td>偏好对数据</td><td>全模型</td></tr>
-    <tr><td><strong>Stage 4:</strong> 高分辨率适配</td><td>细粒度视觉理解</td><td>文档/图表/高分辨率数据</td><td>可能解冻 ViT</td></tr>
-</table>
-
-<h3 id="sec1-5">1.5 分辨率处理 (Resolution Handling)</h3>
-
-<h4>Dynamic Tiling / AnyRes（主流方案）</h4>
-
-<div class="diagram">输入: 1344×896 图像, tile_size=336
-
-1. 确定最佳网格: 1344/336=4 列, 896/336≈3 行 → 4×3 网格
-2. Resize 到 1344×1008 适配网格
-3. 切分为 12 个 336×336 tiles
-4. 创建 1 个 336×336 缩略图（全局视图）
-5. 每个 tile + 缩略图独立编码
-6. 拼接: 12 tiles + 1 thumbnail = 13 × 256 = 3328 visual tokens</div>
-
-<h4>Native Dynamic Resolution (Qwen2-VL)</h4>
-<ul>
-    <li>使用 <strong>2D-RoPE</strong> 替代绝对位置编码 → 天然支持任意分辨率</li>
-    <li>Spatial Merge (2×2→1)：减少 4× token 数</li>
-    <li>无需 tiling，更优雅</li>
-</ul>
-
-<h3 id="sec1-6">1.6 Mixture-of-Experts (MoE) 在 VLM 中的应用</h3>
-
-<div class="card">
-    <h4>核心思想</h4>
-    <p>用多个"专家"FFN 替代单个 dense FFN，路由器为每个 token 选择 top-k 专家。只有被选中的专家参与计算 → <strong>大容量 + 低计算量</strong>。</p>
-</div>
-
-<table>
-    <tr><th>模型</th><th>总参数</th><th>激活参数</th><th>效果</th></tr>
-    <tr><td>Qwen3-VL-30B-A3B</td><td>30B</td><td>3B</td><td>媲美 10B+ 密集模型</td></tr>
-    <tr><td>Qwen3-VL-235B-A22B</td><td>235B</td><td>22B</td><td>前沿水平</td></tr>
-    <tr><td>DeepSeek-VL2</td><td>27B (MoE)</td><td>~5B</td><td>竞争力强</td></tr>
-</table>
-
-<!-- Section 2 -->
-<h2 id="sec2">二、2025-2026 最新进展</h2>
-
-<h3 id="sec2-1">2.1 重要模型发布</h3>
-
-<h4>闭源模型</h4>
-<table>
-    <tr><th>模型</th><th>时间</th><th>关键特性</th></tr>
-    <tr><td>GPT-4o</td><td>2024.05</td><td>原生多模态，统一文本/图像/音频</td></tr>
-    <tr><td>o3 / o4-mini</td><td>2025.04</td><td>多模态推理，"看图思考" CoT</td></tr>
-    <tr><td>GPT-5</td><td>2025.08</td><td>400K 上下文，MMMU 79.1%</td></tr>
-    <tr><td>GPT-5.5</td><td>2026.04</td><td>1M 上下文，首个"完全推理"模型</td></tr>
-    <tr><td>Gemini 2.5 Pro</td><td>2025.03</td><td>内置 thinking，MMMU-Pro 领先</td></tr>
-    <tr><td>Gemini 3 Pro</td><td>2026.03</td><td>像素精准定位，10FPS 视频分析</td></tr>
-</table>
-
-<h4>开源模型</h4>
-<table>
-    <tr><th>模型</th><th>时间</th><th>关键创新</th></tr>
-    <tr><td>Qwen2.5-VL</td><td>2025.01</td><td>原生动态分辨率 ViT，Dynamic FPS</td></tr>
-    <tr><td><strong>Qwen3-VL</strong></td><td>2025.10</td><td>Interleaved-MRoPE, DeepStack, MoE</td></tr>
-    <tr><td>InternVL3</td><td>2025</td><td>RL 训练管线，MMMU 72.2%</td></tr>
-    <tr><td><strong>InternVL3.5</strong></td><td>2025</td><td>Cascade RL (MPO+GSPO)，MMMU 77.7%</td></tr>
-    <tr><td>DeepSeek-VL2</td><td>2024.12</td><td>MoE backbone，动态 tiling</td></tr>
-    <tr><td>LLaVA-OneVision</td><td>2024.08</td><td>统一图像/视频/多图理解</td></tr>
-    <tr><td>SmolVLM</td><td>2025</td><td>2B SOTA 小模型</td></tr>
-</table>
-
-<h3 id="sec2-2">2.2 架构创新</h3>
-
-<div class="card">
-    <h4>原生多模态 vs 模块化</h4>
-    <ul>
-        <li><strong>模块化（主流）</strong>：ViT + Connector + LLM — 利用预训练组件</li>
-        <li><strong>原生（新兴）</strong>：从 raw token 级别统一训练 — Gemini, Chameleon, Emu3.5</li>
-        <li>NaViL (ICCV 2025) 发现：原生模型在适当 scaling 下效率更高</li>
-    </ul>
-</div>
-
-<ul>
-    <li><strong>M-RoPE → Interleaved-MRoPE</strong>：分离/交错时空维度的位置编码</li>
-    <li><strong>DeepStack (Qwen3-VL)</strong>：视觉特征深度集成到 LLM 各层</li>
-    <li><strong>Cascade RL (InternVL3.5)</strong>：离线 MPO + 在线 GSPO</li>
-    <li><strong>Visual Token 压缩</strong>：Dynamic-VLM (ICCV 2025) 减少 50-75% token</li>
-</ul>
-
-<h3 id="sec2-3">2.3 训练范式变化</h3>
-
-<h4>VLM 强化学习（最大范式转变）</h4>
-<ul>
-    <li><strong>GRPO for VLMs</strong>：扩展 DeepSeek GRPO 到多模态（InternVL3, Qwen3-VL）</li>
-    <li><strong>DPO for VLMs</strong>：Direct Preference Optimization 应用于视觉语言任务</li>
-    <li><strong>OPA-DPO (CVPR 2025)</strong>：Object-presence-aware DPO 针对幻觉</li>
-</ul>
-
-<h4>Thinking / Test-Time Compute</h4>
-<ul>
-    <li>"Thinking" 变体成为标准：Qwen3-VL-Thinking, Gemini 2.5 Pro, o3/o4</li>
-    <li>Temporal Chain of Thought (NeurIPS 2025)：逐帧推理长视频</li>
-</ul>
-
-<h4>多模态 Scaling Laws</h4>
-<div class="card key-point">
-    <p>MoE scaling 更高效：<strong>N ∝ C<sup>0.36</sup> (MoE) vs C<sup>0.53</sup> (Dense)</strong></p>
-    <p>视觉编码器比 LLM 更快饱和。最优 ViT 大小与 LLM backbone 呈对数线性关系。</p>
-</div>
-
-<h3 id="sec2-4">2.4 Benchmark 趋势</h3>
-
-<h4>MMMU (截至 2026.05)</h4>
-<table>
-    <tr><th>模型</th><th>分数</th><th>类型</th></tr>
-    <tr><td>o4-mini High</td><td>79.2%</td><td>闭源</td></tr>
-    <tr><td>GPT-5</td><td>79.1%</td><td>闭源</td></tr>
-    <tr><td>Qwen3.5-122B-A10B</td><td>78.1%</td><td>开源</td></tr>
-    <tr><td>Qwen3-VL-32B-Thinking</td><td>78.1%</td><td>开源</td></tr>
-    <tr><td>InternVL3.5-78B</td><td>77.7%</td><td>开源</td></tr>
-</table>
-
-<div class="card key-point">
-    <h4>关键趋势</h4>
-    <ul>
-        <li>开源与闭源差距缩小至 <strong>1-2%</strong></li>
-        <li>"Thinking" 变体持续优于非 thinking 版本</li>
-        <li>MoE 以更少激活参数达到前沿性能</li>
-    </ul>
-</div>
-
-<h3 id="sec2-5">2.5 新兴研究方向</h3>
-
-<table>
-    <tr><th>方向</th><th>关键进展</th></tr>
-    <tr><td><strong>长视频理解</strong></td><td>Agentic 选择性关注、Temporal CoT、Dynamic FPS</td></tr>
-    <tr><td><strong>3D/空间推理</strong></td><td>GR3D (CVPR 2026)、Gemini 3 Pro 像素精准定位</td></tr>
-    <tr><td><strong>具身智能</strong></td><td>VLA 模型、VLM 作为机器人感知骨干</td></tr>
-    <tr><td><strong>Agent VLM</strong></td><td>GUI Agent、Computer Use、视觉 grounding + RL</td></tr>
-    <tr><td><strong>长上下文视觉</strong></td><td>256K→400K→1M tokens</td></tr>
-    <tr><td><strong>VLM 可解释性</strong></td><td>Circuit Tracing (CVPR 2026)</td></tr>
-</table>
-
-<!-- Section 3 -->
-<h2 id="sec3">三、面试高频问答</h2>
-
-<h3 id="q1">Q1: CLIP 和 SigLIP 的核心区别？</h3>
-
-<table>
-    <tr><th>维度</th><th>CLIP</th><th>SigLIP</th></tr>
-    <tr><td>Loss</td><td>Softmax InfoNCE (N-way 分类)</td><td>Sigmoid 二分类 (per-pair)</td></tr>
-    <tr><td>Batch 依赖</td><td>需要大 batch (32K+)</td><td>小 batch 也可</td></tr>
-    <tr><td>分布式训练</td><td>需 all-gather 全局 softmax</td><td>无需跨设备通信</td></tr>
-    <tr><td>内存</td><td>O(N²) 相似度矩阵</td><td>O(N) per-pair</td></tr>
-    <tr><td>稳定性</td><td>τ 敏感</td><td>更稳定</td></tr>
-</table>
-
-<pre><code># CLIP Loss
-logits = image_embeds @ text_embeds.T * exp(log_temperature)  # NxN
-labels = torch.arange(N)
-loss = (F.cross_entropy(logits, labels) + F.cross_entropy(logits.T, labels)) / 2
-
-# SigLIP Loss
-logits = image_embeds @ text_embeds.T * exp(log_temperature) + bias
-labels = 2 * torch.eye(N) - 1  # +1 匹配, -1 不匹配
-loss = -F.logsigmoid(labels * logits).sum() / N</code></pre>
-
-<h3 id="q2">Q2: LLaVA 训练流水线详解</h3>
-
-<table>
-    <tr><th>版本</th><th>架构</th><th>关键改进</th></tr>
-    <tr><td>LLaVA-1.0</td><td>CLIP-ViT-L/14 → Linear → Vicuna</td><td>开创性 visual instruction tuning</td></tr>
-    <tr><td>LLaVA-1.5</td><td>CLIP@336px → 2-layer MLP → Vicuna-1.5</td><td>MLP > 复杂 connector；加入 VQA 数据</td></tr>
-    <tr><td>LLaVA-NeXT</td><td>AnyRes tiling + 更强 LLM</td><td>动态高分辨率 + 1.2M 数据</td></tr>
-    <tr><td>LLaVA-OneVision</td><td>SigLIP-SO400M + Qwen2</td><td>统一 image/video/multi-image</td></tr>
-</table>
-
-<div class="card key-point">
-    <h4>核心 Takeaway</h4>
-    <p>LLaVA 的成功证明：<strong>简单 MLP + 高质量数据</strong> 可以打败复杂架构设计。这是"less is more"的有力证据。</p>
-</div>
-
-<h3 id="q3">Q3: Visual Connector 的作用？为什么 MLP 就够了？</h3>
-
-<p><strong>三个核心功能</strong>：维度对齐 (ViT dim → LLM dim)、模态桥接、Token 压缩（可选）</p>
-
-<p><strong>为什么简单 MLP 就够</strong>：当 ViT 和 LLM 都是强预训练模型时，projector 只需做"翻译"。Q-Former 等复杂设计可能因 query 数量不足而成为信息瓶颈。对需要细粒度空间理解的任务 (OCR, grounding)，保留全部 token 的 MLP 更优。</p>
-
-<h3 id="q4">Q4: VLM 如何处理高分辨率图像？</h3>
-
-<p><strong>核心挑战</strong>: ViT 注意力 O(n²)，分辨率翻倍则 patch 数翻 4 倍。</p>
-
-<pre><code># Dynamic Tiling (AnyRes) - 主流方案
-def tile_image(image, base_res=336, max_tiles=12):
-    cols, rows = find_best_grid(W, H, base_res, max_tiles)
-    resized = resize(image, (rows*base_res, cols*base_res))
-    tiles = split_into_grid(resized, cols, rows)
-    thumbnail = resize(image, (base_res, base_res))
-    return tiles + [thumbnail]  # 每个独立编码后拼接</code></pre>
-
-<p><strong>Qwen2-VL 方案</strong>：2D-RoPE + Spatial Merge (2×2→1)，无需 tiling。</p>
-
-<h3 id="q5">Q5: Visual Grounding 如何实现？</h3>
-
-<pre><code># 主流方法：坐标 Token 化
-User: 图中的狗在哪里？
-Model: &lt;box&gt;(234, 156, 567, 489)&lt;/box&gt;
-# 坐标归一化到 [0, 1000]，LLM 自回归生成</code></pre>
-
-<p>训练数据：RefCOCO, Visual Genome。挑战：坐标幻觉、多相似物体歧义。</p>
-
-<h3 id="q6">Q6: MoE 如何应用于 VLM？</h3>
-
-<pre><code>Input Token → Router → Top-K 专家 → 加权求和</code></pre>
-
-<p>核心优势：3-7× 参数只用 1.5-2× 计算。VLM 特有挑战：视觉 token 导致负载不均衡、需要模态平衡的辅助 loss。</p>
-
-<h3 id="q7">Q7: 视频理解的核心挑战？</h3>
-
-<table>
-    <tr><th>挑战</th><th>原因</th></tr>
-    <tr><td>时序建模</td><td>ViT 处理静态图像，缺乏时间归纳偏置</td></tr>
-    <tr><td>Token 爆炸</td><td>30fps × 10s = 300帧 × 256 = 76,800 tokens</td></tr>
-    <tr><td>时序推理弱</td><td>排序、因果、持续时间估计仍困难</td></tr>
-</table>
-
-<p><strong>方案</strong>：均匀采样、关键帧选择、时序池化、Dynamic FPS (Qwen2.5-VL)、分层编码。长视频前沿：Agentic 方法 + Temporal CoT。</p>
-
-<h3 id="q8">Q8: VLM 的 RLHF/DPO 与纯文本有何不同？</h3>
-
-<div class="card warning">
-    <h4>VLM 特有挑战</h4>
-    <ul>
-        <li><strong>视觉幻觉</strong>是核心失败模式，比文本错误更难检测</li>
-        <li>偏好数据成本 <strong>高 3-5×</strong>（标注员需对照图像判断）</li>
-        <li>Reward Model 需要视觉能力（纯文本 RM 无法判断视觉忠实性）</li>
-        <li>粒度问题：回答可能部分正确（物体对但关系错）</li>
-    </ul>
-</div>
-
-<p>最新方法：OPA-DPO, S2H-DPO, RA-DPO, POVID</p>
-
-<h3 id="q9">Q9: 如何减少 VLM 幻觉？</h3>
-
-<table>
-    <tr><th>阶段</th><th>方法</th></tr>
-    <tr><td>训练时</td><td>高质量数据、负样本、对比训练、DPO/RLHF、Grounding 监督</td></tr>
-    <tr><td>推理时</td><td>Contrastive Decoding (VCD)、OPERA、DoLa、CoT、Self-verify</td></tr>
-    <tr><td>架构层</td><td>高分辨率、保留空间 token、多尺度特征</td></tr>
-</table>
-
-<pre><code># Contrastive Decoding 核心思想
-logits_final = logits_with_image - α * logits_without_image
-# 惩罚不看图也能生成的 token（文本先验偏置）</code></pre>
-
-<h3 id="q10">Q10: 设计多模态 RAG 系统</h3>
-
-<div class="diagram">┌─────────────────────────────────────┐
-│         Query Processing            │
-│  用户查询 → 查询分析 → 多模态编码    │
-└──────────────┬──────────────────────┘
-               ↓
-┌─────────────────────────────────────┐
-│       Multi-Modal Retrieval         │
-│  Text (BM25+Dense) + Visual (CLIP)  │
-│         → Hybrid Re-ranking         │
-└──────────────┬──────────────────────┘
-               ↓
-┌─────────────────────────────────────┐
-│       Context Assembly              │
-│  检索文本 + 图像 + 元数据           │
-└──────────────┬──────────────────────┘
-               ↓
-┌─────────────────────────────────────┐
-│       VLM Generation                │
-│  多模态上下文 → VLM → 带引用的回答   │
-└─────────────────────────────────────┘</div>
-
-<p><strong>关键点</strong>：ColPali/ColQwen per-patch 检索、混合检索 scoring、强制引用来源减少幻觉。</p>
-
-<h3 id="q11">Q11: 如何高效部署 VLM？</h3>
-
-<table>
-    <tr><th>优化方向</th><th>方法</th></tr>
-    <tr><td>Visual Encoding</td><td>Embedding 缓存、Batch 编码、Tile 并行</td></tr>
-    <tr><td>KV-Cache</td><td>PagedAttention (vLLM)、推理 Token 剪枝 (FastV)</td></tr>
-    <tr><td>模型优化</td><td>INT4/INT8 量化 (GPTQ, AWQ)、Flash Attention</td></tr>
-    <tr><td>Serving</td><td>vLLM、SGLang (RadixAttention)、TensorRT-LLM</td></tr>
-    <tr><td>成本优化</td><td>路由策略 (简单→7B, 复杂→70B+)、自适应分辨率</td></tr>
-</table>
-
-<!-- Section 4 -->
-<h2 id="sec4">四、代码实现题</h2>
-
-<h3 id="code1">4.1 实现 Visual Projector</h3>
-
+<section id="sec2"><h2>2. 前沿阅读：看新增机制，保留实验条件</h2>
+<h3 id="sec2-1">2.1 代表路线与原报告</h3>
+<details><summary>展开模型路线表</summary><table><thead><tr><th>路线</th><th>值得读的变化</th><th>原始来源</th></tr></thead><tbody>
+<tr><td>LLaVA→1.5→OneVision</td><td>简单连接、数据/分辨率、图像/视频/多图迁移</td><td><a href="https://arxiv.org/abs/2304.08485">LLaVA</a>；<a href="https://arxiv.org/abs/2310.03744">1.5</a>；<a href="https://arxiv.org/abs/2408.03326">OneVision</a></td></tr>
+<tr><td>Qwen2 / 2.5 / 3-VL</td><td>动态 grid、时空位置、窗口与时间、交错位置/深层视觉接入</td><td><a href="https://arxiv.org/abs/2409.12191">2-VL</a>；<a href="https://arxiv.org/abs/2502.13923">2.5-VL</a>；<a href="https://arxiv.org/abs/2511.21631">3-VL</a></td></tr>
+<tr><td>InternVL3 / 3.5</td><td>训练与推理 recipe、级联偏好/RL、效率与回归</td><td><a href="https://arxiv.org/abs/2504.10479">3</a>；<a href="https://arxiv.org/abs/2508.18265">3.5</a></td></tr>
+<tr><td>DeepSeek-VL2</td><td>动态视觉输入、MoE 总量/激活量和部署成本</td><td><a href="https://arxiv.org/abs/2412.10302">报告</a></td></tr>
+<tr><td>Chameleon / BLIP-2 / Flamingo</td><td>早期融合、query 聚合、独立 cross-attention 的不同接口</td><td><a href="https://arxiv.org/abs/2405.09818">Chameleon</a>；<a href="https://arxiv.org/abs/2301.12597">BLIP-2</a>；<a href="https://arxiv.org/abs/2204.14198">Flamingo</a></td></tr>
+</tbody></table></details>
+<h3 id="sec2-2">2.2 架构：一次改变一个成本或信息路径</h3>
+<ul><li><strong>空间/深层特征：</strong>问新增位置或视觉接入是否改善细节与时序，固定视觉预算。</li><li><strong>视觉压缩：</strong>同时测 token、encoder/projector 时间、OCR/grounding 退化，不能只报压缩率。</li><li><strong>统一/模块化：</strong>比较复用组件、联合目标、生成能力与服务状态，而不是按“原生”词语排高低。</li></ul>
+<h3 id="sec2-3">2.3 训练：偏好与结果反馈是不同数据接口</h3>
+<p><strong>VLM DPO：</strong>chosen/rejected 要共享图像与问题，标签看视觉证据，不能只由纯文本 judge 判“说得好”。<a href="https://arxiv.org/abs/2501.09695">OPA-DPO</a>对应 On-Policy Alignment，原文旧 Object-presence-aware 名称已修正。RL 的奖励应验数值/坐标/业务状态，还要防格式和长思考捷径。</p>
+<ul><li><strong>预算：</strong>thought token、视觉分辨率、帧数、teacher 与工具调用全部登记。</li><li><strong>回归：</strong>纯文本、短图、OCR、长视频和工具行为分别测；不只看本期新题。</li><li><strong>未公开：</strong>训练 FLOPs、峰值显存、teacher 成本无原数据时标缺失，不能用缩放指数补成“实测”。</li></ul>
+<h3 id="sec2-4">2.4 Benchmark：能力轴与共同条件</h3>
+<table><thead><tr><th>任务轴</th><th>代表 benchmark</th><th>验收重点</th></tr></thead><tbody>
+<tr><td>学科 / 视觉推理</td><td><a href="https://arxiv.org/abs/2311.16502">MMMU</a>、<a href="https://arxiv.org/abs/2409.02813">MMMU-Pro</a>、<a href="https://arxiv.org/abs/2310.02255">MathVista</a></td><td>split、思考预算、选项与解析</td></tr>
+<tr><td>文档 / 图表</td><td><a href="https://arxiv.org/abs/2007.00398">DocVQA</a>、<a href="https://arxiv.org/abs/2203.10244">ChartQA</a></td><td>分辨率、OCR 输入、结构与数值</td></tr>
+<tr><td>综合 / 视频</td><td><a href="https://arxiv.org/abs/2307.06281">MMBench</a>、<a href="https://arxiv.org/abs/2405.21075">Video-MME</a></td><td>帧、字幕、时长、judge 与语言</td></tr>
+<tr><td>部署 / 行动</td><td>真实业务留出、GUI/VLA 环境</td><td>原图坐标、任务状态、恢复与成本</td></tr>
+</tbody></table>
+<p><strong>共同条件：</strong>模型版本、processor、split、prompt、分辨率/帧率、采样/思考、评测方、计时和硬件一起列。旧稿商业型号和跨论文分数没有完成共同条件核对，保存在原件供查证，当前不组成排行榜或“差距 1–2%”结论。</p>
+<h3 id="sec2-5">2.5 下一步研究题：把方向写成实验</h3>
+<ul><li><strong>长视频：</strong>固定视觉预算，比较均匀/检索/层级采样对事件定位与先后判断。</li><li><strong>空间 / 具身：</strong>固定场景，逐步加入 3D 条件或动作反馈；VLM 描述正确不等于控制可靠。</li><li><strong>可解释性：</strong>干预视觉/patch/层表示，看回答和动作是否随证据改变；attention 热图本身不是因果证明。</li><li><strong>持续学习：</strong>测试数据先冻结，再从新反馈训练，用旧任务回归检查模态遗忘。</li></ul>
+</section>
+<section id="sec3" class="vlm-checks"><h2>3. 面试短答：重点与追问</h2>
+<details id="q1"><summary>Q1. CLIP 与 SigLIP 的本质区别？</summary><p><strong>短答：</strong>CLIP 行/列 softmax 区分 batch 配对，SigLIP 逐 pair logistic，无全局分母。两者都有负例、scale 与批次设计；SigLIP 全 pair 仍是平方工作量。</p><p><strong>追问：</strong>写 score 梯度、bias、false negative 与分布式负例；<a href="#clip-siglip">本页推导</a>。</p></details>
+<details id="q2"><summary>Q2. LLaVA 的训练流水线为何分阶段？</summary><p><strong>短答：</strong>先适配视觉到语言接口，后用指令训练条件回答；冻结两端降低初期成本，但不是普适要求。1.5 的 MLP/数据 recipe 与 OneVision 的多输入迁移分开。</p><p><strong>追问：</strong>label mask、模块梯度、纯文本回归；<a href="#sec1-4">条件生成目标</a>。</p></details>
+<details id="q3"><summary>Q3. MLP / Q-Former / Resampler 怎样选？</summary><p><strong>短答：</strong>MLP 保 N、做逐 patch 非线性映射；query 模块聚合成固定 M，压语言预算但可能丢细节。任务、encoder、数据、M 和总时延决定选择。</p><p><strong>追问：</strong>MLP 参数与输入长度分别怎么算；<a href="#sec1-3">公式与 576→64 例</a>。</p></details>
+<details id="q4"><summary>Q4. 为什么高分辨率贵？</summary><p><strong>短答：</strong>边长翻倍 patch 四倍，全局视觉 attention 的 score 十六倍；LLM 还受视觉 token、prefill 与 KV 影响。tiling、window、merge/resampler 改成本与信息路径。</p><p><strong>追问：</strong>processor 的 resize、crop、thumbnail、CLS、merge 都数清；<a href="#sec1-5">长度算例</a>。</p></details>
+<details id="q5"><summary>Q5. Grounding 和 GUI 点击怎么验证？</summary><p><strong>短答：</strong>输出坐标合同，逆 resize/pad/crop 后落到原图，比较对象/IoU 或真实业务状态；格式合法不等于目标正确。</p><p><strong>追问：</strong>归一单位、多个相似物体、异步布局和 TOCTOU；<a href="#sec1-6">坐标链</a>。</p></details>
+<details id="q6"><summary>Q6. VLM MoE 为何不一定便宜？</summary><p><strong>短答：</strong>单 token 激活部分专家，总权重仍需驻留/分片，视觉 token 分布造成负载与通信，低激活量不直接等于低峰值显存或低时延。</p><p><strong>追问：</strong>modality 分组路由、drop、EP 和低并发吞吐。</p></details>
+<details id="q7"><summary>Q7. 视频时序与 M-RoPE 解决什么？</summary><p><strong>短答：</strong>时间/高/宽坐标进入不同频率块，编码空间与真实时间；采样可能遗漏事件，位置编码不会补回丢帧信息。</p><p><strong>追问：</strong>不等分频率、时间戳、字幕开关、长程因果；<a href="#sec1-5">视频预算</a>。</p></details>
+<details id="q8"><summary>Q8. 多模态 DPO/RL 与文本有什么不同？</summary><p><strong>短答：</strong>优化式可复用，但标签和奖励必须看共同图像与真实视觉/环境证据；图像/帧预处理改变访问状态和成本。</p><p><strong>追问：</strong>物体/关系部分错误、reward hacking、文本能力遗忘与 teacher 费用。</p></details>
+<details id="q9"><summary>Q9. 如何减少视觉幻觉？</summary><p><strong>短答：</strong>先区分物体、属性、关系和输入缺失，用数据/grounding/偏好/解码单轴对照；VCD 比较原图与扰动图并做候选限制，不能保证零幻觉。</p><p><strong>追问：</strong>POPE 的覆盖、原图 plausibility、额外推理成本；<a href="#sec1-6">机制与边界</a>。</p></details>
+<details id="q10"><summary>Q10. 多模态 RAG 为什么需要 patch 检索？</summary><p><strong>短答：</strong>细粒度 query 可对应不同页面 patch，MaxSim 聚合保局部匹配；还要把原页面和元数据交给 VLM，并独立验答案。</p><p><strong>追问：</strong>文本/OCR/图像召回消融、来源引用、索引与权限。</p></details>
+<details id="q11"><summary>Q11. 部署和微调 VLM 怎样评估收益？</summary><p><strong>短答：</strong>固定 processor/checkpoint，分 encoder、prefill、decode、KV 和缓存计时；量化/剪枝/分辨率扫 OCR、grounding、视频与纯文本回归。线上看任务成功、转人工、延迟和全部尝试成本。</p><p><strong>追问：</strong>缓存键含图像内容与 processor，模型改变需失效；<a href="/llm-serving/">服务账本</a>。</p></details>
+</section>
+<section id="sec4"><h2>4. 实现：形状、mask 与可运行小例</h2>
+<h3 id="code1">4.1 CLIP / SigLIP、patch 与 connector</h3>
 <pre><code>import torch
 import torch.nn as nn
-
-class MLPProjector(nn.Module):
-    """LLaVA-style 2-layer MLP projector."""
-    def __init__(self, visual_dim: int, llm_dim: int, hidden_dim: int = None):
-        super().__init__()
-        hidden_dim = hidden_dim or llm_dim
-        self.projector = nn.Sequential(
-            nn.Linear(visual_dim, hidden_dim),
-            nn.GELU(),
-            nn.Linear(hidden_dim, llm_dim),
-        )
-
-    def forward(self, visual_features: torch.Tensor) -> torch.Tensor:
-        # (batch, num_patches, visual_dim) → (batch, num_patches, llm_dim)
-        return self.projector(visual_features)
-
-
-class PerceiverResampler(nn.Module):
-    """Flamingo-style: 变长视觉特征 → 固定 num_latents 个 token"""
-    def __init__(self, visual_dim, llm_dim, num_latents=64, num_heads=16, num_layers=6):
-        super().__init__()
-        self.latents = nn.Parameter(torch.randn(num_latents, llm_dim) * 0.02)
-        self.input_proj = nn.Linear(visual_dim, llm_dim)
-        self.layers = nn.ModuleList([
-            PerceiverLayer(llm_dim, num_heads) for _ in range(num_layers)
-        ])
-        self.norm = nn.LayerNorm(llm_dim)
-
-    def forward(self, visual_features):
-        B = visual_features.shape[0]
-        x = self.input_proj(visual_features)
-        latents = self.latents.unsqueeze(0).expand(B, -1, -1)
-        for layer in self.layers:
-            latents = layer(latents, x)
-        return self.norm(latents)
-
-
-class PerceiverLayer(nn.Module):
-    def __init__(self, dim, num_heads):
-        super().__init__()
-        self.self_attn = nn.MultiheadAttention(dim, num_heads, batch_first=True)
-        self.cross_attn = nn.MultiheadAttention(dim, num_heads, batch_first=True)
-        self.ffn = nn.Sequential(nn.Linear(dim, dim*4), nn.GELU(), nn.Linear(dim*4, dim))
-        self.norm1 = nn.LayerNorm(dim)
-        self.norm2 = nn.LayerNorm(dim)
-        self.norm3 = nn.LayerNorm(dim)
-
-    def forward(self, latents, context):
-        x = self.norm1(latents)
-        latents = latents + self.self_attn(x, x, x)[0]
-        x = self.norm2(latents)
-        latents = latents + self.cross_attn(x, context, context)[0]
-        latents = latents + self.ffn(self.norm3(latents))
-        return latents</code></pre>
-
-<h3 id="code2">4.2 交错图文输入的 Attention Mask</h3>
-
-<pre><code>import torch
-from typing import List
-
-def create_interleaved_attention_mask(
-    seq_len: int,
-    image_regions: List[tuple],  # [(start, end), ...]
-    dtype=torch.float32,
-) -> torch.Tensor:
-    """
-    规则:
-    1. 整体 causal mask（每个 token 只能看前面的）
-    2. 同一图像内 token 双向注意
-    3. 不同图像 token 不能直接注意
-    """
-    # 标准下三角 causal mask
-    causal = torch.tril(torch.ones(seq_len, seq_len, dtype=torch.bool))
-    
-    # 同一图像内允许双向注意
-    for start, end in image_regions:
-        causal[start:end, start:end] = True
-    
-    # 转为 float: 0=可注意, -inf=mask
-    mask = torch.zeros(seq_len, seq_len, dtype=dtype)
-    mask.masked_fill_(~causal, float('-inf'))
-    
-    return mask.unsqueeze(0).unsqueeze(0)  # (1, 1, seq_len, seq_len)
-
-# 使用示例:
-# 序列: [text:10] [image_0:256] [text:15] [image_1:256] [text:20]
-mask = create_interleaved_attention_mask(557, [(10, 266), (281, 537)])</code></pre>
-
-<h3 id="code3">4.3 图像 Tiling（高分辨率输入）</h3>
-
-<pre><code>import torch
 import torch.nn.functional as F
 import math
 
-def find_best_grid(width, height, base_res=336, max_tiles=12):
-    """找到最匹配宽高比的网格配置"""
-    aspect = width / height
-    best_grid, best_score = (1, 1), float('inf')
-    
-    for total in range(1, max_tiles + 1):
-        for cols in range(1, total + 1):
-            rows = total // cols
-            if rows * cols != total or rows == 0:
-                continue
-            score = abs(math.log(cols/rows) - math.log(aspect)) + 0.01 * total
-            if score < best_score:
-                best_score = score
-                best_grid = (cols, rows)
-    return best_grid
+def image_text_loss(image, text, log_scale, bias=None):
+    # pooled features [N,D]; paired diagonal; scale applied once
+    v, u = F.normalize(image.float(), dim=-1), F.normalize(text.float(), dim=-1)
+    score = log_scale.exp() * v @ u.T
+    n = score.size(0)
+    if bias is None:  # CLIP
+        target = torch.arange(n, device=score.device)
+        return (F.cross_entropy(score, target) +
+                F.cross_entropy(score.T, target)) / 2
+    y = 2*torch.eye(n, device=score.device)-1
+    return -F.logsigmoid(y*(score+bias)).sum()/n  # SigLIP, explicit /N
 
-def tile_image(image: torch.Tensor, base_res=336, max_tiles=12):
-    """
-    Args: image (C, H, W)
-    Returns: tiles (N+1, C, base_res, base_res), grid (cols, rows)
-    """
-    C, H, W = image.shape
-    cols, rows = find_best_grid(W, H, base_res, max_tiles)
-    
-    # Resize to fit grid
-    resized = F.interpolate(
-        image.unsqueeze(0), (rows*base_res, cols*base_res),
-        mode='bicubic', align_corners=False
-    ).squeeze(0)
-    
-    # Split into tiles
-    tiles = []
-    for r in range(rows):
-        for c in range(cols):
-            tiles.append(resized[:, r*base_res:(r+1)*base_res, c*base_res:(c+1)*base_res])
-    
-    # Thumbnail (全局视图)
-    thumb = F.interpolate(image.unsqueeze(0), (base_res, base_res),
-                          mode='bicubic', align_corners=False).squeeze(0)
-    tiles.append(thumb)
-    
-    return torch.stack(tiles), (cols, rows)
+class PatchEmbedding(nn.Module):
+    def __init__(self, channels=3, patch=14, dim=32):
+        super().__init__()
+        self.patch = patch
+        self.conv = nn.Conv2d(channels, dim, patch, stride=patch)
+    def forward(self, image):
+        if any(x % self.patch for x in image.shape[-2:]):
+            raise ValueError("processor must pad/resize to patch grid")
+        return self.conv(image).flatten(2).transpose(1, 2)  # [B,N,D]
 
-# Example
-image = torch.randn(3, 1920, 1080)
+class MLPProjector(nn.Module):
+    def __init__(self, visual_dim, llm_dim, hidden_dim=None):
+        super().__init__()
+        m = hidden_dim or llm_dim
+        self.net = nn.Sequential(nn.Linear(visual_dim, m), nn.GELU(),
+                                 nn.Linear(m, llm_dim))
+    def forward(self, z):
+        return self.net(z)  # [B,N,dv] -> [B,N,dL]
+
+class QueryResampler(nn.Module):
+    # one educational cross-attention block, not full BLIP-2 / Flamingo
+    def __init__(self, dv, dl, queries=8, heads=4):
+        super().__init__()
+        self.query = nn.Parameter(torch.randn(queries, dl)*0.02)
+        self.proj = nn.Linear(dv, dl)
+        self.norm = nn.LayerNorm(dl)
+        self.cross = nn.MultiheadAttention(dl, heads, batch_first=True)
+        self.ffn = nn.Sequential(nn.LayerNorm(dl), nn.Linear(dl, 4*dl),
+                                 nn.GELU(), nn.Linear(4*dl, dl))
+    def forward(self, z):
+        q = self.query[None].expand(z.size(0), -1, -1)
+        kv = self.proj(z)
+        q = q + self.cross(self.norm(q), kv, kv, need_weights=False)[0]
+        return q + self.ffn(q)</code></pre>
+<p><strong>输入接口：</strong>取 encoder patch 后投影，在 image 占位符处插入真实 embedding；同时扩展 attention mask/position 和 labels，视觉/用户部分设 −100。各模型的占位符、special token 与 processor 都需按 checkpoint 实现。</p>
+<h3 id="code2">4.2 交错图文 mask：这是一个明确的教学合同</h3>
+<p>标准 decoder 可以全部 causal；下面的<strong>可选块策略</strong>允许同图像块内部双向、所有位置读此前内容。第二个图像仍能读第一个图像，不能一边实现下三角，一边声称“不同图像绝不互看”。不允许图像块覆盖未来回答。</p>
+<pre><code>def interleaved_mask(length, image_regions, device="cpu"):
+    # half-open [start,end); True means visible
+    mask = torch.ones(length, length, dtype=torch.bool, device=device).tril()
+    previous_end = 0
+    for start, end in sorted(image_regions):
+        if not (previous_end &lt;= start &lt; end &lt;= length):
+            raise ValueError("overlap or invalid image region")
+        mask[start:end, start:end] = True
+        previous_end = end
+    return mask
+
+allowed = interleaved_mask(8, [(1, 3), (5, 7)])
+# image_0 at [1,3), image_1 at [5,7); query=5 can see keys 1/2/6
+# query=1 cannot see future text 3/4 or image_1</code></pre>
+<p><strong>API 边界：</strong>上述 True=可见可用于相应 SDPA；nn.MultiheadAttention 的 bool mask 常表示 True=遮挡，传入前核对版本或取反。多层中所有图像 token 必须遵守相同未来文本隔离，避免间接标签泄漏。</p>
+<h3 id="code3">4.3 有上限的 tiling：网格、形状与结果一致</h3>
+<pre><code>def find_grid(width, height, max_tiles=12):
+    if width &lt;= 0 or height &lt;= 0 or max_tiles &lt; 1:
+        raise ValueError("invalid image or budget")
+    candidates = [(c, r) for c in range(1, max_tiles+1)
+                  for r in range(1, max_tiles//c+1)]
+    # teaching policy: aspect mismatch first, then fewer tiles
+    return min(candidates, key=lambda cr:
+        (abs(math.log(cr[0]/cr[1])-math.log(width/height)), cr[0]*cr[1]))
+
+def tile_image(image, base_res=336, max_tiles=12):
+    # floating CHW tensor; simple resize policy, not official AnyRes processor
+    if image.ndim != 3 or not image.is_floating_point():
+        raise ValueError("image must be a floating CHW tensor")
+    _, height, width = image.shape
+    cols, rows = find_grid(width, height, max_tiles)
+    x = F.interpolate(image[None], (rows*base_res, cols*base_res),
+                      mode="bicubic", align_corners=False)[0]
+    pieces = [x[:, r*base_res:(r+1)*base_res, c*base_res:(c+1)*base_res]
+              for r in range(rows) for c in range(cols)]
+    thumbnail = F.interpolate(image[None], (base_res, base_res),
+                              mode="bicubic", align_corners=False)[0]
+    return torch.stack(pieces+[thumbnail]), (cols, rows)
+
+image = torch.zeros(3, 336, 672)
 tiles, grid = tile_image(image)
-print(f"Grid: {grid[0]}×{grid[1]}, Total tiles: {tiles.shape[0]}")
-# Grid: 3×5, Total tiles: 16 (15 tiles + 1 thumbnail)</code></pre>
-
-<!-- Section 5 -->
-<h2 id="sec5">五、必知论文清单</h2>
-
-<table>
-    <tr><th>论文</th><th>核心贡献</th><th>年份</th></tr>
-    <tr><td>LLaVA</td><td>开创性 visual instruction tuning</td><td>2023</td></tr>
-    <tr><td>LLaVA-1.5</td><td>MLP > 复杂 connector 的实证</td><td>2023</td></tr>
-    <tr><td>BLIP-2</td><td>Q-Former 连接器设计</td><td>2023</td></tr>
-    <tr><td>LLaVA-NeXT</td><td>AnyRes 动态分辨率</td><td>2024</td></tr>
-    <tr><td>InternVL 2/2.5</td><td>6B ViT, progressive training</td><td>2024</td></tr>
-    <tr><td>Qwen2-VL</td><td>Native Dynamic Resolution + M-RoPE</td><td>2024</td></tr>
-    <tr><td>LLaVA-OneVision</td><td>统一 image/video/multi-image</td><td>2024</td></tr>
-    <tr><td>Cambrian-1</td><td>Connector 消融, 多编码器</td><td>2024</td></tr>
-    <tr><td>DeepSeek-VL2</td><td>MoE + VLM</td><td>2024</td></tr>
-    <tr><td><strong>Qwen3-VL</strong></td><td>Interleaved-MRoPE, DeepStack</td><td>2025</td></tr>
-    <tr><td><strong>InternVL3.5</strong></td><td>Cascade RL, MMMU 77.7%</td><td>2025</td></tr>
-    <tr><td>OPA-DPO (CVPR 2025)</td><td>针对幻觉的对齐方法</td><td>2025</td></tr>
-    <tr><td>NaViL (ICCV 2025)</td><td>Native MLLM Scaling Laws</td><td>2025</td></tr>
-    <tr><td>GR3D (CVPR 2026)</td><td>3D Spatial VLM</td><td>2026</td></tr>
-</table>
-
-<!-- Section 6 -->
-<h2 id="sec6">六、面试准备要点总结</h2>
-
-<div class="card">
-    <h4>八大核心知识点</h4>
-    <ol>
-        <li><strong>架构</strong>：ViT-Connector-LLM vs 原生多模态，MoE 应用</li>
-        <li><strong>动态分辨率</strong>：Tiling (AnyRes)、Native Resolution (2D-RoPE)、Token 压缩</li>
-        <li><strong>训练</strong>：多阶段 PT→SFT→RL，GRPO/DPO for VLM，Thinking 变体</li>
-        <li><strong>Scaling</strong>：ViT 比 LLM 更快饱和，MoE 比 Dense 更高效</li>
-        <li><strong>推理+视觉</strong>：o 系列 "thinking with images" 范式</li>
-        <li><strong>效率</strong>：Token 压缩、MoE、小模型 (SmolVLM, Moondream) 是部署关键</li>
-        <li><strong>Agent + 具身</strong>：VLM as GUI Agent / 机器人感知骨干</li>
-        <li><strong>开源追平闭源</strong>：MMMU 差距仅 1-2%</li>
-    </ol>
-</div>
-
-</main>
-
-<script>
-// Smooth scroll for TOC links
-document.querySelectorAll('.sidebar a').forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        // Close mobile sidebar
-        document.querySelector('.sidebar').classList.remove('open');
-    });
-});
-
-// Active TOC highlight on scroll
-const sections = document.querySelectorAll('h2[id], h3[id]');
-const tocLinks = document.querySelectorAll('.sidebar a');
-
-window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop - 100;
-        if (window.scrollY >= sectionTop) {
-            current = section.getAttribute('id');
-        }
-    });
-    tocLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + current) {
-            link.classList.add('active');
-        }
-    });
-});
-</script>
-
-</body>
-</html>
+# grid=(2,1); tiles.shape=(3,3,336,336), 2 crops+thumbnail
+# patch14: 3*576=1728; does not include later merge/CLS/special tokens</code></pre>
+<p><strong>生产差异：</strong>这个例子按 aspect 选最少 tile，可牺牲高分辨率细节；resize 也可能变形。实际 processor 还需像素预算、padding、插值、crop 元数据、归一和 checkpoint 的拼接规则；原例“max_tiles=12 却输出 15 tiles”的结果已修正。</p>
+</section>
+<section id="sec5"><h2>5. 论文与学习定位</h2>
+<details><summary>按问题查论文，不重复维护一张型号榜</summary><ul>
+<li><strong>表示与对齐：</strong><a href="https://arxiv.org/abs/2010.11929">ViT</a>、<a href="https://arxiv.org/abs/2103.00020">CLIP</a>、<a href="https://arxiv.org/abs/2303.15343">SigLIP</a>、<a href="https://arxiv.org/abs/2303.11331">EVA-02</a>。</li>
+<li><strong>视觉语言接口：</strong><a href="https://arxiv.org/abs/2310.03744">LLaVA-1.5</a>、<a href="https://arxiv.org/abs/2301.12597">BLIP-2</a>、<a href="https://arxiv.org/abs/2305.06500">InstructBLIP</a>、<a href="https://arxiv.org/abs/2204.14198">Flamingo</a>、<a href="https://arxiv.org/abs/2312.06742">Honeybee</a>、<a href="https://arxiv.org/abs/2209.06794">PaLI</a>、<a href="https://arxiv.org/abs/2205.01917">CoCa</a>。</li>
+<li><strong>视觉反馈：</strong><a href="https://arxiv.org/abs/2501.09695">OPA-DPO</a>、<a href="https://arxiv.org/abs/2311.16922">VCD</a>、<a href="https://arxiv.org/abs/2311.17911">OPERA</a>、<a href="https://arxiv.org/abs/2407.01449">ColPali</a>。</li></ul></details>
+<p>前沿机制的固定版本与对照见<a href="/llm-research-map-2026/">研究地图</a>；架构、后训练、服务与任务评测由<a href="/blog/#learning-paths">完整学习主线</a>连接。原稿中的 NaViL/GR3D 等命名、无出处速度/标注倍数和商业型号断言尚未闭合，不作为当前结论。</p>
+<p><a download href="/assets/archive/blog-before-learning-rework-20261115/posts/vlm-knowledge-interview/index.html.txt">下载本轮改前原稿</a>，保留全部原引用、历史表和代码以供查证。这里的数值是教学复算；论文性能不是本地训练实测。</p>
+</section>
+<section id="sec6"><h2>6. 掌握检查：能写、能数、能定位失败</h2>
+<ul><li><strong>能写：</strong>CLIP/SigLIP loss 与 score 梯度，MLP/query 接口，assistant loss 的视觉梯度链。</li><li><strong>能数：</strong>patch、crop、thumbnail、merge、帧/时间戳和语言 KV，不混原图与处理图。</li><li><strong>能解释：</strong>温度/负例、空间位置、压缩损失、模型冻结、偏好与结果奖励。</li><li><strong>能实现：</strong>patch/projector、合法图文 mask、预算一致的 tiling，处理 bool mask API 语义。</li><li><strong>能验证：</strong>OCR、grounding、时序、幻觉、文本回归与全部尝试成本分别验收。</li></ul>
+<span id="vlm-agent-bridge"></span><p><strong>接回 GUI Agent：</strong>视觉输入和坐标属于观测/动作链，工具观察不作策略动作 loss；真实环境权限与恢复见<a href="/agent-harness-guide.html">Harness</a>、<a href="/agent-systems/">Agent 系统</a>。</p>
+</section></main></body></html>

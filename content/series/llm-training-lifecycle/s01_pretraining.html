@@ -9,6 +9,10 @@
 </head>
 <body>
 <main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>预训练：数据质量怎样进入参数与 checkpoint</figcaption><ol class="mechanism-chain">
+<li><b>清洗、去重与切分</b><small>固定语料来源、许可和留出集合</small></li><li><b>tokenize → pack → mask</b><small>记录输入、文档边界与预测标签</small></li><li><b>LM loss → 梯度更新</b><small>优化器、并行、数值精度与预算</small></li><li><b>checkpoint + 状态</b><small>权重、优化器、采样进度与评测</small></li>
+</ol><p class="mechanism-return">↶ 按训练进度调整课程；恢复训练要恢复数据和优化器状态，不能只读权重。</p></figure>
 <section id="purpose">
 <h2>预训练要得到什么样的起点</h2>
 <p class="lead">通用 Base 学习文本与代码中的知识、结构和条件分布。它可能已经能续写推理、解释错误或生成工具调用的文本，但尚未保证稳定遵循对话协议，也没有直接以真实任务成功率为优化目标。</p>
@@ -55,9 +59,12 @@
 </section>
 <section id="objective">
 <h2>Causal LM：每个 token 的条件预测</h2>
-<p>给定序列 <code>x₁ … xₙ</code>，decoder 用前文预测下一 token。训练同时预测多个位置，推理则逐步生成；这两个过程共享参数，但数据流和 KV Cache 使用方式不同，详见<a href="../transformer-decoder-flow.html">Decoder 全流程</a>。</p>
-<div class="equation" role="math" aria-label="带目标掩码的因果语言模型损失">L_LM = − Σᵢ mᵢ log pθ(xᵢ | x&lt;ᵢ) / Σᵢ mᵢ
-mᵢ ∈ {0,1}：有效目标位置；padding 与隔离样本的首 token 不计入目标。</div>
+<p>decoder用前文预测下一token，训练可同时计算已知历史下的多个位置。条件概率因子分解、softmax梯度与shift已在架构页展开；这里关注数据进入目标时的边界与分母。</p>
+<div class="reading-math" role="math">\[
+p_\theta(x_{1:n})=\prod_{i=1}^np_\theta(x_i\mid x_{&lt;i}),\qquad
+L_{\rm LM}=-\frac{\sum_i m_i\log p_\theta(x_i\mid x_{&lt;i})}{\sum_i m_i}.
+\]</div>
+<p>\(m_i\in\{0,1\}\)表示目标是否有效；padding和需隔离的文档起点按配方处理。<strong>两文档例：</strong>将[甲,乙]和[丙,丁]打包时，乙→丙这条跨文档预测应依约屏蔽，丙→丁仍有效；attention也需阻断第二文档读取第一文档。loss mask本身不能完成注意力隔离。</p>
 <p>普通文档的多数 token 都是目标。对拼接的独立文档，可以隔离 attention 并屏蔽新文档首 token 的 loss，防止前一文档末尾被用来预测后一文档起点。不同配方可能采用不同边界规则，必须在数据与模型实现中保持一致。</p>
 <pre><code># 概念上的 shift；不是特定框架 API
 input_ids   = [BOS, "CSV", "rows", "exclude", "header", EOS]
@@ -87,10 +94,16 @@ def clean(rows):
 </section>
 <section id="budget">
 <h2>算力预算：参数、token 与实际吞吐</h2>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2203.15556" title="Training Compute-Optimal Large Language Models · Hoffmann, Jordan, Borgeaud, Sebastian, Mensch, Arthur 等 · 2022/03/29 · 2203.15556">Chinchilla</a>。</p></section>
+
 <p>Chinchilla 讨论的是固定训练算力下，如何同时选择模型规模与数据量。它不能被简化成对所有部署目标都有效的固定 token / parameter 比例。模型长期推理成本、数据质量、MoE 激活规模和继续训练价值会改变取舍。<a href="index.html#ref-14">[14]</a></p>
-<div class="equation" role="math" aria-label="训练计算量的粗略估计">C_train ≈ 6 × N × T
-N：稠密模型参数量；T：实际输入训练 token。
-这是粗估；长上下文 attention、辅助头、MoE 路由及系统开销需单独核算。</div>
+<h3 id="compute-derivation">\(6NT\)从哪里来，何时不够用</h3>
+<p>对稠密矩阵 \(y=xW\)，一次乘加按2 FLOPs计；每token的矩阵前向约 \(2N\)。反向既计算输入梯度又计算权重梯度，两次相似矩阵乘法合计约 \(4N\)，前后向约 \(6N\)，再乘实际处理token数 \(T\)。</p>
+<div class="reading-math" role="math">\[
+C_{\rm forward}\approx2NT,\quad C_{\rm backward}\approx4NT,\qquad
+C_{\rm train}\approx6NT.
+\]</div>
+<p><strong>教学例：</strong>\(N=10^6,T=10^3\)，这部分约 \(6\times10^9\) FLOPs。它是矩阵计算粗估，未含长上下文QK/AV、重计算、辅助头、MoE路由、通信与故障恢复；不能直接称为整个训练实测成本。</p>
 <p>MoE 的总参数量决定权重存储的一部分成本，激活参数量更接近单 token 前馈计算量；不能仅把总参数代入来横比训练效率。GPU 小时还取决于并行、通信、padding、重计算、精度与故障恢复。Mask 掉某些目标通常仍需要它们的前向和上下文计算，因此“少算 loss”不等于同比节省输入算力。</p>
 <table>
 <thead><tr><th>统计量</th><th>含义</th><th>常见误读</th></tr></thead>
@@ -116,10 +129,12 @@ N：稠密模型参数量；T：实际输入训练 token。
 <tr><td>DeepSeek-V4</td><td>公开上下文从 4K 扩展到 1M 的训练安排</td><td>仅修改推理 max length 就等价于该训练过程</td></tr>
 </tbody>
 </table>
-<p>课程不是保证收益的魔法。长数据不足会导致名义窗口可用、实际依赖处理差；长样本过多又可能挤压短任务或原有能力。需要短 / 长任务分桶、位置敏感检索、跨文件执行和能力回归共同评估。</p>
+<ul><li><strong>长数据不足：</strong>名义窗口扩大，真实长依赖仍可能失败。</li><li><strong>长样本过多：</strong>可能挤压短任务与原能力；改变有效batch与计算量。</li><li><strong>验收：</strong>短/长分桶、位置敏感检索、跨文件执行与能力回归同时看。</li></ul>
 </section>
 <section id="systems">
 <h2>训练系统保证可继续、可比较</h2>
+<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://arxiv.org/abs/2104.04473" title="Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM · Narayanan, Deepak, Shoeybi, Mohammad, Casper, Jared 等 · 2021/04/09 · 2104.04473">Megatron parallelism</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
+
 <p>数据并行扩大 batch，张量 / 流水线并行拆分模型，序列或上下文并行分担长序列；ZeRO / FSDP 管理参数、梯度和优化器状态。如何组合取决于模型、序列和通信瓶颈，现有<a href="../distributed-training-guide.html">分布式指南</a>提供实现入口。</p>
 <p>可恢复训练需要权重之外的优化器状态、学习率调度、随机数、数据分片游标及 global step。若改变 tokenizer，token ID、embedding 与已学分布的兼容问题必须处理；常见 CPT 使用原 tokenizer，而不是在继续训练时随意重新分词。</p>
 <pre><code># 教学性的产物目录；不要求采用这些文件名
@@ -135,7 +150,8 @@ base-checkpoint/
 </section>
 <section id="handoff">
 <h2>什么时候进入 CPT 或后训练</h2>
-<p>进入下一阶段的依据是能力与业务缺口：若缺领域知识、仓库结构和长依赖，可试领域 CPT；若知识够但不遵守工具协议，可先做 SFT；若示范行为稳定但任务成功率、探索或错误恢复不足，可再引入 RL。它们不是必须依次支付的四笔固定预算。</p>
+<ul><li><strong>知识、结构或长依赖不足：</strong>评估领域CPT与相应数据。</li><li><strong>已有知识但工具协议不稳：</strong>先做可执行示范SFT。</li><li><strong>协议稳定但决策、探索或恢复不足：</strong>评估RL及反馈质量。</li></ul><p>阶段可以分支；是否增加投入由同下游和同预算对照决定。</p>
+<details><summary>自测：loss mask为0为何通常仍消耗前向算力？</summary><p>该token仍要生成条件表示，并被后续预测读取；屏蔽的是直接目标。除非算法改变输入、attention或计算路径，否则不能按目标比例估算输入算力下降。</p></details>
 <table>
 <thead><tr><th>交接项</th><th>必须说清楚</th></tr></thead>
 <tbody>
@@ -157,6 +173,8 @@ base-checkpoint/
 <p>基础目标与预算：<a href="index.html#ref-14">[14] Chinchilla</a>、<a href="index.html#ref-15">[15] FIM</a>。工业数据与课程：<a href="index.html#ref-16">[16] Llama 3</a>、<a href="index.html#ref-12">[12] Qwen3</a>、<a href="index.html#ref-3">[3] GLM-5</a>、<a href="index.html#ref-4">[4] Olmo 3</a>、<a href="index.html#ref-10">[10] V4</a>、<a href="index.html#ref-11">[11] Ultra</a>及<a href="index.html#ref-26">[26] 官方模型卡</a>。</p>
 <p class="note">样本 schema、公式实现提示、目录与交接检查为教学归纳；本章不声称复现了这些团队的训练。</p>
 </section>
+<section id="frontier-evidence" data-frontier-audit="20261114"><h2>同预训练预算的结构比较</h2><p><a href="../llm-architecture/s02_attention_position_cache.html#frontier-comparison">Kimi Linear 的 1.4T token 实验</a>连接预算与结构收益，不能混入发布模型 5.7T 数据。</p></section>
+<!-- READING:FRAGMENT:END -->
 </main>
 </body>
 </html>

@@ -4,13 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>训练方法与系统：参数高效微调、优化器与集群设计</title>
-<meta name="description" content="从参数更新与显存账本到 Dense/MoE 工业后训练配置，连接 LoRA、Muon、Megatron 进程组、异步 rollout 与科学任务对照。">
+<meta name="description" content="LoRA/QLoRA、SGD到AdamW推导与数值例子，Muon及前沿优化器的质量、耗时、显存与FLOPs对照，连接Megatron进程组与工业集群设计。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body><main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>分布式更新：计算、通信与训练状态</figcaption><ol class="mechanism-chain"><li><b>Batch 与参数分片</b><small>DP / TP / PP 负责不同切分</small></li><li><b>前向 → loss → 反向</b><small>重算、精度与梯度累积</small></li><li><b>梯度通信 → optimizer</b><small>归约分片；更新参数与动量</small></li><li><b>checkpoint 与进度</b><small>保存权重、优化器与数据位置</small></li></ol><p class="mechanism-return">↶ 下一 step；global batch、micro-batch 与累积次数按并行拓扑核算。</p></figure>
 <section id="overview">
 <p class="eyebrow">Training methods &amp; systems · 2026-11-14</p>
 <h2>先选择更新对象，再分配集群</h2>
+<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
+
 <p class="lead">Pretraining、CPT、SFT、RL 描述训练链路；全参数、LoRA、优化器和并行策略决定同一阶段怎样更新。一个工业后训练方案要同时回答：哪些参数可训练、哪些状态常驻、哪些数据被采样、哪些环境实际执行，以及谁负责验证。</p>
 <p>先修：<a href="../llm-architecture/s03_ffn_moe_routing.html">FFN / MoE</a>、<a href="../llm-architecture/s04_residual_norm_stability.html">残差与稳定性</a>及<a href="s04_rl_evaluation.html">RL 循环</a>。本章建立方法和资源账本，最新 Muon / FP4 型号证据见<a href="../llm-research-map-2026/s07_architecture_training.html">研究地图07</a>。</p>
 <figure><div class="flow" aria-label="更新到集群的设计流程">
@@ -22,11 +26,28 @@
 </section>
 <section id="peft">
 <h2>LoRA 与 QLoRA：冻结底座，仍需要反向传播</h2>
-<div class="equation" role="math" aria-label="LoRA更新与参数量">W₀ ∈ R^(dout × din)，A ∈ R^(r × din)，B ∈ R^(dout × r)
-y = W₀x + (α/r)BAx；可训练参数 = r(din + dout)
-完整矩阵参数 = din × dout；底座 W₀ 冻结</div>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2002.05202" title="GLU Variants Improve Transformer · Shazeer, Noam · 2020/02/12 · 2002.05202">SwiGLU</a>；<a href="https://arxiv.org/abs/2305.13245" title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints · Ainslie, Joshua, Lee-Thorp, James, de Jong, Michiel 等 · 2023/05/22 · 2305.13245">GQA</a>；<a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>；<a href="https://arxiv.org/abs/2305.14314" title="QLoRA: Efficient Finetuning of Quantized LLMs · Dettmers, Tim, Pagnoni, Artidoro, Holtzman, Ari 等 · 2023/05/23 · 2305.14314">QLoRA</a>。</p></section>
+
+<div class="reading-math">\[
+\begin{aligned}
+W_0&amp;\in\mathbb R^{d_{\mathrm{out}}\times d_{\mathrm{in}}},\\
+A&amp;\in\mathbb R^{r\times d_{\mathrm{in}}},\\
+B&amp;\in\mathbb R^{d_{\mathrm{out}}\times r},\\
+y&amp;=W_0x+\frac{\alpha}{r}B(Ax),\\
+N_{\mathrm{adapter}}&amp;=r(d_{\mathrm{in}}+d_{\mathrm{out}}),\\
+N_{\mathrm{base}}&amp;=d_{\mathrm{in}}d_{\mathrm{out}}.
+\end{aligned}
+\]</div>
 <p>低秩限制施加在增量 ΔW，底座可以是满秩。LoRA 省去冻结参数的梯度和优化器状态；上游 adapter 要获得梯度，仍可能需要穿过后续冻结层反传和保存 / 重算激活。因此“只训练少量参数”不能直接换算为相同比例的训练计算下降。<a href="#ref-lora">[1]</a></p>
 <p>例如一个8192×8192矩阵，本文选 r=64，可训练量为1,048,576，约为原矩阵的1.56%；这是单矩阵规格推导，不代表全模型比例。若扩展到 Q/K/V/O、SwiGLU 三矩阵、router 或专家，必须分别统计真实形状与是否共享。GQA 的 K/V 矩阵通常更小。</p>
+<figure class="mechanism-map"><figcaption>LoRA：一条冻结路径和一条可训练增量相加</figcaption><ol class="mechanism-chain"><li><b>输入 x：d_in</b><small>同时进入底座 W₀ 与低秩 A</small></li><li><b>底座：W₀x</b><small>参数冻结，仍参与计算与向输入传梯度</small></li><li><b>增量：A x → B(Ax)</b><small>d_in → r → d_out；乘 α/r</small></li><li><b>求和 → 后续 loss</b><small>更新 A/B；上游 adapter 仍需反传</small></li></ol></figure>
+<p>令输出梯度为 \(g=\partial L/\partial y\)，\(s=\alpha/r\)，先按链式法则得到：</p>
+<div class="reading-math">\[
+\nabla_B L=s\,g(Ax)^\top,\qquad
+\nabla_A L=s\,B^\top gx^\top,\qquad
+\nabla_x L=(W_0+sBA)^\top g.
+\]</div>
+<p><strong>初始化算例：</strong>常见 vanilla LoRA 令 B=0、A 非零，则初始增量为0，首步 A 梯度为0，但 B 梯度通常非零；B 更新后 A 才开始学习。取 x=(1,2)、A=(1,0)、B=(0,0)ᵀ、s=1、g=(3,4)，则 Ax=1、∇B=(3,4)ᵀ、∇A=(0,0)。冻结 W₀ 不会让 ∇x 消失。</p>
 <div class="reading-table"><table><thead><tr><th>方法</th><th>改变什么</th><th>主要收益对象</th><th>不可省略的条件</th></tr></thead><tbody>
 <tr><td>全参数更新</td><td>全部或明确选择的底座参数</td><td>适应空间大</td><td>权重、梯度、master、optimizer；遗忘与恢复</td></tr>
 <tr><td>LoRA</td><td>低秩增量；底座冻结</td><td>可训练状态、多任务 adapter 交付</td><td>目标矩阵、r/α/dropout、保存激活、服务端 adapter 支持</td></tr>
@@ -46,11 +67,213 @@ result = result + lora_B(lora_A(dropout(x))) * scaling
 </section>
 <section id="optimizers">
 <h2>AdamW、Muon 与精度：更新规则不等于权重约束</h2>
-<div class="equation" role="math" aria-label="AdamW与Muon的概念更新">AdamW：W ← (1−ηλ)W − η m̂/(sqrt(v̂)+ε)
-Muon（概念）：M ← momentum(G)；U ≈ polar(M)；W ← W − η·scale(U)
-梯度裁剪：G ← G·min(1, c/(||G||₂+ε))</div>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>。</p></section>
+
+<div class="reading-math">\[
+\begin{aligned}
+\text{AdamW:}\quad W'&amp;=(1-\eta\lambda)W-\eta\frac{\widehat m}{\sqrt{\widehat v}+\epsilon},\\
+\text{Muon:}\quad M'&amp;=\operatorname{momentum}(G),\quad
+U\approx\operatorname{polar}(M'),\quad W'=W-\eta\operatorname{scale}(U),\\
+\text{clip:}\quad G'&amp;=G\min\!\left(1,\frac{c}{\|G\|_2+\epsilon}\right).
+\end{aligned}
+\]</div>
 <p>AdamW 把 weight decay 从自适应梯度分母中解耦，不能简单等同于给 Adam loss 加 L2。Muon 近似正交化的是二维更新矩阵，不要求更新后 W 正交；embedding、输出头和一维参数的分工，以及矩形缩放、动量 / Nesterov、Newton–Schulz实现都影响结果。<a href="#ref-adamw">[3]</a> <a href="../llm-research-map-2026/s07_architecture_training.html#muon">前沿配方与原论文</a>。</p>
 <p>矩阵被 TP/FSDP 切片后，独立对每块做 polar 一般不等于整矩阵更新再切片。研究方案应冻结 optimizer 的逻辑矩阵、通信、参数分组和精度，再比较 AdamW / Muon；否则“优化器收益”混入了重计算、并行和更新预算差异。</p>
+<div class="callout"><strong>优化器阅读路线：</strong><a href="#adamw-derivation">SGD → Momentum → Adam → AdamW</a> → <a href="#adamw-example">两步数值例子</a> → <a href="#optimizer-landscape">方法与适用条件</a> → <a href="#optimizer-cost">显存与 FLOPs 账本</a> → <a href="#optimizer-evidence">原论文效率对照</a> → <a href="#optimizer-recipe">训练框架中的落地检查</a>。原理、规格推导与作者实验分别注明；没有统一条件下的实测排名。</div>
+
+<h3 id="adamw-derivation">从 SGD 到 AdamW：方向、尺度与衰减逐步分开</h3>
+<p>设待训练参数为 θ，当前 minibatch 的平均损失为 L<sub>t</sub>，g<sub>t</sub> = ∇L<sub>t</sub>(θ<sub>t−1</sub>)。以下向量乘除与平方均逐坐标进行；一次 t 指一次真正的 optimizer update。梯度累积的多个 microbatch 共同形成这次 g<sub>t</sub>，不各自推进动量和偏差修正。来源：<a href="https://arxiv.org/abs/1412.6980v9">Adam 原论文</a>、<a href="#ref-adamw">AdamW 原论文 [3]</a>与<a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html">PyTorch AdamW 算法与 API</a>。</p>
+<figure><div class="flow" aria-label="SGD到AdamW的方法关系">
+<div class="stage"><b>SGD</b><small>用当前梯度<br>同一学习率作用于各坐标</small></div>
+<div class="stage"><b>Momentum</b><small>积累历史方向<br>减少方向反复变化</small></div>
+<div class="stage"><b>Adam</b><small>方向均值 + 平方均值<br>按坐标调整更新尺度</small></div>
+<div class="stage"><b>AdamW</b><small>保留 Adam 更新<br>单独施加权重衰减</small></div>
+</div><figcaption>教学关系图：Adam 还吸收了自适应缩放思想，并不是从 Momentum 唯一推导出的算法。</figcaption></figure>
+<h4>1. SGD：当前梯度决定下一步</h4>
+<div class="reading-math">\[
+\begin{aligned}
+L(\theta+\Delta\theta)&amp;\approx L(\theta)+g^\top\Delta\theta,\\
+\nabla_{\Delta\theta}\left[g^\top\Delta\theta+\frac{\|\Delta\theta\|_2^2}{2\eta}\right]
+&amp;=g+\frac{\Delta\theta}{\eta}=0,\\
+\Delta\theta&amp;=-\eta g,\qquad \theta_t=\theta_{t-1}-\eta_tg_t.
+\end{aligned}
+\]</div>
+<p>这个局部线性化加二次步长惩罚解释了梯度下降方向；minibatch 梯度将它变成 SGD。它不保存梯度历史。不同坐标的梯度尺度差异或 batch 噪声可能让同一个 η 很难兼顾所有方向，但不能据此断言 SGD 在所有任务都差。</p>
+<h4>2. Momentum：对历史方向做平滑</h4>
+<div class="reading-math">\[
+\begin{aligned}
+u_t&amp;=\mu u_{t-1}+g_t,\\
+\theta_t&amp;=\theta_{t-1}-\eta_tu_t,\\
+u_t&amp;=\sum_{k=1}^{t}\mu^{t-k}g_k,\quad u_0=0,\\
+m_t&amp;=\beta_1m_{t-1}+(1-\beta_1)g_t,\\
+m_t&amp;=(1-\mu)u_t\quad(\mu=\beta_1,\ m_0=0).
+\end{aligned}
+\]</div>
+<p>持续同向的梯度会累积，交替方向会部分抵消。sum-buffer 与 EMA 两种写法存在 (1−μ) 的尺度差，学习率要相应换算；不能直接拿相同数值的 η 比更新幅度。Nesterov 又改变取方向的位置，需核对具体实现。定义可对照<a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.SGD.html">PyTorch SGD / momentum 文档</a>。</p>
+<h4>3. Adam：一阶矩给方向，二阶原点矩给尺度</h4>
+<div class="reading-math">\[
+\begin{aligned}
+m_t&amp;=\beta_1m_{t-1}+(1-\beta_1)g_t,\\
+v_t&amp;=\beta_2v_{t-1}+(1-\beta_2)(g_t\odot g_t),\\
+\widehat m_t&amp;=\frac{m_t}{1-\beta_1^t},\qquad
+\widehat v_t=\frac{v_t}{1-\beta_2^t},\\
+\theta_t&amp;=\theta_{t-1}-\eta_t\frac{\widehat m_t}{\sqrt{\widehat v_t}+\epsilon}.
+\end{aligned}
+\]</div>
+<p><strong>m 是梯度的指数加权均值；v 是梯度平方的指数加权均值。</strong>v 不是中心化方差，也不是完整 Hessian：方差还需要减去均值平方，Hessian 则描述损失的二阶导数。sqrt(v̂) 大的坐标会缩小更新；较小的坐标相对放大。β₁ 控制方向记忆，β₂ 控制尺度记忆；Adam 保存两份与参数同形状的状态。</p>
+<div class="reading-math">\[
+\begin{aligned}
+m_t&amp;=(1-\beta_1)\sum_{k=1}^{t}\beta_1^{t-k}g_k,\\
+\mathbb E[m_t]&amp;=(1-\beta_1)a\sum_{j=0}^{t-1}\beta_1^j=(1-\beta_1^t)a,\\
+\mathbb E[v_t]&amp;=(1-\beta_2^t)b,\qquad
+\mathbb E[\widehat m_t]=a,\quad\mathbb E[\widehat v_t]=b.
+\end{aligned}
+\]</div>
+<p>后两行假定各步 \(\mathbb E[g_k]=a\)、\(\mathbb E[g_k^2]=b\) 不变。除以 \(1-\beta^t\) 修正零初始化导致的权重总和不足。</p>
+<p>偏差修正针对零初始化，不代表能消除非平稳数据、策略变化或梯度估计的所有偏差；比值 m̂/sqrt(v̂) 本身也不是某个“真实更新”的无偏估计。学习率 warmup 和偏差修正作用不同，不能互相替代。<a href="https://arxiv.org/abs/1412.6980v9">Adam §2–3</a>。</p>
+<h4>4. AdamW：为什么 Adam 加 L2 不等于解耦衰减</h4>
+<div class="reading-math">\[
+\begin{aligned}
+\widetilde L(\theta)&amp;=L(\theta)+\frac{\lambda}{2}\|\theta\|_2^2,\\
+\widetilde g&amp;=g+\lambda\theta,\\
+\text{SGD+L2:}\quad\theta_t&amp;=(1-\eta_t\lambda)\theta_{t-1}-\eta_tg_t,\\
+\text{AdamW:}\quad\theta_t&amp;=(1-\eta_t\lambda)\theta_{t-1}
+\\&amp;\quad-\eta_t\frac{\widehat m_t}{\sqrt{\widehat v_t}+\epsilon}.
+\end{aligned}
+\]</div>
+<p><strong>Adam+L2</strong> 用 \(\widetilde g\) 更新 m/v，衰减混入历史和坐标分母；<strong>AdamW</strong> 的 m/v 只接收 g，衰减直接作用于参数。</p>
+<p>无动量的标准 SGD 中，上述 L2 和乘法衰减可等价；Adam 的坐标缩放与历史状态破坏了这个等价关系。AdamW 把衰减直接施加于参数，因此衰减项不会进入 m、v。固定学习率下，只有衰减的参数经过 T 步变为 (1−ηλ)<sup>T</sup>θ₀；变动学习率则为 ∏<sub>t</sub>(1−η<sub>t</sub>λ)θ₀。所以“解耦”不意味着最终收缩量与学习率、更新步数无关。<a href="https://arxiv.org/abs/1711.05101v3">Decoupled Weight Decay Regularization</a>。</p>
+
+<h3 id="adamw-hyperparameters">超参数：含义、起点与常见误用</h3>
+<div class="reading-table" style="overflow-x:auto"><table>
+<thead><tr><th>项</th><th>控制什么</th><th>配置与检查</th></tr></thead><tbody>
+<tr><td>η / scheduler / warmup</td><td>整体更新幅度与训练阶段</td><td>先区分 pretrain、CPT、SFT、RL 和全参/adapter；相同 η 不保证 AdamW/Muon 更新 RMS 相同。warmup 随真正更新推进。</td></tr>
+<tr><td>β₁</td><td>一阶矩方向记忆</td><td>PyTorch 默认 0.9。记忆长度粗略为 1/(1−β₁)，不是精确窗口；较长记忆可能跟不上分布变化。</td></tr>
+<tr><td>β₂</td><td>二阶矩尺度记忆</td><td>PyTorch 默认 0.999，约1000步的记忆尺度；若用0.95则约20步。具体值需随batch与训练阶段调试，不能把API默认当最佳LLM配方。</td></tr>
+<tr><td>ε</td><td>分母稳定项与小梯度更新</td><td>默认 10⁻⁸。位于 sqrt(v̂) 外；若状态在低精度下计算，需检查下溢、累积和kernel行为，不能只看权重dtype。</td></tr>
+<tr><td>λ / 参数分组</td><td>独立的权重收缩</td><td>PyTorch 默认0.01。bias/Norm常单独无衰减；embedding/head是否衰减按recipe登记，不能只按二维形状判断。</td></tr>
+<tr><td>clip / accumulation</td><td>进入优化器的梯度</td><td>先按目标token正确归一化，完成累积/归约与必要的unscale，再按全局范数裁剪；记录实际更新次数与跳步。</td></tr>
+<tr><td>fused / foreach / state dtype</td><td>kernel、临时张量与带宽</td><td>同为AdamW也可能有不同峰值和耗时；PyTorch文档注明foreach可能增加约参数大小的临时内存。保存版本与开关。</td></tr>
+</tbody></table></div>
+<p class="note">默认值与 foreach 提醒来自<a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html">官方 API</a>；表内调试原则是本文分析。预训练的最优超参数不能直接移植到少步 SFT 或非平稳 RL。</p>
+
+<h3 id="adamw-example">可复算的两步例子：偏差修正与权重衰减</h3>
+<p>以下为<strong>本文构造的教学算例，非训练实验</strong>：θ₀=1，依次输入 g₁=2、g₂=−1，η=0.1，β₁=0.9，β₂=0.999，ε=10⁻⁸，λ=0.1，m₀=v₀=0。梯度由例子给定，不随各算法参数重新计算，故不能用最终 θ 比较收敛优劣。</p>
+<div class="reading-table" style="overflow-x:auto"><table>
+<thead><tr><th>t / g</th><th>m</th><th>v</th><th>m̂</th><th>v̂</th><th>m̂/(√v̂+ε)</th><th>Adam θ</th><th>AdamW θ</th></tr></thead><tbody>
+<tr><td>1 / 2</td><td>0.2</td><td>0.004</td><td>2</td><td>4</td><td>≈1</td><td>0.900000</td><td>0.890000</td></tr>
+<tr><td>2 / −1</td><td>0.08</td><td>0.004996</td><td>0.421053</td><td>2.499250</td><td>0.266337</td><td>0.873366</td><td>0.854466</td></tr>
+</tbody></table></div>
+<p>第一步未经偏差修正的方向是 0.2/√0.004≈3.1623，修正后约为1。第二步虽然 g₂ 为负，m₂ 仍为正，历史方向尚未反转。AdamW第二步为 0.99×0.89−0.1×0.266337≈0.854466。相同梯度序列下，SGD是1→0.8→0.9；sum-buffer Momentum（μ=0.9）是u:0→2→0.8，θ:1→0.8→0.72。</p>
+<details><summary>展开：用 Python 标准库复算 Adam / AdamW</summary>
+<pre><code>from math import sqrt
+m = v = 0.0
+adam = adamw = 1.0
+for t, g in enumerate((2.0, -1.0), start=1):
+    m = 0.9 * m + 0.1 * g
+    v = 0.999 * v + 0.001 * g * g
+    mh = m / (1.0 - 0.9 ** t)
+    vh = v / (1.0 - 0.999 ** t)
+    direction = mh / (sqrt(vh) + 1e-8)
+    adam -= 0.1 * direction
+    adamw = (1.0 - 0.1 * 0.1) * adamw - 0.1 * direction
+    print(t, mh, vh, direction, adam, adamw)</code></pre>
+<p class="note">这是公式复算代码，不含 autograd、参数分组、混合精度或分布式逻辑。</p>
+</details>
+
+<h3 id="optimizer-landscape">业界与研究路线：优化方向、减少状态、改善矩阵几何</h3>
+<h4 id="muon-mechanism">Muon：把矩阵动量的奇异值尺度和方向分开</h4>
+<p>对二维动量矩阵作薄 SVD，\(M=U\Sigma V^\top\)。非退化子空间上的 polar 方向 \(UV^\top\) 保留左右方向，去掉奇异值幅度；矩形矩阵只能在相应行或列子空间满足正交关系。Muon 用矩阵乘法近似这个方向，再按形状与配方缩放更新。</p>
+<div class="reading-math">\[
+M=\begin{bmatrix}3&amp;0\\0&amp;1\end{bmatrix}
+\quad\Longrightarrow\quad
+\operatorname{polar}(M)=I_2.
+\]</div>
+<p><strong>算例：</strong>未缩放时，M 的两轴更新比为3:1，polar 为1:1；若 W=2I、η=0.1，用该方向后 W'=1.9I，显然 W' 并不正交。Muon 正交化的是<strong>更新方向</strong>。零奇异值、有限迭代与数值精度会影响实际近似，不能把每轮输出当成精确 polar。</p>
+<p>以下区分<strong>已有工业实现</strong>与<strong>研究候选</strong>。参数状态中的二阶矩不是二阶导数；Shampoo/SOAP也通过梯度统计构造预条件器，不直接保存完整模型 Hessian。Muon 的核心机制和工业变体继续见<a href="../llm-research-map-2026/s07_architecture_training.html#muon">研究地图07</a>。</p>
+<div class="reading-table" style="overflow-x:auto"><table>
+<thead><tr><th>方法 / 来源</th><th>怎样更新或节省</th><th>适用方向与代价</th></tr></thead><tbody>
+<tr><td>AdamW<br><a href="#ref-adamw">原论文 [3]</a></td><td>逐坐标m、v，自适应缩放；解耦衰减</td><td>成熟基线，常用于预训练与后训练；全尺寸状态和内存带宽是主要成本。</td></tr>
+<tr><td>Muon / MuonClip<br><a href="https://arxiv.org/abs/2502.16982v1">Moonlight</a>、<a href="https://arxiv.org/abs/2507.20534">Kimi K2</a></td><td>矩阵动量经过近似polar；隐藏层矩阵Muon，其他组AdamW。MuonClip额外控制QK幅度。</td><td>已有LLM工业报告；多次矩阵乘法、逻辑矩阵分组与分布式聚合需计成本。不能默认所有参数或所有RL阶段都更优。</td></tr>
+<tr><td>Lion<br><a href="https://arxiv.org/abs/2302.06675v4">原论文</a></td><td>方向由sign(β₁m+(1−β₁)g)给出，再用β₂更新动量；只存一份动量</td><td>论文含视觉、语言与生产CTR案例；sign改变更新范数，需要独立调学习率/衰减。视觉算力收益不能当成LLM通用收益。</td></tr>
+<tr><td>Adafactor<br><a href="https://arxiv.org/abs/1804.04235v1">原论文</a></td><td>矩阵二阶矩用行/列统计近似；原省内存版本不保留一阶动量，并做update clipping和相对步长调整</td><td>适合状态内存受限；加回完整动量就重新增加mn状态。update clipping不同于gradient clipping。</td></tr>
+<tr><td>Shampoo / SOAP<br><a href="https://proceedings.mlr.press/v80/gupta18a.html">Shampoo 原论文</a>、<a href="https://arxiv.org/abs/2409.11321v2">SOAP</a></td><td>Shampoo保存GGᵀ、GᵀG等预条件器；SOAP在其特征基中运行Adam，周期刷新基</td><td>研究与分布式实现路线；可提高步数效率，但矩阵状态、旋转、分解与通信可能抵消收益。blocking和刷新频率很关键。</td></tr>
+<tr><td>Adam-mini<br><a href="https://arxiv.org/abs/2406.16793v7">原论文</a></td><td>保留完整一阶矩，按结构块共享二阶尺度；特殊参数另处理</td><td>以减少状态和通信为目标；block划分需识别head/模块，不是随意按存储buffer切分。论文覆盖pretrain、SFT、RLHF。</td></tr>
+<tr><td>GaLore / APOLLO<br><a href="https://arxiv.org/abs/2403.03507v2">GaLore</a>、<a href="https://arxiv.org/abs/2412.05270v4">APOLLO</a></td><td>GaLore在周期更新的低秩梯度子空间保存状态；APOLLO用随机低秩辅助状态估计梯度缩放，仍沿原空间梯度更新</td><td>全参数训练的内存路线，不等于冻结底座的LoRA；要计投影basis、低秩状态、刷新和临时梯度成本。</td></tr>
+<tr><td>8-bit Adam(W)<br><a href="https://arxiv.org/abs/2110.02861v2">原论文</a>、<a href="https://huggingface.co/docs/bitsandbytes/optimizers">bitsandbytes</a></td><td>将状态做block-wise量化，目标是压缩既有优化规则的存储；小张量可保持32-bit</td><td>工具生态较成熟；量化元数据与解码kernel有成本。状态8-bit不意味着权重、梯度、master也8-bit，或总显存下降75%。</td></tr>
+</tbody></table></div>
+<details><summary>截至2026-11-14的研究观察：FOAM 与 MoE 分层状态</summary>
+<p><a href="https://arxiv.org/abs/2611.16905v1">FOAM：Factored One-sided Adam-Moment（2026-11-12）</a>保留输入侧预条件器，并在旋转坐标中使用行列分解的二阶矩。主实验124M–760M；降低SOAP状态与分解成本，仍保存输入侧矩阵，不能把它称为“比AdamW更省显存”的一般结论。注意完整题名，别与其他也叫FOAM的工作混淆。</p>
+<p><a href="https://arxiv.org/abs/2607.19058v2">SkewAdam（2026-08-13，v2）</a>按MoE骨干、专家、router分配不同状态；作者6.78B MoE、82M token短程实验报告状态50.6→1.29GB、峰值81.4→31.3GB。v2消融明确：分层主要买到显存收益，不能把全部困惑度改进归因于分层。<strong>两项为作者报告、尚未在本文复现，也不作为成熟万亿token工业配方。</strong></p>
+</details>
+
+<h3 id="optimizer-cost">成本账本：显存、FLOPs、带宽与通信分别计算</h3>
+<p>下面是<strong>根据状态形状推导的逻辑容量</strong>，不是实测峰值。令一个矩阵W∈R<sup>p×q</sup>、n=pq，持久浮点状态统一按FP32计，每元素4 bytes；不含权重、梯度、master、激活、临时buffer和分片。小张量例外、dtype、blocking与具体实现会改变容量。</p>
+<div class="reading-table" style="overflow-x:auto"><table>
+<thead><tr><th>方法</th><th>主要持久状态 / 矩阵</th><th>FP32状态容量</th><th>每次更新的主要工作</th></tr></thead><tbody>
+<tr><td>SGD / Momentum</td><td>0 / n个动量元素</td><td>0 / 4n bytes</td><td>O(n)逐元素读写；Momentum多一份状态</td></tr>
+<tr><td>AdamW</td><td>m、v：2n</td><td>8n bytes</td><td>O(n)逐元素计算，含平方、sqrt、除法；通常更受带宽约束</td></tr>
+<tr><td>Muon / Lion</td><td>n个动量元素</td><td>4n bytes；Muon的AdamW参数组另计</td><td>Lion为O(n)；Muon还做k次矩阵正交化近似，临时Gram矩阵不能漏算</td></tr>
+<tr><td>Adafactor，无一阶动量</td><td>行/列尺度：p+q</td><td>4(p+q) bytes；非矩阵组另计</td><td>仍读取和缩放全部pq梯度：O(pq)，不因状态小就只算O(p+q)</td></tr>
+<tr><td>Adam-mini</td><td>完整m + b个块尺度</td><td>4(n+b) bytes；特殊组可更多</td><td>O(n)更新 + 块内统计/必要归约</td></tr>
+<tr><td>8-bit Adam(W)</td><td>两个量化状态 + scale/codebook</td><td>约2n bytes + 元数据 + 32-bit例外</td><td>O(n)量化/反量化与更新；成本受kernel和块大小影响</td></tr>
+<tr><td>GaLore / APOLLO，单侧rank r投影</td><td>两个rq状态 + pr的basis，示意方向p→r</td><td>约4(2rq+pr) bytes；具体momentum/额外buffer按实现</td><td>投影矩阵乘法、basis刷新；GaLore可能有SVD，APOLLO用随机投影</td></tr>
+<tr><td>SOAP，未分块的双侧版本</td><td>m、旋转v、左右统计矩阵与特征基</td><td>典型约4[2pq+2(p²+q²)] bytes</td><td>旋转/Gram乘法O(p²q+pq²)，分解O(p³+q³)每f步刷新；临时区另计</td></tr>
+</tbody></table></div>
+<p>SOAP公式按同时保存左右统计矩阵与其特征基的版本计；<a href="https://arxiv.org/html/2409.11321v2#S7.SS2">原论文 §7.2</a>讨论空间和优化，blocking/one-sided会改结果。APOLLO的辅助缩放与GaLore的投影更新规则不同，表中只合并说明一侧压缩空间的容量，不能视为两个算法相同。</p>
+<table><thead><tr><th>8192×8192 单矩阵</th><th>状态容量（不含权重等）</th></tr></thead><tbody>
+<tr><td>AdamW m/v</td><td>8n = 512 MiB</td></tr><tr><td>Muon/Lion 动量</td><td>4n = 256 MiB</td></tr>
+<tr><td>Adafactor 行列，无完整动量</td><td>4×(8192+8192) = 64 KiB</td></tr>
+<tr><td>8-bit 双状态，无 scale/例外</td><td>2n = 128 MiB</td></tr></tbody></table>
+<div class="reading-math">\[
+\begin{aligned}
+&amp;M_{\mathrm{AdamW}}=(2+2+4+4+4)N=16N,\\
+&amp;M_{\mathrm{one}}=(2+2+4+4)N=12N,\\
+&amp;M_{\mathrm{optimizer}}=(8-4\rho)N.
+\end{aligned}
+\]</div>
+<p>容量单位为bytes。\(M_{\rm one}\) 表示只存一份完整动量的方案；前两行按 BF16 权重/梯度、FP32 master 与状态计；第三行取 Muon 覆盖比例 ρ，其余 AdamW。<strong>一份动量使状态减半，整体静态容量只减25%</strong>；激活和临时峰值还未计入。</p>
+<p>MiB按2<sup>20</sup>bytes；上述理想式尚未做ZeRO/FSDP分片。MoE按可训练的总参数计状态，前向计算则取决于实际路由；不能用“每token激活参数量”替代全部优化器状态量。原集群<a href="#cluster">16N静态账本</a>可按真实分组替换state项。</p>
+<h4>Muon的矩阵乘法，怎样换算为FLOPs？</h4>
+<p>一种五次多项式实现先规范化 X，转置使 \(a=\min(p,q),b=\max(p,q)\)。多项式系数 \(a_0,b_0,c_0\) 依配方确定；一次迭代含：</p>
+<div class="reading-math">\[
+\begin{aligned}
+A&amp;=XX^\top,\qquad B=b_0A+c_0A^2,\qquad X'=a_0X+BX,\\
+F_{\mathrm{round}}&amp;\approx
+\underbrace{2a^2b}_{XX^\top}+\underbrace{2a^3}_{A^2}+
+\underbrace{2a^2b}_{BX}\\
+&amp;=4a^2b+2a^3,\\
+F_{k}&amp;\approx k(4a^2b+2a^3).
+\end{aligned}
+\]</div>
+<p><strong>8192方阵、5轮：</strong>主乘法约 \(1.649\times10^{13}\) FLOPs，即16.49 TFLOPs/更新；不含归一化、逐元素、通信和其他参数组。这里是<strong>运算量</strong>，不是 TFLOP/s 吞吐率或 GPU 利用率。</p>
+<p>推导依据<a href="https://arxiv.org/html/2502.16982v1#S2.SS1">Muon论文的Newton–Schulz多项式</a>；实际实现可能采用不同乘法安排、迭代数、精度或分块。TFLOPs高不一定墙钟更慢，因为GEMM可利用Tensor Core；AdamW运算少也可能被状态读写拖慢。要测 optimizer step 时间、显存峰值、通信字节、整步时间与有效训练吞吐，不能从公式推出固定耗时倍率。</p>
+<p>对单个dense线性层，B个输入token的前向加两次反向主GEMM约6Bpq FLOPs，便于与这层的optimizer开销对比；这不是整个Transformer的精确6ND公式，Attention、激活重计算、MoE路由和其他算子需另计。梯度累积让同一次更新处理更多token，optimizer占比可能下降；缩小microbatch引发的重计算和通信则可能让真实开销上升。</p>
+<p class="note">同一规格算例：8192方阵、5轮时，NS主GEMM与该层前向/反向主GEMM之比约为5×8192/B。B=65,536时约62.5%，B=524,288时约7.81%。B指这次逻辑更新实际用于该矩阵的token总量，而非microbatch大小；这两个比例为运算量推导，不是实测训练时间占比。</p>
+
+<h3 id="optimizer-evidence">性能与效率对照：保留实验条件和反例</h3>
+<p><strong>下表均为单篇作者报告，不是本文实测。</strong>指标包括同等loss所需FLOPs、目标质量墙钟时间、吞吐与状态容量，它们的分母不同，不能合成一个“快几倍”排名。跨论文模型、数据、batch、硬件和超参数搜索均不相同。</p>
+<p class="note">研究观察中的GB与论文倍率按原文标记保留；本章容量算例则明确使用bytes/MiB。达到目标质量的时间还受评测频率、调度与质量阈值影响。</p>
+<div class="reading-table" style="overflow-x:auto"><table>
+<thead><tr><th>工作与原文</th><th>设置与报告结果</th><th>如何解释 / 不能推广为</th></tr></thead><tbody>
+<tr><td><a href="https://arxiv.org/html/2502.16982v1#S3.SS2">Muon / Moonlight §3.2</a></td><td>compute-optimal scaling-law实验：达到相当性能约用AdamW的52%训练FLOPs；另训练3B/16B MoE、5.7T tokens</td><td>训练量效率，约2×是作者scaling结果；不是optimizer kernel快2×，也不保证任意SFT/RL有同等收益。</td></tr>
+<tr><td><a href="https://arxiv.org/html/2409.11321v2#S6.SS1">SOAP §6.1</a></td><td>360M/660M语言模型、大batch、重新调短cosine schedule到AdamW终点质量：步数减少超过40%、墙钟减少超过35%</td><td>包含每步更重与达到质量步数更少的净结果；依赖batch/调度/实现，不是所有规模都减少35%。</td></tr>
+<tr><td><a href="https://arxiv.org/abs/2406.16793v7">Adam-mini v7</a></td><td>论文报告约半数优化器内存；Llama2-7B、2×A800-80GB：吞吐+49.6%、预训练墙钟约−33%</td><td>减少状态可同时减少通信或提高batch；不是总显存减少50%，也不是算术FLOPs自动减少33%。</td></tr>
+<tr><td><a href="https://arxiv.org/abs/2412.05270v4">APOLLO v4</a></td><td>8×A100-80GB设置支持4×更大batch，报告3×吞吐；7B低显存案例还结合权重量化</td><td>这是扩batch后的系统收益；不能说相同batch下更新kernel快3×，或仅换optimizer就让任意7B训练少于12GB。</td></tr>
+<tr><td><a href="https://arxiv.org/abs/2403.03507v2">GaLore v2</a></td><td>LLaMA 1B/7B、C4最多19.7B tokens与RoBERTa/GLUE：状态内存最多−65.5%；8-bit组合状态最多−82.5%、总内存−63.3%</td><td>“最多”对应特定配置，投影与量化效果要分开；低秩状态不证明同等质量总FLOPs必然降低。</td></tr>
+<tr><td><a href="https://arxiv.org/html/2611.16905v1#S1.F1">FOAM v1，Figure 1</a></td><td>GPT-2 760M、29.55K steps：固定步数墙钟相对AdamW，Muon1.15×、FOAM1.17×、SOAP2.31×；FOAM达到AdamW终点loss为10.53h，AdamW为10.55h</td><td>研究候选；它直接展示“更低终点loss”与“每步更快”不同。SOAP在此设置更慢，与原论文大batch收益不矛盾；目标和实现改变结果。</td></tr>
+</tbody></table></div>
+<p>对照结论是<strong>先确定瓶颈再选候选</strong>：成熟更新/恢复基线从AdamW开始；目标是等质量训练量可考虑Muon或SOAP；状态/通信吃紧可考虑Adam-mini、8-bit或Adafactor；极限单卡全参训练研究GaLore/APOLLO，同时评估basis刷新与精度。以上为本文工程判断，不是统一benchmark排名。</p>
+
+<h3 id="optimizer-recipe">接入训练框架：保持相同目标，记录真实成本</h3>
+<ol>
+<li><strong>固定实验：</strong>模型/数据/tokenizer、有效token batch、loss mask、精度、并行与评测协议；分别比较等token、等总算力、等GPU-hours三种预算。各优化器独立调合理学习率与scale，计入调参成本。</li>
+<li><strong>登记分组：</strong>以逻辑参数名与形状区分attention投影、MLP、expert、embedding、head、router、Norm；保存optimizer种类、decay、lr和共享/拆分规则。Muon用完整逻辑矩阵的更新接口；TP/FSDP切片不能静默改变数学对象。</li>
+<li><strong>记录质量：</strong>held-out loss/perplexity和目标任务质量、遗忘、失稳/重试；至少报告重复种子的离散程度。pretrain结论不能直接当GRPO/PPO收益；RL另计rollout和环境预算。</li>
+<li><strong>记录成本：</strong>forward/backward/optimizer/collective各段时间、有效tokens/s、allocated与reserved峰值、state常驻容量、峰值临时buffer、估算/实测FLOPs口径、GPU-hours与checkpoint I/O。重叠段不能重复相加。</li>
+<li><strong>验证恢复：</strong>保存m/v或动量、块尺度、投影basis、量化scale、scheduler、global update与RNG；从AdamW换Muon通常是新阶段状态初始化，不能把同形状张量直接当兼容状态加载。</li>
+</ol>
+<p>PyTorch当前文档提供<a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.Muon.html">Muon参数与两种学习率缩放</a>及<a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html">AdamW的fused/foreach选项</a>；本文没有验证现有Megatron/verl固定版本已支持所有候选。框架集成要核对版本、分片语义和checkpoint格式，再做小规模运行。原有<a href="#parallel">进程组</a>与<a href="#stability">恢复检查</a>继续适用。</p>
 <div class="reading-table"><table><thead><tr><th>对象</th><th>建议记录</th><th>典型错误</th></tr></thead><tbody>
 <tr><td>模型权重 / master</td><td>常驻 dtype、master 是否存在、量化尺度</td><td>从FP4 GEMM推断 optimizer state 全是4-bit</td></tr>
 <tr><td>梯度 / 通信</td><td>累积、归约精度；裁剪前是否得到全局范数</td><td>每 rank 裁剪局部梯度冒充同一个全局裁剪</td></tr>
@@ -72,6 +295,8 @@ Muon（概念）：M ← momentum(G)；U ≈ polar(M)；W ← W − η·scale(U)
 </section>
 <section id="parallel">
 <h2>并行维度先分清逻辑对象</h2>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
+
 <div class="reading-table"><table><thead><tr><th>维度</th><th>主要切分</th><th>代价与约束</th></tr></thead><tbody>
 <tr><td>TP</td><td>矩阵 / head / FFN 通道</td><td>层内collective；head及矩阵可分性、KV复制</td></tr>
 <tr><td>PP</td><td>层与阶段</td><td>microbatch、pipeline bubble、层 / 专家负载不均</td></tr>
@@ -81,6 +306,20 @@ Muon（概念）：M ← momentum(G)；U ≈ polar(M)；W ← W − η·scale(U)
 <tr><td>FSDP / ZeRO</td><td>参数、梯度、optimizer状态的冗余</td><td>all-gather / reduce-scatter；不是新增的模型层轴</td></tr>
 </tbody></table></div>
 <p>ZeRO-1/2/3分别进一步分片optimizer、gradient、parameter；具体常驻buffer与临时聚合取决于实现。CP减少序列激活 / Attention工作量，不应假定它独立缩小每rank权重。<a href="#ref-zero">[4]</a>；原通信说明见<a href="../distributed-training-guide.html">分布式指南</a>。</p>
+<h3 id="state-sharding">从状态账本推导分片：N=1B、D=4 算例</h3>
+<p>先不叠加 TP/PP，按 BF16 权重2N、梯度2N、FP32 master+m+v 共12N bytes。D 是分片组大小，理想均匀存储为：</p>
+<table><thead><tr><th>策略</th><th>每 rank 理想持久容量</th><th>N=1B，D=4</th><th>交换什么</th></tr></thead><tbody>
+<tr><td>普通 DP</td><td>2N+2N+12N</td><td>16 GB</td><td>梯度 all-reduce</td></tr>
+<tr><td>ZeRO-1</td><td>2N+2N+12N/D</td><td>7 GB</td><td>归约梯度、同步更新后参数</td></tr>
+<tr><td>ZeRO-2</td><td>2N+(2N+12N)/D</td><td>5.5 GB</td><td>梯度 reduce-scatter、参数同步</td></tr>
+<tr><td>ZeRO-3/FSDP full shard</td><td>16N/D</td><td>4 GB</td><td>按需参数 all-gather、梯度 reduce-scatter</td></tr></tbody></table>
+<figure class="mechanism-map"><figcaption>全状态分片省常驻内存，以层级聚合和通信换取计算</figcaption><ol class="mechanism-chain"><li><b>rank 常驻自己的 shard</b><small>权重、梯度、master 与 m/v</small></li><li><b>计算当前层前 all-gather</b><small>临时取得该层完整计算参数</small></li><li><b>反向 → reduce-scatter</b><small>归约后梯度回到负责的 rank</small></li><li><b>本地更新 → 下轮聚合</b><small>释放/重取按策略；临时区与重叠另计</small></li></ol></figure>
+<p><strong>4 GB 是理想持久状态，不是峰值。</strong>当前层完整参数、预取、通信 bucket、激活和 allocator 可能同时存在；不同 master 与梯度 dtype 也会改变账本。</p>
+<h3 id="batch-accounting">Global batch：只沿独立数据副本增加</h3>
+<div class="reading-math">\[
+B_{\mathrm{global}}=B_{\mathrm{micro}}\times A_{\mathrm{accum}}\times D_{\mathrm{data}}.
+\]</div>
+<p>microbatch 每数据副本2条、累积8次、DP=4，则每次 optimizer update 处理64条。TP/PP/CP 是同一批数据的协作计算，不再乘入。变长与 packing 时还应记录64条实际含多少输入 token、目标 token；有效 loss 按目标总数归一化，不能机械平均长度不同的 microbatch loss。</p>
 <details><summary>Megatron Core v0.14.0：同一 world size 的两种进程组</summary>
 <pre><code># parallel_state.py L647–728；简化，BSD-3-Clause
 DP = world_size // (TP * PP * CP)
@@ -93,41 +332,42 @@ expert_DP = world_size // (ETP * EP * PP)
 </details>
 </section>
 <section id="cluster">
+<details><summary>按需查看：128/1024 H100 工业规模规划与静态账本（未运行）</summary>
 <h2>两套工业规模后训练规划</h2>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
+
 <p>目标是讨论大模型系统约束，不为单个airway研究制造足量训练数据。Dense参考公开Qwen2.5-72B；MoE参考Qwen3-235B-A22B。它们是可固定规格的基线，最新型号案例见研究地图。H100 80GB、8卡/节点和池比例由本文选择，配置尚未运行、端到端兼容尚未验证。<a href="#ref-models">[7]</a></p>
 <div class="reading-table"><table><thead><tr><th>规划</th><th>硬件与训练 actor</th><th>rollout 池</th><th>关键约束</th></tr></thead><tbody>
 <tr><td>Dense 约70B</td><td>128卡 / 16节点；64训练卡<br>TP4×PP2×CP2×DP4=64</td><td>64卡；规划16个TP4副本</td><td>TP4×CP2尽量放8卡节点内；PP跨节点。reference共置须另计权重与临时区</td></tr>
 <tr><td>大型MoE</td><td>1024卡 / 128节点；512训练卡<br>TP2×PP4×CP2×DP32=512</td><td>512卡；TP8为初始比较路线，EP服务为另一个消融</td><td>ETP2×PP4×EP8×专家DP8=512；128专家可分8组。94层不能四等分，规划24/23/23/24层</td></tr>
 </tbody></table></div>
 <p>MoE 的 TP8 rollout 可能复制4个KV heads；EP方案也不能再将同一并行域乘一次。节点放置、服务kernel、权重转换、94层stage负载与CP支持需要未来联合检查。不能从进程数乘积成立推断方案可直接投产。</p>
-<div class="equation" role="math" aria-label="Dense静态训练状态估算">本文选定 N=70×10⁹，BF16权重/梯度、FP32 master+m+v：
-无分片逻辑状态 = (2+2+4+4+4)N = 16N bytes
-示意：TP4×PP2切权重；gradient/master/m/v在DP×CP=8域分片
-每rank静态 ≈ 2N/8 + 14N/64 = 32.8125 GB（十进制）
-同形状BF16 reference另加 ≈ 2N/8 = 17.5 GB/rank</div>
+<div class="reading-math">\[
+\begin{aligned}
+N&amp;=70\times10^9,\qquad M_{\mathrm{logical}}=16N\ \text{bytes},\\
+M_{\mathrm{rank}}&amp;\approx\frac{2N}{4\times2}+
+\frac{14N}{4\times2\times8}\\
+&amp;=32.8125\ \text{GB},\\
+M_{\mathrm{reference}}&amp;\approx\frac{2N}{4\times2}\\
+&amp;=17.5\ \text{GB/rank}.
+\end{aligned}
+\]</div>
+<p>本例 TP4×PP2 切模型；gradient/master/m/v 在 DP×CP=8 域分片。GB 使用十进制。</p>
 <p class="note">这是理想均匀切片的规格推导，N=70B也不是精确checkpoint参数量。排除激活、重计算、通信bucket、未分片参数、临时聚合、allocator、KV及碎片；FP32梯度、不同optimizer或ZeRO/FSDP策略会改公式。不能将32.8GB称为实测峰值。</p>
 <p>GRPO可不训练critic；PPO的critic需要权重、梯度、optimizer和推理前向，不能塞进剩余显存时就应减少并行actor资源或扩容。reference可共置 / CPU offload，但CPU内存、传输与重载成本必须计入；独立神经reward / 教师也要独立列资源。</p>
 <p>CPU环境worker负责RNA-seq脚本与verifier，另列CPU-hours、内存、并发和超时；对象存储保存不可变fixture、checkpoint、trace及artifact。未测量前CPU worker数量和墙钟时长保持空值，不能声称与GPU池免费重叠。</p>
 <p><a href="../assets/research/scientific-agent-design-20261114/cluster-plan.json" download>下载完整规划JSON</a>；对照、分层长度预算和成本见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">科学任务集群方案</a>。</p>
+</details>
 </section>
 <section id="rollout">
 <div class="integration-overview"><h2>资源重叠与数据过期的交接</h2><p>本章主讲更新对象、优化器、诊断和训练进程组；异步rollout应把资源计划交接给<a href="../llm-posttraining/s05_frameworks_async.html#three-policy">后训练概率对齐</a>。记录行为/训练版本、丢弃策略和环境耗时，再比较有效更新吞吐；128/1024 H100规划保留在上节。</p></div>
-<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前异步rollout概览 · 2026-11-14</summary>
-<h2>异步 rollout：提升重叠，控制数据过期</h2>
-<p>同步方案等待一批中最慢轨迹，再更新actor；异步方案让环境 / 生成继续运行，trainer有足量数据就更新。其代价是行为策略与当前策略不同。必须保留采样时的logprob和策略版本，区分概率校正、裁剪、过滤及有限lag。重新用新权重计算“旧logprob”不能还原行为策略。</p>
-<p>固定 verl v0.6.0 的<a href="https://github.com/volcengine/verl/blob/ddd86f527a4af75095e4677b02b5aa272913a088/recipe/one_step_off_policy/README.md">one-step-off-policy recipe</a>提供生成 / 训练资源隔离与权重同步的实现路线；AReaL v5描述完全异步、staleness控制与PPO改动。两者不是相同算法，论文数学 / coding结果也不是本科学任务的收益证明。<a href="#ref-areal">[6]</a></p>
-<details><summary>本文建议的接入顺序与配置边界</summary>
-<p>先以同步、相同精度 / 模板 / 动作mask建立概率一致性，再比较one-step overlap；完全异步单独消融。记录样本完成、权重同步、排队与更新时刻，区分更新次数lag和实际时间lag。长工具调用期间是否换策略须明确，最好将整条轨迹绑定同一版本或逐动作保存版本。</p>
-<p>所选 verl 配置文件<a href="https://github.com/volcengine/verl/blob/ddd86f527a4af75095e4677b02b5aa272913a088/verl/trainer/config/engine/megatron.yaml">engine/megatron.yaml</a>确有TP、PP、CP、EP、ETP与distributed optimizer字段。本文下载文件是独立方案schema，不是该框架启动YAML；容器依赖、MCore adapter和全部组合未实测，不混写两个版本的启动参数。</p>
-</details>
-</details><!-- READING:HISTORY:END -->
 </section>
 <section id="self-check">
 <h2>理解检查与下一步</h2>
 <details><summary>LoRA参数少，为什么长上下文仍会OOM？</summary><p>冻结底座仍参与前向；adapter梯度可能穿过冻结层反传，激活、Attention中间状态、logits和临时buffer不随可训练参数同比减少。</p></details>
 <details><summary>512卡、CP2、EP8时，为什么专家DP不是4？</summary><p>本版本普通层DP=32，但专家视角cp=1，重组DP×CP域；ETP=TP时专家DP=32×2/8=8。世界规模始终512。</p></details>
 <details><summary>异步吞吐更高，就证明训练更好吗？</summary><p>还需同资源质量曲线、同推理预算终评、过期样本比例、训练 / 环境成本和失败记录。更多过期或不可验证轨迹可能增加token吞吐却降低有效更新。</p></details>
-<p>沿<a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学合同</a> → <a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">SFT / RL对照</a>继续；服务状态和容量归<a href="../llm-serving/">推理部署系列</a>。三条路线见<a href="../llm-research-map-2026/#learning-paths">统一阅读入口</a>。</p>
+<div class="course-review"><p><strong>Adam 的 v 是方差吗？</strong>是平方梯度的指数均值，未减均值平方，也不是 Hessian。</p><p><strong>AdamW 的解耦意味着与学习率无关吗？</strong>衰减不进 m/v，但每步乘 \(1-\eta_t\lambda\)，总收缩仍依赖学习率与步数。</p><p><strong>Muon 会使权重正交吗？</strong>处理矩阵更新方向；本节 2I→1.9I 算例已经给出反例。</p></div>
 </section>
 <section id="sources"><h2>来源与复核范围</h2>
 <ol class="sources">
@@ -141,4 +381,5 @@ expert_DP = world_size // (ETP * EP * PP)
 </ol>
 <p class="note">硬件 / 预算 / 池比例为本文方案；公式为规格推导；原论文报告与方案判断分别表述。对Muon最新案例复用研究地图证据，不重复统计为独立复现。</p>
 </section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>

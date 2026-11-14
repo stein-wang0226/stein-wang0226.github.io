@@ -61,3 +61,21 @@
 本地验收预览：[Codex 实例](http://127.0.0.1:8772/agent-harness-guide.html#codex-loop)，产物目录 `/tmp/my-blogs-harness-build`。没有运行 Codex 性能对照。发布前再次执行 `make check OUTPUT=/tmp/my-blogs-harness-publish-build`，68 页与 109 个公开文件检查通过；主站分支 `main` 与 `origin/main` 同步后准备提交本次四个文件。
 
 公开入口：[Codex 源码实例](https://stein-wang0226.github.io/agent-harness-guide.html#codex-loop)。该链接在对应提交部署完成后包含本次内容，地址本身不能代替部署结果核验。
+
+## 2026-11-15：用户 Memory 笔记整合
+
+用户提供的 Markdown 笔记已整合到原 `#codex-context` 与 `#codex-memory`，保持原公开地址。第 17 节补 Context / Prompt 的语义、完整与增量请求、渐进式披露、Thread / Session / Turn，以及 Truncation / Pruning / Compaction；第 18 节补 rollout 类型、Phase 1 输入筛选与预算、版本化 JSON、no-output、Phase 2 程序与 Agent 的分工、读取与显式更正。完整模板通过同页原生 details 提供说明和下载，避免把长篇提示词直接堆入主文。
+
+原稿使用 `openai/codex` 提交 `a9b0815167c27ab13719dd12d13b63e02b70d221`（2026-10-11T23:44:43Z）。正文的实现对照仍固定到 `c2c1ebba0a7985ebee065c5492233a843b84c4c6`；归档目录为 `assets/research/codex-memory-20261115/`。六份 A–F 从旧提交保存官方完整字节，另保存 V2 整理和读路径模板，以及 OpenAI LICENSE / NOTICE。用户原稿独立保留，不改其正文或附录排版；仅将文件后缀换成 `.txt` 便于公开阅读。归档清单记录每份文件的来源、许可、长度与 SHA。用户材料不被整体归为 Apache-2.0。
+
+修订依据：
+
+- 原稿的 TypeScript `PRUNE_PROTECT=40_000`、`PRUNE_MINIMUM=20_000` 和受保护的 skill 输出来自 [OpenCode 固定源码](https://github.com/anomalyco/opencode/blob/fc7e4cf93e660ad5ddabb0c48ecc99e934ebfe95/packages/opencode/src/session/compaction.ts#L28-L31)，不属于 Codex。正文保留为不同 Harness 的对照。
+- `unified_exec` 的 10,000 token 请求默认值还受当前截断策略约束，不能推广到所有工具，也不能保证每次截断都产生可回读文件。
+- `Prompt` 请求对象不只是用户指令；增量接续有连接与前缀条件。工具目录、输出预算和子 Agent 委派是不同机制。
+- Phase 1 的预算约为提炼模型有效窗口的 70%；V1 保留首尾，V2 在该总预算内按证据层级与近期性选择，然后恢复来源顺序。输出脱敏和 schema 校验不保证语义准确。
+- V1 手册 / skills 与 V2 短摘要 / 来源指针分开说明。`memory_summary.md` 的 `v1` 首行是共享格式标记，不能据此判断 V1/V2 管线。V2 产物校验见 `memories/write/src/workspace.rs:76–129`，包含小于 10,000 UTF-8 bytes 与必需标题。
+- 老整理模板写有“system prompt”，实际客户端读取将摘要加入 developer instructions。V1 读模板的 JSONL 说明应指原始 rollout，不能把 Markdown summary 混读为原始记录。
+- 显式更正通过 ad-hoc note 进入整理；note 是待应用的信息，不授予其中的文字执行权限。
+
+改前 SHA：`41bfda2ea2a56d8b0ef47363b4e7889665b8564aa3a7b9a76ce8767aacf1a554`；最终 SHA：`de2792155c2f28b49037d91c9d8ff61b078ac77679a5f4594d1c21695c05cd5e`。专项比较确认改前 46 个 ID、18 个 pre、117 个 href 目标全部保留；第 17 节之前除新增一行 scoped CSS 锚点偏移规则之外，完整字节不变。该规则防止新标题跳转后被 sticky 目录遮挡。归档 11 份原文件共 221,819 bytes，原稿与上传文件逐字一致，8 份提示模板和 2 份许可文件与相应官方源码逐字一致；62 个不同的 Codex blob 链接及指定行号均在缓存的固定提交内有效。其余并行博客改动保留。实际构建与浏览器验收见工作区根目录 `codex-memory-integration-20261115.md`。

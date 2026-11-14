@@ -5,24 +5,23 @@
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
 <section id="purpose"><p class="eyebrow">Agent systems · 2026-11-14</p><h2>让行动有证据、有预算、有权限</h2>
-<p class="lead">模型生成下一步，Harness执行并保存状态；系统策略决定该查什么、该继续还是停止、哪些行动被允许。这三层共同决定Agent能否完成任务。一个正确的回答，也可能来自错误的数据版本、泄露的答案或无法重放的工具环境。</p>
-<p>本系列先修是<a href="../agent-harness-guide.html">Harness运行循环、上下文与memory</a>。三章分别解释知识访问、决策策略和系统约束；参数怎样更新归<a href="../llm-training-lifecycle/">训练全链路</a>，最新Agentic RL方法归<a href="../llm-research-map-2026/s02_agentic_rl.html">研究地图</a>。</p>
+<p class="lead">Harness负责运行和保存状态；本章解释三项决策：查什么证据、把计算花在哪条路径、允许执行什么动作。核心学习在本页完成。</p>
+<ul><li><strong>检索：</strong>从可见语料得到候选，再核对原文是否支持结论；相似度不是事实概率。</li><li><strong>规划：</strong>根据观察更新计划，比较候选、选择器和搜索成本；多采样不等于能选对。</li><li><strong>权限：</strong>外部内容提供数据，可信策略层控制真实操作；模型承诺不能代替执行约束。</li></ul>
 <figure><div class="flow"><div class="stage"><b>证据</b><small>来源、版本、权限<br>检索、引用和冲突</small></div><div class="stage"><b>决策</b><small>计划、搜索、验证<br>预算与停止规则</small></div><div class="stage"><b>执行约束</b><small>工具、文件与网络<br>可用能力和隔离</small></div><div class="stage"><b>验收与学习</b><small>合同、轨迹、失败<br>SFT / RL准入</small></div></div><figcaption>概念流程。权限控制贯穿每次读取和行动，不只在最终输出时检查。</figcaption></figure>
 </section>
-<!-- READING:CHAPTERS -->
-<!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；当前顺序见上方目录</summary>
-<section id="chapters"><h2>三章主线</h2><div class="chapter-grid">
-<article class="card"><h3><a href="s01_rag_retrieval.html">01 · RAG与Agentic检索</a></h3><p>从文档版本、chunk和权限到BM25/dense、融合、rerank、多轮检索和引用；拆开检索与生成的错误。</p></article>
-<article class="card"><h3><a href="s02_planning_compute.html">02 · 规划、搜索与推理预算</a></h3><p>ReAct、计划执行、BoN/beam/MCTS、过程验证、分支环境、停止和失败恢复；预算包含工具和验证。</p></article>
-<article class="card"><h3><a href="s03_trust_safety.html">03 · 信任边界、权限与安全评测</a></h3><p>非可信内容、工具门控、sandbox、数据流隔离与攻击评测；区分模型遵循与系统强制。</p></article>
-</div></section>
-</details><!-- READING:HISTORY:END -->
+<!-- READING:COURSE -->
 <section id="case"><h2>贯穿案例：RNA-seq分析怎样形成可靠交付</h2>
-<p>在<a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学任务合同</a>中，Agent先确认count对象、供体配对与处理；检索官方说明来解决来源冲突，规划分析与输出artifact，在受限环境中执行，最后由独立verifier检查。报告不是只给差异基因列表，还要给版本、设计式、contrast与失败解释。</p>
+<p>科学分析需要先确认输入、配对与处理，再规划计算和输出，最后独立验收。下面是教学方案，未执行分析或训练。</p>
 <table><thead><tr><th>系统问题</th><th>具体检查</th><th>学习与评测出口</th></tr></thead><tbody>
 <tr><td>查到的是正确证据吗</td><td>GSE52778的16样本与冻结airway对象的8样本分开</td><td>检索召回、引用支持、冲突处理</td></tr>
 <tr><td>多算几次值得吗</td><td>优先核对配对和count层，再分支比较统计方法</td><td>同预算成功率、有效分支与停止</td></tr>
 <tr><td>执行是否符合权限</td><td>输入只读、输出目录受限、无答案文件与任意外发</td><td>安全负例、污染与独立验收</td></tr>
 </tbody></table>
-<p>这是方案说明，没有执行科学分析或模型训练。集群资源与对照见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">工业后训练方案</a>；服务预算见<a href="../llm-serving/">推理部署</a>。三条路线在<a href="../llm-research-map-2026/#learning-paths">统一阅读入口</a>维护。</p>
-</section></main></body></html>
+</section>
+<section id="mastery"><h2>读完应能做到</h2><ul>
+<li><strong>写出并复算：</strong>BM25长度项、cosine、RRF、独立采样成功概率与UCT选择。</li>
+<li><strong>定位失败：</strong>区分召回缺失、重排错误、生成误用、selector误选与环境污染。</li>
+<li><strong>说明边界：</strong>区分提示、检测、门控、隔离与独立终评。</li>
+<li><strong>解释分母：</strong>合法任务效用、全部ASR和条件ASR不能混用。</li></ul>
+<details><summary>延伸阅读</summary><p><a href="../agent-harness-guide.html">运行、恢复与记忆</a>；<a href="../agent-data-benchmarks/">科学合同与独立评测</a>；<a href="../llm-research-map-2026/">研究增量与论文证据</a>。</p></details></section>
+</main></body></html>

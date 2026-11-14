@@ -5,32 +5,35 @@
 <meta name="description" content="以公开RNA-seq合同连接128/1024 H100规划、SFT/RL/OPD对照、policy lag、研究切分、统计与成功成本。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
+<!-- READING:FRAGMENT:START -->
+<figure class="mechanism-map"><figcaption>集群方案：资源配置要服务有效训练信号</figcaption><ol class="mechanism-chain"><li><b>任务域与长度分布</b><small>环境耗时、奖励密度与样本配额</small></li><li><b>Rollout / 教师 / trainer</b><small>按瓶颈分配 GPU、CPU 与队列</small></li><li><b>有效样本与更新</b><small>监控等待、policy lag 与有效 token</small></li><li><b>独立成功成本</b><small>质量、时间、GPU-hours 与失败</small></li></ol><p class="mechanism-return">↶ 扩容前确认瓶颈；128 / 1024 H100 配置是规划，不能写成已完成的性能实测。</p></figure>
 <section id="overview"><p class="eyebrow">Industrial-scale research protocol · 2026-11-14</p>
 <h2 id="reading-section-1">固定科学任务要求，分别评估数据、算法与系统的贡献</h2>
 <p class="lead">先冻结公开任务、独立verifier、held-out和harness，再比较监督轨迹、结果奖励、步骤信用及计算预算。工业规模规划解释如何分配训练、rollout、教师与CPU环境；它不把一份教学研究变成足量训练语料，也不代替真实容量测量。</p>
 <div class="callout caution"><strong>研究方案，尚未执行。</strong>模型训练、科学任务、轨迹采样、benchmark、容差校准和收益测量均未运行。GPU规模 / 超参是本文设计；无法确认的资源量和结果在下载文件中为<code>null</code>。</div>
-<p>先读<a href="s03_scientific_task_family.html">科学合同</a>、<a href="../llm-training-lifecycle/s05_training_methods_systems.html#cluster">训练状态与进程组</a>、<a href="../llm-research-map-2026/s02_agentic_rl.html">前沿Agentic RL</a>。数据路线集中在<a href="s01_task_synthesis.html">任务合成章</a>，算法定义集中在<a href="../llm-training-lifecycle/s04_rl_evaluation.html#algorithms">训练04</a>。</p>
+<p><strong>本节维护实验协议。</strong>算法推导在<a href="../llm-posttraining/#posttraining-algorithms">后训练主讲</a>，参数与进程组在训练工程主讲。</p>
 </section>
 <section id="design">
-<h2>两层A–E对照不要共用含糊标签</h2>
-<p>原训练系列的<a href="../llm-training-lifecycle/s04_rl_evaluation.html#harbor">Harbor A–E</a>研究CPT / 初始化与额外SFT预算。本章另命名<code>sci-posttrain-A…E</code>，研究可靠SFT之后的反馈和预算。日志保存完整ID，避免同一个“D组”被解释成两个实验。</p>
-<div class="reading-table"><table><thead><tr><th>组</th><th>方案</th><th>回答的问题</th><th>仍需控制的变量</th></tr></thead><tbody>
-<tr><td>sci-posttrain-A</td><td>原模型 + 固定harness</td><td>现有能力 / 工具环境基线</td><td>模型版本、解码、工具 / 网络、运行预算</td></tr>
-<tr><td>sci-posttrain-B</td><td>A + 独立验收过的SFT轨迹</td><td>可靠行为监督的增量</td><td>相同来源 / held-out、动作mask、有效目标、训练量</td></tr>
-<tr><td>sci-posttrain-C</td><td>B + outcome-reward GRPO</td><td>结果反馈与组相对更新的增量</td><td>reward / verifier、G、长度聚合、KL / 标准化 / clipping</td></tr>
-<tr><td>sci-posttrain-D</td><td>B + 单独选择的步骤信用或分层采样</td><td>信用分配 / 异质数据策略的贡献</td><td>先做单因素消融；不能把多个新算法一起改后归因</td></tr>
-<tr><td>sci-posttrain-E</td><td>B + OPD或自适应推理预算，分两个子组</td><td>教师信号与计算重分配各自的条件</td><td>OPD计教师成本；预算策略在同推理资源下比较</td></tr>
+<h2>每次比较一个改动，明确基线与预算</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
+<p>用成对实验解释改动，旧A–E记录在下载方案中保留兼容ID。<strong>步骤信用与采样各有独立组；OPD与推理预算属于不同轴，不能合成一项。</strong></p>
+<div class="reading-table"><table><thead><tr><th>比较轴</th><th>基线 → 改动</th><th>能回答</th><th>必须冻结</th></tr></thead><tbody>
+<tr><td>监督轨迹</td><td>原模型 → 独立验收SFT</td><td>可靠行为监督的增量</td><td>来源、held-out、动作mask、示范生产与训练预算</td></tr>
+<tr><td>结果反馈</td><td>SFT → outcome GRPO</td><td>在固定起点下的RL增量</td><td>环境、verifier、长度与终评预算；另列训练资源</td></tr>
+<tr><td>步骤信用</td><td>outcome GRPO → 只改信用</td><td>中间证据的贡献</td><td>采样配额、optimizer、目标量、额外验证成本</td></tr>
+<tr><td>采样分层</td><td>outcome GRPO → 只改采样</td><td>难度和family调度的贡献</td><td>信用定义、总采样预算、固定终评任务</td></tr>
+<tr><td>教师信号</td><td>SFT → OPD</td><td>学生访问状态上的教师增量</td><td>教师版本、状态分布、rollout和教师资源</td></tr>
+<tr><td>推理预算</td><td>固定策略预算 → 自适应分配</td><td>计算分配收益</td><td>同一checkpoint、工具、selector、总推理资源</td></tr>
 </tbody></table></div>
 <p>同时规划“同训练资源预算”与“同推理执行预算”两种比较。SFT没有RL rollout，但仍有示范生产成本；OPD有学生rollout与教师前向；环境执行、CPU与失败重试不能因训练token相等就视为等价。</p>
 <p>固定held-out涵盖研究 / 数据来源 / 任务族、公开与私有评测隔离、工具协议和version。模型对公开airway的预训练熟悉度单独报告；从该研究变体观察到的收益不能被写为跨研究或临床泛化。</p>
 </section>
 <section id="heterogeneity">
 <h2>异质 GRPO：难度、奖励与长度分别控制</h2>
-<div class="equation" role="math" aria-label="有效奖励组概率">同一题采样G条轨迹：A_i=(R_i−mean(R))/(std(R)+ε)
-二元reward、独立同分布采样且单次成功概率p时：
-P(组内奖励有差异)=1−p^G−(1−p)^G
-G=8：p=0.5约99.2%；p=0.01或0.99约7.7%</div>
-<p>数字为概率公式推导，不是本任务成功率。相关采样 / 环境噪声会破坏独立假设；多级progressive reward也不服从二元公式。组内标准化消除部分尺度差异，但不会自动平衡科学任务难度、梯度方向或学习机会。</p>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>。</p></section>
+
+<p><strong>检查可用信号：</strong>全对/全错组没有组内相对差异；噪声微小差异也不应当成可信信用。独立二元奖励下的有效组概率和G=8算例在<a href="../llm-posttraining/#posttraining-algorithms--rloo-grpo">GRPO主讲</a>，本页只维护诊断与对照。</p>
 <div class="reading-table"><table><thead><tr><th>异质来源</th><th>训练影响</th><th>本文方案</th></tr></thead><tbody>
 <tr><td>难度 / 全对全错组</td><td>零方差组不提供相对信号</td><td>按task-family / 难度采样，统计有效组；动态过滤与固定预算分别比较</td></tr>
 <tr><td>奖励语义与噪声</td><td>组内标准化可能放大不可靠微小差异</td><td>schema分数与科学分数拆开；verifier version固定；环境故障单独标记</td></tr>
@@ -43,11 +46,13 @@ G=8：p=0.5约99.2%；p=0.01或0.99约7.7%</div>
 <section id="budgets">
 <h2>长度与动作预算：模型上下文不是免费工作区</h2>
 <p>本文初始规划两层请求：短任务最多8,192输入 / 4,096输出token、24次动作；长任务最多24,576输入 / 8,192输出、64次动作。数值是预算设定，不是已观察分布；sum=32,768满足所选Dense config的原生最大位置规格。多轮每次请求都检查上下文上限，总轨迹action tokens另计，不能把单次max_new_tokens当完整任务成本。</p>
-<p>Harness负责压缩长stdout、保留重要错误和artifact引用；memory压缩也要保留供体 / 样本 / 对比与当前脚本状态。统计分析结果应保存在文件，再以hash / 精简观察回填，不把整张gene表塞进prompt。科学可审计性来自artifact，不能只依赖会话摘要。</p>
-<p>组大小初选G=8；prompt batch、gradient accumulation和microbatch在容量测量前不冻结。DP决定独立数据副本；TP / PP / CP不能都乘到独立样本batch里。环境wall-time / CPU内存 / verifier超时没有实测依据，当前为待冻结项。</p>
+<ul><li><strong>持久产物：</strong>统计表写文件，以hash和精简观察回填；摘要保留样本、对比和当前脚本状态。</li><li><strong>样本batch：</strong>初选G=8，batch等待容量测量后冻结；只将独立数据副本乘入global batch。</li><li><strong>待冻结：</strong>wall time、CPU内存、verifier超时和训练步数均未实测。</li></ul>
 </section>
 <section id="resources">
 <h2>128 / 1024 H100方案中的每个角色都要入账</h2>
+<details><summary>展开角色配置、分片假设与容量阻塞项（规划，未运行）</summary>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>；<a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>。</p></section>
+
 <figure><div class="flow" aria-label="工业后训练的四类资源">
 <div class="stage"><b>训练池</b><small>actor更新、reference<br>可选critic / 教师另核算</small></div>
 <div class="stage"><b>rollout池</b><small>连续生成、缓存 / 权重同步<br>策略版本、队列、长尾</small></div>
@@ -62,12 +67,15 @@ G=8：p=0.5约99.2%；p=0.01或0.99约7.7%</div>
 <tr><td>critic / reward / teacher</td><td>GRPO无critic；PPO或OPD子实验另设计</td><td>额外状态无法装入就扩容 / 减actor规模；不默认隐藏在128/1024卡内</td></tr>
 <tr><td>环境 / verifier / storage</td><td>独立CPU worker、离线依赖、对象存储</td><td>数量、时长、I/O与采购单价待测；分别记录CPU-hours / GB-hours / 网络</td></tr>
 </tbody></table></div>
-<p>Qwen2.5-72B config的80层、8KV heads、128 head_dim可得到完整模型BF16 KV为320KiB/token/request；32,768 token为10GiB，这是未考虑TP分片 / 重复的逻辑KV，不包含权重和workspace。Qwen3-235B config是94层、4KV heads，服务TP8会涉及KV复制能力，不能直接除8得到真实缓存。规格与训练框架固定源见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#sources">训练05</a>。</p>
+<p>服务容量按本地分片/复制与实际状态核算，<a href="../llm-serving/#serving-capacity--example">70B、TP4容量算例</a>由服务主讲维护。4KV heads在TP8中的复制/分组必须核对，不能直接除8。训练进程组与服务域也不能混套。</p>
 <p>verl / MCore / vLLM / SGLang的组合必须通过版本adapter、转换与logprob一致性检查。v0.6.0 recipe提供一种源码路线，最新服务机制和对象精度由<a href="../llm-serving/s02_parallel_quantization.html">部署02</a>维护。H100改为B200时需重估格式支持、通信、功耗 / 成本和端到端瓶颈，不能按峰值FLOPS直接等比例缩短实验时间。</p>
 <p><a href="../assets/research/scientific-agent-design-20261114/cluster-plan.json" download>集群与角色完整JSON</a> · <a href="../assets/research/scientific-agent-design-20261114/experiment-plan.json" download>A–E与消融方案JSON</a>。</p>
+</details>
 </section>
 <section id="measurement">
 <h2>质量与成本同时量，统计单位保持一致</h2>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>。</p></section>
+
 <p>规划至少三个训练随机种子，并对相同held-out任务使用多个评估种子 / 重复尝试。训练seed是模型重复，评估seed是同模型生成重复，两者不是新增独立研究。统计按研究group重采样 / 分层，报告task-family、难度、来源熟悉度与有效样本数量。</p>
 <div class="reading-table"><table><thead><tr><th>指标</th><th>分母 / 边界</th><th>需要额外说明</th></tr></thead><tbody>
 <tr><td>科学成功率</td><td>固定任务、预算、verifier下的attempts</td><td>环境启动失败同时报告整体率与可执行条件率；不静默移除</td></tr>
@@ -76,12 +84,27 @@ G=8：p=0.5约99.2%；p=0.01或0.99约7.7%</div>
 <tr><td>服务质量</td><td>输入 / 输出 / 并发 / cache固定下的TTFT、ITL、P95</td><td>工具执行另计；token throughput不等于科学成功率</td></tr>
 <tr><td>成功成本</td><td>全部尝试资源 / 科学成功数量</td><td>零成功时不填有限“每成功成本”；离线示范生产 / 校准与线上边际分别列</td></tr>
 </tbody></table></div>
-<div class="equation" role="math" aria-label="成本与每次成功的定义">GPU-hours(role) = Σ device_active_or_reserved_seconds(role) / 3600
-attempt成本向量 = GPU-hours + CPU-hours + tokens + storage/network + retries
-每成功资源 = 全部attempt资源 / 成功attempt数（成功数&gt;0）
-训练总预算另含：示范生产 + reference/teacher + 科学校准 + checkpoint/IO</div>
-<p>GPU-hours是资源单位，不能在缺少单价时换成金额；“reserved”与“active”要选择固定口径并分别保留。固定128卡只给资源上限，没有墙钟时长就没有GPU-hours结果。Little定律与显存容量估算见<a href="../llm-serving/s03_capacity_cost.html">容量与成本</a>。</p>
-<p>成功率区间与差异用配对任务 / 研究group处理：给出每seed值、研究组bootstrap区间与原始分子 / 分母。研究组不足时诚实报告样本不够，不能依靠重复提示将区间变窄。所有本章结果均未测量。</p>
+<p><strong>资源向量分项报告：</strong>GPU-hours、CPU-hours、tokens、存储与网络不同单位，不能直接相加。GPU-hours由各设备秒数相加再除3600；active和reserved分别保留。同样8卡预留2小时就是16 GPU-hours，即使只有一半时间执行kernel，不能把剩余资源称为免费。</p>
+<h3>配对比较：平均分相同也可能换了一批成功任务</h3>
+<p>同100项教学任务、同预算与verifier：A成功60，B成功64。若其中A独有8、B独有12，二者都成功52、都失败28；B的净增量4个百分点由这20个分歧任务产生。</p>
+<div class="reading-math">\[
+D_i=Y_{B,i}-Y_{A,i}\in\{-1,0,1\},\qquad
+\bar D=\frac{n_{B\ {\rm only}}-n_{A\ {\rm only}}}{n}
+=\frac{12-8}{100}=0.04.
+\]</div>
+<div class="reading-math">\[
+\begin{aligned}
+\widehat{\operatorname{SE}}(\bar D)
+&=\sqrt{\frac{\sum_iD_i^2-n\bar D^2}{n(n-1)}}\\
+&=\sqrt{\frac{20-100(0.04)^2}{100\times99}}\\
+&\approx0.0448.
+\end{aligned}
+\]</div>
+<p>仅在独立任务、足够样本等近似条件下，可用配对差分估计上述标准误。正态近似95%区间约−4.8至12.8个百分点；<strong>净提高4点不足以直接宣称显著改进。</strong>这是教学计算，不是科学任务实测；有关联的研究任务应按下面的组重采样。</p>
+<h3>研究组切分与不确定性：保留依赖结构</h3>
+<figure class="mechanism-map"><figcaption>同一研究的变体整体进入同一split</figcaption><ol class="mechanism-chain"><li><b>来源谱系去重</b><small>BioProject / GEO、reads、供体和派生count</small></li><li><b>组内保持完整</b><small>研究A所有提示与轨迹 → train；研究B → validation；研究C → test</small></li><li><b>A/B配对终评</b><small>同任务、预算、工具与verifier，保存每次0/1结果</small></li><li><b>按研究组重采样</b><small>整组抽取、保留A/B对应；报告逐seed与区间</small></li></ol></figure>
+<ol><li>冻结研究组和聚合口径：每task加权或每研究等权，不能事后挑有利方式。</li><li>每次bootstrap抽研究组，再带入该组全部任务和两策略结果，计算配对差异。</li><li>重复后取预先规定的区间；训练seed另列，不能把生成重复当新增研究。</li></ol>
+<p><strong>研究组不足时报告样本不足。</strong>单研究千种题面不能制造千个独立科学样本；所有本章实验结果保持未知。</p>
 </section>
 <section id="failure">
 <h2>失败分类决定下一步改哪里</h2>
@@ -101,7 +124,7 @@ attempt成本向量 = GPU-hours + CPU-hours + tokens + storage/network + retries
 <h2>从方案进入真实实验前的门槛</h2>
 <p>未来依次冻结来源 / 许可与fixture、公开合同、独立reference与多路径容差、scorer负例、隔离wrapper、无reference可用性及独立盲测；随后才产生可靠轨迹并做训练。本站构建 / 阅读验收只检查交付文档，不代表这些实验门槛已经通过。</p>
 <details><summary>为什么工业规模不能省掉小范围协议校准？</summary><p>如果样本映射或scorer错误，大规模RL只会更有效地放大坏reward。协议校准与模型集群是不同工作，CPU科学复算也不能由更多GPU替代。</p></details>
-<details><summary>如果D组比C组好，怎样才可以归因？</summary><p>固定基模、任务来源、训练 / 推理预算、harness与verifier，分别改信用或采样；检查有效组、目标量和policy lag。一次同时改多项不能识别单个机制贡献。</p></details>
+<details><summary>加步骤信用后比outcome GRPO好，怎样才可以归因？</summary><p>冻结基模、来源、采样、训练/推理预算、harness与verifier，只改信用；检查额外验证成本、有效组和policy lag。采样分层另建独立组。</p></details>
 <p>返回<a href="../llm-research-map-2026/#coverage">原理 → 实现 → 实验覆盖表</a>，或进入<a href="../llm-interview-bank.html">题库检验理解</a>。完整资源<a href="../assets/research/scientific-agent-design-20261114/README.txt" download>目录说明</a>明确当前状态、来源与待冻结项。</p>
 </section>
 <section id="sources"><h2>方法证据与分析边界</h2>
@@ -109,4 +132,5 @@ attempt成本向量 = GPU-hours + CPU-hours + tokens + storage/network + retries
 <p>来源 / 方法 / 统计合同见<a href="s03_scientific_task_family.html#sources">科学任务03</a>；模型、optimizer与进程组见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#sources">训练05</a>；前沿异质信用方案见<a href="../llm-research-map-2026/s02_agentic_rl.html">研究地图02</a>。这些公开方法提供路线，不构成对本科学任务的独立复现。</p>
 <p class="note">A–E、128/1024卡、长度 / G / seed设定、切分与成本协议为本文建议；概率 / 字节公式是推导。没有训练曲线、科学基因结果、吞吐、价格或成功率被生成。</p>
 </section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>
