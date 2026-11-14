@@ -84,6 +84,10 @@ Pages Source 应设置为 GitHub Actions；部署作业依赖构建与校验成�
 
 ## 说明与来源
 
+- [项目管理协议](docs/project-management.md)：仓库职责、目录结构、分类、规模化更新与同步边界。
+- [内容与资源协议](docs/content-contract.md)：正文完整度、HTML/Markdown、资源归档、来源与 URL 保留。
+- [设计协议](docs/design-system.md)：Stein’s Notes 配色、字体、组件作用域和 GitHub Profile 设计边界。
+- [Agent 工作入口](AGENTS.md)与[项目管理 skill](.trae/skills/blog-project-manager/SKILL.md)：后续统一维护入口。
 - [日常维护](docs/maintenance.md)：新增、更新、预览、前沿自动化及线上核对。
 - [内容检查](docs/content-audit.md)：覆盖范围、修订与未完成的事实复核。
 - [知识体系扩展依据](docs/knowledge-expansion-research-20261114.md)：架构、训练、Agent、部署、科学方案与60道新增题解；贯通路线在 `/blog/#learning-paths`。
@@ -98,6 +102,18 @@ Pages Source 应设置为 GitHub Actions；部署作业依赖构建与校验成�
 
 `mllm-interview-notes`、`llm-study-notes` 仍是独立子站。
 旧学术主题及示例留在原仓库，MIT 许可保留于 `licenses/academic-pages-MIT.txt`。
+
+## 管理检查
+
+```bash
+make governance                         # 协议引用、登记、Profile 本地一致性
+make inventory                          # 当前规模 JSON，只读
+make profile-check                      # README 结构与站内链接
+make profile-status GH=/path/to/gh       # 远端 README、账号字段和置顶项目
+```
+
+`profile-status` 不修改 GitHub。状态以本次远端读取为准；历史验收文档不是实时仪表盘。
+Profile 的展示稿在本仓库维护，同名展示仓库仍须保留。
 
 ## 后训练专题
 

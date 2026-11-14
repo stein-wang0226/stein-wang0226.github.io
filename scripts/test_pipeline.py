@@ -31,7 +31,14 @@ class PipelineTests(unittest.TestCase):
         self.base = Path(self.tmp.name)
         self.root = self.base / "source"
         shutil.copytree(ROOT, self.root, ignore=shutil.ignore_patterns(
-            ".DS_Store", "__pycache__", "*.pyc", "run.lock"))
+            ".git", ".DS_Store", "__pycache__", "*.pyc", "run.lock"))
+        # A copied worktree .git file points back to the live source repository.
+        # Give the fixture its own refs/index; shared immutable objects stay read-only.
+        metadata = self.base / "metadata"
+        subprocess.run(["git", "clone", "--shared", "--no-checkout", str(ROOT), str(metadata)],
+                       check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        shutil.move(str(metadata / ".git"), str(self.root / ".git"))
+        subprocess.run(["git", "-C", str(self.root), "read-tree", "HEAD"], check=True)
         self.output = self.base / "artifact"
 
     def tearDown(self):

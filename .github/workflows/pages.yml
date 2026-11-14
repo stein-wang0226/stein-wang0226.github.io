@@ -19,6 +19,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r requirements.txt
+      - run: python scripts/governance.py
       - run: python scripts/build.py --output "$RUNNER_TEMP/site-build"
       - run: python scripts/check.py --output "$RUNNER_TEMP/site-build"
       - name: Verify build did not modify sources

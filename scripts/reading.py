@@ -82,15 +82,16 @@ def decorate(ctx, entry, text):
     if not body_match:
         raise ValueError(f"{entry['id']}: missing complete HTML body")
     body = body_match[2]
-    if entry["kind"] == "chapter":
+    if entry["kind"] in {"chapter", "series"}:
         # Legacy chapter bars/footers are presentation copies. Replace them from
         # the same order used by the shared directory; source research stays intact.
         compact = '<nav class="reading-chapter-bar" aria-label="系列章节"><a href="' + series_link + '">系列目录</a>' + "".join(
             f'<a href="{ctx.rel(path, e["url"])}"'
             f'{" aria-current=page" if e["id"] == entry["id"] else ""}>'
             f'{e["order"]:02}</a>' for e in chapters) + "</nav>"
-        body = re.sub(r'<nav\b[^>]*class=["\']nav-bar["\'][^>]*>.*?</nav>', compact, body, flags=re.S)
-        body = re.sub(r'<div\b[^>]*class=["\']page-nav["\'][^>]*>.*?</div>', "", body, flags=re.S)
+        if entry["kind"] == "chapter":
+            body = re.sub(r'<nav\b[^>]*class=["\']nav-bar["\'][^>]*>.*?</nav>', compact, body, flags=re.S)
+            body = re.sub(r'<div\b[^>]*class=["\']page-nav["\'][^>]*>.*?</div>', "", body, flags=re.S)
         def link_label(match):
             attrs, inner = match[1], match[2]
             href = re.search(r'href=["\']([^"\']+)', attrs)
@@ -108,7 +109,13 @@ def decorate(ctx, entry, text):
             else:
                 inner = re.sub(r"^(?:第)?\d{2}(?=\s|章|[ ·])", f'{target["order"]:02}', inner)
             return "<a" + attrs + ">" + inner + "</a>"
-        body = re.sub(r"<a([^>]*)>(.*?)</a>", link_label, body, flags=re.S)
+        fragments = re.split(r'(<!-- READING:HISTORY:START -->.*?<!-- READING:HISTORY:END -->)', body, flags=re.S)
+        body = "".join(f if f.startswith("<!-- READING:HISTORY:START -->") else
+                       re.sub(r"<a([^>]*)>(.*?)</a>", link_label, f, flags=re.S) for f in fragments)
+        if entry["id"] == "llm-research-map-2026":
+            body = body.replace("第03章保留CED", "第04章保留CED")
+        if entry["id"] == "agent-data-benchmarks":
+            body = body.replace("前两章共用本页52项引用", "任务合成与Benchmark两章共用本页52项引用")
     if chapters and entry["kind"] == "series":
         directory = chapter_directory(ctx, entry, chapters)
         if "<!-- READING:CHAPTERS -->" in body:

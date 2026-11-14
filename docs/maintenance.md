@@ -1,5 +1,9 @@
 # 内容维护
 
+长期组织规则见 [项目管理协议](project-management.md)，正文与 HTML/资源要求见
+[内容协议](content-contract.md)，公共样式见 [设计协议](design-system.md)。
+本文件保留日常操作方法，避免多份协议重复登记内容。
+
 ## 最短流程
 
 1. 在 `content/catalog.json` 找到文章 ID 和正文 `source`；直接编辑该正文。
