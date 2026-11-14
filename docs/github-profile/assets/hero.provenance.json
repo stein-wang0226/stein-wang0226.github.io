@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-11-14T04:46:24.557986+00:00",
+  "source_url": "https://copilot-cn.bytedance.net/api/ide/v1/text_to_image?prompt=GitHub+Profile+hero+banner%3A+Editorial+scientific+studio+photograph%2C+realistic+materials%2C+midnight+navy+background%2C+restrained+translucent+teal+glass+and+brushed+silver%2C+precise+soft+studio+lighting%2C+sophisticated+artificial+intelligence+research+website%2C+high+detail%2C+no+text%2C+no+logos%2C+no+watermark.+A+translucent+glass+branching+computation+graph+connected+to+a+small+protein+ribbon+sculpture+and+a+sleek+metal+computer%2C+all+concentrated+on+the+right+half+of+the+frame%3B+the+left+half+is+clean+dark+negative+space+for+a+title%2C+elegant+and+quiet%2C+cinematic+wide+composition.&image_size=landscape_16_9",
+  "generation_method": "GenerateImage backend text-to-image API",
+  "prompt": "GitHub Profile hero banner: Editorial scientific studio photograph, realistic materials, midnight navy background, restrained translucent teal glass and brushed silver, precise soft studio lighting, sophisticated artificial intelligence research website, high detail, no text, no logos, no watermark. A translucent glass branching computation graph connected to a small protein ribbon sculpture and a sleek metal computer, all concentrated on the right half of the frame; the left half is clean dark negative space for a title, elegant and quiet, cinematic wide composition.",
+  "image_size": "landscape_16_9",
+  "original_dimensions": [
+    2560,
+    1440
+  ],
+  "saved_dimensions": [
+    2560,
+    1440
+  ],
+  "file": "hero-source.jpg",
+  "sha256": "1ae6c720f77168829adf2ddfc42fd4d95ad5a9bb012baab0e68f84705d153f29",
+  "purpose": "Decorative research artwork; not experimental evidence or a product screenshot."
+}

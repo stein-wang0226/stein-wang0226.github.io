@@ -1,6 +1,7 @@
 # GitHub Profile 实施稿
 
-更新日期：2026-11-14。主站与 Profile README 已发布；姓名、bio 和 website 字段仍待完成 GitHub `user` 权限授权。
+更新日期：2026-11-14。README 源稿、静态配图与发布记录都维护在本目录；
+实时状态使用 `python scripts/profile.py status --gh /path/to/gh` 核对。
 
 ## 已准备的输入
 
@@ -18,11 +19,12 @@ README 使用主站的规范入口，不依赖外部统计图片。项目工作�
 
 > Research profile and study notes on Agentic RL, scientific task synthesis, GUI agents, diffusion language models, and AI4S.
 
-优先置顶两份已公开科研代码 `trainable-masked-diffusion`、`STM`，再保留有独立内容的
-`llm-study-notes`、`mllm-interview-notes`。
-`terminal-bench-science` 是 `harbor-framework/terminal-bench-science` 的公开 fork，
-可以作为相关 benchmark 入口展示，必须保留 fork 归属；不能据此宣称整个 benchmark 为本人创建，
-也不能将 2,000+ 内部交付任务都视为该仓库公开任务。
+优先置顶主站与两份已公开科研代码 `trainable-masked-diffusion`、`STM`；
+`llm-study-notes`、`mllm-interview-notes` 有独立内容时作为后续入口。
+Profile 仓库本身和 `algorithms` 练习仓库不占优先置顶位置。
+普通 `terminal-bench-science` fork 不在 README 精选和置顶建议中展示。
+只有存在可核对的原创补丁、上游贡献或独立实验时，才描述该具体贡献；
+不能将 2,000+ 内部交付任务当作该 fork 的公开贡献。
 Harbor、ProtAgent、Holon 目前仅有作者提供的项目描述；没有把内部项目写成可下载的公开代码仓库。
 拿到已获准公开的项目链接后，再置顶相应仓库并添加项目页链接。
 
@@ -54,3 +56,46 @@ Harbor、ProtAgent、Holon 目前仅有作者提供的项目描述；没有把�
 - English PDF：`assets/Curriculum_Vitae.pdf`；中文 PDF：`assets/Yuxiang-Wang-Resume-zh.pdf`。
 - GitHub README：本目录 `README.md`。每次履历更新同步核对本稿和 Profile 仓库。
 - 未知论文日期用 `date: null` 和明确的 `date_label`；不要以编辑日代替投稿 / 发表日。
+
+## 管理与预览命令
+
+```bash
+python scripts/profile.py check
+python scripts/profile.py status --gh /path/to/gh
+"$HOME/.cache/stein-notes/venv/bin/python" scripts/profile.py preview \
+  --gh /path/to/gh --output /tmp/github-profile-preview.html
+```
+
+检查和预览均不修改远端。`status` 输出远端 README 与本地的逐字节比较、
+实际账号字段、目标字段和置顶项目；同步差异是状态，不作为读取失败。
+`preview` 使用 GitHub Markdown API 的真实渲染，外加本地模拟 CSS；
+它不代表已发布的网页，也不改变 GitHub 平台的字体或主题。
+
+首版展示稿准备时的核对（2026-11-14，保留历史状态）：
+
+- 线上 README 为 `51246757924db14af2ea9d5b5d6c39c83767991b` 的旧版，
+  修改前与本地主稿一致；新版两列项目/论文状态表已在本地准备，尚未发布。
+- 账号名称仍为 `stein-wang`，bio 仍为旧研究方向，website 仍指向旧项目站前缀。
+  当前 `gh` scope 为 `gist/read:org/repo`，账号字段更新需 `user` 授权。
+- 置顶仍是 `trainable-masked-diffusion`、`STM`、`llm-study-notes`、
+  `mllm-interview-notes`、`algorithms`、`stein-wang0226`；主站未置顶。
+- 本次移除无具体贡献描述的 fork 条目，未修改 fork 仓库和历史研究依据。
+
+GitHub 原生 README 可通过仓库静态图片美化。图片版采用 ryme.md 的 MIT
+横幅模板思路，并为四项研究工作增加主题配图；模板、许可、提示词与维护命令见
+[图片与开源方案](VISUALS.md)。正文继续使用原生 HTML/Markdown 层级、表格和折叠详情。
+
+## 图片版本发布（2026-11-14）
+
+Profile 仓库提交 `514379c4a9d87e9e6c06b0cbf0030dee6643e288` 已推送至 `main`。
+README 与展示图片一起发布；主稿仍在本目录集中维护。
+本地候选通过 26 个链接 / 16 个主站入口和 5 张图片的校验；
+390 / 650 / 1024px 亮色及 1024px 暗色预览无整体横向溢出，
+图片加载、比例和折叠区的点击 / 键盘操作通过。
+线上 README 逐字节一致，5 张展示图片的 Git blob 哈希与本地资源一致。
+真实 GitHub Profile 在 390 / 1440px 下的图片加载、比例、图片链接、
+四项研究标题、论文状态和折叠操作均通过，项目表格也无需横向滚动。
+
+主站同时有其他章节的未完成编辑；本次链接核验以已发布的 `7158e73`
+内容快照为基准。Profile 图片改动没有把这些章节算作本次验收内容。
+账号字段与置顶顺序仍沿用上述实际状态。
