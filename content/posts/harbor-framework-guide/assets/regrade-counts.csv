@@ -1,0 +1,4 @@
+category,trials,denominator,action
+false_negative,89,162,use_regrade
+false_positive,45,162,use_regrade
+measurement_discrepancy,28,162,retain_4.0

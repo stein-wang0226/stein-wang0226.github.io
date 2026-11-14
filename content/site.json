@@ -41,6 +41,14 @@
     "featured": ["2026-semantic-dlm-plus", "protagent", "2026-locality-aware-dlm", "cua-recovery"]
   },
   "assets": [
+    {"source": "content/posts/harbor-framework-guide/_shared/js/ECharts-LICENSE.txt", "url": "/harbor-framework-guide/_shared/js/ECharts-LICENSE.txt"},
+    {"source": "content/posts/harbor-framework-guide/_shared/js/Mermaid-LICENSE.txt", "url": "/harbor-framework-guide/_shared/js/Mermaid-LICENSE.txt"},
+    {"source": "content/posts/harbor-framework-guide/assets/sources.json", "url": "/harbor-framework-guide/assets/sources.json"},
+    {"source": "content/posts/harbor-framework-guide/assets/regrade-counts.csv", "url": "/harbor-framework-guide/assets/regrade-counts.csv"},
+    {"source": "content/posts/harbor-framework-guide/assets/Harbor-Apache-2.0.txt", "url": "/harbor-framework-guide/assets/Harbor-Apache-2.0.txt"},
+    {"source": "content/posts/harbor-framework-guide/_shared/fonts/Sora-OFL.txt", "url": "/harbor-framework-guide/_shared/fonts/Sora-OFL.txt"},
+    {"source": "content/posts/harbor-framework-guide/_shared/fonts/Literata-OFL.txt", "url": "/harbor-framework-guide/_shared/fonts/Literata-OFL.txt"},
+    {"source": "content/posts/harbor-framework-guide/_shared/fonts/JetBrains-Mono-OFL.txt", "url": "/harbor-framework-guide/_shared/fonts/JetBrains-Mono-OFL.txt"},
     {"source": "assets/research/serving-design-20261114/capacity-estimates.csv", "url": "/assets/research/serving-design-20261114/capacity-estimates.csv"},
     {"source": "assets/research/serving-design-20261114/capacity-plan.json", "url": "/assets/research/serving-design-20261114/capacity-plan.json"},
     {"source": "assets/research/serving-design-20261114/measurement-protocol.md", "url": "/assets/research/serving-design-20261114/measurement-protocol.txt"},

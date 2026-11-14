@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "entries": [
+    {"id": "harbor-framework-guide", "kind": "post", "title": "Harbor Framework 与团队 Benchmark：源码、案例与最新进展", "summary": "独立研究 Harbor v0.26.0 的 Task/Trial、安全 verifier、错误策略、ATIF与Server；分析TB4.1、Science2.0征集、Challenges和HarborIndex，附核心源码与真实案例。", "source": "content/posts/harbor-framework-guide/index.html", "url": "/harbor-framework-guide/", "topic": "agent", "type": "system-guide", "tags": ["Harbor", "Harbor Framework", "Terminal-Bench", "TB Science", "Challenges", "HarborIndex", "ATIF", "RewardKit", "Verifier", "Benchmark", "Agent"], "origin": "local", "status": "published", "review_status": "reviewed", "updated": "2026-11-14", "updated_source": null, "series": null, "order": null, "featured": true, "related": ["agent-data-benchmarks", "agent-harness-guide", "posttraining-cases"]},
     {
       "id": "agent-systems", "kind": "series",
       "title": "Agent 系统与推理策略：证据、规划与信任",
