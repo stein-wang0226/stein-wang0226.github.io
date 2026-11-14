@@ -44,7 +44,7 @@ Terminal-Bench、Science、Challenges、HarborIndex，然后介绍框架近期�
 复用图先检查实际任务变化，再列出 regrade 前提、无效记录和 TB 4.1 的特定回退规则。
 图中使用原生 SVG 文本，避免 foreignObject 继承正文样式后出现裁切。
 三图均可在对话框放大、滚动查看，以 Escape 或按钮关闭。
-一张ECharts图采用真实官方计数，并保留静态表格与CSV。
+一张原生 SVG 柱状图采用真实官方计数，并保留静态表格与CSV。
 正文、原生details、源码、表格及引用无需JavaScript即可阅读。
 
 ## 证据边界
@@ -53,7 +53,32 @@ Terminal-Bench、Science、Challenges、HarborIndex，然后介绍框架近期�
 科学任务复现或完整benchmark运行。团队报告、recipe示例与分析推断分别表述。
 浏览器、构建与发布验证只证明对应技术范围。
 
-## 修订版验收
+## 最终收尾验收
+
+- Notes 保留 13 节、44 来源与基础讲解；团队版独立编辑为
+  “Harbor 评测发布与进展”，5 节、六项主表、18 项关键来源。
+  团队版以评测发布、项目进展与代表案例为主，框架压缩为两段；
+  不包含完整目录清单、基础执行链路或源码教程。
+- 团队单文件 `/Users/bytedance/Desktop/my_blogs/harbor-benchmarks-20261114.html`
+  为 26,251 bytes。无脚本、字体或资源加载依赖；复制到 `/tmp` 独立打开，
+  无外部请求。原导出目录的同名入口同步更新。
+- 实际复现移除 SVG 样式后的黑色节点 / 连线；为三图写入明确的
+  填色、线宽、字体和箭头样式，并修复分支标签背景继承文字颜色的问题。
+  截图逐张复核节点、箭头、分支文字与完整边界，不再仅检查 viewBox。
+- 计数图改为原生静态 SVG，无 JavaScript 时仍显示；不再依赖 ECharts 初始化。
+- `make check OUTPUT=/tmp/my-blogs-harbor-polished-build` 通过：
+  97 HTML / 191 public files，governance 11 份协议通过。
+  本次基线为 `ffb2bd5`，构建时含本专题未提交的修改。
+- Notes 与团队版 390 / 768 / 1440 px 共六组检查通过：
+  无页面横向溢出、脚本错误、缺失资源或外部请求；
+  Notes 三图无文字越界，连线无填色、线宽小于 4px，
+  标签为白底深色文字；移除 SVG 内样式表后仍可读。
+  三图放大 / Escape、引用筛选、团队版引用展开均实际操作通过。
+  关闭 JavaScript 后四张图均可阅读。
+
+下列修订版与初版验收保留为历史记录，其导出大小及依赖不代表最终团队版。
+
+## 前次修订版验收
 
 - 标题改为“Harbor 评测体系与研究进展”，公开 URL 保持不变。
 - `make check OUTPUT=/tmp/my-blogs-harbor-revised-build`：通过，
