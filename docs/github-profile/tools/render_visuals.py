@@ -131,52 +131,40 @@ def font(size, bold=False, mono=False):
 
 
 def render_header():
-    """Adapt ryme.md's MIT Sleek Hero: name fitting, underline and corner marks.
+    """Adapt ryme.md's MIT name fitting and underline into a quiet title strip.
 
     Original: Ryan Polasky, aede040201f5ed5168eb74c5e1fe319895b724ed.
-    See ../LICENSE-ryme.md. Static raster composition adds generated artwork,
-    uses left alignment and retains a readable text block on small displays.
+    See ../LICENSE-ryme.md. Reuse only the generated original's empty background;
+    omit the sculptures, monitor, corner marks and large visual composition.
     """
-    width, height = 1280, 460
-    artwork = Image.open(ASSETS / "hero-source.jpg").convert("RGB")
-    canvas = ImageOps.fit(artwork, (width, height), Image.Resampling.LANCZOS,
-                          centering=(0.65, 0.5)).convert("RGBA")
-    # Fade the picture under the left-aligned name, keeping its right side visible.
-    shade = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    shade_draw = ImageDraw.Draw(shade)
-    for x in range(width):
-        alpha = round(240 * max(0, 1 - x / 1050))
-        shade_draw.line([(x, 0), (x, height)], fill=(9, 20, 32, alpha))
-    canvas = Image.alpha_composite(canvas, shade)
+    width, height = 1280, 180
+    with Image.open(ASSETS / "hero-source.jpg") as artwork:
+        # The left third was explicitly generated as dark negative space.
+        empty_background = artwork.crop((0, 0, artwork.width // 3, artwork.height))
+        texture = ImageOps.fit(empty_background.convert("RGB"), (width, height),
+                               Image.Resampling.LANCZOS)
+    paper = Image.new("RGB", (width, height), "#f7f5f0")
+    canvas = Image.blend(paper, texture, 0.012)
     draw = ImageDraw.Draw(canvas)
-    accent, foreground, muted = "#5cdbc5", "#f4f7f9", "#b9c9d5"
-    pad = 60
-    # Static counterpart of the template's two top corner decorations.
-    for x, direction in [(pad, 1), (width - pad, -1)]:
-        draw.line([(x, 44), (x + direction * 24, 44)], fill=accent, width=2)
-        draw.line([(x, 44), (x, 68)], fill=accent, width=2)
-    draw.text((pad, 89), "STEIN / RESEARCH & NOTES", font=font(19, mono=True),
-              fill=accent)
+    accent, foreground, muted = "#0f766e", "#1a1a2e", "#706b65"
+    pad = 52
     name = "Yuxiang Wang"
-    for size in [76, 68, 60, 52]:
+    for size in [56, 48, 40, 32]:
         name_font = font(size, bold=True)
-        if draw.textlength(name, font=name_font) <= 640:
+        if draw.textlength(name, font=name_font) <= 700:
             break
-    draw.text((pad - 3, 142), name, font=name_font, fill=foreground)
-    underline_width = min(640, round(draw.textlength(name, font=name_font)))
-    draw.line([(pad, 244), (pad + underline_width, 244)], fill=accent, width=3)
-    draw.text((pad, 275), "Agentic RL · Scientific task synthesis",
-              font=font(24), fill=foreground)
-    draw.text((pad, 319), "GUI agents · Diffusion language models",
-              font=font(23), fill=muted)
-    canvas.convert("RGB").save(ASSETS / "hero.jpg", quality=93, optimize=True)
+    draw.text((pad, 45), name, font=name_font, fill=foreground)
+    draw.text((width - pad - 225, 69), "Research & notes", font=font(25), fill=muted)
+    draw.line([(pad, 145), (width - pad, 145)], fill="#dedbd5", width=1)
+    draw.line([(pad, 145), (pad + 90, 145)], fill=accent, width=3)
+    canvas.save(ASSETS / "header.jpg", quality=93, optimize=True)
 
 
 def manifest():
     records = []
-    for name in PROMPTS:
+    for name in ["hero"]:
         provenance = json.loads((ASSETS / f"{name}.provenance.json").read_text())
-        output = ASSETS / ("hero.jpg" if name == "hero" else f"{name}.jpg")
+        output = ASSETS / "header.jpg"
         with Image.open(output) as picture:
             dimensions = list(picture.size)
         records.append({
@@ -186,15 +174,17 @@ def manifest():
             "source_url": provenance["source_url"],
         })
     result = {
-        "version": 1,
+        "version": 2,
         "template": {
             "repository": "https://github.com/ryanpolasky/ryme.md",
             "commit": "aede040201f5ed5168eb74c5e1fe319895b724ed",
             "source": "src/lib/templates/sleek-header.ts",
             "license": "MIT",
-            "adaptation": "Static image header with generated artwork and left-aligned text.",
+            "adaptation": "Compact title strip, native content and a single teal underline.",
         },
         "assets": records,
+        "archived_assets": ["hero.jpg", "task-synthesis.jpg", "agentic-rl.jpg",
+                            "gui-agents.jpg", "science-models.jpg"],
     }
     (ASSETS / "manifest.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n")

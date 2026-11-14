@@ -1,57 +1,28 @@
 {
-  "version": 1,
+  "version": 2,
   "template": {
     "repository": "https://github.com/ryanpolasky/ryme.md",
     "commit": "aede040201f5ed5168eb74c5e1fe319895b724ed",
     "source": "src/lib/templates/sleek-header.ts",
     "license": "MIT",
-    "adaptation": "Static image header with generated artwork and left-aligned text."
+    "adaptation": "Compact title strip, native content and a single teal underline."
   },
   "assets": [
     {
-      "file": "hero.jpg",
+      "file": "header.jpg",
       "width": 1280,
-      "height": 460,
-      "bytes": 96618,
-      "sha256": "821102eb65f26d31406f4452cc72ae1086996535c7acfabe854148b16ae8c51f",
+      "height": 180,
+      "bytes": 15071,
+      "sha256": "5eebd98566344131863d32d090fa082a1100b301181b19818a9f2e9df39a23b7",
       "provenance": "hero.provenance.json",
       "source_url": "https://copilot-cn.bytedance.net/api/ide/v1/text_to_image?prompt=GitHub+Profile+hero+banner%3A+Editorial+scientific+studio+photograph%2C+realistic+materials%2C+midnight+navy+background%2C+restrained+translucent+teal+glass+and+brushed+silver%2C+precise+soft+studio+lighting%2C+sophisticated+artificial+intelligence+research+website%2C+high+detail%2C+no+text%2C+no+logos%2C+no+watermark.+A+translucent+glass+branching+computation+graph+connected+to+a+small+protein+ribbon+sculpture+and+a+sleek+metal+computer%2C+all+concentrated+on+the+right+half+of+the+frame%3B+the+left+half+is+clean+dark+negative+space+for+a+title%2C+elegant+and+quiet%2C+cinematic+wide+composition.&image_size=landscape_16_9"
-    },
-    {
-      "file": "task-synthesis.jpg",
-      "width": 768,
-      "height": 432,
-      "bytes": 49813,
-      "sha256": "03c662c5eb306ec14f492a3bff63b7d60f5fa4bc85613440387fa3b116bb2755",
-      "provenance": "task-synthesis.provenance.json",
-      "source_url": "https://copilot-cn.bytedance.net/api/ide/v1/text_to_image?prompt=GitHub+Profile+research+card%3A+Editorial+scientific+studio+photograph%2C+realistic+materials%2C+midnight+navy+background%2C+restrained+translucent+teal+glass+and+brushed+silver%2C+precise+soft+studio+lighting%2C+sophisticated+artificial+intelligence+research+website%2C+high+detail%2C+no+text%2C+no+logos%2C+no+watermark.+An+orderly+scientist%27s+workbench+with+an+open+laboratory+notebook%2C+a+small+molecular+sculpture%2C+and+a+laptop+showing+subtle+unlabeled+code-like+lines%3B+three+glass+task+blocks+connected+to+one+verification+block%2C+physically+arranged+on+the+desk%2C+close-up+at+eye+level.&image_size=landscape_16_9"
-    },
-    {
-      "file": "agentic-rl.jpg",
-      "width": 768,
-      "height": 432,
-      "bytes": 49374,
-      "sha256": "287e1af7e8e330f4c0994cf63a15f5e51ec08dfe6d2c8edf2c53d3d3f3ef3e80",
-      "provenance": "agentic-rl.provenance.json",
-      "source_url": "https://copilot-cn.bytedance.net/api/ide/v1/text_to_image?prompt=GitHub+Profile+research+card%3A+Editorial+scientific+studio+photograph%2C+realistic+materials%2C+midnight+navy+background%2C+restrained+translucent+teal+glass+and+brushed+silver%2C+precise+soft+studio+lighting%2C+sophisticated+artificial+intelligence+research+website%2C+high+detail%2C+no+text%2C+no+logos%2C+no+watermark.+A+finely+detailed+translucent+protein+ribbon+sculpture+surrounded+by+a+branching+path+of+small+connected+glass+nodes%2C+one+path+softly+illuminated+teal%2C+an+elegant+physical+representation+of+learning+through+scientific+tool+interactions%2C+close-up+at+eye+level.&image_size=landscape_16_9"
-    },
-    {
-      "file": "gui-agents.jpg",
-      "width": 768,
-      "height": 432,
-      "bytes": 40664,
-      "sha256": "8bbc31ba26a07bfb5cfc10314ee40113d7450057e239f818ba8850f30b201a75",
-      "provenance": "gui-agents.provenance.json",
-      "source_url": "https://copilot-cn.bytedance.net/api/ide/v1/text_to_image?prompt=GitHub+Profile+research+card%3A+Editorial+scientific+studio+photograph%2C+realistic+materials%2C+midnight+navy+background%2C+restrained+translucent+teal+glass+and+brushed+silver%2C+precise+soft+studio+lighting%2C+sophisticated+artificial+intelligence+research+website%2C+high+detail%2C+no+text%2C+no+logos%2C+no+watermark.+A+premium+metal+desktop+monitor+and+keyboard+at+a+three-quarter+angle%2C+the+screen+shows+a+few+clearly+separated+unlabeled+application+windows+and+a+simple+cursor%2C+a+restrained+teal+glass+action+path+in+front+of+the+monitor%2C+professional+computer-use+research+workspace.&image_size=landscape_16_9"
-    },
-    {
-      "file": "science-models.jpg",
-      "width": 768,
-      "height": 432,
-      "bytes": 46369,
-      "sha256": "b9dc0764fb5f0357af9edeeff6cdf2f002bc9912dc62b1be59741d6247190f94",
-      "provenance": "science-models.provenance.json",
-      "source_url": "https://copilot-cn.bytedance.net/api/ide/v1/text_to_image?prompt=GitHub+Profile+research+card%3A+Editorial+scientific+studio+photograph%2C+realistic+materials%2C+midnight+navy+background%2C+restrained+translucent+teal+glass+and+brushed+silver%2C+precise+soft+studio+lighting%2C+sophisticated+artificial+intelligence+research+website%2C+high+detail%2C+no+text%2C+no+logos%2C+no+watermark.+A+protein+ribbon+model+and+a+precise+row+of+small+luminous+rectangular+glass+tokens+connected+by+a+silver+bridge%2C+with+a+compact+computing+chip+behind+them%2C+a+physical+scientific+model+of+protein+and+language+representation+learning%2C+close-up+at+eye+level.&image_size=landscape_16_9"
     }
+  ],
+  "archived_assets": [
+    "hero.jpg",
+    "task-synthesis.jpg",
+    "agentic-rl.jpg",
+    "gui-agents.jpg",
+    "science-models.jpg"
   ]
 }

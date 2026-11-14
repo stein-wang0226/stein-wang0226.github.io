@@ -120,7 +120,10 @@ class PipelineTests(unittest.TestCase):
             '<section id="fixture-history"><a href="#ref-fixture">[fixture]</a></section></details>'
             '<ol><li id="ref-fixture">'
             '<a href="https://arxiv.org/abs/9901.12345v1">Fixture A</a>'
-            '<a href="https://arxiv.org/html/9901.12346v2">Fixture B</a></li></ol>')
+            '<a href="https://arxiv.org/html/9901.12346v2">Fixture B</a></li></ol>'
+            '<p><a href="#cite-fixture">[fixture alternate format]</a></p>'
+            '<ol><li id="cite-fixture"><a href="https://arxiv.org/pdf/9901.12345v1">'
+            'Fixture A</a></li></ol>')
         source.write_text(source.read_text().replace("</body>", fixture + "</body>"))
         before = tree(self.root)
         data, errors = derive(self.root)
@@ -129,7 +132,9 @@ class PipelineTests(unittest.TestCase):
         for key in ("arxiv:9901.12345@v1", "arxiv:9901.12346@v2"):
             row = next(s for s in data["sources"] if s["source_key"] == key)
             self.assertEqual({"current", "historical"}, {u["role"] for u in row["used_in"]})
-            self.assertTrue(row["local_references"][0]["url"].endswith("#ref-fixture"))
+            self.assertTrue(any(r["url"].endswith("#ref-fixture") for r in row["local_references"]))
+        row = next(s for s in data["sources"] if s["source_key"] == "arxiv:9901.12345@v1")
+        self.assertTrue(any(r["url"].endswith("#cite-fixture") for r in row["local_references"]))
         self.assertEqual(source_identity("https://arxiv.org/abs/9901.12345v1")[0],
                          source_identity("https://arxiv.org/pdf/9901.12345v1")[0])
         self.assertNotEqual(source_identity("https://arxiv.org/abs/9901.12345v1")[0],

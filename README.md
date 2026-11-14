@@ -86,9 +86,10 @@ Pages Source 应设置为 GitHub Actions；部署作业依赖构建与校验成�
 
 - [日常维护](docs/maintenance.md)：新增、更新、预览、前沿自动化及线上核对。
 - [内容检查](docs/content-audit.md)：覆盖范围、修订与未完成的事实复核。
+- [知识体系扩展依据](docs/knowledge-expansion-research-20261114.md)：架构、训练、Agent、部署、科学方案与60道新增题解；贯通路线在 `/blog/#learning-paths`。
 - [训练全链路来源复核](docs/llm-training-research-20261114.md)：27 项原始来源、原 Midtraining 调研修订与实验边界；本地入口 `/llm-training-lifecycle/`。
 - [研究地图与覆盖审计](docs/blog-research-review-20261114.md)：初版五章及后续七章扩展说明；公开入口 `/llm-research-map-2026/`。
-- [多家族架构调研](docs/architecture-research-20261114.md)：第06–07章版本、机制与证据边界；当前研究地图71项来源、15份原件。
+- [多家族架构调研](docs/architecture-research-20261114.md)：现行第03/05章的模型版本、机制与证据边界；研究地图71项来源、15份原件。
 - [验收记录](docs/validation.md)：内容保留、浏览器、隔离构建与真实发布状态。
 - [全站结构整合](docs/organization-integration-20261114.md)：学习主线、研究路径、章序、冻结原文和引用保留证据。
 - [个人资料更新依据](docs/profile-update-20261114.md)：最新简历、项目口径、论文状态、中英文附件与 GitHub Profile 稿。

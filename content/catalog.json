@@ -2,327 +2,909 @@
   "schema_version": 1,
   "entries": [
     {
-      "id": "agent-systems", "kind": "series",
+      "id": "agent-systems",
+      "kind": "series",
       "title": "Agent 系统与推理策略：证据、规划与信任",
       "summary": "三章串起RAG/Agentic检索、规划与推理预算、权限隔离与安全评测，连接Codex状态、科学合同和工业后训练。",
-      "source": "content/series/agent-systems/index.html", "url": "/agent-systems/",
-      "topic": "agent", "type": "series-tutorial",
-      "tags": ["Agent", "RAG", "Search-R1", "Agentic-R", "PROGRESS", "Planning", "Test-Time Compute", "Safety", "Permissions"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": null, "order": null, "featured": true,
-      "related": ["agent-harness-guide", "agent-data-benchmarks", "llm-training-lifecycle", "llm-serving"]
+      "source": "content/series/agent-systems/index.html",
+      "url": "/agent-systems/",
+      "topic": "agent",
+      "type": "series-tutorial",
+      "tags": [
+        "Agent",
+        "RAG",
+        "Search-R1",
+        "Agentic-R",
+        "PROGRESS",
+        "Planning",
+        "Test-Time Compute",
+        "Safety",
+        "Permissions"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": null,
+      "order": null,
+      "featured": true,
+      "related": [
+        "agent-harness-guide",
+        "agent-data-benchmarks",
+        "llm-training-lifecycle",
+        "llm-serving"
+      ]
     },
     {
-      "id": "agent-rag", "kind": "chapter",
+      "id": "agent-rag",
+      "kind": "chapter",
       "title": "01 · RAG与Agentic检索：从文档到可核实的证据",
       "summary": "版本/权限、chunk、BM25/dense融合和rerank，比较Self-RAG、Search-R1、Agentic-R、Search-R1++与PROGRESS；检索、引用与任务分开评测。",
       "source": "content/series/agent-systems/s01_rag_retrieval.html",
       "url": "/agent-systems/s01_rag_retrieval.html",
-      "topic": "agent", "type": "system-guide",
-      "tags": ["RAG", "BM25", "Dense Retrieval", "RRF", "Rerank", "Search-R1", "Agentic-R", "PROGRESS", "Citation", "Memory"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "agent-systems", "order": 1, "featured": false,
-      "related": ["agent-harness-guide", "agent-planning", "agent-trust", "scientific-task-family", "llm-interview-bank"]
+      "topic": "agent",
+      "type": "system-guide",
+      "tags": [
+        "RAG",
+        "BM25",
+        "Dense Retrieval",
+        "RRF",
+        "Rerank",
+        "Search-R1",
+        "Agentic-R",
+        "PROGRESS",
+        "Citation",
+        "Memory"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "agent-systems",
+      "order": 1,
+      "featured": false,
+      "related": [
+        "agent-harness-guide",
+        "agent-planning",
+        "agent-trust",
+        "scientific-task-family",
+        "llm-interview-bank"
+      ]
     },
     {
-      "id": "agent-planning", "kind": "chapter",
+      "id": "agent-planning",
+      "kind": "chapter",
       "title": "02 · 规划、搜索与推理预算：让额外计算产生价值",
       "summary": "ReAct、计划执行、反思、BoN/beam/MCTS与过程验证，解释环境分支、停止/恢复和工具预算；同预算任务成功与selector分开。",
       "source": "content/series/agent-systems/s02_planning_compute.html",
       "url": "/agent-systems/s02_planning_compute.html",
-      "topic": "agent", "type": "principles",
-      "tags": ["ReAct", "Reflexion", "Planning", "BoN", "MCTS", "Verifier", "Budget", "Test-Time Compute", "State", "Recovery"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "agent-systems", "order": 2, "featured": false,
-      "related": ["agent-rag", "agent-trust", "agent-harness-guide", "serving-capacity", "cluster-training-evaluation"]
+      "topic": "agent",
+      "type": "principles",
+      "tags": [
+        "ReAct",
+        "Reflexion",
+        "Planning",
+        "BoN",
+        "MCTS",
+        "Verifier",
+        "Budget",
+        "Test-Time Compute",
+        "State",
+        "Recovery"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "agent-systems",
+      "order": 2,
+      "featured": false,
+      "related": [
+        "agent-rag",
+        "agent-trust",
+        "agent-harness-guide",
+        "serving-capacity",
+        "cluster-training-evaluation"
+      ]
     },
     {
-      "id": "agent-trust", "kind": "chapter",
+      "id": "agent-trust",
+      "kind": "chapter",
       "title": "03 · Agent信任边界、权限与安全评测",
       "summary": "指令与外部数据、prompt injection、工具门控和sandbox，分析六种隔离模式与AgentDojo效用/ASR分母，设计科学安全负例。",
       "source": "content/series/agent-systems/s03_trust_safety.html",
       "url": "/agent-systems/s03_trust_safety.html",
-      "topic": "agent", "type": "system-guide",
-      "tags": ["Safety", "Prompt Injection", "Permissions", "Sandbox", "AgentDojo", "Verifier", "Data Flow"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "agent-systems", "order": 3, "featured": false,
-      "related": ["agent-rag", "agent-planning", "scientific-task-family", "agent-benchmark-map", "agent-harness-guide"]
+      "topic": "agent",
+      "type": "system-guide",
+      "tags": [
+        "Safety",
+        "Prompt Injection",
+        "Permissions",
+        "Sandbox",
+        "AgentDojo",
+        "Verifier",
+        "Data Flow"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "agent-systems",
+      "order": 3,
+      "featured": false,
+      "related": [
+        "agent-rag",
+        "agent-planning",
+        "scientific-task-family",
+        "agent-benchmark-map",
+        "agent-harness-guide"
+      ]
     },
     {
-      "id": "llm-serving", "kind": "series",
+      "id": "llm-serving",
+      "kind": "series",
       "title": "LLM推理与部署工程：调度、并行与成功成本",
       "summary": "三章从prefill/decode和KV生命周期到TP/EP/PD、量化与投机，再建立容量/延迟/成功成本账本；附固定源码、规划CSV和测量协议。",
-      "source": "content/series/llm-serving/index.html", "url": "/llm-serving/",
-      "topic": "training-inference", "type": "series-tutorial",
-      "tags": ["Serving", "vLLM", "SGLang", "KV Cache", "PagedAttention", "Parallelism", "Quantization", "Speculative Decoding", "Cost"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": null, "order": null, "featured": true,
-      "related": ["transformer-decoder-flow", "distributed-training-guide", "llm-architecture", "cluster-training-evaluation"]
+      "source": "content/series/llm-serving/index.html",
+      "url": "/llm-serving/",
+      "topic": "training-inference",
+      "type": "series-tutorial",
+      "tags": [
+        "Serving",
+        "vLLM",
+        "SGLang",
+        "KV Cache",
+        "PagedAttention",
+        "Parallelism",
+        "Quantization",
+        "Speculative Decoding",
+        "Cost"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": null,
+      "order": null,
+      "featured": true,
+      "related": [
+        "transformer-decoder-flow",
+        "distributed-training-guide",
+        "llm-architecture",
+        "cluster-training-evaluation"
+      ]
     },
     {
-      "id": "serving-runtime", "kind": "chapter",
+      "id": "serving-runtime",
+      "kind": "chapter",
       "title": "01 · LLM请求调度与缓存生命周期",
       "summary": "continuous batching、分页与prefix、chunked prefill和抢占，核对vLLM v0.32.0/SGLang v0.5.23源码，分析工具暂停与混合状态。",
       "source": "content/series/llm-serving/s01_runtime_scheduling.html",
       "url": "/llm-serving/s01_runtime_scheduling.html",
-      "topic": "training-inference", "type": "system-guide",
-      "tags": ["Prefill", "Decode", "vLLM", "SGLang", "PagedAttention", "RadixAttention", "Prefix", "Continuous Batching"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-serving", "order": 1, "featured": false,
-      "related": ["architecture-attention", "serving-parallel", "serving-capacity", "agent-harness-guide"]
+      "topic": "training-inference",
+      "type": "system-guide",
+      "tags": [
+        "Prefill",
+        "Decode",
+        "vLLM",
+        "SGLang",
+        "PagedAttention",
+        "RadixAttention",
+        "Prefix",
+        "Continuous Batching"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-serving",
+      "order": 1,
+      "featured": false,
+      "related": [
+        "architecture-attention",
+        "serving-parallel",
+        "serving-capacity",
+        "agent-harness-guide"
+      ]
     },
     {
-      "id": "serving-parallel", "kind": "chapter",
+      "id": "serving-parallel",
+      "kind": "chapter",
       "title": "02 · 推理并行、量化与投机验证",
       "summary": "TP/DP/EP与PD分离、KV传输、weight/activation/KV量化和FP4，解释贪心与采样验证边界，设计Dense/MoE/Hybrid服务对照。",
       "source": "content/series/llm-serving/s02_parallel_quantization.html",
       "url": "/llm-serving/s02_parallel_quantization.html",
-      "topic": "training-inference", "type": "system-guide",
-      "tags": ["TP", "EP", "Disaggregation", "FP8", "FP4", "GPTQ", "AWQ", "KIVI", "Speculative Decoding", "MTP"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-serving", "order": 2, "featured": false,
-      "related": ["serving-runtime", "serving-capacity", "research-inference-diffusion", "research-base-architecture", "training-methods-systems"]
+      "topic": "training-inference",
+      "type": "system-guide",
+      "tags": [
+        "TP",
+        "EP",
+        "Disaggregation",
+        "FP8",
+        "FP4",
+        "GPTQ",
+        "AWQ",
+        "KIVI",
+        "Speculative Decoding",
+        "MTP"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-serving",
+      "order": 2,
+      "featured": false,
+      "related": [
+        "serving-runtime",
+        "serving-capacity",
+        "research-inference-diffusion",
+        "research-base-architecture",
+        "training-methods-systems"
+      ]
     },
     {
-      "id": "serving-capacity", "kind": "chapter",
+      "id": "serving-capacity",
+      "kind": "chapter",
       "title": "03 · LLM容量、延迟与成功成本",
       "summary": "权重/KV/状态/临时区显存、70B TP4容量推导、TTFT/ITL/goodput、长程rollout与全部尝试成本；下载CSV/JSON/协议，实测字段为空。",
       "source": "content/series/llm-serving/s03_capacity_cost.html",
       "url": "/llm-serving/s03_capacity_cost.html",
-      "topic": "training-inference", "type": "practical-guide",
-      "tags": ["Capacity", "Memory", "TTFT", "ITL", "Goodput", "Cost", "Rollout", "H100", "Measurement"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-serving", "order": 3, "featured": false,
-      "related": ["serving-runtime", "serving-parallel", "cluster-training-evaluation", "training-methods-systems", "llm-interview-bank"]
+      "topic": "training-inference",
+      "type": "practical-guide",
+      "tags": [
+        "Capacity",
+        "Memory",
+        "TTFT",
+        "ITL",
+        "Goodput",
+        "Cost",
+        "Rollout",
+        "H100",
+        "Measurement"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-serving",
+      "order": 3,
+      "featured": false,
+      "related": [
+        "serving-runtime",
+        "serving-parallel",
+        "cluster-training-evaluation",
+        "training-methods-systems",
+        "llm-interview-bank"
+      ]
     },
     {
-      "id": "llm-posttraining", "kind": "series",
+      "id": "llm-posttraining",
+      "kind": "series",
       "title": "LLM 后训练：SFT、RL、OPD 与 Agent 训练系统",
       "summary": "六章深入监督与偏好、主流RL算法、OPD与自蒸馏、过程信用及异步框架；结合代码、Harbor科学和GUI任务，附66项一手来源与待执行实验。",
-      "source": "content/series/llm-posttraining/index.html", "url": "/llm-posttraining/",
-      "topic": "rl-post-training", "type": "series-tutorial",
-      "tags": ["Post-training", "SFT", "RFT", "RL", "OPD", "MOPD", "SDPO", "GRPO", "PPO", "Reward", "Async", "Harbor"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": null, "order": null, "featured": true,
-      "related": ["llm-training-lifecycle", "llm-research-map-2026", "agent-data-benchmarks", "agent-harness-guide"]
+      "source": "content/series/llm-posttraining/index.html",
+      "url": "/llm-posttraining/",
+      "topic": "rl-post-training",
+      "type": "series-tutorial",
+      "tags": [
+        "Post-training",
+        "SFT",
+        "RFT",
+        "RL",
+        "OPD",
+        "MOPD",
+        "SDPO",
+        "GRPO",
+        "PPO",
+        "Reward",
+        "Async",
+        "Harbor"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": null,
+      "order": null,
+      "featured": true,
+      "related": [
+        "llm-training-lifecycle",
+        "llm-research-map-2026",
+        "agent-data-benchmarks",
+        "agent-harness-guide"
+      ]
     },
     {
-      "id": "posttraining-supervision", "kind": "chapter",
+      "id": "posttraining-supervision",
+      "kind": "chapter",
       "title": "01 · SFT、两种 RFT、偏好优化与工业链路",
       "summary": "角色mask、token/episode分母、恢复轨迹、拒绝采样、DPO/SimPO/ORPO/KTO，连接Qwen、Kimi、GLM、DeepSeek与MiMo。",
       "source": "content/series/llm-posttraining/s01_supervision_preference.html",
       "url": "/llm-posttraining/s01_supervision_preference.html",
-      "topic": "rl-post-training", "type": "principles",
-      "tags": ["SFT", "RFT", "DPO", "SimPO", "ORPO", "KTO", "ReTerm", "Recovery"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-posttraining", "order": 1, "featured": false,
-      "related": ["llm-training-sft-rft", "posttraining-opd", "posttraining-algorithms"]
+      "topic": "rl-post-training",
+      "type": "principles",
+      "tags": [
+        "SFT",
+        "RFT",
+        "DPO",
+        "SimPO",
+        "ORPO",
+        "KTO",
+        "ReTerm",
+        "Recovery"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-posttraining",
+      "order": 1,
+      "featured": false,
+      "related": [
+        "llm-training-sft-rft",
+        "posttraining-opd",
+        "posttraining-algorithms"
+      ]
     },
     {
-      "id": "posttraining-algorithms", "kind": "chapter",
+      "id": "posttraining-algorithms",
+      "kind": "chapter",
       "title": "02 · RL 目标、主流算法与训练偏差",
       "summary": "推导PPO/GAE、RLOO/GRPO，分析DAPO、Dr.GRPO、GSPO、CISPO、两种SAPO与SAO，解释异质数据和有效组。",
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
       "url": "/llm-posttraining/s02_rl_algorithms.html",
-      "topic": "rl-post-training", "type": "principles",
-      "tags": ["PPO", "GAE", "RLOO", "GRPO", "DAPO", "Dr. GRPO", "GSPO", "CISPO", "SAPO", "SAO"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-posttraining", "order": 2, "featured": false,
-      "related": ["research-agentic-rl", "posttraining-rewards", "posttraining-frameworks"]
+      "topic": "rl-post-training",
+      "type": "principles",
+      "tags": [
+        "PPO",
+        "GAE",
+        "RLOO",
+        "GRPO",
+        "DAPO",
+        "Dr. GRPO",
+        "GSPO",
+        "CISPO",
+        "SAPO",
+        "SAO"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-posttraining",
+      "order": 2,
+      "featured": false,
+      "related": [
+        "research-agentic-rl",
+        "posttraining-rewards",
+        "posttraining-frameworks"
+      ]
     },
     {
-      "id": "posttraining-opd", "kind": "chapter",
+      "id": "posttraining-opd",
+      "kind": "chapter",
       "title": "03 · OPD、多教师与自蒸馏",
       "summary": "固定prefix的reverse-KL梯度、采样PG、full/top-k成本与工业分歧；MOPD2、OPSD/SDPO/SDPG、Guided-OPD/TISD与遗忘。",
       "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
       "url": "/llm-posttraining/s03_opd_self_distillation.html",
-      "topic": "rl-post-training", "type": "principles",
-      "tags": ["OPD", "MOPD", "MOPD2", "Reverse KL", "OPSD", "SDPO", "SDPG", "Guided-OPD", "TISD", "OPDArena", "Distillation"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-posttraining", "order": 3, "featured": false,
-      "related": ["llm-training-sft-rft", "posttraining-frameworks", "posttraining-cases"]
+      "topic": "rl-post-training",
+      "type": "principles",
+      "tags": [
+        "OPD",
+        "MOPD",
+        "MOPD2",
+        "Reverse KL",
+        "OPSD",
+        "SDPO",
+        "SDPG",
+        "Guided-OPD",
+        "TISD",
+        "OPDArena",
+        "Distillation"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-posttraining",
+      "order": 3,
+      "featured": false,
+      "related": [
+        "llm-training-sft-rft",
+        "posttraining-frameworks",
+        "posttraining-cases"
+      ]
     },
     {
-      "id": "posttraining-rewards", "kind": "chapter",
+      "id": "posttraining-rewards",
+      "kind": "chapter",
       "title": "04 · RL 环境、奖励、过程监督与长程信用",
       "summary": "Harbor独立verifier，区分结果/PRM/value/advantage/teacher；PURE、Cliff、GiGPO、RLDS、KnowGPO、GAR与奖励漏洞。",
       "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
       "url": "/llm-posttraining/s04_environment_reward_credit.html",
-      "topic": "rl-post-training", "type": "system-guide",
-      "tags": ["Environment", "Reward", "PRM", "Value", "Credit Assignment", "Harbor", "PURE", "Cliff", "GiGPO", "RLDS", "KnowGPO", "GAR"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-posttraining", "order": 4, "featured": false,
-      "related": ["agent-task-synthesis", "posttraining-algorithms", "posttraining-cases"]
+      "topic": "rl-post-training",
+      "type": "system-guide",
+      "tags": [
+        "Environment",
+        "Reward",
+        "PRM",
+        "Value",
+        "Credit Assignment",
+        "Harbor",
+        "PURE",
+        "Cliff",
+        "GiGPO",
+        "RLDS",
+        "KnowGPO",
+        "GAR"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-posttraining",
+      "order": 4,
+      "featured": false,
+      "related": [
+        "agent-task-synthesis",
+        "posttraining-algorithms",
+        "posttraining-cases"
+      ]
     },
     {
-      "id": "posttraining-frameworks", "kind": "chapter",
+      "id": "posttraining-frameworks",
+      "kind": "chapter",
       "title": "05 · 后训练框架、异步分布式与训练对齐",
       "summary": "十类框架的固定版本支持与边界；三策略校正、完成顺序偏移、partial KV、Agent Lightning v1与slime OPD源码。",
       "source": "content/series/llm-posttraining/s05_frameworks_async.html",
       "url": "/llm-posttraining/s05_frameworks_async.html",
-      "topic": "rl-post-training", "type": "system-guide",
-      "tags": ["Async", "Distributed", "Policy Lag", "TRL", "verl", "slime", "AReaL", "OpenRLHF", "NeMo RL", "ROLL", "RLinf", "SkyRL", "Agent Lightning"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-posttraining", "order": 5, "featured": false,
-      "related": ["distributed-training-guide", "agent-harness-guide", "posttraining-opd", "research-agentic-rl"]
+      "topic": "rl-post-training",
+      "type": "system-guide",
+      "tags": [
+        "Async",
+        "Distributed",
+        "Policy Lag",
+        "TRL",
+        "verl",
+        "slime",
+        "AReaL",
+        "OpenRLHF",
+        "NeMo RL",
+        "ROLL",
+        "RLinf",
+        "SkyRL",
+        "Agent Lightning"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-posttraining",
+      "order": 5,
+      "featured": false,
+      "related": [
+        "distributed-training-guide",
+        "agent-harness-guide",
+        "posttraining-opd",
+        "research-agentic-rl"
+      ]
     },
     {
-      "id": "posttraining-cases", "kind": "chapter",
+      "id": "posttraining-cases",
+      "kind": "chapter",
       "title": "06 · 代码、Harbor 科学、GUI：后训练交付",
       "summary": "三类任务输入→动作→反馈→目标→独立终评；提供轨迹契约、单轴消融、失败诊断和成功成本，明确尚未训练。",
       "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
       "url": "/llm-posttraining/s06_task_cases_experiments.html",
-      "topic": "rl-post-training", "type": "practical-guide",
-      "tags": ["Case Study", "Code", "Science", "Harbor", "GUI", "Verifier", "Experiment", "Cost"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-posttraining", "order": 6, "featured": false,
-      "related": ["agent-task-synthesis", "agent-benchmark-map", "posttraining-rewards", "posttraining-opd"]
+      "topic": "rl-post-training",
+      "type": "practical-guide",
+      "tags": [
+        "Case Study",
+        "Code",
+        "Science",
+        "Harbor",
+        "GUI",
+        "Verifier",
+        "Experiment",
+        "Cost"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-posttraining",
+      "order": 6,
+      "featured": false,
+      "related": [
+        "agent-task-synthesis",
+        "agent-benchmark-map",
+        "posttraining-rewards",
+        "posttraining-opd"
+      ]
     },
     {
-      "id": "training-methods-systems", "kind": "chapter",
+      "id": "training-methods-systems",
+      "kind": "chapter",
       "title": "05 · 训练方法与集群设计：PEFT、优化器、稳定性及后训练系统",
       "summary": "LoRA/QLoRA、AdamW/Muon与训练状态，核对Megatron普通/专家进程组，设计128/1024 H100后训练池、reference与异步rollout；配置与实测分开。",
       "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
       "url": "/llm-training-lifecycle/s05_training_methods_systems.html",
-      "topic": "training-inference", "type": "system-guide",
-      "tags": ["PEFT", "LoRA", "QLoRA", "AdamW", "Muon", "Megatron", "EP", "CP", "Stability", "Cluster", "Policy Lag"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-training-lifecycle", "order": 5, "featured": false,
-      "related": ["architecture-moe", "architecture-residual", "research-architecture-training", "llm-training-rl-evaluation", "cluster-training-evaluation", "distributed-training-guide"]
+      "topic": "training-inference",
+      "type": "system-guide",
+      "tags": [
+        "PEFT",
+        "LoRA",
+        "QLoRA",
+        "AdamW",
+        "Muon",
+        "Megatron",
+        "EP",
+        "CP",
+        "Stability",
+        "Cluster",
+        "Policy Lag"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-training-lifecycle",
+      "order": 5,
+      "featured": false,
+      "related": [
+        "architecture-moe",
+        "architecture-residual",
+        "research-architecture-training",
+        "llm-training-rl-evaluation",
+        "cluster-training-evaluation",
+        "distributed-training-guide"
+      ]
     },
     {
-      "id": "scientific-task-family", "kind": "chapter",
-      "title": "02 · 科学 Agent 任务族：来源、统计合同、验证与训练准入",
+      "id": "scientific-task-family",
+      "kind": "chapter",
+      "title": "02 · 科学 Agent 任务族：数据与验证合同",
       "summary": "围绕GSE52778/airway设计RNA-seq任务族，核对count层、配对与来源冲突，公开完整schema、研究切分、独立verifier和轨迹；尚未构建真实benchmark。",
       "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
       "url": "/agent-data-benchmarks/s03_scientific_task_family.html",
-      "topic": "agent", "type": "practical-guide",
-      "tags": ["Science", "Harbor", "GEO", "RNA-seq", "airway", "DESeq2", "edgeR", "Verifier", "Schema", "Data Split", "Trajectory"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "agent-data-benchmarks", "order": 2, "featured": false,
-      "prerequisites": [{"entry": "agent-task-synthesis", "reason": "先明确环境、verifier与独立切分"}],
-      "related": ["agent-task-synthesis", "agent-benchmark-map", "cluster-training-evaluation", "agent-harness-guide", "llm-training-sft-rft"]
+      "topic": "agent",
+      "type": "practical-guide",
+      "tags": [
+        "Science",
+        "Harbor",
+        "GEO",
+        "RNA-seq",
+        "airway",
+        "DESeq2",
+        "edgeR",
+        "Verifier",
+        "Schema",
+        "Data Split",
+        "Trajectory"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "agent-data-benchmarks",
+      "order": 2,
+      "featured": false,
+      "prerequisites": [
+        {
+          "entry": "agent-task-synthesis",
+          "reason": "先明确环境、verifier与独立切分"
+        }
+      ],
+      "related": [
+        "agent-task-synthesis",
+        "agent-benchmark-map",
+        "cluster-training-evaluation",
+        "agent-harness-guide",
+        "llm-training-sft-rft"
+      ]
     },
     {
-      "id": "cluster-training-evaluation", "kind": "chapter",
+      "id": "cluster-training-evaluation",
+      "kind": "chapter",
       "title": "03 · 科学 Agent 工业训练方案：SFT、异质 RL、失败归因与成本",
       "summary": "独立命名sci-posttrain A–E，设计SFT/GRPO/步骤信用/OPD与预算消融，连接128/1024 H100、policy lag、研究组统计、失败与成功成本；无实测结果。",
       "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
       "url": "/agent-data-benchmarks/s04_cluster_training_evaluation.html",
-      "topic": "rl-post-training", "type": "system-guide",
-      "tags": ["Agentic RL", "SFT", "GRPO", "OPD", "Heterogeneity", "Cluster", "Harbor", "Cost", "Failure", "Evaluation"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "agent-data-benchmarks", "order": 3, "featured": false,
-      "prerequisites": [{"entry": "scientific-task-family", "reason": "训练准入依赖统计合同和结果协议"}],
-      "related": ["scientific-task-family", "training-methods-systems", "research-agentic-rl", "llm-training-rl-evaluation", "agentic-rl-guide"]
+      "topic": "rl-post-training",
+      "type": "system-guide",
+      "tags": [
+        "Agentic RL",
+        "SFT",
+        "GRPO",
+        "OPD",
+        "Heterogeneity",
+        "Cluster",
+        "Harbor",
+        "Cost",
+        "Failure",
+        "Evaluation"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "agent-data-benchmarks",
+      "order": 3,
+      "featured": false,
+      "prerequisites": [
+        {
+          "entry": "scientific-task-family",
+          "reason": "训练准入依赖统计合同和结果协议"
+        }
+      ],
+      "related": [
+        "scientific-task-family",
+        "training-methods-systems",
+        "research-agentic-rl",
+        "llm-training-rl-evaluation",
+        "agentic-rl-guide"
+      ]
     },
     {
-      "id": "llm-architecture", "kind": "series",
+      "id": "llm-architecture",
+      "kind": "series",
       "title": "LLM 基础与前沿架构：从张量流到系统设计",
       "summary": "六章从 token、QKV、causal mask 和 loss 讲到 KV/位置、SwiGLU/MoE、残差与状态递推，连接最新模型证据、工业训练和部署，附推导、源码与自测。",
-      "source": "content/series/llm-architecture/index.html", "url": "/llm-architecture/",
-      "topic": "llm-foundations", "type": "series-tutorial",
-      "tags": ["Transformer", "Architecture", "Attention", "KV Cache", "RoPE", "SwiGLU", "MoE", "RMSNorm", "GDN", "Mamba", "FP4", "Muon"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": null, "order": null, "featured": true,
-      "related": ["transformer-decoder-flow", "llm-training-lifecycle", "research-architecture-landscape", "research-architecture-training"]
+      "source": "content/series/llm-architecture/index.html",
+      "url": "/llm-architecture/",
+      "topic": "llm-foundations",
+      "type": "series-tutorial",
+      "tags": [
+        "Transformer",
+        "Architecture",
+        "Attention",
+        "KV Cache",
+        "RoPE",
+        "SwiGLU",
+        "MoE",
+        "RMSNorm",
+        "GDN",
+        "Mamba",
+        "FP4",
+        "Muon"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": null,
+      "order": null,
+      "featured": true,
+      "related": [
+        "transformer-decoder-flow",
+        "llm-training-lifecycle",
+        "research-architecture-landscape",
+        "research-architecture-training"
+      ]
     },
     {
-      "id": "architecture-transformer", "kind": "chapter",
+      "id": "architecture-transformer",
+      "kind": "chapter",
       "title": "01 · Transformer 的张量流与训练目标",
       "summary": "端到端形状、QKV/causal mask、残差、logits、teacher forcing、shift/loss 和梯度；区分参数、激活、KV 与优化器状态。",
       "source": "content/series/llm-architecture/s01_transformer_foundations.html",
       "url": "/llm-architecture/s01_transformer_foundations.html",
-      "topic": "llm-foundations", "type": "principles",
-      "tags": ["Transformer", "QKV", "Causal Mask", "Tensor", "Teacher Forcing", "Loss"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-architecture", "order": 1, "featured": false,
-      "related": ["transformer-decoder-flow", "llm-training-pretraining", "architecture-attention"]
+      "topic": "llm-foundations",
+      "type": "principles",
+      "tags": [
+        "Transformer",
+        "QKV",
+        "Causal Mask",
+        "Tensor",
+        "Teacher Forcing",
+        "Loss"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-architecture",
+      "order": 1,
+      "featured": false,
+      "related": [
+        "transformer-decoder-flow",
+        "llm-training-pretraining",
+        "architecture-attention"
+      ]
     },
     {
-      "id": "architecture-attention", "kind": "chapter",
+      "id": "architecture-attention",
+      "kind": "chapter",
       "title": "02 · Attention、位置与历史缓存",
       "summary": "MHA/MQA/GQA/MLA、RoPE、SWA/稀疏检索和逐层 KV 字节推导；分清 FlashAttention 计算、分页存储与 prefix 复用。",
       "source": "content/series/llm-architecture/s02_attention_position_cache.html",
       "url": "/llm-architecture/s02_attention_position_cache.html",
-      "topic": "llm-foundations", "type": "principles",
-      "tags": ["Attention", "MHA", "MQA", "GQA", "MLA", "RoPE", "KV Cache", "FlashAttention", "PagedAttention"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-architecture", "order": 2, "featured": false,
-      "related": ["architecture-transformer", "research-base-architecture", "architecture-hybrid"]
+      "topic": "llm-foundations",
+      "type": "principles",
+      "tags": [
+        "Attention",
+        "MHA",
+        "MQA",
+        "GQA",
+        "MLA",
+        "RoPE",
+        "KV Cache",
+        "FlashAttention",
+        "PagedAttention"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-architecture",
+      "order": 2,
+      "featured": false,
+      "related": [
+        "architecture-transformer",
+        "research-base-architecture",
+        "architecture-hybrid"
+      ]
     },
     {
-      "id": "architecture-moe", "kind": "chapter",
+      "id": "architecture-moe",
+      "kind": "chapter",
       "title": "03 · FFN、MoE 与专家通信",
       "summary": "SwiGLU 的矩阵/参数、top-k 路由、容量与负载、dispatch/combine、EP 和 LatentMoE；总参数、激活计算与网络分别核算。",
       "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
       "url": "/llm-architecture/s03_ffn_moe_routing.html",
-      "topic": "llm-foundations", "type": "principles",
-      "tags": ["FFN", "SwiGLU", "MoE", "Router", "EP", "All-to-All", "LatentMoE"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-architecture", "order": 3, "featured": false,
-      "related": ["research-architecture-training", "distributed-training-guide", "architecture-residual"]
+      "topic": "llm-foundations",
+      "type": "principles",
+      "tags": [
+        "FFN",
+        "SwiGLU",
+        "MoE",
+        "Router",
+        "EP",
+        "All-to-All",
+        "LatentMoE"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-architecture",
+      "order": 3,
+      "featured": false,
+      "related": [
+        "research-architecture-training",
+        "distributed-training-guide",
+        "architecture-residual"
+      ]
     },
     {
-      "id": "architecture-residual", "kind": "chapter",
+      "id": "architecture-residual",
+      "kind": "chapter",
       "title": "04 · 残差、归一化与稳定性",
       "summary": "Pre/Post-Norm 的 Jacobian 路径、RMSNorm 固定源码、初始化/QK/gate 风险，区分 AttnRes/mHC 的对象和局部稳定性条件。",
       "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
       "url": "/llm-architecture/s04_residual_norm_stability.html",
-      "topic": "llm-foundations", "type": "principles",
-      "tags": ["Residual", "RMSNorm", "Pre-Norm", "Post-Norm", "AttnRes", "mHC", "Stability", "Muon"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-architecture", "order": 4, "featured": false,
-      "related": ["research-architecture-training", "architecture-transformer", "llm-training-lifecycle"]
+      "topic": "llm-foundations",
+      "type": "principles",
+      "tags": [
+        "Residual",
+        "RMSNorm",
+        "Pre-Norm",
+        "Post-Norm",
+        "AttnRes",
+        "mHC",
+        "Stability",
+        "Muon"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-architecture",
+      "order": 4,
+      "featured": false,
+      "related": [
+        "research-architecture-training",
+        "architecture-transformer",
+        "llm-training-lifecycle"
+      ]
     },
     {
-      "id": "architecture-hybrid", "kind": "chapter",
+      "id": "architecture-hybrid",
+      "kind": "chapter",
       "title": "05 · 线性 Attention、状态空间与混合架构",
       "summary": "外积状态、遗忘/delta/GDN 递推、Mamba/SSD 的并行训练；按历史、深度、参数记忆和外部知识分对象，分析混合层计划与分支恢复。",
       "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
       "url": "/llm-architecture/s05_hybrid_architectures.html",
-      "topic": "llm-foundations", "type": "principles",
-      "tags": ["Linear Attention", "GDN", "KDA", "Mamba", "SSD", "Hybrid", "State", "Engram", "Memory"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-architecture", "order": 5, "featured": false,
-      "related": ["research-architecture-landscape", "agent-harness-guide", "architecture-comparison"]
+      "topic": "llm-foundations",
+      "type": "principles",
+      "tags": [
+        "Linear Attention",
+        "GDN",
+        "Gated Delta Networks",
+        "KDA",
+        "Mamba",
+        "SSD",
+        "Hybrid",
+        "State",
+        "Engram",
+        "Memory"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-architecture",
+      "order": 5,
+      "featured": false,
+      "related": [
+        "research-architecture-landscape",
+        "agent-harness-guide",
+        "architecture-comparison"
+      ]
     },
     {
-      "id": "architecture-comparison", "kind": "chapter",
+      "id": "architecture-comparison",
+      "kind": "chapter",
       "title": "06 · 前沿模型比较与设计取舍",
       "summary": "用历史、专家、深度、精度、预测与系统六条轴比较公开路线；连接固定型号证据和工业训练/Agent 成功成本，说明闭源披露与因果边界。",
       "source": "content/series/llm-architecture/s06_model_comparison.html",
       "url": "/llm-architecture/s06_model_comparison.html",
-      "topic": "llm-foundations", "type": "system-guide",
-      "tags": ["Architecture", "DeepSeek", "Qwen", "Kimi", "Nemotron", "GLM", "MiniMax", "MiMo", "Step", "Gemma", "FP4", "MTP", "Agent"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-architecture", "order": 6, "featured": false,
-      "related": ["research-architecture-landscape", "research-architecture-training", "research-inference-diffusion", "agent-data-benchmarks"]
+      "topic": "llm-foundations",
+      "type": "system-guide",
+      "tags": [
+        "Architecture",
+        "DeepSeek",
+        "Qwen",
+        "Kimi",
+        "Nemotron",
+        "GLM",
+        "MiniMax",
+        "MiMo",
+        "Step",
+        "Gemma",
+        "FP4",
+        "MTP",
+        "Agent"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-architecture",
+      "order": 6,
+      "featured": false,
+      "related": [
+        "research-architecture-landscape",
+        "research-architecture-training",
+        "research-inference-diffusion",
+        "agent-data-benchmarks"
+      ]
     },
     {
       "id": "agent-data-benchmarks",
@@ -331,12 +913,36 @@
       "summary": "四章连接任务合成、经典与前沿Benchmark、公开RNA-seq科学合同和工业SFT/RL方案；附52项原始索引及新增科学来源、schema、128/1024 H100规划和失败/成本记录。",
       "source": "content/series/agent-data-benchmarks/index.html",
       "url": "/agent-data-benchmarks/",
-      "topic": "agent", "type": "series-tutorial",
-      "tags": ["Agent", "Data Synthesis", "Benchmark", "Harbor", "Terminal-Bench", "DeepSWE", "SWE-Gym", "AA", "ScienceIDE", "GUI"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": null, "order": null, "featured": true,
-      "related": ["llm-research-map-2026", "llm-training-lifecycle", "agent-harness-guide", "scientific-task-family", "cluster-training-evaluation"]
+      "topic": "agent",
+      "type": "series-tutorial",
+      "tags": [
+        "Agent",
+        "Data Synthesis",
+        "Benchmark",
+        "Harbor",
+        "Terminal-Bench",
+        "DeepSWE",
+        "SWE-Gym",
+        "AA",
+        "ScienceIDE",
+        "GUI"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": null,
+      "order": null,
+      "featured": true,
+      "related": [
+        "harbor-framework-guide",
+        "llm-research-map-2026",
+        "llm-training-lifecycle",
+        "agent-harness-guide",
+        "scientific-task-family",
+        "cluster-training-evaluation"
+      ]
     },
     {
       "id": "agent-task-synthesis",
@@ -345,12 +951,39 @@
       "summary": "比较十二条数据路线；Harbor 合同、ScienceIDE 科学容差、失败轨迹和 critic、CPT / SFT / RL 准入，连接 AutoResearch 与 GUI 履历。",
       "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
       "url": "/agent-data-benchmarks/s01_task_synthesis.html",
-      "topic": "agent", "type": "practical-guide",
-      "tags": ["Data Synthesis", "Harbor", "SWE-Gym", "R2E-Gym", "SWE-smith", "SWE-Universe", "daVinci-Env", "CoderForge", "NexForge", "EvoSyn", "ProgramGym", "ScienceIDE", "SWE-Critix", "AutoResearch", "GUI"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "agent-data-benchmarks", "order": 1, "featured": false,
-      "related": ["agent-benchmark-map", "research-agentic-rl", "llm-training-midtraining", "research-base-architecture"]
+      "topic": "agent",
+      "type": "practical-guide",
+      "tags": [
+        "Data Synthesis",
+        "Harbor",
+        "SWE-Gym",
+        "R2E-Gym",
+        "SWE-smith",
+        "SWE-Universe",
+        "daVinci-Env",
+        "CoderForge",
+        "NexForge",
+        "EvoSyn",
+        "ProgramGym",
+        "ScienceIDE",
+        "SWE-Critix",
+        "AutoResearch",
+        "GUI"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "agent-data-benchmarks",
+      "order": 1,
+      "featured": false,
+      "related": [
+        "agent-benchmark-map",
+        "research-agentic-rl",
+        "llm-training-midtraining",
+        "research-base-architecture"
+      ]
     },
     {
       "id": "agent-benchmark-map",
@@ -359,12 +992,51 @@
       "summary": "固定 TB 4.1 / Science 0.1 / HarborIndex 1.4 与 AA 5.0.1；深入 DeepSWE 和 SWE-bench，分类总结经典 benchmark，解释评分、污染、预算和成功成本。",
       "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
       "url": "/agent-data-benchmarks/s02_benchmark_map.html",
-      "topic": "agent", "type": "quick-reference",
-      "tags": ["Benchmark", "Terminal-Bench", "Terminal-Bench Science", "Terminal-Bench Challenges", "HarborIndex", "Harbor-Index", "DeepSWE", "SWE-bench", "Artificial Analysis", "AA", "HumanEval", "MBPP", "EvalPlus", "LiveCodeBench", "BigCodeBench", "AgentBench", "GAIA", "τ²-Bench", "SkillsBench", "WebArena", "OSWorld", "AndroidWorld", "SciCode", "BixBench", "AIRS-Bench", "LAB-Bench", "MLE-bench"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "agent-data-benchmarks", "order": 4, "featured": false,
-      "related": ["agent-task-synthesis", "research-agent-frontiers", "agent-harness-guide", "research-agentic-rl"]
+      "topic": "agent",
+      "type": "quick-reference",
+      "tags": [
+        "Benchmark",
+        "Terminal-Bench",
+        "Terminal-Bench Science",
+        "Terminal-Bench Challenges",
+        "HarborIndex",
+        "Harbor-Index",
+        "DeepSWE",
+        "SWE-bench",
+        "Artificial Analysis",
+        "AA",
+        "HumanEval",
+        "MBPP",
+        "EvalPlus",
+        "LiveCodeBench",
+        "BigCodeBench",
+        "AgentBench",
+        "GAIA",
+        "τ²-Bench",
+        "SkillsBench",
+        "WebArena",
+        "OSWorld",
+        "AndroidWorld",
+        "SciCode",
+        "BixBench",
+        "AIRS-Bench",
+        "LAB-Bench",
+        "MLE-bench"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "agent-data-benchmarks",
+      "order": 4,
+      "featured": false,
+      "related": [
+        "agent-task-synthesis",
+        "research-agent-frontiers",
+        "agent-harness-guide",
+        "research-agentic-rl"
+      ]
     },
     {
       "id": "llm-research-map-2026",
@@ -373,12 +1045,43 @@
       "summary": "七章连接 Agent 数据、RL、推理与场景，扩展 Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma 架构及 AttnRes / mHC、LatentMoE、Muon；附71项来源和15份原件。",
       "source": "content/series/llm-research-map-2026/index.html",
       "url": "/llm-research-map-2026/",
-      "topic": "agent", "type": "series-tutorial",
-      "tags": ["LLM", "Agent", "Data", "Benchmark", "Harbor", "Agentic RL", "DeepSeek V4.1", "Diffusion", "Qwen", "Kimi", "Nemotron", "GLM", "MiniMax", "MiMo", "Step", "Gemma", "Architecture", "Muon"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": null, "order": null, "featured": true,
-      "related": ["agent-data-benchmarks", "llm-training-lifecycle", "llm-frontier-2026", "agentic-rl-guide", "dlm-survey"]
+      "topic": "agent",
+      "type": "series-tutorial",
+      "tags": [
+        "LLM",
+        "Agent",
+        "Data",
+        "Benchmark",
+        "Harbor",
+        "Agentic RL",
+        "DeepSeek V4.1",
+        "Diffusion",
+        "Qwen",
+        "Kimi",
+        "Nemotron",
+        "GLM",
+        "MiniMax",
+        "MiMo",
+        "Step",
+        "Gemma",
+        "Architecture",
+        "Muon"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": null,
+      "order": null,
+      "featured": true,
+      "related": [
+        "agent-data-benchmarks",
+        "llm-training-lifecycle",
+        "llm-frontier-2026",
+        "agentic-rl-guide",
+        "dlm-survey"
+      ]
     },
     {
       "id": "research-agent-data",
@@ -387,12 +1090,34 @@
       "summary": "区分轨迹、任务、环境与 benchmark，比较 SWE-smith、NexForge、EvoSyn、ProgramGym；独立 verifier、adapter parity、版本与成本审计。",
       "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
       "url": "/llm-research-map-2026/s01_agent_data_bench.html",
-      "topic": "agent", "type": "practical-guide",
-      "tags": ["Agent Data", "Benchmark", "Harbor", "Verifier", "SWE-smith", "NexForge", "EvoSyn", "ProgramGym", "Terminal-Bench"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-research-map-2026", "order": 1, "featured": false,
-      "related": ["agent-task-synthesis", "agent-benchmark-map", "agent-harness-guide", "llm-training-midtraining", "research-agentic-rl"]
+      "topic": "agent",
+      "type": "practical-guide",
+      "tags": [
+        "Agent Data",
+        "Benchmark",
+        "Harbor",
+        "Verifier",
+        "SWE-smith",
+        "NexForge",
+        "EvoSyn",
+        "ProgramGym",
+        "Terminal-Bench"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-research-map-2026",
+      "order": 1,
+      "featured": false,
+      "related": [
+        "agent-task-synthesis",
+        "agent-benchmark-map",
+        "agent-harness-guide",
+        "llm-training-midtraining",
+        "research-agentic-rl"
+      ]
     },
     {
       "id": "research-agentic-rl",
@@ -401,12 +1126,34 @@
       "summary": "四维 loss 比较 GRPO / GSPO / CISPO；GiGPO、RLDS、KnowGPO、两种 SAPO 和 SAMPO；异质数据、policy lag 与 rollout–trainer 对齐。",
       "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
       "url": "/llm-research-map-2026/s02_agentic_rl.html",
-      "topic": "rl-post-training", "type": "system-guide",
-      "tags": ["Agentic RL", "GRPO", "GSPO", "CISPO", "GiGPO", "RLDS", "KnowGPO", "SAPO", "SAMPO", "Async RL"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-research-map-2026", "order": 2, "featured": false,
-      "related": ["agentic-rl-guide", "llm-training-rl-evaluation", "rl-interview-guide", "research-agent-data"]
+      "topic": "rl-post-training",
+      "type": "system-guide",
+      "tags": [
+        "Agentic RL",
+        "GRPO",
+        "GSPO",
+        "CISPO",
+        "GiGPO",
+        "RLDS",
+        "KnowGPO",
+        "SAPO",
+        "SAMPO",
+        "Async RL"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-research-map-2026",
+      "order": 2,
+      "featured": false,
+      "related": [
+        "agentic-rl-guide",
+        "llm-training-rl-evaluation",
+        "rl-interview-guide",
+        "research-agent-data"
+      ]
     },
     {
       "id": "research-base-architecture",
@@ -415,12 +1162,34 @@
       "summary": "固定 v1 报告，图解 CED 张量来源、40层 CSA2 计划、FP4 格式与890 B/token推导、两种 bounded replay；补齐 MoE / mHC / Engram 及系统口径。",
       "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
       "url": "/llm-research-map-2026/s03_base_architecture.html",
-      "topic": "llm-foundations", "type": "principles",
-      "tags": ["DeepSeek V4.1", "CED", "CSA2", "FP4", "KV Cache", "Engram", "Kimi K3", "MoE"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-research-map-2026", "order": 4, "featured": false,
-      "related": ["research-architecture-landscape", "research-architecture-training", "agent-task-synthesis", "transformer-decoder-flow", "distributed-training-guide", "research-inference-diffusion"]
+      "topic": "llm-foundations",
+      "type": "principles",
+      "tags": [
+        "DeepSeek V4.1",
+        "CED",
+        "CSA2",
+        "FP4",
+        "KV Cache",
+        "Engram",
+        "Kimi K3",
+        "MoE"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-research-map-2026",
+      "order": 4,
+      "featured": false,
+      "related": [
+        "research-architecture-landscape",
+        "research-architecture-training",
+        "agent-task-synthesis",
+        "transformer-decoder-flow",
+        "distributed-training-guide",
+        "research-inference-diffusion"
+      ]
     },
     {
       "id": "research-inference-diffusion",
@@ -429,12 +1198,33 @@
       "summary": "扩散并行 drafter、半自回归块内依赖、reverse-KL OPD；验证精确性、non-anticipating admission、并发、吞吐与成功成本。",
       "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
       "url": "/llm-research-map-2026/s04_inference_diffusion.html",
-      "topic": "diffusion", "type": "system-guide",
-      "tags": ["DFlash", "DSpark", "AdaFlash", "Speculative Decoding", "DLM", "OPD", "Inference", "Throughput"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-research-map-2026", "order": 6, "featured": false,
-      "related": ["research-architecture-landscape", "dlm-speculative", "dlm-block", "research-base-architecture", "llm-training-sft-rft"]
+      "topic": "diffusion",
+      "type": "system-guide",
+      "tags": [
+        "DFlash",
+        "DSpark",
+        "AdaFlash",
+        "Speculative Decoding",
+        "DLM",
+        "OPD",
+        "Inference",
+        "Throughput"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-research-map-2026",
+      "order": 6,
+      "featured": false,
+      "related": [
+        "research-architecture-landscape",
+        "dlm-speculative",
+        "dlm-block",
+        "research-base-architecture",
+        "llm-training-sft-rft"
+      ]
     },
     {
       "id": "research-agent-frontiers",
@@ -443,12 +1233,36 @@
       "summary": "OSWorld 2.0、AIRS-Bench、SkillsBench 1.1、Macaron、PARL / MOPD；区分状态恢复、科学验收、memory / skill / 参数更新与并行成本。",
       "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
       "url": "/llm-research-map-2026/s05_agent_frontiers.html",
-      "topic": "agent", "type": "practical-guide",
-      "tags": ["GUI Agent", "Scientific Agent", "OSWorld", "AIRS-Bench", "SkillsBench", "Macaron", "Memory", "Continual Learning", "PARL", "MOPD"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-research-map-2026", "order": 7, "featured": false,
-      "related": ["agent-benchmark-map", "agent-task-synthesis", "research-agent-data", "research-agentic-rl", "vlm-knowledge-interview", "llm-training-sft-rft"]
+      "topic": "agent",
+      "type": "practical-guide",
+      "tags": [
+        "GUI Agent",
+        "Scientific Agent",
+        "OSWorld",
+        "AIRS-Bench",
+        "SkillsBench",
+        "Macaron",
+        "Memory",
+        "Continual Learning",
+        "PARL",
+        "MOPD"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-research-map-2026",
+      "order": 7,
+      "featured": false,
+      "related": [
+        "agent-benchmark-map",
+        "agent-task-synthesis",
+        "research-agent-data",
+        "research-agentic-rl",
+        "vlm-knowledge-interview",
+        "llm-training-sft-rft"
+      ]
     },
     {
       "id": "research-architecture-landscape",
@@ -457,13 +1271,51 @@
       "summary": "按历史状态、实际层数量、全局检索、专家与多模态比较八个工业模型家族及Gemma；区分固定报告、模型配置、kernel测量与闭源披露，附结构图与规格数据。",
       "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
       "url": "/llm-research-map-2026/s06_architecture_landscape.html",
-      "topic": "llm-foundations", "type": "principles",
-      "tags": ["Architecture", "Qwen3.8", "Qwen3.5", "Kimi K3.1", "Nemotron 3 Ultra", "GLM-5.3", "MiniMax M3.1", "MiMo-V2.6", "Step 3.7", "Gemma 4", "GDN", "KDA", "QSA", "DSA", "MSA", "SWA", "MoE", "GPT-6.1", "Opus 5.5", "Gemini 4"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-research-map-2026", "order": 3, "featured": false,
-      "prerequisites": [{"entry": "architecture-hybrid", "reason": "先区分KV、递归状态与混合结构"}],
-      "related": ["research-architecture-training", "research-base-architecture", "research-inference-diffusion", "transformer-decoder-flow", "distributed-training-guide"]
+      "topic": "llm-foundations",
+      "type": "principles",
+      "tags": [
+        "Architecture",
+        "Qwen3.8",
+        "Qwen3.5",
+        "Kimi K3.1",
+        "Nemotron 3 Ultra",
+        "GLM-5.3",
+        "MiniMax M3.1",
+        "MiMo-V2.6",
+        "Step 3.7",
+        "Gemma 4",
+        "GDN",
+        "KDA",
+        "QSA",
+        "DSA",
+        "MSA",
+        "SWA",
+        "MoE",
+        "GPT-6.1",
+        "Opus 5.5",
+        "Gemini 4"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-research-map-2026",
+      "order": 3,
+      "featured": false,
+      "prerequisites": [
+        {
+          "entry": "architecture-hybrid",
+          "reason": "先区分KV、递归状态与混合结构"
+        }
+      ],
+      "related": [
+        "research-architecture-training",
+        "research-base-architecture",
+        "research-inference-diffusion",
+        "transformer-decoder-flow",
+        "distributed-training-guide"
+      ]
     },
     {
       "id": "research-architecture-training",
@@ -472,12 +1324,41 @@
       "summary": "推导残差深度选择、双随机流混合、latent专家和Muon矩阵更新；拆解参数分组、分布式梯度、FP4对象与Huginn循环深度，并连接Agentic RL和等算力消融。",
       "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
       "url": "/llm-research-map-2026/s07_architecture_training.html",
-      "topic": "training-inference", "type": "principles",
-      "tags": ["AttnRes", "Attention Residuals", "mHC", "Gated Residual", "LatentMoE", "Stable LatentMoE", "Muon", "MuonClip", "Muown", "Polar Express", "FP4", "NVFP4", "MXFP4", "Recurrent Depth", "Huginn", "Agentic RL"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-research-map-2026", "order": 5, "featured": false,
-      "related": ["research-architecture-landscape", "research-base-architecture", "distributed-training-guide", "research-agentic-rl", "llm-training-pretraining"]
+      "topic": "training-inference",
+      "type": "principles",
+      "tags": [
+        "AttnRes",
+        "Attention Residuals",
+        "mHC",
+        "Gated Residual",
+        "LatentMoE",
+        "Stable LatentMoE",
+        "Muon",
+        "MuonClip",
+        "Muown",
+        "Polar Express",
+        "FP4",
+        "NVFP4",
+        "MXFP4",
+        "Recurrent Depth",
+        "Huginn",
+        "Agentic RL"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-research-map-2026",
+      "order": 5,
+      "featured": false,
+      "related": [
+        "research-architecture-landscape",
+        "research-base-architecture",
+        "distributed-training-guide",
+        "research-agentic-rl",
+        "llm-training-pretraining"
+      ]
     },
     {
       "id": "llm-training-lifecycle",
@@ -488,11 +1369,33 @@
       "url": "/llm-training-lifecycle/",
       "topic": "training-inference",
       "type": "series-tutorial",
-      "tags": ["Pretraining", "CPT", "Midtraining", "SFT", "RFT", "RL", "Agent", "OPD", "Harbor"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": null, "order": null, "featured": true,
-      "related": ["llm-posttraining", "llm-architecture", "llm-research-map-2026", "agentic-rl-guide", "distributed-training-guide", "agent-harness-guide"]
+      "tags": [
+        "Pretraining",
+        "CPT",
+        "Midtraining",
+        "SFT",
+        "RFT",
+        "RL",
+        "Agent",
+        "OPD",
+        "Harbor"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": null,
+      "order": null,
+      "featured": true,
+      "related": [
+        "llm-posttraining",
+        "llm-architecture",
+        "llm-research-map-2026",
+        "agentic-rl-guide",
+        "distributed-training-guide",
+        "agent-harness-guide"
+      ]
     },
     {
       "id": "llm-training-pretraining",
@@ -501,12 +1404,28 @@
       "summary": "数据治理、因果 LM、FIM、训练预算与上下文课程，以及交接给 CPT 和后训练的产物。",
       "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
       "url": "/llm-training-lifecycle/s01_pretraining.html",
-      "topic": "training-inference", "type": "principles",
-      "tags": ["Pretraining", "Causal LM", "FIM", "Compute", "Checkpoint"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-training-lifecycle", "order": 1, "featured": false,
-      "related": ["transformer-decoder-flow", "distributed-training-guide", "llm-training-midtraining"]
+      "topic": "training-inference",
+      "type": "principles",
+      "tags": [
+        "Pretraining",
+        "Causal LM",
+        "FIM",
+        "Compute",
+        "Checkpoint"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-training-lifecycle",
+      "order": 1,
+      "featured": false,
+      "related": [
+        "transformer-decoder-flow",
+        "distributed-training-guide",
+        "llm-training-midtraining"
+      ]
     },
     {
       "id": "llm-training-midtraining",
@@ -515,12 +1434,32 @@
       "summary": "复核 Nemotron 的混合 CPT、trace mask 与固定 SFT 对照，比较 Qwen、GLM、Olmo、MidTool、PRISM、SPT 和函数级 FIM。",
       "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
       "url": "/llm-training-lifecycle/s02_midtraining.html",
-      "topic": "training-inference", "type": "system-guide",
-      "tags": ["CPT", "Midtraining", "Agent", "Nemotron", "Qwen", "GLM", "FIM", "Harbor"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-training-lifecycle", "order": 2, "featured": false,
-      "related": ["research-agent-data", "llm-training-pretraining", "llm-training-sft-rft", "llm-training-rl-evaluation"]
+      "topic": "training-inference",
+      "type": "system-guide",
+      "tags": [
+        "CPT",
+        "Midtraining",
+        "Agent",
+        "Nemotron",
+        "Qwen",
+        "GLM",
+        "FIM",
+        "Harbor"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-training-lifecycle",
+      "order": 2,
+      "featured": false,
+      "related": [
+        "research-agent-data",
+        "llm-training-pretraining",
+        "llm-training-sft-rft",
+        "llm-training-rl-evaluation"
+      ]
     },
     {
       "id": "llm-training-sft-rft",
@@ -529,12 +1468,32 @@
       "summary": "验证示范与角色 mask、拒绝采样和强化微调的区别、DPO，以及专家到统一模型的 OPD。",
       "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
       "url": "/llm-training-lifecycle/s03_sft_rft.html",
-      "topic": "rl-post-training", "type": "principles",
-      "tags": ["SFT", "RFT", "DPO", "Distillation", "OPD", "Post-training"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-training-lifecycle", "order": 3, "featured": false,
-      "related": ["posttraining-supervision", "posttraining-opd", "research-agent-frontiers", "agentic-rl-guide", "rl-interview-guide", "llm-training-rl-evaluation"]
+      "topic": "rl-post-training",
+      "type": "principles",
+      "tags": [
+        "SFT",
+        "RFT",
+        "DPO",
+        "Distillation",
+        "OPD",
+        "Post-training"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-training-lifecycle",
+      "order": 3,
+      "featured": false,
+      "related": [
+        "posttraining-supervision",
+        "posttraining-opd",
+        "research-agent-frontiers",
+        "agentic-rl-guide",
+        "rl-interview-guide",
+        "llm-training-rl-evaluation"
+      ]
     },
     {
       "id": "llm-training-rl-evaluation",
@@ -543,12 +1502,34 @@
       "summary": "PPO、GRPO、DAPO、Dr. GRPO 与 GSPO；rollout、verifier、policy lag、预算对照和可追溯交付。",
       "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
       "url": "/llm-training-lifecycle/s04_rl_evaluation.html",
-      "topic": "rl-post-training", "type": "practical-guide",
-      "tags": ["RL", "PPO", "GRPO", "DAPO", "GSPO", "Agent", "Verifier", "Harbor"],
-      "origin": "local", "status": "published", "review_status": "reviewed",
-      "updated": "2026-11-14", "updated_source": null,
-      "series": "llm-training-lifecycle", "order": 4, "featured": false,
-      "related": ["posttraining-algorithms", "posttraining-frameworks", "research-agentic-rl", "agent-harness-guide", "agentic-rl-guide", "distributed-training-guide"]
+      "topic": "rl-post-training",
+      "type": "practical-guide",
+      "tags": [
+        "RL",
+        "PPO",
+        "GRPO",
+        "DAPO",
+        "GSPO",
+        "Agent",
+        "Verifier",
+        "Harbor"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": "llm-training-lifecycle",
+      "order": 4,
+      "featured": false,
+      "related": [
+        "posttraining-algorithms",
+        "posttraining-frameworks",
+        "research-agentic-rl",
+        "agent-harness-guide",
+        "agentic-rl-guide",
+        "distributed-training-guide"
+      ]
     },
     {
       "id": "llm-frontier-2026",
@@ -560,16 +1541,31 @@
       "url": "/llm-frontier-2026.html",
       "topic": "llm-foundations",
       "type": "frontier-tracker",
-      "tags": ["LLM", "Agent", "RL", "Protein LLM", "Benchmark"],
+      "tags": [
+        "LLM",
+        "Agent",
+        "RL",
+        "Protein LLM",
+        "Benchmark"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "unreviewed",
       "updated": null,
-      "updated_source": {"kind": "html-element", "id": "last-updated", "attribute": "datetime"},
+      "updated_source": {
+        "kind": "html-element",
+        "id": "last-updated",
+        "attribute": "datetime"
+      },
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["llm-research-map-2026", "agentic-rl-guide", "agent-harness-guide", "dlm-survey"]
+      "related": [
+        "llm-research-map-2026",
+        "agentic-rl-guide",
+        "agent-harness-guide",
+        "dlm-survey"
+      ]
     },
     {
       "id": "agentic-rl-guide",
@@ -581,7 +1577,13 @@
       "url": "/agentic-rl-guide.html",
       "topic": "rl-post-training",
       "type": "system-guide",
-      "tags": ["PPO", "DPO", "GRPO", "OPD", "Agent"],
+      "tags": [
+        "PPO",
+        "DPO",
+        "GRPO",
+        "OPD",
+        "Agent"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "unreviewed",
@@ -590,7 +1592,11 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["research-agentic-rl", "rl-interview-guide", "agent-harness-guide"]
+      "related": [
+        "research-agentic-rl",
+        "rl-interview-guide",
+        "agent-harness-guide"
+      ]
     },
     {
       "id": "dlm-survey",
@@ -601,7 +1607,14 @@
       "url": "/dlm-survey/",
       "topic": "diffusion",
       "type": "series-tutorial",
-      "tags": ["DLM", "DDPM", "Flow Matching", "SDE", "ELBO", "VAE"],
+      "tags": [
+        "DLM",
+        "DDPM",
+        "Flow Matching",
+        "SDE",
+        "ELBO",
+        "VAE"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "unreviewed",
@@ -610,7 +1623,11 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["research-inference-diffusion", "transformer-decoder-flow", "llm-frontier-2026"]
+      "related": [
+        "research-inference-diffusion",
+        "transformer-decoder-flow",
+        "llm-frontier-2026"
+      ]
     },
     {
       "id": "transformer-decoder-flow",
@@ -622,7 +1639,12 @@
       "url": "/transformer-decoder-flow.html",
       "topic": "llm-foundations",
       "type": "principles",
-      "tags": ["Transformer", "RoPE", "Attention", "KV Cache"],
+      "tags": [
+        "Transformer",
+        "RoPE",
+        "Attention",
+        "KV Cache"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "unreviewed",
@@ -631,7 +1653,13 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["research-architecture-landscape", "research-architecture-training", "research-base-architecture", "distributed-training-guide", "llm-interview-bank"]
+      "related": [
+        "research-architecture-landscape",
+        "research-architecture-training",
+        "research-base-architecture",
+        "distributed-training-guide",
+        "llm-interview-bank"
+      ]
     },
     {
       "id": "rl-interview-guide",
@@ -643,7 +1671,14 @@
       "url": "/rl-interview-guide.html",
       "topic": "rl-post-training",
       "type": "quick-reference",
-      "tags": ["Policy Gradient", "PPO", "GRPO", "RLHF", "DPO", "RLVR"],
+      "tags": [
+        "Policy Gradient",
+        "PPO",
+        "GRPO",
+        "RLHF",
+        "DPO",
+        "RLVR"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "unreviewed",
@@ -652,11 +1687,21 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["research-agentic-rl", "agentic-rl-guide", "rl-interview-guide-legacy"]
+      "related": [
+        "research-agentic-rl",
+        "agentic-rl-guide",
+        "rl-interview-guide-legacy"
+      ]
     },
     {
       "id": "agent-harness-guide",
-      "prerequisites": [{"entry": "architecture-transformer", "anchor": "tensor-flow", "reason": "理解token、模型输出与工具动作的区别"}],
+      "prerequisites": [
+        {
+          "entry": "architecture-transformer",
+          "anchor": "tensor-flow",
+          "reason": "理解token、模型输出与工具动作的区别"
+        }
+      ],
       "kind": "post",
       "title": "Agent Harness 深度解析",
       "summary": "Codex 源码实例串起运行循环、上下文压缩与换窗、history/notes 和跨会话 memory；结合异步 Rollout、Sandbox 与 Reward 工程。",
@@ -664,7 +1709,17 @@
       "url": "/agent-harness-guide.html",
       "topic": "agent",
       "type": "system-guide",
-      "tags": ["Agent", "Codex", "Context Management", "Memory", "Harness", "Rollout", "Sandbox", "Reward", "Tools"],
+      "tags": [
+        "Agent",
+        "Codex",
+        "Context Management",
+        "Memory",
+        "Harness",
+        "Rollout",
+        "Sandbox",
+        "Reward",
+        "Tools"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "needs-review",
@@ -673,7 +1728,16 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["agent-systems", "llm-posttraining", "agent-task-synthesis", "agent-benchmark-map", "research-agent-data", "research-agentic-rl", "agentic-rl-guide", "distributed-training-guide"]
+      "related": [
+        "agent-systems",
+        "llm-posttraining",
+        "agent-task-synthesis",
+        "agent-benchmark-map",
+        "research-agent-data",
+        "research-agentic-rl",
+        "agentic-rl-guide",
+        "distributed-training-guide"
+      ]
     },
     {
       "id": "distributed-training-guide",
@@ -685,7 +1749,13 @@
       "url": "/distributed-training-guide.html",
       "topic": "training-inference",
       "type": "practical-guide",
-      "tags": ["DeepSpeed", "FSDP", "Megatron-LM", "ZeRO", "Parallelism"],
+      "tags": [
+        "DeepSpeed",
+        "FSDP",
+        "Megatron-LM",
+        "ZeRO",
+        "Parallelism"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "unreviewed",
@@ -694,7 +1764,14 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["research-architecture-training", "research-architecture-landscape", "research-base-architecture", "research-agentic-rl", "transformer-decoder-flow", "agent-harness-guide"]
+      "related": [
+        "research-architecture-training",
+        "research-architecture-landscape",
+        "research-base-architecture",
+        "research-agentic-rl",
+        "transformer-decoder-flow",
+        "agent-harness-guide"
+      ]
     },
     {
       "id": "llm-interview-bank",
@@ -706,7 +1783,13 @@
       "url": "/llm-interview-bank.html",
       "topic": "llm-foundations",
       "type": "interview-bank",
-      "tags": ["LLM", "RLHF", "VLM", "Agent", "RAG"],
+      "tags": [
+        "LLM",
+        "RLHF",
+        "VLM",
+        "Agent",
+        "RAG"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "unreviewed",
@@ -715,11 +1798,19 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["vlm-knowledge-interview", "rl-interview-guide"]
+      "related": [
+        "vlm-knowledge-interview",
+        "rl-interview-guide"
+      ]
     },
     {
       "id": "vlm-knowledge-interview",
-      "prerequisites": [{"entry": "architecture-transformer", "reason": "视觉表示需要连接语言模型的张量与目标"}],
+      "prerequisites": [
+        {
+          "entry": "architecture-transformer",
+          "reason": "视觉表示需要连接语言模型的张量与目标"
+        }
+      ],
       "kind": "post",
       "title": "VLM 算法知识与面经",
       "summary": "视觉编码器、对齐训练、分辨率处理、MoE 与代码实现。",
@@ -727,7 +1818,13 @@
       "url": "/vlm-knowledge-interview.html",
       "topic": "multimodal",
       "type": "interview-bank",
-      "tags": ["VLM", "CLIP", "LLaVA", "MoE", "Vision Encoder"],
+      "tags": [
+        "VLM",
+        "CLIP",
+        "LLaVA",
+        "MoE",
+        "Vision Encoder"
+      ],
       "origin": "local",
       "status": "published",
       "review_status": "unreviewed",
@@ -736,7 +1833,11 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["research-agent-frontiers", "llm-interview-bank", "mllm-interview-notes"]
+      "related": [
+        "research-agent-frontiers",
+        "llm-interview-bank",
+        "mllm-interview-notes"
+      ]
     },
     {
       "id": "mllm-interview-notes",
@@ -747,7 +1848,12 @@
       "url": "https://stein-wang0226.github.io/mllm-interview-notes/",
       "topic": "multimodal",
       "type": "interview-bank",
-      "tags": ["Transformer", "LLM", "Multimodal", "RLHF"],
+      "tags": [
+        "Transformer",
+        "LLM",
+        "Multimodal",
+        "RLHF"
+      ],
       "origin": "external",
       "status": "published",
       "review_status": "unreviewed",
@@ -756,7 +1862,10 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["vlm-knowledge-interview", "llm-interview-bank"]
+      "related": [
+        "vlm-knowledge-interview",
+        "llm-interview-bank"
+      ]
     },
     {
       "id": "llm-study-notes",
@@ -767,7 +1876,11 @@
       "url": "https://stein-wang0226.github.io/llm-study-notes/",
       "topic": "llm-foundations",
       "type": "series-tutorial",
-      "tags": ["NLP", "LLM", "CS40008"],
+      "tags": [
+        "NLP",
+        "LLM",
+        "CS40008"
+      ],
       "origin": "external",
       "status": "published",
       "review_status": "unreviewed",
@@ -776,7 +1889,9 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["transformer-decoder-flow"]
+      "related": [
+        "transformer-decoder-flow"
+      ]
     },
     {
       "id": "rl-interview-guide-legacy",
@@ -787,7 +1902,12 @@
       "url": "/legacy/rl-interview-guide.html",
       "topic": "rl-post-training",
       "type": "quick-reference",
-      "tags": ["RL", "PPO", "RLHF", "Historical"],
+      "tags": [
+        "RL",
+        "PPO",
+        "RLHF",
+        "Historical"
+      ],
       "origin": "local",
       "status": "archived",
       "review_status": "unreviewed",
@@ -796,7 +1916,9 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["rl-interview-guide"]
+      "related": [
+        "rl-interview-guide"
+      ]
     },
     {
       "id": "dlm-ddpm",
@@ -805,11 +1927,25 @@
       "summary": "扩散系列基础理论 A：DDPM、变分推断与噪声预测。",
       "source": "content/series/dlm-survey/s00a_ddpm.html",
       "url": "/dlm-survey/s00a_ddpm.html",
-      "topic": "diffusion", "type": "principles", "tags": ["DDPM", "ELBO", "Noise Prediction"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 11,
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "DDPM",
+        "ELBO",
+        "Noise Prediction"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 11,
       "chapter_group": "prerequisite",
-      "featured": false, "related": ["dlm-flow-sde"]
+      "featured": false,
+      "related": [
+        "dlm-flow-sde"
+      ]
     },
     {
       "id": "dlm-flow-sde",
@@ -818,11 +1954,26 @@
       "summary": "扩散系列基础理论 B：连续时间演化、向量场、训练目标与采样。",
       "source": "content/series/dlm-survey/s00b_flow_sde.html",
       "url": "/dlm-survey/s00b_flow_sde.html",
-      "topic": "diffusion", "type": "principles", "tags": ["ODE", "SDE", "Flow Matching"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 12,
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "ODE",
+        "SDE",
+        "Flow Matching"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 12,
       "chapter_group": "prerequisite",
-      "featured": false, "related": ["dlm-ddpm", "dlm-continuous"]
+      "featured": false,
+      "related": [
+        "dlm-ddpm",
+        "dlm-continuous"
+      ]
     },
     {
       "id": "dlm-overview",
@@ -831,10 +1982,26 @@
       "summary": "扩散系列第 01 章：扩散语言模型概述与流派。",
       "source": "content/series/dlm-survey/s01_overview.html",
       "url": "/dlm-survey/s01_overview.html",
-      "topic": "diffusion", "type": "principles", "tags": ["DLM", "Discrete Diffusion", "Continuous Diffusion"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 1,
-      "featured": false, "related": ["dlm-discrete", "dlm-block", "dlm-continuous"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "DLM",
+        "Discrete Diffusion",
+        "Continuous Diffusion"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 1,
+      "featured": false,
+      "related": [
+        "dlm-discrete",
+        "dlm-block",
+        "dlm-continuous"
+      ]
     },
     {
       "id": "dlm-discrete",
@@ -843,11 +2010,30 @@
       "summary": "扩散系列第 02 章：离散空间扩散语言模型。",
       "source": "content/series/dlm-survey/s02_discrete.html",
       "url": "/dlm-survey/s02_discrete.html",
-      "topic": "diffusion", "type": "principles", "tags": ["Discrete Diffusion", "DLM"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 3,
-      "prerequisites": [{"entry": "dlm-paradigms", "reason": "先分清预测对象与训练目标"}],
-      "featured": false, "related": ["dlm-block", "dlm-elbo-rl"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "Discrete Diffusion",
+        "DLM"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 3,
+      "prerequisites": [
+        {
+          "entry": "dlm-paradigms",
+          "reason": "先分清预测对象与训练目标"
+        }
+      ],
+      "featured": false,
+      "related": [
+        "dlm-block",
+        "dlm-elbo-rl"
+      ]
     },
     {
       "id": "dlm-block",
@@ -856,10 +2042,25 @@
       "summary": "扩散系列第 03 章：块扩散与半自回归。",
       "source": "content/series/dlm-survey/s03_block.html",
       "url": "/dlm-survey/s03_block.html",
-      "topic": "diffusion", "type": "principles", "tags": ["Block Diffusion", "Semi-AR"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 4,
-      "featured": false, "related": ["research-inference-diffusion", "dlm-discrete", "dlm-speculative"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "Block Diffusion",
+        "Semi-AR"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 4,
+      "featured": false,
+      "related": [
+        "research-inference-diffusion",
+        "dlm-discrete",
+        "dlm-speculative"
+      ]
     },
     {
       "id": "dlm-continuous",
@@ -868,11 +2069,30 @@
       "summary": "扩散系列第 04 章：连续隐空间扩散语言模型。",
       "source": "content/series/dlm-survey/s04_continuous.html",
       "url": "/dlm-survey/s04_continuous.html",
-      "topic": "diffusion", "type": "principles", "tags": ["Continuous Diffusion", "Latent Space"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 5,
-      "prerequisites": [{"entry": "dlm-flow-sde", "reason": "需要连续时间或Flow推导时按需复习"}],
-      "featured": false, "related": ["dlm-flow-sde", "dlm-vae"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "Continuous Diffusion",
+        "Latent Space"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 5,
+      "prerequisites": [
+        {
+          "entry": "dlm-flow-sde",
+          "reason": "需要连续时间或Flow推导时按需复习"
+        }
+      ],
+      "featured": false,
+      "related": [
+        "dlm-flow-sde",
+        "dlm-vae"
+      ]
     },
     {
       "id": "dlm-paradigms",
@@ -881,10 +2101,24 @@
       "summary": "扩散系列第 05 章：预测范式。",
       "source": "content/series/dlm-survey/s05_paradigms.html",
       "url": "/dlm-survey/s05_paradigms.html",
-      "topic": "diffusion", "type": "principles", "tags": ["Prediction Paradigms", "DLM"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 2,
-      "featured": false, "related": ["dlm-ddpm", "dlm-flow-sde"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "Prediction Paradigms",
+        "DLM"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 2,
+      "featured": false,
+      "related": [
+        "dlm-ddpm",
+        "dlm-flow-sde"
+      ]
     },
     {
       "id": "dlm-scaling",
@@ -893,10 +2127,24 @@
       "summary": "扩散系列第 06 章：DLM Scaling Laws 与自回归模型对比。",
       "source": "content/series/dlm-survey/s06_scaling.html",
       "url": "/dlm-survey/s06_scaling.html",
-      "topic": "diffusion", "type": "principles", "tags": ["Scaling Laws", "AR", "DLM"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 6,
-      "featured": false, "related": ["dlm-comparison"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "Scaling Laws",
+        "AR",
+        "DLM"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 6,
+      "featured": false,
+      "related": [
+        "dlm-comparison"
+      ]
     },
     {
       "id": "dlm-speculative",
@@ -905,11 +2153,32 @@
       "summary": "扩散系列第 07 章：DLM 投机解码、DFlash 与 MTP。",
       "source": "content/series/dlm-survey/s07_speculative.html",
       "url": "/dlm-survey/s07_speculative.html",
-      "topic": "diffusion", "type": "principles", "tags": ["Speculative Decoding", "DFlash", "MTP"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 7,
-      "prerequisites": [{"entry": "dlm-block", "reason": "先理解块内并行与跨块因果关系"}],
-      "featured": false, "related": ["research-inference-diffusion", "dlm-block", "transformer-decoder-flow"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "Speculative Decoding",
+        "DFlash",
+        "MTP"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 7,
+      "prerequisites": [
+        {
+          "entry": "dlm-block",
+          "reason": "先理解块内并行与跨块因果关系"
+        }
+      ],
+      "featured": false,
+      "related": [
+        "research-inference-diffusion",
+        "dlm-block",
+        "transformer-decoder-flow"
+      ]
     },
     {
       "id": "dlm-elbo-rl",
@@ -918,11 +2187,36 @@
       "summary": "扩散系列第 08 章：ELBO 问题、SPG 与 GDSD。",
       "source": "content/series/dlm-survey/s08_elbo_rl.html",
       "url": "/dlm-survey/s08_elbo_rl.html",
-      "topic": "diffusion", "type": "principles", "tags": ["ELBO", "RL", "SPG", "GDSD"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 8,
-      "prerequisites": [{"entry": "dlm-ddpm", "reason": "ELBO推导按需复习DDPM"}, {"entry": "dlm-vae", "reason": "潜变量下界与变分后验按需复习"}],
-      "featured": false, "related": ["dlm-ddpm", "agentic-rl-guide"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "ELBO",
+        "RL",
+        "SPG",
+        "GDSD"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 8,
+      "prerequisites": [
+        {
+          "entry": "dlm-ddpm",
+          "reason": "ELBO推导按需复习DDPM"
+        },
+        {
+          "entry": "dlm-vae",
+          "reason": "潜变量下界与变分后验按需复习"
+        }
+      ],
+      "featured": false,
+      "related": [
+        "dlm-ddpm",
+        "agentic-rl-guide"
+      ]
     },
     {
       "id": "dlm-commercial",
@@ -931,11 +2225,25 @@
       "summary": "扩散系列第 09 章：商业落地现状与行业实践。",
       "source": "content/series/dlm-survey/s09_commercial.html",
       "url": "/dlm-survey/s09_commercial.html",
-      "topic": "diffusion", "type": "practical-guide", "tags": ["DLM", "Industry"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 14,
+      "topic": "diffusion",
+      "type": "practical-guide",
+      "tags": [
+        "DLM",
+        "Industry"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 14,
       "chapter_group": "reference",
-      "featured": false, "related": ["dlm-comparison", "llm-frontier-2026"]
+      "featured": false,
+      "related": [
+        "dlm-comparison",
+        "llm-frontier-2026"
+      ]
     },
     {
       "id": "dlm-comparison",
@@ -944,10 +2252,24 @@
       "summary": "扩散系列第 10 章：综合对比表与未来方向。",
       "source": "content/series/dlm-survey/s10_comparison.html",
       "url": "/dlm-survey/s10_comparison.html",
-      "topic": "diffusion", "type": "quick-reference", "tags": ["DLM", "Comparison"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 9,
-      "featured": false, "related": ["dlm-overview", "dlm-scaling"]
+      "topic": "diffusion",
+      "type": "quick-reference",
+      "tags": [
+        "DLM",
+        "Comparison"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 9,
+      "featured": false,
+      "related": [
+        "dlm-overview",
+        "dlm-scaling"
+      ]
     },
     {
       "id": "dlm-loop-transformer",
@@ -956,11 +2278,25 @@
       "summary": "扩散系列第 11 章：Looped Transformer 与 Latent Reasoning。",
       "source": "content/series/dlm-survey/s11_loop_transformer.html",
       "url": "/dlm-survey/s11_loop_transformer.html",
-      "topic": "diffusion", "type": "principles", "tags": ["Looped Transformer", "Latent Reasoning"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 10,
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "Looped Transformer",
+        "Latent Reasoning"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 10,
       "chapter_group": "extension",
-      "featured": false, "related": ["transformer-decoder-flow", "llm-frontier-2026"]
+      "featured": false,
+      "related": [
+        "transformer-decoder-flow",
+        "llm-frontier-2026"
+      ]
     },
     {
       "id": "dlm-vae",
@@ -970,10 +2306,60 @@
       "summary": "扩散系列第 12 章：VAE 原理、发展脉络与 VAE 家族。",
       "source": "content/series/dlm-survey/s12_vae.html",
       "url": "/dlm-survey/s12_vae.html",
-      "topic": "diffusion", "type": "principles", "tags": ["VAE", "Latent Space", "CVAE"],
-      "origin": "local", "status": "published", "review_status": "unreviewed",
-      "updated": null, "updated_source": null, "series": "dlm-survey", "order": 13,
-      "featured": false, "related": ["dlm-continuous"]
+      "topic": "diffusion",
+      "type": "principles",
+      "tags": [
+        "VAE",
+        "Latent Space",
+        "CVAE"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "unreviewed",
+      "updated": null,
+      "updated_source": null,
+      "series": "dlm-survey",
+      "order": 13,
+      "featured": false,
+      "related": [
+        "dlm-continuous"
+      ]
+    },
+    {
+      "id": "harbor-framework-guide",
+      "kind": "post",
+      "title": "Harbor Framework 与团队 Benchmark：源码、案例与最新进展",
+      "summary": "独立研究 Harbor v0.26.0 的 Task/Trial、安全 verifier、错误策略、ATIF与Server；分析TB4.1、Science2.0征集、Challenges和HarborIndex，附核心源码与真实案例。",
+      "source": "content/posts/harbor-framework-guide/index.html",
+      "url": "/harbor-framework-guide/",
+      "topic": "agent",
+      "type": "system-guide",
+      "tags": [
+        "Harbor",
+        "Harbor Framework",
+        "Terminal-Bench",
+        "TB Science",
+        "Challenges",
+        "HarborIndex",
+        "ATIF",
+        "RewardKit",
+        "Verifier",
+        "Benchmark",
+        "Agent"
+      ],
+      "origin": "local",
+      "status": "published",
+      "review_status": "reviewed",
+      "updated": "2026-11-14",
+      "updated_source": null,
+      "series": null,
+      "order": null,
+      "featured": true,
+      "related": [
+        "agent-data-benchmarks",
+        "agent-harness-guide",
+        "posttraining-cases"
+      ]
     }
   ]
 }

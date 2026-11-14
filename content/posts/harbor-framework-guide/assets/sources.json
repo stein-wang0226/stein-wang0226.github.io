@@ -1,0 +1,626 @@
+{
+  "snapshot": "2026-11-14",
+  "scope": "Harbor Framework、团队benchmark与代表性case；未运行模型评测或训练",
+  "framework_release": {
+    "version": "v0.26.0",
+    "commit": "3cb627394b95d3ae605f31e0d694edf508cf4b7b",
+    "published_at": "2026-11-13T23:49:24Z"
+  },
+  "source_commit": "ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4",
+  "sources": [
+    {
+      "id": 1,
+      "title": "Harbor 团队 · Framework README",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/README.md",
+      "scope": "框架定位与 Terminal-Bench 团队来源",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#summary",
+        "/harbor-framework-guide/#team-map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 2,
+      "title": "Harbor · Task Overview",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/tasks/overview.mdx",
+      "scope": "task 文件合同与 reward",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#summary",
+        "/harbor-framework-guide/#task-contract"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 3,
+      "title": "Harbor · v0.26.0 正式发布",
+      "url": "https://github.com/harbor-framework/harbor/releases/tag/v0.26.0",
+      "scope": "2026-11-13T23:49:24Z，release commit 3cb627394b95d3ae605f31e0d694edf508cf4b7b",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#summary",
+        "/harbor-framework-guide/#team-map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 4,
+      "title": "Harbor · 官方版本 Changelog",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/changelog.mdx",
+      "scope": "v0.25.0 / 0.26.0 功能与迁移边界",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#errors",
+        "/harbor-framework-guide/#interfaces",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#summary",
+        "/harbor-framework-guide/#team-map",
+        "/harbor-framework-guide/#trajectory"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 5,
+      "title": "Terminal-Bench 团队 · Terminal-Bench 4.1",
+      "url": "https://www.tbench.ai/news/terminal-bench-4-1",
+      "scope": "2026-11-09；regrade 计数、回退处理与 case",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#summary",
+        "/harbor-framework-guide/#team-map",
+        "/harbor-framework-guide/#terminal"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 6,
+      "title": "Steven Dillmann / TB Science 团队 · Science 0.1 公告",
+      "url": "https://www.tbench.ai/news/terminal-bench-science-0-1",
+      "scope": "70任务、首版试验与历史roadmap",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#science",
+        "/harbor-framework-guide/#summary",
+        "/harbor-framework-guide/#team-map",
+        "/llm-frontier-2026.html#sources"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 7,
+      "title": "Terminal-Bench 团队 · Challenges 公告",
+      "url": "https://www.tbench.ai/news/terminal-bench-challenges",
+      "scope": "2026-06-18；三类挑战与首发系统试验",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#challenges",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#summary",
+        "/harbor-framework-guide/#team-map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 8,
+      "title": "HarborIndex · 正式 1.4 Release",
+      "url": "https://github.com/harbor-framework/harbor-index/releases/tag/harbor-index-1.4",
+      "scope": "80题、oracle gate、image digest",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#index",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#summary",
+        "/harbor-framework-guide/#team-map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 9,
+      "title": "Ryan Marten · Continuous Benchmarks",
+      "url": "https://www.tbench.ai/news/continuous-benchmarks",
+      "scope": "2026-07-30；reuse / regrade / rerun与语义版本",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#practice",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#team-map",
+        "/harbor-framework-guide/#trajectory"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 10,
+      "title": "Terminal-Bench · v5.0 milestone",
+      "url": "https://github.com/harbor-framework/terminal-bench/milestone/3",
+      "scope": "2026-11-14访问：open；无due date",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#team-map",
+        "/harbor-framework-guide/#terminal"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 11,
+      "title": "TB Science · 当前 Call for Contributions",
+      "url": "https://www.terminal-bench-science.ai/contribute",
+      "scope": "0.2 / 1.0准备、2.0征集与12-15截止",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#science",
+        "/harbor-framework-guide/#team-map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 12,
+      "title": "Harbor Adapters · 独立仓库 README",
+      "url": "https://github.com/harbor-framework/adapters/blob/40b140eab2aae7375b2369aeddd2f8b3f872e2da/README.md",
+      "scope": "独立adapter结构、约85目录与parity",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#index",
+        "/harbor-framework-guide/#task-contract",
+        "/harbor-framework-guide/#team-map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 13,
+      "title": "Harbor Adapters and Harbor-Index: Infrastructure and a Curated Meta-Dataset for Large-Scale Agentic Evaluation",
+      "url": "https://arxiv.org/html/2609.04298v1",
+      "scope": "arXiv v1；§2–4、D.4、F、H；54/6627大规模研究与初版82题",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
+        "/harbor-framework-guide/#index",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#team-map",
+        "/llm-research-map-2026/s01_agent_data_bench.html#parity"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 14,
+      "title": "Harbor Cookbook · 当前 README",
+      "url": "https://github.com/harbor-framework/harbor-cookbook/blob/2700bb28301ca93b191899c88d1cd10384024a81/README.md",
+      "scope": "recipes、GEPA和多后端RL示例",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#interaction",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#team-map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 15,
+      "title": "Harbor Client · 独立 SDK README",
+      "url": "https://github.com/harbor-framework/harbor-client/blob/6133defbda20f58fd5b9cdc9294c06d416d0f835/README.md",
+      "scope": "开发预览，尚无package release",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#server",
+        "/harbor-framework-guide/#team-map"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 16,
+      "title": "Terminal-Bench · v4.1.0 Release",
+      "url": "https://github.com/harbor-framework/terminal-bench/releases/tag/v4.1.0",
+      "scope": "2026-11-03；66modified、CPU-only63、无新增删除",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#terminal"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 17,
+      "title": "Harbor 团队 · Cracking down on reward hacking",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/news/reward-hacking.mdx",
+      "scope": "2026-10-28；篡改、查答案、verifier漏洞及多个边界",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#interfaces",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#verification"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 18,
+      "title": "TB Science · v0.1.0 Release",
+      "url": "https://github.com/harbor-framework/terminal-bench-science/releases/tag/v0.1.0",
+      "scope": "2026-08-26；当前正式发布标签",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html#science",
+        "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#science"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 19,
+      "title": "Terminal-Bench Challenges · 当前项目合同",
+      "url": "https://github.com/harbor-framework/terminal-bench-challenges/blob/578b75ffe20944faba321b8a0a596684428c19cb/README.md",
+      "scope": "Rust / CUDA / WASM验收规格",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#challenges",
+        "/harbor-framework-guide/#progress"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 20,
+      "title": "Harbor 团队 · Explore the Harbor cookbook",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/news/harbor-cookbook.mdx",
+      "scope": "2026-03-27；初版任务与优化示例",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#progress"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 21,
+      "title": "Harbor · Job 源码",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/src/harbor/job.py",
+      "scope": "preflight、trial配置、队列、hooks、聚合",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#architecture"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 22,
+      "title": "Harbor · SingleStepTrial 源码",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/src/harbor/trial/single_step.py",
+      "scope": "artifact收集与独立验证顺序",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#architecture"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 23,
+      "title": "Harbor · Trial 生命周期源码",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/src/harbor/trial/trial.py",
+      "scope": "main快照；取消记录修复晚于release",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#architecture"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 24,
+      "title": "Harbor · Agent / Environment 抽象接口",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/src/harbor/agents/base.py",
+      "scope": "结合src/harbor/environments/base.py阅读",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#interfaces"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 25,
+      "title": "Harbor · Separate verifier 文档",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/tasks/separate-verifier.mdx",
+      "scope": "shared默认、image优先级、source恢复与清理",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#verification"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 26,
+      "title": "RewardKit · Worker 实现",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/packages/rewardkit/src/rewardkit/sandbox.py",
+      "scope": "新UID、root Linux、private paths和进程清理",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#verification"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 27,
+      "title": "Harbor · secure-python-worker 示例",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/examples/tasks/secure-python-worker/README.md",
+      "scope": "instruction、task.toml、check.py完整对应",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#secure-case"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 28,
+      "title": "Harbor · Error classification",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/jobs/error-classification.mdx",
+      "scope": "以src/harbor/models/trial/error_policy.py为权威表",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#errors"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 29,
+      "title": "Harbor · ATIF 文档与 RFC",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/agents/atif.mdx",
+      "scope": "v1.8、输出/加载能力区别；rfcs/0001-trajectory-format.md",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#trajectory"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 30,
+      "title": "Harbor · Regrade 文档",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/jobs/regrade.mdx",
+      "scope": "来源要求、artifact、独立验证与无Agent成本",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#trajectory"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 31,
+      "title": "Harbor · API Server 文档",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/harbor-serve/api-server.mdx",
+      "scope": "8390、HTTP/CLI/SDK/MCP、controls与幂等性",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#server"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 32,
+      "title": "Harbor · Multi-step 文档",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/tasks/multi-step.mdx",
+      "scope": "有序步骤、resume、early stop、mean/final",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#interaction"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 33,
+      "title": "Harbor · ACP 集成",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/agents/acp.mdx",
+      "scope": "ACP registry Agent、版本与认证",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#interaction"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 34,
+      "title": "Harbor · Simulate a user",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/docs-mintlify/jobs/simulate-a-user.mdx",
+      "scope": "user prompt、bridge与target支持范围",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#interaction"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 35,
+      "title": "Harbor Cookbook · GEPA / MedAgentBench recipe",
+      "url": "https://github.com/harbor-framework/harbor-cookbook/blob/2700bb28301ca93b191899c88d1cd10384024a81/harbor_cookbook/gepa/README.md",
+      "scope": "32题validation、3轮约28→50%为recipe示例，未复现",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#interaction"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 36,
+      "title": "TB Science · 当前 README",
+      "url": "https://github.com/harbor-framework/terminal-bench-science/blob/45195b2af0653ddc12d43838d9096add9f52acf2/README.md",
+      "scope": "活跃96题、2.0截止、任务维护与canary",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#practice",
+        "/harbor-framework-guide/#science"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 37,
+      "title": "TB Science · ambient-rna-correction 任务",
+      "url": "https://github.com/harbor-framework/terminal-bench-science/blob/45195b2af0653ddc12d43838d9096add9f52acf2/tasks/life-sciences/biology/ambient-rna-correction/instruction.md",
+      "scope": "结合同目录README；synthetic数据与公开输出/数值合同",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#science"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 38,
+      "title": "HarborIndex · 当前提交协议",
+      "url": "https://github.com/harbor-framework/harbor-index/blob/5399ea1026fb2c7fc384cf8acd91a7d10fc943f3/README.md",
+      "scope": "每题至少5 trials、固定judge ensemble与公开轨迹",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#index"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 39,
+      "title": "SingleStepTrial._run：产物收集和 verifier 顺序",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/src/harbor/trial/single_step.py#L36-L56",
+      "scope": "固定源码连续摘录，lines 36–56；Apache-2.0",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#architecture"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 40,
+      "title": "transfer_tar_filter：data filter 与特殊文件",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/src/harbor/environments/base.py#L71-L84",
+      "scope": "固定源码连续摘录，lines 71–84；Apache-2.0",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#verification"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 41,
+      "title": "Worker：权限、private paths 与输出边界",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/packages/rewardkit/src/rewardkit/sandbox.py#L70-L88",
+      "scope": "固定源码连续摘录，lines 70–88；Apache-2.0",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#verification"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 42,
+      "title": "correct_sums：可信进程构造输入并核验结果",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/examples/tasks/secure-python-worker/tests/check.py#L27-L45",
+      "scope": "固定源码连续摘录，lines 27–45；Apache-2.0",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#secure-case"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 43,
+      "title": "TrialResult.reward_valid：所有记录异常共同决定",
+      "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/src/harbor/models/trial/result.py#L140-L148",
+      "scope": "固定源码连续摘录，lines 140–148；Apache-2.0",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/harbor-framework-guide/#errors"
+      ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    }
+  ],
+  "source_excerpts": [
+    {
+      "path": "src/harbor/trial/single_step.py",
+      "start": 36,
+      "end": 56,
+      "sha256": "d5ed6e5cf86c6c3abe6c3649fb7234f01574b1d8aeb281d3f551d1e3cc80e56e"
+    },
+    {
+      "path": "src/harbor/environments/base.py",
+      "start": 71,
+      "end": 84,
+      "sha256": "fc9c156f77c64780e6de15743ad7dcd579af12d3e18400a1708bc20ad84f1be2"
+    },
+    {
+      "path": "packages/rewardkit/src/rewardkit/sandbox.py",
+      "start": 70,
+      "end": 88,
+      "sha256": "a0a928936d8ee6686d170c76784382e283e89e1ee42332cd56f5b7461d517a19"
+    },
+    {
+      "path": "examples/tasks/secure-python-worker/tests/check.py",
+      "start": 27,
+      "end": 45,
+      "sha256": "1a79e9e57d54601d805f48d1c71364a9321b7105ab7798d36bab5538116050db"
+    },
+    {
+      "path": "src/harbor/models/trial/result.py",
+      "start": 140,
+      "end": 148,
+      "sha256": "06f6c8c2012d5b84a899442b28f3987f417cb789cfce8a9bf1c2a38a9e2a96c3"
+    }
+  ],
+  "benchmark_snapshots": {
+    "terminal-bench": "4.1.0 / 66 full / 63 CPU",
+    "science_release": "0.1.0 / 70",
+    "science_main": "96 active",
+    "science_roadmap": "0.2/1.0 preparation;2.0 deadline2026-12-15",
+    "harbor-index": "1.4 / 80"
+  },
+  "chart": {
+    "name": "TB4.1 regrade initial changed162",
+    "source": "https://www.tbench.ai/news/terminal-bench-4-1",
+    "denominator": 162,
+    "all_trials": 11550,
+    "values": [
+      89,
+      45,
+      28
+    ],
+    "note": "134acceptedchanges;28measurementdiscrepanciesretainedoldscore"
+  }
+}

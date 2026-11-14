@@ -12,6 +12,13 @@ from urllib.parse import unquote, urljoin, urlsplit, urlunsplit
 from catalog import load_content
 from render import ROOT, route_path
 
+REGISTRIES = [
+    ("assets/research/agent-data-benchmarks/sources.json", "/agent-data-benchmarks/", "ref-"),
+    ("assets/research/posttraining-20261114/sources.json", "/llm-posttraining/", "ref-"),
+    ("assets/research/2026-11-14/sources.json", "/llm-research-map-2026/", "ref-"),
+    ("content/posts/harbor-framework-guide/assets/sources.json", "/harbor-framework-guide/", "cite-"),
+]
+
 
 def source_identity(url):
     parsed = urlsplit(url)
@@ -50,7 +57,7 @@ class Links(HTMLParser):
         if tag != "a" or not attrs.get("href"):
             return
         ref = next((a["id"] for _, a in reversed(self.stack)
-                    if re.fullmatch(r"ref-[\w-]+", a.get("id", ""))), None)
+                    if re.fullmatch(r"(?:ref|cite)-[\w-]+", a.get("id", ""))), None)
         section = next((a["id"] for t, a in reversed(self.stack)
                         if t in {"section", "article", "h2", "h3"} and a.get("id")), None)
         historical = any("data-reading-history" in a for _, a in self.stack)
@@ -64,7 +71,7 @@ class Links(HTMLParser):
 
     def handle_data(self, data):
         ref = next((a["id"] for _, a in reversed(self.stack)
-                    if re.fullmatch(r"ref-[\w-]+", a.get("id", ""))), None)
+                    if re.fullmatch(r"(?:ref|cite)-[\w-]+", a.get("id", ""))), None)
         if ref:
             self.text_refs[ref].append(data)
         if self.current:
@@ -104,7 +111,7 @@ def derive(root=ROOT, content=None):
         for link in parser.links:
             url = urlsplit(link["url"])
             if url.netloc == "notes.local":
-                if url.fragment.startswith("ref-"):
+                if url.fragment.startswith(("ref-", "cite-")):
                     local = url.path.removesuffix("index.html") if url.path.endswith("/index.html") else url.path
                     pending.append((local + "#" + url.fragment, entry, link))
                 continue
@@ -115,7 +122,8 @@ def derive(root=ROOT, content=None):
             if link["ref"]:
                 ref_url = entry["url"] + "#" + link["ref"]
                 references[ref_url].add(value["source_key"])
-                ref = {"url": ref_url, "label": f'{entry["title"]} [{link["ref"].removeprefix("ref-")}]'}
+                number = re.sub(r"^(?:ref|cite)-", "", link["ref"])
+                ref = {"url": ref_url, "label": f'{entry["title"]} [{number}]'}
                 if ref not in value["local_references"]:
                     value["local_references"].append(ref)
             else:
@@ -132,7 +140,7 @@ def derive(root=ROOT, content=None):
             records[key] = {
                 "source_key": key, "title": title, "version": "unspecified",
                 "kind": "原文元数据", "urls": [], "archive_metadata": [], "used_in": [],
-                "local_references": [{"url": target, "label": f'{entry["title"]} [{anchor.removeprefix("ref-")}]'}],
+                "local_references": [{"url": target, "label": f'{entry["title"]} [{re.sub(r"^(?:ref|cite)-", "", anchor)}]'}],
             }
             references[target].add(key)
     for target, entry, link in pending:
@@ -145,18 +153,15 @@ def derive(root=ROOT, content=None):
                      "role": link["role"], "citation": target}
             if usage not in records[key]["used_in"]:
                 records[key]["used_in"].append(usage)
-    registries = [
-        ("assets/research/agent-data-benchmarks/sources.json", "/agent-data-benchmarks/"),
-        ("assets/research/posttraining-20261114/sources.json", "/llm-posttraining/"),
-        ("assets/research/2026-11-14/sources.json", "/llm-research-map-2026/"),
-    ]
-    for name, index in registries:
+    for name, index, prefix in REGISTRIES:
+        if not (root / name).is_file():
+            continue
         data = json.loads((root / name).read_text())
         for metadata in data["sources"]:
             url = metadata.get("canonical_url") or metadata.get("url")
             value = record(url, metadata["title"])
             number = metadata.get("number", metadata.get("id"))
-            target = index + "#ref-" + str(number)
+            target = index + "#" + prefix + str(number)
             if value["source_key"] not in references.get(target, set()):
                 errors.append(f"citation registry: {name} [{number}] URL differs from HTML bibliography")
             arxiv = re.search(r"\d{4}\.\d{4,5}(v\d+)", str(metadata.get("version", "")))
@@ -168,7 +173,11 @@ def derive(root=ROOT, content=None):
                     if metadata.get(field) != expected:
                         errors.append(f"citation registry: {name} [{number}] stale {field}")
             # Preserve every field; current/historical uses are derived independently.
-            value["archive_metadata"].append({"registry_url": "/" + name, **metadata})
+            registry_url = (index + "assets/sources.json" if name.startswith("content/posts/") else "/" + name)
+            if not value["archive_metadata"] and (value["title"] in value["urls"]
+                    or re.fullmatch(r"[0-9a-f]{7,40}", value["title"])):
+                value["title"] = metadata["title"]
+            value["archive_metadata"].append({"registry_url": registry_url, **metadata})
             if metadata.get("local_asset"):
                 local = root / route_path(metadata["local_asset"])
                 if not local.is_file():
@@ -182,7 +191,7 @@ def derive(root=ROOT, content=None):
         value["urls"].sort()
         value["local_references"].sort(key=lambda u: u["url"])
     return {"schema_version": 1, "as_of": "2026-11-14",
-            "note": "Derived from original HTML and three versioned source registries. Local citation numbers remain page-scoped; unspecified means the source did not pin a version. Current and frozen-original usage are separate.",
+            "note": "Derived from original HTML and versioned source registries. Local citation numbers remain page-scoped; unspecified means the source did not pin a version. Current and frozen-original usage are separate.",
             "sources": sorted(records.values(), key=lambda s: (s["kind"], s["title"].casefold(), s["source_key"]))}, errors
 
 
@@ -195,6 +204,7 @@ def render_citations(ctx):
     rows = []
     for index, source in enumerate(data["sources"]):
         search = " ".join([source["title"], source["source_key"], *source["urls"],
+                           *(m["title"] for m in source["archive_metadata"]),
                            *(u["title"] for u in source["used_in"])]).casefold()
         uses = []
         for role, label in (("current", "当前使用"), ("historical", "冻结原文")):

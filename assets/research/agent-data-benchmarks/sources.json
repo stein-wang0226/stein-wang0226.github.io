@@ -220,7 +220,9 @@
       "accessed": "2026-11-14",
       "used_in": [
         "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
-        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#terminal"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
@@ -253,7 +255,9 @@
       "used_in": [
         "/agent-data-benchmarks/s02_benchmark_map.html#science",
         "/agent-data-benchmarks/s02_benchmark_map.html#terminal",
-        "/agent-data-benchmarks/s02_benchmark_map.html#versions"
+        "/agent-data-benchmarks/s02_benchmark_map.html#versions",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#science"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
@@ -285,6 +289,9 @@
       "accessed": "2026-11-14",
       "used_in": [
         "/agent-data-benchmarks/s02_benchmark_map.html#harbor",
+        "/harbor-framework-guide/#index",
+        "/harbor-framework-guide/#progress",
+        "/harbor-framework-guide/#team-map",
         "/llm-research-map-2026/s01_agent_data_bench.html#parity"
       ],
       "used_in_before_organization": [

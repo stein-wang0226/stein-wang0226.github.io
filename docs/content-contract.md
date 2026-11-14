@@ -116,10 +116,10 @@ Markdown front matter 与 catalog 中重复的标题等字段保持一致；
 `reading.js` 仅增强深链接展开和焦点，无脚本仍可手动展开。
 核验覆盖关系时不能以字符数、相似度或重建基线代替原单元检查。
 
-`scripts/citations.py` 从所有 HTML 引用及三份原来源登记生成
+`scripts/citations.py` 从所有 HTML 引用及四份原来源登记生成
 `/blog/references.json` 和 `/blog/references/`，没有第二份手工 bibliography。
 `source_key` 区分论文版本与固定代码文件；一个本地编号包含多篇论文时分别采集，
-原页面的 `ref-*` 与编号保持不变。未固定版本显示 `unspecified`。
+原页面的 `ref-*`、`cite-*` 与编号保持不变。未固定版本显示 `unspecified`。
 原件版本、许可、字节数与 SHA 保留；`used_in` 和 `historical_used_in`
 分别记录实际当前使用位置与冻结原文位置。旧使用字段在更新时保留为历史元数据。
 结构检查不提升科研事实审阅状态。

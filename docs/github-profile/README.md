@@ -1,4 +1,4 @@
-<a href="https://stein-wang0226.github.io/about/"><img src="./assets/hero.jpg" alt="Yuxiang Wang — Agentic RL, scientific task synthesis, GUI agents and diffusion language models" width="1280"></a>
+<a href="https://stein-wang0226.github.io/about/"><img src="./assets/header.jpg" alt="Yuxiang Wang · Research and notes" width="1280"></a>
 
 # Yuxiang Wang / 王煜祥
 
@@ -14,13 +14,11 @@ GUI Agent Data Algorithm Intern at **ByteDance Seed / AI Data**. Previously at *
 <table width="100%">
 <tr>
 <td valign="top" width="50%">
-<a href="https://stein-wang0226.github.io/cv/#autoresearch"><img src="./assets/task-synthesis.jpg" alt="Scientific task synthesis: a laboratory workbench with connected task and verification blocks" width="100%"></a>
 <h3>Scientific task synthesis</h3>
 <p><strong>AutoResearch</strong><br>Expert protocols into executable Harbor tasks, with independent verification and difficulty calibration. Delivered <strong>2,000+ task packages</strong> for Qwen post-training.</p>
 <p><a href="https://stein-wang0226.github.io/cv/#autoresearch">Methods &amp; delivery</a></p>
 </td>
 <td valign="top" width="50%">
-<a href="https://arxiv.org/abs/2610.33746"><img src="./assets/agentic-rl.jpg" alt="Agentic RL: a protein structure and branching interaction paths" width="100%"></a>
 <h3>Learning from tool use</h3>
 <p><strong>ProtAgent</strong><br>Tool-Trajectory SFT and step-level RL for protein agents. OOD-1000 annotation-coverage success: <strong>40.2% SFT → 61.0% RL</strong>.</p>
 <p><a href="https://arxiv.org/abs/2610.33746">Paper</a> / <a href="https://stein-wang0226.github.io/cv/#protagent">Training &amp; evaluation</a></p>
@@ -28,13 +26,11 @@ GUI Agent Data Algorithm Intern at **ByteDance Seed / AI Data**. Previously at *
 </tr>
 <tr>
 <td valign="top">
-<a href="https://stein-wang0226.github.io/cv/#gui-agent"><img src="./assets/gui-agents.jpg" alt="GUI agents: a desktop research environment with application windows and an action path" width="100%"></a>
 <h3>Reliable computer use</h3>
 <p><strong>GUI agents</strong><br>Reproducible environments, independent oracles and failure replay. Turn real execution failures into verifiable tasks for SFT and RL.</p>
 <p><a href="https://stein-wang0226.github.io/cv/#gui-agent">Environments &amp; data</a></p>
 </td>
 <td valign="top">
-<a href="https://stein-wang0226.github.io/cv/#holon"><img src="./assets/science-models.jpg" alt="Models for science: protein and language representations joined by a bridge" width="100%"></a>
 <h3>Models for science</h3>
 <p><strong>Holon / ProtText-Eval</strong><br>Protein–Text pretraining, CPT and scientific SFT across <strong>0.6B–8B</strong> models, connecting instruction alignment to scientific evaluation.</p>
 <p><a href="https://stein-wang0226.github.io/cv/#holon">Training &amp; evaluation</a></p>
@@ -55,7 +51,6 @@ GUI Agent Data Algorithm Intern at **ByteDance Seed / AI Data**. Previously at *
 
 - [CUA-Recovery](https://stein-wang0226.github.io/publication/cua-recovery/) studies error recovery in long-horizon computer-use agents. ICLR 2027 under review.
 - [STM](https://doi.org/10.1007/978-981-95-3906-2_3) studies dynamic-graph fraud detection. DASFAA 2025; first author.
-- Project scope follows my November 2026 resumes. ProtAgent's number above uses the balanced OOD-1000 annotation-coverage protocol; it is not a standalone measure of biological correctness. Task delivery does not imply public release or benchmark acceptance.
 
 [All publications](https://stein-wang0226.github.io/publications/) / [English resume](https://stein-wang0226.github.io/assets/Curriculum_Vitae.pdf) / [中文简历](https://stein-wang0226.github.io/assets/Yuxiang-Wang-Resume-zh.pdf)
 
