@@ -41,6 +41,14 @@
     "featured": ["2026-semantic-dlm-plus", "protagent", "2026-locality-aware-dlm", "cua-recovery"]
   },
   "assets": [
+    {"source": "assets/research/agent-data-benchmarks/ced-path.svg", "url": "/assets/research/agent-data-benchmarks/ced-path.svg"},
+    {"source": "assets/research/agent-data-benchmarks/csa2-layer-plan.svg", "url": "/assets/research/agent-data-benchmarks/csa2-layer-plan.svg"},
+    {"source": "assets/research/agent-data-benchmarks/global-kv-bytes.svg", "url": "/assets/research/agent-data-benchmarks/global-kv-bytes.svg"},
+    {"source": "assets/research/agent-data-benchmarks/bounded-replay.svg", "url": "/assets/research/agent-data-benchmarks/bounded-replay.svg"},
+    {"source": "assets/research/agent-data-benchmarks/task-synthesis-flow.svg", "url": "/assets/research/agent-data-benchmarks/task-synthesis-flow.svg"},
+    {"source": "assets/research/agent-data-benchmarks/global-kv-bytes.csv", "url": "/assets/research/agent-data-benchmarks/global-kv-bytes.csv"},
+    {"source": "assets/research/agent-data-benchmarks/figure-data.json", "url": "/assets/research/agent-data-benchmarks/figure-data.json"},
+    {"source": "assets/research/agent-data-benchmarks/sources.json", "url": "/assets/research/agent-data-benchmarks/sources.json"},
     {"source": "assets/Curriculum_Vitae.pdf", "url": "/assets/Curriculum_Vitae.pdf"},
     {"source": "assets/Yuxiang-Wang-Resume-zh.pdf", "url": "/assets/Yuxiang-Wang-Resume-zh.pdf"},
     {"source": "assets/archive/Curriculum_Vitae-before-20261114.pdf", "url": "/assets/archive/Curriculum_Vitae-before-20261114.pdf"},

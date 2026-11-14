@@ -94,6 +94,16 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(before, tree(self.output))
         self.assertEqual(sources, tree(self.root))
 
+    def test_registered_csv_and_embedded_chart_targets_are_checked(self):
+        build(self.output, self.root)
+        asset = "assets/research/agent-data-benchmarks/global-kv-bytes.csv"
+        self.assertEqual((self.root / asset).read_bytes(), (self.output / asset).read_bytes())
+        source = self.root / "content/series/agent-data-benchmarks/s01_task_synthesis.html"
+        source.write_text(source.read_text().replace(
+            "task-synthesis-flow.svg", "missing-chart.svg"))
+        with self.assertRaisesRegex(ValueError, "missing target.*missing-chart.svg"):
+            build(self.output, self.root)
+
     def test_draft_scaffold_collision_and_empty_template(self):
         create("fixture-post", 'A "quoted" title', "agent", root=self.root)
         record = next(e for e in load_content(self.root)[1] if e["id"] == "fixture-post")

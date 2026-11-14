@@ -1,0 +1,5 @@
+group,entries_per_token,Main E2M1 values,Main E4M3 scales,Indexer E2M1 values,Indexer E8M0 scales,bytes_per_token
+Encoder group 1,0.5,128.0,16.0,32.0,2.0,178.0
+Encoder group 2,0.5,128.0,16.0,32.0,2.0,178.0
+Encoder group 3,0.5,128.0,16.0,32.0,2.0,178.0
+Decoder shared,1.0,256.0,32.0,64.0,4.0,356.0

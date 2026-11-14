@@ -1,0 +1,62 @@
+{
+  "as_of": "2026-11-14",
+  "measurement": false,
+  "source": "https://arxiv.org/html/2609.19969v1",
+  "specification": {
+    "main_channels": 512,
+    "main_scale_block": 16,
+    "indexer_channels": 128,
+    "indexer_scale_block": 32,
+    "value_bits": 4,
+    "scale_bits": 8
+  },
+  "groups": [
+    {
+      "group": "Encoder group 1",
+      "entries_per_token": 0.5,
+      "Main E2M1 values": 128.0,
+      "Main E4M3 scales": 16.0,
+      "Indexer E2M1 values": 32.0,
+      "Indexer E8M0 scales": 2.0,
+      "bytes_per_token": 178.0
+    },
+    {
+      "group": "Encoder group 2",
+      "entries_per_token": 0.5,
+      "Main E2M1 values": 128.0,
+      "Main E4M3 scales": 16.0,
+      "Indexer E2M1 values": 32.0,
+      "Indexer E8M0 scales": 2.0,
+      "bytes_per_token": 178.0
+    },
+    {
+      "group": "Encoder group 3",
+      "entries_per_token": 0.5,
+      "Main E2M1 values": 128.0,
+      "Main E4M3 scales": 16.0,
+      "Indexer E2M1 values": 32.0,
+      "Indexer E8M0 scales": 2.0,
+      "bytes_per_token": 178.0
+    },
+    {
+      "group": "Decoder shared",
+      "entries_per_token": 1.0,
+      "Main E2M1 values": 256.0,
+      "Main E4M3 scales": 32.0,
+      "Indexer E2M1 values": 64.0,
+      "Indexer E8M0 scales": 4.0,
+      "bytes_per_token": 356.0
+    }
+  ],
+  "total_global_bytes_per_token": 890.0,
+  "excludes": [
+    "SWA",
+    "weights",
+    "Engram",
+    "workspace",
+    "padding/alignment",
+    "allocator",
+    "shard replication",
+    "partial tail blocks"
+  ]
+}

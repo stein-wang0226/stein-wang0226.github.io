@@ -308,3 +308,70 @@ input digest与上述本地浏览器快照相同，共98个公开文件。
 证据为 `/tmp/my-blogs-browser-tests/research-release-check.py`、
 `research-release-report.json`。本段记录内容发布快照；后续纯验收文档提交
 不改变该input digest，最终部署commit继续以线上 `build-info.json` 为准。
+
+## 2026-11-14 任务合成、经典与前沿Benchmark及架构增补
+
+新增 `/agent-data-benchmarks/` 两章：可执行任务合成、Benchmark地图。
+正文深入十二条数据路线和TB / Science / Challenges / HarborIndex /
+DeepSWE / SWE-bench / AA；附经典代码、通用Agent、Web / GUI、
+科学与基础保留性评测的对象、评分、用途和边界。
+新系列52项来源（35篇论文、17项项目文档），独立于原43项索引。
+原DeepSeek第03章增加CED张量路径、CSA2层计划与hierarchical indexer、
+FP4格式和890 B/token推导、两种replay及MoE / mHC / Engram细节。
+五张SVG、CSV和JSON均可下载，数值明示为规格推导。
+
+本地命令与结果：
+
+- `make check OUTPUT=/tmp/my-blogs-bench-build`：68 HTML页 / 109公开文件，
+  登记、链接、锚点、章节、来源及资源清单通过。
+- `python3 docs/verify-content-migration.py --require-clean`：23项原SHA相同、
+  18项有准确理由的历史 / 本次变化；299个原始锚点、59个标记保留；
+  当前12个本地集合、25章、6篇论文、2个独立子站。
+- `~/.cache/stein-notes/venv/bin/python scripts/test_pipeline.py`：8项隔离测试通过。
+  增加注册CSV的输出检查及missing object-data图表目标会阻塞构建的检查；
+  站点CSV只按显式资源登记发布，不扫描研究目录。
+- `python3 scripts/research_figures.py`：5 SVG + CSV + 规格JSON + 来源JSON；
+  连续两次生成的8文件逐字节一致，未引入站点运行依赖。
+- Chrome实际交互：27项布局（9页 × 390 / 768 / 1440px）、
+  39项导航 / 搜索 / 键盘 / 资源检查、6页无JavaScript阅读，共72项通过，
+  无页面脚本错误。图表加载、宽高比、放大查看、CSV下载、
+  两章前后导航、原来源锚点、CV往返及经典关键词搜索均检查。
+
+验收预览为 `http://127.0.0.1:8771/`。脚本与证据：
+`/tmp/my-blogs-browser-tests/bench-series-check.js`、`bench-series-report.json`、
+`bench-index-1440.png`、`bench-kv-1440.png`、`bench-classics-390.png`。
+已查看系列入口、890B分项图与手机经典表格，保持Stein’s Notes风格，
+表格在容器内横向滚动，图表原始比例保留。
+验收脚本修正了SVG根节点、生成目录anchor与CV链接形式的错误假设；
+最终次数不重复累计已通过项。
+
+浏览器验收输入快照为commit `784f449a51e1158377e3ccb9b282fbbfa5b3614b`、
+`dirty: true`，input digest
+`7804284bed574464cf573ad3a6119c8e53c5be35e6605db3188a8f954bf9073c`。
+之后仅将SWE-bench Pro引用从重定向且返回403的旧榜单入口
+改为实际可访问的官方overview，并重新生成来源JSON、构建和检查。
+最终发布版本另以Actions / 线上manifest核对，不将旧本地commit当发布证据。
+
+论文及团队报告没有在本站训练 / benchmark复现；作者履历数字单列，
+TB Sci仍仅为一轮review通过；0.2 roadmap、TB 4.1与AA TB 4.0、
+HarborIndex 82→80及DeepSWE同名区别在正文明确。
+
+### 最终发布范围复核
+
+最后构建时，另一维护线程正在修改
+`content/posts/agent-harness-guide/index.html`，共享工作树出现独立的
+title检查失败。本次未改写或提交该线程的正文。为避免其影响发布，
+在 `/tmp/my-blogs-bench-validation` 从原HEAD建立detached worktree，
+只复制本次25个文件，重新构建 / 校验同一预览产物，68页 / 109文件通过。
+该隔离快照的input digest为
+`ca29de2c7fd853d3adb881e66189b8307af8503311e688cbf8bb8edf18e5c550`。
+提交前规范化matplotlib SVG行尾空白与CSV的LF换行，不改变图形或数值，
+重新构建与资源验收通过。
+
+最后引用修订通过10项补充浏览器检查：官方Pro来源链接、
+手机无脚本系列入口及8项发布资源SHA，结果保存在
+`/tmp/my-blogs-browser-tests/bench-final-report.json`；
+此前72项交互验收仍对应其明示快照。发布只包含本次文件，
+原共享目录中的其他未提交内容保留，不能把共享工作树称为干净。
+隔离快照同时排除另一线程的Harness目录摘要与保留记录更新，
+仅提交本专题关联链接；最终隔离迁移检查再次通过。

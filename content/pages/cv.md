@@ -79,6 +79,8 @@ Updated from my November 2026 research resumes. The PDFs are original author-sup
 - **Production system.** Built multi-agent batch generation with concurrency, resumable execution, and version tracking; **delivered 2,000+ Harbor task packages**.
 - **Training connection.** Data was validated with **Qwen3.8-27B SFT** and delivered to the Qwen post-training team. My resume reports improvement on Terminal-Bench and related evaluations, without a numerical improvement claim. Related tasks submitted to Terminal-Bench Sci passed one review round.
 
+Public study notes: [Executable task synthesis](/agent-data-benchmarks/s01_task_synthesis.html#resume) · [Agent benchmark map](/agent-data-benchmarks/s02_benchmark_map.html). These compare public methods with my author-reported experience; internal task packages and data are not published.
+
 <h3 id="protagent">ProtAgent · Protein Tool Use &amp; Step-Level RL</h3>
 
 *Alibaba · Qwen3-8B ReAct agent · First-authored manuscript under ARR review*
@@ -97,6 +99,8 @@ Updated from my November 2026 research resumes. The PDFs are original author-sup
 - **Quality and failure analysis.** Validated prompts, attachments, checklists, and execution results for CAD, Blender, and SketchUp tasks. Applied different SFT / RL admission rules and reviewed **9,641 trace events**, analyzing end-state constraints, GUI perception, long-horizon execution, retries, time, and token cost.
 - **Real failures → RL tasks.** Reconstructed dependencies, assets, and prerequisite software states from failure traces. Froze initial conditions, replayed critical actions in clean VMs, and checked both assets and state transitions to provide traceable environment packages.
 - **Error attribution.** Distinguish application defects, agent execution failures, and environment issues before assigning training signals.
+
+[GUI / Web benchmark study notes](/agent-data-benchmarks/s02_benchmark_map.html#classics) connect state validation and reset to public evaluation protocols.
 
 <h3 id="holon">Holon · Protein–Text Models &amp; ProtText-Eval</h3>
 

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Benchmark地图：Terminal、SWE、Web、GUI、科学与AA</title>
+<meta name="description" content="深入Terminal-Bench 4.1、Science 0.1、Challenges、HarborIndex 1.4、DeepSWE和AA v5；分类速查经典代码、通用Agent、Web GUI和科学评测，解释pass@1、pass@k、pass^k与成本。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="map">
+<p class="eyebrow">02 · Benchmark map · Snapshot 2026-11-14</p>
+<h2>先按能力与产物选评测，再看分数</h2>
+<p class="lead">Benchmark不只有一条“难度轴”。函数生成、仓库修改、终端操作、浏览器交互、桌面状态与科学研究产物，需要不同环境和检查。经典评测适合定位基础缺口；前沿Agent评测进一步测长程执行、恢复、工具和真实产物。</p>
+<div class="flow" aria-label="从基础代码到真实Agent任务的测量对象">
+<div class="stage"><b>函数 / 答案</b><small>HumanEval、MBPP、GPQA<br>代码单元与知识保留</small></div>
+<div class="stage"><b>仓库 / 终端</b><small>SWE-bench、DeepSWE、TB<br>多步工具与工程产物</small></div>
+<div class="stage"><b>环境状态</b><small>WebArena、OSWorld、τ²<br>交互、权限、reset与恢复</small></div>
+<div class="stage"><b>专业研究 / 工作</b><small>TB Science、BixBench、AA<br>专业知识、产物与完整验收</small></div>
+</div>
+<p class="note">这是测量对象分类，不是单向能力等级。一个函数题可能非常难，一个GUI任务也可能短；不同环境不可用一个未经校准的总分排序。</p>
+</section>
+<section id="versions">
+<h2>当前版本与定位速查</h2>
+<table><thead><tr><th>名称</th><th>采用的快照</th><th>对象 / 规模</th><th>首要边界</th></tr></thead><tbody>
+<tr><td>Terminal-Bench</td><td><a href="index.html#ref-13">4.1.0，2026-11-03</a></td><td>Full 66任务；CPU-only 63</td><td>全部66项modified，无新增 / 删除；4.0成绩不可直接改标4.1</td></tr>
+<tr><td>Terminal-Bench-Science / TB Sci</td><td><a href="index.html#ref-15">0.1.0，2026-08-26</a></td><td>70任务，5领域</td><td>0.2是roadmap；native harness下测系统表现</td></tr>
+<tr><td>Terminal-Bench Challenges</td><td><a href="index.html#ref-16">2026-06首发项目协议</a></td><td>3项长时单项目挑战</td><td>无统一time / resource limit，不应与TB pass@1放一列</td></tr>
+<tr><td>HarborIndex</td><td><a href="index.html#ref-19">Hub rev.5 / 1.4</a></td><td>80任务，困难切片</td><td>初版1.0为82任务；不同版本漏斗与题量分开</td></tr>
+<tr><td>Datacurve DeepSWE</td><td><a href="index.html#ref-22">1.1，2026-09修订</a></td><td>113任务 / 91 repos / 5语言</td><td>Benchmark，与DeepSWE-Preview模型同名不同物</td></tr>
+<tr><td>SWE-bench系列</td><td><a href="index.html#ref-24">具体split及运行日</a></td><td>Verified 500；Lite 300；其他split独立</td><td>Split、agent和turn budget必须写明</td></tr>
+<tr><td>SWE-Gym / R2E / CoderForge / ScienceIDE</td><td><a href="s01_task_synthesis.html#routes">固定论文 / release</a></td><td>训练资源、环境与轨迹系统</td><td>可以有自有held-out评测，但主定位不是统一外部测试集</td></tr>
+<tr><td>Artificial Analysis（AA）</td><td><a href="index.html#ref-27">Intelligence Index 5.0.1</a></td><td>9项评测、4大类各25%</td><td>方法页仍采用TB 4.0；AA不是一个单独task dataset</td></tr>
+</tbody></table>
+<p>Harbor是执行框架，Hub是registry，HarborIndex才是具体benchmark。使用 <code>@latest</code> 的命令可以帮助探索，但正式报告必须记录解析后的revision与manifest。</p>
+</section>
+<section id="terminal">
+<h2>Terminal-Bench、Science、Challenges怎样分工</h2>
+<h3>Terminal-Bench 4.1：修复测量工具也会改变榜单</h3>
+<p>4.0官方说明删除8任务、修复19任务并保留66任务，agent timeout扩到8小时；合作方对修复数另有20项口径，旧快照保留该差异。<a href="index.html#ref-14">[14]</a> 4.1正式release随后修改全部66任务，重点涉及verifier、可复现性和anti-hacking；另提供63项CPU-only集合。<a href="index.html#ref-13">[13]</a></p>
+<pre><code># 官方4.1集合，示例命令；本文未运行
+harbor run -d terminal-bench/terminal-bench@4.1.0
+harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
+
+# 报告还需注明：agent/model、harness版本、budget、trials、sandbox</code></pre>
+<p>训练前后在相同4.1任务及verifier上重跑，才能解释收益。CPU-only集合、旧TB 2.x、当前4.x与AA采用的4.0都要写全；“Terminal-Bench分数”一个名字不足以比较。</p>
+<h3>TB Science 0.1：测专业执行，不只测科学问答</h3>
+<p>首版70题覆盖5领域，任务需要在终端使用专业知识完成可执行产物。提案到发布经历920 proposals → 464 approved → 386 PR → 70 release，各门槛不同，不能把approved当入库题量。官方评测采用每模型3 trials及native harness，结果包含模型与执行系统差异。<a href="index.html#ref-15">[15]</a></p>
+<p>科学任务须区分代码可跑、检查通过、复现某结果与产生新科学发现；TB Sci高分不能单独支持最后一项。构建、数据下载、verifier timeout及数值容差可能造成无声误判。下一版0.2在调研日仍是路线规划，不写成已发布版本。</p>
+<h3>Challenges：长时间项目交付，先比正确性与资源</h3>
+<p>首发Rust Compiler Speedup、Inference Engine Codegolf、WASM WebGL Renderer三项挑战，面向day-scale单项目；提交最终repo与完整自主执行logs，按各任务的正确性或性能协议验收。<a href="index.html#ref-16">[16]</a> 没有统一时间和资源上限，就不适合与固定budget的TB成功率直接合并。</p>
+<p>对Challenges应列wall time、tokens / API cost、计算资源、人类介入、完整日志与产物revision；性能优化先过correctness gate，再按同硬件timing。一次项目成功并不估计某个广泛任务分布的pass@1。</p>
+<table><thead><tr><th>首发challenge</th><th>交付与正确性gate</th><th>性能口径</th></tr></thead><tbody>
+<tr><td>Rust compiler speedup</td><td>Compiler修改；20k+ tests全部通过</td><td>Cachegrind instruction count；52个真实crates，Opt profile，Full / IncrUnchanged / IncrPatched分别测</td></tr>
+<tr><td>Inference engine codegolf</td><td>Kimi K2.5 inference engine，单CUDA文件≤25 KB，16 H100；相对SGLang per-token mean KL≤0.1 nats</td><td>Throughput、TTFT、TPOT分别报告，不能用一个“速度”总数替代</td></tr>
+<tr><td>WASM WebGL renderer</td><td>无browser / GPU / external libs的JS / WASM renderer；2,071 Khronos CTS及three.js / Babylon.js visual regression</td><td>先满足API和渲染正确性；具体测试版本与产物固定</td></tr>
+</tbody></table>
+</section>
+<section id="harbor">
+<h2>HarborIndex：困难切片与迁移一致性</h2>
+<p>初版研究从54个adapter的6,627候选任务形成82题困难切片；当前Hub revision 5 / 1.4是80题。<a href="index.html#ref-17">[17]</a><a href="index.html#ref-18">[18]</a><a href="index.html#ref-19">[19]</a> 初版筛选漏斗用于解释方法，不能把82题原实验计数改成80再称同一结果。</p>
+<p>选择困难切片能拉开前沿系统差异，也会受所用筛选模型、budget及失败定义影响。它不是总体真实用户任务分布，也不是通用潜在能力指数。看结果时同时看SWE、安全、科学、数学与优化分项。</p>
+<table><thead><tr><th>统一框架能做</th><th>还要验证</th><th>报告中保留</th></tr></thead><tbody>
+<tr><td>统一task / job / reward格式</td><td>原生harness与adapter的权限、工具、终止语义、timeout是否一致</td><td>原生与迁移运行协议，paired差异</td></tr>
+<tr><td>统一sandbox及资源配置</td><td>文件交接、数据与依赖是否改变任务</td><td>Image digest、reset、verifier revision</td></tr>
+<tr><td>跨benchmark组织执行</td><td>验收异常、reward hacking、难度选择偏差</td><td>逐任务状态、错误归因、修订与重跑</td></tr>
+</tbody></table>
+<p>当前提交要求每题至少5 trials，并为部分任务固定LLM ensemble judge配置。Judge模型、prompt与版本属于评测工具的一部分；测量工具更新后要保留旧快照或全量重跑。适配执行成功不证明所有环境语义一致。</p>
+</section>
+<section id="deepswe">
+<h2>DeepSWE的两个含义，以及SWE-bench家族</h2>
+<h3>Datacurve DeepSWE v1.1：original tasks + behavioral verifier</h3>
+<p>Benchmark含113 original工程任务，来自91个repo，涉及TypeScript、Go、Python、JavaScript、Rust；采用mini-swe-agent，评估long-horizon工程修改。交付committed diff后，放到干净verifier环境执行行为测试并生成CTRF；不向solver提供future git。<a href="index.html#ref-22">[22]</a></p>
+<p>任务原创新写且不upstream，降低公开旧patch污染风险；“contamination-free”的团队表述不能证明每个模型从未见过全部相关材料。Behavioral tests比匹配参考patch更能接受替代正确实现，但仍会误收 / 误拒；团队的LLM audit不能替代独立真值。版本1.0与1.1的verifier修订要分别看。</p>
+<h3>Together / Agentica DeepSWE-Preview：RL模型 / recipe</h3>
+<p>这是2025-07的Qwen3-32B训练方案，采用约4.5k R2E环境。团队报告42.2% pass@1、71% pass@16、59% hybrid test-time scaling；三个数分别包含不同采样或选择预算。<a href="index.html#ref-23">[23]</a> 不能把它们当Datacurve benchmark成绩，也不能把pass@16写成单次成功率。</p>
+<h3>SWE-bench：真实issue基线与更严格的扩展</h3>
+<table><thead><tr><th>家族</th><th>对象 / 协议</th><th>适合使用</th><th>局限 / 注意</th></tr></thead><tbody>
+<tr><td><a href="index.html#ref-24">SWE-bench Verified / Lite</a></td><td>Verified 500 issues；Lite 300。Repo + issue → patch → tests</td><td>经典repo-agent baseline与训练前后对照</td><td>公开历史patch污染；test completeness；scaffold与budget会影响结果</td></tr>
+<tr><td><a href="index.html#ref-24">Multilingual / Multimodal</a></td><td>各自语言 / 输入形式的独立split</td><td>跨语言或视觉issue泛化</td><td>不是Verified的同难度翻译；勿按名字假定统一题量</td></tr>
+<tr><td><a href="index.html#ref-25">SWE-bench Pro</a></td><td>官方overview：public 731 / private 276 / held-out 858，共1,865，41 repos</td><td>更广工程与隔离集；需写明具体使用split</td><td>旧50-turn / capped-cost与新250-turn / uncapped不同；copyleft不是零污染证明</td></tr>
+<tr><td><a href="index.html#ref-26">SWE-bench-Live</a></td><td>滚动真实issue；扩展MultiLang / Windows；Python lite / verified冻结，test滚动</td><td>带时间边界的近期泛化</td><td>“Live”不代表每个split都月更；引用抓取日期与版本，不拼滚动总数</td></tr>
+<tr><td><a href="s01_task_synthesis.html#routes">SWE-Gym / R2E-Gym / SWE-smith</a></td><td>训练环境与生产方法</td><td>采样、SFT / RL及verifier训练</td><td>训练与最终SWE-bench测试隔离；环境数量不是评测得分</td></tr>
+</tbody></table>
+</section>
+<section id="aa">
+<h2>AA：综合指数怎样组合不同测量</h2>
+<p>AA在本文指Artificial Analysis。2026-11-14方法页为<strong>Intelligence Index v5.0.1</strong>，9评测按4类各25%组合。它仍使用Terminal-Bench 4.0，虽然TB官方最新为4.1；引用AA结果应保留AA自身版本。<a href="index.html#ref-27">[27]</a></p>
+<table><thead><tr><th>类别 / 总权重</th><th>成员与指数权重</th><th>主要评分</th><th>解读</th></tr></thead><tbody>
+<tr><td>Knowledge Work · 25%</td><td>AA-Briefcase 1.1 15%；AutomationBench-AA 5%；GDP.pdf 5%</td><td>产物rubric / pairwise Elo；workflow objective；PDF answer rubric</td><td>工作产物、SaaS状态和文档回答不是同一种单位</td></tr>
+<tr><td>Coding · 25%</td><td>FrontierCode 2.0 15%；TB 4.0 10%</td><td>Tests + rubric blocking gate；terminal pass@1</td><td>AA采用的scaffold、turns、private题与TB版本都要记录</td></tr>
+<tr><td>Science · 25%</td><td>TB Science 0.1 15%；CritPt v2 Hard 10%</td><td>Terminal tests；官方grading server</td><td>专业执行与研究级问题的互补；不等于自主科学发现</td></tr>
+<tr><td>General · 25%</td><td>AA-Omniscience 1.1 15%；HLE-Diamond 10%</td><td>Accuracy / hallucination component；answer equality</td><td>主要英语与文本；仅部分题涉及image，不能替代全面视觉 / 多语评测</td></tr>
+</tbody></table>
+<p>子项pass、Elo与rubric须经AA定义的尺度处理后组合，不能把原始分数直接相加。权重是测量设计选择，不是各能力在所有用户场景中的真实占比；总分相近的系统可能有不同专业缺口。</p>
+<p>GDPval-AA、APEX-Agents-AA、EnterpriseOps-Gym-AA等在该页属于<strong>Additional Evaluations</strong>，不是本版9个指数成员。它们分别扩展专业产物、专业服务与企业工作流；例如EnterpriseOps使用resettable工具环境及SQL outcome检查，GDPval-AA使用pairwise Elo。名称带AA也不表示所有harness、judge与split等同原始benchmark。</p>
+<p>AA一般多次重复后平均pass@1，不能把3 repeats当pass@3；API failure重试、output token上限、reasoning effort、tool access、成本与cache计量也属于协议。对私有题可以核对公开方法，但无法声称已在本站独立复现。</p>
+</section>
+<section id="classics">
+<h2>经典与常用评测：按测量对象快速定位</h2>
+<h3>代码：从函数到真实库调用</h3>
+<table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
+<tr><td><a href="index.html#ref-28">HumanEval</a></td><td>函数补全；unit tests / pass@k</td><td>经典代码生成基线</td><td>小函数 / 已公开题；不代表repo工具执行</td></tr>
+<tr><td><a href="index.html#ref-29">MBPP</a></td><td>自然语言到短Python程序；tests</td><td>基础程序合成与指令理解</td><td>题型较基础；不同prompt / split分别报告</td></tr>
+<tr><td><a href="index.html#ref-30">EvalPlus</a></td><td>强化HumanEval / MBPP测试输入</td><td>发现原测试遗漏的错误</td><td>更强verifier，不是长程Agent environment</td></tr>
+<tr><td><a href="index.html#ref-31">LiveCodeBench</a></td><td>近期竞赛题；生成 / 执行 / 自修复；时间分段</td><td>减少旧题污染并分析时间泛化</td><td>必须注明release window / cutoff；竞赛程序不等于工程agent</td></tr>
+<tr><td><a href="index.html#ref-32">BigCodeBench</a></td><td>复杂指令、多库组合；tests</td><td>实用函数与库使用</td><td>Complete / Instruct设置不同；仍不是完整repo生命周期</td></tr>
+</tbody></table>
+<h3>通用Agent：工具、检索、政策与skills</h3>
+<table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
+<tr><td><a href="index.html#ref-33">AgentBench</a></td><td>多类环境交互；各环境success / score</td><td>早期通用Agent能力地图</td><td>领域权重、工具和harness影响aggregate</td></tr>
+<tr><td><a href="index.html#ref-34">GAIA</a></td><td>多步检索、资料和工具；final answer正确性</td><td>现实助理与信息整合</td><td>Web随时间变化；答案正确不直接评估过程可靠性</td></tr>
+<tr><td><a href="index.html#ref-35">τ-bench / τ²-Bench</a></td><td>用户与agent交互、policy及DB状态；success / pass^k</td><td>客户服务、工具可靠性、协同控制</td><td>τ²允许user和agent共同改变环境；用户模拟器与政策必须固定</td></tr>
+<tr><td><a href="index.html#ref-36">SkillsBench 1.1</a></td><td>87 tasks / 8 domains / 18 paired configurations；有 / 无skill对照</td><td>检验skills是否带来额外能力</td><td>固定模型 / harness / budget；skill曝光与baseline提示强度会影响增益</td></tr>
+</tbody></table>
+<h3>Web与GUI：最终状态、reset与视觉</h3>
+<table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
+<tr><td><a href="index.html#ref-37">WebArena</a></td><td>自托管网站，多步操作；functional state / answer checks</td><td>浏览器工具与Web状态</td><td>同站数据及reset一致；DOM-only不能替代视觉任务</td></tr>
+<tr><td><a href="index.html#ref-38">VisualWebArena</a></td><td>网页视觉与文字联合任务；状态 / 答案验收</td><td>视觉定位和Web行动</td><td>截图、渲染与工具可见面改变结果</td></tr>
+<tr><td><a href="index.html#ref-39">OSWorld</a> / <a href="index.html#ref-40">OSWorld 2.0</a></td><td>真实桌面与跨应用；execution / state checks；2.0说明含108长程任务、31自托管网站</td><td>GUI执行、文件产物及恢复</td><td>1.x / 2.0任务和预算不同；最终文件存在不足以证明所有状态约束</td></tr>
+<tr><td><a href="index.html#ref-41">AndroidWorld</a></td><td>Android apps；参数化初始状态、programmatic reward</td><td>移动端GUI与动态任务变化</td><td>116基础tasks / 20 apps的参数变体不是无限独立families；reset与模拟器固定</td></tr>
+</tbody></table>
+<p>这些评测与作者GUI工作关联在于Setup → Rollout → Verify → Reset；比较Agent能力时先控制应用版本、分辨率、初始附件与可见工具，再区分perception、planning、execution、app defect和infra failure。</p>
+</section>
+<section id="science">
+<h2>科学评测：问答、代码、实验与研究产物</h2>
+<table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
+<tr><td><a href="index.html#ref-42">SciCode</a></td><td>科学问题到代码；子问题及主问题tests</td><td>科学知识与程序实现</td><td>单程序成功不证明自主科研流程</td></tr>
+<tr><td><a href="index.html#ref-43">LAB-Bench</a></td><td>文献、图表、数据库与生物实验相关题；answer accuracy</td><td>研究知识与资料理解</td><td>主要题目回答，不能替代真实工具和wet lab执行</td></tr>
+<tr><td><a href="index.html#ref-44">MLAgentBench</a></td><td>ML任务的探索与实验；完成及性能指标</td><td>代码执行、实验迭代</td><td>固定数据 / budget；metric提升可能依赖任务泄漏</td></tr>
+<tr><td><a href="index.html#ref-45">MLE-bench</a></td><td>Kaggle式ML工程；官方竞赛score / medal threshold</td><td>端到端训练、调参与提交</td><td>Validation / test严格隔离；计算预算与额外数据需申明</td></tr>
+<tr><td><a href="index.html#ref-46">BixBench</a></td><td>生物数据分析与工具；答案 / 分析正确性</td><td>专业数据操作与分析</td><td>不是通用科学发现；原版与后续版本分开</td></tr>
+<tr><td><a href="index.html#ref-47">BixBench 3</a></td><td>20 tasks / 138 artifacts；raw data →研究产物，对原study artifacts程序评分</td><td>多产物科研重建</td><td>Artifacts不是任务数；复建已有研究不等于自主选题或新wet lab发现</td></tr>
+<tr><td><a href="index.html#ref-48">AIRS-Bench</a></td><td>Frontier AI research tasks；valid submission及scientific metric</td><td>AI研究工程与实验</td><td>提交有效与研究指标分列；计算资源、seed与预算必须固定</td></tr>
+<tr><td><a href="index.html#ref-15">TB Science</a> / <a href="s01_task_synthesis.html#science">ScienceIDE</a></td><td>前者为固定科学terminal评测；后者为科学训练环境体系</td><td>专业执行与训练闭环</td><td>二者任务定位不同；本地verifier通过不代表跨学科真实正确</td></tr>
+</tbody></table>
+<p>按“知识回答 → 程序实现 → 实验迭代 → 研究产物”组织留出集更容易定位缺口。成功提交、数值接近、重现论文结论、提出新问题与验证新发现，是不同层次的验收；不要把它们统一写成“科研成功率”。</p>
+<h3>训练后仍保留基础评测</h3>
+<p><a href="index.html#ref-49">MMLU</a>用于学科知识、<a href="index.html#ref-50">GSM8K</a>用于基础多步数学、<a href="index.html#ref-51">IFEval</a>用于程序可验证的指令遵循、<a href="index.html#ref-52">GPQA</a>用于专家级科学问答。它们适合检查Agent训练是否损伤基础能力，不能作为tool use、long-horizon执行或GUI成功的证据。HLE-Diamond与CritPt等更前沿知识 / 科学题的具体设置见AA表。</p>
+</section>
+<section id="metrics">
+<h2>Pass@1、pass@k、pass^k和成本测量不同东西</h2>
+<table><thead><tr><th>指标</th><th>含义</th><th>必须同时报告</th></tr></thead><tbody>
+<tr><td>pass@1 / mean success</td><td>一次独立尝试成功的比例；多次repeats可以平均估计它</td><td>Tasks、trials、seed、budget与失败分母</td></tr>
+<tr><td>pass@k</td><td>k个样本至少一个通过，oracle可识别成功</td><td>Sample budget、成功判定及是否可部署选择</td></tr>
+<tr><td>pass^k</td><td>k次都成功，衡量重复可靠性</td><td>用户模拟、环境变化与尝试相关性</td></tr>
+<tr><td>Best-of-k / verifier selection</td><td>部署时由verifier或critic选一个候选</td><td>Selector版本、验证成本、误判；不等于oracle pass@k</td></tr>
+<tr><td>Rubric / Elo</td><td>多个标准或成对偏好</td><td>Judge、prompt、anchor、顺序随机化及幻觉gate</td></tr>
+</tbody></table>
+<div class="equation" role="math" aria-label="pass指标的独立采样近似">If independent identical trials have success probability p:
+pass@k = 1 − (1−p)^k; pass^k = p^k
+finite-sample pass@k estimate = 1 − C(n−c,k) / C(n,k)</div>
+<p>公式第一行依赖独立同分布假设；真实Agent尝试共享prompt、工具或故障，通常相关。最后一行适用于n个独立采样中c个成功且n≥k的组合估计。若已全部执行3 repeats再平均success，它仍是pass@1估计，不是pass@3。</p>
+<h3>把正确性、有效性与运行成本拆开</h3>
+<p>固定发布题集的headline应保留全部任务分母；invalid task、infra fail、API error、agent timeout、verifier timeout与policy fail分别列出。另报告有效任务上的conditional success，用来解释环境影响，不能静默删除失败让headline上涨。修订题集后用新版本全量重跑。</p>
+<div class="equation" role="math" aria-label="成功成本统计定义">cost per successful episode = total cost of all attempts / successful episodes
+cost = model input/output + tools + sandbox + verifier + environment build
+paired comparison: same tasks, policy budget, hardware and scoring</div>
+<p>失败尝试也消耗预算；全部失败时该比值无定义，应报告0成功及总成本。Environment build可按明示规则摊销，并保留冷 / 热成本。输入与缓存token、client span与server span、重试和工具等待要去重；同时提供episode P50 / P95、任务加权bootstrap区间与逐领域结果。跨模型cache计费不同，token数不是统一美元或FLOPs。</p>
+</section>
+<section id="selection">
+<h2>待执行：为任务合成选择一组互补留出</h2>
+<table><thead><tr><th>训练目标</th><th>核心留出</th><th>补充诊断</th><th>控制项</th></tr></thead><tbody>
+<tr><td>Repo coding</td><td>SWE-bench Verified + 明确split的Pro / Live + DeepSWE</td><td>EvalPlus / BigCodeBench</td><td>Repo / time去污、diff交接、turns及成本</td></tr>
+<tr><td>Terminal / Harbor</td><td>TB 4.1 + HarborIndex固定revision</td><td>CPU-only另表；逐域及adapter parity</td><td>Full与subset分开，verifier修订、trials</td></tr>
+<tr><td>科学protocol</td><td>TB Science 0.1 + 目标领域artifact任务</td><td>SciCode / BixBench / AIRS按对象选择</td><td>数值容差、数据划分、valid submission</td></tr>
+<tr><td>GUI / Web</td><td>OSWorld明确版本 + Web / Android目标域</td><td>失败恢复、state与perception分类</td><td>Reset、分辨率、应用 / 网站版本与权限</td></tr>
+<tr><td>工具与工作流</td><td>τ² / SkillsBench paired任务；对应AA额外项</td><td>政策合规、重复可靠性及产物rubric</td><td>用户模拟、skill曝光、SQL / artifact oracle</td></tr>
+</tbody></table>
+<p>这是按作者方向制定的评测建议，未执行。资源有限时选一个核心真实场景、一个不同环境迁移集与一组基础保留性评测；每次增补任务都记录版本和不可比项。任务生产回到<a href="s01_task_synthesis.html">第01章</a>，算法归因与异质数据回到<a href="../llm-research-map-2026/s02_agentic_rl.html">Agentic RL</a>。</p>
+</section>
+</main>
+</body>
+</html>

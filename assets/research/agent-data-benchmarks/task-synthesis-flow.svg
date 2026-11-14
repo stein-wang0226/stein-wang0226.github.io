@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="367.2pt" viewBox="0 0 864 367.2" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Stein's Notes / research_figures.py</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 367.2
+L 864 367.2
+L 864 0
+L 0 0
+z
+" style="fill: #fcfbf7"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 119.16 197.3556
+L 264.24 197.3556
+Q 265.077 197.3556 265.077 196.524
+L 265.077 105.048
+Q 265.077 104.2164 264.24 104.2164
+L 119.16 104.2164
+Q 118.323 104.2164 118.323 105.048
+L 118.323 196.524
+Q 118.323 197.3556 119.16 197.3556
+z
+" clip-path="url(#p3a9ca7cb54)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 286.56 197.3556
+L 431.64 197.3556
+Q 432.477 197.3556 432.477 196.524
+L 432.477 105.048
+Q 432.477 104.2164 431.64 104.2164
+L 286.56 104.2164
+Q 285.723 104.2164 285.723 105.048
+L 285.723 196.524
+Q 285.723 197.3556 286.56 197.3556
+z
+" clip-path="url(#p3a9ca7cb54)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 453.96 197.3556
+L 599.04 197.3556
+Q 599.877 197.3556 599.877 196.524
+L 599.877 105.048
+Q 599.877 104.2164 599.04 104.2164
+L 453.96 104.2164
+Q 453.123 104.2164 453.123 105.048
+L 453.123 196.524
+Q 453.123 197.3556 453.96 197.3556
+z
+" clip-path="url(#p3a9ca7cb54)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 621.36 197.3556
+L 766.44 197.3556
+Q 767.277 197.3556 767.277 196.524
+L 767.277 105.048
+Q 767.277 104.2164 766.44 104.2164
+L 621.36 104.2164
+Q 620.523 104.2164 620.523 105.048
+L 620.523 196.524
+Q 620.523 197.3556 621.36 197.3556
+z
+" clip-path="url(#p3a9ca7cb54)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 119.16 299.9196
+L 431.64 299.9196
+Q 432.477 299.9196 432.477 299.088
+L 432.477 235.332
+Q 432.477 234.5004 431.64 234.5004
+L 119.16 234.5004
+Q 118.323 234.5004 118.323 235.332
+L 118.323 299.088
+Q 118.323 299.9196 119.16 299.9196
+z
+" clip-path="url(#p3a9ca7cb54)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 453.96 299.9196
+L 766.44 299.9196
+Q 767.277 299.9196 767.277 299.088
+L 767.277 235.332
+Q 767.277 234.5004 766.44 234.5004
+L 453.96 234.5004
+Q 453.123 234.5004 453.123 235.332
+L 453.123 299.088
+Q 453.123 299.9196 453.96 299.9196
+z
+" clip-path="url(#p3a9ca7cb54)" style="fill: #ffffff; stroke: #b37b29; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="fill: #172d35; font: 700 17px 'DejaVu Sans'; text-anchor: start" x="119.16" y="69.012" transform="rotate(-0 119.16 69.012)">From source material to a trainable, executable task</text>
+   </g>
+   <g id="text_2">
+    <text style="fill: #0f766e; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="191.7" y="133.97253" transform="rotate(-0 191.7 133.97253)">Source + protocol</text>
+   </g>
+   <g id="text_3">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'" transform="translate(121.049219 159.04346)">Issue / requirements / paper</text>
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'" transform="translate(132.480469 173.66057)">License + held-out split</text>
+   </g>
+   <g id="patch_8">
+    <path d="M 266.242588 150.5088
+Q 275.401792 150.5088 282.772142 150.5088
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 278.372142 148.3088
+L 282.772142 150.5088
+L 278.372142 152.7088
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_4">
+    <text style="fill: #0f766e; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="359.1" y="133.97253" transform="rotate(-0 359.1 133.97253)">Environment + task</text>
+   </g>
+   <g id="text_5">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'" transform="translate(294.682813 159.04346)">Pinned build / data / state</text>
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'" transform="translate(303.694531 173.66057)">Solver-visible contract</text>
+   </g>
+   <g id="patch_9">
+    <path d="M 433.642588 150.5088
+Q 442.801792 150.5088 450.172142 150.5088
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 445.772142 148.3088
+L 450.172142 150.5088
+L 445.772142 152.7088
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_6">
+    <text style="fill: #0f766e; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="526.5" y="133.97253" transform="rotate(-0 526.5 133.97253)">Independent checks</text>
+   </g>
+   <g id="text_7">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'" transform="translate(471.926562 159.04346)">Oracle + bad controls</text>
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'" transform="translate(468.713281 173.66057)">Clean-sandbox handoff</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 601.042588 150.5088
+Q 610.201792 150.5088 617.572142 150.5088
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 613.172142 148.3088
+L 617.572142 150.5088
+L 613.172142 152.7088
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_8">
+    <text style="fill: #0f766e; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="693.9" y="133.97253" transform="rotate(-0 693.9 133.97253)">Calibrated episodes</text>
+   </g>
+   <g id="text_9">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'" transform="translate(639.538281 159.04346)">Fixed policy + budget</text>
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'" transform="translate(635.129687 173.66057)">Failures + artifact audit</text>
+   </g>
+   <g id="text_10">
+    <text style="fill: #477d9b; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="275.4" y="256.448055" transform="rotate(-0 275.4 256.448055)">Admit by training objective</text>
+   </g>
+   <g id="text_11">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="275.4" y="278.895215" transform="rotate(-0 275.4 278.895215)">CPT: text/masks / SFT: verified actions / RL: repeatable reward</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #b37b29; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="610.2" y="256.49493" transform="rotate(-0 610.2 256.49493)">Keep evaluation independent</text>
+   </g>
+   <g id="text_13">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="610.2" y="278.895215" transform="rotate(-0 610.2 278.895215)">Family/repo/time hold-out; version + trials + cost + attribution</text>
+   </g>
+   <g id="patch_11">
+    <path d="M 692.083878 197.366056
+Q 652.050288 215.927866 613.639596 233.737211
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 618.556806 233.882289
+L 613.639596 233.737211
+L 616.705984 229.89049
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 691.910822 196.708459
+Q 484.651628 215.927849 279.173646 234.982065
+" style="fill: none; stroke: #477d9b; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 283.757986 236.766393
+L 279.173646 234.982065
+L 283.351712 232.38519
+" style="fill: none; stroke: #477d9b; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_14">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="119.16" y="322.3728" transform="rotate(-0 119.16 322.3728)">Editorial synthesis of SWE-Gym / R2E-Gym / ScienceIDE / Harbor; this workflow has not been run here.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p3a9ca7cb54">
+   <rect x="108" y="44.064" width="669.6" height="282.744"/>
+  </clipPath>
+ </defs>
+</svg>

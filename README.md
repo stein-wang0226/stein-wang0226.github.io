@@ -33,6 +33,7 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 | 扩散系列 14 章 | `content/series/dlm-survey/*.html` |
 | LLM 训练全链路 4 章 | `content/series/llm-training-lifecycle/*.html`；专用样式 `assets/site/training-lifecycle.css` |
 | LLM 研究地图 5 章 | `content/series/llm-research-map-2026/*.html`；数据 / RL / 架构 / 推理 / 场景，与训练全链路交叉引用 |
+| Agent 任务合成与 Benchmark 2 章 | `content/series/agent-data-benchmarks/*.html`；52项来源、经典与前沿评测；图表在 `assets/research/agent-data-benchmarks/` |
 | 研究报告原件与引用 | `assets/research/2026-11-14/`；`sources.json` 登记固定版本、来源、许可与 SHA，公开资源登记在 `site.json` |
 | 个人介绍及在线 CV | `content/pages/about.md`、`cv.md` |
 | 论文与精选记录 | `content/publications/*.md`，精选 ID 在 `site.json` |
@@ -49,6 +50,9 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 研究原件保留下载字节，不做文本归一化；`.gitattributes` 将归档PDF标记为二进制，
 并保留官方许可原有换行。添加报告后同步登记来源、署名、许可、长度和SHA，
 以及 `site.json` 的公开资源；不要用下载时间代替论文版本。
+
+架构与任务合成SVG由 `python3 scripts/research_figures.py` 生成（调用解释器需有matplotlib，
+不属于站点构建依赖）。脚本从专题入口生成来源JSON；数值图为规格推导，CSV与JSON保留分项。
 
 ## 检查和发布
 

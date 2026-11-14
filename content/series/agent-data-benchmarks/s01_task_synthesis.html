@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>可执行任务合成：环境、独立验证、轨迹与训练准入</title>
+<meta name="description" content="比较十二种Agent任务与数据合成路线，深入Harbor合同、ScienceIDE科学验收、失败轨迹与critic、CPT/SFT/RL准入，连接AutoResearch和GUI履历。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="objects">
+<p class="eyebrow">01 · Executable task synthesis · 2026-11-14</p>
+<h2>从“生成问题”到“生产可学习任务”</h2>
+<p class="lead">Agent数据合成的关键产物是一个可重复执行、结果可独立检查的任务系统。问题文本、依赖环境、初始状态、可见资源、solver权限、verifier和轨迹必须形成一致的合同；否则“失败”无法区分能力不足、环境损坏与验收错误。</p>
+<figure>
+<object class="research-chart layers" type="image/svg+xml" data="../assets/research/agent-data-benchmarks/task-synthesis-flow.svg" aria-label="任务资料到环境验证校准与训练数据的流程"><p>资料与专家协议 → 可执行环境及task → 独立检查 → 受控episodes → CPT / SFT / RL准入；固定benchmark始终留出。</p></object>
+<figcaption>综合SWE-Gym、R2E-Gym、ScienceIDE与Harbor的机制整理，属于编辑归纳；不是本次已执行的流水线。</figcaption>
+<p class="figure-links"><a href="../assets/research/agent-data-benchmarks/task-synthesis-flow.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
+</figure>
+<table><thead><tr><th>生产单位</th><th>最小内容</th><th>常见错位</th></tr></thead><tbody>
+<tr><td>Source</td><td>Issue、commit、论文、需求或专家protocol；来源与许可</td><td>Source记录数当作可执行任务数</td></tr>
+<tr><td>Environment</td><td>固定依赖、数据、构建与初始状态</td><td>镜像构建成功就称任务正确</td></tr>
+<tr><td>Task</td><td>问题、环境、独立verifier、资源与时间限制</td><td>一个环境的任务变体当作独立能力family</td></tr>
+<tr><td>Episode / trajectory</td><td>策略版本、动作、工具结果、产物、reward和成本</td><td>同任务重复采样数量当作覆盖扩张</td></tr>
+</tbody></table>
+<p>公开评测集用于固定留出；合成资源可有自己的held-out split，但不能因此直接替代最终benchmark。评分协议见<a href="s02_benchmark_map.html#metrics">第02章</a>。</p>
+</section>
+<section id="routes">
+<h2>十二条路线：改变的是来源、验收还是分布</h2>
+<p>下面比较生产机制，不跨论文拼接SWE-bench分数排名。数字固定到引用版本；训练收益同时依赖基础策略、scaffold、采样预算及训练配方。</p>
+<table><thead><tr><th>路线 / 来源</th><th>怎样构造</th><th>报告规模与对象</th><th>验收与学习启示</th></tr></thead><tbody>
+<tr><td><a href="index.html#ref-1">SWE-Gym [1]</a></td><td>真实issue → 可执行仓库环境 → tests → agent / outcome verifier</td><td>2,438 tasks，11个Python repos；Raw 64,689项缺完整环境</td><td>先把真实问题变成可运行任务；不能把Raw数量视为同等成熟任务</td></tr>
+<tr><td><a href="index.html#ref-2">R2E-Gym v1 [2]</a></td><td>SweGen从commit及F2P tests反译任务；execution与execution-free verifier</td><td>Full 8,135；去SWE repos subset 4,578</td><td>Test / fix patch与初始状态一致；后续8.7k快照不覆盖v1计数</td></tr>
+<tr><td><a href="index.html#ref-3">SWE-smith [3]</a></td><td>可运行repo → 引入缺陷 → 用测试产生repair任务</td><td>大规模mutation-derived tasks；以固定原论文为机制依据</td><td>语法通过不足，需bad状态失败 / repaired状态通过的行为对照</td></tr>
+<tr><td><a href="index.html#ref-4">SWE-Universe [4]</a></td><td>PR提取，test / fix patch分离；bug / fixed双状态；in-loop hacking detector</td><td>807,693 multilingual instances，超过52,000 repos</td><td>是论文报告规模；不能据此写成所有实例均完整公开可下载</td></tr>
+<tr><td><a href="index.html#ref-5">daVinci-Env [5]</a></td><td>OpenSWE环境工厂，Docker构建、质量筛选，再收集轨迹</td><td>45,320 environments，超过12.8k repos；筛后约9k environments / 13k trajectories</td><td>环境建设与轨迹采样成本分列；三个数量不是互换分母</td></tr>
+<tr><td><a href="index.html#ref-6">CoderForge-Preview [6]</a></td><td>汇集任务，OpenHands 0.52.1 + Qwen3-Coder-480B采样，测试标注</td><td>51,201 tasks / 1,655去重repos；258,134 trajectories，其中155,144 pass</td><td>成功用于行为训练，失败可用于critic；来源repo重叠，不能相加</td></tr>
+<tr><td><a href="index.html#ref-7">NexForge [7]</a></td><td>Requirement-driven synthesis，由需求约束环境与成功条件</td><td>重点在需求覆盖与可执行任务生产</td><td>从真实issue分布扩到目标需求；scaffold变化也能改变baseline</td></tr>
+<tr><td><a href="index.html#ref-8">EvoSyn [8]</a></td><td>策略失败反馈调整generation space，并重分配space内预算</td><td>两个维度：扩大生成空间 / 已有空间内调度</td><td>固定budget和held-out判断收益；防止反复追逐verifier漏洞</td></tr>
+<tr><td><a href="index.html#ref-9">ProgramGym [9]</a></td><td>Paper → executable program reproduction environment</td><td>长程程序复现任务</td><td>代码能跑、达到指标、复现论文结论须分级验收</td></tr>
+<tr><td><a href="index.html#ref-10">ScienceIDE [10]</a></td><td>专家定义可观察科学行为，specialize环境工厂与verifier</td><td>27 codebases / 64 environments / 2,812 tasks；Hard 85</td><td>科学容差与invariant比文件存在重要；下节展开</td></tr>
+<tr><td><a href="index.html#ref-11">SWE-Critix [11]</a></td><td>成功 / 失败差异分析 → critic SFT → GRPO</td><td>报告all-test label accuracy 57% → 66% → 78%</td><td>这是预测测试标签，不是78%真实代码或科学正确率</td></tr>
+<tr><td><a href="index.html#ref-12">DeepSeek V4.1 [12]</a></td><td>Task triplet、general failure回放、mock tool；多角色coding构建 / 检查 / 修订</td><td>工业团队数据工程报告，§5.1.1</td><td>模型自造任务仍不完美；数据收益不证明训练算法普遍无价值</td></tr>
+</tbody></table>
+<h3>路线的选择应由缺口决定</h3>
+<p>已有真实问题但环境不稳定，优先做SWE-Gym / daVinci式环境工程；repair任务缺量，用commit逆向与mutation，但控制分布偏移；目标技能在旧issue中缺失，用NexForge / 专家protocol；训练停滞时，用EvoSyn分析生成空间覆盖与预算；reward稀疏而验收昂贵时，学习critic辅助筛选，并保持独立可执行验证。</p>
+<p class="note">同一recipe可能结合多条路线。任务数量不代表information gain：同repo的近重复patch、模板变体及同策略重复rollout应分别计数。</p>
+</section>
+<section id="contract">
+<h2>Harbor任务合同：让solver与verifier看到不同资源</h2>
+<p>Harbor提供运行与交接约定；它本身不是benchmark。任务包至少包括说明、配置、environment、参考solution与tests。<a href="index.html#ref-20">[20]</a> 将独立verifier放入干净sandbox时，必须显式交接允许的产物；不能假设solver随手写入的任意文件或运行状态自动出现在验收环境。<a href="index.html#ref-21">[21]</a></p>
+<pre><code>task/
+  instruction.md          # solver可见：目标、输入、交付约束
+  task.toml               # 环境 / agent / verifier资源与deadline
+  environment/Dockerfile  # 固定base image与依赖
+  solution/solve.sh        # 校准用oracle，solver不可见
+  tests/test.sh            # 独立验收入口
+  tests/check_result.py    # 行为、数值或状态检查
+
+audit/                    # 此处为建议的审计伴随产物，非Harbor必需字段
+  source.json             # 来源、license、repo/revision及family
+  calibration.json        # oracle / bad / alternative结果
+  artifact-manifest.json  # 允许交接的文件与hash</code></pre>
+<p class="note">这是目录示意，没有随本文发布一套已校准task。审计字段属于建议扩展；实际配置名称按所用Harbor版本的schema核对。</p>
+<table><thead><tr><th>边界</th><th>最低检查</th><th>典型错误</th></tr></thead><tbody>
+<tr><td>构建与reset</td><td>离线可重建、冻结输入、清洁初始状态、重复reset一致</td><td>残留产物、未来git、依赖更新改变难度</td></tr>
+<tr><td>solver可见面</td><td>可见目录 / 工具 / 网络白名单，排除答案和隐藏tests</td><td>solution、test patch或缓存含参考答案</td></tr>
+<tr><td>产物交接</td><td>明确文件、diff或状态；干净verifier重建后检查</td><td>只在solver环境中test通过，交付物不能复现</td></tr>
+<tr><td>验收独立性</td><td>oracle通过；bad控制失败；替代正确解可接受</td><td>测试特定实现风格，或solver能改reward写入逻辑</td></tr>
+<tr><td>资源与时间</td><td>区分agent deadline、verifier计算预算与outer deadline</td><td>timeout当普通wrong reward；共享CPU噪声影响性能验收</td></tr>
+</tbody></table>
+<p>Oracle仅证明至少一条已知解有效，不能证明问题无歧义或verifier完整。多个judge出自同一答案模板也不能视为独立证据；补充构造坏解、不同算法与clean rebuild比重复问同一个judge更有价值。</p>
+</section>
+<section id="science">
+<h2>科学任务：把专家protocol变成可观察验收</h2>
+<p>ScienceIDE把专家知识落到模块、输入输出、可观察行为和数值容差，再生成环境工厂；报告的2,812 tasks包括2,515 repair、295 implementation、2 acceleration，七类taxonomy并不表示七类等量生产。<a href="index.html#ref-10">[10]</a></p>
+<div class="flow" aria-label="专家协议到科学验收">
+<div class="stage"><b>定科学对象</b><small>数据、模型、单位、假设<br>什么结果有科学意义</small></div>
+<div class="stage"><b>选observable</b><small>函数输出、守恒、趋势<br>可比较的研究产物</small></div>
+<div class="stage"><b>定容差 / invariant</b><small>数值稳定与可接受误差<br>冻结检查配置</small></div>
+<div class="stage"><b>正 / 坏 / 变体校准</b><small>跨build重复、替代解<br>检测漏洞和过窄约束</small></div>
+</div>
+<h3>数值接近不等于科学结论成立</h3>
+<div class="equation" role="math" aria-label="pointwise数值容差">pointwise: |candidate − reference| ≤ absolute_tol + relative_tol × |reference|
+invariant: units / conservation / monotonicity / boundary conditions</div>
+<p>Pointwise检查适合确定性数组或标量；invariant能接受不同实现而保留物理约束。近零参考值需要absolute tolerance；随机算法固定seed并考虑分布统计；不同CPU / 库导致的小差异不能被误判为推理失败。另一方面，最终指标一致也可能掩盖数据泄漏、错误单位或只针对测试输入硬编码。</p>
+<table><thead><tr><th>任务</th><th>有效性检查</th><th>科学检查</th><th>坏控制</th></tr></thead><tbody>
+<tr><td>数值程序repair</td><td>导入、运行、输出schema</td><td>边界值、误差、稳定性或守恒</td><td>常数输出、错单位、仅修一个test</td></tr>
+<tr><td>论文程序复现</td><td>代码可跑、产物可读</td><td>数据划分、核心metric、消融方向</td><td>读取held-out答案、错误baseline、只重述结论</td></tr>
+<tr><td>科学数据分析</td><td>数据来源与预处理可追溯</td><td>统计假设、图表与研究产物一致</td><td>标签泄漏、错误聚合、无依据显著性</td></tr>
+<tr><td>加速任务</td><td>相同输入下结果正确</td><td>固定硬件、编译、warmup与重复timing</td><td>删计算、减精度超容差、缓存测试答案</td></tr>
+</tbody></table>
+<p>ScienceIDE的repair reward可按 <code>max(0, (r−f)/(1−f))</code> 计算，r为测试通过比例、f为faulty baseline比例；它奖励相对修复进展，须处理f=1的无有效缺陷情况。Timeout、构建故障与graded failure应分列。其bounded / filtered训练cohort的结果不能推出全科学领域有效。ProgramGym和BixBench 3也分别强调复现与研究产物，见<a href="s02_benchmark_map.html#science">下一章</a>。</p>
+</section>
+<section id="industrial">
+<h2>需求合成、闭环扩张与失败回收</h2>
+<h3>NexForge / EvoSyn：覆盖扩张与预算调度分开</h3>
+<p>NexForge从需求出发补任务覆盖；EvoSyn用当前策略的不足调整generation space，同时决定已有space的采样预算。<a href="index.html#ref-7">[7]</a><a href="index.html#ref-8">[8]</a> 二者都需要固定留出集：若生成器与verifier一起演化，训练reward提升可能只代表学会迎合新增判定规则。</p>
+<p>实际对照可分别设置固定空间 / 固定预算、只调预算、只扩空间、两者一起变化；固定基础policy、harness和训练tokens，报告逐family的覆盖、有效组比例与成本。难度应来自多策略受控rollout及专家分析；单一弱solver全失败既可能是真难，也可能是坏task。</p>
+<h3>DeepSeek V4.1：多角色生产与独立检查</h3>
+<p>§5.1.1描述task triplet、general失败回放和mock tool；coding侧把build、test、solve、independent inspect和repair loop拆成角色，以修复不可靠任务。<a href="index.html#ref-12">[12]</a> 角色分离减少同一路径自证，但如果各角色共享参考答案、判断模板或模型偏差，仍需独立测试和坏控制。报告承认自造任务能力不完美。</p>
+<h3>失败轨迹可以训练critic，但标签质量仍是上限</h3>
+<p>CoderForge公开成功与失败轨迹；SWE-Critix利用差异分析训练critic，报告all-test预测accuracy从57%到66%再到78%。<a href="index.html#ref-6">[6]</a><a href="index.html#ref-11">[11]</a> 这些标签来自特定测试协议，不能换成“真实正确率”。论文Table II中R2E子集SFT表现更差，说明跨源异质性必须分项看。</p>
+<p>Execution-based检查与execution-free critic互补：后者可廉价做排序、预筛和预算分配，但可能偏好长解释或特定patch风格。保留小规模独立执行校准，检查false accept / reject、逐源泛化与reward hacking，再决定是否用critic替代昂贵验证。</p>
+</section>
+<section id="admission">
+<h2>同一批episode，进入CPT、SFT、RL的规则不同</h2>
+<table><thead><tr><th>用途</th><th>准入重点</th><th>loss / feedback对象</th><th>不应直接使用</th></tr></thead><tbody>
+<tr><td>CPT / midtraining</td><td>来源、去重、文本 / 工具轨迹格式及能力回放</td><td>角色与工具observation mask按目标设计</td><td>把所有工具输出当作模型动作监督</td></tr>
+<tr><td>SFT</td><td>有效示范、动作合法、结果可复验、角色mask</td><td>目标assistant动作与回答tokens</td><td>失败episode整段直接当正确动作；隐藏答案进入prompt</td></tr>
+<tr><td>RL</td><td>反复reset、稳定reward、预算与难度可控</td><td>On-policy actions、reward、advantage</td><td>坏环境产生惩罚；只追训练verifier导致reward hacking</td></tr>
+<tr><td>Critic / preference</td><td>成功失败标签、对比路径及理由可核对</td><td>Outcome / pair / step标签</td><td>自写理由作为因果真值；混淆测试通过和科学正确</td></tr>
+</tbody></table>
+<pre><code># 示意记录：不含真实内部task或episode
+task_id, family, source_revision, environment_digest, verifier_revision
+policy_revision, harness_revision, seed, attempt_index
+status = pass | policy_fail | invalid_task | infra_fail | timeout
+reward, artifact_hash, target_tokens, tool_calls, wall_time, total_cost
+split = train | validation | fixed_test</code></pre>
+<p>Family / repo / time层留出优于只按issue ID去重；例如同仓库相邻commit可能共享目标函数，模板任务也可能暴露同一答案结构。CoderForge的issue / base revision去污是有用措施，但不能单独证明所有这些泛化层次。架构、mock fidelity、渲染和工具权限也需要控制，避免训练与真实执行语义不一致。</p>
+<p>异质GRPO进一步需要看success-rate分布、零方差组比例、逐域advantage与轨迹长度。数据量增加而有效更新组减少时，优先校准任务和采样，再换算法。机制与公式见<a href="../llm-research-map-2026/s02_agentic_rl.html#heterogeneity">Agentic RL章节</a>；训练mask见<a href="../llm-training-lifecycle/s02_midtraining.html">CPT / Midtraining</a>。</p>
+</section>
+<section id="resume">
+<h2>与我的Harbor / GUI工作怎样对应</h2>
+<p>下面是公开履历材料与文献机制的对应。<strong>项目规模来自作者提供的简历，论文提供方法参照，不能当作内部项目成绩的外部证明。</strong> 原任务包、内部数据和私有执行记录不在本文公开。</p>
+<table><thead><tr><th>履历事实</th><th>对应研究问题</th><th>可公开学习总结</th><th>证据边界</th></tr></thead><tbody>
+<tr><td><a href="../cv/#autoresearch">AutoResearch</a>：expert Skill / Protocol → audit / synthesis / calibration / rollout / refinement / SFT；2,000+ Harbor task packages</td><td>专家知识如何落到可靠任务</td><td>合同、独立oracle、坏控制、修订原因与版本链</td><td>作者简历陈述；packages不是2,000个独立family</td></tr>
+<tr><td>Qwen3.8-27B SFT验证；简历称TB相关表现改善，未提供数值</td><td>训练收益如何归因</td><td>固定策略 / 预算对照、逐域结果、任务质量消融</td><td>不补造提升百分比；TB Sci仅一轮review通过，不写accepted或正式入库</td></tr>
+<tr><td><a href="../cv/#gui-agent">GUI工作</a>：Setup → Rollout → Verify → Reset；9,641 trace events审计</td><td>状态、失败归因与reward稳定性</td><td>初始VM状态、artifact和GUI约束、真实失败转RL task</td><td>Events是trace审计量，不是任务数；截图或文件存在不足以证明完成</td></tr>
+</tbody></table>
+<p>可以把简历中的“数据合成”拆成来源建模、环境工程、验收设计、校准与数据准入五个可解释能力。科学任务重点是observable与容差；GUI重点是状态与恢复。具体研究履历保持在CV唯一源，本文只提供公开机制总结。</p>
+</section>
+<section id="experiments">
+<h2>待执行：一个能解释结果的最小对照</h2>
+<ol>
+<li>选3类family：真实repair、需求implementation、科学protocol；固定train / validation / test，记录来源、repo和时间边界。</li>
+<li>先做oracle、bad、alternative、clean rebuild校准，冻结verifier；invalid task与infra fail单列。</li>
+<li>固定policy / harness及总预算，对比原始合成、加入坏控制、加入失败修订、加入生成空间扩张。记录建设与采样两类成本。</li>
+<li>相同训练配置跑小规模SFT或RL，报告逐family成绩、有效组比例、失败归因及成本；保留泛用指令 / 知识评测防遗忘。</li>
+<li>在固定外部benchmark上评测，按下一章协议报告版本、trials、uncertainty及成功成本。</li>
+</ol>
+<p>本次完成公开文献研究与方案归纳，以上实验未执行。继续阅读<a href="s02_benchmark_map.html">经典与前沿Benchmark地图</a>，确定最终测量对象和可信边界。</p>
+</section>
+</main>
+</body>
+</html>

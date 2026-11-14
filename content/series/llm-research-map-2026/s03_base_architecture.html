@@ -40,6 +40,13 @@
 <figcaption>概念流程，不是逐算子kernel图。重要限制：prefill不能画成“完全不走decoder”；decoder的SWA局部状态仍需重建。Decode 16B active也不能当作prefill 8B的重复计数。</figcaption>
 </figure>
 <p>学习时应把它接到已有<a href="../transformer-decoder-flow.html">Decoder张量流</a>：普通decoder通常逐层保存自己的KV；CED先改变global KV来源，再通过跨层复用减少存储与重复计算。具体Q、KV、SWA和indexer的所有权要分开画。</p>
+<h3>张量来源：global C / Z 与本层 Q / SWA</h3>
+<p>Hidden维度为5120。Decoder的Full层从末层encoder表示 <code>H₂₀</code>生成global latent <code>Cₗ = H₂₀ Wₗᴷⱽ</code> 与压缩权重 <code>Zₗ = H₂₀ Wₗᶻ</code>；本层query和SWA KV仍由本层hidden产生。C / Z是压缩表示及其权重，不能画成传统独立K和V两份等长缓存。主Attention有64个query heads、512 channels，query compression维度1280；indexer有32个query heads、128 channels。<a href="index.html#ref-1">[1] §2.2–2.3</a></p>
+<figure>
+<object class="research-chart wide" type="image/svg+xml" data="../assets/research/agent-data-benchmarks/ced-path.svg" aria-label="CED global缓存与局部SWA张量来源图"><p>图示内容：长prompt → 20层encoder → decoder global投影；尾部encoder输出重放产生decoder SWA；新token通过完整encoder与decoder。</p></object>
+<figcaption>按报告张量所有权整理。Prefill主计算使用encoder，不必对整个长prefix执行完整decoder；尾部decoder replay仍存在。图中连线表示依赖，不表示GPU调度顺序。</figcaption>
+<p class="figure-links"><a href="../assets/research/agent-data-benchmarks/ced-path.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
+</figure>
 </section>
 <section id="csa2">
 <h2>CSA2：共享KV、重算索引和复用候选是三件事</h2>
@@ -53,6 +60,17 @@
 </table>
 <p>CSA2减少跨层冗余，但<strong>共享KV不等于所有层做相同Attention</strong>：各层仍有自己的query和局部SWA。Decoder的hierarchical indexing让后续索引在首层候选池内扫描，第一层仍需扫描全文，不能宣称所有indexing成本变成O(1)。<a href="index.html#ref-1">[1] §2.3</a></p>
 <p>分析算力时至少区分KV projection、候选检索、选中位置的Attention和SWA四部分；“稀疏Attention”一个标签不能说明总复杂度。实现性能还取决于候选大小、跨层计划、内存访问与kernel，而不只取决于理论乘加次数。</p>
+<h3>40层的实际计划</h3>
+<figure>
+<object class="research-chart layers" type="image/svg+xml" data="../assets/research/agent-data-benchmarks/csa2-layer-plan.svg" aria-label="CSA2四十层Full Reindex Reuse计划"><p>Encoder：前两层SWA-only，其余3组各6层，Full + Reuse×5。Decoder：5组各4层，首组Full + Reuse×3，之后每组Reindex + Reuse×3。</p></object>
+<figcaption>层号采用1–40表示；encoder压缩比m=2，decoder为m=1。Decoder的5个计算组共用一个global cache，不能把它们算成5份KV。来源：[1] §2.3。</figcaption>
+<p class="figure-links"><a href="../assets/research/agent-data-benchmarks/csa2-layer-plan.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
+</figure>
+<h3>Hierarchical indexer：先选block，再在池内重排</h3>
+<p>在<strong>decode中的decoder</strong>，首个Full仍对全局历史扫描，把位置按8个一组组成block，按block内最高indexer score筛出最多2048组，得到最多16384位置的候选池。后续4个Reindex按各层query在该池内选top-512；Reuse沿用所选位置。SWA独立处理最近128位置。首扫描仍随历史N增长；后层扫描受候选池上限约束，不能把整体写成O(1)。这一decode优化在post-training引入，报告强调训练与推理采用一致流程。<a href="index.html#ref-1">[1] §2.3.2</a></p>
+<div class="equation" role="math" aria-label="hierarchical indexing候选规模">first global scan: O(N)
+candidate pool ≤ 2048 blocks × 8 positions = 16384
+later Reindex: select 512 from this pool; Reuse: no new index selection</div>
 </section>
 <section id="cache">
 <h2>890 bytes/token究竟包括什么</h2>
@@ -66,8 +84,40 @@
 </tbody>
 </table>
 <p>以上固定到报告摘要、§2.4、§3.2。FP4是精度 / 存储设计的一环；压缩后的KV访问与反量化也有计算和带宽成本，需要实际profile。<a href="index.html#ref-1">[1]</a></p>
+<h3>FP4格式：主KV与indexer用不同scale</h3>
+<table>
+<thead><tr><th>对象</th><th>数值 / scale规格</th><th>每entry规格字节</th><th>量化与使用</th></tr></thead>
+<tbody>
+<tr><td>Main KV，512 channels</td><td>E2M1 4-bit；每16值一个E4M3 8-bit scale</td><td>512÷2 + 512÷16 = <strong>288 B</strong></td><td>RoPE后量化；post-training QAT；读出反量化。省略标准NVFP4的第二级全局scale</td></tr>
+<tr><td>Indexer K，128 channels</td><td>OCP MXFP4：E2M1；每32值一个E8M0 8-bit scale</td><td>128÷2 + 128÷32 = <strong>68 B</strong></td><td>格式与主KV不同，不能一律按16值scale计费</td></tr>
+<tr><td>SWA局部KV</td><td>FP8</td><td>另计，未加入890 B/token</td><td>窗口128，仍有各层state及重建成本</td></tr>
+</tbody>
+</table>
+<p>本节讲<strong>KV存储</strong>。不能据此声称全模型权重、GEMM或所有激活已变成FP4。NVIDIA标准NVFP4还使用per-tensor FP32 scale；DeepSeek省略该级，布局并非完全相同。格式补充来源：<a href="https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf">OCP MX v1.0规范</a>、<a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">NVIDIA NVFP4格式说明（2025-06-24）</a>。</p>
+<h3>890 B/token的逐项推导</h3>
+<div class="equation" role="math" aria-label="890 bytes每token推导">main + indexer = 288 + 68 = 356 B/entry
+encoder: 3 cache groups × (1 entry / 2 tokens) = 1.5 entries/token
+decoder: 1 shared cache × (1 entry / token) = 1 entry/token
+global total = (1.5 + 1) × 356 = 890 B/token</div>
+<figure>
+<object class="research-chart wide" type="image/svg+xml" data="../assets/research/agent-data-benchmarks/global-kv-bytes.svg" aria-label="890 bytes每token的四组缓存组成柱状图"><p>三个encoder缓存组各178 B/token，加一个decoder共享缓存组356 B/token，总890 B/token。</p></object>
+<figcaption><strong>规格推导值</strong>与报告摘要890相符，图中没有GPU实测值。采用长序列近似，未计尾部block、alignment、allocator、SWA、weights、Engram、workspace及分片复制；不是完整显存预算。</figcaption>
+<p class="figure-links"><a href="../assets/research/agent-data-benchmarks/global-kv-bytes.svg" target="_blank" rel="noopener">放大查看 / SVG</a><a href="../assets/research/agent-data-benchmarks/global-kv-bytes.csv" download>下载分项 CSV</a><a href="../assets/research/agent-data-benchmarks/figure-data.json">规格与推导 JSON</a></p>
+</figure>
 <h3>Bounded replay：用计算换存储</h3>
 <p>持久缓存可以保留更紧凑的global表示，恢复时重跑尾部以近似重建decoder局部状态。§3.2.2报告其质量影响小，但这是bounded replay的近似storage–compute trade-off，不能称为bit-exact重建。</p>
+<table>
+<thead><tr><th>重放对象</th><th>触发与输入</th><th>写入 / 保留</th><th>状态恢复边界</th></tr></thead>
+<tbody>
+<tr><td>Encoder SWA</td><td>global cache命中、SWA未命中；重放cached prefix最后128 tokens</td><td>只补SWA，不覆盖已缓存global；uncached suffix产生global及SWA。短TTL host池仍使用约10% host DRAM保留encoder SWA</td><td>逐层exact恢复的依赖范围理论上L×W；实际只重放W</td></tr>
+<tr><td>Decoder SWA</td><td>每次prefill，取最后128位置encoder outputs过decoder</td><td>得到decode用SWA；从不作为prefix cache长期保存</td><td>理论依赖L_dec×W；实际bounded replay为W，同样是近似状态</td></tr>
+</tbody>
+</table>
+<figure>
+<object class="research-chart replay" type="image/svg+xml" data="../assets/research/agent-data-benchmarks/bounded-replay.svg" aria-label="encoder与decoder bounded replay区别"><p>Encoder在global命中而SWA未命中时补局部状态；decoder每次prefill重放encoder尾部输出，局部state只用于decode。</p></object>
+<figcaption>Global压缩降低HBM驻留；不长期保存SWA进一步降低host / SSD persistent cache。约1/4与约1/8分别属于不同对象，不能相乘。</figcaption>
+<p class="figure-links"><a href="../assets/research/agent-data-benchmarks/bounded-replay.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
+</figure>
 <p>对多轮Agent，缓存命中后往往只有短工具返回，却仍要恢复局部状态；长输入、短输出与大量轮次下，replay、host / SSD IO和排队可能成为显著成本。长prompt的单次prefill加速不能直接替代端到端Agent实验。</p>
 <div class="equation" role="math" aria-label="Agent推理延迟的概念分解">T_episode ≈ Σ_turn (T_prefill_new + T_cache_IO + T_replay + T_decode + T_tool + T_queue)</div>
 <p class="note">这是观测项的概念分解；实际系统可能重叠计算、IO和工具等待，不能把重叠span直接累加。计费去重见<a href="s01_agent_data_bench.html#audit">第01章</a>。</p>
@@ -85,6 +135,17 @@
 </tbody>
 </table>
 <p>这些层可以协作，但不能相互替代：参数记忆不自动保证事实可追溯，长KV不自动实现跨任务持续学习，skill文件增长不等于参数能力增长。场景验收见<a href="s05_agent_frontiers.html#adaptation">第05章</a>。</p>
+<h3>MoE、mHC与Engram的实现规格</h3>
+<table>
+<thead><tr><th>模块</th><th>报告规格与机制</th><th>直接影响与限制</th></tr></thead>
+<tbody>
+<tr><td>MoE</td><td>每层1 shared + 384 routed experts，激活6 routed；expert intermediate维度2304</td><td>稀疏激活降低计算，参数存储与专家通信仍存在；active参数不是设备驻留参数</td></tr>
+<tr><td>Single-Pass mHC</td><td>Expansion n=4，Sinkhorn 20步；使用上一block的A，activation traffic从(4n+4)d到(2n+2)d，即20d→10d</td><td>是该映射activation traffic减少50%，不是模型总时间或显存减少50%</td></tr>
+<tr><td>Engram</td><td>196B；zero-indexed层1 / 14两个模块；n-gram {2,3,4}，8 hash heads，FP8 lookup</td><td>Inference通过host RDMA预取；RL rollout为吞吐在GPU驻留，两种放置不可直接互换容量估算</td></tr>
+<tr><td>CSA2分布式训练</td><td>Shadow indexer采用单一logical owner，管理pipeline payload与microbatch生命周期</td><td>跨层共享缓存会穿越分布式边界，需明确张量所有权和释放时间；机制图不等于零通信开销</td></tr>
+</tbody>
+</table>
+<p>来源：[1] §2.1、§2.4.1、§3.1.2–3.2.1、§4.2.1。学习上可以把“参数稀疏 / 状态压缩 / 跨层复用 / 存储放置”作为四个独立维度，逐一连接已有分布式训练章节。</p>
 </section>
 <section id="alternatives">
 <h2>另一条基模路线：Kimi K3与Nemotron</h2>
@@ -106,7 +167,7 @@
 <li>在开放实现允许时消融缓存 / replay / 索引计划；不把不存在的可配置项假装成已经完成的实验。</li>
 <li>固定工具、题集与总生成预算，同时报告成功率、工具错误、成本和长上下文质量；改变缓存策略后重新验收输出。</li>
 </ul>
-<p>本章仅完成原报告拆解，实验未执行。推理预算和扩散drafter继续见<a href="s04_inference_diffusion.html">下一章</a>；V4.1的任务生产见<a href="s01_agent_data_bench.html#synthesis">第01章</a>，异步训练见<a href="s02_agentic_rl.html#asynchrony">第02章</a>。</p>
+<p>本章仅完成原报告拆解，实验未执行。推理预算和扩散drafter继续见<a href="s04_inference_diffusion.html">下一章</a>；V4.1的任务生产见<a href="../agent-data-benchmarks/s01_task_synthesis.html#industrial">任务合成专题</a>，benchmark版本与验收口径见<a href="../agent-data-benchmarks/s02_benchmark_map.html">评测地图</a>，异步训练见<a href="s02_agentic_rl.html#asynchrony">第02章</a>。</p>
 </section>
 </main>
 </body>

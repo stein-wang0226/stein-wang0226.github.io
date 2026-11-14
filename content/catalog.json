@@ -2,6 +2,48 @@
   "schema_version": 1,
   "entries": [
     {
+      "id": "agent-data-benchmarks",
+      "kind": "series",
+      "title": "Agent 任务合成与 Benchmark：训练数据到可靠评测",
+      "summary": "两章比较可执行任务合成、科学验收与训练准入，深入 Terminal-Bench / Science / Challenges、HarborIndex、DeepSWE、SWE-bench、AA；附经典代码、Web、GUI、科学评测速查与52项来源。",
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "url": "/agent-data-benchmarks/",
+      "topic": "agent", "type": "series-tutorial",
+      "tags": ["Agent", "Data Synthesis", "Benchmark", "Harbor", "Terminal-Bench", "DeepSWE", "SWE-Gym", "AA", "ScienceIDE", "GUI"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": null, "order": null, "featured": true,
+      "related": ["llm-research-map-2026", "llm-training-lifecycle", "agent-harness-guide"]
+    },
+    {
+      "id": "agent-task-synthesis",
+      "kind": "chapter",
+      "title": "01 · 可执行任务合成：环境、验证、轨迹与训练",
+      "summary": "比较十二条数据路线；Harbor 合同、ScienceIDE 科学容差、失败轨迹和 critic、CPT / SFT / RL 准入，连接 AutoResearch 与 GUI 履历。",
+      "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
+      "url": "/agent-data-benchmarks/s01_task_synthesis.html",
+      "topic": "agent", "type": "practical-guide",
+      "tags": ["Data Synthesis", "Harbor", "SWE-Gym", "R2E-Gym", "SWE-smith", "SWE-Universe", "daVinci-Env", "CoderForge", "NexForge", "EvoSyn", "ProgramGym", "ScienceIDE", "SWE-Critix", "AutoResearch", "GUI"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "agent-data-benchmarks", "order": 1, "featured": false,
+      "related": ["agent-benchmark-map", "research-agentic-rl", "llm-training-midtraining", "research-base-architecture"]
+    },
+    {
+      "id": "agent-benchmark-map",
+      "kind": "chapter",
+      "title": "02 · Benchmark 地图：Terminal、SWE、GUI、科学与 AA",
+      "summary": "固定 TB 4.1 / Science 0.1 / HarborIndex 1.4 与 AA 5.0.1；深入 DeepSWE 和 SWE-bench，分类总结经典 benchmark，解释评分、污染、预算和成功成本。",
+      "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
+      "url": "/agent-data-benchmarks/s02_benchmark_map.html",
+      "topic": "agent", "type": "quick-reference",
+      "tags": ["Benchmark", "Terminal-Bench", "Terminal-Bench Science", "Terminal-Bench Challenges", "HarborIndex", "Harbor-Index", "DeepSWE", "SWE-bench", "Artificial Analysis", "AA", "HumanEval", "MBPP", "EvalPlus", "LiveCodeBench", "BigCodeBench", "AgentBench", "GAIA", "τ²-Bench", "SkillsBench", "WebArena", "OSWorld", "AndroidWorld", "SciCode", "BixBench", "AIRS-Bench", "LAB-Bench", "MLE-bench"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "agent-data-benchmarks", "order": 2, "featured": false,
+      "related": ["agent-task-synthesis", "research-agent-frontiers", "agent-harness-guide", "research-agentic-rl"]
+    },
+    {
       "id": "llm-research-map-2026",
       "kind": "series",
       "title": "LLM 研究地图：数据、Agent RL、架构与推理",
@@ -13,7 +55,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": null, "order": null, "featured": true,
-      "related": ["llm-training-lifecycle", "llm-frontier-2026", "agentic-rl-guide", "dlm-survey"]
+      "related": ["agent-data-benchmarks", "llm-training-lifecycle", "llm-frontier-2026", "agentic-rl-guide", "dlm-survey"]
     },
     {
       "id": "research-agent-data",
@@ -27,7 +69,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-research-map-2026", "order": 1, "featured": false,
-      "related": ["agent-harness-guide", "llm-training-midtraining", "research-agentic-rl"]
+      "related": ["agent-task-synthesis", "agent-benchmark-map", "agent-harness-guide", "llm-training-midtraining", "research-agentic-rl"]
     },
     {
       "id": "research-agentic-rl",
@@ -47,7 +89,7 @@
       "id": "research-base-architecture",
       "kind": "chapter",
       "title": "03 · DeepSeek V4.1：CED、CSA2、FP4 与缓存",
-      "summary": "固定 v1 技术报告，拆解因果编码解码、跨层稀疏 Attention、890 bytes/token 与 bounded replay；区分 Engram、Kimi K3 和1017更新。",
+      "summary": "固定 v1 报告，图解 CED 张量来源、40层 CSA2 计划、FP4 格式与890 B/token推导、两种 bounded replay；补齐 MoE / mHC / Engram 及系统口径。",
       "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
       "url": "/llm-research-map-2026/s03_base_architecture.html",
       "topic": "llm-foundations", "type": "principles",
@@ -55,7 +97,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-research-map-2026", "order": 3, "featured": false,
-      "related": ["transformer-decoder-flow", "distributed-training-guide", "research-inference-diffusion"]
+      "related": ["agent-task-synthesis", "transformer-decoder-flow", "distributed-training-guide", "research-inference-diffusion"]
     },
     {
       "id": "research-inference-diffusion",
@@ -83,7 +125,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-research-map-2026", "order": 5, "featured": false,
-      "related": ["research-agent-data", "research-agentic-rl", "vlm-knowledge-interview", "llm-training-sft-rft"]
+      "related": ["agent-benchmark-map", "agent-task-synthesis", "research-agent-data", "research-agentic-rl", "vlm-knowledge-interview", "llm-training-sft-rft"]
     },
     {
       "id": "llm-training-lifecycle",
@@ -274,7 +316,7 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["research-agent-data", "research-agentic-rl", "agentic-rl-guide", "distributed-training-guide"]
+      "related": ["agent-task-synthesis", "agent-benchmark-map", "research-agent-data", "research-agentic-rl", "agentic-rl-guide", "distributed-training-guide"]
     },
     {
       "id": "distributed-training-guide",

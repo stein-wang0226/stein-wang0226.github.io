@@ -43,6 +43,11 @@
 .training-lifecycle .mask-grid div{border-radius:6px;border:1px solid var(--tl-line);padding:14px;background:#edf0ed}
 .training-lifecycle .mask-grid .target{background:#e3f1e9;border-color:#80b9a4}
 .training-lifecycle .mask-grid b{display:block}
+.training-lifecycle .research-chart{display:block;width:100%;height:auto;border:1px solid var(--tl-line);border-radius:6px;background:var(--tl-paper)}
+.training-lifecycle .research-chart.wide{aspect-ratio:12/5}
+.training-lifecycle .research-chart.layers{aspect-ratio:12/5.1}
+.training-lifecycle .research-chart.replay{aspect-ratio:12/4.7}
+.training-lifecycle .figure-links{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px}
 @media(max-width:800px){.training-lifecycle .flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.training-lifecycle{margin:16px 12px;padding:22px 18px;font-size:15px}.training-lifecycle .chapter-grid,.training-lifecycle .metric-grid,.training-lifecycle .flow,.training-lifecycle .mask-grid{grid-template-columns:1fr}.training-lifecycle .flow .stage:not(:last-child) b::after{content:" ↓"}.training-lifecycle pre{padding:16px}.training-lifecycle th,.training-lifecycle td{padding:10px}.training-lifecycle .callout{padding:14px 16px}}
 @media print{.training-lifecycle{max-width:none;margin:0;padding:0;background:white}.training-lifecycle pre{background:#f0f0f0;color:#111;white-space:pre-wrap}.training-lifecycle .card,.training-lifecycle figure{break-inside:avoid}}

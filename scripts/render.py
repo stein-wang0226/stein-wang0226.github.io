@@ -15,7 +15,7 @@ DEFAULT_OUTPUT = Path("/tmp/my-blogs-site-build")
 START, END = "<!-- SITE:NAV:START -->", "<!-- SITE:NAV:END -->"
 PUBLIC_EXTENSIONS = {
     ".html", ".css", ".js", ".pdf", ".svg", ".ico", ".woff", ".woff2",
-    ".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".json", ".xml", ".txt",
+    ".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".json", ".xml", ".txt", ".csv",
 }
 PRIVATE_PARTS = {
     "content", "templates", "scripts", "docs", "licenses", "drafts",

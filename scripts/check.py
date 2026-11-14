@@ -40,6 +40,8 @@ class Document(HTMLParser):
         for key in ("href", "src", "poster"):
             if attrs.get(key):
                 self.links.append(attrs[key])
+        if tag == "object" and attrs.get("data"):
+            self.links.append(attrs["data"])
         if attrs.get("srcset"):
             self.links.extend(part.strip().split()[0] for part in attrs["srcset"].split(",")
                               if part.strip())

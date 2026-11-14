@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent 任务合成与 Benchmark：从训练数据到可靠评测</title>
+<meta name="description" content="两章连接可执行任务合成、独立验证与Agent评测；深入Terminal-Bench、HarborIndex、DeepSWE、SWE-bench和AA，并分类总结经典代码、Web、GUI和科学benchmark。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="overview">
+<p class="eyebrow">Stein’s Notes · Data &amp; evaluation · 2026-11-14</p>
+<h2>合成什么数据，才能测到真正的 Agent 能力</h2>
+<p class="lead">数据生产的单位可能是文本、task、environment或trajectory；评测的对象可能是模型、agent系统或完整工作产物。先固定对象，再讨论规模、训练收益和榜单。本系列把任务工程接到CPT / SFT / RL，并把经典与前沿benchmark放进同一张能力地图。</p>
+<div class="callout"><strong>核心判断：</strong>可运行环境、独立验收、受控校准和固定留出集，是任务合成与评测共有的基础。更多任务、更高通过率或更长轨迹，都需要结合覆盖、预算和验证器质量解释。</div>
+<div class="chapter-grid">
+<a class="card" href="s01_task_synthesis.html"><span class="eyebrow">01 / Synthesis</span><h3>可执行任务与训练数据合成</h3><p>SWE-Gym、R2E-Gym、SWE-smith、SWE-Universe、daVinci、CoderForge、NexForge、EvoSyn、ProgramGym、ScienceIDE与critic；连接Harbor及GUI履历。</p></a>
+<a class="card" href="s02_benchmark_map.html"><span class="eyebrow">02 / Benchmark map</span><h3>经典与前沿 Agent 评测地图</h3><p>Terminal-Bench / Science / Challenges、HarborIndex、DeepSWE、SWE-bench和AA；代码、通用Agent、Web／GUI、科学任务分类速查。</p></a>
+</div>
+<p>想做任务生产：01的合同 → 科学校准 → 训练准入 → 02的留出与评分。想读榜单：02的版本表 → 指标定义 → 领域速查。架构关联见<a href="../llm-research-map-2026/s03_base_architecture.html">DeepSeek V4.1 CED / CSA2 / FP4</a>；训练背景见<a href="../llm-training-lifecycle/">训练全链路</a>。</p>
+<p class="note">来源访问截止2026-11-14。论文数字、团队发布、个人简历陈述分别标注；本次没有执行任务合成、模型训练或benchmark。两章共用本页52项引用，编号独立于《LLM研究地图》。</p>
+</section>
+<section id="boundaries">
+<h2>读之前先分清四类对象</h2>
+<table><thead><tr><th>对象</th><th>实例</th><th>适合回答</th><th>不能直接推出</th></tr></thead><tbody>
+<tr><td>训练资源 / 环境</td><td>SWE-Gym、R2E-Gym、CoderForge、ScienceIDE</td><td>怎样获得任务、reward与可学习轨迹</td><td>等量任务具有同样难度，或所有报告数据均已公开</td></tr>
+<tr><td>固定或滚动benchmark</td><td>SWE-bench、TB、DeepSWE、LiveCodeBench</td><td>固定协议下的成功、泛化与成本</td><td>脱离版本、harness、预算后的纯模型排名</td></tr>
+<tr><td>运行框架 / registry</td><td>Harbor / Harbor Hub</td><td>统一执行、任务迁移、artifact和结果管理</td><td>所有adapter语义一致，或所有入库任务均可靠</td></tr>
+<tr><td>评测组织 / 综合指数</td><td>Artificial Analysis / Intelligence Index</td><td>多项测量的加权总体表现</td><td>每个专业任务的表现，或私有评测全部可复现</td></tr>
+</tbody></table>
+<p>“DeepSWE”是特别需要拆开的名字：Datacurve的v1.1是benchmark；Together / Agentica的DeepSWE-Preview是RL模型与配方。两者分别见<a href="s02_benchmark_map.html#deepswe">第02章</a>。</p>
+</section>
+<section id="sources">
+<h2>来源索引与维护方式</h2>
+<p>论文采用下列明确版本，项目页采用访问快照。引用支持的是机制、规格或团队报告，不代表独立复现。经典速查优先引用原论文；滚动benchmark以官方当前split说明为准。<a href="../assets/research/agent-data-benchmarks/sources.json">下载来源清单</a>；图表数值见<a href="../assets/research/agent-data-benchmarks/figure-data.json">规格JSON</a>。</p>
+<ol class="sources">
+<li id="ref-1"><a href="https://arxiv.org/html/2412.21139v2">SWE-Gym: Training Software Engineering Agents and Verifiers</a> · 可执行真实issue及outcome verifier。</li>
+<li id="ref-2"><a href="https://arxiv.org/html/2504.07164v1">R2E-Gym: Reinforcement Learning Environments for Real-World Code Agents</a> · SweGen、F2P与execution / critic。</li>
+<li id="ref-3"><a href="https://arxiv.org/html/2504.21798v1">SWE-smith: Scaling Data for Software Engineering Agents</a> · 缺陷注入。<a href="../assets/research/2026-11-14/swesmith-2504.21798v1.pdf">归档PDF</a>。</li>
+<li id="ref-4"><a href="https://arxiv.org/html/2602.02361v1">SWE-Universe: Scale Real-World Verifiable Environments to Millions</a> · bug / fixed状态及反hacking。</li>
+<li id="ref-5"><a href="https://arxiv.org/html/2603.13023v1">daVinci-Env: Open SWE Environment Synthesis at Scale</a> · 环境构建、筛选及轨迹规模。</li>
+<li id="ref-6"><a href="https://www.together.ai/blog/coderforge-preview">CoderForge-Preview</a> · 2026-02-25公开数据与采样说明。</li>
+<li id="ref-7"><a href="https://arxiv.org/html/2607.14186v6">NexForge</a> · Requirement-driven task synthesis。</li>
+<li id="ref-8"><a href="https://arxiv.org/html/2610.12593v1">EvoSyn: Know What You Don’t Know</a> · Generation space与闭环预算。<a href="../assets/research/2026-11-14/evosyn-2610.12593v1.pdf">PDF</a>。</li>
+<li id="ref-9"><a href="https://arxiv.org/html/2610.13395v1">ProgramGym</a> · 论文程序复现环境。<a href="../assets/research/2026-11-14/programgym-2610.13395v1.pdf">PDF</a>。</li>
+<li id="ref-10"><a href="https://arxiv.org/html/2609.19134v1">ScienceIDE: Turning World’s Scientific Codebase into Agent Learnable Environments</a> · 专家知识、环境工厂与科学检查。</li>
+<li id="ref-11"><a href="https://arxiv.org/html/2610.13356v1">SWE-Critix: Post-Training Generalist Verifiers for Assessing Coding-Agent Trajectories</a> · 基于成功 / 失败轨迹训练critic。</li>
+<li id="ref-12"><a href="https://arxiv.org/html/2609.19969v1">DeepSeek V4.1技术报告</a> · §5.1.1任务生产。<a href="../assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf">官方PDF</a>。</li>
+<li id="ref-13"><a href="https://github.com/harbor-framework/terminal-bench/releases/tag/v4.1.0">Terminal-Bench v4.1.0 release</a> · 2026-11-03，66题及CPU-only 63题。</li>
+<li id="ref-14"><a href="https://www.tbench.ai/news/terminal-bench-4-0">Terminal-Bench 4.0</a> · major release、修复与预算。</li>
+<li id="ref-15"><a href="https://github.com/harbor-framework/terminal-bench-science/releases/tag/v0.1.0">Terminal-Bench-Science v0.1.0 release</a> · 70任务、当前正式版本。</li>
+<li id="ref-16"><a href="https://github.com/harbor-framework/terminal-bench-challenges">Terminal-Bench Challenges官方仓库</a> · 长时单项目、提交与资源协议。</li>
+<li id="ref-17"><a href="https://arxiv.org/html/2609.04298v1">Harbor Adapters and Harbor-Index</a> · 迁移一致性、初版候选与困难切片。</li>
+<li id="ref-18"><a href="https://harbor-index.org/">Introducing Harbor-Index 1.0</a> · 初版82题与审计流程。</li>
+<li id="ref-19"><a href="https://hub.harborframework.com/datasets/harbor-index/harbor-index">HarborIndex Hub registry</a> · revision 5 / 1.4，80题、trials与judge。</li>
+<li id="ref-20"><a href="https://www.harborframework.com/docs/task-format">Harbor task format</a> · 任务合同与reward。</li>
+<li id="ref-21"><a href="https://www.harborframework.com/news/separate-verifier-sandboxes">Harbor separate verifier sandboxes</a> · 干净验收与产物交接。</li>
+<li id="ref-22"><a href="https://deepswe.datacurve.ai/blog/deepswe-v1-1">Datacurve DeepSWE v1.1</a> · benchmark修订，<a href="https://deepswe.datacurve.ai/">113任务 / 91仓库 / 5语言</a>。</li>
+<li id="ref-23"><a href="https://www.together.ai/blog/deepswe">Together / Agentica DeepSWE-Preview</a> · 2025-07-02，RL模型与test-time scaling。</li>
+<li id="ref-24"><a href="https://www.swebench.com/">SWE-bench官方站</a> · Verified / Lite / Multilingual / Multimodal splits。</li>
+<li id="ref-25"><a href="https://scale.com/blog/swe-bench-pro">SWE-bench Pro官方overview</a> · 1,865 instances / 41 repos，public / commercial / held-out；当前榜单入口见文末。</li>
+<li id="ref-26"><a href="https://swe-bench-live.github.io/">SWE-bench-Live</a> · 当前滚动及冻结split说明。</li>
+<li id="ref-27"><a href="https://artificialanalysis.ai/methodology/intelligence-benchmarking">Artificial Analysis Intelligence Index v5.0.1</a> · 9评测 / 4类、子项权重、harness与额外评测。</li>
+<li id="ref-28"><a href="https://arxiv.org/abs/2107.03374">HumanEval: Evaluating Large Language Models Trained on Code</a>。</li>
+<li id="ref-29"><a href="https://arxiv.org/abs/2108.07732">MBPP: Program Synthesis with Large Language Models</a>。</li>
+<li id="ref-30"><a href="https://arxiv.org/abs/2305.01210">EvalPlus: Is Your Code Generated by ChatGPT Really Correct?</a>。</li>
+<li id="ref-31"><a href="https://arxiv.org/abs/2403.07974">LiveCodeBench</a> · 时间分段的程序能力评测。</li>
+<li id="ref-32"><a href="https://arxiv.org/abs/2406.15877">BigCodeBench</a> · 多库调用与复杂指令。</li>
+<li id="ref-33"><a href="https://arxiv.org/abs/2308.03688">AgentBench</a> · 多环境Agent能力。</li>
+<li id="ref-34"><a href="https://arxiv.org/abs/2311.12983">GAIA</a> · 真实资料检索与多步助理任务。</li>
+<li id="ref-35"><a href="https://arxiv.org/html/2506.07982v1">τ²-Bench</a> · 双主体控制、交互与政策约束。</li>
+<li id="ref-36"><a href="https://www.skillsbench.ai/blogs/skillsbench-1-1">SkillsBench 1.1</a> · Paired skills对照。</li>
+<li id="ref-37"><a href="https://arxiv.org/abs/2307.13854">WebArena</a> · 自托管Web任务。</li>
+<li id="ref-38"><a href="https://arxiv.org/abs/2401.13649">VisualWebArena</a> · 视觉信息参与的Web任务。</li>
+<li id="ref-39"><a href="https://arxiv.org/abs/2404.07972">OSWorld</a> · 真实桌面环境。</li>
+<li id="ref-40"><a href="https://snorkel.ai/leaderboard/os-world-2-0/">OSWorld 2.0合作方说明</a> · 当前长程任务与环境。</li>
+<li id="ref-41"><a href="https://arxiv.org/abs/2405.14573">AndroidWorld</a> · Android应用、参数化初始状态与programmatic reward。</li>
+<li id="ref-42"><a href="https://arxiv.org/abs/2407.13168">SciCode</a> · 科学代码生成。</li>
+<li id="ref-43"><a href="https://arxiv.org/abs/2407.10362">LAB-Bench</a> · 生物研究任务知识与理解。</li>
+<li id="ref-44"><a href="https://arxiv.org/abs/2310.03302">MLAgentBench</a> · ML实验任务。</li>
+<li id="ref-45"><a href="https://arxiv.org/abs/2410.07095">MLE-bench</a> · 机器学习工程。</li>
+<li id="ref-46"><a href="https://arxiv.org/abs/2503.00096">BixBench</a> · 生物数据分析。</li>
+<li id="ref-47"><a href="https://arxiv.org/abs/2608.25286v2">BixBench 3</a> · 原始数据到研究产物。</li>
+<li id="ref-48"><a href="https://arxiv.org/html/2602.06855v3">AIRS-Bench</a> · 科研Agent有效提交与科学metric。</li>
+<li id="ref-49"><a href="https://arxiv.org/abs/2009.03300">MMLU</a> · 学科知识保留。</li>
+<li id="ref-50"><a href="https://arxiv.org/abs/2110.14168">GSM8K</a> · 多步数学文字题。</li>
+<li id="ref-51"><a href="https://arxiv.org/abs/2311.07911">IFEval</a> · 可程序验证的指令遵循。</li>
+<li id="ref-52"><a href="https://arxiv.org/abs/2311.12022">GPQA</a> · 专家级科学问答。</li>
+</ol>
+</section>
+</main>
+</body>
+</html>

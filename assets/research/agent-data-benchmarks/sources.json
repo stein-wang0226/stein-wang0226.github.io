@@ -1,0 +1,528 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-14",
+  "index": "/agent-data-benchmarks/#sources",
+  "note": "Paper/team-reported claims; no local training or benchmark reproduction. Author-provided CV metrics are a separate provenance category. Generated from the authoritative HTML reference index.",
+  "sources": [
+    {
+      "id": 1,
+      "title": "SWE-Gym: Training Software Engineering Agents and Verifiers",
+      "url": "https://arxiv.org/html/2412.21139v2",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "R2E-Gym: Reinforcement Learning Environments for Real-World Code Agents",
+      "url": "https://arxiv.org/html/2504.07164v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "SWE-smith: Scaling Data for Software Engineering Agents",
+      "url": "https://arxiv.org/html/2504.21798v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "SWE-Universe: Scale Real-World Verifiable Environments to Millions",
+      "url": "https://arxiv.org/html/2602.02361v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "daVinci-Env: Open SWE Environment Synthesis at Scale",
+      "url": "https://arxiv.org/html/2603.13023v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 6,
+      "title": "CoderForge-Preview",
+      "url": "https://www.together.ai/blog/coderforge-preview",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 7,
+      "title": "NexForge",
+      "url": "https://arxiv.org/html/2607.14186v6",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 8,
+      "title": "EvoSyn: Know What You Don’t Know",
+      "url": "https://arxiv.org/html/2610.12593v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 9,
+      "title": "ProgramGym",
+      "url": "https://arxiv.org/html/2610.13395v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 10,
+      "title": "ScienceIDE: Turning World’s Scientific Codebase into Agent Learnable Environments",
+      "url": "https://arxiv.org/html/2609.19134v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 11,
+      "title": "SWE-Critix: Post-Training Generalist Verifiers for Assessing Coding-Agent Trajectories",
+      "url": "https://arxiv.org/html/2610.13356v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 12,
+      "title": "DeepSeek V4.1技术报告",
+      "url": "https://arxiv.org/html/2609.19969v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 13,
+      "title": "Terminal-Bench v4.1.0 release",
+      "url": "https://github.com/harbor-framework/terminal-bench/releases/tag/v4.1.0",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Terminal-Bench 4.0",
+      "url": "https://www.tbench.ai/news/terminal-bench-4-0",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Terminal-Bench-Science v0.1.0 release",
+      "url": "https://github.com/harbor-framework/terminal-bench-science/releases/tag/v0.1.0",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 16,
+      "title": "Terminal-Bench Challenges官方仓库",
+      "url": "https://github.com/harbor-framework/terminal-bench-challenges",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 17,
+      "title": "Harbor Adapters and Harbor-Index",
+      "url": "https://arxiv.org/html/2609.04298v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 18,
+      "title": "Introducing Harbor-Index 1.0",
+      "url": "https://harbor-index.org/",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 19,
+      "title": "HarborIndex Hub registry",
+      "url": "https://hub.harborframework.com/datasets/harbor-index/harbor-index",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 20,
+      "title": "Harbor task format",
+      "url": "https://www.harborframework.com/docs/task-format",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 21,
+      "title": "Harbor separate verifier sandboxes",
+      "url": "https://www.harborframework.com/news/separate-verifier-sandboxes",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s01_task_synthesis.html"
+      ]
+    },
+    {
+      "id": 22,
+      "title": "Datacurve DeepSWE v1.1",
+      "url": "https://deepswe.datacurve.ai/blog/deepswe-v1-1",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 23,
+      "title": "Together / Agentica DeepSWE-Preview",
+      "url": "https://www.together.ai/blog/deepswe",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 24,
+      "title": "SWE-bench官方站",
+      "url": "https://www.swebench.com/",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 25,
+      "title": "SWE-bench Pro官方overview",
+      "url": "https://scale.com/blog/swe-bench-pro",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 26,
+      "title": "SWE-bench-Live",
+      "url": "https://swe-bench-live.github.io/",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 27,
+      "title": "Artificial Analysis Intelligence Index v5.0.1",
+      "url": "https://artificialanalysis.ai/methodology/intelligence-benchmarking",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 28,
+      "title": "HumanEval: Evaluating Large Language Models Trained on Code",
+      "url": "https://arxiv.org/abs/2107.03374",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 29,
+      "title": "MBPP: Program Synthesis with Large Language Models",
+      "url": "https://arxiv.org/abs/2108.07732",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 30,
+      "title": "EvalPlus: Is Your Code Generated by ChatGPT Really Correct?",
+      "url": "https://arxiv.org/abs/2305.01210",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 31,
+      "title": "LiveCodeBench",
+      "url": "https://arxiv.org/abs/2403.07974",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 32,
+      "title": "BigCodeBench",
+      "url": "https://arxiv.org/abs/2406.15877",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 33,
+      "title": "AgentBench",
+      "url": "https://arxiv.org/abs/2308.03688",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 34,
+      "title": "GAIA",
+      "url": "https://arxiv.org/abs/2311.12983",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 35,
+      "title": "τ²-Bench",
+      "url": "https://arxiv.org/html/2506.07982v1",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 36,
+      "title": "SkillsBench 1.1",
+      "url": "https://www.skillsbench.ai/blogs/skillsbench-1-1",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 37,
+      "title": "WebArena",
+      "url": "https://arxiv.org/abs/2307.13854",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 38,
+      "title": "VisualWebArena",
+      "url": "https://arxiv.org/abs/2401.13649",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 39,
+      "title": "OSWorld",
+      "url": "https://arxiv.org/abs/2404.07972",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 40,
+      "title": "OSWorld 2.0合作方说明",
+      "url": "https://snorkel.ai/leaderboard/os-world-2-0/",
+      "kind": "project_documentation",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 41,
+      "title": "AndroidWorld",
+      "url": "https://arxiv.org/abs/2405.14573",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 42,
+      "title": "SciCode",
+      "url": "https://arxiv.org/abs/2407.13168",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 43,
+      "title": "LAB-Bench",
+      "url": "https://arxiv.org/abs/2407.10362",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 44,
+      "title": "MLAgentBench",
+      "url": "https://arxiv.org/abs/2310.03302",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 45,
+      "title": "MLE-bench",
+      "url": "https://arxiv.org/abs/2410.07095",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 46,
+      "title": "BixBench",
+      "url": "https://arxiv.org/abs/2503.00096",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 47,
+      "title": "BixBench 3",
+      "url": "https://arxiv.org/abs/2608.25286v2",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 48,
+      "title": "AIRS-Bench",
+      "url": "https://arxiv.org/html/2602.06855v3",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 49,
+      "title": "MMLU",
+      "url": "https://arxiv.org/abs/2009.03300",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 50,
+      "title": "GSM8K",
+      "url": "https://arxiv.org/abs/2110.14168",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 51,
+      "title": "IFEval",
+      "url": "https://arxiv.org/abs/2311.07911",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    },
+    {
+      "id": 52,
+      "title": "GPQA",
+      "url": "https://arxiv.org/abs/2311.12022",
+      "kind": "paper",
+      "accessed": "2026-11-14",
+      "used_in": [
+        "/agent-data-benchmarks/s02_benchmark_map.html"
+      ]
+    }
+  ]
+}
