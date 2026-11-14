@@ -451,6 +451,35 @@ Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma分别分析，
 对122项manifest文件比较，仅HTML资源查询参数及博客data-catalog-version不同；
 归一化这些缓存版本后全部一致，正文、导航、数据和资源字节没有其他变化。
 
+## 项目管理协议与 Profile 展示稿（2026-11-14）
+
+范围：新增 `AGENTS.md`、`blog-project-manager`、管理/内容/设计三份协议，
+只读规模与 Profile 检查脚本；管理检查接入 `make check` 和 Pages 工作流。
+Profile 改为研究项目两列、精选论文状态表和笔记入口，移除普通 Science fork 展示项。
+未改动该 fork、履历事实或旧研究依据。
+
+- `make governance`：11 份文档/skill 引用检查通过；Profile 21 个链接，
+  其中 12 个站内链接及源锚点通过。
+- `make check OUTPUT=/tmp/my-blogs-management-build`：70 个 HTML 页面、
+  123 个公开文件通过。输入为 `8fbf29df7cdb5878b854d62a305727bef6149287`
+  加本地修改，含并行任务正在维护的架构章节，不是隔离发布快照。
+- `scripts/test_pipeline.py`：8 项现有测试通过；`git diff --check` 通过。
+- `scripts/profile.py status` 实际读取远端 README、账号字段与置顶项目，
+  逐字节比较发现新版稿尚未发布；账号仍为旧资料，主站未置顶。
+- `scripts/profile.py preview` 使用 GitHub Markdown API 渲染新版；
+  临时浏览器检查 390/650/1024px 均无页面整体横向溢出，项目表在手机自身容器滚动。
+  点击展开和 Enter 收起通过；没有外部图片或脚本依赖。
+
+已查看实际桌面和手机截图。公开交付预览为工作区
+`github-profile-preview.html`；临时证据在
+`/tmp/my-blogs-profile-preview/verification.json` 和该目录截图中。
+预览 CSS 模拟 GitHub 外观，实际公开页由 GitHub 平台控制。
+管理 skill 的工作区发现路径链接到仓库中的同一个权威文件。
+
+本次管理与 Profile 修改未提交或推送；没有更新账号字段或置顶项目。
+已发布旧 README 的提交为 `51246757924db14af2ea9d5b5d6c39c83767991b`。
+当前 OAuth scope 缺少账号字段需要的 `user`；主站、README、账号资料和置顶须分别核对。
+
 ## 2026-11-14 · 知识体系贯通
 
 本轮新增架构6章、Agent系统3章、部署3章、训练方法1章、科学任务2章及3个系列入口；
@@ -498,3 +527,15 @@ input digest `68f1e3e099cef2dac71846c59909e17aedd5d063c02dca19f1fc349d5c6807b9`�
 提交后只重新构建以记录真实commit/clean状态；发布收据保存在
 `/tmp/my-blogs-browser-tests/knowledge-publication-report.json`，
 以其中Actions对应版本、线上manifest与实际公开文件SHA为准。
+
+## 2026-11-14 · Git 同步与管理协议落库
+
+本轮先对齐已发布的`1492b6e`（Harbor专题），再提交剩余项目管理协议、
+Agent入口、管理skill、构建/Pages治理检查及目录格式整理，共12个文件。
+上文“项目管理协议与Profile展示稿”中的未发布描述为初次检查时的历史状态，
+不能作为当前Git或Profile远端状态；本轮不改账号字段、置顶或Profile正文。
+
+`make check OUTPUT=/tmp/my-blogs-git-sync-build`通过96 HTML页/187公开文件；
+治理检查通过11份协议/skill引用，Profile本地检查22个链接（13个站内链接）。
+暂存差异`git diff --cached --check`通过。构建未回写正文，
+原迁移基线及差异收据未改动。本轮没有新增页面交互或科研实验结果。
