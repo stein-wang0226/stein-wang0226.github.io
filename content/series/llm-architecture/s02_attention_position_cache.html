@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>02 · Attention、位置与历史缓存</title><meta name="description" content="推导MHA/MQA/GQA/MLA与KV字节，解释RoPE、长上下文、SWA、稀疏检索、FlashAttention和分页缓存的不同作用。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="purpose"><h2>历史保存、历史选择与计算实现分别优化什么</h2>
+<p class="lead">Attention 的查询仍是“当前位置读哪些历史表示”。MHA/MQA/GQA 改变 query 与 KV 的共享关系；MLA 压缩历史表示；SWA/稀疏检索限制读取集合；FlashAttention 改变精确计算的 IO；PagedAttention 改变状态分配。这些可以组合，但不产生同一种复杂度或质量保证。</p>
+<p>先修：<a href="s01_transformer_foundations.html#attention-mask">QKV 与 causal mask</a>。本文 B 为并发序列数、T 为保存的历史 token 数、L 为采用该机制的层数、Hq/Hkv 为 query/KV heads、dh 为每个 K/V head 的宽度。K/V 宽度相同只是本节基础假设。</p>
+</section>
+<section id="head-sharing"><h2>MHA、MQA、GQA：写入头和读取头可以不同</h2>
+<table><thead><tr><th>机制</th><th>共享关系</th><th>KV 存储/投影</th><th>边界</th></tr></thead><tbody>
+<tr><td>MHA</td><td>Hkv=Hq，每个 query 对应一组 KV</td><td>独立 KV 较多</td><td>表达容量与内存都较大</td></tr>
+<tr><td>MQA</td><td>Hkv=1，所有 query 共享一组 KV</td><td>KV 存储显著减少</td><td>query 仍多头；质量影响取决于训练</td></tr>
+<tr><td>GQA</td><td>1&lt;Hkv&lt;Hq，每组 query 共享 KV</td><td>在 MHA/MQA 之间折中</td><td>checkpoint 转换通常需 uptraining</td></tr>
+<tr><td>MLA</td><td>保存 latent KV 与位置相关分量，再恢复/吸收投影</td><td>依 latent、RoPE 与实现算字节</td><td>不能套用单一 Hkv 缩减比</td></tr>
+</tbody></table>
+<p>MQA 和 GQA 原论文讨论了内存带宽与质量取舍，GQA 包含从 MHA checkpoint uptraining 的配方；它们没有证明任意模型减少 head 都无损。固定 Llama 源码中 Q 投影到 <code>Hq·dh</code>、K/V 投影到 <code>Hkv·dh</code>；eager 路径的 <code>repeat_kv</code> 为计算展开 head，不意味着持久缓存也必须保存展开后的副本。<a href="index.html#ref-2">[2]</a><a href="index.html#ref-8">[8] L159–220</a></p>
+<figure><div class="flow">
+<div class="stage"><b>投影</b><small>当前 hidden → Q 多头<br>K/V 写入头可更少</small></div>
+<div class="stage"><b>保存</b><small>每层保存未重复 KV<br>附位置与版本信息</small></div>
+<div class="stage"><b>读取</b><small>query group 共享 KV<br>按 mask/索引访问历史</small></div>
+<div class="stage"><b>聚合</b><small>softmax 权重 × V<br>拼接/输出投影</small></div>
+</div><figcaption>GQA 的概念流程。kernel 可以在计算中广播 KV，而不实体化 repeat；具体布局由实现决定。</figcaption></figure>
+</section>
+<section id="kv-bytes"><h2>从形状推导缓存字节</h2>
+<div class="equation" role="math">M_KV = B × T × L × Hkv × (dK + dV) × bytes/value
+若 dK=dV=dh：M_KV = 2 B T L Hkv dh b
+bytes/token/request = 2 L Hkv dh b
+本文规划例：L=80，Hkv=8，dh=128，BF16 b=2
+每 token = 327,680 B = 320 KiB；T=32,768 时每请求 = 10 GiB</div>
+<p>上述数值由选定的形状算出，是容量例子，不是某个服务的峰值实测。它排除分页余量、allocator、workspace、临时激活、权重和跨设备复制。TP 理想分片可减少每 rank 的份额，但 Hkv 小于 TP 时可能复制 KV head；必须检查后端布局。</p>
+<p>长上下文不同机制要逐层加总：full KV 随 T 增长，SWA 可按实现截到 window，recursive state 按 state shape 算；训练 SWA 并不保证服务只分配 window 大小。量化还要加 scale、零点、对齐和高精度例外。容量表和完整预算见<a href="../llm-serving/s03_capacity_cost.html">部署第03章</a>。</p>
+<p>MLA 的关键是保存比完整多头 KV 更窄的 latent；RoPE 的位置相关部分常需单独处理，以免破坏投影吸收。DeepSeek V4.1 又使用 CED、CSA2 与缓存共享，其报告的 890 B/token 属于特定压缩/组共享口径，不是所有 MLA 的常数。<a href="../llm-research-map-2026/s03_base_architecture.html#cache">V4.1 分项推导与排除项</a>保留为具体案例。</p>
+</section>
+<section id="position"><h2>RoPE 让内积包含相对位移</h2>
+<div class="equation" role="math">二维分量：R(pθ)[x₁,x₂]ᵀ
+          = [cos(pθ)x₁ − sin(pθ)x₂,
+             sin(pθ)x₁ + cos(pθ)x₂]ᵀ
+q'_i = R(i)q_i，k'_j = R(j)k_j
+(q'_i)ᵀk'_j = q_iᵀ R(j−i) k_j</div>
+<p>旋转本身编码绝对位置，QK 内积中的相对旋转取决于 j−i。多频率二维对子让模型处理不同距离；通常作用于 Q/K，不能笼统说把位置向量加到所有输入。不同实现的 interleaving、partial rotary、频率与 scaling 必须与 checkpoint 一致。<a href="index.html#ref-3">[3]</a></p>
+<p>把最大位置调大只允许计算更长位置；未见过的频率/距离仍会产生分布变化。插值、频率缩放与长上下文训练解决不同问题。长上下文验收应包含位置敏感检索、多针冲突、依赖链和真实任务，不能只用一个 needle 成功率证明普遍能力。</p>
+<details><summary>Cache position 与逻辑 position 为什么要分开？</summary><p>cache_position 决定状态写到哪里，position_ids 决定位置编码。padding、prefix 复用、分页、截断和 SWA 可能使物理槽位与逻辑位置不同。复用相同 token prefix 还要求 position、mask、adapter、权重和精度兼容。</p></details>
+</section>
+<section id="local-sparse"><h2>局部窗口与稀疏检索改变可见历史</h2>
+<table><thead><tr><th>路线</th><th>每步主要读取</th><th>保留什么</th><th>需验证的能力</th></tr></thead><tbody>
+<tr><td>Full attention</td><td>所有允许历史</td><td>通常完整 KV</td><td>精确多项召回与 O(T) decode 访问</td></tr>
+<tr><td>SWA</td><td>附近 window</td><td>局部 KV；可能另有全局层/sink</td><td>远程信息能否通过混合层传递</td></tr>
+<tr><td>稀疏 indexer</td><td>选出的 top-k 历史/压缩块</td><td>候选索引与被查询表示</td><td>indexer 漏召回、选择成本与梯度</td></tr>
+<tr><td>压缩历史</td><td>摘要/latent/压缩块</td><td>压缩 state 或 KV</td><td>不可逆信息损失与恢复机制</td></tr>
+</tbody></table>
+<p>少读历史不等于少存历史；索引仍可能依赖完整候选状态。局部层与全局层交替也不能简单按局部比例推算端到端速度。新架构的 indexer、压缩组与层计划应回到<a href="../llm-research-map-2026/s06_architecture_landscape.html">固定模型配置</a>，分别核算。</p>
+</section>
+<section id="implementation"><h2>FlashAttention 和 PagedAttention 的优化对象</h2>
+<p>FlashAttention 通过分块和 online softmax 在 SRAM 中累积输出，避免将大规模 score/概率矩阵反复写入 HBM；原算法保留 dense softmax attention 的数学计算。它没有把 full attention 变成线性计算，也不能自动缩小所有 KV。不同融合顺序与浮点格式仍可能导致数值差异。<a href="index.html#ref-4">[4]</a></p>
+<p>PagedAttention 把逻辑 KV 映射到非连续物理块，改善变长请求的碎片与共享；prefix cache 再复用兼容前缀的计算。存储分页不改变 causal mask，命中前缀也没有降低从零 prefill 的内在计算。具体 vLLM/SGLang 调度和源码在<a href="../llm-serving/s01_runtime_scheduling.html">部署第01章</a>维护。</p>
+<div class="callout"><strong>判断一个“提速”：</strong>先写清它改变的是算术次数、HBM IO、持久状态、物理碎片、共享命中、网络传输还是调度等待，再比较相同模型、精度、长度和负载。</div>
+</section>
+<section id="evaluation"><h2>对照方案与自测</h2>
+<p>本文建议：固定 checkpoint 时先比较 full forward/KV 解码的一致性，再测同长度同并发的 TTFT、ITL 和峰值内存。改变 MHA/GQA 或窗口属于结构变更，应单独训练或使用有依据的转换配方；不可把未适配模型的质量下降当成机制本身上限。所有这些对照尚未执行。</p>
+<details><summary>自测：为什么 GQA 省 KV，却不把全部 Attention 计算同比减少？</summary><p>query head 仍有 Hq 个，每个仍要与允许的历史计算 score 并聚合 value。K/V 投影与保存量减少，读取可以共享，但 softmax/query 计算、输出投影与 FFN 仍存在；最终收益还受 kernel 和带宽限制。</p></details>
+<p>下一章分析 FFN 和专家计算：节省历史状态与减少每 token 激活参数是不同方向，通信又可能成为新的瓶颈。</p>
+</section>
+<section id="sources"><h2>来源</h2><p><a href="index.html#ref-2">[2] MQA/GQA</a>、<a href="index.html#ref-3">[3] RoPE</a>、<a href="index.html#ref-4">[4] FlashAttention</a>、<a href="index.html#ref-8">[8] Llama 固定源码</a>；MLA/V4.1 对照<a href="../llm-research-map-2026/s03_base_architecture.html#versions">报告与缓存规格</a>。字节计算为明确假设下的规格推导。</p></section>
+</main></body></html>

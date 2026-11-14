@@ -171,6 +171,8 @@ def render_blog(ctx):
             '<div class="catalog-intro"><h2>博客与研究笔记</h2>'
             '<p>从原理推导到训练工程，记录 LLM、Agent 与扩散模型的学习和实践。'
             '选一个主题，或从感兴趣的问题开始。</p>'
+            f'<p><a href="{ctx.rel("/blog/", "/llm-research-map-2026/")}#learning-paths">'
+            '按学习路线阅读：模型与训练 · Agent 研究 · 工程与评测</a></p>'
             f'<div class="catalog-stats"><span><strong>{len(local)}</strong>笔记集合</span>'
             f'<span><strong>{sum(e["kind"] == "chapter" and e["status"] == "published" for e in rows)}</strong>章节</span>'
             f'<span><strong>{len(ctx.site["topics"])}</strong>主题</span></div></div></header>'

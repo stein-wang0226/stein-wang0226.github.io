@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>06 · 前沿模型比较与设计取舍</title><meta name="description" content="按历史信息、专家、残差、精度、训练和服务统一比较公开LLM架构，连接固定型号证据，提出工业集群与Agent任务的设计分析。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="purpose"><h2>按机制比较模型，按预算比较收益</h2>
+<p class="lead">前五章说明了架构中的张量对象。本章把它们放到一张共同的设计表：保存什么历史、计算哪些参数、混合哪些深度、采用什么数值格式，以及需要怎样的训练和服务系统。型号的具体规格在研究地图维护，这里提供比较方法与分析。</p>
+<p>截止日 2026-11-14。公开报告/config 描述的是已披露实现，不自动证明独立复现；闭源模型未披露的结构写“未披露”。不能从产品上下文长度、响应行为或 Agent memory 推断 MoE、SSM、recurrent depth 或内部训练配方。</p></section>
+<section id="axes"><h2>六条比较轴</h2>
+<table><thead><tr><th>轴</th><th>必须记录</th><th>影响</th></tr></thead><tbody>
+<tr><td>序列信息</td><td>Full/GQA/MLA/SWA/sparse/state；实际 layer pattern</td><td>召回、缓存、prefill/decode</td></tr>
+<tr><td>通道容量</td><td>Dense/MoE/latent、E/k/shared、hidden/intermediate</td><td>激活计算、权重、派发与负载</td></tr>
+<tr><td>深度传递</td><td>Norm、普通残差、AttnRes/mHC、共享深度</td><td>稳定性、激活保存、重计算</td></tr>
+<tr><td>数值对象</td><td>权重/激活/梯度/KV/state/optimizer 分别的格式与 scales</td><td>容量、kernel 支持、概率偏差</td></tr>
+<tr><td>预测方式</td><td>AR/MTP/drafter/block/diffusion；采样/验证规则</td><td>接受率、精确性、输出与吞吐</td></tr>
+<tr><td>系统与数据</td><td>目标、阶段、并行、rollout、环境、版本</td><td>训练投入、任务质量与成功成本</td></tr>
+</tbody></table>
+<p>总参数与激活参数属于容量轴；“1M context”是可配置长度，不能代替召回质量；某个 FP4 对象也不能代表整个模型都是 4bit。比较应记录模型卡、config revision、原报告页码和源码，并注明缺少哪些项。</p></section>
+<section id="families"><h2>公开路线与具体型号证据</h2>
+<table><thead><tr><th>路线/家族</th><th>值得拆解的机制</th><th>本地主要证据页</th><th>分析问题</th></tr></thead><tbody>
+<tr><td>DeepSeek V4.1</td><td>CED/CSA2、压缩共享缓存、FP4、mHC、Engram</td><td><a href="../llm-research-map-2026/s03_base_architecture.html">报告与字节推导</a></td><td>压缩信息、检索、重放和训练/服务如何一致</td></tr>
+<tr><td>Qwen 系列</td><td>混合状态/Attention、门控与专家路线</td><td><a href="../llm-research-map-2026/s06_architecture_landscape.html#families">固定型号表</a></td><td>层计划/多模态变化是否影响全局召回</td></tr>
+<tr><td>Kimi 系列</td><td>delta state、全局选择、AttnRes、latent experts</td><td><a href="../llm-research-map-2026/s06_architecture_landscape.html#families">型号配置</a> / <a href="../llm-research-map-2026/s07_architecture_training.html#latent-moe">训练机制</a></td><td>state、专家和深度成本怎样共同控制</td></tr>
+<tr><td>Nemotron 系列</td><td>Mamba/Attention 混合、LatentMoE、低精度训练</td><td><a href="../llm-research-map-2026/s06_architecture_landscape.html#families">报告/config</a></td><td>硬件收益和后期失稳能否独立解释</td></tr>
+<tr><td>GLM / MiniMax / MiMo / Step</td><td>不同稀疏/局部计划、专家和优化配方</td><td><a href="../llm-research-map-2026/s06_architecture_landscape.html#families">同维度型号比较</a></td><td>索引、全局层、共享和量化边界是什么</td></tr>
+<tr><td>Gemma 与多模态模型</td><td>局部/全局、多模态输入与不同模型尺寸</td><td><a href="../llm-research-map-2026/s06_architecture_landscape.html#families">固定模型卡/config</a></td><td>同一家族是否采用不同层与输入机制</td></tr>
+<tr><td>闭源 GPT / Claude / Gemini</td><td>仅列官方已披露能力与接口条件</td><td><a href="../llm-research-map-2026/s06_architecture_landscape.html#closed">披露边界</a></td><td>无法披露的结构不纳入数值推导</td></tr>
+</tbody></table>
+<p>表中不复制各型号参数表，避免同一版本更新多处。各家族报告的基础模型、Instruct、量化与推理预算可能不同；应先确定比较对象，再读取论文结果。</p></section>
+<section id="co-design"><h2>架构、训练和服务共同约束</h2>
+<figure><div class="flow">
+<div class="stage"><b>任务需求</b><small>代码/科学/多模态<br>长度、召回、工具与预算</small></div>
+<div class="stage"><b>结构设计</b><small>KV/state、experts、深度<br>规格和数值对象</small></div>
+<div class="stage"><b>训练配方</b><small>数据/目标/optimizer<br>并行、回放和验证</small></div>
+<div class="stage"><b>服务反馈</b><small>调度/缓存/rollout<br>质量、延迟、成功成本</small></div>
+</div><figcaption>设计关系图；反馈需通过可控实验建立，不能从模型排行榜反推单一结构贡献。</figcaption></figure>
+<p>训练小 batch/长序列与服务高并发/decode 的瓶颈不同。MoE 的小专家在训练大 token 数时利用率较好，decode 的小 GEMM 和跨节点派发可能更难；递归状态减小持久历史，但树搜索要快照和分支；稀疏 indexer 减少读取，训练与服务的选择差异又可能影响 RL ratio。</p>
+<p>Muon、mHC 或 FP4 都不独立定义整套方案。optimizer 分组、训练精度、checkpoint、rollout backend 和环境协议需要版本化。工业规模资源分配见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#cluster">训练集群设计</a>；科学任务对照见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">SFT/RL 方案</a>。</p></section>
+<section id="mtp"><h2>MTP、投机与 diffusion drafter 的收益边界</h2>
+<p>MTP 可以增加辅助预测/训练信号，投机服务则需要候选与目标验证；多预测头不自动让所有生成并行且无损。扩散 drafter 提出候选块，目标模型按规定验证，其质量和接受率影响实际收益。方法详细证据在<a href="../llm-research-map-2026/s04_inference_diffusion.html">DFlash → DSpark → AdaFlash</a>维护。</p>
+<p>精确采样需要对应 proposal/target 和接受/修正规则；greedy 一致性与随机采样分布一致性是不同条件。模型 forward 更少不一定减小请求延迟，drafter、验证、KV 和调度的成本都要计入。并发下 drafter 还可能占用原本可以服务目标模型的资源。</p></section>
+<section id="analysis"><h2>面向科学 Agent 的设计分析</h2>
+<table><thead><tr><th>需求</th><th>本文判断</th><th>待验证的取舍</th></tr></thead><tbody>
+<tr><td>精确读取样本/contrast</td><td>显式文件和结构化证据比依赖隐式 state 更容易审计</td><td>RAG/工具读取与长上下文成本</td></tr>
+<tr><td>长程执行与恢复</td><td>模型 cache、Harness checkpoint、环境状态分别版本化</td><td>摘要/换窗是否丢关键约束</td></tr>
+<tr><td>多候选与 verifier</td><td>为难题分配预算，保存所有失败与验证成本</td><td>自适应策略是否优于固定 BoN</td></tr>
+<tr><td>工业 MoE 后训练</td><td>先评估 EP 网络、专家利用率与 rollout/trainer parity</td><td>激活计算优势能否转成有效训练吞吐</td></tr>
+<tr><td>量化 rollout</td><td>同时监控质量和长轨迹 logprob ratio，保留高精度基线</td><td>平均误差是否掩盖重尾 episode</td></tr>
+</tbody></table>
+<p>这些是基于机制的设计判断，不是新性能结论。公开 RNA-seq 子集只承担科学合同示例；足量训练数据要经过多研究来源审计、独立切分和验证，不能把一个小数据包当成大模型训练规模。</p></section>
+<section id="experiments"><h2>可解释的比较协议</h2>
+<p>把问题分成三层：机制消融固定主干、数据和参数/算力预算；同 checkpoint 服务比较固定精度、长度、并发与输出策略；端到端 Agent 比较固定任务、工具权限、verifier 和总执行预算。任何一层改多个因素，都需另列联合方案，避免声称单机制因果。</p>
+<table><thead><tr><th>对照</th><th>主要指标</th><th>证据缺口</th></tr></thead><tbody>
+<tr><td>状态/full attention</td><td>多项召回、loss、KV/state、训练计算</td><td>不同团队报告不能代替同主干消融</td></tr>
+<tr><td>专家/latent</td><td>任务质量、负载、payload、GEMM 与网络时间</td><td>维度比不能代替时间比例</td></tr>
+<tr><td>残差/optimizer</td><td>loss、梯度、失稳、step/恢复开销</td><td>初始化与参数组需分别调优</td></tr>
+<tr><td>量化/投机</td><td>目标质量、TTFT/ITL/P95、吞吐、接受率</td><td>单请求或 kernel 结果不能替代负载测量</td></tr>
+<tr><td>科学 Agent</td><td>独立成功率、失败分类、GPU/CPU/IO 与成功成本</td><td>本文只有方案，无实际运行结果</td></tr>
+</tbody></table>
+<details><summary>自测：怎样判断一个架构报告的证据强度？</summary><p>区分规格披露、代码可读、可执行配置、作者实测、受控消融和独立复现。前三者支持理解实现，后几者才逐步支持效果归因。团队模型卡与团队博客不能算两次独立复现。</p></details>
+<p>完成架构主线后，沿<a href="../llm-research-map-2026/index.html#learning-paths">阅读路线</a>进入训练或工程；题库负责检验概念，研究地图保留最新机制和待验证问题。</p></section>
+<section id="sources"><h2>证据入口</h2><p>基础论文见<a href="index.html#sources">系列来源</a>；型号/config/原件与新机制固定在<a href="../llm-research-map-2026/index.html#sources">研究地图</a>。本文没有新增模型实测或闭源结构推断，设计分析与来源规格分开呈现。</p></section>
+</main></body></html>

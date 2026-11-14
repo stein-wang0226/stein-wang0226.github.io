@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM容量、延迟与成功成本</title>
+<meta name="description" content="权重/KV/递归状态/激活/临时区显存账本，TTFT/ITL/goodput和长程Agent成本；下载规划CSV、JSON与测量协议。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="overview"><p class="eyebrow">Capacity &amp; cost · 2026-11-14</p><h2>容量是准入边界，成功成本是端到端指标</h2>
+<p class="lead">“模型装得下”只说明权重和最低运行状态可放入设备。服务还要为并发历史、prefill激活、临时工作区、graph、通信、碎片和峰值留空间。Agent多轮重算与失败尝试也应纳入成本。</p>
+<p>先修<a href="s01_runtime_scheduling.html">调度与cache</a>、<a href="s02_parallel_quantization.html">并行与精度</a>。本章提供规格推导和待执行测量协议；没有GPU运行、真实价格或训练结果。</p>
+<figure><div class="flow"><div class="stage"><b>静态容量</b><small>权重、adapter、固定buffer<br>实际分片与复制</small></div><div class="stage"><b>动态容量</b><small>KV、状态、激活<br>并发、长度与cache保留</small></div><div class="stage"><b>服务表现</b><small>队列、TTFT、ITL<br>吞吐、P95与goodput</small></div><div class="stage"><b>任务成本</b><small>GPU、CPU、网络<br>所有尝试 / 独立成功</small></div></div><figcaption>容量上界不能作为可投产并发。工作集与SLO仍需实际负载测量。</figcaption></figure>
+</section>
+<section id="ledger"><h2>按对象建立显存账本</h2>
+<div class="equation" role="math" aria-label="服务显存账本">Mpeak = Mweights + Madapters + MKV + Mrecurrent_state
+      + Mactivations + Mworkspace + Mcommunication + Mgraph + Mallocator
+MKV = Σlayer Σunique_token_blocks (nKV,local · dhead · [bytesK+bytesV])
+递归状态示意：每request每层 dv×dk×bytes + 卷积/辅助状态</div>
+<p>全局KV随历史长度增长；SWA按有效窗口和实际保留策略核算；递归矩阵通常不随T线性增长，但branch/checkpoint会增加副本。共享cache按唯一物理block算；TP下按本地KV heads及是否复制算。MLA、CED/CSA2和混合模型必须用真实状态布局，不能硬套普通GQA公式。</p>
+<table><thead><tr><th>对象</th><th>已知时可估算</th><th>仍需测量</th></tr></thead><tbody>
+<tr><td>权重</td><td>tensor形状×dtype/scales，按rank实际分片</td><td>未量化/未分片层、加载双份、adapter与通信buffer</td></tr>
+<tr><td>KV / 递归状态</td><td>层、head、维度、格式、长度、分支和cache策略</td><td>padding、scales、checkpoint、复制与驱逐</td></tr>
+<tr><td>激活 / workspace</td><td>选定kernel的形状界限可作参考</td><td>prefill块、logits、MoE dispatch、graph与临时峰值</td></tr>
+<tr><td>allocator / 余量</td><td>规划预留</td><td>实际分配、碎片、OOM前峰值与混合负载</td></tr>
+</tbody></table>
+<p>训练显存另含梯度、master和optimizer，见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#cluster">训练账本</a>。不把推理权重占用替代训练状态。</p>
+</section>
+<section id="example"><h2>70B、TP4、32K历史的可复算例子</h2>
+<p>结构取公开Qwen2.5-72B的80层、8KV heads、128head维度；权重参数数用N=70B做理想近似，不是精确checkpoint参数量。本文选TP4、BF16、名义80×10⁹ bytes/rank容量，16×10⁹ bytes/rank预留，假设KV均匀分片、无prefix共享。长度是已缓存输入+已生成token总和，32,768不超过该config原生位置上限。<a href="#sources">来源</a>。</p>
+<div class="equation" role="math" aria-label="70B服务容量推导">全模型KV/token = 80×8×128×(2+2) = 327,680 bytes = 320 KiB
+TP4本地KV/token = 81,920 bytes = 80 KiB（8heads可整分）
+32,768 token/request：本地KV = 2,684,354,560 bytes = 2.5 GiB
+BF16权重/rank ≈ 70×10⁹×2/4 = 35×10⁹ bytes
+规划KV预算 = 80×10⁹ − 35×10⁹ − 16×10⁹ = 29×10⁹ bytes
+理想并发上界 = floor(29×10⁹ / 2,684,354,560) = 10</div>
+<p>选择8请求/TP4组时，理想权重+KV+预留约72.47GB/rank（十进制）。这只是本文容量候选，8请求是否满足时延、峰值和框架cache预算仍未知。名义80GB不是实机可用字节；32K时总输入+输出不得超原生上限，不能输入32K再额外生成无限token。</p>
+<table><thead><tr><th>每请求缓存长度</th><th>本地KV（BF16）</th><th>理想上界（同29GB预算）</th><th>含义</th></tr></thead><tbody>
+<tr><td>8,192</td><td>0.625GiB</td><td>43</td><td>容量界；不保证43请求的ITL</td></tr>
+<tr><td>16,384</td><td>1.25GiB</td><td>21</td><td>更长历史使并发下降</td></tr>
+<tr><td>32,768</td><td>2.5GiB</td><td>10</td><td>本文选8作待测候选</td></tr>
+<tr><td>32,768，1byte KV候选</td><td>1.25GiB（仅数据）</td><td>21（忽略scale等）</td><td>量化容量上限示意；误差/kernel/metadata待验</td></tr>
+</tbody></table>
+<p>最后一行不是已启用FP8服务，也不是性能结论。表格未包含真实分配对齐；预留16GB是设计变量，不能当作实测workspace。与V4.1的890B/token报告比较时，应区分不同结构/压缩/全局与SWA边界，见<a href="../llm-research-map-2026/s03_base_architecture.html">专章推导</a>。</p>
+<p><a href="../assets/research/serving-design-20261114/capacity-estimates.csv" download>下载容量CSV</a> · <a href="../assets/research/serving-design-20261114/capacity-plan.json" download>下载假设与公式JSON</a>。均为计算表，无真实服务结果。</p>
+</section>
+<section id="metrics"><h2>服务指标的边界和分母</h2>
+<table><thead><tr><th>指标</th><th>本协议定义</th><th>常见误读</th></tr></thead><tbody>
+<tr><td>TTFT</td><td>请求提交到首个输出token，包括排队</td><td>仅prefill GPU时间冒充用户TTFT</td></tr>
+<tr><td>ITL / TPOT</td><td>ITL为相邻token间隔；TPOT为请求输出阶段时长/(输出数−1)，适用输出&gt;1</td><td>平均TPOT掩盖间隔抖动；单token请求要另报</td></tr>
+<tr><td>输出token吞吐</td><td>测量窗内完成/产生token总数÷窗时长，说明边界</td><td>混用prompt与output token；只计活跃GPU时间</td></tr>
+<tr><td>goodput</td><td>同时满足所定TTFT/ITL/SLO的成功请求数÷测量窗</td><td>不含任务正确性，需另报独立verifier</td></tr>
+<tr><td>P95 / P99</td><td>指定请求或间隔分布的分位</td><td>request-level与token-level不同；超时不应默默删除</td></tr>
+</tbody></table>
+<p>closed-loop固定并发会在服务变慢时自动降低提交率，可能掩盖排队；open-loop按固定到达过程测试超载和尾延迟，但需限流与报告未完成请求。两种协议分别命名。冷cache/热cache、warm-up、request timeout和输出长度分布都要公开。</p>
+<p>比较不同系统必须固定checkpoint、模板、tokenizer、精度、采样、长度、硬件/驱动、版本、cache策略和请求集。MoE同时记录专家负载和dispatch；spec同时记录draft成本、接受token分母与target调用数。没有这些条件，单个tokens/s没有充分可比性。</p>
+</section>
+<section id="rollout"><h2>从服务容量到长程Agent rollout</h2>
+<div class="equation" role="math" aria-label="Little定律与有效轨迹">稳定区间Little定律：系统内平均任务L = 到达率λ × 平均完成时间W
+有效轨迹/小时 = 满足科学/权限/版本准入的轨迹数 / 全部墙钟小时
+训练准入率 = 可用轨迹数 / 全部采样尝试数</div>
+<p>工具等待使W增加，系统同时持有更多任务；KV若一直保留，会进一步降低GPU准入。CPU环境、存储、网络、检索与verifier需单独测队列。异步rollout可增加重叠，也增加policy lag，不能把过期/不可验证轨迹计作有效更新。</p>
+<p>Dense64卡rollout池规划16个TP4组；若每组候选并发8，理论活跃生成上限128不是端到端每秒完成数。MoE512卡池、TP8和EP路线需重新核算模型与KV复制，不能用Dense每组并发直接乘64。完整128/1024卡集群规划在<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">科学后训练方案</a>。</p>
+</section>
+<section id="cost"><h2>成功成本包含所有尝试与独立资源</h2>
+<div class="equation" role="math" aria-label="成功成本">Ctotal = Σ GPU-hours·GPU-price + CPU-hours·CPU-price
+       + memory/storage/network + verifier/teacher + 重试与失败成本
+Csuccess = Ctotal / N独立验收成功
+若N成功=0：成本/成功未定义或无穷；保留全部成本，不填0</div>
+<p>同时报GPU-hours/成功、CPU-hours/成功等无需价格的资源指标；价格未知保留null。预算包含教师、reference、PPO critic、神经reward，以及失败环境和闲置预留。共享GPU按可解释分摊规则报告，不能因共置就称额外模型免费。</p>
+<p>BoN要计所有候选与selector，Agent要计每轮prefill/重算和工具，训练方案要同时给训练/采样成本与固定预算终评。训练成本与推理成本分开，若计算摊销需写明部署任务量。收益按研究组置信区间与失败类别报告，不虚构采购价格或吞吐。</p>
+</section>
+<section id="protocol"><h2>可下载的测量协议</h2>
+<p><a href="../assets/research/serving-design-20261114/measurement-protocol.txt" download>下载协议文本（Markdown语法）</a>：明确输入输出分布、到达过程、warm-up、cache、请求/任务分母、超时、硬件版本、质量与成本，含空的结果字段。它定义未来怎样测，没有测量值。</p>
+<p>建议先检查固定小负载的概率/模板与artifact一致性，再扫并发/长度找容量和SLO，最后加入真实工具等待和混合任务。每次只改变一项核心变量，并保存失败与OOM；数学容量检查属于方案核对，不代替GPU验收。</p>
+<details><summary>高token吞吐为什么可能降低成功成本表现？</summary><p>更多无效、过期、重复或越权轨迹消耗资源却不增加独立成功；CPU等待、长输入重算与失败选择也可能不体现在GPU吞吐中。</p></details>
+<details><summary>为什么10个容量上界不能直接作为生产并发？</summary><p>上界依赖理想参数、KV分片和固定预留，忽略了真实峰值和SLO。生产准入要按实际可用显存、峰值/尾延迟及混合负载重新确定。</p></details>
+<p>回到<a href="../llm-research-map-2026/#learning-paths">工程与评测路线</a>；自测见<a href="../llm-interview-bank.html#sec-infra">推理工程</a>和<a href="../llm-interview-bank.html#sec-eval">系统评估</a>。</p></section>
+<section id="sources"><h2>规格来源与边界</h2><ol class="sources">
+<li><a href="https://huggingface.co/Qwen/Qwen2.5-72B-Instruct/blob/495f39366efef23836d0cfae4fbe635880d2be31/config.json">Qwen2.5-72B-Instruct固定config</a>：80层、8192hidden、64heads、8KV、32768原生位置；head_dim=8192/64推导。</li>
+<li><a href="https://arxiv.org/abs/2309.06180v1">PagedAttention</a>：block与共享；<a href="https://arxiv.org/abs/2401.09670v3">DistServe</a>：TTFT/TPOT与SLO goodput；<a href="https://arxiv.org/abs/2402.02750v2">KIVI</a>：KV量化对象。</li>
+<li><a href="s01_runtime_scheduling.html#implementation">固定vLLM/SGLang源码</a>：版本、token/cache预算；模型组合和容量仍待实测。</li>
+</ol><p class="note">截至2026-11-14；N=70B、80GB名义容量、16GB预留和并发8均为本文选择。CSV/JSON是规格推导，未申请GPU、训练或运行benchmark。</p></section>
+</main></body></html>

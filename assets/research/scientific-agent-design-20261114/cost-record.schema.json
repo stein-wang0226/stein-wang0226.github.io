@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scientific agent attempt resource record",
+  "description": "Schema only. Null means unmeasured, not free. GPU and CPU units are separate; monetary costs require real prices. Offline demonstration/calibration/training budgets are recorded separately from attempt marginal cost.",
+  "type": "object", "additionalProperties": false,
+  "required": ["attempt_id", "task_id", "study_group", "experiment_id", "policy_revision", "verifier_version", "outcome", "failure_codes", "resources", "price_basis", "currency_cost"],
+  "properties": {
+    "attempt_id": {"type": "string", "minLength": 1}, "task_id": {"type": "string", "minLength": 1},
+    "study_group": {"type": "string", "minLength": 1}, "experiment_id": {"type": "string", "minLength": 1},
+    "policy_revision": {"type": "string", "minLength": 1}, "verifier_version": {"type": ["string", "null"]},
+    "outcome": {"enum": ["not_run", "scientific_success", "scientific_failure", "environment_failure", "invalid_submission"]},
+    "failure_codes": {"type": "array", "items": {"type": "string"}},
+    "resources": {
+      "type": "object", "additionalProperties": false,
+      "required": ["accounting_basis", "gpu_hours_by_role", "cpu_hours_environment", "cpu_hours_verifier", "request_input_tokens", "action_output_tokens", "observation_tokens", "wall_seconds", "tool_seconds", "retry_count", "storage_gb_hours", "network_gb"],
+      "properties": {
+        "accounting_basis": {"enum": ["reserved", "active", "unmeasured"]},
+        "gpu_hours_by_role": {
+          "type": "object", "additionalProperties": false,
+          "required": ["actor", "rollout", "reference", "critic", "reward", "teacher"],
+          "properties": {"actor": {"$ref": "#/$defs/resource"}, "rollout": {"$ref": "#/$defs/resource"}, "reference": {"$ref": "#/$defs/resource"}, "critic": {"$ref": "#/$defs/resource"}, "reward": {"$ref": "#/$defs/resource"}, "teacher": {"$ref": "#/$defs/resource"}}
+        },
+        "cpu_hours_environment": {"$ref": "#/$defs/resource"}, "cpu_hours_verifier": {"$ref": "#/$defs/resource"},
+        "request_input_tokens": {"$ref": "#/$defs/integer"}, "action_output_tokens": {"$ref": "#/$defs/integer"},
+        "observation_tokens": {"$ref": "#/$defs/integer"}, "wall_seconds": {"$ref": "#/$defs/resource"},
+        "tool_seconds": {"$ref": "#/$defs/resource"}, "retry_count": {"$ref": "#/$defs/integer"},
+        "storage_gb_hours": {"$ref": "#/$defs/resource"}, "network_gb": {"$ref": "#/$defs/resource"}
+      }
+    },
+    "price_basis": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "object", "additionalProperties": false, "required": ["currency", "source", "effective_date"], "properties": {"currency": {"type": "string", "minLength": 1}, "source": {"type": "string", "minLength": 1}, "effective_date": {"type": "string", "format": "date"}}}
+      ]
+    },
+    "currency_cost": {"$ref": "#/$defs/resource"}
+  },
+  "$defs": {"resource": {"type": ["number", "null"], "minimum": 0}, "integer": {"type": ["integer", "null"], "minimum": 0}}
+}

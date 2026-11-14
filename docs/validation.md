@@ -450,3 +450,51 @@ Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma分别分析，
 `27859a146c91ac073b5058f6ca354ac48bbe1fc620b9f276c91b490700f44db6`。
 对122项manifest文件比较，仅HTML资源查询参数及博客data-catalog-version不同；
 归一化这些缓存版本后全部一致，正文、导航、数据和资源字节没有其他变化。
+
+## 2026-11-14 · 知识体系贯通
+
+本轮新增架构6章、Agent系统3章、部署3章、训练方法1章、科学任务2章及3个系列入口；
+训练/数据旧章、8篇独立指南与DLM14章做有限复核，新增60道具体题解。
+研究地图维护唯一“原理→实现→实验”覆盖表和三条阅读路线，博客直接链接路线。
+13份可下载文件为研究设计、schema与容量推导，未执行真实训练、科学分析或benchmark。
+来源与边界见`knowledge-expansion-research-20261114.md`及`content-audit.md`。
+
+- 共享目录`make check OUTPUT=/tmp/my-blogs-knowledge-build`：95页/169文件通过，
+  包含同期后训练专题与未提交管理检查；不作为本任务独立提交证据。
+- 隔离目录`/tmp/my-blogs-knowledge-release-validation`基于`bae271a`：
+  `make check OUTPUT=/tmp/my-blogs-knowledge-release-build`通过88页/154文件。
+- `python3 docs/verify-content-migration.py --require-clean`：9项原SHA相同、
+  32项已登记变化、299原锚点、59原标记、148公开路由通过；
+  当前15本地集合/42章/6论文/2外部入口。原迁移manifest未重建。
+- 现有`./scripts/test_pipeline.py`8项测试通过，暂存差异`git diff --check`通过。
+- 本机Chrome：52页×390/768/1440px=156项布局、92项交互/资源、
+  8项无JS检查，合计256项通过，无页面脚本错误。原生目录/前后章、
+  六个机制关键词搜索、答案点击/Enter/aria、13资源SHA及CSV实际下载通过。
+  无JS全部155个答案可读。保留470原问题及95原答案的逐字检查另见来源记录。
+
+隔离浏览器输入：commit `bae271a0a021b22ee8a60b9b4be6a96b37b5c585`，
+`dirty:true`，input digest
+`bde3a4709c79e3f1b67e379242316d0dc2aa84edb01805ff2c500936925f5d46`。
+证据在`/tmp/my-blogs-browser-tests/knowledge-check.js`、`knowledge-release-report.json`
+及`knowledge-{routes-1440,attention-390,scientific-1440,capacity-390}.png`。
+已看4张截图，保留原视觉与宽高比；科学章节标题精简后重新核对。
+
+浏览器早期失败来自旧文单一h1假设、错误结果卡片选择器和索引外词汇；
+修订验收脚本后仅统计最终通过项，不重写旧文去迎合测试。
+内置浏览器连接不可用，使用本机Chrome/Playwright执行。
+
+同步前远端已发布后训练专题和Profile极简稿。本任务最终从`567654e`的
+`/tmp/my-blogs-knowledge-final-release`装配，保留这些已提交内容；
+原共享目录的管理协议与Profile未提交改动不纳入。
+最终检查、Actions与线上版本由后续实际核对确认。
+
+最终整合快照已通过`make check`：95页/169公开文件；
+迁移核验为9项原SHA、32项登记变化、299原锚点、59原标记、163公开路由，
+当前16本地集合/48章/6论文/2外部入口。对同一最终产物再次执行156项布局、
+92项交互资源和8项无JS检查，256项全部通过。浏览器证据为
+`/tmp/my-blogs-browser-tests/knowledge-final-report.json`，
+commit `567654eb63cfa772872d5fa095295c3633b2457d`、`dirty:true`、
+input digest `68f1e3e099cef2dac71846c59909e17aedd5d063c02dca19f1fc349d5c6807b9`。
+提交后只重新构建以记录真实commit/clean状态；发布收据保存在
+`/tmp/my-blogs-browser-tests/knowledge-publication-report.json`，
+以其中Actions对应版本、线上manifest与实际公开文件SHA为准。

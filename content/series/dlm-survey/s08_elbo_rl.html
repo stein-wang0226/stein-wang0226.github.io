@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
 </nav>
 <div class="container">
 <h2 class="section-title" id="s8"><span class="num">08</span> ELBO 问题与 RL 训练 (SPG / GDSD)</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：三个概率、两类误差</h3><p>区分token denoiser pθ(x0[n]|xt)、可记录的去噪轨迹概率与边际最终文本pθ(x0)。因子化反向transition可以计算轨迹概率；边际化所有路径可能不可处理。ELBO下界松度、其Monte Carlo估计方差、将下界代入非线性ratio的偏差，不能混称“ELBO有bias”。</p><p>本轮对照 <a href="https://arxiv.org/html/2510.09541v1#S3">SPG v1 §3/算法1</a>、<a href="https://arxiv.org/html/2605.29398v1#S3">GDSD v1 §3式6–10</a>修订；“uniform梯度方差必为10×”“只需换公式就通用”“高斯投影给精确文本log-prob”均未获普适证据。argmax通常不可逆，连续密度不等于离散概率。其余历史数值/迁移建议保留待核实，接 <a href="/llm-training-lifecycle/s04_rl_evaluation.html">GRPO目标与异质性</a>。</p></div>
 
 <h3>8.1 ELBO 的根本问题</h3>
 <div class="card red">
@@ -107,18 +108,18 @@ window.addEventListener('load', function() {
   <div class="formula-box">
     $\log \pi_\theta(\tau) = \sum_{t=1}^{T} \log p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$
   </div>
-  <p>其中 $p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 需要对所有可能的去噪结果求和（指数级），<strong>不可精确计算</strong>。标准做法是用 ELBO 近似 $\log \pi_\theta(\tau)$，但 ELBO 的 bias 直接传播到梯度估计，导致 RL 训练不稳定。</p>
+  <p>对给定轨迹且显式因子化的transition，上式通常可计算（还需初始噪声概率及decoder选择概率）；难点是最终文本的边际概率，需要对潜在路径求和。ELBO通常替代的是文本边际log-likelihood，而不是任意轨迹概率；轨迹法计算成本与预训练目标失配是另一个取舍。</p>
   
   <h4>SPG 的三明治构造</h4>
-  <p>SPG 利用真实对数似然的<strong>上界 $U(\tau)$</strong> 和<strong>下界 $L(\tau)$</strong>（$L \leq \log \pi_\theta(\tau) \leq U$）构造修正的优势函数：</p>
+  <p>SPG用响应文本x的log-likelihood下界Lθ与上界Uθ构造分段目标；优势A由组内奖励得到，界不从奖励中相减：</p>
   <div class="formula-box">
-    $\hat{A}^{\mathrm{lower}}_i = R(\tau_i) - b - U(\tau_i), \quad \hat{A}^{\mathrm{upper}}_i = R(\tau_i) - b - L(\tau_i)$
+    $A_i=R_i-b,\qquad L_\theta(x_i)\leq\log p_\theta(x_i)\leq U_\theta(x_i)$
   </div>
-  <p>其中 $R(\tau_i)$ 是奖励，$b$ 是 baseline。SPG 的策略梯度估计为：</p>
+  <p>忽略其它正则、按原算法1写出教学目标（优势在更新中固定）：</p>
   <div class="formula-box">
-    $\nabla_\theta J \approx \frac{1}{N}\sum_{i=1}^{N}\left[\hat{A}^{\mathrm{upper}}_i \cdot \nabla_\theta \log \pi_\theta(\tau_i) \cdot \mathbf{1}[\hat{A}_i > 0] + \hat{A}^{\mathrm{lower}}_i \cdot \nabla_\theta \log \pi_\theta(\tau_i) \cdot \mathbf{1}[\hat{A}_i < 0]\right]$
+    $J_{\mathrm{SPG}}=\frac1G\sum_i\left[\mathbf1(A_i\geq0)A_iL_\theta(x_i)+\mathbf1(A_i&lt;0)A_i\tilde U_\theta(x_i)\right]$
   </div>
-  <p>核心思想：对<strong>正优势</strong>轨迹（应增加概率），用<strong>上界优势</strong> $\hat{A}^{\mathrm{upper}}$（更保守的增量）；对<strong>负优势</strong>轨迹（应降低概率），用<strong>下界优势</strong> $\hat{A}^{\mathrm{lower}}$（更保守的惩罚）。这确保了策略更新始终是保守的——不会因 ELBO bias 而过度调整。</p>
+  <p>正优势最大化下界，负优势乘以上界后符号翻转，得到更保守的目标。实用负分支还可混合上下界以缓解方差；这是界构造与实用估计的区别，不是PPO clip或每次更新必然安全的保证。</p>
   
   <p>关键发现：去掉负优势惩罚会导致性能大幅下降；block-wise masking 比随机 masking 更稳定。</p>
   
@@ -138,19 +139,19 @@ window.addEventListener('load', function() {
   
   <h4>核心思想：RL → 自蒸馏</h4>
   <p>GDSD 将 dLLM 的 RL 训练重新表述为<strong>去噪器自蒸馏</strong>问题，完全绕过 ELBO。</p>
-  <p><strong>标准 RL 目标</strong>：最大化期望奖励 $\mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]$，需要对 $\pi_\theta$ 求梯度——在 dLLM 中不可计算。</p>
-  <p><strong>GDSD 等价转换</strong>：通过闭式最优策略推导，最优策略 $\pi^*$ 与当前策略 $\pi_\theta$ 之间的关系可以表达为：</p>
+  <p><strong>标准 RL 目标</strong>：最大化期望奖励。文本边际likelihood通常不可处理；显式去噪轨迹梯度是另一条可行但成本较高的路线。</p>
+  <p><strong>先看单KL的教学特例：</strong>固定old policy，用优势与reverse-KL权衡，可得到指数倾斜的最优策略；实际GDSD另含reference正则及共同forward过程，不能用本特例替代原算法：</p>
   <div class="formula-box">
-    $\pi^*(\mathbf{x}_{t-1} | \mathbf{x}_t) \propto \pi_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t) \cdot \exp\!\left(\frac{A(\mathbf{x}_{t-1}, \mathbf{x}_t)}{\beta}\right)$
+    $\pi^*(x_0)\propto\pi_{\mathrm{old}}(x_0)\exp(A(x_0)/\lambda),\qquad\lambda&gt;0$
   </div>
-  <p>其中 $A$ 是优势函数，$\beta$ 是温度参数。这等价于：用优势函数引导的<strong>自教师分布</strong>来蒸馏当前模型。</p>
+  <p>实际GDSD对old/ref/current使用一致masked输入，再将冻结教师的denoiser logit加上优势引导；教师与学生不是同一个可微变量。</p>
   
   <h4>Squared-Logit 损失</h4>
   <p>GDSD 推导出一个<strong>无需归一化 (normalization-free) 的损失函数</strong>：</p>
   <div class="formula-box">
-    $\mathcal{L}_{\mathrm{GDSD}} = \mathbb{E}_{t, \mathbf{x}_t} \left[ \sum_i \left\| \mathrm{logit}_\theta(\mathbf{x}_t)_i - \mathrm{logit}_\theta(\mathbf{x}_t)_i \cdot \exp\!\left(\frac{A_i}{\beta}\right) \right\|^2 \right]$
+    $\mathcal L=\mathbb E\left[(\ell_\theta-\operatorname{sg}(\ell_{\mathrm{old}})-\psi A)^2+\beta(\ell_\theta-\operatorname{sg}(\ell_{\mathrm{ref}}))^2\right]$
   </div>
-  <p>关键优势：不需要对 $p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 进行显式归一化（避免了指数级求和），直接在 logit 空间操作。</p>
+  <p>对应原式10，$\ell_p=\sum_n[\log p(x_0^{(n)}|x_t)-|\mathcal V|^{-1}\sum_v\log p(v|x_t)]$ 是token-level centralization后的序列分数；sg为停止梯度。优势以加法平移log分数，不是乘原始logit。消除的是文本空间教师partition常数，并非取消token softmax或全部模型近似误差。</p>
   
   <p>理论贡献：(1) 将 dLLM 的 RL 归约为去噪器自蒸馏，利用优势函数引导的自教师 (2) 证明现有 ELBO 方法是特定散度选择的特例，诊断其病理问题 (3) 提出无偏的 GDSD 目标函数。在 Dream-7B 和 LLaDA-8B 上验证，测试精度提升<strong>最高达 +19.6%</strong>。</p>
 
@@ -170,7 +171,7 @@ window.addEventListener('load', function() {
 
 <div class="insight">
   <div class="insight-title">ELBO 优化路线小结</div>
-  <p>两条路线解决 ELBO 的 bias：(1) <strong>SPG</strong> (Meta)：用上下界构造"三明治"，减少但不消除 bias；(2) <strong>GDSD</strong>：通过自蒸馏完全绕过 ELBO，理论上无偏。两者都是在解决同一个根本问题——离散扩散模型的似然不可精确计算。</p>
+  <p>SPG用上下界处理有正有负的优势；GDSD在共同forward/教师假设下用denoiser蒸馏避开特定likelihood-ratio失配。它不等于任意decoder、uniform迁移或reward估计下均为无偏；原报告的+19.6是特定规划任务增益，不作为本文任务结果。</p>
 </div>
 
 <h3>8.5 d1：首个 dLLM 推理 RL 框架 ⭐</h3>

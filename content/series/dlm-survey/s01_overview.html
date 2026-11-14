@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
 </nav>
 <div class="container">
 <h2 class="section-title" id="s1"><span class="num">01</span> 扩散语言模型全景概述与四大流派</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：分类轴不能混成排名</h3><p>离散/连续描述状态空间，masked/uniform描述噪声核，block描述生成因子化，draft/standalone描述系统角色；它们可以交叉。对一个模型登记状态、kernel、预测对象、loss、decoder及验证协议，才能解释它和AR比较的是哪一部分。四流派是本笔记的阅读组织，不是唯一分类。</p><p>历史4–14×、1196 tok/s和“复杂推理仍是AR领地”等总结均限原材料条件，未做统一复核。最新固定报告见 <a href="/llm-research-map-2026/s04_inference_diffusion.html">推理与扩散</a>；基础来源在 <a href="index.html#foundations">系列入口</a>。</p></div>
 
 <h3>1.1 为什么需要扩散语言模型？</h3>
 <p>自回归 (AR) 语言模型（GPT、LLaMA 等）是当前的主流范式，但存在<strong>三个结构性局限</strong>：</p>

@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
 </nav>
 <div class="container">
 <h2 class="section-title" id="s7"><span class="num">07</span> DLM 投机解码：DFlash vs MTP 深度分析</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：草稿、验证与精确性</h3><p>DLM作AR drafter时，最终分布由target验证协议决定；standalone dLLM减少去噪步数则可能改变自身质量。精确随机投机需min(1,p/q)接受及拒绝后的残差重采样，贪心prefix匹配不证明随机分布精确。MTP是预测/训练接口，不能与DLM或某种验证算法直接等同。</p><p>固定target、temperature、batch与长度，比较每accepted token的draft+verify时间、KV和goodput。旧7–14×限原条件；来源：<a href="https://arxiv.org/abs/2211.17192v1">Speculative Decoding</a>；最新 <a href="/llm-research-map-2026/s04_inference_diffusion.html">DFlash/DSpark/AdaFlash</a> → <a href="/llm-serving/s02_parallel_quantization.html">部署验证</a>。</p></div>
 
 <h3>7.0 投机解码基础概念</h3>
 <div class="card purple">

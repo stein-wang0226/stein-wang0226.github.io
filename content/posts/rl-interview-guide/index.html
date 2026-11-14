@@ -728,6 +728,9 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备">
+<h3 id="rl-objective-bridge">四个分布和三个检验</h3>
+<p>先明确当前policy、采样behavior/old policy、KL reference、蒸馏teacher；PPO重要性比率分母是behavior，reference进入KL，teacher提供监督。DPO是偏好对上的优化目标；OPD描述学生在策略采样与教师反馈的蒸馏流程，两者不是同一维度的算法标签。</p>
+<p>用科学任务检查：verifier失败是否策略导致？奖励是否被文件名/空结果投机满足？统计提升是否伴随更多rollout和更长轨迹？<a href="/llm-training-lifecycle/s03_sft_rft.html">SFT/RFT定义</a> → <a href="/llm-training-lifecycle/s04_rl_evaluation.html">RL归一化与loss</a> → <a href="/agent-data-benchmarks/s04_cluster_training_evaluation.html">同任务同预算对照</a>形成实际阅读路径。来源：<a href="https://arxiv.org/abs/1707.06347">PPO</a>、<a href="https://arxiv.org/abs/2305.18290">DPO</a>；历史OPD实例的型号与性能保持待逐项核实。</p>
 <h2>阅读准备</h2><p><strong>范围与先修：</strong>策略梯度、PPO / GRPO、RLHF / RLVR、DPO 和蒸馏。需要条件概率、期望、梯度与语言模型 loss 基础。</p>
 <p><strong>阅读路线：</strong>策略梯度与 advantage → PPO / GRPO → RLHF / RLVR → DPO → 算法对比 → 高频问答。复习时分别说清采样数据、reward、advantage、损失和更新后模型；不要混用“离线偏好优化”和“在线 rollout”。</p>
 </section>

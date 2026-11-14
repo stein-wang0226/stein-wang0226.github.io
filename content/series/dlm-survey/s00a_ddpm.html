@@ -98,6 +98,9 @@ window.MathJax = {
 
 <div class="doc-header">
 <h1>DDPM：从变分推断到噪声预测</h1>
+<div class="card" id="mechanism-review"><h3>机制与验收：加权界与简化目标</h3>
+<p>下面的后验 <code>q(x[t−1]|x[t],x0)</code> 在给定x0时精确高斯；未给定x0的逆向边缘通常是混合分布，有限步不能宣称精确高斯。固定模型方差时，KL的θ相关部分是加权均值MSE；丢掉时间权重得到Lsimple会改变优化目标，而不是与ELBO严格相等。检查练习：给定t与β，分别计算两个时间点权重，解释均匀采t如何估计所选目标。</p>
+<p>来源：<a href="https://arxiv.org/abs/2006.11239">DDPM §2–3</a>；接 <a href="s00b_flow_sde.html">连续时间与采样</a>、<a href="s08_elbo_rl.html">界/概率/梯度区别</a>。</p></div>
 <div class="doc-subtitle">理论基础 · 第一章</div>
 </div>
 
@@ -137,7 +140,7 @@ $$p_\theta(\mathbf{x}_{0:T}) := p(\mathbf{x}_T) \prod_{t=1}^T p_\theta(\mathbf{x
 $$p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t) := \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \Sigma_\theta(\mathbf{x}_t, t))$$
 </div>
 <p><strong>逆向分布的直觉理解：Score Function 视角</strong></p>
-<p>在 DDPM 的严格数学假设下（$\beta_t$ 极小且 $T$ 充分大），逆向分布 $q(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 可证明为一个多维高斯分布 $\mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_q, \Sigma_q)$，其形状完全由方差与均值两个统计量决定：</p>
+<p>小步长下可采用局部高斯逆向近似，并用高斯网络参数化均值与方差；有限步的边缘逆向分布 $q(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 不保证精确高斯。后文精确推导的是额外给定 $\mathbf{x}_0$ 的条件后验：</p>
 <ul>
 <li><strong>方差 $\Sigma_q$</strong>：刻画回推过程中的不确定性。由于步长极小，该不确定性被严格限制在一个以当前点为中心的微小球形区域内。</li>
 <li><strong>均值 $\boldsymbol{\mu}_q$</strong>：高斯分布的几何中心，即概率密度取最大值的点。</li>
@@ -266,7 +269,7 @@ $$D_{KL}(\mathcal{N}(\mu_1, \sigma^2 I) \parallel \mathcal{N}(\mu_2, \sigma^2 I)
 </div>
 <p>因此，最小化 KL 散度等价于最小化均值的均方误差（MSE）：</p>
 <div class="math-display">
-$$L_{t-1} = \mathbb{E}_q \left[ \frac{1}{2\sigma_t^2} \| \tilde{\boldsymbol{\mu}}_t - \boldsymbol{\mu}_\theta(\mathbf{x}_t, t) \|^2 \right]$$
+$$L_{t-1} = \mathbb{E}_q \left[ \frac{1}{2\sigma_t^2} \| \tilde{\boldsymbol{\mu}}_t - \boldsymbol{\mu}_\theta(\mathbf{x}_t, t) \|^2 \right] + C_t$$
 </div>
 <p>根据第四步得出的 $\tilde{\boldsymbol{\mu}}_t$ 结构，我们让网络的输出均值 $\boldsymbol{\mu}_\theta$ 采用相同的参数化形式，将预测目标从均值转移到噪声 $\boldsymbol{\epsilon}$ 上：</p>
 <div class="math-display">
@@ -304,7 +307,7 @@ $$L_{simple}(\theta) = \mathbb{E}_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left
 <li><strong>第 5 行（反向传播）</strong>：将 $\mathbf{x}_t$ 和时间步编码 $t$ 输入神经网络 $\boldsymbol{\epsilon}_\theta$。计算网络输出值与真实噪声 $\boldsymbol{\epsilon}$ 之间的 L2 范数（MSE 损失）。计算损失关于网络参数 $\theta$ 的梯度，并使用优化器（如 Adam）更新参数。</li>
 </ul>
 <p><strong>算法 2：推理/采样过程 (Sampling)</strong></p>
-<p>推理过程本质上是一个离散时间步下的祖先采样（Ancestral Sampling）过程，等价于退火朗之万动力学的数值求解。</p>
+<p>原DDPM算法是离散逆向链的祖先采样；与score/SDE采样存在联系，但不应泛称与所有退火朗之万算法严格等价。DDIM、概率流ODE和DPM-Solver可以采用不同路径/步数，详见连续时间章。</p>
 <pre><code>1: x_T ~ N(0, I)
 2: for t = T, ..., 1 do
 3:     z ~ N(0, I) if t &gt; 1, else z = 0
@@ -317,7 +320,7 @@ $$L_{simple}(\theta) = \mathbb{E}_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left
 <p><strong>原理解析：</strong></p>
 <ul>
 <li><strong>第 1 行</strong>：初始化状态。从平稳先验分布 $\mathcal{N}(\mathbf{0}, \mathbf{I})$ 中抽取初始随机张量 $\mathbf{x}_T$。</li>
-<li><strong>第 2 行</strong>：执行严格的逆序遍历。由于后验概率 $q(\mathbf{x}_{t-1} | \mathbf{x}_t)$ 的推导严格依赖于马尔可夫性，推理时必须逐时间步计算，无法像训练时那样跳跃。</li>
+<li><strong>第 2 行</strong>：该祖先采样算法依次遍历所选逆向时间网格；这是原算法约定，不能据此排除重新推导的跳步或ODE采样器。</li>
 <li><strong>第 3 行</strong>：生成方差项的随机扰动因子 $\mathbf{z}$。当 $t = 1$（最后一步）时，为了确保最终输出落在确定的数据流形上而非分布的散布点，方差项被截断设为 $\mathbf{0}$。</li>
 <li><strong>第 4 行（均值估计）</strong>：括号内的部分 $\frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right)$ 是网络估算出的真实后验分布均值 $\tilde{\boldsymbol{\mu}}_t$。这代表了梯度上升的方向，将样本推向高概率密度区域。</li>
 <li><strong>第 4 行（方差注入）</strong>：尾部的 $+\sigma_t \mathbf{z}$ 是随机微分方程中的布朗运动项。$\sigma_t$ 的取值在 DDPM 论文中通常设为 $\sqrt{\tilde{\beta}_t}$ 或 $\sqrt{\beta_t}$。这一项通过注入计算好的方差，维持采样轨迹在状态空间中的遍历性，防止过早收敛至局部确定的均值节点。</li>

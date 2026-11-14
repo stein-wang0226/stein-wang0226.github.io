@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status": "design_only_not_executed",
+  "date": "2026-11-14",
+  "model_geometry_source": "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct/blob/495f39366efef23836d0cfae4fbe635880d2be31/config.json",
+  "geometry": {"layers": 80, "hidden_size": 8192, "query_heads": 64, "kv_heads": 8, "head_dim_derived": 128, "native_position_limit": 32768},
+  "chosen_assumptions": {
+    "parameter_count_for_ideal_weights": 70000000000,
+    "parameter_count_is_exact_checkpoint_count": false,
+    "tensor_parallel": 4,
+    "kv_heads_per_rank": 2,
+    "kv_head_replication": false,
+    "weight_bytes_per_element": 2,
+    "nominal_device_bytes_per_rank": 80000000000,
+    "reserve_bytes_per_rank": 16000000000,
+    "reserve_is_measured": false,
+    "prefix_sharing": false,
+    "candidate_concurrent_requests_per_tp_group_at_32k": 8
+  },
+  "formulas": {
+    "weight_bytes_per_rank": "N * weight_bytes / TP",
+    "kv_bytes_per_token_per_rank": "layers * (kv_heads / TP) * head_dim * (K_bytes + V_bytes)",
+    "kv_bytes_per_request_per_rank": "cached_input_plus_generated_tokens * kv_bytes_per_token_per_rank",
+    "ideal_capacity_ceiling": "floor((nominal_device_bytes - weight_bytes - reserve_bytes) / kv_bytes_per_request)"
+  },
+  "excluded_or_not_explicitly_modeled": ["exact parameter placement", "quantization scales and padding", "nonsharded weights", "allocation alignment", "prefill activation peaks", "MoE dispatch buffers", "communication buffers", "CUDA graphs", "allocator fragmentation", "actual device available bytes"],
+  "units": {"GB": "10^9 bytes", "GiB": "2^30 bytes", "KiB": "2^10 bytes"},
+  "one_byte_kv": {"status": "capacity_candidate_only", "scales_included": false, "kernel_verified": false, "quality_verified": false},
+  "measured_results": {"peak_memory_bytes": null, "ttft_ms": null, "itl_ms": null, "output_tokens_per_second": null, "independent_success_rate": null, "gpu_hour_price": null},
+  "note": "All CSV values are arithmetic planning values, not GPU measurements. Total cached tokens include input and generated output and must fit the fixed model context limit."
+}

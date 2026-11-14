@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>规划、搜索与推理预算：让额外计算产生价值</title>
+<meta name="description" content="ReAct、计划执行、反思、BoN/beam/MCTS、过程与结果验证，分析工具环境分支、预算分配、停止与恢复。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="overview"><p class="eyebrow">Planning &amp; test-time compute · 2026-11-14</p><h2>规划是选择下一步，搜索是分配备选路径的计算</h2>
+<p class="lead">长程Agent需要在信息不完整时行动。计划给出依赖与检查点，工具观察更新状态，搜索给不同方案机会，verifier提供筛选依据。更多token或分支只有在增加有效信息、修复关键错误或找到更好的方案时才有价值。</p>
+<p>先读<a href="../agent-harness-guide.html#codex-loop">Harness执行循环</a>及<a href="s01_rag_retrieval.html">证据检索</a>。本章讨论策略，不重写Codex的上下文/换窗实现。动作权限和非可信反馈见<a href="s03_trust_safety.html">信任边界</a>。</p>
+<figure><div class="flow"><div class="stage"><b>目标与状态</b><small>合同、已知证据<br>环境与未决问题</small></div><div class="stage"><b>候选下一步</b><small>查证、计算、分支<br>依赖与预期收益</small></div><div class="stage"><b>执行与观察</b><small>隔离的工具环境<br>artifact、exit与反馈</small></div><div class="stage"><b>检查与重规划</b><small>验证、剩余预算<br>继续 / 回退 / 停止</small></div></div><figcaption>重复循环中，每条分支同时具有模型状态和外部环境状态。文字计划不是执行证据。</figcaption></figure>
+</section>
+<section id="strategies"><h2>ReAct、计划执行与反思的分工</h2>
+<table><thead><tr><th>策略</th><th>控制方式</th><th>适用与失败</th></tr></thead><tbody>
+<tr><td>ReAct</td><td>reasoning/action/observation交替，根据反馈选择行动</td><td>适合未知环境；可能重复工具、局部贪心、被观察中的注入带偏</td></tr>
+<tr><td>Plan-then-execute</td><td>先列依赖与检查点，再逐项执行</td><td>已知流程便于审阅；错误前提会污染整条计划，必须允许受控重规划</td></tr>
+<tr><td>反思 / Reflexion</td><td>根据失败与反馈生成经验，再尝试</td><td>文本反思不等于参数更新；重复生成理由不能代替新的验证证据</td></tr>
+<tr><td>分层控制</td><td>planner给子目标，executor操作，verifier检查</td><td>职责清晰但接口需定义；多个角色可能共享同一错误来源</td></tr>
+</tbody></table>
+<p>ReAct强调推理与行动协同，Reflexion强调由反馈形成语言经验；原始任务条件见<a href="#ref-react">[1–2]</a>。不是所有Agent都需要展示自由文本思维；工程可记录简短计划、动作理由、输入/输出与检查结果，在不暴露内部思维的情况下保留可审计过程。</p>
+<p>科学案例的计划应把“确认raw count与配对 → 固定design/contrast → 分析 → 输出schema → 独立验收”设成依赖图。未确认count层就跑DESeq2，再用更多分支比较结果，通常只是扩大错误。未知来源冲突是阻塞条件；可以完成不依赖该冲突的审计材料。</p>
+</section>
+<section id="search"><h2>BoN、beam与MCTS：候选、评分与展开对象不同</h2>
+<div class="equation" role="math" aria-label="候选成功率与MCTS选择">理想独立采样、有完美oracle时：P(至少一条成功) = 1−(1−p)^N
+实际部署：只输出由可用selector选择的一条；相关采样与评分误差改变收益
+UCT示意：选择 argmaxa [Q(s,a)+c√(ln N(s)/N(s,a))]</div>
+<p>Best-of-N生成完整候选再选一条；beam维护有限个高分中间前缀；MCTS在部分状态上选择、展开、模拟和回传价值。Tree of Thoughts提供离散thought搜索框架，但自然语言“状态”如何映射到可执行环境，要由系统另行定义。<a href="#ref-tot">[3]</a></p>
+<table><thead><tr><th>方式</th><th>计算花在哪里</th><th>必须评估</th></tr></thead><tbody>
+<tr><td>BoN</td><td>N条完整生成/执行与最终选择</td><td>样本相关、selector错误、所有失败成本；oracle pass@N不是部署准确率</td></tr>
+<tr><td>beam / step search</td><td>中间扩展与剪枝</td><td>过程评分偏差、早期错误剪枝、多样性和长度偏置</td></tr>
+<tr><td>MCTS</td><td>树访问、rollout、value/verifier</td><td>状态快照、价值校准、探索常数、重复状态和模拟成本</td></tr>
+<tr><td>顺序修订</td><td>基于反馈改一条方案</td><td>反馈是否独立可靠；修订是否引入新错误和更多失败操作</td></tr>
+</tbody></table>
+<p>二值科学验收难以为每个中间节点打分。过程信号可检查合法count、列对齐、design秩、输出列与工具exit，但这些局部通过不保证最终统计有效。用测试集verifier反复挑选候选，也会把测试变成推理oracle；需要公开的可用反馈与隐藏终评分开。</p>
+<details><summary>pass@k估计和真正选出正确答案之间有什么区别</summary>
+<p>在n个可交换采样中有c个成功，经典估计为 <code>1−C(n−c,k)/C(n,k)</code>（适用时按边界取1）。它估计至少一个成功，不评价选择器是否能找到成功候选。交付一条结果时还需报告selector的top-1成功及选择开销。工具环境不独立、种子相关和缓存复用都要记录。</p></details>
+</section>
+<section id="verification"><h2>过程验证、结果验证与自评分</h2>
+<p>结果verifier检查最终artifact是否满足合同；过程verifier检查动作和中间状态的合法性；reward model预测偏好/质量；模型自评提供候选信号。它们可信度和成本不同。一个漂亮报告可能掩盖错误contrast，一个低置信度输出也可能满足独立统计检查。</p>
+<p>测试时计算研究<a href="#ref-ttc">[4]</a>发现最合适的搜索/修订策略依赖问题难度；其数学任务中的compute-optimal收益不能直接外推到工具Agent。对科学任务，困难可能来自缺失数据、工具环境或不可识别design，而不是需要更长推理。</p>
+<p>2026的<a href="s01_rag_retrieval.html#agentic">Search-R1++与PROGRESS</a>说明模板、reward与搜索监督改变策略；<a href="../llm-research-map-2026/s05_agent_frontiers.html">持续学习与并行Agent</a>提供领域实例。多Agent或更长上下文并非天然获得独立验证：共享同一底座、文档和评分器仍会相关出错。</p>
+</section>
+<section id="environment"><h2>环境分支和恢复：不能只复制对话</h2>
+<p>纯文本搜索可以复制前缀；工具Agent的分支还包括文件、进程、数据库、网络会话、随机态和挂载权限。复制prompt但共用可写目录，会让一个分支修改另一个分支输入。科学结果目录和日志必须有独立run/branch ID；公共不可变fixture可以只读复用。</p>
+<table><thead><tr><th>层</th><th>分支或恢复需要什么</th><th>错误解释</th></tr></thead><tbody>
+<tr><td>模型上下文</td><td>token、工具记录、计划、KV/递归状态或可重算前缀</td><td>摘要相同不代表概率分布完全相同</td></tr>
+<tr><td>执行环境</td><td>隔离目录、镜像、版本、进程/文件快照，定义哪些可恢复</td><td>重新运行不等于延续中断进程</td></tr>
+<tr><td>外部副作用</td><td>幂等键、提交记录、允许的回滚/补偿</td><td>删除/发送不能靠重置对话撤销</td></tr>
+<tr><td>评分状态</td><td>verifier版本、已消耗预算、可见反馈</td><td>重试后清零预算或遗忘失败会夸大成功率</td></tr>
+</tbody></table>
+<p>Codex固定源码分析见<a href="../agent-harness-guide.html#codex-context">压缩、换窗与状态重装配</a>：模型窗口变化与工作环境持续存在是不同层。这里的分支方案由本文提出，未实现科学任务runner。</p>
+</section>
+<section id="budget"><h2>预算、停止与工业rollout容量</h2>
+<div class="equation" role="math" aria-label="测试时预算与收益">总预算包含：生成/重算、检索、环境执行、verifier、排队和失败重试
+期望净收益示意：ΔP(success|state, action)·V − incremental_cost(action)
+继续条件：剩余预算足够 + 新行动能解决未决条件 + 权限允许
+停止条件：合同通过 / 硬阻塞 / 重复无信息 / 预算耗尽</div>
+<p>收益概率未知时不要伪造精确value。本文建议按任务类型、当前证据缺口和错误类别设置可解释规则，再用held-out任务拟合/校准预算策略。超时和停止不是一定失败：拒绝非法统计设计可满足审计类任务合同，但分析类任务需要另报未完成。</p>
+<p>工业集群的G=8训练rollout与部署BoN=8不是同一含义。前者为组内优势产生样本，后者需要可用selector选择交付结果；训练和终评推理预算要明确。长程环境造成尾延迟和policy lag，增加GPU不一定降低CPU工具的瓶颈。128/1024卡方案见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">集群对照</a>，资源测量见<a href="../llm-serving/s03_capacity_cost.html">服务成本</a>。</p>
+</section>
+<section id="evaluation"><h2>同预算研究方案</h2>
+<p>本文建议冻结基础模型、合同、研究切分、工具环境和终评权限，比较单轨迹ReAct、带检查点的计划执行、BoN+独立selector、有限过程搜索。同时给相同总token/工具调用上限和相同墙钟上限两组报告，避免把并行与资源增加混为算法收益。</p>
+<p>结果应包含任务/研究组成功率、所有尝试成本、验证调用、重复操作、停止原因、环境失败、P95时长与selector误选。分支快照创建和清理也计成本。先分错误来源，再讨论“增加推理是否有用”；不在本轮实际运行。</p>
+<details><summary>反思为什么可能只是重复错误？</summary><p>如果反馈来自同一模型的自评分，没有新的观察或独立验证，反思可能把原错误解释得更流畅。应检查反思是否改变可执行行动以及最终独立验收。</p></details>
+<details><summary>为什么相同token预算仍不完全公平？</summary><p>不同输入长度、prefill重算、工具/CPU时间、verification和并行资源改变成本。还需完整预算和端到端测量边界。</p></details>
+<p>下一章<a href="s03_trust_safety.html">信任与权限</a>；配套<a href="../llm-interview-bank.html#sec-agent">Agent题库</a>。</p>
+</section>
+<section id="sources"><h2>来源与复核范围</h2><ol class="sources">
+<li id="ref-react">Yao等，<a href="https://arxiv.org/abs/2210.03629v1">ReAct</a>：reasoning/action/observation协同。</li>
+<li id="ref-reflexion">Shinn等，<a href="https://arxiv.org/abs/2303.11366v1">Reflexion</a>：语言反馈与跨尝试经验；不是梯度训练。</li>
+<li id="ref-tot">Yao等，<a href="https://arxiv.org/abs/2305.10601v1">Tree of Thoughts</a>：候选thought、评价与搜索。</li>
+<li id="ref-ttc">Snell等，<a href="https://arxiv.org/abs/2408.03314v1">Scaling LLM Test-Time Compute Optimally</a>：难度自适应与验证/修订。</li>
+<li id="ref-codex"><a href="../agent-harness-guide.html#codex-loop">Codex固定源码分析</a>及<a href="../agent-harness-guide.html#codex-context">上下文案例</a>：commit c2c1ebba0a7985ebee065c5492233a843b84c4c6，源码引用集中维护，实验/托管边界保留。</li>
+<li id="ref-2026"><a href="https://arxiv.org/abs/2602.19526v1">Search-R1++</a>、<a href="https://arxiv.org/abs/2608.00969v1">PROGRESS</a>：2026检索策略与奖励对照，原文机制核对，不外推领域收益。</li>
+</ol><p class="note">截止2026-11-14；环境分支、停止与科学对照是本文设计。没有执行benchmark、rollout或模型训练。</p></section>
+</main></body></html>

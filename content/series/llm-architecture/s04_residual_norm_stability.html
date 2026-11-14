@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>04 · 残差、归一化与稳定性</title><meta name="description" content="解释Pre/Post-Norm、RMSNorm、梯度直通、初始化与QK尺度，区分AttnRes和mHC的对象、约束与稳定性证据。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="purpose"><h2>稳定性来自一条完整数值路径</h2>
+<p class="lead">深层网络既要传递表示，也要把梯度送回前层。残差、Norm、初始化和优化器共同控制尺度；任一机制的局部性质都不能独立保证大模型训练稳定。前沿残差改变信息读取方式，需要连同激活保存、通信和数值误差评估。</p>
+<p>先修：<a href="s01_transformer_foundations.html#block">decoder block</a>与链式法则。基础结论来自归一化论文和固定实现，前沿机制的具体报告见<a href="../llm-research-map-2026/s07_architecture_training.html#residual">研究地图第07章</a>。</p></section>
+<section id="norm-position"><h2>Pre-Norm 与 Post-Norm 的梯度路径</h2>
+<div class="equation" role="math">Pre-Norm：y = x + F(N(x))
+∂y/∂x = I + J_F(N(x)) J_N(x)
+Post-Norm：y = N(x + F(x))
+∂y/∂x = J_N(x+F(x)) [I + J_F(x)]
+深层反向传播包含各层 Jacobian 的连乘</div>
+<p>Pre-Norm 的残差分支给出了显式 I 路径，但完整 Jacobian 仍可能因其它项放大/衰减。Post-Norm 的所有路径经过 Norm 的 Jacobian。Xiong 等在均值场与初始化条件下分析了输出附近梯度和 warm-up，并报告其任务中的 Pre-LN 实验；不能推成“所有 Pre-Norm 都不需要 warm-up”。<a href="index.html#ref-6">[6] On Layer Normalization</a></p>
+<figure><div class="flow">
+<div class="stage"><b>残差主路</b><small>x 直接参与相加<br>给表示/梯度短路径</small></div>
+<div class="stage"><b>模块输入</b><small>Norm 与初始化<br>控制尺度分布</small></div>
+<div class="stage"><b>模块计算</b><small>QK / FFN / experts<br>非线性与低精度误差</small></div>
+<div class="stage"><b>更新与恢复</b><small>梯度、optimizer、scheduler<br>checkpoint 与异常定位</small></div>
+</div><figcaption>稳定性检查的依赖链。图不表示这些因素可以分别带来确定比例的收益。</figcaption></figure>
+<p>现代模型可能采用 residual scaling、额外 Norm、深度相关初始化、多路残差与融合 kernel。阅读 config 时需找出真实的运算顺序，不能只按参数名称判断。</p></section>
+<section id="rmsnorm"><h2>RMSNorm 保留均值，主要调整幅度</h2>
+<div class="equation" role="math">LayerNorm(x) = γ ⊙ (x−mean(x))/√(var(x)+ε) + β
+RMSNorm(x) = γ ⊙ x/√(mean(x²)+ε)
+归一化轴通常是单个 token 的 hidden 维度；不是 batch 统计</div>
+<p>RMSNorm 不显式减均值，计算较简洁；它不是 BatchNorm，也不意味着所有激活标准正态。ε、γ、统计累积精度和输出精度都影响行为。固定 Llama 源码先转 FP32、求平方均值、用 rsqrt，再转回输入 dtype；这说明低精度主干仍可能保留高精度统计。<a href="index.html#ref-6">[6] RMSNorm</a><a href="index.html#ref-8">[8] L53–67</a></p>
+<pre><code># 摘录自固定 Transformers v4.57.1 LlamaRMSNorm；Apache-2.0
+input_dtype = hidden_states.dtype
+hidden_states = hidden_states.to(torch.float32)
+variance = hidden_states.pow(2).mean(-1, keepdim=True)
+hidden_states = hidden_states * torch.rsqrt(variance + self.variance_epsilon)
+return self.weight * hidden_states.to(input_dtype)
+# 来源链接见本章 [8]，仅此函数片段，不是生产配方</code></pre>
+<p>Norm 的 scale 与 optimizer/weight decay 也需分组管理；“所有参数使用同一精度和衰减”往往不符合真实配方。</p></section>
+<section id="scale"><h2>初始化、QK 与长上下文会改变数值范围</h2>
+<table><thead><tr><th>风险</th><th>产生机制</th><th>应观察的量</th></tr></thead><tbody>
+<tr><td>残差幅度随深度增长</td><td>多层更新累积，与初始化/相关性有关</td><td>逐层激活 RMS、分支比例、gradient norm</td></tr>
+<tr><td>Attention logits 尖峰</td><td>Q/K 范数、位置外推和异常 token</td><td>QK 最大值、softmax entropy、饱和与 NaN</td></tr>
+<tr><td>专家/门控异常</td><td>路由集中、低精度选择、非线性重尾</td><td>expert 负载、gate 范数、溢出/梯度</td></tr>
+<tr><td>优化器更新异常</td><td>学习率、动量、矩阵分组和低精度误差</td><td>update/weight 比、optimizer 状态与 step 时间</td></tr>
+<tr><td>长度课程退化</td><td>位置和 token 分布变化，有效 batch 改变</td><td>短/长桶 loss、位置检索、回放与回归</td></tr>
+</tbody></table>
+<p>QK clipping、QK Norm、MuonClip 与普通 gradient clipping 控制的对象不同。gradient clipping 限制更新前梯度的整体尺度，不能自动纠正错误 mask、数据坏样本或 Attention logits 的前向溢出。新方法应在<a href="../llm-training-lifecycle/s05_training_methods_systems.html">训练方法章</a>与实际参数组一起解释。</p></section>
+<section id="new-residual"><h2>AttnRes 与 mHC 读取不同对象</h2>
+<table><thead><tr><th>机制</th><th>选择/混合的轴</th><th>需要保存</th><th>不能由名称推出</th></tr></thead><tbody>
+<tr><td>普通残差</td><td>当前流固定相加</td><td>当前表示与反向所需激活</td><td>不需要梯度/尺度管理</td></tr>
+<tr><td>Attention Residuals</td><td>历史层/深度表示</td><td>full 或 block 历史摘要</td><td>替代 token Attention 或检索全部历史 token</td></tr>
+<tr><td>mHC</td><td>多路残差之间的映射</td><td>多路流与映射信息</td><td>整个非线性网络天然不爆梯度</td></tr>
+<tr><td>Gated Residual</td><td>模型定义的元素/流门控</td><td>对应多路状态与 gate</td><td>和双随机约束或深度 softmax 等价</td></tr>
+</tbody></table>
+<p>AttnRes 对此前层表示进行加权读取；full 与 block 版本在历史状态保存上不同。mHC 约束 residual mixing 为近似双随机矩阵：理想矩阵是置换的凸组合，谱范数不超过 1；它只控制该混合部分，F、pre/post 路径和有限次 Sinkhorn 的误差仍存在。原式、固定来源与 Single-Pass 实现口径见<a href="../llm-research-map-2026/s07_architecture_training.html#residual">机制证据页</a>。</p>
+<p>因此本文分析建议：既看 gradient/loss，也看保存激活、重算、PP 传输和约束误差；不能把减少某个映射的 traffic 改写成整个训练时间同比下降。</p></section>
+<section id="evaluation"><h2>把结构、配方和故障来源拆开对照</h2>
+<p>先固定数据、token、主干和精度，再分别改变 Norm/残差；各方案需要有合理学习率与初始化，而不是用未经调参的单点证明胜负。等 token 与等总计算预算都要记录。对深度选择机制还要测激活占用、重算与 optimizer step 时间；此处为待执行设计。</p>
+<p>一次 loss spike 的归因可沿“样本/mask → 逐层激活 → QK/gate → 梯度 → optimizer → 通信/恢复”排查。坏数据、数值溢出和同步错误产生的表象相似；恢复 checkpoint 时要保留 optimizer、scheduler、RNG 与数据游标，避免换状态后将不可比结果当作修复成功。</p>
+<details><summary>自测：RMSNorm 为什么不能消除所有训练不稳定？</summary><p>它主要规范局部输入尺度，没有固定所有矩阵范数、QK 最大值、非线性 Jacobian、optimizer 更新和数据分布。它是配方的一部分，局部归一化不等于全网稳定证明。</p></details>
+<p>下一章转向历史状态：递归模型压缩的是序列信息，AttnRes/mHC 处理的是深度信息，两条轴要明确区分。</p></section>
+<section id="sources"><h2>来源</h2><p><a href="index.html#ref-6">[6] Pre/Post-LN 与 RMSNorm 原论文</a>、<a href="index.html#ref-8">[8] 固定源码</a>；前沿残差与优化器引用<a href="../llm-research-map-2026/s07_architecture_training.html#sources">固定报告索引</a>。检查协议为本文建议，没有实测失稳率。</p></section>
+</main></body></html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>03 · FFN、MoE 与专家通信</title><meta name="description" content="从SwiGLU矩阵和参数量推导MoE路由、容量、负载均衡、专家并行、通信和LatentMoE，解释稀疏模型的系统边界。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="purpose"><h2>通道容量怎样变成稀疏计算</h2>
+<p class="lead">FFN 在每个 token 的表示上执行非线性变换。MoE 把一组 FFN 换成多个专家，再由 router 选择少数参与当前 token 的计算。它扩大可存储的参数容量，同时控制激活计算；代价是路由、专家负载、派发通信和训练稳定性。</p>
+<p>先修：<a href="s01_transformer_foundations.html#block">block 与矩阵形状</a>。基础 FFN 来源于 Transformer；门控变体见 GLU 原论文，稀疏训练工程用 Switch 作明确案例。<a href="index.html#ref-1">[1]</a><a href="index.html#ref-5">[5]</a></p></section>
+<section id="swiglu"><h2>两矩阵 FFN 与三矩阵 SwiGLU</h2>
+<div class="equation" role="math">普通 FFN：y = φ(xW₁ + b₁) W₂ + b₂
+W₁[d,f]，W₂[f,d]；忽略 bias：2df 参数
+SwiGLU：y = (SiLU(xW_gate) ⊙ xW_up) W_down
+W_gate/W_up[d,f]，W_down[f,d]；忽略 bias：3df 参数
+若普通 f=4d，为近似等参数，SwiGLU f≈8d/3（实际按硬件取整）</div>
+<p>gate 分支和 up 分支分别投影，元素乘积产生输入依赖的通道选择，再回到 hidden 维度。这里的 gate 是每 token 的通道门控，和 MoE router 的专家选择不同。固定 Llama 实现的 <code>LlamaMLP.forward</code> 正是 <code>act(gate_proj(x))*up_proj(x)</code> 后经 down_proj。<a href="index.html#ref-8">[8] L143–156</a></p>
+<p>如果只换非线性而保持 f 不变，参数和 GEMM 也变多；所谓“公平激活函数比较”需明确是否等参数、等 FLOPs 或等训练算力。现代专家宽度可能更细，还叠加共享专家与 latent 投影。</p></section>
+<section id="routing"><h2>Router 决定 token 走向哪些专家</h2>
+<div class="equation" role="math">s = Router(x)，I = TopK(s)
+y = Σ_(e∈I) g_e(x) · E_e(x) + E_shared(x)
+E_e 是 routed expert；共享路径是否存在由模型决定
+g 的 softmax/sigmoid、top-k 后是否归一化、bias 是否只用于选择都需查实现</div>
+<p>token-choice 路由让每个 token 选择专家，容易造成专家收到的 token 数不均。专家数量 E、top-k、宽度 f、共享专家、层计划共同决定容量；“总参数 1T、激活 30B”并未描述 KV、router、通信、输出头或投机模块。</p>
+<figure><div class="flow">
+<div class="stage"><b>路由</b><small>hidden → scores<br>选择专家/记录 assignment</small></div>
+<div class="stage"><b>Dispatch</b><small>token 按专家重排<br>跨 EP 组 All-to-All</small></div>
+<div class="stage"><b>专家计算</b><small>local experts 执行 GEMM<br>处理 padding/负载不均</small></div>
+<div class="stage"><b>Combine</b><small>输出返回 token 位置<br>按 gate 权重汇总</small></div>
+</div><figcaption>专家并行的概念路径。单设备也要重排；不同实现可能采用 AllGather/ReduceScatter 或融合通信，并非一律同一 collective。</figcaption></figure>
+<details><summary>top-k 是可微的吗？</summary><p>离散选择本身通常不对所有候选传播普通连续梯度；选中路径的 gate 和专家参与训练，router 还可从辅助目标获得梯度。不同 straight-through、soft routing、loss-free balancing 的处理不相同。不能因为选择离散就说 router 完全不学习。</p></details>
+</section>
+<section id="balance"><h2>负载与容量既影响效率，也影响学习机会</h2>
+<table><thead><tr><th>机制</th><th>主要目的</th><th>需记录的副作用</th></tr></thead><tbody>
+<tr><td>Auxiliary balance loss</td><td>鼓励分派数量与概率均衡</td><td>权重可能与任务 loss 冲突，局部/batch/全局口径不同</td></tr>
+<tr><td>Capacity factor</td><td>限制每专家接收量，规划 buffer</td><td>overflow/drop/pad 策略可能改变哪些 token 真正学习</td></tr>
+<tr><td>Dropless dispatch</td><td>尽量不丢 token assignment</td><td>不均衡仍造成显存和时间长尾</td></tr>
+<tr><td>路由 bias / loss-free balancing</td><td>通过选择偏置调节分派</td><td>bias 更新速度、统计窗口、训练/服务一致性</td></tr>
+</tbody></table>
+<p>Switch 的 top-1、capacity 与 selective precision 是特定训练方案；现代 top-k、多共享专家和动态派发不能照搬全部参数。<a href="index.html#ref-5">[5] Switch</a> 若模型按领域过度集中到少数专家，短期质量与长期利用率可能呈现不同关系；只看平均 token 数会漏掉峰值和不活跃专家。</p>
+<p>本文建议同时记录每层每专家 assignment、overflow、gate entropy、梯度、GEMM 利用率和 All-to-All P95。科学/代码混合数据应分桶查看，不能把总负载均衡等同于各域学得一样好。</p></section>
+<section id="parameters"><h2>总参数、激活参数与通信分别算账</h2>
+<div class="equation" role="math">单层 SwiGLU experts：总量 ≈ E·3df + shared + router
+单 token routed 激活矩阵 ≈ k·3df（另加 shared/Attention/其它模块）
+理想 dispatch 一向 payload ≈ assignments × representation_width × bytes/value
+assignments 最多接近 tokens·k；实际取决于重复、local assignment 和布局</div>
+<p>所有专家权重仍需存储并分布到设备；top-k 小不意味着整个模型能装入单卡。专家训练状态可按专家 DP 分片，非专家参数按普通 DP 管理。dispatch/combine 要传表示和元数据，网络拓扑、负载偏斜与 overlap 决定实际时间。</p>
+<p>若固定总参数增加 E 并缩小单专家，激活 FLOPs 可能下降，但更小的 GEMM 未必更快；若固定激活计算增大 E，权重容量和 checkpoint IO 增加。两类设计要分开对照。</p></section>
+<section id="latent"><h2>LatentMoE 把专家工作空间缩窄</h2>
+<div class="equation" role="math">z = xP_down ∈ R^r，r&lt;d
+y_routed = [Σ_e g_e E_e(z)]P_up
+加上模型定义的 shared/Norm 路径
+投影参数 ≈ 2dr；专家与 dispatch 的 width 从 d 改为 r（满足相同路径条件时）</div>
+<p>可把节省的维度用于更多专家或新宽度，但投影、共享路径和 router 仍有成本。router 读 hidden 还是 latent、投影后 Norm 和 gate 的顺序，必须看对应实现。Nemotron 与 Kimi 的不同规格及稳定化证据集中在<a href="../llm-research-map-2026/s07_architecture_training.html#latent-moe">LatentMoE 案例</a>，不把维度缩减率改写成整体吞吐收益。</p></section>
+<section id="parallel"><h2>EP 与其它并行维度的组合</h2>
+<p>TP 拆矩阵，EP 分布专家，DP 复制并同步参数，PP 分配层，CP 分担长序列；进程组可以重叠/重新组织。Megatron 的 expert DP 与普通 DP 关系有明确实现约束，EP 不总是再乘一次 world size。大型 MoE 的工业配置在<a href="../llm-training-lifecycle/s05_training_methods_systems.html#cluster">训练方法章</a>与<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">集群对照章</a>统一解释。</p>
+<p>服务 decode 每步 token 少，专家负载和小 GEMM 可能更敏感；prefill token 多、CP/TP 与派发策略又不同。训练快的 EP 配置不能直接认定是低延迟服务的最优方案。</p></section>
+<section id="evaluation"><h2>消融与常见失败</h2>
+<table><thead><tr><th>问题</th><th>本文建议的对照</th><th>不可省略</th></tr></thead><tbody>
+<tr><td>更多专家是否有效</td><td>固定激活 FLOPs，再改变 E；另做固定总参数实验</td><td>loss、各域质量、总算力、实际 wall time</td></tr>
+<tr><td>Latent 是否损失信息</td><td>先固定 E/k，仅改 r；再评估容量再分配</td><td>投影、payload、梯度与长尾质量</td></tr>
+<tr><td>训练/rollout 概率偏差</td><td>固定权重与输入，比 routing、logprob 和精度</td><td>版本、随机性、mask、router replay</td></tr>
+</tbody></table>
+<p>这些是待执行研究设计。失败包括专家塌缩、overflow 丢学习目标、跨节点通信主导、小 batch GEMM 低效和低精度 router 选择不稳定。对 Agent RL，选择偏差可累积在长轨迹的重要性比率中，见<a href="../llm-research-map-2026/s02_agentic_rl.html">研究地图 RL 章</a>。</p>
+<details><summary>自测：为什么“激活参数少”不能独立预测延迟？</summary><p>它只近似一部分矩阵计算；权重读写、专家派发、负载尾部、KV、kernel 利用率、共享路径和请求调度都影响时间。不同层和阶段的瓶颈也不相同。</p></details>
+</section><section id="sources"><h2>来源</h2><p><a href="index.html#ref-1">[1] FFN</a>、<a href="index.html#ref-5">[5] GLU / Switch</a>、<a href="index.html#ref-8">[8] 固定 Llama MLP</a>；LatentMoE/最新路由采用<a href="../llm-research-map-2026/s07_architecture_training.html#sources">研究地图固定论文与 config</a>。参数和通信式为限定假设下的推导。</p></section>
+</main></body></html>

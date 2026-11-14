@@ -28,23 +28,34 @@
 <div class="card"><span class="metric">15 份原件</span><p>保存DeepSeek官方报告与14篇CC BY原论文，新增Nemotron、GDN、LatentMoE、GLM-5和Gemma 4；版本、许可与SHA可核对。</p></div>
 </div>
 <p class="note">调研截止 2026-11-14。论文数字均为作者报告，本次未复现训练或 benchmark；建议实验全部标为待执行。动态文档只代表访问时口径，不把版本不同的榜单拼成同一实验。</p>
-<p>新增架构阅读：<a href="s06_architecture_landscape.html">第06章 · 多家族模型架构地图</a>与<a href="s07_architecture_training.html">第07章 · 残差、MoE、优化器与训练机制</a>，附4张图和可下载规格数据。<a href="../agent-data-benchmarks/">Agent任务合成与Benchmark两章专题</a>继续覆盖十二条生产路线、经典评测及TB / HarborIndex / AA口径；第03章保留CED / CSA2 / FP4详细拆解，原43项引用号不变。</p>
+<p>新增架构阅读：<a href="s06_architecture_landscape.html">第06章 · 多家族模型架构地图</a>与<a href="s07_architecture_training.html">第07章 · 残差、MoE、优化器与训练机制</a>，附4张图和可下载规格数据。<a href="../agent-data-benchmarks/">Agent任务合成与Benchmark四章专题</a>连接十二条生产路线、经典评测、TB / HarborIndex / AA、科学合同及工业训练方案；第03章保留CED / CSA2 / FP4详细拆解，原43项引用号不变。</p>
 </section>
 <section id="coverage">
-<h2>当前博客怎样补，才能形成清晰分工</h2>
+<h2>原理 → 实现 → 实验：知识体系覆盖表</h2>
 <table>
-<thead><tr><th>已有入口</th><th>当前定位</th><th>本次补充</th><th>优先级</th></tr></thead>
+<thead><tr><th>研究问题</th><th>原理主位置</th><th>实现证据</th><th>实验依据与缺口</th></tr></thead>
 <tbody>
-<tr><td><a href="../llm-training-lifecycle/">训练全链路</a></td><td>Pretrain → CPT → SFT / RFT → RL / OPD</td><td>沿训练阶段查基础；本专题沿问题查机制和实验</td><td>P0</td></tr>
-<tr><td><a href="../llm-frontier-2026.html">前沿追踪</a></td><td>版本、出处、增量信号</td><td>快讯链接到机制长文；记录后续修订与证据边界</td><td>P0</td></tr>
-<tr><td><a href="../agent-harness-guide.html">Agent Harness</a></td><td>工具、sandbox、rollout、reward</td><td>独立 verifier、artifact 合同、adapter parity、失败与成本审计</td><td>P0</td></tr>
-<tr><td><a href="../agentic-rl-guide.html">Agentic RL</a> / <a href="../rl-interview-guide.html">RL 手册</a></td><td>基础算法与推导</td><td>四维目标比较、RLDS / KnowGPO / SAPO、异质数据、版本滞后</td><td>P0</td></tr>
-<tr><td><a href="../transformer-decoder-flow.html">Decoder</a> / <a href="../distributed-training-guide.html">分布式训练</a></td><td>张量流与并行框架</td><td>多家族历史状态与层计划、AttnRes / mHC / GR、LatentMoE、Muon、低精度和真实任务成本</td><td>P1</td></tr>
-<tr><td><a href="../dlm-survey/">DLM 14章</a></td><td>扩散理论、解码与训练</td><td>扩散 drafter、块内依赖、验证精确性、实际并发条件</td><td>P1</td></tr>
-<tr><td><a href="../vlm-knowledge-interview.html">VLM</a> / <a href="../llm-interview-bank.html">题库</a></td><td>知识与问答</td><td>GUI 恢复、科学任务、skills 和持续学习的正式专题</td><td>P1</td></tr>
+<tr><td>模型怎样计算</td><td><a href="../llm-architecture/s01_transformer_foundations.html">张量/目标</a> → <a href="../llm-architecture/s02_attention_position_cache.html">Attention/位置</a> → <a href="../llm-architecture/s03_ffn_moe_routing.html">FFN/MoE</a></td><td>固定 Transformers Llama QKV、MLP、Norm；<a href="../transformer-decoder-flow.html">紧凑流程页</a></td><td>原论文支持基础；一致性/机制消融是本文待执行设计</td></tr>
+<tr><td>新架构改什么</td><td><a href="../llm-architecture/s04_residual_norm_stability.html">残差</a> / <a href="../llm-architecture/s05_hybrid_architectures.html">状态</a> / <a href="../llm-architecture/s06_model_comparison.html">比较</a></td><td><a href="s03_base_architecture.html">V4.1</a>、<a href="s06_architecture_landscape.html">固定型号/config</a>、<a href="s07_architecture_training.html">新机制</a></td><td>作者报告、规格推导分别标注；跨家族排名不能独立归因</td></tr>
+<tr><td>知识/行为怎样学来</td><td><a href="../llm-training-lifecycle/">Pretrain → CPT → SFT/RFT → RL</a></td><td><a href="../llm-training-lifecycle/s05_training_methods_systems.html">PEFT/optimizer/集群设计</a>；<a href="../distributed-training-guide.html">并行基础</a></td><td>工业报告的阶段消融；本文配置参考未在集群验证</td></tr>
+<tr><td>Agent 怎样执行与取证</td><td><a href="../agent-harness-guide.html#codex-loop">运行/上下文/memory</a>；<a href="../agent-systems/">RAG/规划/信任</a></td><td>固定 Codex 源码；检索接口、预算与权限合同</td><td>论文评测与本文测试设计分开；新攻击/执行测试未运行</td></tr>
+<tr><td>轨迹怎样变成训练信号</td><td><a href="../agentic-rl-guide.html">RL 基础</a>、<a href="s02_agentic_rl.html">信用/异质/异步</a></td><td>loss 四维、role mask、版本 lag、routing/logprob parity</td><td>作者算法/系统实验；科学任务 A–E 对照待执行</td></tr>
+<tr><td>什么是有效任务与结果</td><td><a href="../agent-data-benchmarks/s01_task_synthesis.html">数据生产</a> / <a href="../agent-data-benchmarks/s02_benchmark_map.html">Benchmark 地图</a></td><td><a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学合同/split/verifier</a></td><td>候选范围与文档已核对；数据hash/许可与映射冲突待冻结，oracle/容差/通过率未生成</td></tr>
+<tr><td>怎样衡量工业方案</td><td><a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">SFT/RL 对照与成本</a></td><td>128/1024 H100 规划、角色/版本/失败字段</td><td>同训练计算与同执行预算两套协议；无新训练数值</td></tr>
+<tr><td>怎样部署与算成本</td><td><a href="../llm-serving/">调度 → 并行/量化 → 容量/成本</a></td><td>vLLM/SGLang 原理与固定版本；对象级估算</td><td>paper/kernel、服务与 Agent 端到端测量分开；未知吞吐不填时间</td></tr>
+<tr><td>扩散与多模态怎样接入</td><td><a href="../dlm-survey/">DLM 14章</a>、<a href="../vlm-knowledge-interview.html">VLM</a></td><td><a href="s04_inference_diffusion.html">drafter/验证</a>、<a href="s05_agent_frontiers.html">GUI/科学/Skills</a></td><td>历史论断继续具体复核；任务、精度和预算不可混比</td></tr>
+<tr><td>怎样检验理解</td><td><a href="../llm-interview-bank.html">题库</a>、<a href="../rl-interview-guide.html">RL 速查</a></td><td>简明答案链接主要长文，不重复阶段定义</td><td>答案覆盖率独立统计；不能把目录完善当作全部题解完成</td></tr>
 </tbody>
 </table>
-<p>本次审计前为10个公开本地笔记集合、18个系列章节；独立子站和历史材料另计。已有旧文的未知数字和未完成答案仍保留原来的复核标记，本次增补不代表全部旧内容已重新审定。</p>
+<p>训练系列负责阶段定义，正式专题负责完整机制，研究地图负责最新证据、跨专题问题与待验证假设，题库负责理解检验。固定源码、可下载配置、论文实测和本站实测是不同证据层次；本轮本站只执行站点检查，不执行训练/科学任务/benchmark。</p>
+</section>
+<section id="learning-paths">
+<h2>三条贯通阅读路线</h2>
+<div class="chapter-grid">
+<article class="card"><h3>模型与训练</h3><p><a href="../llm-architecture/s01_transformer_foundations.html">张量流</a> → <a href="../llm-architecture/s02_attention_position_cache.html">Attention/位置</a> → <a href="../llm-architecture/s03_ffn_moe_routing.html">FFN/MoE</a> → <a href="../llm-architecture/s04_residual_norm_stability.html">残差/稳定</a> → <a href="../llm-training-lifecycle/">训练四阶段</a> → <a href="../llm-training-lifecycle/s05_training_methods_systems.html">训练方法/集群</a> → <a href="../distributed-training-guide.html">并行</a> → <a href="s06_architecture_landscape.html">前沿型号</a> / <a href="s07_architecture_training.html">新机制</a>。</p><p class="note">目标：能从形状解释参数、计算和状态，再读工业报告的配方与消融。</p></article>
+<article class="card"><h3>Agent 研究</h3><p><a href="../agent-harness-guide.html#codex-loop">运行与上下文</a> → <a href="../agent-systems/s01_rag_retrieval.html">RAG</a> → <a href="../agent-systems/s02_planning_compute.html">规划/预算</a> → <a href="../agent-systems/s03_trust_safety.html">信任边界</a> → <a href="../agent-data-benchmarks/s01_task_synthesis.html">任务合成</a> → <a href="s02_agentic_rl.html">Agentic RL</a> → <a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学合同</a> → <a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">工业对照</a>。</p><p class="note">目标：把问题、环境、轨迹、奖励与更新串起来，明确什么可以验收。</p></article>
+<article class="card"><h3>工程与评测</h3><p><a href="../transformer-decoder-flow.html">prefill/decode</a> → <a href="../llm-serving/s01_runtime_scheduling.html">服务调度</a> → <a href="../llm-serving/s02_parallel_quantization.html">并行/量化</a> → <a href="../llm-serving/s03_capacity_cost.html">容量/成本</a> → <a href="../agent-data-benchmarks/s02_benchmark_map.html">评测口径</a> → <a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">科学任务对照</a> → <a href="../llm-interview-bank.html">题库自测</a>。</p><p class="note">目标：从规格推导走向测量协议，不混淆 kernel、服务与任务成功成本。</p></article>
+</div>
 </section>
 <section id="chapters">
 <h2>七章阅读路径</h2>
@@ -73,7 +84,7 @@
 </tbody>
 </table>
 <p>七章已覆盖上述方向的机制综述与实验设计；第06–07章进一步补齐模型家族、残差、专家、矩阵更新与递归深度。训练和kernel复现实验仍未执行。闭源前沿按公开披露登记，例如Gemini Argon公开稀疏MoE Transformer；更细结构与未公开参数保留未知。</p>
-<details><summary>建议的维护节奏</summary><p>每次快讯登记版本和来源；当一个方向出现不同团队的机制或可运行代码，再更新专题。每月复查 benchmark 与工具版本，过时结果保留快照并说明不可直接横比；每季度选择一个小规模实验，交付配置、原始轨迹、失败归因和成本，而不是只增加模型名称。</p></details>
+<details><summary>建议的维护节奏</summary><p>每次快讯登记版本和来源；当一个方向出现不同团队的机制或可运行代码，再更新专题。定期复查 benchmark 与工具版本，过时结果保留快照并说明不可直接横比；研究方案更新时保留配置、证据缺口、失败归因与成本口径。实验若另行执行，应单独记录实际环境和结果；当前规划没有本地真实训练或任务运行。</p></details>
 </section>
 <section id="archive">
 <h2>技术报告与引用如何保留</h2>

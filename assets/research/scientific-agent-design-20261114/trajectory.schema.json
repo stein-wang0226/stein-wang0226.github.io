@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scientific agent trajectory record design",
+  "description": "Schema only; no rollout was generated. Token spans are half-open offsets in the declared tokenizer/chat-template token sequence. Each assistant action carries the behavior policy revision.",
+  "type": "object", "additionalProperties": false,
+  "required": ["trajectory_id", "task_id", "study_group", "versions", "steps", "termination", "verification"],
+  "properties": {
+    "trajectory_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "study_group": {"type": "string", "minLength": 1},
+    "versions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fixture_sha256", "contract", "harness", "environment_digest", "tokenizer", "chat_template", "initial_policy"],
+      "properties": {
+        "fixture_sha256": {"$ref": "#/$defs/hash"},
+        "contract": {"type": "string", "minLength": 1}, "harness": {"type": "string", "minLength": 1},
+        "environment_digest": {"type": "string", "minLength": 1},
+        "tokenizer": {"type": "string", "minLength": 1}, "chat_template": {"type": "string", "minLength": 1},
+        "initial_policy": {"type": "string", "minLength": 1}
+      }
+    },
+    "steps": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["step", "role", "text", "tool", "action_status", "policy_revision", "token_span", "behavior_action_logprobs", "elapsed_seconds", "artifacts"],
+        "properties": {
+          "step": {"type": "integer", "minimum": 0},
+          "role": {"enum": ["system", "user", "assistant", "tool"]},
+          "text": {"type": "string"},
+          "tool": {
+            "anyOf": [
+              {"type": "null"},
+              {"type": "object", "additionalProperties": false, "required": ["call_id", "name", "arguments", "exit_code"], "properties": {"call_id": {"type": "string"}, "name": {"type": "string"}, "arguments": {"type": "object"}, "exit_code": {"type": ["integer", "null"]}}}
+            ]
+          },
+          "action_status": {"enum": ["not_action", "pending", "success", "error", "timeout", "cancelled"]},
+          "policy_revision": {"type": ["string", "null"], "description": "Required non-null for policy-generated assistant actions; no new-policy recomputation pretending to be old logprob."},
+          "token_span": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 0}},
+          "behavior_action_logprobs": {"type": ["array", "null"], "items": {"type": "number"}, "description": "One logprob per sampled action token, excluding environment observation tokens; null if not recorded, with RL admission blocked."},
+          "elapsed_seconds": {"type": ["number", "null"], "minimum": 0},
+          "artifacts": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/hash"}}}}
+        }
+      }
+    },
+    "termination": {"enum": ["completed", "policy_stop", "budget_exhausted", "environment_error", "cancelled"]},
+    "verification": {
+      "type": "object", "additionalProperties": false,
+      "required": ["verifier_version", "status", "reward", "failure_codes"],
+      "properties": {
+        "verifier_version": {"type": ["string", "null"]},
+        "status": {"enum": ["not_run", "valid_scientific_success", "valid_scientific_failure", "environment_failure", "invalid_submission"]},
+        "reward": {"type": ["number", "null"], "description": "Null if verifier not run or environment invalid; scoring policy remains to be calibrated."},
+        "failure_codes": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

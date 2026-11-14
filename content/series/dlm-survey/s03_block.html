@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
 </nav>
 <div class="container">
 <h2 class="section-title" id="s3"><span class="num">03</span> 块扩散与半自回归 (Block / Semi-AR)</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：因子化不等于精确块似然</h3><p>块间p(x)=∏b p(xb|x&lt;b)成立，不代表每个扩散块的边际概率可精确计算；内部仍可能需要ELBO。固定已提交前缀可以缓存，块内状态反复修改时不能沿用未经验证的AR缓存。块长同时改变串行深度、去噪代价与训练/推理分布。</p><p>最小对照冻结target、数据与硬件，扫块长/去噪步数，记录accepted tokens、NFE、质量与SLO；本页旧加速值不作为统一对照。<a href="/llm-research-map-2026/s04_inference_diffusion.html">DFlash至AdaFlash固定证据</a> → <a href="/llm-serving/s02_parallel_quantization.html">target验证</a>。</p></div>
 
 <p>块扩散认为没必要一上来就生成全篇纯噪声让模型去解——可以一段一段做扩散。宏观自回归保证长文本可控性，微观块内并行去噪提供速度优势。</p>
 

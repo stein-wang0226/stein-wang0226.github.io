@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "status": "classification_design_no_observed_failures",
+  "allow_multiple_labels": true,
+  "categories": [
+    {"code": "task_specification", "trigger": "required units, pairing, fields or statistical policy are missing/contradictory", "evidence": ["public contract", "submission", "reference divergence"]},
+    {"code": "data_semantics", "trigger": "FPKM/count confusion, sample mapping or donor/run unit error", "evidence": ["input manifest", "tool trace", "analysis script"]},
+    {"code": "scientific_design", "trigger": "incorrect pairing/contrast/normalization/testing universe", "evidence": ["design matrix", "artifacts", "objective reference comparison"]},
+    {"code": "verifier_correctness", "trigger": "a valid accepted path is incorrectly rejected", "evidence": ["frozen submission", "scorer version", "reference alternatives"]},
+    {"code": "numerical_variation", "trigger": "legitimate method or numerical divergence exceeds an unjustified tolerance", "evidence": ["versioned alternatives", "calibration spread", "field-level differences"]},
+    {"code": "tool_environment", "trigger": "dependency, container, disk or memory failure", "evidence": ["exit code", "resource log", "environment digest"]},
+    {"code": "reward_hacking", "trigger": "private oracle access, schema-score exploitation or artifact substitution", "evidence": ["permission/network log", "isolated re-execution", "artifact hashes"]},
+    {"code": "budget_timeout", "trigger": "fixed action/token/time limit exhausted", "evidence": ["budget counters", "timing", "termination state"]},
+    {"code": "undetermined", "trigger": "insufficient evidence to assign a primary mechanism", "evidence": ["known missing records"]}
+  ],
+  "rule": "Persist submission and artifact hashes before auditing private scorer; preserve old task/oracle versions; no subjective prose quality score."
+}

@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
 </nav>
 <div class="container">
 <h2 class="section-title" id="s5"><span class="num">05</span> 预测范式 (Prediction Paradigms) 大一统</h2>
+<div class="card" id="mechanism-review"><h3>机制与验收：可转换参数化与损失权重</h3><p>若xt=αx0+σε且α²+σ²=1，v=αε−σx0，则x0=αxt−σv、ε=σxt+αv。变量能互转不代表未加权MSE相同：目标变换改变随t的权重。这里的VP v-pred不应与任意Flow Matching向量场同名等同。</p><p>Diffusion也能用概率流ODE或DDIM确定性采样；FM不保证任意数据下更稳定或更少步。来源：<a href="https://arxiv.org/abs/2011.13456">Score-SDE</a>、<a href="https://arxiv.org/abs/2210.02747">Flow Matching</a>；继续 <a href="s00b_flow_sde.html">时间约定/边际路径</a>、<a href="s06_scaling.html">同目标预算对照</a>。</p></div>
 
 <p>无论底层是连续还是离散，算 Loss 时模型到底在预测什么？这决定了梯度稳定性和生成质量。以下对六种预测范式逐一展开数学原理。</p>
 
@@ -97,7 +98,7 @@ window.addEventListener('load', function() {
   <div class="formula-box">
     $\mathbf{v}_t = \sqrt{\bar{\alpha}_t}\,\boldsymbol{\epsilon} - \sqrt{1-\bar{\alpha}_t}\,\mathbf{x}_0, \quad \mathcal{L}_v = \mathbb{E}[\|\mathbf{v}_t - v_\theta(\mathbf{x}_t, t)\|^2]$
   </div>
-  <p>数值稳定性优势：在 $t \to 0$ 时 $v_t \approx -\mathbf{x}_0$（预测数据），在 $t \to 1$ 时 $v_t \approx \boldsymbol{\epsilon}$（预测噪声）——$v$-prediction 自动在两端选择信噪比更高的目标。Stable Diffusion 2.x、SD3、FLUX 均采用。<strong>本质上是连续空间概念</strong>，离散文本中不直接使用。</p>
+  <p>按本节数据t=0→噪声t=1、$\bar\alpha_0=1,\bar\alpha_1\approx0$的约定，$v_0\approx\epsilon$、$v_1\approx-x_0$。这是VP参数化的端点关系；SD3/FLUX的rectified-flow向量场需按各自路径定义，不能统称采用本式。离散token没有直接对应的连续向量速度。</p>
   
   <h4>三种目标的等价性与非等价性</h4>
   <p>理论上，三种预测目标通过前向过程的线性关系互相可推导：</p>
@@ -235,9 +236,9 @@ window.addEventListener('load', function() {
 
 <div class="insight warning">
   <div class="insight-title">Flow Matching vs Diffusion 的本质差异</div>
-  <p><strong>理论基础</strong>：Flow Matching 基于 ODE（常微分方程），拟合速度场 $v_\theta(x_t, t)$，推理时 ODE 积分 $x(0)=\epsilon \to x(1)=\mathrm{data}$。Diffusion 基于 SDE（随机微分方程），涉及 Fokker-Planck 方程和 Langevin 动力学，每步引入随机噪声。</p>
-  <p><strong>路径几何</strong>：FM 的条件路径 $x_t = (1-t)\epsilon + t x_0$ 是直线（Rectified Flow），ODE 积分仅需少量步数；Diffusion 的 $\mathbf{x}_t = \sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1-\bar{\alpha}_t}\boldsymbol{\epsilon}$ 是弧线，需要更多步数跟踪弯曲轨迹。</p>
-  <p><strong>工程实现</strong>：FM 训练更稳定（直线目标更简单），硬件兼容性更好，ELF、SD3、FLUX 均采用 Rectified Flow。Consistency Model 可在 Flow 基础上实现单步生成。</p>
+  <p><strong>理论基础</strong>：Flow Matching拟合所选概率路径的向量场，通常用ODE积分；扩散的score也能用于逆向SDE或对应概率流ODE，所以并非每一种扩散采样都逐步加随机噪声。</p>
+  <p><strong>路径几何</strong>：线性插值 $x_t=(1-t)\epsilon+tx_0$ 的条件路径是直线，边际流仍可弯曲；VP扩散使用另一组系数。有限步误差还取决于场、耦合和求解器，不能仅由条件路径形状推出必需步数。</p>
+  <p><strong>工程实现</strong>：路径、预测对象、时间权重和求解器共同决定训练及采样；FM普遍更稳定或硬件更兼容的结论需要同条件证据。Consistency/蒸馏可减少NFE，但仍要验收质量与端到端成本。</p>
 </div>
 
 <!-- ==================== Section 6 ==================== -->

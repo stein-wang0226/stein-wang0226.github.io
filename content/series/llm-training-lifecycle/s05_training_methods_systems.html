@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>训练方法与集群设计：PEFT、优化器、稳定性及后训练系统</title>
+<meta name="description" content="从参数更新与显存账本到 Dense/MoE 工业后训练配置，连接 LoRA、Muon、Megatron 进程组、异步 rollout 与科学任务对照。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body><main class="training-lifecycle">
+<section id="overview">
+<p class="eyebrow">Training methods &amp; systems · 2026-11-14</p>
+<h2>先选择更新对象，再分配集群</h2>
+<p class="lead">Pretraining、CPT、SFT、RL 描述训练链路；全参数、LoRA、优化器和并行策略决定同一阶段怎样更新。一个工业后训练方案要同时回答：哪些参数可训练、哪些状态常驻、哪些数据被采样、哪些环境实际执行，以及谁负责验证。</p>
+<p>先修：<a href="../llm-architecture/s03_ffn_moe_routing.html">FFN / MoE</a>、<a href="../llm-architecture/s04_residual_norm_stability.html">残差与稳定性</a>及<a href="s04_rl_evaluation.html">RL 循环</a>。本章建立方法和资源账本，最新 Muon / FP4 型号证据见<a href="../llm-research-map-2026/s07_architecture_training.html">研究地图07</a>。</p>
+<figure><div class="flow" aria-label="更新到集群的设计流程">
+<div class="stage"><b>更新对象</b><small>全参数 / adapter / 专家<br>可训练参数与目标矩阵</small></div>
+<div class="stage"><b>数值与状态</b><small>权重、梯度、master、动量<br>精度与重计算分别决定</small></div>
+<div class="stage"><b>进程组与角色</b><small>TP / PP / CP / DP / EP<br>actor、reference、环境</small></div>
+<div class="stage"><b>协议与验收</b><small>数据 / 策略 / verifier 版本<br>质量、遗忘、成本与恢复</small></div>
+</div><figcaption>本文设计流程。后面的128卡和1024卡是规划示例，未运行训练，也不是厂商披露的真实配方。</figcaption></figure>
+</section>
+<section id="peft">
+<h2>LoRA 与 QLoRA：冻结底座，仍需要反向传播</h2>
+<div class="equation" role="math" aria-label="LoRA更新与参数量">W₀ ∈ R^(dout × din)，A ∈ R^(r × din)，B ∈ R^(dout × r)
+y = W₀x + (α/r)BAx；可训练参数 = r(din + dout)
+完整矩阵参数 = din × dout；底座 W₀ 冻结</div>
+<p>低秩限制施加在增量 ΔW，底座可以是满秩。LoRA 省去冻结参数的梯度和优化器状态；上游 adapter 要获得梯度，仍可能需要穿过后续冻结层反传和保存 / 重算激活。因此“只训练少量参数”不能直接换算为相同比例的训练计算下降。<a href="#ref-lora">[1]</a></p>
+<p>例如一个8192×8192矩阵，本文选 r=64，可训练量为1,048,576，约为原矩阵的1.56%；这是单矩阵规格推导，不代表全模型比例。若扩展到 Q/K/V/O、SwiGLU 三矩阵、router 或专家，必须分别统计真实形状与是否共享。GQA 的 K/V 矩阵通常更小。</p>
+<div class="reading-table"><table><thead><tr><th>方法</th><th>改变什么</th><th>主要收益对象</th><th>不可省略的条件</th></tr></thead><tbody>
+<tr><td>全参数更新</td><td>全部或明确选择的底座参数</td><td>适应空间大</td><td>权重、梯度、master、optimizer；遗忘与恢复</td></tr>
+<tr><td>LoRA</td><td>低秩增量；底座冻结</td><td>可训练状态、多任务 adapter 交付</td><td>目标矩阵、r/α/dropout、保存激活、服务端 adapter 支持</td></tr>
+<tr><td>QLoRA</td><td>冻结底座用4-bit存储；adapter训练</td><td>底座存储和 optimizer 内存峰值</td><td>NF4、double quantization、计算 dtype、paged optimizer；NF4 不是通用 FP4 训练</td></tr>
+<tr><td>专家 / router 更新</td><td>明确选择的 MoE 子模块</td><td>领域适应与状态减少</td><td>专家覆盖、冷专家梯度、路由偏移；不是自动具有 LoRA 性质</td></tr>
+</tbody></table></div>
+<p>QLoRA 的原论文包含65B在48GB单卡微调的报告，这是其模型、序列和训练条件下的结果，不能据此保证任意70B长程 Agent RL可装入同样显存。NF4编码存储与BF16计算要分开；合并时 ΔW 加到反量化底座，再量化会引入新的误差。<a href="#ref-qlora">[2]</a></p>
+<details><summary>固定 PEFT 实现：forward、scaling 与 merge</summary>
+<pre><code># 简化摘录：PEFT v0.17.1，Apache-2.0；仅 vanilla Linear LoRA
+scaling = lora_alpha / r
+result = base_layer(x)
+result = result + lora_B(lora_A(dropout(x))) * scaling
+# merge: orig_weight += delta_weight.to(orig_dtype)
+# rslora 在该实现中用 alpha/sqrt(r)，不能混用缩放约定。</code></pre>
+<p><a href="https://github.com/huggingface/peft/blob/53c25fe4fdd7c6aa4b40db0560815ea570d32303/src/peft/tuners/lora/layer.py#L210-L224">scaling</a>、<a href="https://github.com/huggingface/peft/blob/53c25fe4fdd7c6aa4b40db0560815ea570d32303/src/peft/tuners/lora/layer.py#L629-L679">merge</a>、<a href="https://github.com/huggingface/peft/blob/53c25fe4fdd7c6aa4b40db0560815ea570d32303/src/peft/tuners/lora/layer.py#L737-L781">forward</a>。量化 Linear、DoRA、专家参数和服务动态切换有各自分支，不由这段摘录覆盖。</p>
+</details>
+</section>
+<section id="optimizers">
+<h2>AdamW、Muon 与精度：更新规则不等于权重约束</h2>
+<div class="equation" role="math" aria-label="AdamW与Muon的概念更新">AdamW：W ← (1−ηλ)W − η m̂/(sqrt(v̂)+ε)
+Muon（概念）：M ← momentum(G)；U ≈ polar(M)；W ← W − η·scale(U)
+梯度裁剪：G ← G·min(1, c/(||G||₂+ε))</div>
+<p>AdamW 把 weight decay 从自适应梯度分母中解耦，不能简单等同于给 Adam loss 加 L2。Muon 近似正交化的是二维更新矩阵，不要求更新后 W 正交；embedding、输出头和一维参数的分工，以及矩形缩放、动量 / Nesterov、Newton–Schulz实现都影响结果。<a href="#ref-adamw">[3]</a> <a href="../llm-research-map-2026/s07_architecture_training.html#muon">前沿配方与原论文</a>。</p>
+<p>矩阵被 TP/FSDP 切片后，独立对每块做 polar 一般不等于整矩阵更新再切片。研究方案应冻结 optimizer 的逻辑矩阵、通信、参数分组和精度，再比较 AdamW / Muon；否则“优化器收益”混入了重计算、并行和更新预算差异。</p>
+<div class="reading-table"><table><thead><tr><th>对象</th><th>建议记录</th><th>典型错误</th></tr></thead><tbody>
+<tr><td>模型权重 / master</td><td>常驻 dtype、master 是否存在、量化尺度</td><td>从FP4 GEMM推断 optimizer state 全是4-bit</td></tr>
+<tr><td>梯度 / 通信</td><td>累积、归约精度；裁剪前是否得到全局范数</td><td>每 rank 裁剪局部梯度冒充同一个全局裁剪</td></tr>
+<tr><td>Norm / router / softmax</td><td>高精度保留项和 kernel 实际 dtype</td><td>选择 BF16 就假定所有算子同精度</td></tr>
+<tr><td>激活 / 长上下文</td><td>重计算粒度、序列长度、有效目标与 packing</td><td>把激活 OOM 归因于 optimizer，然后盲目减学习率</td></tr>
+</tbody></table></div>
+<p>本文分析：新架构的稳定性应分解为残差传播、QK尺度、路由负载、数值范围和参数更新五个对象。loss下降只能说明当前目标被优化；通用能力回放与 held-out 任务必须独立评测。</p>
+</section>
+<section id="stability">
+<h2>训练诊断与恢复：保存能解释异常的状态</h2>
+<p>每步至少按任务桶保存目标 token 数、loss、梯度范数、裁剪比例、学习率、溢出 / 跳步、序列长度、专家负载、零方差组比例及policy lag。一次尖峰要能对应到数据版本和样本，避免把数据污染、非法工具输出、FP溢出或路由失衡统称为“训练不稳定”。</p>
+<div class="reading-table"><table><thead><tr><th>现象</th><th>先区分的解释</th><th>本文建议的待执行对照</th></tr></thead><tbody>
+<tr><td>某一批 loss / gradient spike</td><td>异常文本、长序列、数值溢出、更新过大</td><td>冻结样本与起点，比较精度 / 裁剪 / step；保留失败 checkpoint</td></tr>
+<tr><td>训练指标升、通用能力跌</td><td>分布偏移、目标重加权、遗忘、污染</td><td>同预算比较 replay 比率与数据切分，不用训练集验收</td></tr>
+<tr><td>MoE 一部分专家过载</td><td>router漂移、token异质性、容量和dispatch</td><td>分任务 / 专家看token、drop、梯度和通信；不能只看均值</td></tr>
+<tr><td>恢复后行为不同</td><td>遗漏 optimizer、RNG、sampler、rollout版本</td><td>checkpoint同时保存数据游标、随机态、scheduler、adapter与环境镜像</td></tr>
+</tbody></table></div>
+<p>恢复范围分两层：模型训练状态能够续训；长程工具环境是否能够恢复要另外定义。只恢复权重并重新采样，不等于恢复一条中断中的科学分析轨迹。对应<a href="../agent-harness-guide.html">Harness状态管理</a>。</p>
+</section>
+<section id="parallel">
+<h2>并行维度先分清逻辑对象</h2>
+<div class="reading-table"><table><thead><tr><th>维度</th><th>主要切分</th><th>代价与约束</th></tr></thead><tbody>
+<tr><td>TP</td><td>矩阵 / head / FFN 通道</td><td>层内collective；head及矩阵可分性、KV复制</td></tr>
+<tr><td>PP</td><td>层与阶段</td><td>microbatch、pipeline bubble、层 / 专家负载不均</td></tr>
+<tr><td>CP</td><td>同一长序列的上下文</td><td>Attention历史交换；不是多条独立样本</td></tr>
+<tr><td>DP + optimizer sharding</td><td>样本；冗余训练状态</td><td>梯度归约 / 状态聚合；有效batch按独立样本维度算</td></tr>
+<tr><td>EP / ETP</td><td>专家分配 / 单专家矩阵</td><td>dispatch/combine；专家DP与普通层DP可不同</td></tr>
+<tr><td>FSDP / ZeRO</td><td>参数、梯度、optimizer状态的冗余</td><td>all-gather / reduce-scatter；不是新增的模型层轴</td></tr>
+</tbody></table></div>
+<p>ZeRO-1/2/3分别进一步分片optimizer、gradient、parameter；具体常驻buffer与临时聚合取决于实现。CP减少序列激活 / Attention工作量，不应假定它独立缩小每rank权重。<a href="#ref-zero">[4]</a>；原通信说明见<a href="../distributed-training-guide.html">分布式指南</a>。</p>
+<details><summary>Megatron Core v0.14.0：同一 world size 的两种进程组</summary>
+<pre><code># parallel_state.py L647–728；简化，BSD-3-Clause
+DP = world_size // (TP * PP * CP)
+ETP = TP if expert_tensor_parallel_size is None else ETP
+expert_DP = world_size // (ETP * EP * PP)
+# 普通层 RankGenerator：tp=TP, cp=CP, dp=DP, ep=1
+# 专家层 RankGenerator：tp=ETP, cp=1, dp=expert_DP, ep=EP
+# 两种视角共享 pipeline groups；不额外分配 EP 倍的 GPU。</code></pre>
+<p>固定提交<a href="https://github.com/NVIDIA/Megatron-LM/blob/23e00ed0963c35382dfe8a5a94fb3cda4d21e133/megatron/core/parallel_state.py#L647-L728">23e00ed</a>。当 ETP=TP，专家层使用普通层DP×CP域重组，<code>expert_DP = DP×CP/EP</code>。这比“EP永远嵌在DP内”更精确；新版本或独立ETP需重新核对。</p>
+</details>
+</section>
+<section id="cluster">
+<h2>两套工业规模后训练规划</h2>
+<p>目标是讨论大模型系统约束，不为单个airway研究制造足量训练数据。Dense参考公开Qwen2.5-72B；MoE参考Qwen3-235B-A22B。它们是可固定规格的基线，最新型号案例见研究地图。H100 80GB、8卡/节点和池比例由本文选择，配置尚未运行、端到端兼容尚未验证。<a href="#ref-models">[7]</a></p>
+<div class="reading-table"><table><thead><tr><th>规划</th><th>硬件与训练 actor</th><th>rollout 池</th><th>关键约束</th></tr></thead><tbody>
+<tr><td>Dense 约70B</td><td>128卡 / 16节点；64训练卡<br>TP4×PP2×CP2×DP4=64</td><td>64卡；规划16个TP4副本</td><td>TP4×CP2尽量放8卡节点内；PP跨节点。reference共置须另计权重与临时区</td></tr>
+<tr><td>大型MoE</td><td>1024卡 / 128节点；512训练卡<br>TP2×PP4×CP2×DP32=512</td><td>512卡；TP8为初始比较路线，EP服务为另一个消融</td><td>ETP2×PP4×EP8×专家DP8=512；128专家可分8组。94层不能四等分，规划24/23/23/24层</td></tr>
+</tbody></table></div>
+<p>MoE 的 TP8 rollout 可能复制4个KV heads；EP方案也不能再将同一并行域乘一次。节点放置、服务kernel、权重转换、94层stage负载与CP支持需要未来联合检查。不能从进程数乘积成立推断方案可直接投产。</p>
+<div class="equation" role="math" aria-label="Dense静态训练状态估算">本文选定 N=70×10⁹，BF16权重/梯度、FP32 master+m+v：
+无分片逻辑状态 = (2+2+4+4+4)N = 16N bytes
+示意：TP4×PP2切权重；gradient/master/m/v在DP×CP=8域分片
+每rank静态 ≈ 2N/8 + 14N/64 = 32.8125 GB（十进制）
+同形状BF16 reference另加 ≈ 2N/8 = 17.5 GB/rank</div>
+<p class="note">这是理想均匀切片的规格推导，N=70B也不是精确checkpoint参数量。排除激活、重计算、通信bucket、未分片参数、临时聚合、allocator、KV及碎片；FP32梯度、不同optimizer或ZeRO/FSDP策略会改公式。不能将32.8GB称为实测峰值。</p>
+<p>GRPO可不训练critic；PPO的critic需要权重、梯度、optimizer和推理前向，不能塞进剩余显存时就应减少并行actor资源或扩容。reference可共置 / CPU offload，但CPU内存、传输与重载成本必须计入；独立神经reward / 教师也要独立列资源。</p>
+<p>CPU环境worker负责RNA-seq脚本与verifier，另列CPU-hours、内存、并发和超时；对象存储保存不可变fixture、checkpoint、trace及artifact。未测量前CPU worker数量和墙钟时长保持空值，不能声称与GPU池免费重叠。</p>
+<p><a href="../assets/research/scientific-agent-design-20261114/cluster-plan.json" download>下载完整规划JSON</a>；对照、分层长度预算和成本见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">科学任务集群方案</a>。</p>
+</section>
+<section id="rollout">
+<h2>异步 rollout：提升重叠，控制数据过期</h2>
+<p>同步方案等待一批中最慢轨迹，再更新actor；异步方案让环境 / 生成继续运行，trainer有足量数据就更新。其代价是行为策略与当前策略不同。必须保留采样时的logprob和策略版本，区分概率校正、裁剪、过滤及有限lag。重新用新权重计算“旧logprob”不能还原行为策略。</p>
+<p>固定 verl v0.6.0 的<a href="https://github.com/volcengine/verl/blob/ddd86f527a4af75095e4677b02b5aa272913a088/recipe/one_step_off_policy/README.md">one-step-off-policy recipe</a>提供生成 / 训练资源隔离与权重同步的实现路线；AReaL v5描述完全异步、staleness控制与PPO改动。两者不是相同算法，论文数学 / coding结果也不是本科学任务的收益证明。<a href="#ref-areal">[6]</a></p>
+<details><summary>本文建议的接入顺序与配置边界</summary>
+<p>先以同步、相同精度 / 模板 / 动作mask建立概率一致性，再比较one-step overlap；完全异步单独消融。记录样本完成、权重同步、排队与更新时刻，区分更新次数lag和实际时间lag。长工具调用期间是否换策略须明确，最好将整条轨迹绑定同一版本或逐动作保存版本。</p>
+<p>所选 verl 配置文件<a href="https://github.com/volcengine/verl/blob/ddd86f527a4af75095e4677b02b5aa272913a088/verl/trainer/config/engine/megatron.yaml">engine/megatron.yaml</a>确有TP、PP、CP、EP、ETP与distributed optimizer字段。本文下载文件是独立方案schema，不是该框架启动YAML；容器依赖、MCore adapter和全部组合未实测，不混写两个版本的启动参数。</p>
+</details>
+</section>
+<section id="self-check">
+<h2>理解检查与下一步</h2>
+<details><summary>LoRA参数少，为什么长上下文仍会OOM？</summary><p>冻结底座仍参与前向；adapter梯度可能穿过冻结层反传，激活、Attention中间状态、logits和临时buffer不随可训练参数同比减少。</p></details>
+<details><summary>512卡、CP2、EP8时，为什么专家DP不是4？</summary><p>本版本普通层DP=32，但专家视角cp=1，重组DP×CP域；ETP=TP时专家DP=32×2/8=8。世界规模始终512。</p></details>
+<details><summary>异步吞吐更高，就证明训练更好吗？</summary><p>还需同资源质量曲线、同推理预算终评、过期样本比例、训练 / 环境成本和失败记录。更多过期或不可验证轨迹可能增加token吞吐却降低有效更新。</p></details>
+<p>沿<a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学合同</a> → <a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">SFT / RL对照</a>继续；服务状态和容量归<a href="../llm-serving/">推理部署系列</a>。三条路线见<a href="../llm-research-map-2026/#learning-paths">统一阅读入口</a>。</p>
+</section>
+<section id="sources"><h2>来源与复核范围</h2>
+<ol class="sources">
+<li id="ref-lora">[1] Hu et al. <a href="https://arxiv.org/abs/2106.09685v2">LoRA</a>，v2；低秩增量与冻结底座。实现见本章固定PEFT链接。</li>
+<li id="ref-qlora">[2] Dettmers et al. <a href="https://arxiv.org/abs/2305.14314v1">QLoRA</a>，v1；NF4、double quantization、paged optimizer；性能限于原报告协议。</li>
+<li id="ref-adamw">[3] Loshchilov &amp; Hutter. <a href="https://arxiv.org/abs/1711.05101v3">Decoupled Weight Decay Regularization</a>，v3。</li>
+<li id="ref-zero">[4] Rajbhandari et al. <a href="https://arxiv.org/abs/1910.02054v3">ZeRO</a>，v3；状态冗余与通信。本文不使用其历史吞吐估算新集群。</li>
+<li id="ref-frameworks">[5] Megatron Core v0.14.0，23e00ed；verl v0.6.0，ddd86f5；固定文件、函数与配置见正文。是源码检查，非联合运行认证。</li>
+<li id="ref-areal">[6] Fu et al. <a href="https://arxiv.org/abs/2505.24298v5">AReaL</a>，v5（2026-03-02）；完全异步与过期样本处理，报告任务为数学 / 代码。</li>
+<li id="ref-models">[7] Qwen官方config：<a href="https://huggingface.co/Qwen/Qwen2.5-72B-Instruct/blob/495f39366efef23836d0cfae4fbe635880d2be31/config.json">Qwen2.5-72B-Instruct，495f393</a>；<a href="https://huggingface.co/Qwen/Qwen3-235B-A22B/blob/8efa61729e24bd65b1d152b5ab5409052aa80e65/config.json">Qwen3-235B-A22B，8efa617</a>。仅作为公开基线；本文未下载权重。</li>
+</ol>
+<p class="note">硬件 / 预算 / 池比例为本文方案；公式为规格推导；原论文报告与方案判断分别表述。对Muon最新案例复用研究地图证据，不重复统计为独立复现。</p>
+</section>
+</main></body></html>

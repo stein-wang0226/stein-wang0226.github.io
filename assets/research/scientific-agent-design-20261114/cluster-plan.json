@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "status": "research_design_not_launch_config",
+  "date": "2026-11-14",
+  "executed": false,
+  "hardware_is_author_selected": true,
+  "frameworks": {
+    "megatron_core": {"version": "core_v0.14.0", "commit": "23e00ed0963c35382dfe8a5a94fb3cda4d21e133", "source": "https://github.com/NVIDIA/Megatron-LM/blob/23e00ed0963c35382dfe8a5a94fb3cda4d21e133/megatron/core/parallel_state.py#L647-L728"},
+    "verl": {"version": "v0.6.0", "commit": "ddd86f527a4af75095e4677b02b5aa272913a088", "config_source": "https://github.com/volcengine/verl/blob/ddd86f527a4af75095e4677b02b5aa272913a088/verl/trainer/config/engine/megatron.yaml", "async_source": "https://github.com/volcengine/verl/blob/ddd86f527a4af75095e4677b02b5aa272913a088/recipe/one_step_off_policy/README.md"},
+    "compatibility": "source_fields_verified_joint_runtime_not_verified",
+    "rollout_engine": "vLLM or SGLang; serving version and model adapter must be frozen before execution"
+  },
+  "plans": [
+    {
+      "id": "dense-approximately-70b",
+      "model": {"id": "Qwen/Qwen2.5-72B-Instruct", "revision": "495f39366efef23836d0cfae4fbe635880d2be31", "config_url": "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct/blob/495f39366efef23836d0cfae4fbe635880d2be31/config.json", "layers": 80, "hidden_size": 8192, "attention_heads": 64, "kv_heads": 8, "head_dim": 128, "intermediate_size": 29568, "native_max_positions": 32768, "weights_downloaded": false},
+      "hardware": {"gpu": "H100 80GB", "gpus_per_node": 8, "total_gpus": 128, "total_nodes": 16},
+      "actor": {"gpus": 64, "nodes": 8, "TP": 4, "PP": 2, "CP": 2, "DP": 4, "world_size_formula": "4*2*2*4=64", "update": "full_parameter_AdamW_BF16_baseline", "grad_accumulation": null, "microbatch": null, "optimizer_sharding": "distributed optimizer candidate; exact grad-buffer strategy to freeze", "placement_target": "TP4*CP2 within 8-GPU node; PP across nodes, verify actual rank map"},
+      "rollout": {"gpus": 64, "nodes": 8, "initial_candidate": "16 replicas of TP4", "jointly_validated": false},
+      "reference": {"policy": "frozen SFT initialization", "placement": "trainer-colocated candidate", "additional_bf16_weight_bytes_per_rank_estimate_for_N_70B": 17500000000, "activations_and_workspace_bytes": null},
+      "critic": {"enabled_in_grpo_baseline": false, "ppo_extra_resources": "requires separately measured state and allocation or expansion"},
+      "static_actor_memory_derivation": {"N_selected_for_estimate": 70000000000, "bf16_weight_bytes": 2, "bf16_gradient_bytes": 2, "fp32_master_bytes": 4, "fp32_adam_m_bytes": 4, "fp32_adam_v_bytes": 4, "formula": "2*N/(TP*PP) + 14*N/(TP*PP*DP*CP)", "bytes_per_rank": 32812500000, "boundary": "ideal uniform partition and distributed gradient/optimizer sharding; excludes activations, communication buffers, unsharded weights, gather peaks, allocator, KV and fragmentation; not measured peak"}
+    },
+    {
+      "id": "large-moe",
+      "model": {"id": "Qwen/Qwen3-235B-A22B", "revision": "8efa61729e24bd65b1d152b5ab5409052aa80e65", "config_url": "https://huggingface.co/Qwen/Qwen3-235B-A22B/blob/8efa61729e24bd65b1d152b5ab5409052aa80e65/config.json", "family_parameter_label": "235B total / 22B active (model family label, not a per-token memory size)", "layers": 94, "hidden_size": 4096, "attention_heads": 64, "kv_heads": 4, "head_dim": 128, "experts": 128, "experts_per_token": 8, "moe_intermediate_size": 1536, "native_max_positions": 40960, "weights_downloaded": false},
+      "hardware": {"gpu": "H100 80GB", "gpus_per_node": 8, "total_gpus": 1024, "total_nodes": 128},
+      "actor": {"gpus": 512, "nodes": 64, "TP": 2, "PP": 4, "CP": 2, "DP": 32, "ETP": 2, "EP": 8, "expert_DP": 8, "ordinary_world_size_formula": "2*4*2*32=512", "expert_world_size_formula": "2*4*8*8=512", "expert_DP_formula": "DP*CP/EP when ETP=TP; experts have CP=1 in this fixed source", "rank_order": "tp-cp-ep-dp-pp", "layers_per_stage_proposed": [24, 23, 23, 24], "update": "full_parameter_AdamW_BF16_baseline", "microbatch": null, "grad_accumulation": null, "placement": "TP local; EP/ETP dispatch may cross nodes; exact rank map and stage balance not runtime-verified"},
+      "rollout": {"gpus": 512, "nodes": 64, "initial_candidate": "TP8-only baseline; EP serving is separate ablation, not extra world size", "kv_replication": "kv_heads=4 and TP=8; engine support and physical cache bytes must be checked", "jointly_validated": false},
+      "reference": {"policy": "frozen SFT initialization", "placement": "trainer-colocated candidate pending capacity", "memory_bytes": null},
+      "critic": {"enabled_in_grpo_baseline": false, "ppo_extra_resources": "requires separately measured state and allocation or expansion"},
+      "static_actor_memory_bytes": null
+    }
+  ],
+  "common_roles": {
+    "neural_reward_or_teacher": {"enabled_in_outcome_grpo_baseline": false, "opd_gpu_allocation": null, "rule": "explicit extra state and compute; reduce actor allocation or expand if not colocatable"},
+    "environment_workers": {"device": "CPU", "workers": null, "cpu_cores_per_worker": null, "memory_gb": null, "wall_time_limit_seconds": null, "rule": "offline scientific tools and independent verifier; record CPU-hours and invalid environment attempts"},
+    "storage": {"objects": ["immutable fixture", "checkpoint", "trace", "artifact"], "bytes": null, "io_throughput": null},
+    "network": {"intra_node": "NVLink/NVSwitch class assumption", "inter_node": "high-bandwidth fabric needed; actual topology and effective bandwidth unmeasured", "weight_sync_bytes": null},
+    "precision": {"training": "BF16 baseline with explicit FP32 master/optimizer assumption", "fp8_fp4": "separate object-specific ablation, not uniform 4-bit state"},
+    "sync_policy": {"baseline": "synchronous", "comparison": ["one-step overlap", "fully asynchronous with calibrated lag"], "max_update_lag": null, "max_wall_time_lag_seconds": null, "behavior_logprob_required": true}
+  },
+  "author_selected_budget_tiers": {
+    "short": {"request_input_tokens_max": 8192, "request_output_tokens_max": 4096, "task_actions_max": 24},
+    "long": {"request_input_tokens_max": 24576, "request_output_tokens_max": 8192, "task_actions_max": 64},
+    "rule": "per-request limits; total trajectory action and observation tokens measured separately; enforce context bound on every turn",
+    "group_size_initial": 8
+  },
+  "unmeasured": {"wall_clock_hours": null, "gpu_hours": null, "cpu_hours": null, "throughput": null, "success_rate": null, "purchase_prices": null, "currency_cost": null},
+  "release_checks_remaining": ["model conversion and licensing", "exact image and dependency versions", "rank maps and uneven stages", "activation and reference peak capacity", "CP/EP/optimizer combination", "train/serve template, mask, precision and logprob consistency", "CPU verifier and environment calibration"]
+}

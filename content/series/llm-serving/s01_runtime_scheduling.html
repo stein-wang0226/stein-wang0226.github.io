@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM请求调度与缓存生命周期</title>
+<meta name="description" content="Prefill/decode、continuous batching、PagedAttention/RadixAttention、prefix与chunked prefill、抢占和隔离，核对固定vLLM/SGLang源码。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="overview"><p class="eyebrow">Runtime &amp; scheduling · 2026-11-14</p><h2>每次调度分配的是token计算与状态空间</h2>
+<p class="lead">请求输入长度不同、输出何时结束未知。服务系统要在有限token计算预算与缓存空间内，让已有请求继续，并让新请求进入。PagedAttention管理状态位置，continuous batching管理参与计算的请求，chunked prefill管理长输入的计算粒度。</p>
+<p>先修<a href="../transformer-decoder-flow.html">Decoder prefill/decode</a>与<a href="../llm-architecture/s02_attention_position_cache.html">KV公式</a>。本章解释调度；多设备通信和低精度见<a href="s02_parallel_quantization.html">下一章</a>。</p>
+<figure><div class="flow"><div class="stage"><b>排队与准入</b><small>长度、优先级、租户<br>可用token/状态预算</small></div><div class="stage"><b>匹配已有前缀</b><small>模型版本与权限域<br>命中部分 / 未命中部分</small></div><div class="stage"><b>调度一次前向</b><small>prefill块 + decode<br>分配物理cache blocks</small></div><div class="stage"><b>提交与释放</b><small>输出、结束、取消<br>保留可复用prefix或回收</small></div></div><figcaption>每轮更新完成token数和可用block。投机解码与混合状态可能让一轮推进多个token或维护额外状态。</figcaption></figure>
+</section>
+<section id="phases"><h2>Prefill和decode具有不同工作形状</h2>
+<p>prefill处理新输入的多个位置，建立各层历史状态；decode使用已有状态生成后续位置。prefill的矩阵批量通常更大，decode低batch常受权重/KV读取和层间launch影响；这只是常见瓶颈，不是“prefill永远compute-bound、decode永远memory-bound”的定律。长度、并发、MoE、kernel、精度和网络会改变瓶颈。</p>
+<p>TTFT包含排队、输入预处理、prefix查找、prefill及首token产生；ITL描述输出token之间的间隔。一个长prefill占用设备，会干扰已有decode的尾延迟；过度偏向decode又可能让新请求等待。调度需定义SLO和公平性。</p>
+<table><thead><tr><th>批处理方式</th><th>行为</th><th>局限</th></tr></thead><tbody>
+<tr><td>Static batching</td><td>一组请求共同开始，通常等待组完成</td><td>长度不齐、空槽与队首阻塞</td></tr>
+<tr><td>Continuous / iteration-level batching</td><td>每轮加入新请求、移除结束请求</td><td>还受cache容量和每轮token预算约束</td></tr>
+<tr><td>Chunked prefill</td><td>长输入拆成多个前向片段，与decode交错</td><td>切块过小增加调度/launch，TTFT可能变长；不是文本chunk/RAG</td></tr>
+<tr><td>PD分离</td><td>不同设备分别承担prefill/decode</td><td>新增状态传输、路由与资源闲置，详见下一章</td></tr>
+</tbody></table>
+</section>
+<section id="paging"><h2>PagedAttention解决物理存储，数学仍读取逻辑历史</h2>
+<p>连续为最大长度预留KV会浪费空间；逐请求扩容也容易产生碎片。PagedAttention把逻辑历史分block，由block table指向非连续物理页，kernel按映射访问。它降低外部碎片和重复分配，不把完整attention改成稀疏attention。最后一页仍可能有内部浪费，元数据、预留与临时区也存在。</p>
+<div class="equation" role="math" aria-label="分页KV存储">请求有T个已保存token，block size为B：
+逻辑block数 = ceil(T/B)
+实际分配token槽 = B·ceil(T/B)，末页浪费 &lt; B
+共享prefix时：按唯一物理block核算，不能把每请求逻辑长度直接相加</div>
+<p>prefix共享可让多个请求读取相同不可变block；写入共享尾页时需要copy-on-write或等价机制。物理分页与FlashAttention的IO-aware计算不同，两者可组合。原论文<a href="#ref-paged">[1]</a>的吞吐收益是其模型、硬件、负载和延迟条件，不是当前vLLM的统一倍数。</p>
+</section>
+<section id="prefix"><h2>Prefix复用与RadixAttention</h2>
+<p>共享系统提示、文档或多轮历史的请求可以复用已计算prefix。复用通常依赖完全匹配的token前缀以及模型权重、adapter、位置/模板、多模态内容和cache格式；语义相似或最后一句相同不能直接复用。此前缀是数值状态，不是知识库。</p>
+<p>SGLang的RadixAttention以树组织不同请求的共享前缀，按匹配部分减少重算。固定v0.5.23实现中的<code>match_prefix</code>、<code>evict</code>与<code>inc_lock_ref/dec_lock_ref</code>分别负责匹配、回收与正在使用的节点保护。<a href="#ref-sglang">[2]</a> <a href="#ref-code">[3]</a></p>
+<details><summary>源码入口和“已结束”不等于“立即删除”</summary>
+<pre><code># 本文对SGLang radix_cache.py的概念摘录，不是可直接调用的API
+matched = match_prefix(request_prefix)
+inc_lock_ref(matched_node)       # 正在使用的cache不能随意evict
+execute_remaining_input_and_decode()
+dec_lock_ref(matched_node)
+evict_unlocked_nodes_under_pressure()
+# 请求结束后，prefix可留给未来请求；取消和策略换版另行清理。</code></pre>
+<p>固定<a href="https://github.com/sgl-project/sglang/blob/297e54fd105e974cdf401e5b4d20253a22c16f90/python/sglang/srt/mem_cache/radix_cache.py#L364">匹配L364</a>、<a href="https://github.com/sgl-project/sglang/blob/297e54fd105e974cdf401e5b4d20253a22c16f90/python/sglang/srt/mem_cache/radix_cache.py#L552-L610">回收与引用L552–610</a>，Apache-2.0；这里只解释生命周期。</p></details>
+<p>权限域、租户和模型版本必须纳入cache命名空间。跨租户共享即使不直接暴露KV，也可能通过命中时延形成侧信号；是否允许共享应在威胁模型中明确。policy更新后，旧权重KV通常不能直接沿用为新策略的状态。</p>
+</section>
+<section id="implementation"><h2>vLLM V1：统一按进度和token预算调度</h2>
+<p>vLLM v0.32.0固定源码在scheduler中用<code>num_computed_tokens</code>和目标token数跟踪请求进度，每轮有<code>token_budget</code>；代码注释明确不依赖一个单独的prefill/decode阶段标签。缓存空间不足时有抢占和归还本轮预算的逻辑，不能把论文示意直接当当前状态机。</p>
+<table><thead><tr><th>固定入口</th><th>本文核对</th><th>未验证的组合</th></tr></thead><tbody>
+<tr><td>scheduler.py，L591起</td><td>schedule、running请求、token预算、进度、抢占</td><td>具体SLO、connector、graph与新模型的联合行为</td></tr>
+<tr><td>kv_cache_manager.py，L264起</td><td>computed blocks、prefix查找与分配/释放接口</td><td>不同cache groups、量化、混合状态与分布式传输</td></tr>
+<tr><td>SGLang radix_cache.py</td><td>prefix匹配、eviction、引用保护</td><td>所有HiCache/Mamba/SWA实现等价性</td></tr>
+</tbody></table>
+<p>固定<a href="https://github.com/vllm-project/vllm/blob/5df63a7203cdb9328d824a27b682e77c7b9928be/vllm/v1/core/sched/scheduler.py#L591-L825">scheduler</a>与<a href="https://github.com/vllm-project/vllm/blob/5df63a7203cdb9328d824a27b682e77c7b9928be/vllm/v1/core/kv_cache_manager.py#L264">KV manager</a>。我们读取源码，没有启动服务或测吞吐。</p>
+</section>
+<section id="mixed"><h2>长短请求、工具暂停与混合状态</h2>
+<p>工具Agent在生成与CPU工具执行之间停顿。如果持续保留全部KV，会占用大量容量；如果回收，下一步需要prefix命中或重算。要测工具等待时间、cache保留时长、重算token和复用收益，不能只报运行中batch size。</p>
+<p>Hybrid模型可能同时维护全局KV、SWA、卷积状态和递归矩阵。全局KV可按token页管理；递归状态通常是累计状态，不能默认在任意前缀处裁剪或复制。当前vLLM KV manager包含Mamba共享prefix checkpoint相关分支，说明恢复对象需专门支持，不证明所有混合架构兼容。基础机制见<a href="../llm-architecture/s05_hybrid_architectures.html">状态递推</a>。</p>
+<p>本文建议长短任务分桶、设置准入和排队上限，比较混合池与独立池；限流避免环境迟缓的长程请求无限积累。TP/EP、PD和异步rollout在后两章共同算账。</p>
+</section>
+<section id="evaluation"><h2>调度对照与理解检查</h2>
+<p>冻结硬件、模型版本、精度和真实输入/输出分布，对照prefix开关、chunk大小、并发和长短请求比例。分别报冷/热cache、TTFT、ITL/P95、goodput、抢占、重算、取消和端到端任务成功。若提升prefix命中是因为测试请求复制训练答案，需要先排除污染。</p>
+<details><summary>分页为什么不会自动缩小每token的KV字节？</summary><p>它改变分配方式和共享，单个逻辑token的结构/格式仍由层、KV head、维度与dtype决定。压缩或量化才改变内容表示。</p></details>
+<details><summary>工具暂停后重新发同样prompt能直接复用吗？</summary><p>要匹配token、权重/adapter和cache命名空间，且旧状态尚在；语义相同不保证token一致。若回收则需重算。</p></details>
+<p>继续<a href="s02_parallel_quantization.html">并行与量化</a>；完整测量模板在<a href="s03_capacity_cost.html">容量与成本</a>。</p>
+</section>
+<section id="sources"><h2>来源与范围</h2><ol class="sources">
+<li id="ref-paged">Kwon等，<a href="https://arxiv.org/abs/2309.06180v1">PagedAttention / vLLM</a>，SOSP2023：分页、共享与负载实验。</li>
+<li id="ref-sglang">Zheng等，<a href="https://arxiv.org/abs/2312.07104v2">SGLang</a>：程序控制与RadixAttention。</li>
+<li id="ref-code">vLLM v0.32.0 commit5df63a7203cdb9328d824a27b682e77c7b9928be；SGLang v0.5.23 commit297e54fd105e974cdf401e5b4d20253a22c16f90，均Apache-2.0。核对范围是上述文件/调用，不代表运行所有功能。</li>
+</ol><p class="note">截止2026-11-14；没有服务性能实测。论文收益、当前实现和本文方案不互换。</p></section>
+</main></body></html>

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "status": "research_design",
+  "executed": false,
+  "experiment_namespace": "sci-posttrain",
+  "distinct_from": "training-lifecycle Harbor A-E initialization/CPT comparison",
+  "groups": [
+    {"id": "sci-posttrain-A", "initialization": "fixed public model", "method": "fixed harness baseline"},
+    {"id": "sci-posttrain-B", "initialization": "A", "method": "SFT on independently verified eligible trajectories"},
+    {"id": "sci-posttrain-C", "initialization": "B", "method": "outcome-reward GRPO"},
+    {"id": "sci-posttrain-D", "initialization": "B", "method": "one chosen credit-assignment or stratified-sampling change", "rule": "factorial or one-factor ablations; no attribution to bundled changes"},
+    {"id": "sci-posttrain-E-opd", "initialization": "B", "method": "OPD with teacher compute recorded"},
+    {"id": "sci-posttrain-E-budget", "initialization": "B", "method": "adaptive inference budget under fixed total inference resource"}
+  ],
+  "controls": ["model and tokenizer revision", "study-group source split", "harness and tool schemas", "environment digest", "verifier/oracle version", "action mask and chat template", "decoding and request/task budget", "training and evaluation seeds", "teacher/reference cost", "policy lag and train/serve logprob consistency"],
+  "splits": {"unit": "study/BioProject/source lineage group", "counts": null, "same_source_variants_may_cross_split": false, "cross_species_or_assay": "separate stress-test stratum", "airway_public_teaching_data": "contamination-risk stratum, not evidence of unseen pretraining"},
+  "author_selected_initial_design": {"training_seed_count_min": 3, "evaluation_repeats": "multiple per fixed task, count to freeze after cost calibration", "GRPO_group_size": 8, "request_budget_tiers": "see cluster-plan.json", "wall_time": null, "training_steps": null},
+  "ablation_axes": ["SFT data eligibility / action masking", "outcome reward vs objective intermediate evidence", "group/batch/no standard-deviation normalization", "sequence/token/fixed-denominator loss aggregation", "task-family and difficulty stratification", "policy lag correction/filtering", "same training budget vs same inference execution budget"],
+  "metrics": ["scientific successes / all attempts", "scientific successes / executable attempts plus environment failure count", "per-family and per-difficulty rates", "valid nonzero-advantage groups", "training GPU-hours by role", "environment/verifier CPU-hours", "action and observation tokens", "TTFT/ITL/P95 and tool time separately", "total resource per scientific success"],
+  "statistics": {"resampling_unit": "study group, with paired task comparisons", "report": "per-training-seed results, raw numerators/denominators and grouped bootstrap uncertainty", "insufficient_studies": "report inadequate sample size; no fake narrow intervals from prompt variants"},
+  "result": {"success_rate": null, "confidence_interval": null, "gpu_hours": null, "cpu_hours": null, "currency_cost": null, "cost_per_success": null},
+  "prerequisites": ["frozen public fixture", "multiple defensible references", "empirical tolerances and scorer tests", "public/private isolation", "independent blind trials", "eligible SFT/RL trajectories", "cluster joint compatibility and capacity checks"]
+}

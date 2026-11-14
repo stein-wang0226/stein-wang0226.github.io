@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>05 · 线性 Attention、状态空间与混合架构</title><meta name="description" content="从外积状态推导线性Attention、遗忘与delta更新，比较GDN、Mamba、SWA、全局KV及混合架构的历史信息和系统代价。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="purpose"><h2>固定大小状态怎样保留不断增长的历史</h2>
+<p class="lead">完整 Attention 为历史保留可逐项访问的 KV；递归模型不断更新一个固定形状的状态，用它概括历史。后者可降低长序列 decode 的状态增长，但压缩与覆盖会影响精确召回。混合架构让不同层承担递推、局部访问与全局读取。</p>
+<p>先修：<a href="s02_attention_position_cache.html">Attention 与缓存</a>。本章公式采用 <code>S ∈ R^(dv×dk)</code>、列向量 q/k/v；与第01章的行向量约定转置等价，不能混用乘法方向。GDN 原论文 §2–3 明确讨论更新和硬件并行。<a href="index.html#ref-7">[7]</a></p></section>
+<section id="linear"><h2>外积状态把历史聚合为关联矩阵</h2>
+<div class="equation" role="math">S_t = S_(t−1) + v_t k_tᵀ
+o_t = S_t q_t = Σ_(i≤t) v_i (k_iᵀq_t)
+S ∈ R^(dv×dk)；k/q ∈ R^dk；v/o ∈ R^dv
+此式省略 feature map、归一化及模型特定 gate，不等于 softmax Attention</div>
+<p>状态是多次外积的和；读 query 时通过 kᵀq 的匹配得到 value 组合。因为固定维度要承载越来越多关联，相似/非正交 key 会干扰。它没有保留每个 token 的原始 KV 列表，也不能无条件恢复所有细节。</p>
+<div class="equation">固定状态预算（单请求、仅该部分）：
+M_state = Σ_layers H_state × dv × dk × bytes/value
+Full KV 预算 = Σ_layers T × Hkv × (dK+dV) × bytes/value
+递归模型还可能有 convolution state、Norm/gate、中间缓存和混合 Attention KV</div>
+<p>“状态不随 T 增长”指特定递归状态的持久大小；训练仍有按序列的激活/重计算，prefill 仍要处理每个 token。它不能推出无限上下文、训练 O(1) 显存或无损记忆。</p></section>
+<section id="gated-delta"><h2>遗忘控制与定向更新解决不同问题</h2>
+<div class="equation" role="math">带遗忘外积：S_t = α_t S_(t−1) + v_t k_tᵀ
+Delta：S_t = S_(t−1) + β_t (v_t−S_(t−1)k_t)k_tᵀ
+Gated delta：S_t = α_t S_(t−1)
+            + β_t (v_t−α_t S_(t−1)k_t)k_tᵀ
+等价：α_t S_(t−1)(I−β_t k_t k_tᵀ) + β_t v_t k_tᵀ
+α/β 的范围、key 归一化与 gate 参数化由模型规定</div>
+<p>α 对旧状态整体衰减，便于快速清除；delta 先读取当前 key 关联的旧值，再朝新值修正，实现定向覆盖。GDN 把两者组合，原论文讨论了快速遗忘、精确修改与检索的互补。它们的报告实验是该模型规模/配方下的结果，不是所有工业任务上的普适排序。<a href="index.html#ref-7">[7] GDN §2–4</a></p>
+<figure><div class="flow">
+<div class="stage"><b>旧状态</b><small>Sₜ₋₁ 保存关联<br>不是原 token 数据库</small></div>
+<div class="stage"><b>遗忘/读取</b><small>α 调整保留<br>按 k 读旧关联</small></div>
+<div class="stage"><b>写入误差</b><small>新 v − 旧预测<br>β 控制定向修正</small></div>
+<div class="stage"><b>当前输出</b><small>新状态 × q<br>再经模型输出路径</small></div>
+</div><figcaption>Gated delta 更新的概念图。归一化、局部卷积、输出门控和投影省略，不冒充完整工业 block。</figcaption></figure>
+<p>KDA 等进一步细化 decay 的方向/粒度，需要检查 gate 是标量、向量还是其它结构；不能把所有“K”或“delta”变体写成同一递推。具体 Kimi/Qwen 配置与披露边界放在<a href="../llm-research-map-2026/s06_architecture_landscape.html#state">型号证据页</a>。</p></section>
+<section id="ssm"><h2>Mamba 与 SSD 把状态更新组织成高效计算</h2>
+<div class="equation" role="math">一般离散状态空间：h_t = Ā_t h_(t−1) + B̄_t x_t
+y_t = C_t h_t + D x_t
+Mamba 使部分参数依赖输入，实现选择性传播/遗忘
+Mamba-2 / SSD 利用结构化半可分矩阵联系递归与分块并行</div>
+<p>Mamba 不只是普通 RNN 换名字：选择性参数和硬件算法让它适应语言等离散输入；Mamba-2 又以 SSD 提供结构化并行。原报告中的 kernel/层速度不是任意混合 LLM 的端到端收益。<a href="index.html#ref-7">[7] Mamba、SSD</a></p>
+<p>递推式有时间依赖，但训练并非只能 Python for-loop：chunkwise 算法以 chunk 的入状态、局部块计算和出状态组织 tensor-core 运算。GDN 还利用 WY 表示处理 delta 的依赖。更快 kernel 要连同 chunk 大小、状态读写、backward 和精度测量。</p></section>
+<section id="hybrid"><h2>混合层计划决定信息访问与状态预算</h2>
+<table><thead><tr><th>信息对象</th><th>机制例子</th><th>访问/更新特性</th><th>主要失败</th></tr></thead><tbody>
+<tr><td>序列关联摘要</td><td>GDN/KDA、Mamba state</td><td>逐步递推、固定形状</td><td>关联冲突、覆盖、遗忘</td></tr>
+<tr><td>附近 token</td><td>SWA/local KV</td><td>window 内可逐项读取</td><td>远程依赖失联</td></tr>
+<tr><td>长历史 token/块</td><td>full/sparse/global attention</td><td>保存候选并查询</td><td>状态增长、索引漏召回</td></tr>
+<tr><td>前层表示</td><td>AttnRes/mHC</td><td>深度选择/多路混合</td><td>激活和尺度压力</td></tr>
+<tr><td>条件化参数记忆</td><td>Engram 类检索模块</td><td>模型定义的键/槽读取</td><td>碰撞、访问和更新边界</td></tr>
+<tr><td>外部知识</td><td>RAG / 工具 / 持久 memory</td><td>Harness 取回并装配上下文</td><td>权限、检索与摘要错误</td></tr>
+</tbody></table>
+<p>这些机制的“memory”对象不同。Engram 的模型内部查表/条件记忆不能直接当成会话文件；RAG 在外部检索知识再输入模型，长期 memory 还涉及筛选/巩固/权限。完整边界连接<a href="../agent-harness-guide.html#codex-memory">Codex memory</a>与<a href="../agent-systems/s01_rag_retrieval.html">RAG</a>。</p>
+<p>Qwen、Kimi、Nemotron、MiniMax 等公开家族的 layer pattern、state 和专家路径由<a href="../llm-research-map-2026/s06_architecture_landscape.html#families">型号表</a>维护。配置里的 pattern、共享层与真实 block 数可能不同，计算预算按实际层执行，不按宣传比例独立推算。</p></section>
+<section id="agent-state"><h2>Agent 分支和换窗需要不同的恢复协议</h2>
+<p>树搜索/多采样要从同一 prefix 创建分支。Full KV 可在相容条件下共享前缀页，递归模型则要保存分支起点的状态快照，局部卷积状态也要一致。发生截断或摘要换窗后，重新 prefill 摘要得到的状态与继续完整历史的状态不同；两者不能声称无损等价。</p>
+<p>RL 权重更新还使旧状态过期。rollout 版本、router、mask、位置、adapter、精度与 kernel 要冻结到 episode，跨版本恢复需有明确协议。恢复机制与 policy lag 连接<a href="../llm-research-map-2026/s02_agentic_rl.html#asynchrony">异步 RL</a>。</p></section>
+<section id="evaluation"><h2>沿信息损失和真实预算设计对照</h2>
+<p>本文建议分开测试：单针/多针与关联冲突、长依赖、多跳组合、顺序重排、分支恢复、上下文超出训练长度。先固定参数/数据对比历史机制，再在等训练算力与同服务预算下比较混合层计划。记录 state+KV 总量、prefill/decode、任务质量和每个成功任务成本。</p>
+<p>没有实测时不画模拟性能曲线。GDN、Mamba 报告展示特定实验中的效率与质量，跨家族 token/s 和 benchmark 分数不能直接归因给一个 state 机制。</p>
+<details><summary>自测：固定状态为什么不等于无限无损上下文？</summary><p>固定维度要压缩无限增长的关联，非正交 key、覆盖和有限精度会损失信息；也没有逐项保留原文。能处理更长输入是计算能力，能可靠读取任意历史细节是另一个质量问题。</p></details></section>
+<section id="sources"><h2>来源</h2><p><a href="index.html#ref-7">[7] GDN v3 §2–3、Mamba v2、SSD v1</a>为递推与算法来源；前沿变体与模型 config 见<a href="../llm-research-map-2026/s06_architecture_landscape.html#reading">固定型号来源</a>。所有新对照为设计，本站未执行。</p></section>
+</main></body></html>

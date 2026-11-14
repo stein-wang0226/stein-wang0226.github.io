@@ -595,6 +595,9 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备">
+<h3 id="system-contract-bridge">同一条轨迹，连接执行、记忆与训练</h3>
+<p>用“确认供体配对→运行差异分析→检查输出合同”的科学任务贯穿：Harness记录工具输入/退出码、文件状态与policy版本；短期context留下未完成步骤和证据定位；长期memory只沉淀稳定规则。压缩摘要不替代原始轨迹、可恢复文件或独立verifier。工具网页与旧memory都属于需核实的数据，不应自动获得系统指令优先级。</p>
+<p>生产门控在执行前验证权限、参数、路径、预算；训练导出时保留observation作为条件，但不把环境token当作策略动作。固定reference用于KL锚定，采样behavior/old policy用于重要性比率，两者不能互换。把这三个标识写入trajectory，再接入 <a href="/agent-systems/s03_trust_safety.html">权限隔离</a>、<a href="/agent-systems/s01_rag_retrieval.html">证据检索</a>与 <a href="/agent-data-benchmarks/s03_scientific_task_family.html">输出/verifier合同</a>。</p>
 <h2>阅读准备</h2><p><strong>范围：</strong>理解 Agent 从工具执行到训练的系统链路；先修 Python、LLM 推理和基础 RL。建议先读架构与模块，再读 rollout、隔离环境和 reward，最后看训练集成。只想理解一个实际 Agent，可直接读 <a href="#codex-loop">Codex 运行循环</a> → <a href="#codex-context">上下文管理</a> → <a href="#codex-memory">跨会话记忆</a>；这三节不要求 RL 基础。</p>
 <p><strong>核心链路与产物：</strong>任务输入 → 工具调用与环境反馈 → 多轮轨迹 → reward → 训练样本及评估。正文中的接口和代码是理解实现的示例，部署时还需结合所用框架版本验证。</p>
 </section>
@@ -1128,7 +1131,7 @@ mask_t[k] = 1  if token k ∈ {Thought, Action}    # LLM 生成
 mask_t[k] = 0  if token k ∈ {Observation, System} # 环境/系统
 
 # Step 3: Clipped Policy Ratio
-ratio = π_θ(token|ctx) / π_ref(token|ctx)
+ratio = π_θ(token|ctx) / π_old(token|ctx)  # 实际采样策略；不是KL reference
 clipped = clip(ratio, 1-ε, 1+ε)
 
 # Step 4: Final Loss
@@ -1154,7 +1157,7 @@ L = -(1/N) Σᵢ Σ_t Σ_k [mask · min(ratio·A_{i,t}, clipped·A_{i,t})]
 
     <div class="highlight-box highlight-blue">
         <div class="hl-title">为什么按步归一化？</div>
-        <p>不同步的 reward 分布不同（第 1 步信息少 → reward 低，最后步有 answer → reward 高）。混合归一化会让早期步永远负 advantage，模型永远不学"怎么开头"。</p>
+        <p>这是额外的step-level设计，需要可比较的状态、步骤奖励及对齐规则。原始GRPO按同一prompt的整条响应奖励构造组优势，不要求每个Agent轮次分别标准化。不同轨迹的第t步可能处于不同语义状态，直接比较可能产生错误信用分配；不能由“早期奖励低”推出早期优势永远为负。</p>
     </div>
 
     <h3>Dr. GRPO: 消除长度偏差</h3>

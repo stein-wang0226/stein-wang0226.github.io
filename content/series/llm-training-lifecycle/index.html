@@ -34,6 +34,12 @@
 </div>
 <p>已有基础可直接从第二章开始；希望理解算法推导，可配合现有的<a href="../rl-interview-guide.html">强化学习手册</a>。张量流见<a href="../transformer-decoder-flow.html">Transformer Decoder</a>，并行实现见<a href="../distributed-training-guide.html">分布式训练指南</a>，执行环境见<a href="../agent-harness-guide.html">Agent Harness</a>。</p>
 </section>
+<section id="methods-systems">
+<h2>四个训练阶段之外：更新方法与集群设计</h2>
+<a class="card" href="s05_training_methods_systems.html"><h3>05 · PEFT、优化器、稳定性与工业后训练系统</h3><p>LoRA / QLoRA与全参数状态，AdamW / Muon分工，TP / PP / CP / EP进程组；128 / 1024 H100规划、reference / critic / CPU环境与异步rollout。</p></a>
+<p>第05章是横向方法，不增加第五个训练阶段。张量与底层机制见独立<a href="../llm-architecture/">LLM架构六章</a>；真实科学数据怎样成为任务、轨迹与奖励，接<a href="../agent-data-benchmarks/s03_scientific_task_family.html">科学合同</a>和<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">SFT / RL对照方案</a>。</p>
+<p class="note">四阶段原有27项编号不变；第05章独立记录新增方法与固定源码。本轮只调研与设计，不真实执行训练、科学任务或benchmark。</p>
+</section>
 <section id="artifacts">
 <h2>沿途究竟交付什么</h2>
 <table>
@@ -51,7 +57,7 @@
 <section id="findings">
 <h2>本次调研可以支持的结论</h2>
 <div class="metric-grid">
-<div class="card"><b class="metric">24 + 3</b><p>24 篇原论文 / 团队报告，加 3 份官方页面或文档。来源固定到版本，调研截止 2026-11-14。</p></div>
+<div class="card"><b class="metric">24 + 3</b><p>前四章原始索引：24 篇原论文 / 团队报告，加 3 份官方页面或文档；新增训练方法来源见第05章。调研截止 2026-11-14。</p></div>
 <div class="card"><b class="metric">4 个学习环节</b><p>用同一个 CSV 清洗任务贯穿文档、代码变更、轨迹、监督目标、reward 与最终产物验证。</p></div>
 </div>
 <p><strong>工业链路正在扩展训练上下文的结构。</strong> 仓库、issue–PR、CI 日志、函数依赖和工具工作流提供了不同信号；它们不能统一简化成“多收集一些长轨迹”。Nemotron 的混合配方有直接受控证据，Qwen 与 GLM 提供工业规模参考，MidTool 和函数级 FIM 提供更小规模的设计实验。<a href="#ref-1">[1]</a> <a href="#ref-2">[2]</a> <a href="#ref-3">[3]</a> <a href="#ref-5">[5]</a> <a href="#ref-8">[8]</a></p>

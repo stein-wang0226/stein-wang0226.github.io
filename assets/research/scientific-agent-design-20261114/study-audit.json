@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "status": "research_design",
+  "release_ready": false,
+  "review_date": "2026-11-14",
+  "study": "GSE52778",
+  "central_question": "在冻结的四供体配对 gene count 子集中，估计 Dex 相对 untreated 的表达变化，并验证统计设计和数值产物。",
+  "scope": {
+    "selected_candidate_layer": "near_raw_gene_count_matrix",
+    "candidate_object": "airway::airway",
+    "package_version": "1.32.0",
+    "bioconductor_version": "3.23",
+    "reason": "保留下游计数语义、配对设计、归一化、NB检验和多重校正；上游比对不属于本合同。",
+    "full_series_samples": 16,
+    "candidate_samples_reported_in_vignette": 8,
+    "candidate_genes_reported_in_vignette": 63677,
+    "fixture_bytes": null,
+    "fixture_sha256": null,
+    "downloaded_or_executed": false
+  },
+  "sources": [
+    {"id": "geo", "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778", "classification": "metadata", "version": "accessed 2026-11-14", "bytes": null, "sha256": null},
+    {"id": "sra", "url": "https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA229998", "accession": "SRP033351", "classification": "raw_reads_entry", "downloaded": false, "bytes": null, "sha256": null},
+    {"id": "paper", "url": "https://doi.org/10.1371/journal.pone.0099625", "classification": "scientific_claims", "oracle": false},
+    {"id": "fpkm", "filename": "GSE52778_All_Sample_FPKM_Matrix.txt.gz", "classification": "processed", "public_fixture_selected": false},
+    {"id": "author_diff", "filename": "GSE52778_Dex_vs_Untreated_gene_exp.diff.gz", "classification": "answer_bearing", "public_fixture_selected": false},
+    {"id": "airway", "url": "https://bioconductor.org/packages/3.23/data/experiment/html/airway.html", "version": "1.32.0", "classification": "near_raw_gene_counts", "package_license": "LGPL", "scientific_data_redistribution_review": "pending", "bytes": null, "sha256": null},
+    {"id": "vignette", "url": "https://bioconductor.org/packages/3.23/data/experiment/vignettes/airway/inst/doc/airway.html", "version": "BioC3.23 / airway1.32.0", "classification": "processing_and_sample_provenance"},
+    {"id": "author_code", "url": "https://github.com/blancahimes/taffeta", "classification": "author_processing_code_entry", "commit": null, "audited": false, "public_fixture_selected": false}
+  ],
+  "candidate_processing_reported_by_vignette": {
+    "alignment": "STAR / GRCh37 / Ensembl75",
+    "counting": "summarizeOverlaps",
+    "mode": "Union",
+    "singleEnd": false,
+    "ignore_strand": true,
+    "fragments": true,
+    "annotation": "Ensembl75, gene-level; verify frozen package rowRanges metadata before export",
+    "object_separation": "airway object is distinct from Salmon demonstrations and gse object"
+  },
+  "candidate_sample_mapping_from_frozen_object_printout": [
+    {"sample_id": "SRR1039508", "geo_sample": "GSM1275862", "donor_id": "N61311", "condition": "untreated"},
+    {"sample_id": "SRR1039509", "geo_sample": "GSM1275863", "donor_id": "N61311", "condition": "Dex"},
+    {"sample_id": "SRR1039512", "geo_sample": "GSM1275866", "donor_id": "N052611", "condition": "untreated"},
+    {"sample_id": "SRR1039513", "geo_sample": "GSM1275867", "donor_id": "N052611", "condition": "Dex"},
+    {"sample_id": "SRR1039516", "geo_sample": "GSM1275870", "donor_id": "N080611", "condition": "untreated"},
+    {"sample_id": "SRR1039517", "geo_sample": "GSM1275871", "donor_id": "N080611", "condition": "Dex"},
+    {"sample_id": "SRR1039520", "geo_sample": "GSM1275874", "donor_id": "N061011", "condition": "untreated"},
+    {"sample_id": "SRR1039521", "geo_sample": "GSM1275875", "donor_id": "N061011", "condition": "Dex"}
+  ],
+  "provenance_conflicts": [
+    {
+      "observed": "BioC3.23 vignette intermediate regenerated metadata table prints 16 rows and all dex=untrt, while frozen airway object prints 8 samples with paired treatments.",
+      "root_cause": "not_verified",
+      "hypothesis": "positional GEO metadata parsing is brittle",
+      "required_resolution": "Compare immutable package sample_table.csv and colData(airway) with semantic GSM fields; do not use positional field renaming as authority."
+    }
+  ],
+  "research_trajectory": {
+    "claims_as_hypotheses": ["Dex is associated with transcript expression changes in the specified airway smooth muscle cell setting; no expected gene names or values are public oracle inputs."],
+    "source_graph": ["GSE52778 -> GSM samples -> PRJNA229998 / SRP033351", "GSE52778 -> airway1.32.0 airway object -> immutable exported counts and metadata", "GSE52778 -> FPKM / author diff -> private source audit only"],
+    "operations": ["validate count units, sample mapping and paired design", "estimate normalization and NB model using donor + condition", "compute Dex/untreated contrast, multiple-testing adjustment and objective artifacts"],
+    "outputs": ["sample_qc.tsv", "gene_stats.tsv", "summary.json", "executable analysis script for Terminal wrapper"],
+    "limits": ["one study and four paired donors", "transcript expression only", "no protein mechanism, clinical efficacy or cross-population generalization", "public teaching data may have pretraining contamination"]
+  },
+  "eligibility": {
+    "near_raw_available_by_documentation": true,
+    "experimental_design_candidate": "four paired donors",
+    "objective_reference_possible": "proposed_not_run",
+    "difficulty": "statistical design, units, count-model fitting and multiple testing; not file size",
+    "redistribution_and_runtime": "pending",
+    "final_eligible_for_release": null
+  },
+  "future_isolation": {"public": ["instruction", "counts", "samples", "input_manifest", "output_contract", "offline_dependencies"], "private": ["source_audit", "reference", "oracle", "calibration", "scorer", "blind_records"]},
+  "release_blockers": ["source and fixture hashes", "package object and sample mapping conflict resolution", "data redistribution review", "deterministic transformation manifest", "public prefilter and missing-value rules frozen against real data", "allowed methods and multiple reference paths", "empirical tolerances and scorer unit weights", "container digest and runtime limits", "scorer negative tests", "public/private isolation and independent blind evaluations"]
+}

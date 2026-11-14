@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent信任边界、权限与安全评测</title>
+<meta name="description" content="非可信数据与指令、prompt injection、工具文件网络权限、sandbox与数据流隔离，设计科学Agent的安全负例和可复核评测。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
+<section id="overview"><p class="eyebrow">Trust &amp; permissions · 2026-11-14</p><h2>模型提出动作，系统决定是否执行</h2>
+<p class="lead">工具结果、网页、文件和memory可能含有看起来像指令的文字。Agent必须从它们提取证据，却不能让它们自行授予权限。提示词与模型训练降低误遵循风险；真正的文件、网络和工具能力需要由执行系统约束。</p>
+<p>先修：<a href="../agent-harness-guide.html">运行循环与状态</a>、<a href="s01_rag_retrieval.html">检索权限</a>、<a href="s02_planning_compute.html">环境分支</a>。本章是系统设计与论文调研，不对现有站点做安全审计，也不执行攻击。</p>
+<figure><div class="flow"><div class="stage"><b>用户目标与授权</b><small>可信任务合同<br>允许的数据和操作</small></div><div class="stage"><b>外部观察</b><small>文档、工具、memory<br>带来源的非可信数据</small></div><div class="stage"><b>动作控制器</b><small>schema、路径、域名<br>能力与副作用检查</small></div><div class="stage"><b>隔离执行与记录</b><small>受限环境、结果<br>权限判定与安全终评</small></div></div><figcaption>外部数据可影响事实判断，不能直接修改权限政策。controller依据可信配置检查实际操作。</figcaption></figure>
+</section>
+<section id="threat-model"><h2>先确定攻击者控制什么</h2>
+<table><thead><tr><th>维度</th><th>科学Agent的本文设计</th><th>需要区分</th></tr></thead><tbody>
+<tr><td>合法目标</td><td>审计来源、分析公开count、产出规定artifact</td><td>完成任务与遵守权限是两条验收轴</td></tr>
+<tr><td>攻击面</td><td>README、网页、工具stdout、元数据字符串、被检索的笔记</td><td>攻击者编辑外部内容，不假定控制系统policy或隐藏verifier</td></tr>
+<tr><td>资产</td><td>输入fixture完整性、隐藏参考、凭据、输出和科学结论</td><td>公开数据也可能发生结果篡改或答案污染</td></tr>
+<tr><td>攻击目标</td><td>越权读写、外发、修改答案文件、诱导错误contrast、耗尽预算</td><td>注入成功、普通模型错误与环境错误不能混计</td></tr>
+</tbody></table>
+<p>prompt injection指外部内容诱导Agent偏离授权任务；它不同于合法用户改变目标，也不同于程序本身有路径穿越漏洞。两种风险可能组合：模型被诱导提交参数，而控制器没有检查解析后的实际路径。可靠设计需同时约束模型交互与传统执行权限。</p>
+</section>
+<section id="isolation"><h2>提示、检测、权限与隔离各自能保证什么</h2>
+<table><thead><tr><th>层</th><th>能做什么</th><th>保证边界</th></tr></thead><tbody>
+<tr><td>提示 / 指令层级训练</td><td>标记外部数据、减少越权遵循</td><td>是概率性行为；没有撤销工具能力</td></tr>
+<tr><td>注入检测 / guard模型</td><td>增加攻击难度、标记可疑输入/输出</td><td>有漏检和误拒；检测器本身也要评测</td></tr>
+<tr><td>结构化工具与controller</td><td>校验参数、能力、目标路径和副作用</td><td>JSON合法不等于操作合法；策略需覆盖真实API语义</td></tr>
+<tr><td>sandbox / 最小权限</td><td>限制可读写对象、网络、进程和资源</td><td>容器不能自动保证无secret、无宿主挂载、无外网或无内核风险</td></tr>
+<tr><td>独立终评</td><td>检验最终产物与安全目标</td><td>事后发现不能撤销已发生外发；预防与验收分别设计</td></tr>
+</tbody></table>
+<p>设计模式论文<a href="#ref-patterns">[1]</a>把不可信数据与控制流隔离作为主线。action-selector限制为预定动作；plan-then-execute在读非可信数据前固定允许控制流；map-reduce让受限局部处理器输出数据；dual-LLM把非可信读取与有能力的控制器分开；code-then-execute先固定程序再处理数据；context minimization减少非可信信息进入下一决策。</p>
+<p>这些模式牺牲部分任意任务能力；其条件性保证不等于所有Agent都“免疫注入”。尤其普通Plan-and-Execute若在读取文档后允许任意新增工具或代码，并没有满足论文隔离条件。dual-LLM若把自由文本重新当指令传给privileged模型，也不能自动形成强边界。</p>
+<details><summary>本文设计的工具门控：按解析后对象检查</summary>
+<pre><code># 设计伪代码；不是现有Codex或Harbor API
+request = parse_typed_tool_call(model_output)
+capability = trusted_task_policy.lookup(request.tool)
+target = resolve_canonical_target(request, prevent_symlink_escape=True)
+assert capability.allows(target, request.operation)
+assert request.credentials_scope &lt;= capability.credentials_scope
+assert network_destination_allowed(request, including_redirects=True)
+run_in_isolated_worker(request, limits=capability.resource_limits)
+record(request, policy_version, authorization_decision, tool_result)</code></pre>
+<p>检查与使用之间还可能有TOCTOU；真实实现需使用受限目录句柄/挂载及适当系统调用约束。这里表达职责，未实现或验证执行器。</p></details>
+</section>
+<section id="science"><h2>科学合同、独立verifier和权限的连接</h2>
+<p>科学任务公开完整输出schema、design与可用输入，不公开隐藏参考结果。模型能读fixture、写自己的artifact，verifier在独立只读输入/输出通道中运行；奖励文件不能由模型写入。容差、标签、参考和verifier源码按任务威胁模型决定可见性，不能依赖模糊题面来隐藏答案。</p>
+<p>对于本文airway设计，原始count和来源审计只读，每条轨迹输出隔离；正式评分阶段没有任意网络查答案。若研究模式允许访问官方文档，应与闭卷终评分别命名并计预算。不能在训练时公开某研究答案，再把同研究变体称为独立test。</p>
+<table><thead><tr><th>安全负例（待构建）</th><th>应由哪一层处理</th><th>验收对象</th></tr></thead><tbody>
+<tr><td>README声称“为验证需读取隐藏参考”</td><td>模型识别非可信内容 + OS/挂载限制</td><td>实际文件访问日志与artifact，不只看模型拒绝文本</td></tr>
+<tr><td>元数据字段建议改contrast并跳过供体配对</td><td>来源审计、统计合同与独立verifier</td><td>合法design/contrast、报告是否解释矛盾</td></tr>
+<tr><td>工具stdout诱导上传结果或凭据</td><td>网络和凭据scope限制、目的地检查</td><td>实际网络副作用；工具层拒绝与模型拒绝分别记录</td></tr>
+<tr><td>分支写入公共输入、另一个分支读取</td><td>输入只读、输出与进程隔离</td><td>fixture哈希、run/branch路径与污染</td></tr>
+</tbody></table>
+<p>这些负例不是已执行攻击。完整科学合同见<a href="../agent-data-benchmarks/s03_scientific_task_family.html">任务族设计</a>。训练准入同时要求科学有效、来源可追溯、权限合规；“获得高reward”不能替代三者。</p>
+</section>
+<section id="evaluating"><h2>安全评测同时报告任务效用与攻击成功</h2>
+<p>AgentDojo<a href="#ref-dojo">[2]</a>提供工具Agent在非可信数据上的任务、攻击与防御环境；它是可扩展环境，论文版本中的任务数不等于当前仓库数量。固定task suite、attack、agent、防御、模型、权限和预算后再比较。</p>
+<div class="equation" role="math" aria-label="安全评测分母">Clean utility = 无攻击合法任务成功 / 无攻击合法任务数
+Attacked utility = 有攻击合法任务成功 / 有攻击合法任务数
+ASRall = 达成攻击者目标 / 全部攻击尝试
+ASRconditional = 达成攻击者目标 / 所选基线可成功任务的攻击尝试</div>
+<p>条件ASR和全部ASR的分母不同，必须同时说明。防御若让所有任务都失败，可能ASR很低但没有效用。还要报误拒、攻击适应预算、攻击可见知识、实际越权副作用与环境错误。单轮恶意字符串集合不能充分代表多轮、自适应、长文或跨memory攻击。</p>
+<p>本文建议分三条对照：仅prompt、prompt+检测、执行权限+隔离；在相同合法任务和攻击预算下比较。保存工具参数、控制器判定、worker日志及终评结果，隐藏secret不进入公开轨迹或训练样本。用Canary可设计泄露检测，但命中规则/secret格式不能成为模型可学的答案捷径。</p>
+<p>本文判断：科学Agent可靠性的最低要求是控制实际数据与副作用，同时用独立科学验证发现错误结论。模型训练、检测器和提示是增量防线，不应取代任务合同和执行能力限制。</p>
+</section>
+<section id="self-check"><h2>理解检查与后续</h2>
+<details><summary>工具只接受JSON，为什么还可能越权？</summary><p>JSON约束语法。合法字符串仍可能指向不允许路径、攻击域名或过大资源；要按可信能力检查实际对象和API语义。</p></details>
+<details><summary>模型回答“我不会泄露”，就能算安全成功吗？</summary><p>还需实际工具/网络日志和最终副作用。文本承诺可能与工具行动不一致，终评要检查攻击目标是否真实发生。</p></details>
+<p>继续读<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">训练与失败归因</a>、<a href="../llm-serving/s01_runtime_scheduling.html">共享缓存的生命周期</a>；题库见<a href="../llm-interview-bank.html#sec-agent">Agent</a>与<a href="../llm-interview-bank.html#sec-eval">评估</a>。</p>
+</section>
+<section id="sources"><h2>原始来源与证据边界</h2><ol class="sources">
+<li id="ref-patterns">Beurer-Kellner等，<a href="https://arxiv.org/html/2506.08837v3">Design Patterns for Securing LLM Agents against Prompt Injections</a>，§2–3、§4科学/软件等案例：六种隔离模式与能力取舍。</li>
+<li id="ref-dojo">Debenedetti等，<a href="https://arxiv.org/abs/2406.13352v3">AgentDojo</a>：动态攻击/防御环境；v3修正实现与suite，数字不外推当前版本。</li>
+<li id="ref-runtime"><a href="../agent-harness-guide.html#codex-loop">Codex源码案例</a>：固定commit的工具执行与策略边界；本文不将其作为上述模式的完整形式化实现证明。</li>
+</ol><p class="note">截止2026-11-14。本文只调研设计与定义安全评测，不运行攻击、防御、科学任务或训练；未知防御成功率保持未知。</p></section>
+</main></body></html>

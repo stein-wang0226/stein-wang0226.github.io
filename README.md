@@ -31,9 +31,12 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 | 文章、系列章节、独立子站及关联关系 | `content/catalog.json` |
 | 正文 | `content/posts/<id>/index.html` 或 `index.md` |
 | 扩散系列 14 章 | `content/series/dlm-survey/*.html` |
-| LLM 训练全链路 4 章 | `content/series/llm-training-lifecycle/*.html`；专用样式 `assets/site/training-lifecycle.css` |
+| LLM 训练全链路 5 章 | `content/series/llm-training-lifecycle/*.html`；四阶段加训练方法与集群设计，专用样式 `assets/site/training-lifecycle.css` |
+| LLM 架构基础 6 章 | `content/series/llm-architecture/*.html`；张量、Attention、MoE、残差、状态与模型比较 |
+| Agent 系统 3 章 | `content/series/agent-systems/*.html`；检索证据、规划预算与信任边界 |
+| LLM 推理部署 3 章 | `content/series/llm-serving/*.html`；调度、并行量化、容量与成功成本 |
 | LLM 研究地图 7 章 | `content/series/llm-research-map-2026/*.html`；数据 / RL / DeepSeek / 推理 / 场景 / 多家族架构 / 训练机制 |
-| Agent 任务合成与 Benchmark 2 章 | `content/series/agent-data-benchmarks/*.html`；52项来源、经典与前沿评测；图表在 `assets/research/agent-data-benchmarks/` |
+| Agent 任务合成与 Benchmark 4 章 | `content/series/agent-data-benchmarks/*.html`；生产与评测、科学任务合同及工业训练对照；原52项来源保留 |
 | 研究报告原件与引用 | `assets/research/2026-11-14/`；`sources.json` 登记固定版本、来源、许可与 SHA，公开资源登记在 `site.json` |
 | 个人介绍及在线 CV | `content/pages/about.md`、`cv.md` |
 | 论文与精选记录 | `content/publications/*.md`，精选 ID 在 `site.json` |
@@ -80,6 +83,7 @@ Pages Source 应设置为 GitHub Actions；部署作业依赖构建与校验成�
 
 - [日常维护](docs/maintenance.md)：新增、更新、预览、前沿自动化及线上核对。
 - [内容检查](docs/content-audit.md)：覆盖范围、修订与未完成的事实复核。
+- [知识体系扩展依据](docs/knowledge-expansion-research-20261114.md)：架构、训练、Agent、部署、科学方案与60道新增题解；贯通路线在 `/llm-research-map-2026/#learning-paths`。
 - [训练全链路来源复核](docs/llm-training-research-20261114.md)：27 项原始来源、原 Midtraining 调研修订与实验边界；本地入口 `/llm-training-lifecycle/`。
 - [研究地图与覆盖审计](docs/blog-research-review-20261114.md)：初版五章及后续七章扩展说明；公开入口 `/llm-research-map-2026/`。
 - [多家族架构调研](docs/architecture-research-20261114.md)：第06–07章版本、机制与证据边界；当前研究地图71项来源、15份原件。

@@ -167,6 +167,10 @@ y+：chosen；y−：rejected；β 控制相对参考策略的尺度。</div>
 </section>
 <section id="sources">
 <div class="callout"><strong>继续深入：</strong><a href="../llm-posttraining/s01_supervision_preference.html">SFT、恢复训练与偏好路线</a>；<a href="../llm-posttraining/s03_opd_self_distillation.html">OPD 的完整词表/采样梯度、多教师和自蒸馏</a>。新专题保留本章术语，并扩展到最新报告和具体任务。</div>
+<h2 id="admission-bridge">轨迹准入与教师接口：成功不是唯一条件</h2>
+<p>SFT科学轨迹需同时满足artifact验收、公共任务与许可、版本 / 模板一致、真实工具输出和准确token spans。不能仅按最终成功给整条历史所有assistant动作监督；可保留可验证的修复路径，但误删输入或无依据猜测应单独审查。<a href="../agent-data-benchmarks/s03_scientific_task_family.html#trajectories">科学轨迹schema</a>将动作状态、观察和artifact关联起来。</p>
+<p>OPD还需教师在学生实际prefix上提供兼容概率或评分：完整词表KL要求词表 / token化及条件支持可对应；API只给最终答案或少数top logprobs不能直接实现完整词表reverse KL。教师对“从学生错误状态继续”的覆盖和成本另评估，不能把离线教师答案SFT称为OPD。已有V4 / Ultra的不同报告保留在<a href="#distillation">蒸馏节</a>。</p>
+<p>全参数与LoRA / QLoRA是更新选择，不改变SFT / RL反馈来源的定义。其状态和合并限制见<a href="s05_training_methods_systems.html#peft">训练05</a>；同预算科学对照见<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">sci-posttrain方案</a>。</p>
 <h2>本章证据与延伸阅读</h2>
 <p>术语与经典流程：<a href="index.html#ref-24">[24] 拒绝采样 RFT</a>、<a href="index.html#ref-25">[25] 强化 RFT</a>、<a href="index.html#ref-17">[17] DPO</a>、<a href="index.html#ref-19">[19] InstructGPT</a>。循环与蒸馏：<a href="index.html#ref-12">[12] Qwen3</a>、<a href="index.html#ref-13">[13] R1</a>、<a href="index.html#ref-2">[2] Coder-Next</a>、<a href="index.html#ref-3">[3] GLM-5</a>、<a href="index.html#ref-10">[10] V4</a>、<a href="index.html#ref-11">[11] Ultra</a>。</p>
 </section>

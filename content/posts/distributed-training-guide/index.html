@@ -281,6 +281,10 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备">
+<h3 id="cluster-design-bridge">从框架速查到工业集群方案</h3>
+<p>先算状态再选并行：BF16参数2N、梯度按实际dtype、FP32 master/m/v通常12N bytes；常见16N bytes近似并不包含激活、临时通信buffer和峰值all-gather。ZeRO/FSDP切分状态，TP切分算子，PP切分层，CP切分上下文，EP路由专家；不能把EP再次当成独立乘数套进所有层的world size。</p>
+<p>所选Megatron Core版本中，普通层 <code>TP2×PP4×CP2×DP32=512</code>；专家层 <code>ETP2×PP4×EP8×expert_DP8=512</code>。两套通信组覆盖同一512 ranks，专家组cp=1；当ETP=TP时 <code>expert_DP=DP×CP/EP</code>。这是源码分组推导，未确认特定模型转换、rank放置及完整组合可运行。</p>
+<p><strong>固定入口：</strong><a href="https://arxiv.org/abs/1910.02054v3">ZeRO</a>与 <a href="https://github.com/NVIDIA/Megatron-LM/blob/23e00ed0963c35382dfe8a5a94fb3cda4d21e133/megatron/core/parallel_state.py">MCore core_v0.14.0分组源码</a>。完整128/1024 H100规划、普通/专家rank和故障记录见 <a href="/llm-training-lifecycle/s05_training_methods_systems.html">训练方法与系统</a>、<a href="/agent-data-benchmarks/s04_cluster_training_evaluation.html">集群对照方案</a>；本页历史安装/API示例和5.3数字不代表新版本实测。</p>
 <h2>阅读准备</h2><p><strong>范围与先修：</strong>单机多卡及多机训练中的状态切分、通信和并行配置；需要 PyTorch 训练循环、显存组成与 collective 通信基础。</p>
 <p><strong>核心链路：</strong>估算参数 / 梯度 / 优化器状态 → 选择切分与并行方式 → 配置启动 → 采集吞吐、显存和 checkpoint。先读 ZeRO / FSDP，再看 TP / PP 与框架选择；配置示例需按当前版本适配，5.3 的无来源性能数字已标为待核实。</p>
 </section>

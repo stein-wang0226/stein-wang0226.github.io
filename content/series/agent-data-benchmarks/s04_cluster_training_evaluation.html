@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>科学 Agent 工业训练方案：SFT、异质 RL、失败归因与成本</title>
+<meta name="description" content="以公开RNA-seq合同连接128/1024 H100规划、SFT/RL/OPD对照、policy lag、研究切分、统计与成功成本。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
+<body><main class="training-lifecycle">
+<section id="overview"><p class="eyebrow">Industrial-scale research protocol · 2026-11-14</p>
+<h2>同一科学合同，拆开数据、算法和系统的贡献</h2>
+<p class="lead">先冻结公开任务、独立verifier、held-out和harness，再比较监督轨迹、结果奖励、步骤信用及计算预算。工业规模规划解释如何分配训练、rollout、教师与CPU环境；它不把一份教学研究变成足量训练语料，也不代替真实容量测量。</p>
+<div class="callout caution"><strong>研究方案，尚未执行。</strong>模型训练、科学任务、轨迹采样、benchmark、容差校准和收益测量均未运行。GPU规模 / 超参是本文设计；无法确认的资源量和结果在下载文件中为<code>null</code>。</div>
+<p>先读<a href="s03_scientific_task_family.html">科学合同</a>、<a href="../llm-training-lifecycle/s05_training_methods_systems.html#cluster">训练状态与进程组</a>、<a href="../llm-research-map-2026/s02_agentic_rl.html">前沿Agentic RL</a>。数据路线集中在<a href="s01_task_synthesis.html">任务合成章</a>，算法定义集中在<a href="../llm-training-lifecycle/s04_rl_evaluation.html#algorithms">训练04</a>。</p>
+</section>
+<section id="design">
+<h2>两层A–E对照不要共用含糊标签</h2>
+<p>原训练系列的<a href="../llm-training-lifecycle/s04_rl_evaluation.html#harbor">Harbor A–E</a>研究CPT / 初始化与额外SFT预算。本章另命名<code>sci-posttrain-A…E</code>，研究可靠SFT之后的反馈和预算。日志保存完整ID，避免同一个“D组”被解释成两个实验。</p>
+<div class="reading-table"><table><thead><tr><th>组</th><th>方案</th><th>回答的问题</th><th>仍需控制的变量</th></tr></thead><tbody>
+<tr><td>sci-posttrain-A</td><td>原模型 + 固定harness</td><td>现有能力 / 工具环境基线</td><td>模型版本、解码、工具 / 网络、运行预算</td></tr>
+<tr><td>sci-posttrain-B</td><td>A + 独立验收过的SFT轨迹</td><td>可靠行为监督的增量</td><td>相同来源 / held-out、动作mask、有效目标、训练量</td></tr>
+<tr><td>sci-posttrain-C</td><td>B + outcome-reward GRPO</td><td>结果反馈与组相对更新的增量</td><td>reward / verifier、G、长度聚合、KL / 标准化 / clipping</td></tr>
+<tr><td>sci-posttrain-D</td><td>B + 单独选择的步骤信用或分层采样</td><td>信用分配 / 异质数据策略的贡献</td><td>先做单因素消融；不能把多个新算法一起改后归因</td></tr>
+<tr><td>sci-posttrain-E</td><td>B + OPD或自适应推理预算，分两个子组</td><td>教师信号与计算重分配各自的条件</td><td>OPD计教师成本；预算策略在同推理资源下比较</td></tr>
+</tbody></table></div>
+<p>同时规划“同训练资源预算”与“同推理执行预算”两种比较。SFT没有RL rollout，但仍有示范生产成本；OPD有学生rollout与教师前向；环境执行、CPU与失败重试不能因训练token相等就视为等价。</p>
+<p>固定held-out涵盖研究 / 数据来源 / 任务族、公开与私有评测隔离、工具协议和version。模型对公开airway的预训练熟悉度单独报告；从该研究变体观察到的收益不能被写为跨研究或临床泛化。</p>
+</section>
+<section id="heterogeneity">
+<h2>异质 GRPO：难度、奖励与长度分别控制</h2>
+<div class="equation" role="math" aria-label="有效奖励组概率">同一题采样G条轨迹：A_i=(R_i−mean(R))/(std(R)+ε)
+二元reward、独立同分布采样且单次成功概率p时：
+P(组内奖励有差异)=1−p^G−(1−p)^G
+G=8：p=0.5约99.2%；p=0.01或0.99约7.7%</div>
+<p>数字为概率公式推导，不是本任务成功率。相关采样 / 环境噪声会破坏独立假设；多级progressive reward也不服从二元公式。组内标准化消除部分尺度差异，但不会自动平衡科学任务难度、梯度方向或学习机会。</p>
+<div class="reading-table"><table><thead><tr><th>异质来源</th><th>训练影响</th><th>本文方案</th></tr></thead><tbody>
+<tr><td>难度 / 全对全错组</td><td>零方差组不提供相对信号</td><td>按task-family / 难度采样，统计有效组；动态过滤与固定预算分别比较</td></tr>
+<tr><td>奖励语义与噪声</td><td>组内标准化可能放大不可靠微小差异</td><td>schema分数与科学分数拆开；verifier version固定；环境故障单独标记</td></tr>
+<tr><td>轨迹长度 / 工具时间</td><td>loss权重、信用稀疏、长尾等待</td><td>记录action tokens、观察、尝试时长；同任务预算对照；截断不混为模型EOS</td></tr>
+<tr><td>训练 / 采样策略差异</td><td>policy lag、精度 / mask / routing偏差</td><td>行为logprob和逐动作版本；同步先验证，再对lag与校正做消融</td></tr>
+</tbody></table></div>
+<p>DAPO、Dr. GRPO和GSPO改变不同对象，不能写作统一的“改进GRPO”。前沿RLDS / KnowGPO / SAPO / SAMPO的证据和算法同名差异沿用<a href="../llm-research-map-2026/s02_agentic_rl.html">研究地图02</a>；科学任务D组应选一个与失败机制匹配的方法，固定implementation，再检验收益。</p>
+<p>步骤信用不能凭人工想象“正确步骤”赋值。可验证中间artifact / 反事实继续执行能提供更客观依据，但需要额外环境成本及独立校准。最终科学成功仍单独验收，防止学会刷格式分或提前停止。</p>
+</section>
+<section id="budgets">
+<h2>长度与动作预算：模型上下文不是免费工作区</h2>
+<p>本文初始规划两层请求：短任务最多8,192输入 / 4,096输出token、24次动作；长任务最多24,576输入 / 8,192输出、64次动作。数值是预算设定，不是已观察分布；sum=32,768满足所选Dense config的原生最大位置规格。多轮每次请求都检查上下文上限，总轨迹action tokens另计，不能把单次max_new_tokens当完整任务成本。</p>
+<p>Harness负责压缩长stdout、保留重要错误和artifact引用；memory压缩也要保留供体 / 样本 / 对比与当前脚本状态。统计分析结果应保存在文件，再以hash / 精简观察回填，不把整张gene表塞进prompt。科学可审计性来自artifact，不能只依赖会话摘要。</p>
+<p>组大小初选G=8；prompt batch、gradient accumulation和microbatch在容量测量前不冻结。DP决定独立数据副本；TP / PP / CP不能都乘到独立样本batch里。环境wall-time / CPU内存 / verifier超时没有实测依据，当前为待冻结项。</p>
+</section>
+<section id="resources">
+<h2>128 / 1024 H100方案中的每个角色都要入账</h2>
+<figure><div class="flow" aria-label="工业后训练的四类资源">
+<div class="stage"><b>训练池</b><small>actor更新、reference<br>可选critic / 教师另核算</small></div>
+<div class="stage"><b>rollout池</b><small>连续生成、缓存 / 权重同步<br>策略版本、队列、长尾</small></div>
+<div class="stage"><b>CPU与验证</b><small>统计环境、重跑与grader<br>内存、超时、IO独立计量</small></div>
+<div class="stage"><b>持久化 / 观测</b><small>fixture、artifact、trace、ckpt<br>吞吐、lag、故障、谱系</small></div>
+</div><figcaption>本文规划；原件 / oracle / held-out隔离，神经reward和教师所需GPU另列。只给训练与rollout卡数，不代表全部资源需求已确定。</figcaption></figure>
+<div class="reading-table"><table><thead><tr><th>角色</th><th>规划配置</th><th>资源与边界</th></tr></thead><tbody>
+<tr><td>Dense actor</td><td>64卡，TP4 PP2 CP2 DP4</td><td>全参数AdamW基线；70B理想静态32.8GB/rank，激活等另计，非峰值测量</td></tr>
+<tr><td>MoE actor</td><td>512卡，TP2 PP4 CP2 DP32；ETP2 EP8，专家DP8</td><td>128专家、94层；规划24/23/23/24 stage；实际负载与通信待测</td></tr>
+<tr><td>rollout</td><td>Dense64卡 / MoE512卡</td><td>独立扩缩容；同步基线、one-step overlap、完全异步分三组</td></tr>
+<tr><td>reference</td><td>GRPO基线采用冻结B策略，共置候选</td><td>权重和logprob前向、临时buffer计入；不拟合critic并不表示无reference成本</td></tr>
+<tr><td>critic / reward / teacher</td><td>GRPO无critic；PPO或OPD子实验另设计</td><td>额外状态无法装入就扩容 / 减actor规模；不默认隐藏在128/1024卡内</td></tr>
+<tr><td>环境 / verifier / storage</td><td>独立CPU worker、离线依赖、对象存储</td><td>数量、时长、I/O与采购单价待测；分别记录CPU-hours / GB-hours / 网络</td></tr>
+</tbody></table></div>
+<p>Qwen2.5-72B config的80层、8KV heads、128 head_dim可得到完整模型BF16 KV为320KiB/token/request；32,768 token为10GiB，这是未考虑TP分片 / 重复的逻辑KV，不包含权重和workspace。Qwen3-235B config是94层、4KV heads，服务TP8会涉及KV复制能力，不能直接除8得到真实缓存。规格与训练框架固定源见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#sources">训练05</a>。</p>
+<p>verl / MCore / vLLM / SGLang的组合必须通过版本adapter、转换与logprob一致性检查。v0.6.0 recipe提供一种源码路线，最新服务机制和对象精度由<a href="../llm-serving/s02_parallel_quantization.html">部署02</a>维护。H100改为B200时需重估格式支持、通信、功耗 / 成本和端到端瓶颈，不能按峰值FLOPS直接等比例缩短实验时间。</p>
+<p><a href="../assets/research/scientific-agent-design-20261114/cluster-plan.json" download>集群与角色完整JSON</a> · <a href="../assets/research/scientific-agent-design-20261114/experiment-plan.json" download>A–E与消融方案JSON</a>。</p>
+</section>
+<section id="measurement">
+<h2>质量与成本同时量，统计单位保持一致</h2>
+<p>规划至少三个训练随机种子，并对相同held-out任务使用多个评估种子 / 重复尝试。训练seed是模型重复，评估seed是同模型生成重复，两者不是新增独立研究。统计按研究group重采样 / 分层，报告task-family、难度、来源熟悉度与有效样本数量。</p>
+<div class="reading-table"><table><thead><tr><th>指标</th><th>分母 / 边界</th><th>需要额外说明</th></tr></thead><tbody>
+<tr><td>科学成功率</td><td>固定任务、预算、verifier下的attempts</td><td>环境启动失败同时报告整体率与可执行条件率；不静默移除</td></tr>
+<tr><td>pass@k / best-of-k</td><td>真实k次尝试；选择规则固定</td><td>verifier rerank和全部尝试成本入账；不能用oracle挑选却声称普通pass@1</td></tr>
+<tr><td>训练效率</td><td>actor / rollout / reference / teacher GPU-hours及有效目标</td><td>队列等待、重采样、校正 / 过滤与零方差组</td></tr>
+<tr><td>服务质量</td><td>输入 / 输出 / 并发 / cache固定下的TTFT、ITL、P95</td><td>工具执行另计；token throughput不等于科学成功率</td></tr>
+<tr><td>成功成本</td><td>全部尝试资源 / 科学成功数量</td><td>零成功时不填有限“每成功成本”；离线示范生产 / 校准与线上边际分别列</td></tr>
+</tbody></table></div>
+<div class="equation" role="math" aria-label="成本与每次成功的定义">GPU-hours(role) = Σ device_active_or_reserved_seconds(role) / 3600
+attempt成本向量 = GPU-hours + CPU-hours + tokens + storage/network + retries
+每成功资源 = 全部attempt资源 / 成功attempt数（成功数&gt;0）
+训练总预算另含：示范生产 + reference/teacher + 科学校准 + checkpoint/IO</div>
+<p>GPU-hours是资源单位，不能在缺少单价时换成金额；“reserved”与“active”要选择固定口径并分别保留。固定128卡只给资源上限，没有墙钟时长就没有GPU-hours结果。Little定律与显存容量估算见<a href="../llm-serving/s03_capacity_cost.html">容量与成本</a>。</p>
+<p>成功率区间与差异用配对任务 / 研究group处理：给出每seed值、研究组bootstrap区间与原始分子 / 分母。研究组不足时诚实报告样本不够，不能依靠重复提示将区间变窄。所有本章结果均未测量。</p>
+</section>
+<section id="failure">
+<h2>失败分类决定下一步改哪里</h2>
+<div class="reading-table"><table><thead><tr><th>类别</th><th>具体触发</th><th>改进对象</th></tr></thead><tbody>
+<tr><td>task_specification</td><td>配对 / 单位 / 字段 / 过滤政策未公开</td><td>任务合同；不是惩罚Agent来掩盖歧义</td></tr>
+<tr><td>data_semantics</td><td>FPKM误用、样本错位、供体 / run混淆</td><td>检索与元数据验证、科学训练样本</td></tr>
+<tr><td>scientific_design</td><td>忽略配对、反向contrast、BH集合错误</td><td>统计决策 / 可验证步骤与artifact</td></tr>
+<tr><td>verifier_correctness / numerical_variation</td><td>合法路径被oracle拒绝或容差不稳</td><td>reference校准 / scorer版本；不把坏reward送RL</td></tr>
+<tr><td>tool_environment</td><td>依赖缺失、磁盘 / 内存 / 容器失败</td><td>环境构建、资源与恢复；单列故障率</td></tr>
+<tr><td>reward_hacking</td><td>偷读oracle、刷schema分、替换artifact</td><td>权限隔离、复算与负例审计</td></tr>
+<tr><td>budget_timeout</td><td>工具 / verifier长尾或动作预算耗尽</td><td>停止规则与预算；分policy失败和环境超时</td></tr>
+</tbody></table></div>
+<p>允许多标签，先保存真实exit / timeout与artifact，再判断主因。没有足够证据时用<code>undetermined</code>，不根据最终文本主观断言根因。新scorer / 题面版本重跑时保存旧失败记录，不能覆盖历史oracle让旧失分消失。</p>
+<p><a href="../assets/research/scientific-agent-design-20261114/failure-taxonomy.json" download>失败分类与证据合同</a> · <a href="../assets/research/scientific-agent-design-20261114/cost-record.schema.json" download>资源 / 成本记录schema</a>。</p>
+</section>
+<section id="roadmap">
+<h2>从方案进入真实实验前的门槛</h2>
+<p>未来依次冻结来源 / 许可与fixture、公开合同、独立reference与多路径容差、scorer负例、隔离wrapper、无reference可用性及独立盲测；随后才产生可靠轨迹并做训练。本站构建 / 阅读验收只检查交付文档，不代表这些实验门槛已经通过。</p>
+<details><summary>为什么工业规模不能省掉小范围协议校准？</summary><p>如果样本映射或scorer错误，大规模RL只会更有效地放大坏reward。协议校准与模型集群是不同工作，CPU科学复算也不能由更多GPU替代。</p></details>
+<details><summary>如果D组比C组好，怎样才可以归因？</summary><p>固定基模、任务来源、训练 / 推理预算、harness与verifier，分别改信用或采样；检查有效组、目标量和policy lag。一次同时改多项不能识别单个机制贡献。</p></details>
+<p>返回<a href="../llm-research-map-2026/#coverage">原理 → 实现 → 实验覆盖表</a>，或进入<a href="../llm-interview-bank.html">题库检验理解</a>。完整资源<a href="../assets/research/scientific-agent-design-20261114/README.txt" download>目录说明</a>明确当前状态、来源与待冻结项。</p>
+</section>
+<section id="sources"><h2>方法证据与分析边界</h2>
+<p>算法原始证据：<a href="../llm-training-lifecycle/index.html#ref-20">GRPO / DeepSeekMath</a>、<a href="../llm-training-lifecycle/index.html#ref-21">DAPO</a>、<a href="../llm-training-lifecycle/index.html#ref-22">Dr. GRPO</a>、<a href="../llm-training-lifecycle/index.html#ref-23">GSPO</a>。异步路线：<a href="https://arxiv.org/abs/2505.24298v5">AReaL v5</a>与<a href="https://github.com/volcengine/verl/blob/ddd86f527a4af75095e4677b02b5aa272913a088/recipe/one_step_off_policy/README.md">verl v0.6.0固定recipe</a>。</p>
+<p>来源 / 方法 / 统计合同见<a href="s03_scientific_task_family.html#sources">科学任务03</a>；模型、optimizer与进程组见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#sources">训练05</a>；前沿异质信用方案见<a href="../llm-research-map-2026/s02_agentic_rl.html">研究地图02</a>。这些公开方法提供路线，不构成对本科学任务的独立复现。</p>
+<p class="note">A–E、128/1024卡、长度 / G / seed设定、切分与成本协议为本文建议；概率 / 字节公式是推导。没有训练曲线、科学基因结果、吞吐、价格或成功率被生成。</p>
+</section>
+</main></body></html>
