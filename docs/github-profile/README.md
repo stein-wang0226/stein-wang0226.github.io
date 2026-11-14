@@ -1,45 +1,71 @@
-# Yuxiang Wang · 王煜祥
+# Yuxiang Wang / 王煜祥
 
-**Agentic RL · Scientific Task Synthesis · GUI Agents · Diffusion Language Models · AI4S**
+> I study how agents learn from interaction, and how to evaluate what they can actually do.
 
-I am a Master's student in Artificial Intelligence at **Fudan University** (2025–2028, expected), advised by [Baojian Zhou](https://baojian.github.io/) at the Knowledge Works Lab. I am currently a **GUI Agent Data Algorithm Intern at ByteDance Seed / AI Data**, following a Research Internship at Alibaba's Platform Technology / AIR Program.
+**Fudan University · M.S. in Artificial Intelligence**<br>
+GUI Agent Data Algorithm Intern at **ByteDance Seed / AI Data**. Previously at **Alibaba AIR**. Advised by [Baojian Zhou](https://baojian.github.io/).
 
-My work connects **reproducible tasks → tool-use trajectories → SFT → reinforcement learning → evaluation**, with an emphasis on scientific agents and long-horizon computer use.
+**[Homepage](https://stein-wang0226.github.io/about/)** &nbsp; / &nbsp; **[CV](https://stein-wang0226.github.io/cv/)** &nbsp; / &nbsp; **[Stein’s Notes](https://stein-wang0226.github.io/blog/)** &nbsp; / &nbsp; [Scholar](https://scholar.google.com/citations?hl=en&user=PCoqb3wAAAAJ) &nbsp; / &nbsp; [Email](mailto:25210980109@m.fudan.edu.cn)
 
-[Academic homepage](https://stein-wang0226.github.io/about/) · [Online CV](https://stein-wang0226.github.io/cv/) · [English resume PDF](https://stein-wang0226.github.io/assets/Curriculum_Vitae.pdf) · [中文简历 PDF](https://stein-wang0226.github.io/assets/Yuxiang-Wang-Resume-zh.pdf) · [Study notes](https://stein-wang0226.github.io/blog/) · [Email](mailto:25210980109@m.fudan.edu.cn)
+## Research in practice
 
-## Selected Work
+<table>
+<tr>
+<td valign="top" width="50%">
+<h3>Scientific task synthesis</h3>
+<p><strong>AutoResearch</strong><br>Expert protocols into executable Harbor tasks, with independent verification and difficulty calibration. Delivered <strong>2,000+ task packages</strong> for Qwen post-training.</p>
+<p><a href="https://stein-wang0226.github.io/cv/#autoresearch">Methods &amp; delivery</a></p>
+</td>
+<td valign="top" width="50%">
+<h3>Learning from tool use</h3>
+<p><strong>ProtAgent</strong><br>Tool-Trajectory SFT and step-level RL for protein agents. OOD-1000 annotation-coverage success: <strong>40.2% SFT → 61.0% RL</strong>.</p>
+<p><a href="https://arxiv.org/abs/2610.33746">Paper</a> / <a href="https://stein-wang0226.github.io/cv/#protagent">Training &amp; evaluation</a></p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<h3>Reliable computer use</h3>
+<p><strong>GUI agents</strong><br>Reproducible environments, independent oracles and failure replay. Turn real execution failures into verifiable tasks for SFT and RL.</p>
+<p><a href="https://stein-wang0226.github.io/cv/#gui-agent">Environments &amp; data</a></p>
+</td>
+<td valign="top">
+<h3>Models for science</h3>
+<p><strong>Holon / ProtText-Eval</strong><br>Protein–Text pretraining, CPT and scientific SFT across <strong>0.6B–8B</strong> models, connecting instruction alignment to scientific evaluation.</p>
+<p><a href="https://stein-wang0226.github.io/cv/#holon">Training &amp; evaluation</a></p>
+</td>
+</tr>
+</table>
 
-- **AutoResearch — scientific Harbor task synthesis.** Delivered **2,000+ task packages** for Qwen post-training. Built expert-protocol conversion, data audit, task generation, calibration, rollout, refinement, evaluation, and SFT validation with solver / verifier separation. Related Terminal-Bench Sci tasks passed one review round. [Details](https://stein-wang0226.github.io/cv/#autoresearch)
-- **ProtAgent — step-level Agentic RL.** Trained a **Qwen3-8B ReAct agent** with Tool-Trajectory SFT and Batched Step-Level REINFORCE across five protein annotation tasks. Balanced OOD-1000 annotation-coverage success: **14.1% Base → 40.2% SFT → 61.0% RL** (**+20.8 percentage points** over SFT). [Paper](https://arxiv.org/abs/2610.33746) · [Details](https://stein-wang0226.github.io/cv/#protagent)
-- **GUI Agent data & environments.** Built Setup → GUI Rollout → Verify → Reset workflows, independent oracle checks, and reproducible failure replay for professional software. Reviewed **9,641 trace events** and reconstructed real failure cases as RL tasks. [Details](https://stein-wang0226.github.io/cv/#gui-agent)
-- **Holon / ProtText-Eval — Protein ↔ Text models.** Contributed to protein pretraining, multimodal CPT, scientific SFT, and evaluation from **0.6B to 8B**. In 0.6B SFT experiments, mixed general / scientific data improved IFEval by **29.02 percentage points** over scientific-only training. [Details](https://stein-wang0226.github.io/cv/#holon)
+## Selected papers
 
-Project scales follow my November 2026 resumes; the ProtAgent paper describes its closed-loop protocol. Annotation coverage does not alone establish biological correctness; delivered task counts and a review round do not imply public release or benchmark acceptance.
+| Work | Focus | Status |
+| --- | --- | --- |
+| [Semantic DLM+](https://arxiv.org/abs/2606.15327) | Semantic diffusion | **NeurIPS 2026 · Accepted** |
+| [Trainability of masked diffusion LMs](https://arxiv.org/abs/2604.24832) | Blockwise locality | First author · ACL 2027 under review |
+| [ProtAgent](https://arxiv.org/abs/2610.33746) | Interaction-level credit assignment | First author · ARR under review |
 
-## Research
+<details>
+<summary>More research &amp; evaluation context</summary>
 
-- [Semantic DLM+](https://arxiv.org/abs/2606.15327) — **NeurIPS 2026 Main Conference — Accepted**.
-- [On the Trainability of Masked Diffusion Language Models via Blockwise Locality](https://arxiv.org/abs/2604.24832) — **ACL 2027 under review**, first author.
-- [ProtAgent: Post-Training Compact Protein Tool Agents with Interaction-Level Credit Assignment](https://arxiv.org/abs/2610.33746) — **ARR under review**, first author.
-- [CUA-Recovery: Benchmarking Error Recovery in Long-Horizon Computer-Use Agents](https://stein-wang0226.github.io/publication/cua-recovery/) — **ICLR 2027 under review**.
-- [STM: A Spatio-Temporal Model for Dynamic Graph Fraud Detection](https://doi.org/10.1007/978-981-95-3906-2_3) — **DASFAA 2025**, first author.
+- [CUA-Recovery](https://stein-wang0226.github.io/publication/cua-recovery/) studies error recovery in long-horizon computer-use agents. ICLR 2027 under review.
+- [STM](https://doi.org/10.1007/978-981-95-3906-2_3) studies dynamic-graph fraud detection. DASFAA 2025; first author.
+- Project scope follows my November 2026 resumes. ProtAgent's number above uses the balanced OOD-1000 annotation-coverage protocol; it is not a standalone measure of biological correctness. Task delivery does not imply public release or benchmark acceptance.
 
-[All research records and source notes](https://stein-wang0226.github.io/publications/)
+[All publications](https://stein-wang0226.github.io/publications/) / [English resume](https://stein-wang0226.github.io/assets/Curriculum_Vitae.pdf) / [中文简历](https://stein-wang0226.github.io/assets/Yuxiang-Wang-Resume-zh.pdf)
 
-## Public Code
+</details>
 
-- [Blockwise diffusion trainability](https://github.com/stein-wang0226/trainable-masked-diffusion) — structured-task experiments comparing autoregressive and masked diffusion models.
-- [STM](https://github.com/stein-wang0226/STM) — dynamic-graph fraud-detection experiments.
-- [Terminal-Bench Science fork](https://github.com/stein-wang0226/terminal-bench-science) — my fork of the [Harbor framework benchmark repository](https://github.com/harbor-framework/terminal-bench-science).
+## Code & notes
 
-## Open Study Notes
+**Public research code**<br>
+[Masked diffusion trainability](https://github.com/stein-wang0226/trainable-masked-diffusion) — structured-task experiments on autoregressive and diffusion models.<br>
+[STM](https://github.com/stein-wang0226/STM) — spatio-temporal modeling for dynamic-graph fraud detection.
 
-I maintain [Stein's Notes](https://stein-wang0226.github.io/blog/) on LLMs, agents, diffusion models, multimodal learning, and training systems.
+**[Stein’s Notes](https://stein-wang0226.github.io/blog/)** connects principles, implementations and experiments:
 
-- [Pretraining → CPT / Midtraining → SFT / RFT → RL](https://stein-wang0226.github.io/llm-training-lifecycle/)
-- [Agentic RL](https://stein-wang0226.github.io/agentic-rl-guide.html)
-- [Agent harnesses](https://stein-wang0226.github.io/agent-harness-guide.html)
-- [Diffusion language models](https://stein-wang0226.github.io/dlm-survey/)
-
-*Profile content updated from November 2026 research resumes.*
+| Start with | Read about |
+| --- | --- |
+| [LLM training lifecycle](https://stein-wang0226.github.io/llm-training-lifecycle/) | Pretraining, CPT, SFT and RL |
+| [Agent tasks & benchmarks](https://stein-wang0226.github.io/agent-data-benchmarks/) | Executable task synthesis and reliable evaluation |
+| [Agent harnesses](https://stein-wang0226.github.io/agent-harness-guide.html) | Tool execution, context management and memory |
+| [Diffusion language models](https://stein-wang0226.github.io/dlm-survey/) | Training, generation and model design |
