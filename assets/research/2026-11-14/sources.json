@@ -818,6 +818,7 @@
       "used_in": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives",
         "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
@@ -861,6 +862,7 @@
       "used_in": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives",
         "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
@@ -1227,6 +1229,7 @@
         "/agentic-rl-guide.html#citation-sources-32",
         "/agentic-rl-guide.html#citation-sources-35",
         "/llm-posttraining/s02_rl_algorithms.html#citation-sources-6",
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],

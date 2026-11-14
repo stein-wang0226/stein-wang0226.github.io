@@ -48,7 +48,7 @@
 <p><strong>稠密反馈不等于更可信。</strong> PRM、文本反馈、特权答案和教师 logits 可以提供比二值成败更丰富的信号，也会引入步骤误判、泄漏、奖励投机和偏离真实任务。最终评分仍应来自独立产物或状态验证。<a href="#ref-32">[32]</a> <a href="#ref-38">[38]</a> <a href="#ref-39">[39]</a></p>
 <p><strong>异步吞吐要和有效学习一起核算。</strong> 样本的策略版本延迟、同版本训练与推理数值差异、完成顺序导致的任务偏移是三类问题。importance ratio 主要处理概率分布差异，不能自动补回调度中消失的长任务。<a href="#ref-25">[25]</a> <a href="#ref-51">[51]</a> <a href="#ref-52">[52]</a></p>
 <p><strong>工业报告有实质分歧，应通过实验判断。</strong> DeepSeek V4 / V4.1 使用完整词表 OPD，Nemotron Ultra 报告其部分 Agent 实验更偏好 sampled-token。OPDArena 又提醒教师保留能力和目标任务增益不总是同步。这里保留配置、来源和失败解释，而不宣布通用赢家。<a href="#ref-24">[24]</a> <a href="#ref-25">[25]</a> <a href="#ref-26">[26]</a> <a href="#ref-36">[36]</a></p>
-<p class="note">调研截止 2026-11-14，引用 72 项原论文、团队报告、官方文档或固定源码。数值属于原作者报告或明确标注的解析推导；本站没有执行 GPU 后训练。三类任务案例与对照矩阵是教学设计，不能当作真实训练日志或性能结果。</p>
+<p class="note">调研截止 2026-11-14，引用 79 项原论文、团队报告、官方文档或固定源码。数值属于原作者报告、固定官方配置或明确标注的解析推导；本站没有执行 GPU 后训练。三类任务案例与对照矩阵是教学设计，不能当作真实训练日志或性能结果。</p>
 </section>
 <section id="downloads">
 <h2>资料与可复核口径</h2>
@@ -133,6 +133,13 @@
 <li id="ref-70"><a href="https://arxiv.org/html/2608.19803v1">MileGPO: Milestone Inference with Local Evidence for Graph-Based Policy Optimization of Long-Horizon LLM Agents</a> · rollout 图上的里程碑、陷阱、可靠性和分支校准。</li>
 <li id="ref-71"><a href="https://github.com/meta-pytorch/torchforge/blob/b32f06b6417a6d3e7ed50355036a1133e000d932/README.md">TorchForge · README @ b32f06b</a> · PyTorch-native Agentic RL；2026-04-23 明确开发暂停并向 TorchTitan 汇总；BSD-3-Clause。</li>
 <li id="ref-72"><a href="https://github.com/OpenPipe/ART/blob/534620a41b82ed89667f4642cc0b8e1d00e2269b/README.md">ART · README @ 534620a</a> · 多步 Agent 的 GRPO 接入、本地/托管训练后端与 vLLM/LoRA；Apache-2.0。</li>
+<li id="ref-73"><a href="https://arxiv.org/html/2402.03300v3">DeepSeekMath v3 · §4.2 Training and Evaluating DeepSeekMath-RL</a> · GRPO 的 G、batch、LR、KL、最大长度与单次更新原值。</li>
+<li id="ref-74"><a href="https://arxiv.org/html/2501.12948v2">DeepSeek-R1 v2 · §2.1 / §3.2 / Appendix B.4</a> · R1-Zero、第一 RL 阶段及 Qwen-32B 的新增超参数披露。</li>
+<li id="ref-75"><a href="https://github.com/volcengine/verl/blob/4f80e465c2ec79ab9c3c30ec74b9745de61d0490/recipe/dapo/run_dapo_qwen2.5_32b.sh">verl DAPO full reproduction config @ 4f80e4</a> · prompt/group/mini-batch、clip、KL、长度、采样、优化器与资源配置。</li>
+<li id="ref-76"><a href="https://github.com/sail-sg/understand-r1-zero/blob/dfca49dd460ee7cc8e4a5a162c876a7fd6993b87/README.md">understand-r1-zero · README @ dfca49d</a> · Dr.GRPO / OAT 官方运行命令与 batch、生成、优化参数。</li>
+<li id="ref-77"><a href="https://github.com/huggingface/trl/blob/8ad18ec1b6493b85cf9fffbd87d376767ceb8611/trl/trainer/grpo_config.py">TRL · GRPOConfig @ 8ad18ec</a> · G、长度、采样、LR、β、iterations、clip、reward scaling 与 loss defaults。</li>
+<li id="ref-78"><a href="https://github.com/alibaba/ROLL/blob/7c0ded3d621ad4f45fb4d6675914de5eae8918eb/examples/docs_examples/example_gspo.yaml">ROLL · GSPO documentation example @ 7c0ded3</a> · 字段映射示例；文件声明不保证训练性能。</li>
+<li id="ref-79"><a href="https://github.com/NVIDIA-NeMo/RL/blob/81aa43dda4765b0429cf31dab44441e4e4383911/examples/configs/recipes/llm/grpo-cispo-mm1-async-lag1-highoffpolicy-qwen3-30ba3b-3n8g-megatron-cispo.yaml">NeMo RL · CISPO high-off-policy config @ 81aa43d</a> · Qwen3-30B-A3B 的 G、async lag、batch、IS clip 与 KL 示例。</li>
 </ol>
 </section>
 <!-- READING:HISTORY:START --><details data-reading-history><summary>来源数量更新前的冻结说明</summary>

@@ -150,6 +150,62 @@ runtime: {train_backend, rollout_backend, dp, tp, pp, cp, ep,
           colocate, sync_interval, max_policy_lag}
 evaluation: {frozen_checkpoint, decoding_budget, held_out_tasks,
              pass_at_k, success_cost, capability_regression}</code></pre>
+<section id="paper-recipes">
+<h3>论文级数值配方：先看口径，再背数字</h3>
+<div class="callout caution"><strong>三类数字不能混用。</strong>“论文原值”只描述该模型和任务；“官方复现脚本”可能修订论文设置；“框架默认值”只是 API 初值，不代表推荐方案。尤其要区分 prompt batch、trajectory batch、mini-batch、micro-batch、梯度累积和每批重复更新次数。</div>
+<table>
+<thead><tr><th>工作与模型</th><th>采样与 batch</th><th>生成</th><th>优化</th><th>必须连同数字一起说的边界</th></tr></thead>
+<tbody>
+<tr><td><strong>DeepSeekMath-GRPO</strong><br>Instruct 7B <a href="index.html#ref-73">[73]</a></td><td>每题 <strong>G=64</strong>；论文写 training batch=<strong>1024</strong>，未进一步命名为 prompt 还是 trajectory batch</td><td>max response=<strong>1024</strong></td><td>LR=<strong>1e-6</strong>；KL β=<strong>0.04</strong>；每次 exploration 后策略只更新 <strong>1 次</strong></td><td>这是早期 SFT→RL 数学配方；不能用摘要里的 self-consistency 64 次替代训练 G，也不要擅自把 1024/64 推成论文未明说的 prompt 数</td></tr>
+<tr><td><strong>DeepSeek-R1-Zero</strong><br>V3-Base <a href="index.html#ref-74">[74]</a></td><td>每次 policy update：<strong>32 prompts × G=16 = 512 trajectories</strong>；外层一次生成 <strong>8192 outputs</strong>，拆成 16 个 mini-batches</td><td>T=<strong>1.0</strong>；max=<strong>32,768</strong>，8.2k step 后升至 <strong>65,536</strong></td><td>LR=<strong>3e-6</strong>；β=<strong>0.001</strong>；单个 inner epoch；reference 每 <strong>400</strong> step 刷新；共 10,400 step / 1.6 epochs</td><td>“16 个 mini-batches”是把 rollout pool 分批更新，不是 16 epochs；R1-Zero 小节没有给 clip ε。附录中的 Qwen-32B 复现实验 LR 为 2e-6</td></tr>
+<tr><td><strong>DAPO</strong><br>Qwen2.5-32B <a href="index.html#ref-5">[5]</a> <a href="index.html#ref-75">[75]</a></td><td><strong>512 prompts × G=16 = 8192 trajectories</strong>；trajectory mini-batch=<strong>512</strong>，即每 rollout step 16 次梯度更新；动态采样先生成 1536 prompts 再补足 512 个有效组</td><td>训练 T=<strong>1.0</strong>、top-p=<strong>1.0</strong>；max=<strong>20,480</strong>=16,384 目标长度+4096 soft buffer</td><td>LR=<strong>1e-6</strong> constant；论文 warmup=<strong>20 rollout steps</strong>，固定复现脚本为 10；clip low/high=<strong>0.20/0.28</strong>；KL=<strong>0</strong>；grad clip=1，WD=0.1</td><td>四件套是 clip-higher + dynamic sampling + token-mean + overlong shaping；只设置 <code>loss_type=dapo</code> 不等于完整 DAPO</td></tr>
+<tr><td><strong>Dr. GRPO</strong><br>Qwen2.5-Math <a href="index.html#ref-6">[6]</a> <a href="index.html#ref-76">[76]</a></td><td><strong>G=8</strong>；论文表未给 global batch；官方示例 flags 为 train/rollout batch=128，具体语义按 OAT</td><td>T=<strong>1.0</strong>；top-p=<strong>1.0</strong>；max=<strong>3000</strong></td><td>LR=<strong>1e-6</strong> constant；clip=<strong>0.2</strong>；KL loss/penalty=<strong>0</strong>；inner epoch=<strong>1</strong>；AdamW β=(0.9,0.95)，WD=0，grad clip=1</td><td>关键不是一套新 clip，而是去掉 group-std 缩放并用固定长度分母，修正题目难度和长度偏置</td></tr>
+<tr><td><strong>GSPO</strong><br>Qwen3-30B-A3B cold start <a href="index.html#ref-7">[7]</a></td><td>每个 rollout batch 切成 <strong>4 mini-batches</strong>；论文未披露 G、prompt/global batch</td><td>论文未披露 T 与最大长度的固定数值</td><td>GSPO sequence-ratio clip low/high=<strong>3e-4/4e-4</strong>；对照 GRPO=<strong>0.20/0.27</strong>；LR、KL 与 inner epoch 未完整披露</td><td>GSPO ratio 是长度归一化的 sequence ratio，clip 比 token-ratio 小约三个数量级；不能把 0.0003 直接抄给 GRPO</td></tr>
+<tr><td><strong>CISPO / MiniMax-M1</strong> <a href="index.html#ref-8">[8]</a></td><td>受控 Qwen2.5-32B 实验每个 generation batch 做 <strong>16 轮 off-policy updates</strong>；原报告未披露 G/global batch</td><td>正式 M1 从 <strong>40K</strong> 分阶段扩到 48/56/64/72/<strong>80K</strong></td><td>无 KL；AdamW β=(0.9,0.95)、eps=<strong>1e-15</strong>；原报告未披露 LR 和最终 εhigh 数值</td><td>CISPO clip 后的 IS weight 被 detach，所有 token 仍经 log-policy 得到梯度；“不丢 token”不等于 importance weight 不裁剪</td></tr>
+</tbody>
+</table>
+<p class="note">DeepSeek-R1 v2 另在“第一 RL 阶段”写出 clip ratio ε=10；该值与标准 0.2 相差很大，且 R1-Zero 主段没有给 clip。背诵时应按“版本原文如此披露”陈述，不将它改写成通用 GRPO 默认值。<a href="index.html#ref-74">[74]</a></p>
+
+<h3>官方实现示例：可运行字段不等于原论文配方</h3>
+<table>
+<thead><tr><th>固定来源</th><th>关键默认 / 示例值</th><th>正确用法</th></tr></thead>
+<tbody>
+<tr><td>TRL <code>GRPOConfig</code> @ 8ad18ec <a href="index.html#ref-77">[77]</a></td><td>LR=1e-6，G=8，max completion=512，T/top-p=1，β=0，iterations=1，ε=0.2，reward scaling=group，loss type=dapo</td><td>这是 API 默认值。effective batch=<code>world_size × per_device_batch × grad_accum</code>，必须能被 G 整除；默认 <code>loss_type=dapo</code> 也不包含 DAPO 的动态采样与 overlong recipe</td></tr>
+<tr><td>ROLL GSPO example @ 7c0ded3 <a href="index.html#ref-78">[78]</a></td><td>64 prompts、G=8、response=4096、LR=1e-6、warmup=20、T/top-p≈0.99、KL=0.001、PPO epoch=1</td><td>官方文件明确标注 documentation example、无性能保证；用于理解字段映射，不冒充 Qwen GSPO 论文训练值</td></tr>
+<tr><td>NeMo RL CISPO example @ 81aa43d <a href="index.html#ref-79">[79]</a></td><td>32 prompts、G=16、async lag=1；ratio_clip_min/max=1/5，即有效 clamp [0,6]；KL=0</td><td>这是 Qwen3-30B-A3B 的高 off-policy 验证配置，不是 MiniMax-M1 原始 recipe；额外 actor-vs-generation correction 与 CISPO clip 是两项机制</td></tr>
+</tbody>
+</table>
+
+<h3>参数背诵表：数字、作用与调参方向</h3>
+<table>
+<thead><tr><th>参数</th><th>公开配方中的量级</th><th>调大通常发生什么</th><th>面试必须补充的条件</th></tr></thead>
+<tbody>
+<tr><td><strong>Group size G</strong></td><td>8（Dr./TRL/ROLL）、16（R1/DAPO）、64（DeepSeekMath）</td><td>有效组概率和 baseline 稳定性提高；rollout token、KV 和环境成本近似线性增加</td><td>二值 reward 下有效组率为 <code>1-p^G-(1-p)^G</code>；极易/极难题即使增 G 也可能低效</td></tr>
+<tr><td><strong>Global batch</strong></td><td>R1 单更新 32 prompts/512 trajectories；DAPO 512 prompts/8192 trajectories</td><td>梯度方差下降、吞吐更好；采样等待、policy lag 和完成顺序偏移增大</td><td>先说单位：prompt 还是 trajectory。<code>Btrajectory=Bprompt×G</code>；micro-batch 和 grad accumulation 只决定如何实现 global batch</td></tr>
+<tr><td><strong>Learning rate</strong></td><td>公开 full-parameter RL 多为 1e-6；R1-Zero 3e-6</td><td>学习更快，但 ratio 长尾、KL、clip fraction 与 entropy collapse 风险上升</td><td>必须连同模型规模、batch、重复更新、LoRA/全参和 scheduler 一起说</td></tr>
+<tr><td><strong>Clip</strong></td><td>GRPO/Dr. 0.2；DAPO 0.20/0.28；GSPO 3e-4/4e-4；CISPO 示例上界 6</td><td>放宽正优势上界可增加探索，也可能放大 off-policy 更新</td><td>先说明 ratio 是 token、sequence 还是 detached IS weight；不同单位的数值不可横向复制</td></tr>
+<tr><td><strong>KL β</strong></td><td>0.04（DeepSeekMath）、0.001（R1）、0（DAPO/Dr./CISPO）</td><td>更贴近 reference、语言稳定；探索空间和可达到策略受限</td><td>规则 verifier 可允许 β=0，但开放偏好/RM、能力保留或不可靠 reward 下不能机械删除</td></tr>
+<tr><td><strong>Temperature</strong></td><td>主流 reasoning rollout 常见 1.0</td><td>多样性和发现正样本概率提高；reward 方差、无效格式和长尾成本也上升</td><td>与 top-p/top-k、G 和 base pass@k 联动；训练采样与冻结评测解码要分别报告</td></tr>
+<tr><td><strong>最大长度</strong></td><td>1K（DeepSeekMath）→3K（Dr.）→20K（DAPO）→32/64K（R1）→40/80K（M1）</td><td>允许更深推理；显存/时延、截断偏差、重复和长度投机增加</td><td>自然结束、硬截断、超时和 soft overlong penalty 必须分开统计</td></tr>
+<tr><td><strong>更新 epochs / iterations</strong></td><td>DeepSeekMath、R1、Dr. 常为 1 inner epoch；DAPO 一次 rollout 切 16 mini-batches</td><td>同一 rollout 利用率提高，但策略越来越偏离 behavior policy</td><td>“16 gradient updates”不等于“16 epochs”；TRL <code>num_iterations</code> 才是同批重复次数</td></tr>
+</tbody>
+</table>
+
+<h3 id="interview-cards">GRPO 高频追问卡</h3>
+<details><summary>1. 为什么 G 不能只背 8、16 或 64？</summary><p>G 决定同题 baseline 的方差和二值 reward 出现混合成败组的概率，也近似线性决定 rollout 成本。DeepSeekMath 用 64、R1/DAPO 用 16、Dr.GRPO 与多个框架示例用 8，只能说明各自预算与任务选择。回答时给出 <code>1-p^G-(1-p)^G</code>，再说明极易/极难题更应调课程、动态采样或 reward，而不是无限加 G。</p></details>
+<details><summary>2. Global batch 到底按 prompt 还是 response 计？</summary><p>两种口径都存在，必须写单位。若每步有 B 个 prompt、每题 G 条 rollout，则 trajectory batch 为 B×G。R1 的 32 prompts×16=512 trajectories 是一个 policy-update mini-batch；外层 8192 outputs 再拆成 16 批。micro-batch、DP 和 gradient accumulation 只是把 global batch 分摊到设备。</p></details>
+<details><summary>3. 为什么 GRPO 通常只做一个 inner epoch？</summary><p>数据来自旧策略；重复更新越多，当前策略与 behavior policy 越远，importance ratio 长尾和 clipping 增加。单 epoch 用更多新 rollout 换取 on-policy 新鲜度。若多次复用，就要报告 ratio、clip fraction、ESS/接受率和 rollout correction。</p></details>
+<details><summary>4. KL β 为什么有时是 0.04，有时直接为 0？</summary><p>DeepSeekMath 用 0.04、R1 用 0.001 锚定 reference；DAPO、Dr.GRPO、CISPO 在规则可验证推理中移除 KL 以减少探索限制。是否设 0 取决于 reward 是否可靠、是否需要保留通用能力和 reference 是否仍代表目标行为，而不是由“算法叫 GRPO”决定。</p></details>
+<details><summary>5. DAPO 为什么 clip low/high 用 0.20/0.28？</summary><p>正优势低概率 token 很容易被标准 1.2 上界卡住，扩大 upper clip 给探索 token 更多上涨空间；lower clip 仍保持 0.2，避免负优势更新把动作概率快速压到接近 0。它主要针对 entropy collapse，不代表 upper 越大越好。</p></details>
+<details><summary>6. GSPO 的 clip 为什么只有 3e-4/4e-4？</summary><p>GSPO 裁剪长度归一化 sequence ratio，GRPO 裁剪 token ratio，随机变量和数值尺度不同。Qwen 论文明确指出两者通常相差多个数量级；把 GSPO 的 0.0003 抄给 token-level GRPO 会造成完全不同的约束。</p></details>
+<details><summary>7. 为什么 Dr.GRPO 去掉 group std？</summary><p>除以每题 std 会放大奖励差很小或本身噪声大的组，并产生题目难度相关权重。Dr.GRPO 保留中心化但移除 std scaling，同时用固定最大长度作 loss 分母，分别处理 difficulty bias 和 length bias。</p></details>
+<details><summary>8. Token-mean、sequence-mean 和固定分母怎么选？</summary><p>Sequence-mean 让每条 response 总权重近似相同，长序列单 token 权重更小；token-mean 让每个有效 token 等权，长序列贡献更多总梯度；固定分母避免实际长度改变总尺度，但 padding/截断策略会进入目标。必须和任务希望按 episode 还是 token 加权一致。</p></details>
+<details><summary>9. Temperature=1 为什么常见，但不是默认真理？</summary><p>Reasoning RL 需要足够探索，T=1 在 DeepSeek-R1、DAPO、Dr.GRPO 等公开配方中常见。若 base policy 太随机、格式脆弱或工具调用错误多，可降低 T 或先做 cold start；若组内输出高度重复，则同时检查 T、top-p、G、模板和 entropy，而不是只调一个参数。</p></details>
+<details><summary>10. 最大生成长度为什么是训练参数，不只是推理参数？</summary><p>它决定可访问轨迹、截断 reward、loss mask、KV 容量和长短样本权重。突然扩长会改变训练分布；R1 和 MiniMax 都采用阶段式扩长。监控自然结束率、硬截断率、99 分位长度、重复循环和成功/token。</p></details>
+<details><summary>11. Dynamic sampling 会不会改变训练分布？</summary><p>会。过滤全对/全错组提高有效梯度比例，却会削弱极易与极难题，并增加补采成本。必须记录 dispatch、生成、过滤、准入四层分布，给过滤前后难度和任务域占比。</p></details>
+<details><summary>12. 面试中如何在一分钟内讲完整 GRPO recipe？</summary><p>按“数据→采样→奖励→优势→loss→优化→监控”回答：每题 G 条、T/top-p/最大长度；规则 verifier；组内中心化及是否除 std；ratio 单位、clip、KL、分母；global batch、LR、inner epoch；最后给有效组率、entropy/KL、ratio/clip、长度/截断和冻结终评。数字必须注明来自哪篇论文或哪个固定配置。</p></details>
+</section>
+
 <h3>训练曲线不能只看 reward</h3>
 <table>
 <thead><tr><th>监控项</th><th>异常信号</th><th>优先排查</th></tr></thead>

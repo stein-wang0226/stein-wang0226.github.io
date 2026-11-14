@@ -93,6 +93,7 @@
       "used_in": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives",
         "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
@@ -116,6 +117,7 @@
       "used_in": [
         "/agent-data-benchmarks/s04_cluster_training_evaluation.html#sources",
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-research-map-2026/s02_agentic_rl.html#heterogeneity",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives",
         "/llm-training-lifecycle/s04_rl_evaluation.html#sources"
@@ -137,6 +139,7 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "Group Sequence Policy Optimization · Qwen；§3，几何平均 ratio、序列 clipping。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-posttraining/s02_rl_algorithms.html#ratio-methods"
       ],
       "used_in_before_organization": [
@@ -158,6 +161,7 @@
         "/agentic-rl-guide.html#citation-sources-32",
         "/agentic-rl-guide.html#citation-sources-35",
         "/llm-posttraining/s02_rl_algorithms.html#citation-sources-6",
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes",
         "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
@@ -1392,6 +1396,111 @@
       "used_in": [
         "/agentic-rl-guide.html",
         "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 73,
+      "title": "DeepSeekMath v3 · §4.2 Training and Evaluating DeepSeekMath-RL",
+      "url": "https://arxiv.org/html/2402.03300v3",
+      "kind": "paper",
+      "version": "2402.03300v3",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "§4.2；GRPO的G、training batch、LR、KL、最大长度与单次更新原值。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 74,
+      "title": "DeepSeek-R1 v2 · §2.1 / §3.2 / Appendix B.4",
+      "url": "https://arxiv.org/html/2501.12948v2",
+      "kind": "paper",
+      "version": "2501.12948v2",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "R1-Zero、第一RL阶段与Qwen-32B的G、batch、LR、KL、长度、reference刷新和更新轮次。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 75,
+      "title": "verl DAPO full reproduction config @ 4f80e4",
+      "url": "https://github.com/volcengine/verl/blob/4f80e465c2ec79ab9c3c30ec74b9745de61d0490/recipe/dapo/run_dapo_qwen2.5_32b.sh",
+      "kind": "source-code",
+      "version": "4f80e465c2ec79ab9c3c30ec74b9745de61d0490",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "DAPO-Qwen2.5-32B full reproduction；prompt/group/mini-batch、clip、KL、长度、采样、优化器与资源配置。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 76,
+      "title": "understand-r1-zero · README @ dfca49d",
+      "url": "https://github.com/sail-sg/understand-r1-zero/blob/dfca49dd460ee7cc8e4a5a162c876a7fd6993b87/README.md",
+      "kind": "source-code",
+      "version": "dfca49dd460ee7cc8e4a5a162c876a7fd6993b87",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "Dr.GRPO / OAT官方运行命令；batch、生成、优化参数与固定环境版本。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 77,
+      "title": "TRL · GRPOConfig @ 8ad18ec",
+      "url": "https://github.com/huggingface/trl/blob/8ad18ec1b6493b85cf9fffbd87d376767ceb8611/trl/trainer/grpo_config.py",
+      "kind": "source-code",
+      "version": "8ad18ec1b6493b85cf9fffbd87d376767ceb8611",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "GRPOConfig固定源码；G、长度、采样、LR、β、iterations、clip、reward scaling与loss defaults。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 78,
+      "title": "ROLL · GSPO documentation example @ 7c0ded3",
+      "url": "https://github.com/alibaba/ROLL/blob/7c0ded3d621ad4f45fb4d6675914de5eae8918eb/examples/docs_examples/example_gspo.yaml",
+      "kind": "source-code",
+      "version": "7c0ded3d621ad4f45fb4d6675914de5eae8918eb",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "GSPO文档示例；字段映射、batch、G、生成、LR、KL与epoch；文件声明不保证训练性能。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 79,
+      "title": "NeMo RL · CISPO high-off-policy config @ 81aa43d",
+      "url": "https://github.com/NVIDIA-NeMo/RL/blob/81aa43dda4765b0429cf31dab44441e4e4383911/examples/configs/recipes/llm/grpo-cispo-mm1-async-lag1-highoffpolicy-qwen3-30ba3b-3n8g-megatron-cispo.yaml",
+      "kind": "source-code",
+      "version": "81aa43dda4765b0429cf31dab44441e4e4383911",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "Qwen3-30B-A3B CISPO验证配置；G、async lag、batch、IS clip、KL与资源布局。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#paper-recipes"
       ],
       "used_in_before_organization": [],
       "historical_used_in": [],

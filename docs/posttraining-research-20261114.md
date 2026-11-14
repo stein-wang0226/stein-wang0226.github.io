@@ -9,14 +9,14 @@
 | 章节 | 核心贡献 | 主要来源编号 |
 | --- | --- | --- |
 | 01 监督与偏好 | mask、两种RFT、恢复、DPO/SimPO/ORPO/KTO、工业训练图 | 12–23、27、49 |
-| 02 RL目标 | PPO/GAE/RLOO/GRPO、分母、GSPO/CISPO/SAPO/SAO、RLVR配置与诊断 | 1–11、44、50、58 |
+| 02 RL目标 | PPO/GAE/RLOO/GRPO、分母、GSPO/CISPO/SAPO/SAO、论文级recipe、参数背诵表与追问卡 | 1–11、44、50、58、73–79 |
 | 03 OPD | fixed-prefix梯度、full/sample/top-k、多教师、自蒸馏、参数、覆盖与遗忘 | 24–36、55、60、66 |
 | 04 环境与信用 | Harbor隔离、PRM/value、图/信念/环境反馈信用、子任务与GAR | 27、37–44、53–54、67–70 |
 | 05 系统 | 十二类框架、配置映射、三策略、completion bias、partial KV、固定slime代码 | 25、27、45–65、71–72 |
 | 06 案例 | code/科学/GUI输入到终评、轨迹契约、单轴消融与成本 | 16、27、30、34、41、53–54 |
 
 编号、原始URL、版本/commit、位置与使用章节见公开
-`assets/research/posttraining-20261114/sources.json`，共72项。
+`assets/research/posttraining-20261114/sources.json`，共79项。
 该索引从正文参考列表生成。动态文档记录访问日期，不宣称与仓库SHA同步。
 不归档整个外部仓库或新大文件；沿用既有V4.1、Ultra、RLDS、ARLArena原件。
 
@@ -68,6 +68,23 @@
 20. 配方审计以语义字段为准：模型/模板、prompt batch、每题生成数、生成参数、
     verifier、advantage、ratio/clip/分母、优化器、并行与异步版本均需记录。
     没有跨模型通用依据的learning rate、group size或batch不写成标准答案。
+21. DeepSeekMath v3 §4.2明确披露G=64、training batch=1024、max=1024、
+    policy LR=1e-6、KL β=0.04和每次exploration后单次更新；原文未进一步定义
+    batch的prompt/trajectory单位，因此正文不自行用1024/64反推prompt数。
+22. DeepSeek-R1 v2新增R1-Zero数值：G=16、每次update为32 prompts/512 trajectories、
+    外层8192 outputs拆16 mini-batches、LR=3e-6、β=0.001、T=1、32K→64K、
+    single inner epoch及reference每400步刷新。第一RL阶段另写clip ε=10；
+    该异常量级按版本原文保留，不提升为通用默认。
+23. DAPO论文与固定复现脚本分开：论文warmup为20 rollout steps，commit `4f80e4`
+    脚本为10；两者均使用512 prompts、G=16、LR=1e-6、clip 0.20/0.28、
+    KL=0及20,480最大生成长度。差异明确并列，不静默选一个。
+24. Dr.GRPO论文表给G=8、T/top-p=1、max=3000、LR=1e-6、clip=0.2、
+    KL=0、inner epoch=1、AdamW betas(0.9,0.95)、WD=0、grad clip=1；
+    global batch未在论文表披露。OAT README中的batch=128仅列作官方命令参数。
+25. GSPO原论文披露Qwen3-30B-A3B、4 mini-batches和sequence clip
+    3e-4/4e-4，对照GRPO 0.20/0.27；未公开G/LR/global batch等完整配方。
+    ROLL数值只标“文档示例”。MiniMax报告未给CISPO最终clip/LR/G；
+    NeMo的[0,6] clamp只标固定验证配置，不能冒充MiniMax原始recipe。
 
 ## 面试覆盖审计结论
 
@@ -77,7 +94,7 @@
 | Agentic RL | 多轮环境、verifier、GiGPO/RLDS/KnowGPO、图/belief/环境反馈信用、单轨迹value | 主流与2026趋势已形成方法簇，不逐篇堆名 |
 | OPD | full/top-k/sampled、MOPD/MOPD2、OPSD/SDPO/SDPG、Guided-OPD/TISD、遗忘 | 主线完整；已补教师接口、混合目标和监控 |
 | 框架 | TRL、verl、slime、AReaL、OpenRLHF、NeMo RL、ROLL、RLinf、SkyRL、Agent Lightning、ART、TorchForge | 按角色和维护状态覆盖；不做star速度榜 |
-| 参数与训练细节 | batch关系、rollout、reward、advantage、loss、optimizer、parallel、policy lag、OPD信号 | 达到面试解释与配置审计层；不伪造统一可运行YAML |
+| 参数与训练细节 | DeepSeekMath/R1、DAPO、Dr.GRPO论文原值；GSPO/CISPO披露边界；TRL/ROLL/NeMo固定配置；参数联动与12道追问 | 达到可背诵实验卡层；论文值、框架默认与文档示例严格分栏 |
 | 旁支谱系 | Offline RL、Decision Transformer、AlphaZero/MuZero、MARL、Distributional/Model-based RL | 在面试手册略写完整，不与RLVR主线等篇幅 |
 
 ## 图与教学资源

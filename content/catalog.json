@@ -361,7 +361,7 @@
       "id": "posttraining-algorithms",
       "kind": "chapter",
       "title": "02 · RLVR 目标、主流算法、配置与训练诊断",
-      "summary": "推导PPO/GAE、RLOO/GRPO及主流变体，补齐RLVR配置字段、global batch关系、训练监控与失败诊断。",
+      "summary": "推导PPO/GAE、RLOO/GRPO及变体；汇总DeepSeekMath/R1、DAPO、Dr.GRPO、GSPO、CISPO数值recipe、参数联动、诊断与面试追问。",
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
       "url": "/llm-posttraining/s02_rl_algorithms.html",
       "topic": "rl-post-training",
