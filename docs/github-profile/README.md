@@ -51,7 +51,6 @@ GUI Agent Data Algorithm Intern at **ByteDance Seed / AI Data**. Previously at *
 
 - [CUA-Recovery](https://stein-wang0226.github.io/publication/cua-recovery/) studies error recovery in long-horizon computer-use agents. ICLR 2027 under review.
 - [STM](https://doi.org/10.1007/978-981-95-3906-2_3) studies dynamic-graph fraud detection. DASFAA 2025; first author.
-- Project scope follows my November 2026 resumes. ProtAgent's number above uses the balanced OOD-1000 annotation-coverage protocol; it is not a standalone measure of biological correctness. Task delivery does not imply public release or benchmark acceptance.
 
 [All publications](https://stein-wang0226.github.io/publications/) / [English resume](https://stein-wang0226.github.io/assets/Curriculum_Vitae.pdf) / [中文简历](https://stein-wang0226.github.io/assets/Yuxiang-Wang-Resume-zh.pdf)
 
