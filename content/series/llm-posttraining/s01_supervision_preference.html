@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>01 · SFT、两种 RFT、偏好优化与工业链路</title>
+<title>01 · SFT、RFT 与偏好优化：方法及训练流程</title>
 <meta name="description" content="分析监督目标、恢复轨迹、拒绝采样与强化 RFT、DPO/SimPO/ORPO/KTO，结合代码修复及最新工业后训练配方。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
@@ -101,7 +101,7 @@ L_SimPO = − log σ(rθ(x,y+) − rθ(x,y−) − γ)</div>
 <p>RLHF、RLVR 主要区分反馈来源；PPO、GRPO 主要区分优化目标；异步训练描述执行系统。把它们分开，才能判断失败应该改标签、补数据、换算法，还是修运行环境。</p>
 </section>
 <section id="industry">
-<h2>工业后训练已经是带分支的训练图</h2>
+<h2 id="reading-section-8">实际后训练流程：不同数据与方法如何组合</h2>
 <table>
 <thead><tr><th>公开报告</th><th>明确披露的路线</th><th>读者应提取的机制</th></tr></thead>
 <tbody>

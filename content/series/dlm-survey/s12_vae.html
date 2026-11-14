@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VAE 原理、发展脉络与 VAE 家族 - 扩散语言模型调研</title>
+<title>VAE 原理、发展脉络与主要变体 - 扩散语言模型调研</title>
 <link rel="stylesheet" href="shared.css">
 <script>
 window.MathJax = {
@@ -51,7 +51,7 @@ window.MathJax = {
 <div class="container">
 <a href="index.html" class="back-link">&larr; 返回目录</a>
 
-<h2 class="section-title" id="s12"><span class="num">12</span> VAE 原理、发展脉络与 VAE 家族</h2>
+<h2 class="section-title" id="s12"><span class="num">12</span> VAE 原理、发展脉络与主要变体</h2>
 <div class="card" id="mechanism-review"><h3>机制与验收：连续密度与离散码本</h3><p>VAE优化重建项−KL(qφ(z|x)∥p(z))，重参数化路径把梯度传给encoder；ELBO gap是与真实后验的KL。VQ的最近码、commitment与straight-through/EMA是另一种训练接口，不能将连续Gaussian KL原样套用。生成prior质量和codec重建质量要分别评测。</p><p>来源：<a href="https://arxiv.org/abs/1312.6114">Auto-Encoding Variational Bayes</a>、<a href="https://arxiv.org/abs/1711.00937">VQ-VAE</a>。图像latent、语言embedding与GUI视觉token职责不同，接 <a href="s04_continuous.html">连续DLM</a>与 <a href="/vlm-knowledge-interview.html#vlm-agent-bridge">VLM/GUI链路</a>；历史厂商codec归属未全面核实。</p></div>
 
 <p>本章系统梳理 <strong>Variational Autoencoder (VAE)</strong> 的原理、训练目标、关键问题、六阶段发展脉络和 18 个变体。重点深入三个方向：<strong>离散量化路线</strong>（VQ-VAE &rarr; RQ-VAE &rarr; FSQ &rarr; LFQ）如何成为现代视觉 tokenizer 的基石；<strong>VAE 在 Latent Diffusion / 视频生成 / 多模态 / 机器人策略</strong>中的具体技术角色；以及 <strong>CVAE 在 ACT/ALOHA</strong> 中解决行为克隆多模态问题的机制。</p>

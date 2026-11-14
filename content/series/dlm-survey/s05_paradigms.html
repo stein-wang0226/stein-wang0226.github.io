@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>预测范式 (Prediction Paradigms) 大一统 - 扩散语言模型前沿调研</title>
+<title>扩散模型的预测目标与参数化比较 - 扩散语言模型前沿调研</title>
 <script>
 window.MathJax = {
   tex: {
@@ -64,7 +64,7 @@ window.addEventListener('load', function() {
  <span class="sep">|</span> <a href="s12_vae.html">12</a>
 </nav>
 <div class="container">
-<h2 class="section-title" id="s5"><span class="num">05</span> 预测范式 (Prediction Paradigms) 大一统</h2>
+<h2 class="section-title" id="s5"><span class="num">05</span> 扩散模型的预测目标与参数化比较</h2>
 <div class="card" id="mechanism-review"><h3>机制与验收：可转换参数化与损失权重</h3><p>若xt=αx0+σε且α²+σ²=1，v=αε−σx0，则x0=αxt−σv、ε=σxt+αv。变量能互转不代表未加权MSE相同：目标变换改变随t的权重。这里的VP v-pred不应与任意Flow Matching向量场同名等同。</p><p>Diffusion也能用概率流ODE或DDIM确定性采样；FM不保证任意数据下更稳定或更少步。来源：<a href="https://arxiv.org/abs/2011.13456">Score-SDE</a>、<a href="https://arxiv.org/abs/2210.02747">Flow Matching</a>；继续 <a href="s00b_flow_sde.html">时间约定/边际路径</a>、<a href="s06_scaling.html">同目标预算对照</a>。</p></div>
 
 <p>无论底层是连续还是离散，算 Loss 时模型到底在预测什么？这决定了梯度稳定性和生成质量。以下对六种预测范式逐一展开数学原理。</p>

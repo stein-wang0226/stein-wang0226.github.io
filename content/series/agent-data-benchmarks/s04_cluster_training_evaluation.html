@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>科学 Agent 工业训练方案：SFT、异质 RL、失败归因与成本</title>
+<title>科学 Agent 训练方案：实验对照、集群配置与成本</title>
 <meta name="description" content="以公开RNA-seq合同连接128/1024 H100规划、SFT/RL/OPD对照、policy lag、研究切分、统计与成功成本。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
 <section id="overview"><p class="eyebrow">Industrial-scale research protocol · 2026-11-14</p>
-<h2>同一科学合同，拆开数据、算法和系统的贡献</h2>
+<h2 id="reading-section-1">固定科学任务要求，分别评估数据、算法与系统的贡献</h2>
 <p class="lead">先冻结公开任务、独立verifier、held-out和harness，再比较监督轨迹、结果奖励、步骤信用及计算预算。工业规模规划解释如何分配训练、rollout、教师与CPU环境；它不把一份教学研究变成足量训练语料，也不代替真实容量测量。</p>
 <div class="callout caution"><strong>研究方案，尚未执行。</strong>模型训练、科学任务、轨迹采样、benchmark、容差校准和收益测量均未运行。GPU规模 / 超参是本文设计；无法确认的资源量和结果在下载文件中为<code>null</code>。</div>
 <p>先读<a href="s03_scientific_task_family.html">科学合同</a>、<a href="../llm-training-lifecycle/s05_training_methods_systems.html#cluster">训练状态与进程组</a>、<a href="../llm-research-map-2026/s02_agentic_rl.html">前沿Agentic RL</a>。数据路线集中在<a href="s01_task_synthesis.html">任务合成章</a>，算法定义集中在<a href="../llm-training-lifecycle/s04_rl_evaluation.html#algorithms">训练04</a>。</p>

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>04 · RL 环境、奖励、过程监督与长程信用</title>
+<title>04 · RL 环境与奖励：过程监督和多步信用分配</title>
 <meta name="description" content="区分结果奖励、PRM/value/advantage/teacher信号，分析 Harbor 独立验证、PURE/Cliff/GiGPO/RLDS/KnowGPO 和 MiMo GAR，结合代码科学GUI。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
@@ -88,7 +88,7 @@ T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
 <p>科学设计若错用 contrast 且未修复，后续步骤会沿错误方向；代码先跑出错误再修好，则不满足“首错后全废”。应按任务分别测试边界质量、恢复率和反事实影响，避免把数学推导的假设自动应用到交互任务。</p>
 </section>
 <section id="long-credit">
-<h2>长程信用：重复状态、子任务和知识条件 baseline</h2>
+<h2 id="reading-section-8">多步信用分配：重复状态、子任务与知识条件基线</h2>
 <table>
 <thead><tr><th>路线</th><th>信用对象</th><th>何时有帮助</th><th>限制</th></tr></thead>
 <tbody>

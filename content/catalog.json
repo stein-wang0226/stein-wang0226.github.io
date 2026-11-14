@@ -4,7 +4,7 @@
     {
       "id": "agent-systems",
       "kind": "series",
-      "title": "Agent 系统与推理策略：证据、规划与信任",
+      "title": "Agent 系统：检索、规划与安全",
       "summary": "三章串起RAG/Agentic检索、规划与推理预算、权限隔离与安全评测，连接Codex状态、科学合同和工业后训练。",
       "source": "content/series/agent-systems/index.html",
       "url": "/agent-systems/",
@@ -39,7 +39,7 @@
     {
       "id": "agent-rag",
       "kind": "chapter",
-      "title": "01 · RAG与Agentic检索：从文档到可核实的证据",
+      "title": "01 · RAG 与 Agent 检索：检索方法与证据验证",
       "summary": "版本/权限、chunk、BM25/dense融合和rerank，比较Self-RAG、Search-R1、Agentic-R、Search-R1++与PROGRESS；检索、引用与任务分开评测。",
       "source": "content/series/agent-systems/s01_rag_retrieval.html",
       "url": "/agent-systems/s01_rag_retrieval.html",
@@ -76,7 +76,7 @@
     {
       "id": "agent-planning",
       "kind": "chapter",
-      "title": "02 · 规划、搜索与推理预算：让额外计算产生价值",
+      "title": "02 · Agent 规划、搜索与推理预算",
       "summary": "ReAct、计划执行、反思、BoN/beam/MCTS与过程验证，解释环境分支、停止/恢复和工具预算；同预算任务成功与selector分开。",
       "source": "content/series/agent-systems/s02_planning_compute.html",
       "url": "/agent-systems/s02_planning_compute.html",
@@ -147,7 +147,7 @@
     {
       "id": "llm-serving",
       "kind": "series",
-      "title": "LLM推理与部署工程：调度、并行与成功成本",
+      "title": "LLM 推理与部署：调度、加速与成本评估",
       "summary": "三章从prefill/decode和KV生命周期到TP/EP/PD、量化与投机，再建立容量/延迟/成功成本账本；附固定源码、规划CSV和测量协议。",
       "source": "content/series/llm-serving/index.html",
       "url": "/llm-serving/",
@@ -216,7 +216,7 @@
     {
       "id": "serving-parallel",
       "kind": "chapter",
-      "title": "02 · 推理并行、量化与投机验证",
+      "title": "02 · 推理加速：并行、量化与投机解码",
       "summary": "TP/DP/EP与PD分离、KV传输、weight/activation/KV量化和FP4，解释贪心与采样验证边界，设计Dense/MoE/Hybrid服务对照。",
       "source": "content/series/llm-serving/s02_parallel_quantization.html",
       "url": "/llm-serving/s02_parallel_quantization.html",
@@ -253,7 +253,7 @@
     {
       "id": "serving-capacity",
       "kind": "chapter",
-      "title": "03 · LLM容量、延迟与成功成本",
+      "title": "03 · LLM 服务容量、延迟与任务成本",
       "summary": "权重/KV/状态/临时区显存、70B TP4容量推导、TTFT/ITL/goodput、长程rollout与全部尝试成本；下载CSV/JSON/协议，实测字段为空。",
       "source": "content/series/llm-serving/s03_capacity_cost.html",
       "url": "/llm-serving/s03_capacity_cost.html",
@@ -327,7 +327,7 @@
     {
       "id": "posttraining-supervision",
       "kind": "chapter",
-      "title": "01 · SFT、两种 RFT、偏好优化与工业链路",
+      "title": "01 · SFT、RFT 与偏好优化：方法及训练流程",
       "summary": "角色mask、token/episode分母、恢复轨迹、拒绝采样、DPO/SimPO/ORPO/KTO，连接Qwen、Kimi、GLM、DeepSeek与MiMo。",
       "source": "content/series/llm-posttraining/s01_supervision_preference.html",
       "url": "/llm-posttraining/s01_supervision_preference.html",
@@ -431,7 +431,7 @@
     {
       "id": "posttraining-rewards",
       "kind": "chapter",
-      "title": "04 · RL 环境、奖励、过程监督与长程信用",
+      "title": "04 · RL 环境与奖励：过程监督和多步信用分配",
       "summary": "Harbor独立verifier，区分结果/PRM/value/advantage/teacher；PURE、Cliff、GiGPO、RLDS、KnowGPO、GAR与奖励漏洞。",
       "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
       "url": "/llm-posttraining/s04_environment_reward_credit.html",
@@ -468,7 +468,7 @@
     {
       "id": "posttraining-frameworks",
       "kind": "chapter",
-      "title": "05 · 后训练框架、异步分布式与训练对齐",
+      "title": "05 · 后训练框架：分布式执行、异步更新与训练偏差",
       "summary": "十类框架的固定版本支持与边界；三策略校正、完成顺序偏移、partial KV、Agent Lightning v1与slime OPD源码。",
       "source": "content/series/llm-posttraining/s05_frameworks_async.html",
       "url": "/llm-posttraining/s05_frameworks_async.html",
@@ -507,7 +507,7 @@
     {
       "id": "posttraining-cases",
       "kind": "chapter",
-      "title": "06 · 代码、Harbor 科学、GUI：后训练交付",
+      "title": "06 · Agent 后训练案例：代码、科学分析与 GUI 操作",
       "summary": "三类任务输入→动作→反馈→目标→独立终评；提供轨迹契约、单轴消融、失败诊断和成功成本，明确尚未训练。",
       "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
       "url": "/llm-posttraining/s06_task_cases_experiments.html",
@@ -541,7 +541,7 @@
     {
       "id": "training-methods-systems",
       "kind": "chapter",
-      "title": "05 · 训练方法与集群设计：PEFT、优化器、稳定性及后训练系统",
+      "title": "05 · 训练方法与系统：参数高效微调、优化器与集群设计",
       "summary": "LoRA/QLoRA、AdamW/Muon与训练状态，核对Megatron普通/专家进程组，设计128/1024 H100后训练池、reference与异步rollout；配置与实测分开。",
       "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
       "url": "/llm-training-lifecycle/s05_training_methods_systems.html",
@@ -580,7 +580,7 @@
     {
       "id": "scientific-task-family",
       "kind": "chapter",
-      "title": "02 · 科学 Agent 任务族：数据与验证合同",
+      "title": "02 · 科学 Agent 任务设计：数据、分析要求与验收",
       "summary": "围绕GSE52778/airway设计RNA-seq任务族，核对count层、配对与来源冲突，公开完整schema、研究切分、独立verifier和轨迹；尚未构建真实benchmark。",
       "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
       "url": "/agent-data-benchmarks/s03_scientific_task_family.html",
@@ -624,7 +624,7 @@
     {
       "id": "cluster-training-evaluation",
       "kind": "chapter",
-      "title": "03 · 科学 Agent 工业训练方案：SFT、异质 RL、失败归因与成本",
+      "title": "03 · 科学 Agent 训练方案：实验对照、集群配置与成本",
       "summary": "独立命名sci-posttrain A–E，设计SFT/GRPO/步骤信用/OPD与预算消融，连接128/1024 H100、policy lag、研究组统计、失败与成功成本；无实测结果。",
       "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
       "url": "/agent-data-benchmarks/s04_cluster_training_evaluation.html",
@@ -705,7 +705,7 @@
     {
       "id": "architecture-transformer",
       "kind": "chapter",
-      "title": "01 · Transformer 的张量流与训练目标",
+      "title": "01 · Transformer 基础：模型结构、前向计算与训练目标",
       "summary": "端到端形状、QKV/causal mask、残差、logits、teacher forcing、shift/loss 和梯度；区分参数、激活、KV 与优化器状态。",
       "source": "content/series/llm-architecture/s01_transformer_foundations.html",
       "url": "/llm-architecture/s01_transformer_foundations.html",
@@ -736,7 +736,7 @@
     {
       "id": "architecture-attention",
       "kind": "chapter",
-      "title": "02 · Attention、位置与历史缓存",
+      "title": "02 · Attention、位置编码与 KV 缓存",
       "summary": "MHA/MQA/GQA/MLA、RoPE、SWA/稀疏检索和逐层 KV 字节推导；分清 FlashAttention 计算、分页存储与 prefix 复用。",
       "source": "content/series/llm-architecture/s02_attention_position_cache.html",
       "url": "/llm-architecture/s02_attention_position_cache.html",
@@ -909,7 +909,7 @@
     {
       "id": "agent-data-benchmarks",
       "kind": "series",
-      "title": "Agent 任务合成与 Benchmark：训练数据到可靠评测",
+      "title": "Agent 任务合成与评测：数据构建、任务设计与基准选择",
       "summary": "四章连接任务合成、经典与前沿Benchmark、公开RNA-seq科学合同和工业SFT/RL方案；附52项原始索引及新增科学来源、schema、128/1024 H100规划和失败/成本记录。",
       "source": "content/series/agent-data-benchmarks/index.html",
       "url": "/agent-data-benchmarks/",
@@ -988,7 +988,7 @@
     {
       "id": "agent-benchmark-map",
       "kind": "chapter",
-      "title": "04 · Benchmark 地图：Terminal、SWE、GUI、科学与 AA",
+      "title": "04 · Agent 评测基准：能力覆盖与指标解读",
       "summary": "固定 TB 4.1 / Science 0.1 / HarborIndex 1.4 与 AA 5.0.1；深入 DeepSWE 和 SWE-bench，分类总结经典 benchmark，解释评分、污染、预算和成功成本。",
       "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
       "url": "/agent-data-benchmarks/s02_benchmark_map.html",
@@ -1122,7 +1122,7 @@
     {
       "id": "research-agentic-rl",
       "kind": "chapter",
-      "title": "02 · Agentic RL：目标、信用、异质数据与异步",
+      "title": "02 · Agentic RL：训练目标、信用分配与异步更新",
       "summary": "四维 loss 比较 GRPO / GSPO / CISPO；GiGPO、RLDS、KnowGPO、两种 SAPO 和 SAMPO；异质数据、policy lag 与 rollout–trainer 对齐。",
       "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
       "url": "/llm-research-map-2026/s02_agentic_rl.html",
@@ -1158,7 +1158,7 @@
     {
       "id": "research-base-architecture",
       "kind": "chapter",
-      "title": "04 · DeepSeek V4.1：CED、CSA2、FP4 与缓存",
+      "title": "04 · DeepSeek V4.1 架构：注意力机制、低精度与缓存",
       "summary": "固定 v1 报告，图解 CED 张量来源、40层 CSA2 计划、FP4 格式与890 B/token推导、两种 bounded replay；补齐 MoE / mHC / Engram 及系统口径。",
       "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
       "url": "/llm-research-map-2026/s03_base_architecture.html",
@@ -1194,7 +1194,7 @@
     {
       "id": "research-inference-diffusion",
       "kind": "chapter",
-      "title": "06 · 推理成本与扩散投机：DFlash、DSpark、AdaFlash",
+      "title": "06 · 扩散模型辅助的投机解码：方法比较与推理成本",
       "summary": "扩散并行 drafter、半自回归块内依赖、reverse-KL OPD；验证精确性、non-anticipating admission、并发、吞吐与成功成本。",
       "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
       "url": "/llm-research-map-2026/s04_inference_diffusion.html",
@@ -1267,7 +1267,7 @@
     {
       "id": "research-architecture-landscape",
       "kind": "chapter",
-      "title": "03 · 前沿模型架构：Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step 与 Gemma",
+      "title": "03 · 前沿模型架构比较：注意力、专家与混合设计",
       "summary": "按历史状态、实际层数量、全局检索、专家与多模态比较八个工业模型家族及Gemma；区分固定报告、模型配置、kernel测量与闭源披露，附结构图与规格数据。",
       "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
       "url": "/llm-research-map-2026/s06_architecture_landscape.html",
@@ -1320,7 +1320,7 @@
     {
       "id": "research-architecture-training",
       "kind": "chapter",
-      "title": "05 · 架构与训练机制：AttnRes、mHC、LatentMoE、Muon、低精度与递归深度",
+      "title": "05 · 架构与训练机制：残差、专家、优化器与递归计算",
       "summary": "推导残差深度选择、双随机流混合、latent专家和Muon矩阵更新；拆解参数分组、分布式梯度、FP4对象与Huginn循环深度，并连接Agentic RL和等算力消融。",
       "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
       "url": "/llm-research-map-2026/s07_architecture_training.html",
@@ -1400,7 +1400,7 @@
     {
       "id": "llm-training-pretraining",
       "kind": "chapter",
-      "title": "01 · 预训练：从数据到通用 Base",
+      "title": "01 · 预训练：数据、训练目标与基础模型",
       "summary": "数据治理、因果 LM、FIM、训练预算与上下文课程，以及交接给 CPT 和后训练的产物。",
       "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
       "url": "/llm-training-lifecycle/s01_pretraining.html",
@@ -1464,7 +1464,7 @@
     {
       "id": "llm-training-sft-rft",
       "kind": "chapter",
-      "title": "03 · SFT、两种 RFT、偏好优化与蒸馏",
+      "title": "03 · 后训练方法概览：SFT、RFT、偏好优化与蒸馏",
       "summary": "验证示范与角色 mask、拒绝采样和强化微调的区别、DPO，以及专家到统一模型的 OPD。",
       "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
       "url": "/llm-training-lifecycle/s03_sft_rft.html",
@@ -1633,7 +1633,7 @@
       "id": "transformer-decoder-flow",
       "reading_role": "reference",
       "kind": "post",
-      "title": "Transformer Decoder 全流程",
+      "title": "Transformer Decoder：前向计算与张量维度",
       "summary": "训练与推理的数据流、RoPE、Attention、KV Cache 和张量维度。",
       "source": "content/posts/transformer-decoder-flow/index.html",
       "url": "/transformer-decoder-flow.html",
@@ -1812,7 +1812,7 @@
         }
       ],
       "kind": "post",
-      "title": "VLM 算法知识与面经",
+      "title": "VLM 核心知识与面试问答",
       "summary": "视觉编码器、对齐训练、分辨率处理、MoE 与代码实现。",
       "source": "content/posts/vlm-knowledge-interview/index.html",
       "url": "/vlm-knowledge-interview.html",
@@ -1978,7 +1978,7 @@
     {
       "id": "dlm-overview",
       "kind": "chapter",
-      "title": "01 · 扩散语言模型全景概述与四大流派",
+      "title": "01 · 扩散语言模型概述与主要路线",
       "summary": "扩散语言模型概述与流派。",
       "source": "content/series/dlm-survey/s01_overview.html",
       "url": "/dlm-survey/s01_overview.html",
@@ -2097,7 +2097,7 @@
     {
       "id": "dlm-paradigms",
       "kind": "chapter",
-      "title": "02 · 预测范式 (Prediction Paradigms) 大一统",
+      "title": "02 · 扩散模型的预测目标与参数化比较",
       "summary": "预测范式。",
       "source": "content/series/dlm-survey/s05_paradigms.html",
       "url": "/dlm-survey/s05_paradigms.html",
@@ -2149,7 +2149,7 @@
     {
       "id": "dlm-speculative",
       "kind": "chapter",
-      "title": "07 · DLM 投机解码：DFlash vs MTP 深度分析",
+      "title": "07 · DLM 投机解码：DFlash 与 MTP 比较",
       "summary": "DLM 投机解码、DFlash 与 MTP。",
       "source": "content/series/dlm-survey/s07_speculative.html",
       "url": "/dlm-survey/s07_speculative.html",
@@ -2248,7 +2248,7 @@
     {
       "id": "dlm-comparison",
       "kind": "chapter",
-      "title": "09 · 综合对比表与未来方向",
+      "title": "09 · 扩散语言模型方法比较与研究方向",
       "summary": "综合对比表与未来方向。",
       "source": "content/series/dlm-survey/s10_comparison.html",
       "url": "/dlm-survey/s10_comparison.html",
@@ -2302,7 +2302,7 @@
       "id": "dlm-vae",
       "chapter_group": "prerequisite",
       "kind": "chapter",
-      "title": "13 · VAE 原理、发展脉络与 VAE 家族",
+      "title": "13 · VAE 原理、发展脉络与主要变体",
       "summary": "VAE 原理、发展脉络与 VAE 家族。",
       "source": "content/series/dlm-survey/s12_vae.html",
       "url": "/dlm-survey/s12_vae.html",

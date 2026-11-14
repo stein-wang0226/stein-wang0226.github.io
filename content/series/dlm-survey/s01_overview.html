@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>扩散语言模型全景概述与四大流派 - 扩散语言模型前沿调研</title>
+<title>扩散语言模型概述与主要路线 - 扩散语言模型前沿调研</title>
 <script>
 window.MathJax = {
   tex: {
@@ -64,7 +64,7 @@ window.addEventListener('load', function() {
  <span class="sep">|</span> <a href="s12_vae.html">12</a>
 </nav>
 <div class="container">
-<h2 class="section-title" id="s1"><span class="num">01</span> 扩散语言模型全景概述与四大流派</h2>
+<h2 class="section-title" id="s1"><span class="num">01</span> 扩散语言模型概述与主要路线</h2>
 <div class="card" id="mechanism-review"><h3>机制与验收：分类轴不能混成排名</h3><p>离散/连续描述状态空间，masked/uniform描述噪声核，block描述生成因子化，draft/standalone描述系统角色；它们可以交叉。对一个模型登记状态、kernel、预测对象、loss、decoder及验证协议，才能解释它和AR比较的是哪一部分。四流派是本笔记的阅读组织，不是唯一分类。</p><p>历史4–14×、1196 tok/s和“复杂推理仍是AR领地”等总结均限原材料条件，未做统一复核。最新固定报告见 <a href="/llm-research-map-2026/s04_inference_diffusion.html">推理与扩散</a>；基础来源在 <a href="index.html#foundations">系列入口</a>。</p></div>
 
 <h3>1.1 为什么需要扩散语言模型？</h3>
@@ -91,7 +91,7 @@ window.addEventListener('load', function() {
 
 <p><strong>但 DLM 也有明确劣势</strong>：Token 效率低于 AR（达到同等质量需要更多计算）、缺乏成熟的 KV cache 机制、Chain-of-Thought 推理能力弱、RL 对齐（RLHF/GRPO）因 ELBO bias 而困难。因此当前的共识是：<strong>DLM 不是要取代 AR，而是在特定场景（高吞吐、并行生成、投机解码）提供互补优势</strong>。</p>
 
-<h3>1.2 四大流派概览</h3>
+<h3 id="reading-section-4">1.2 四类主要路线概览</h3>
 
 <p>根据底层建模空间和生成策略的不同，当前 DLM 可分为<strong>四大流派</strong>：</p>
 
@@ -118,7 +118,7 @@ window.addEventListener('load', function() {
   </div>
 </div>
 
-<h3>1.3 四大流派的关系与演化</h3>
+<h3 id="reading-section-5">1.3 四类路线的关系与演化</h3>
 
 <div class="card purple">
   <div class="card-title">技术路线演化脉络（2020—2026）</div>

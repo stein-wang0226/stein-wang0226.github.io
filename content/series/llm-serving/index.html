@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LLM推理与部署工程：调度、并行与成功成本</title>
+<title>LLM 推理与部署：调度、加速与成本评估</title>
 <meta name="description" content="Prefill/decode、continuous batching、KV复用、TP/EP/PD分离、量化与投机，建立容量账本和端到端测量协议。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
 <section id="purpose"><p class="eyebrow">Serving engineering · 2026-11-14</p><h2>把结构收益转成可测量的服务结果</h2>
@@ -11,8 +11,8 @@
 <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；当前顺序见上方目录</summary>
 <section id="chapters"><h2>三章主线</h2><div class="chapter-grid">
 <article class="card"><h3><a href="s01_runtime_scheduling.html">01 · 请求调度与缓存生命周期</a></h3><p>continuous batching、分页、prefix、chunked prefill与抢占；vLLM/SGLang固定源码入口。</p></article>
-<article class="card"><h3><a href="s02_parallel_quantization.html">02 · 并行、量化与投机验证</a></h3><p>TP/DP/EP、prefill/decode分离、权重/KV格式、FP4和drafter；区分对象、精度与收益条件。</p></article>
-<article class="card"><h3><a href="s03_capacity_cost.html">03 · 容量、延迟与成功成本</a></h3><p>显存账本、负载测量、长短请求、工业rollout容量；下载CSV规划表与测量协议。</p></article>
+<article class="card"><h3 id="reading-section-4"><a href="s02_parallel_quantization.html">02 · 并行、量化与投机解码</a></h3><p>TP/DP/EP、prefill/decode分离、权重/KV格式、FP4和drafter；区分对象、精度与收益条件。</p></article>
+<article class="card"><h3 id="reading-section-5"><a href="s03_capacity_cost.html">03 · 服务容量、延迟与任务成本</a></h3><p>显存账本、负载测量、长短请求、工业rollout容量；下载CSV规划表与测量协议。</p></article>
 </div></section>
 </details><!-- READING:HISTORY:END -->
 <section id="connections"><h2>连接训练与Agent执行</h2>

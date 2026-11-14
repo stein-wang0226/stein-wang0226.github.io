@@ -21,8 +21,8 @@
 <!-- READING:CHAPTERS -->
 <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前目录说明 · 2026-11-14；当前顺序见上方目录</summary>
 <section id="chapters"><h2>六章主线</h2><div class="chapter-grid">
-<article class="card"><h3><a href="s01_transformer_foundations.html">01 · Transformer 的张量流与训练目标</a></h3><p>从矩阵形状走完 token、QKV、mask、残差、logits、shift 与 loss；区分参数、激活、KV 和优化器状态。</p></article>
-<article class="card"><h3><a href="s02_attention_position_cache.html">02 · Attention、位置与历史缓存</a></h3><p>MHA/MQA/GQA/MLA、RoPE、SWA 与稀疏检索；分清数学、FlashAttention 算法和 PagedAttention 存储。</p></article>
+<article class="card"><h3 id="reading-section-3"><a href="s01_transformer_foundations.html">01 · Transformer 基础：模型结构、前向计算与训练目标</a></h3><p>从矩阵形状走完 token、QKV、mask、残差、logits、shift 与 loss；区分参数、激活、KV 和优化器状态。</p></article>
+<article class="card"><h3 id="reading-section-4"><a href="s02_attention_position_cache.html">02 · Attention、位置编码与 KV 缓存</a></h3><p>MHA/MQA/GQA/MLA、RoPE、SWA 与稀疏检索；分清数学、FlashAttention 算法和 PagedAttention 存储。</p></article>
 <article class="card"><h3><a href="s03_ffn_moe_routing.html">03 · FFN、MoE 与专家通信</a></h3><p>SwiGLU、top-k、负载与容量；专家派发、EP 和 LatentMoE；总参数与激活参数分别算账。</p></article>
 <article class="card"><h3><a href="s04_residual_norm_stability.html">04 · 残差、归一化与稳定性</a></h3><p>Pre-/Post-Norm、RMSNorm、梯度路径；初始化、QK 尺度、AttnRes 与 mHC 的约束边界。</p></article>
 <article class="card"><h3><a href="s05_hybrid_architectures.html">05 · 线性 Attention、状态空间与混合架构</a></h3><p>从外积状态推导遗忘和 delta 更新；解释 GDN、Mamba、全局召回和跨层信息的不同对象。</p></article>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>02 · Attention、位置与历史缓存</title><meta name="description" content="推导MHA/MQA/GQA/MLA与KV字节，解释RoPE、长上下文、SWA、稀疏检索、FlashAttention和分页缓存的不同作用。">
+<title>02 · Attention、位置编码与 KV 缓存</title><meta name="description" content="推导MHA/MQA/GQA/MLA与KV字节，解释RoPE、长上下文、SWA、稀疏检索、FlashAttention和分页缓存的不同作用。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
 <section id="purpose"><h2>历史保存、历史选择与计算实现分别优化什么</h2>
 <p class="lead">Attention 的查询仍是“当前位置读哪些历史表示”。MHA/MQA/GQA 改变 query 与 KV 的共享关系；MLA 压缩历史表示；SWA/稀疏检索限制读取集合；FlashAttention 改变精确计算的 IO；PagedAttention 改变状态分配。这些可以组合，但不产生同一种复杂度或质量保证。</p>

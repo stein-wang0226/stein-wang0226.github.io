@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Agentic RL：目标设计、长程信用、异质数据与异步系统</title>
+<title>Agentic RL：训练目标、信用分配与异步更新</title>
 <meta name="description" content="用四维目标地图比较GRPO、GSPO、CISPO和SAMPO，分析GiGPO、RLDS、KnowGPO、同名SAPO、异质数据及异步采样与训练对齐。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
@@ -40,7 +40,7 @@ sequence surrogate = min(sᵢ Aᵢ, clip(sᵢ, 1−εₗ, 1+εᵤ) Aᵢ)</div>
 <p>概念式省略具体归一化与超参数。CISPO对importance weight限幅并stop-gradient，仍通过log-prob更新；它与PPO的min-clipped surrogate梯度不同。原始出处是MiniMax-M1，不能写成Kimi K2发明。<a href="index.html#ref-31">[31]</a></p>
 </section>
 <section id="credit">
-<h2>长程信用：怎样知道哪一步值得更新</h2>
+<h2 id="reading-section-6">多步信用分配：哪些动作影响了最终结果</h2>
 <figure>
 <div class="flow" aria-label="长程信用分配的四个环节">
 <div class="stage"><b>最终验收</b><small>结果reward可靠且有失败归因<br>错误grader会污染全部信用</small></div>

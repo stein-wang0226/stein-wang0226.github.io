@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LLM容量、延迟与成功成本</title>
+<title>LLM 服务容量、延迟与任务成本</title>
 <meta name="description" content="权重/KV/递归状态/激活/临时区显存账本，TTFT/ITL/goodput和长程Agent成本；下载规划CSV、JSON与测量协议。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
-<section id="overview"><p class="eyebrow">Capacity &amp; cost · 2026-11-14</p><h2>容量是准入边界，成功成本是端到端指标</h2>
+<section id="overview"><p class="eyebrow">Capacity &amp; cost · 2026-11-14</p><h2 id="reading-section-1">从服务容量到每个成功任务的总成本</h2>
 <p class="lead">“模型装得下”只说明权重和最低运行状态可放入设备。服务还要为并发历史、prefill激活、临时工作区、graph、通信、碎片和峰值留空间。Agent多轮重算与失败尝试也应纳入成本。</p>
 <p>先修<a href="s01_runtime_scheduling.html">调度与cache</a>、<a href="s02_parallel_quantization.html">并行与精度</a>。本章提供规格推导和待执行测量协议；没有GPU运行、真实价格或训练结果。</p>
 <figure><div class="flow"><div class="stage"><b>静态容量</b><small>权重、adapter、固定buffer<br>实际分片与复制</small></div><div class="stage"><b>动态容量</b><small>KV、状态、激活<br>并发、长度与cache保留</small></div><div class="stage"><b>服务表现</b><small>队列、TTFT、ITL<br>吞吐、P95与goodput</small></div><div class="stage"><b>任务成本</b><small>GPU、CPU、网络<br>所有尝试 / 独立成功</small></div></div><figcaption>容量上界不能作为可投产并发。工作集与SLO仍需实际负载测量。</figcaption></figure>
@@ -58,7 +58,7 @@ BF16权重/rank ≈ 70×10⁹×2/4 = 35×10⁹ bytes
 <p>工具等待使W增加，系统同时持有更多任务；KV若一直保留，会进一步降低GPU准入。CPU环境、存储、网络、检索与verifier需单独测队列。异步rollout可增加重叠，也增加policy lag，不能把过期/不可验证轨迹计作有效更新。</p>
 <p>Dense64卡rollout池规划16个TP4组；若每组候选并发8，理论活跃生成上限128不是端到端每秒完成数。MoE512卡池、TP8和EP路线需重新核算模型与KV复制，不能用Dense每组并发直接乘64。完整128/1024卡集群规划在<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">科学后训练方案</a>。</p>
 </section>
-<section id="cost"><h2>成功成本包含所有尝试与独立资源</h2>
+<section id="cost"><h2 id="reading-section-6">每个成功任务的成本：计入失败尝试和各类资源</h2>
 <div class="equation" role="math" aria-label="成功成本">Ctotal = Σ GPU-hours·GPU-price + CPU-hours·CPU-price
        + memory/storage/network + verifier/teacher + 重试与失败成本
 Csuccess = Ctotal / N独立验收成功

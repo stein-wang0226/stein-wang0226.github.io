@@ -59,7 +59,8 @@
     },
     {
       "source": "content/series/dlm-survey/index.html",
-      "sha256": "efdffad3533ef3d8feb0431468a65e66e1751794ab7fede8f0b374c1ce5a7a38",
+      "sha256": "786144c40c80714143a59921258d18da27ff4cf3ae7188eb53543ecdbf19f7d3",
+      "title_revision_reason": "2026-11-14 title audit: use descriptive chapter labels for diffusion routes, prediction targets and VAE variants; retain all paragraphs, research units, anchors, links and markers.",
       "reason": "Add series prerequisites, recommended order and fact-review limits; all fourteen chapters unchanged. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     },
     {
@@ -84,12 +85,14 @@
     },
     {
       "source": "content/posts/transformer-decoder-flow/index.html",
-      "sha256": "7ef30965f49de277a11d40b9cf8538e866197cd14cdb2c97acbff06a343ef456",
+      "sha256": "4abf700d5a681370b44f66cacbda20a4dbfb4ea74f4da3414205b73093d1fb20",
+      "title_revision_reason": "2026-11-14 title audit: describe the actual forward-computation and tensor-dimension walkthrough in document title and h1; retain scientific text and interactive content.",
       "reason": "Add prerequisites, data-flow reading route and symbolic shape-tracking exercise. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     },
     {
       "source": "content/posts/vlm-knowledge-interview/index.html",
-      "sha256": "fd68bbd02a53f9ba2058231f49ccdba25400c3faf7070369fdb6be3671df98f8",
+      "sha256": "fb0d29d1a2ff7aaea5857a4e42d1e70381c854a96e4759d300af1a31839fd19f",
+      "title_revision_reason": "2026-11-14 title audit: replace colloquial interview-experience wording with core knowledge and interview questions in title and h1; preserve questions, answers and sources.",
       "reason": "Add prerequisites, architecture/training reading route and fact-review limits. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     },
     {
@@ -104,7 +107,8 @@
     },
     {
       "source": "content/series/dlm-survey/s01_overview.html",
-      "sha256": "1d6aad7820d1e845f440808ccff8279ca592ced151d36df5161968193f342cd4",
+      "sha256": "75b15ed7d4a5fdd45a1de8c0f5d00c3cc0b419f0d0c5a7d31c70accfe74fadc0",
+      "title_revision_reason": "2026-11-14 title audit: call the chapter an overview of major diffusion routes; change two classification headings from schools to routes without changing their scientific contents.",
       "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     },
     {
@@ -124,7 +128,8 @@
     },
     {
       "source": "content/series/dlm-survey/s05_paradigms.html",
-      "sha256": "ae4948debc0cece9b6697aa26a8abf14e98033d49422025f36fbc32e6ec15dfb",
+      "sha256": "22fe490746756f97a972adf05dea02a73cf2a0d32fad0aeb6885672012bc4e37",
+      "title_revision_reason": "2026-11-14 title audit: replace grand-unification framing with comparison of prediction targets and parameterizations; keep formulas and assumptions unchanged.",
       "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     },
     {
@@ -134,7 +139,8 @@
     },
     {
       "source": "content/series/dlm-survey/s07_speculative.html",
-      "sha256": "470a91184bb72cf3621952228a63909743e9e0e2f1abf12c9f137de72b7cfc8d",
+      "sha256": "0d3609a754a9742332a505c4686b99437739bffb6a42368aa36e382f257fb615",
+      "title_revision_reason": "2026-11-14 title audit: simplify the DFlash/MTP comparison title and chapter heading; preserve evidence and original comparison content.",
       "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     },
     {
@@ -144,12 +150,14 @@
     },
     {
       "source": "content/series/dlm-survey/s09_commercial.html",
-      "sha256": "8cf23f3ea61e069eb15f1341c7413c9e9b8ca989e790047ad1300bc1392df89c",
+      "sha256": "5c920a790728879dd7351e558e62992c5f11aa86bf9163e3131a6e74b3bd52dc",
+      "title_revision_reason": "2026-11-14 title audit: describe the DiffusionGemma subsection as mechanism and public measurements rather than industrial validation; leave original reported measurements and qualifications intact.",
       "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     },
     {
       "source": "content/series/dlm-survey/s10_comparison.html",
-      "sha256": "03183c60b4f23a442cd99c90acbd2993091e31c775be5ebe185d7b256327fc7a",
+      "sha256": "7d3d08191f5f9524ef1ab047617e1651ddae05c6ec3e70dca87142bdc4e9de8d",
+      "title_revision_reason": "2026-11-14 title audit: name the chapter by diffusion-method comparison and research directions rather than its table format; preserve tables and all research units.",
       "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     },
     {
@@ -159,7 +167,8 @@
     },
     {
       "source": "content/series/dlm-survey/s12_vae.html",
-      "sha256": "9b1df9ee227fbd50408fd2ee0d4bc074a16f10576fdf33fc2e10c712c81d7c7c",
+      "sha256": "0cc22e99601136779745d731e0e83a3ab2d4339fd89ed2be0d0f109e4885e782",
+      "title_revision_reason": "2026-11-14 title audit: remove repeated VAE wording by naming the chapter principles, development and main variants; preserve subsection details, formulas and sources.",
       "reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
     }
   ]

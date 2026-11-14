@@ -8,7 +8,7 @@
 <p>先修<a href="../transformer-decoder-flow.html">Decoder prefill/decode</a>与<a href="../llm-architecture/s02_attention_position_cache.html">KV公式</a>。本章解释调度；多设备通信和低精度见<a href="s02_parallel_quantization.html">下一章</a>。</p>
 <figure><div class="flow"><div class="stage"><b>排队与准入</b><small>长度、优先级、租户<br>可用token/状态预算</small></div><div class="stage"><b>匹配已有前缀</b><small>模型版本与权限域<br>命中部分 / 未命中部分</small></div><div class="stage"><b>调度一次前向</b><small>prefill块 + decode<br>分配物理cache blocks</small></div><div class="stage"><b>提交与释放</b><small>输出、结束、取消<br>保留可复用prefix或回收</small></div></div><figcaption>每轮更新完成token数和可用block。投机解码与混合状态可能让一轮推进多个token或维护额外状态。</figcaption></figure>
 </section>
-<section id="phases"><h2>Prefill和decode具有不同工作形状</h2>
+<section id="phases"><h2 id="reading-section-2">Prefill 与 decode 的计算负载不同</h2>
 <p>prefill处理新输入的多个位置，建立各层历史状态；decode使用已有状态生成后续位置。prefill的矩阵批量通常更大，decode低batch常受权重/KV读取和层间launch影响；这只是常见瓶颈，不是“prefill永远compute-bound、decode永远memory-bound”的定律。长度、并发、MoE、kernel、精度和网络会改变瓶颈。</p>
 <p>TTFT包含排队、输入预处理、prefix查找、prefill及首token产生；ITL描述输出token之间的间隔。一个长prefill占用设备，会干扰已有decode的尾延迟；过度偏向decode又可能让新请求等待。调度需定义SLO和公平性。</p>
 <table><thead><tr><th>批处理方式</th><th>行为</th><th>局限</th></tr></thead><tbody>

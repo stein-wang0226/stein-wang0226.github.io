@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>科学 Agent 任务族：数据与验证合同</title>
+<title>科学 Agent 任务设计：数据、分析要求与验收</title>
 <meta name="description" content="围绕 GSE52778 与 airway 设计 RNA-seq 科学 Harbor 任务族，贯通来源审计、公共输出schema、研究切分、独立verifier和轨迹。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
@@ -52,7 +52,7 @@
 <p>本文分析：相比指定必须用某R包，公开科学操作与输出语义更能测量决策能力。若跨方法的合理结果无法统一校准，应拆成不同评分协议，而不是随意放大容差或要求匹配论文叙事。</p>
 </section>
 <section id="statistics">
-<h2>科学合同先固定对比和统计单位</h2>
+<h2 id="reading-section-4">分析要求：先固定比较对象与统计单位</h2>
 <div class="equation" role="math" aria-label="配对RNA-seq统计模型">K_gj ~ NB(μ_gj, α_g)，Var(K_gj)=μ_gj+α_g μ_gj²
 log μ_gj = log s_j + β_g0 + donor效应 + β_g,Dex · I(Dex)
 本合同方向：Dex / untreated；log2FC = β_g,Dex / log(2)

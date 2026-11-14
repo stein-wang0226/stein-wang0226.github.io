@@ -39,7 +39,7 @@ run_in_isolated_worker(request, limits=capability.resource_limits)
 record(request, policy_version, authorization_decision, tool_result)</code></pre>
 <p>检查与使用之间还可能有TOCTOU；真实实现需使用受限目录句柄/挂载及适当系统调用约束。这里表达职责，未实现或验证执行器。</p></details>
 </section>
-<section id="science"><h2>科学合同、独立verifier和权限的连接</h2>
+<section id="science"><h2 id="reading-section-4">科学任务要求、独立验证与权限控制</h2>
 <p>科学任务公开完整输出schema、design与可用输入，不公开隐藏参考结果。模型能读fixture、写自己的artifact，verifier在独立只读输入/输出通道中运行；奖励文件不能由模型写入。容差、标签、参考和verifier源码按任务威胁模型决定可见性，不能依赖模糊题面来隐藏答案。</p>
 <p>对于本文airway设计，原始count和来源审计只读，每条轨迹输出隔离；正式评分阶段没有任意网络查答案。若研究模式允许访问官方文档，应与闭卷终评分别命名并计预算。不能在训练时公开某研究答案，再把同研究变体称为独立test。</p>
 <table><thead><tr><th>安全负例（待构建）</th><th>应由哪一层处理</th><th>验收对象</th></tr></thead><tbody>
