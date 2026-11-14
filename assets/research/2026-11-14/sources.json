@@ -720,6 +720,14 @@
       "used_for": "Episode and anchor-state group advantages; recurrence/fragmentation limits.",
       "local_asset": null,
       "used_in": [
+        "/agentic-rl-guide.html#citation-sources-11",
+        "/agentic-rl-guide.html#citation-sources-19",
+        "/agentic-rl-guide.html#citation-sources-20",
+        "/agentic-rl-guide.html#citation-sources-30",
+        "/agentic-rl-guide.html#citation-sources-33",
+        "/agentic-rl-guide.html#citation-sources-35",
+        "/agentic-rl-guide.html#citation-sources-8",
+        "/llm-posttraining/s04_environment_reward_credit.html#citation-sources-8",
         "/llm-research-map-2026/s02_agentic_rl.html#credit"
       ],
       "historical_used_in": [],
@@ -970,7 +978,9 @@
       "used_for": "Multi-teacher capability integration under student rollouts.",
       "local_asset": null,
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#citation-sources-5",
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-posttraining/s05_frameworks_async.html#citation-sources-2",
         "/llm-research-map-2026/s04_inference_diffusion.html#opd",
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
       ],
@@ -1213,6 +1223,10 @@
       "used_for": "MiniMax-M1 original clipped-IS objective and stop-gradient; not Kimi K2 origin.",
       "local_asset": null,
       "used_in": [
+        "/agentic-rl-guide.html#citation-sources-21",
+        "/agentic-rl-guide.html#citation-sources-32",
+        "/agentic-rl-guide.html#citation-sources-35",
+        "/llm-posttraining/s02_rl_algorithms.html#citation-sources-6",
         "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],

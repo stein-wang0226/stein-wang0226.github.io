@@ -9,14 +9,14 @@
 | 章节 | 核心贡献 | 主要来源编号 |
 | --- | --- | --- |
 | 01 监督与偏好 | mask、两种RFT、恢复、DPO/SimPO/ORPO/KTO、工业训练图 | 12–23、27、49 |
-| 02 RL目标 | PPO/GAE/RLOO/GRPO、分母、GSPO/CISPO/SAPO/SAO | 1–11、44、50 |
-| 03 OPD | fixed-prefix梯度、full/sample/top-k、多教师、自蒸馏、覆盖与遗忘 | 24–36、60、66 |
-| 04 环境与信用 | Harbor隔离、PRM/value、PURE/Cliff、anchor/子任务/GAR | 27、37–44、53–54 |
-| 05 系统 | 十类框架、三策略、completion bias、partial KV、固定slime代码 | 25、27、45–65 |
+| 02 RL目标 | PPO/GAE/RLOO/GRPO、分母、GSPO/CISPO/SAPO/SAO、RLVR配置与诊断 | 1–11、44、50、58 |
+| 03 OPD | fixed-prefix梯度、full/sample/top-k、多教师、自蒸馏、参数、覆盖与遗忘 | 24–36、55、60、66 |
+| 04 环境与信用 | Harbor隔离、PRM/value、图/信念/环境反馈信用、子任务与GAR | 27、37–44、53–54、67–70 |
+| 05 系统 | 十二类框架、配置映射、三策略、completion bias、partial KV、固定slime代码 | 25、27、45–65、71–72 |
 | 06 案例 | code/科学/GUI输入到终评、轨迹契约、单轴消融与成本 | 16、27、30、34、41、53–54 |
 
 编号、原始URL、版本/commit、位置与使用章节见公开
-`assets/research/posttraining-20261114/sources.json`，共66项。
+`assets/research/posttraining-20261114/sources.json`，共72项。
 该索引从正文参考列表生成。动态文档记录访问日期，不宣称与仓库SHA同步。
 不归档整个外部仓库或新大文件；沿用既有V4.1、Ultra、RLDS、ARLArena原件。
 
@@ -59,6 +59,26 @@
     不将2025 v0.x LightningRL图当作当前实现。
 17. 框架固定README支持与特殊branch/recipe边界保留，ROLL部分async仍在实现。
     AReaL新后端、SkyRL两package、NeMo跨tokenizer均不泛化为全组合支持。
+18. 2026 Agentic RL信用趋势新增GraphGPO、ReBel、EFCA与MileGPO：
+    分别复用状态转移图、结构化belief、环境反馈多时间尺度和里程碑/分支证据。
+    主要实验环境集中在ALFWorld/WebShop等，不外推为开放代码、GUI和科学任务的通用增益。
+19. TorchForge固定README `b32f06b` 明确开发暂停并向TorchTitan汇总，
+    因而仅保留架构参考，不列为活跃首选。ART固定README `534620a` 作为
+    既有多步Agent接入GRPO的客户端/训练后端路线，不与底层分布式框架按star排名。
+20. 配方审计以语义字段为准：模型/模板、prompt batch、每题生成数、生成参数、
+    verifier、advantage、ratio/clip/分母、优化器、并行与异步版本均需记录。
+    没有跨模型通用依据的learning rate、group size或batch不写成标准答案。
+
+## 面试覆盖审计结论
+
+| 维度 | 当前覆盖 | 结论 |
+| --- | --- | --- |
+| RLVR算法 | PPO/GAE、RLOO/GRPO、DAPO/Dr.GRPO、GSPO/CISPO、两种SAPO、SAO | 主线完整；已补配方和诊断 |
+| Agentic RL | 多轮环境、verifier、GiGPO/RLDS/KnowGPO、图/belief/环境反馈信用、单轨迹value | 主流与2026趋势已形成方法簇，不逐篇堆名 |
+| OPD | full/top-k/sampled、MOPD/MOPD2、OPSD/SDPO/SDPG、Guided-OPD/TISD、遗忘 | 主线完整；已补教师接口、混合目标和监控 |
+| 框架 | TRL、verl、slime、AReaL、OpenRLHF、NeMo RL、ROLL、RLinf、SkyRL、Agent Lightning、ART、TorchForge | 按角色和维护状态覆盖；不做star速度榜 |
+| 参数与训练细节 | batch关系、rollout、reward、advantage、loss、optimizer、parallel、policy lag、OPD信号 | 达到面试解释与配置审计层；不伪造统一可运行YAML |
+| 旁支谱系 | Offline RL、Decision Transformer、AlphaZero/MuZero、MARL、Distributional/Model-based RL | 在面试手册略写完整，不与RLVR主线等篇幅 |
 
 ## 图与教学资源
 

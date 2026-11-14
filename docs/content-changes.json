@@ -9,8 +9,8 @@
     },
     {
       "source": "content/posts/agentic-rl-guide/index.html",
-      "sha256": "4daa89b9bb6b7d88b1d6b3d48a1b93bf793977b4c61e37a4e600790a6b9fbc67",
-      "reason": "Add prerequisites, reading route and training artifacts. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "c16bd46eee33b2a677fbb37600c6ad248f33bc584a221539ac0498bd4c7e7206",
+      "reason": "Add prerequisites, reading route and training artifacts. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified. Follow-up RL audit: constrain the RLVR ceiling claim to the cited study settings; replace framework fact-standard and star-ranking language with capability/version boundaries; record TorchForge's development pause and ART's integration role using fixed README commits."
     },
     {
       "source": "assets/site/catalog.js",
@@ -75,8 +75,8 @@
     },
     {
       "source": "content/posts/rl-interview-guide/index.html",
-      "sha256": "aadfe16d7c1a04c5750dbf9d769b1f0077e9aef022247c4a3127a88b138d2139",
-      "reason": "Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged."
+      "sha256": "04fdfc768ce44741d6af18b69ffeb19d302cda3dd637a1a6bf772ce4c8581ec4",
+      "reason": "Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified. Follow-up RL audit: make GRPO group size recipe-dependent, add compact Offline RL/Decision Transformer/planning/self-play/MARL/distributional/model-based coverage, and remove an unsupported blanket ranking of offline LLM RL."
     },
     {
       "source": "templates/home.html",

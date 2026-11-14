@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>02 · RL 目标、主流算法与训练偏差</title>
-<meta name="description" content="从策略梯度、PPO/GAE 到 RLOO/GRPO/DAPO/Dr.GRPO/GSPO/CISPO/SAPO，分析长度、异质数据、单轨迹价值学习与真实目标。">
+<title>02 · RLVR 目标、主流算法、配置与训练诊断</title>
+<meta name="description" content="从策略梯度、PPO/GAE 到 RLOO/GRPO/DAPO/Dr.GRPO/GSPO/CISPO/SAPO，分析长度、异质数据、配置字段、训练监控与诊断。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
@@ -19,6 +19,8 @@ Aₜ = Q(hₜ,aₜ) − b(hₜ)；b 不依赖当前采样动作时可作 baselin
 </section>
 <section id="ppo-gae">
 <h2>PPO 与 GAE：学习一个状态价值来降低方差</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>。</p></section>
+
 <p>PPO 用采样策略 <code>πold</code> 的 rollout 更新 <code>πθ</code>，critic 估计未来回报。GAE 将不同长度的 TD residual 混合，在价值误差与采样方差之间取舍。<a href="index.html#ref-1">[1]</a> <a href="index.html#ref-2">[2]</a></p>
 <div class="equation" role="math" aria-label="GAE和PPO">δₜ = rₜ + γ V(hₜ₊₁) − V(hₜ)
 Âₜ = Σₗ≥0 (γλ)^l δₜ₊ₗ
@@ -33,6 +35,8 @@ J_clip = E[min(ρₜ Âₜ, clip(ρₜ,1−εlow,1+εhigh) Âₜ)]</div>
 </section>
 <section id="rloo-grpo">
 <h2>RLOO 与 GRPO：用同题候选代替 learned baseline</h2>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 <div class="equation" role="math" aria-label="组相对优势">RLOO：Aᵢ = Rᵢ − (1/(G−1)) Σⱼ≠ᵢ Rⱼ
 GRPO：Aᵢ = (Rᵢ − mean(R₁…R_G)) / (std(R₁…R_G) + ε)</div>
 <p>RLOO 用其他候选的均值避免自己的 reward 进入 baseline；GRPO 用组内中心化和标准差。它们节省显式 critic，却需要同一任务多次采样；单条长 episode 很贵时，省下的 critic 不能直接等价为总成本降低。<a href="index.html#ref-3">[3]</a> <a href="index.html#ref-4">[4]</a></p>
@@ -65,6 +69,8 @@ G=8：p=0.01 / 0.99 时约 7.7%；p=0.50 时约 99.2%</div>
 </section>
 <section id="normalization">
 <h2>DAPO、Dr. GRPO：归一化与数据准入也是算法的一部分</h2>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>。</p></section>
+
 <table>
 <thead><tr><th>设计</th><th>为什么改</th><th>会带来什么新边界</th></tr></thead>
 <tbody>
@@ -84,6 +90,8 @@ Token 平均：ΣᵢΣₜ ℓᵢₜ / Σᵢ Tᵢ
 </section>
 <section id="ratio-methods">
 <h2>GSPO、CISPO、Soft SAPO：控制更新的对象不同</h2>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>；<a href="https://arxiv.org/abs/2506.13585v1" title="MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention · 2025/06/16 · 2506.13585v1">CISPO / MiniMax-M1</a>。</p></section>
+
 <div class="equation" role="math" aria-label="GSPO序列ratio">sᵢ = exp[(1/Tᵢ) Σₜ log(πθ(aᵢₜ|hᵢₜ) / πold(aᵢₜ|hᵢₜ))]
 J_GSPO = meanᵢ min(sᵢ Aᵢ, clip(sᵢ,1−εlow,1+εhigh) Aᵢ)</div>
 <p>GSPO 在序列层裁剪长度归一化几何比率，缓解 token ratio 的不稳定和更新单位不一致。它不是完整轨迹 importance ratio 的乘积，也不保证对所有长程 off-policy 目标无偏。<a href="index.html#ref-7">[7]</a></p>
@@ -98,6 +106,8 @@ df/dρ = 4p(1−p)；ρ=1 时门控为 1
 </section>
 <section id="single-rollout">
 <h2>单轨迹长程训练：另外一种 SAPO，以及 SAO</h2>
+<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>。</p></section>
+
 <table>
 <thead><tr><th>路线</th><th>baseline / 信用</th><th>主要动机与限制</th></tr></thead>
 <tbody>
@@ -109,8 +119,55 @@ df/dρ = 4p(1−p)；ρ=1 时门控为 1
 <div class="callout caution"><strong>SAPO 同名必须区分。</strong>Qwen 的 Soft Adaptive Policy Optimization 研究 ratio 门控；Single-Rollout Autoregressive Policy Optimization 研究单 rollout 的 policy/value 和回合信用。缩写相同，目标和系统不是同一条路线。</div>
 <p>长程任务应比较“每题多候选的 baseline 成本”和“单候选 + critic 成本”。用相同更新步数未必公平：两者探索 token、执行等待和价值训练量不同。需要同生成预算与同总计算预算两个口径。</p>
 </section>
+<section id="rlvr-recipe">
+<h2>RLVR 配方：从配置字段到训练诊断</h2>
+<p>RLVR 是奖励来源，GRPO / RLOO / PPO 是更新算法。一个可复现配方不能只写“RLVR + GRPO”，还要固定模型快照、chat template、任务采样、rollout、verifier、优势、loss 聚合、优化器与评测协议。下表给出跨 TRL、verl 等实现都应能映射的语义字段；具体键名和默认值以所用 commit 为准。<a href="index.html#ref-50">[50]</a> <a href="index.html#ref-58">[58]</a></p>
+<table>
+<thead><tr><th>配置层</th><th>至少记录</th><th>关键关系与常见误区</th></tr></thead>
+<tbody>
+<tr><td>Prompt batch</td><td>每步 prompt 数、每 prompt 生成数 G、梯度累积、DP world size</td><td>rollout 条数约为 prompt 数 × G；global batch 还取决于过滤后是否补采，不能只报 device batch</td></tr>
+<tr><td>生成</td><td>temperature、top-p / top-k、最大 response token、stop、工具最大回合</td><td>采样分布决定探索与 behavior log-prob；Agent 的回合上限和单回合 token 上限需分开</td></tr>
+<tr><td>奖励</td><td>各 verifier、权重、超时、invalid、截断和环境故障处理</td><td>格式分、正确分与成本分分别记录；基础设施失败不能静默记为模型 0 分</td></tr>
+<tr><td>优势</td><td>GRPO / RLOO / GAE、是否除 std、全同奖励组处理、动态采样</td><td>G 不是固定“标准值”；G 增大会提高发现成败差异的机会，也线性增加生成成本</td></tr>
+<tr><td>策略目标</td><td>token / sequence ratio、clip low/high、loss 分母、每批更新轮数、KL 位置与系数</td><td>“DAPO loss”不自动包含动态采样和 overlong shaping；多轮复用同批会增加与 behavior policy 的偏移</td></tr>
+<tr><td>优化器</td><td>全参或 PEFT、学习率、scheduler、warmup、weight decay、grad clip、精度</td><td>学习率必须和参数规模、有效 token batch、更新轮数一起解释；不同 recipe 的数值不可脱离这些条件抄用</td></tr>
+<tr><td>系统</td><td>训练/rollout 后端、并行布局、colocation、策略版本、队列与权重同步周期</td><td>同 checkpoint 仍可能因 kernel、精度、template 或采样参数产生 log-prob 差异</td></tr>
+</tbody>
+</table>
+<h3>最小配置骨架：先表达语义，再翻译成框架键名</h3>
+<pre><code># 教学骨架，不是可直接运行的通用 YAML
+model: {checkpoint, tokenizer, chat_template, precision}
+data: {prompt_sources, domain_weights, prompt_batch, seed}
+rollout: {num_generations, temperature, top_p, max_response_tokens,
+          max_agent_turns, stop_rules, behavior_logprobs}
+reward: {verifiers, weights, timeout_policy, invalid_policy, overlong_policy}
+advantage: {estimator, group_std, epsilon, all_equal_policy, resampling}
+policy_loss: {ratio_unit, clip_low, clip_high, aggregation,
+              updates_per_rollout, kl_estimator, kl_coef}
+optimizer: {trainable_parameters, learning_rate, scheduler, warmup,
+            weight_decay, grad_clip, gradient_accumulation}
+runtime: {train_backend, rollout_backend, dp, tp, pp, cp, ep,
+          colocate, sync_interval, max_policy_lag}
+evaluation: {frozen_checkpoint, decoding_budget, held_out_tasks,
+             pass_at_k, success_cost, capability_regression}</code></pre>
+<h3>训练曲线不能只看 reward</h3>
+<table>
+<thead><tr><th>监控项</th><th>异常信号</th><th>优先排查</th></tr></thead>
+<tbody>
+<tr><td>有效组率、全零/全一组率</td><td>大部分组无差异</td><td>难度、协议、verifier、G 与补采；不要先盲目调学习率</td></tr>
+<tr><td>response 长度、结束率、截断率</td><td>reward 上升且长度持续增长</td><td>长度分母、overlong 处理、停止奖励和过程 reward 投机</td></tr>
+<tr><td>entropy、KL、clip fraction、ratio 分位数</td><td>entropy 骤降或 ratio 长尾</td><td>学习率、更新轮数、clip、旧策略版本与 rollout / train log-prob 一致性</td></tr>
+<tr><td>每域 dispatch / 完成 / 接受 / 训练占比</td><td>长任务逐步消失</td><td>完成顺序偏移、超时、动态过滤和并发配额</td></tr>
+<tr><td>训练 reward 与冻结终评</td><td>训练分涨、留出成功率不涨</td><td>reward hacking、任务泄漏、grader 漂移和推理预算不一致</td></tr>
+<tr><td>成功/token、成功/GPU-hour、环境重试</td><td>吞吐提升但成功成本变差</td><td>拒绝样本、grader、队列和环境成本是否遗漏</td></tr>
+</tbody>
+</table>
+<div class="callout"><strong>面试回答顺序：</strong>先说 reward 如何验证，再说 advantage 如何构造，随后说明 ratio / clip / 分母怎样更新，最后给出有效组率、KL / entropy、截断率和冻结终评。只背一组超参数，不能证明理解训练配方。</div>
+</section>
 <section id="case-diagnosis">
 <h2>代码修复案例：先定位信号问题，再决定改什么</h2>
+
+
 <table>
 <thead><tr><th>观测</th><th>更直接的解释</th><th>可区分原因的对照</th></tr></thead>
 <tbody>

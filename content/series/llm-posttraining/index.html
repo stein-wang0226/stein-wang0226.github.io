@@ -42,14 +42,18 @@
 </details><!-- READING:HISTORY:END -->
 <section id="findings">
 <h2>这轮调研最值得保留的判断</h2>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
 <p><strong>OPD 的关键是学生状态，而不只是教师更强。</strong> 静态教师示范覆盖理想路径；学生 rollout 暴露自己的失败 prefix。MOPD2、Guided-OPD 与 TISD 又通过前缀、接管和轨迹分支改变状态覆盖。它们是否“on-policy”，要说明是整条 episode 还是仅新增 continuation。<a href="#ref-30">[30]</a> <a href="#ref-27">[27]</a> <a href="#ref-34">[34]</a> <a href="#ref-35">[35]</a></p>
 <p><strong>稠密反馈不等于更可信。</strong> PRM、文本反馈、特权答案和教师 logits 可以提供比二值成败更丰富的信号，也会引入步骤误判、泄漏、奖励投机和偏离真实任务。最终评分仍应来自独立产物或状态验证。<a href="#ref-32">[32]</a> <a href="#ref-38">[38]</a> <a href="#ref-39">[39]</a></p>
 <p><strong>异步吞吐要和有效学习一起核算。</strong> 样本的策略版本延迟、同版本训练与推理数值差异、完成顺序导致的任务偏移是三类问题。importance ratio 主要处理概率分布差异，不能自动补回调度中消失的长任务。<a href="#ref-25">[25]</a> <a href="#ref-51">[51]</a> <a href="#ref-52">[52]</a></p>
 <p><strong>工业报告有实质分歧，应通过实验判断。</strong> DeepSeek V4 / V4.1 使用完整词表 OPD，Nemotron Ultra 报告其部分 Agent 实验更偏好 sampled-token。OPDArena 又提醒教师保留能力和目标任务增益不总是同步。这里保留配置、来源和失败解释，而不宣布通用赢家。<a href="#ref-24">[24]</a> <a href="#ref-25">[25]</a> <a href="#ref-26">[26]</a> <a href="#ref-36">[36]</a></p>
-<p class="note">调研截止 2026-11-14，引用 66 项原论文、团队报告、官方文档或固定源码。数值属于原作者报告或明确标注的解析推导；本站没有执行 GPU 后训练。三类任务案例与对照矩阵是教学设计，不能当作真实训练日志或性能结果。</p>
+<p class="note">调研截止 2026-11-14，引用 72 项原论文、团队报告、官方文档或固定源码。数值属于原作者报告或明确标注的解析推导；本站没有执行 GPU 后训练。三类任务案例与对照矩阵是教学设计，不能当作真实训练日志或性能结果。</p>
 </section>
 <section id="downloads">
 <h2>资料与可复核口径</h2>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 <p><a href="../assets/research/posttraining-20261114/sources.json" download>来源索引 JSON</a> · <a href="../assets/research/posttraining-20261114/group-signal.csv" download>GRPO 有效组概率 CSV</a> · <a href="../assets/research/posttraining-20261114/mimo-compute.csv" download>MiMo RL 算力构成 CSV</a> · <a href="../assets/research/posttraining-20261114/case-contracts.json" download>教学案例与轨迹契约</a> · <a href="../assets/research/posttraining-20261114/experiment-matrix.csv" download>待执行实验矩阵</a></p>
 <p>数学推导和来源定位记录在仓库 <code>docs/posttraining-research-20261114.md</code>。案例契约中的 <code>execution_status=design_only</code> 表明尚未执行训练；诊断字段没有填入虚构的 reward、成功率或 GPU 小时。</p>
 </section>
@@ -123,8 +127,17 @@
 <li id="ref-64"><a href="https://github.com/microsoft/agent-lightning/blob/2070bad5113e52f1aa2e5bdba822d4b24b197c05/README.md">Agent Lightning · README @ 2070bad</a> · v1 当前重写实现；MIT。</li>
 <li id="ref-65"><a href="https://github.com/huggingface/trl/blob/8ad18ec1b6493b85cf9fffbd87d376767ceb8611/README.md">TRL · README @ 8ad18ec</a> · trainer 体系；Apache-2.0，动态文档另列。</li>
 <li id="ref-66"><a href="https://arxiv.org/html/2606.30406v1">MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training</a> · 多教师能力整合，区别于 MiMo-V2.6 的 Multi-Prefix MOPD2 扩展。</li>
+<li id="ref-67"><a href="https://arxiv.org/html/2605.26684v2">Beyond Trajectory-Level Attribution: Graph-Based Credit Assignment for Agentic Reinforcement Learning</a> · GraphGPO；任务内状态转移图、目标距离与边级优势。</li>
+<li id="ref-68"><a href="https://arxiv.org/html/2605.20061v1">Rewarding Beliefs, Not Actions: Consistency-Guided Credit Assignment for Long-Horizon Agents</a> · ReBel；结构化 belief、一致性反馈与 belief-aware grouping。</li>
+<li id="ref-69"><a href="https://arxiv.org/html/2608.08255v1">Learning from Environmental Feedback: Credit Assignment across Multiple Timescales for Agentic Reinforcement Learning</a> · EFCA；即时环境反馈、近期历史与最终结果。</li>
+<li id="ref-70"><a href="https://arxiv.org/html/2608.19803v1">MileGPO: Milestone Inference with Local Evidence for Graph-Based Policy Optimization of Long-Horizon LLM Agents</a> · rollout 图上的里程碑、陷阱、可靠性和分支校准。</li>
+<li id="ref-71"><a href="https://github.com/meta-pytorch/torchforge/blob/b32f06b6417a6d3e7ed50355036a1133e000d932/README.md">TorchForge · README @ b32f06b</a> · PyTorch-native Agentic RL；2026-04-23 明确开发暂停并向 TorchTitan 汇总；BSD-3-Clause。</li>
+<li id="ref-72"><a href="https://github.com/OpenPipe/ART/blob/534620a41b82ed89667f4642cc0b8e1d00e2269b/README.md">ART · README @ 534620a</a> · 多步 Agent 的 GRPO 接入、本地/托管训练后端与 vLLM/LoRA；Apache-2.0。</li>
 </ol>
 </section>
+<!-- READING:HISTORY:START --><details data-reading-history><summary>来源数量更新前的冻结说明</summary>
+<p>调研截止 2026-11-14，引用 66 项原论文、团队报告、官方文档或固定源码。数值属于原作者报告或明确标注的解析推导；本站没有执行 GPU 后训练。三类任务案例与对照矩阵是教学设计，不能当作真实训练日志或性能结果。</p>
+</details><!-- READING:HISTORY:END -->
 </main>
 </body>
 </html>

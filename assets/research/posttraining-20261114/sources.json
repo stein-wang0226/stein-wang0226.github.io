@@ -154,6 +154,10 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MiniMax-M1 · MiniMax；CISPO 的 detached clipped importance weights。",
       "used_in": [
+        "/agentic-rl-guide.html#citation-sources-21",
+        "/agentic-rl-guide.html#citation-sources-32",
+        "/agentic-rl-guide.html#citation-sources-35",
+        "/llm-posttraining/s02_rl_algorithms.html#citation-sources-6",
         "/llm-posttraining/s02_rl_algorithms.html#ratio-methods",
         "/llm-research-map-2026/s02_agentic_rl.html#objectives"
       ],
@@ -1003,6 +1007,7 @@
       "source_position_and_scope": "TRL · GRPO Trainer · reward scaling、loss type、ratio 粒度；动态 main 文档。",
       "used_in": [
         "/llm-posttraining/s02_rl_algorithms.html#normalization",
+        "/llm-posttraining/s02_rl_algorithms.html#rlvr-recipe",
         "/llm-posttraining/s05_frameworks_async.html#framework-map"
       ],
       "used_in_before_organization": [
@@ -1095,6 +1100,7 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "slime · OPD advantage 源码 · Apache-2.0；同 SHA 的 OPD 文档与教师评分入口。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#opd-recipe",
         "/llm-posttraining/s05_frameworks_async.html#slime-opd"
       ],
       "used_in_before_organization": [
@@ -1146,6 +1152,7 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "verl · README @ 61adb0c · FSDP / Megatron 与 rollout 后端；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#rlvr-recipe",
         "/llm-posttraining/s05_frameworks_async.html#framework-map"
       ],
       "used_in_before_organization": [
@@ -1180,6 +1187,7 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "NeMo RL · README @ bb9ed78 · AutoModel / Megatron Bridge、多教师与不同 tokenizer 路线；Apache-2.0。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#opd-recipe",
         "/llm-posttraining/s03_opd_self_distillation.html#sampled-gradient",
         "/llm-posttraining/s05_frameworks_async.html#framework-map"
       ],
@@ -1285,13 +1293,107 @@
       "accessed": "2026-11-14",
       "source_position_and_scope": "MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · 多教师能力整合，区别于 MiMo-V2.6 的 Multi-Prefix MOPD2 扩展。",
       "used_in": [
+        "/llm-posttraining/s03_opd_self_distillation.html#citation-sources-5",
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
+        "/llm-posttraining/s05_frameworks_async.html#citation-sources-2",
         "/llm-research-map-2026/s04_inference_diffusion.html#opd",
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s03_opd_self_distillation.html"
       ],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 67,
+      "title": "Beyond Trajectory-Level Attribution: Graph-Based Credit Assignment for Agentic Reinforcement Learning",
+      "url": "https://arxiv.org/html/2605.26684v2",
+      "kind": "paper",
+      "version": "2605.26684v2",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "GraphGPO · 任务内状态转移图、目标距离与边级优势；主要实验为ALFWorld、WebShop、Sokoban。",
+      "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#credit-frontier"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 68,
+      "title": "Rewarding Beliefs, Not Actions: Consistency-Guided Credit Assignment for Long-Horizon Agents",
+      "url": "https://arxiv.org/html/2605.20061v1",
+      "kind": "paper",
+      "version": "2605.20061v1",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "ReBel · 结构化belief、一致性反馈与belief-aware grouping；主要实验为ALFWorld与WebShop。",
+      "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#credit-frontier"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 69,
+      "title": "Learning from Environmental Feedback: Credit Assignment across Multiple Timescales for Agentic Reinforcement Learning",
+      "url": "https://arxiv.org/html/2608.08255v1",
+      "kind": "paper",
+      "version": "2608.08255v1",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "EFCA · 环境即时反馈、近期action-feedback历史与终局结果的多时间尺度信用；CC BY 4.0。",
+      "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#credit-frontier"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 70,
+      "title": "MileGPO: Milestone Inference with Local Evidence for Graph-Based Policy Optimization of Long-Horizon LLM Agents",
+      "url": "https://arxiv.org/html/2608.19803v1",
+      "kind": "paper",
+      "version": "2608.19803v1",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "MileGPO · rollout图上的里程碑、陷阱、可靠性加权、局部进展和同状态分支校准。",
+      "used_in": [
+        "/llm-posttraining/s04_environment_reward_credit.html#credit-frontier"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 71,
+      "title": "TorchForge · README @ b32f06b",
+      "url": "https://github.com/meta-pytorch/torchforge/blob/b32f06b6417a6d3e7ed50355036a1133e000d932/README.md",
+      "kind": "source-code",
+      "version": "b32f06b6417a6d3e7ed50355036a1133e000d932",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "PyTorch-native Agentic RL抽象；README明确开发暂停并向TorchTitan汇总；BSD-3-Clause。",
+      "used_in": [
+        "/agentic-rl-guide.html",
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-14"
+    },
+    {
+      "id": 72,
+      "title": "ART · README @ 534620a",
+      "url": "https://github.com/OpenPipe/ART/blob/534620a41b82ed89667f4642cc0b8e1d00e2269b/README.md",
+      "kind": "source-code",
+      "version": "534620a41b82ed89667f4642cc0b8e1d00e2269b",
+      "accessed": "2026-11-14",
+      "source_position_and_scope": "Agent Reinforcement Trainer；多步Agent接入GRPO、本地/托管训练后端与vLLM/LoRA；Apache-2.0。",
+      "used_in": [
+        "/agentic-rl-guide.html",
+        "/llm-posttraining/s05_frameworks_async.html#framework-map"
+      ],
+      "used_in_before_organization": [],
       "historical_used_in": [],
       "usage_as_of": "2026-11-14"
     }

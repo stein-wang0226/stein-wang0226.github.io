@@ -463,7 +463,10 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
-        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
+        "/agentic-rl-guide.html#citation-sources-10",
+        "/agentic-rl-guide.html#citation-sources-35",
+        "/agentic-rl-guide.html#citation-sources-4"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
@@ -599,7 +602,9 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
-        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
+        "/agentic-rl-guide.html#citation-sources-30",
+        "/agentic-rl-guide.html#citation-sources-34"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"
@@ -629,7 +634,9 @@
       "kind": "paper",
       "accessed": "2026-11-14",
       "used_in": [
-        "/agent-data-benchmarks/s02_benchmark_map.html#classics"
+        "/agent-data-benchmarks/s02_benchmark_map.html#classics",
+        "/agentic-rl-guide.html#citation-sources-30",
+        "/agentic-rl-guide.html#citation-sources-34"
       ],
       "used_in_before_organization": [
         "/agent-data-benchmarks/s02_benchmark_map.html"

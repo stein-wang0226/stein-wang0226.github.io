@@ -3,13 +3,15 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>03 · OPD、多教师与自蒸馏：从条件分布到长程 Agent</title>
-<meta name="description" content="深入 OPD 的状态分布、reverse-KL 与采样梯度，比较 DeepSeek、Nemotron、MiMo MOPD2、OPSD/SDPO/SDPG/Guided-OPD/TISD 和遗忘。">
+<meta name="description" content="深入 OPD 的状态分布、reverse-KL 与采样梯度，比较 MOPD2、OPSD/SDPO/SDPG、轨迹干预、教师接口、参数配方、监控和遗忘。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
 <main class="training-lifecycle">
 <section id="why-on-policy">
 <h2>OPD 为什么需要学生自己走一遍任务</h2>
+
+
 <p class="lead">静态蒸馏让学生模仿教师访问过的路径；OPD 让学生生成动作和历史，再由教师评估这些真实学生 prefix 的下一步分布。它补的是状态分布偏移，不只是把教师答案换成概率。</p>
 <figure><div class="flow" aria-label="OPD的训练循环">
 <div class="stage"><b>学生访问状态</b><small>生成动作 / 工具参数<br>真实环境返回观察</small></div>
@@ -24,6 +26,8 @@ d_barθ：生成本批数据的学生快照所访问的 prefix 分布</div>
 </section>
 <section id="full-vocabulary">
 <h2>完整词表 reverse-KL：每个 prefix 的局部梯度</h2>
+
+
 <p>令固定 prefix 上的学生概率是 <code>pᵥ</code>、教师概率是 <code>qᵥ</code>，教师分支无梯度。reverse-KL 对学生具有概率的候选施加约束，forward-KL 则按教师概率加权。支持集、温度和词表对齐必须先定义。</p>
 <div class="equation" role="math" aria-label="反向和正向KL">D_reverse = KL(p || q) = Σᵥ pᵥ(log pᵥ − log qᵥ)
 D_forward = KL(q || p) = Σᵥ qᵥ(log qᵥ − log pᵥ)
@@ -45,6 +49,8 @@ loss.backward()</code></pre>
 </section>
 <section id="sampled-gradient">
 <h2>采样 token 的蒸馏信号：数值估计和正确梯度是两件事</h2>
+
+
 <div class="equation" role="math" aria-label="采样蒸馏梯度">a ~ p：
 D_reverse = Eₐ[log p(a) − log q(a)]
 局部最小化梯度 = Eₐ[(log p(a) − log q(a) − D_reverse) ∇ log p(a)]
@@ -59,6 +65,8 @@ loss = -adv_distill * student_logp
 # 若rollout来自旧行为策略，需要按真实实现定义ratio、mask与截断。</code></pre>
 <p>TML 的公开实现把教师与学生 log-prob 差作为即时 token 蒸馏反馈，使用 γ=0 的设计，避免把每个 token 的反馈简单累成整条序列的大回报；这不是所有 OPD 的统一折扣规则。其“难以 hack”的讨论是接近教师分布这一目标，不能替代独立任务正确性。<a href="index.html#ref-30">[30]</a></p>
 <h3>完整词表、top-k、sampled-token 的信息与成本</h3>
+
+
 <table>
 <thead><tr><th>信号</th><th>知道什么</th><th>实现与误差来源</th></tr></thead>
 <tbody>
@@ -72,6 +80,8 @@ loss = -adv_distill * student_logp
 </section>
 <section id="industry-mopd">
 <h2>工业多教师：DeepSeek、Nemotron 与 MiMo 的选择不同</h2>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2606.30406v1" title="MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · Ma, Wenhan, Wei, Jianyu, Zhao, Liang 等 · 2026/06/29 · 2606.30406v1">MOPD</a>；<a href="https://arxiv.org/abs/2609.34745" title="No Pain, More Gain: Iterative Merging for Effective Multi-Teacher On-Policy Distillation · Kim, Seonghyeon, Jang, Chaeyun, Lee, Noah 等 · 2026/09/28 · 2609.34745">IM-MOPD</a>。</p></section>
+
 <table>
 <thead><tr><th>公开路线</th><th>信号与状态</th><th>可以支持的结论</th></tr></thead>
 <tbody>
@@ -98,6 +108,8 @@ loss = -adv_distill * student_logp
 </section>
 <section id="self-distillation">
 <h2>自蒸馏：同一模型也能通过更充分的信息当教师</h2>
+
+
 <p>“Self” 常指共享或相同模型参数，学生和教师看到的条件可以不同。教师分支得到验证解法、失败反馈或成功 sibling，因此信息更充分；没有外部大教师不等于没有外部监督。</p>
 <table>
 <thead><tr><th>路线</th><th>教师额外条件</th><th>优化与稳定性</th><th>部署边界</th></tr></thead>
@@ -134,9 +146,49 @@ L = L_outcome-PG
 </section>
 <section id="forgetting">
 <h2>OPDArena：目标能力增加，仍需检查能力保留</h2>
+<section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
 <p>OPDArena 比较五个 Qwen Base、OpenR1-50k 一轮训练，主要结果取两个 seed 平均。其 OPD 采用 student-weighted Top-16 approximation；完整词表用于部分分布测量，不能把这项实验说成 full-vocabulary OPD。<a href="index.html#ref-36">[36]</a></p>
 <p>研究发现教师类型会影响保留，RLVR teacher 在相关设置中优于 SFT teacher；更大或更多教师不保证更少遗忘。它与原 OPSD 在 prompt、模板、教师和更新实现上存在差别，不能用一个标签覆盖为“自蒸馏无效”。</p>
 <p>分布外 JS 变化与遗忘呈关联，支持增加行为分布与能力回归监测，但不是单独的因果证明。终评至少并列目标域增量、分布外增量、工具协议稳定性和总成本，避免仅凭 teacher KL 越小越好。</p>
+</section>
+<section id="opd-recipe">
+<h2>OPD 配方：教师接口、信号规模与稳定性</h2>
+<p>OPD 的主要配置不只是蒸馏系数。必须先确定学生访问哪些 prefix、教师看到什么上下文、返回完整词表还是 sampled-token 概率，以及教师信号如何与 outcome RL 合并。下面字段可映射到 slime、NeMo RL 或自研实现；框架支持某种 OPD 不代表默认值适合当前任务。<a href="index.html#ref-55">[55]</a> <a href="index.html#ref-60">[60]</a></p>
+<table>
+<thead><tr><th>配置层</th><th>必须明确</th><th>诊断问题</th></tr></thead>
+<tbody>
+<tr><td>Prefix 来源</td><td>纯学生 rollout、teacher-prefix、SFT-prefix、失败反馈或成功 sibling 的比例</td><td>部署学生能否自主到达这些状态；每个长示范产生多个 prefix 后是否过度加权</td></tr>
+<tr><td>教师条件</td><td>普通同历史、特权答案、环境反馈、教师接管回合；teacher checkpoint / EMA</td><td>训练时额外信息是否泄漏到留出集；教师在学生错误状态上是否仍可靠</td></tr>
+<tr><td>概率接口</td><td>same / cross tokenizer、temperature、full / top-k / sampled-token、尾部处理</td><td>token IDs 和 response mask 是否逐位对齐；普通文本 API 不能冒充 full-logit 教师</td></tr>
+<tr><td>蒸馏目标</td><td>forward / reverse KL、JSD 或 sampled-PG；baseline、gate、schedule</td><td>直接反传 sampled log-ratio 是否遗漏 score-function 权重；教师分支是否 stop-gradient</td></tr>
+<tr><td>混合目标</td><td>outcome advantage、OPD advantage、reference KL 各自系数和归一化顺序</td><td>先混合后标准化与分别标准化结果不同；某一项是否因尺度大而吞掉其他目标</td></tr>
+<tr><td>系统成本</td><td>教师并行、prefix prefill、logits 传输、缓存、超时、重试与策略版本</td><td>只报训练 FLOPs 会漏掉教师和长 prefix 成本；旧学生轨迹使 OPD 也可能 off-policy</td></tr>
+</tbody>
+</table>
+<pre><code># 语义配置骨架；键名按实际框架转换
+student_rollout: {checkpoint_version, prefix_source_mix, sampling, max_turns}
+teacher: {checkpoint, context_privilege, tokenizer, temperature,
+          signal: full_vocab | top_k | sampled_token, top_k, no_grad}
+distillation: {divergence, coefficient, baseline, positive_gate, schedule}
+outcome_rl: {reward, advantage_estimator, coefficient}
+reference_regularization: {estimator, coefficient}
+aggregation: {assistant_mask, token_or_episode_mean, normalization_order}
+runtime: {teacher_parallelism, prefill_cache_policy, timeout, retry,
+          logits_transport, policy_lag}
+evaluation: {student_only_rollout, held_out_verifier, target_domains,
+             retained_capabilities, total_teacher_tokens}</code></pre>
+<h3>OPD 专属监控</h3>
+<table>
+<thead><tr><th>指标</th><th>它回答什么</th><th>不能单独推出什么</th></tr></thead>
+<tbody>
+<tr><td>student / teacher token NLL、KL 或 top-k overlap</td><td>学生在访问 prefix 上是否接近教师</td><td>任务一定正确；教师可能在该状态上也错</td></tr>
+<tr><td>教师信号覆盖率、无效评分率</td><td>多少动作真正拿到对齐概率</td><td>覆盖越高越好；低质量覆盖会稳定放大错误</td></tr>
+<tr><td>RL advantage 与 OPD advantage 的尺度、符号一致率</td><td>结果信号和教师信号是否冲突</td><td>冲突必然应删掉某一项；可能是教师、verifier 或状态分布问题</td></tr>
+<tr><td>自主 rollout 与 teacher-prefix 的成功率差</td><td>学生是否依赖训练时脚手架</td><td>混合 rollout 成功率就是部署能力</td></tr>
+<tr><td>目标域、保留域与总教师 token 成本</td><td>能力迁移、遗忘和成本的共同结果</td><td>KL 更小等于综合能力更强</td></tr>
+</tbody>
+</table>
 </section>
 <section id="recipe">
 <h2>把 OPD 放进代码修复：一个可比较的训练设计</h2>

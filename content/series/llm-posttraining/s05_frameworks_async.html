@@ -3,13 +3,15 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>05 · 后训练框架：分布式执行、异步更新与训练偏差</title>
-<meta name="description" content="比较十类后训练框架，解释训练/rollout/环境/teacher分工、policy lag、三策略校正、调度偏移、partial rollout、slime OPD固定源码与Agent Lightning v1。">
+<meta name="description" content="比较十二类后训练框架，解释训练/rollout/环境/teacher分工、RLVR与OPD配置映射、policy lag、三策略校正、调度偏移、partial rollout和固定源码。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
 <main class="training-lifecycle">
 <section id="roles">
 <h2>后训练是多个服务的循环，不只是一次 backward</h2>
+<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
+
 <p class="lead">训练节点更新权重，推理节点生成轨迹，环境执行动作，verifier 判结果，teacher / critic 提供额外信号。任务长度与服务速度不同，决定同步等待、异步缓存、并发配额和参数传输的成本。</p>
 <figure><div class="flow" aria-label="分布式后训练服务循环">
 <div class="stage"><b>采样服务</b><small>当前/旧版本模型<br>token IDs、behavior log-prob</small></div>
@@ -31,6 +33,8 @@
 </section>
 <section id="framework-map">
 <h2>框架地图：按接入方式、后端和版本边界选择</h2>
+<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（21 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://arxiv.org/abs/1909.08053" title="Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism · Shoeybi, Mohammad, Patwary, Mostofa, Puri, Raul 等 · 2019/09/17 · 1909.08053">Megatron-LM</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>；<a href="https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html" title="PyTorch FSDP2 · 官方文档 / 原始出版页">PyTorch FSDP2</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>；<a href="https://docs.nvidia.com/megatron-core/developer-guide/latest/index.html" title="Megatron Core · 官方文档 / 原始出版页">Megatron Core</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>；<a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>；<a href="https://github.com/alibaba/ROLL" title="ROLL · 官方文档 / 原始出版页">ROLL</a>；<a href="https://docs.ray.io/en/latest/" title="Ray · 官方文档 / 原始出版页">Ray</a>；<a href="https://github.com/OpenRLHF/OpenRLHF" title="OpenRLHF · 官方文档 / 原始出版页">OpenRLHF</a>；<a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>；<a href="https://arxiv.org/abs/2606.30406v1" title="MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · Ma, Wenhan, Wei, Jianyu, Zhao, Liang 等 · 2026/06/29 · 2606.30406v1">MOPD</a>；<a href="https://arxiv.org/abs/2609.34745" title="No Pain, More Gain: Iterative Merging for Effective Multi-Teacher On-Policy Distillation · Kim, Seonghyeon, Jang, Chaeyun, Lee, Noah 等 · 2026/09/28 · 2609.34745">IM-MOPD</a>；<a href="https://arxiv.org/abs/2505.24298v5" title="AReaL: A Large-Scale Asynchronous Reinforcement Learning System for Language Reasoning · Fu, Wei, Gao, Jiaxuan, Shen, Xujie 等 · 2025/05/30 · 2505.24298v5">AReaL</a>；<a href="https://arxiv.org/abs/2508.03680" title="Agent Lightning: Train ANY AI Agents with Reinforcement Learning · Luo, Xufang, Zhang, Yuge, He, Zhiyuan 等 · 2025/08/05 · 2508.03680">Agent Lightning</a>。</p></details></section>
+
 <p>下表依据 2026-11-14 固定 README 与官方文档。支持列表不是所有模型 × 后端 × 算法 × pipeline 的全组合保证，也不用于跨框架速度排名。</p>
 <table>
 <thead><tr><th>框架</th><th>训练 / 推理组织</th><th>值得看的能力</th><th>选型时核对</th></tr></thead>
@@ -45,15 +49,47 @@
 <tr><td>RLinf <a href="index.html#ref-62">[62]</a></td><td>FSDP / Megatron / Megatron Bridge，多加速器</td><td>v0.4 的文本、视觉、机器人任务</td><td>模型、硬件、算法和后端对应支持，不自动全部通用</td></tr>
 <tr><td>SkyRL <a href="index.html#ref-63">[63]</a></td><td>当前 monorepo：skyrl-train 与 skyrl-tx</td><td>异步训练及 Tinker-compatible backend 路线</td><td>实际采用哪个 package，避免混用配置与启动方式</td></tr>
 <tr><td>Agent Lightning v1 <a href="index.html#ref-47">[47]</a> <a href="index.html#ref-64">[64]</a></td><td>Trainer + API Gateway + Rollout Controller；已有 harness 接入</td><td>真实模型调用、上下文压缩/子 Agent 的精确样本记录</td><td>v1 已重写，不能照搬 v0.x 的 LightningRL 架构</td></tr>
+<tr><td>ART <a href="index.html#ref-72">[72]</a></td><td>Agent 客户端 + 本地或托管训练后端；vLLM 与 LoRA</td><td>把现有 Python / LangGraph 等多步应用接入 GRPO，强调低运维门槛</td><td>当前公开训练循环在组完成后阻塞推理再训练；托管服务指标不是底层框架通用结论</td></tr>
+<tr><td>TorchForge <a href="index.html#ref-71">[71]</a></td><td>PyTorch-native RL 抽象，Monarch / TorchTitan / vLLM</td><td>同步到异步的可编程架构仍有研究参考价值</td><td><strong>开发已暂停并并入 TorchTitan</strong>；不作为 2026-11 新项目的活跃首选</td></tr>
 </tbody>
 </table>
-<p>小预算算法学习先确保能精确检查 token / loss；工业大模型再匹配 Megatron / FSDP、rollout 引擎、环境并发与同步方案。已有复杂 harness 则优先保留真实 API 调用语义，避免为训练把整段运行重新拼成一个不存在的 prompt。</p>
+<p>小预算算法学习先确保能精确检查 token / loss；工业大模型再匹配 Megatron / FSDP、rollout 引擎、环境并发与同步方案。已有复杂 harness 则优先保留真实 API 调用语义，避免为训练把整段运行重新拼成一个不存在的 prompt。verl 是主流开源框架之一，不是由 star 数或论文引用自动确立的“事实标准”；框架选型应按后端、算法、harness、异步语义和维护状态。</p>
+</section>
+<section id="config-map">
+<h2>从算法配方映射到框架配置</h2>
+<p>先写一份框架无关的实验契约，再翻译成 TRL 参数、verl Hydra 配置、slime flags 或 NeMo RL recipe。否则同名 <code>GRPO</code> 可能在 reward scaling、loss 分母、ratio 粒度、动态采样和 KL 上完全不同。</p>
+<table>
+<thead><tr><th>语义字段</th><th>配置时查什么</th><th>运行后留什么证据</th></tr></thead>
+<tbody>
+<tr><td>模型与模板</td><td>actor / ref / critic / teacher checkpoint，tokenizer，chat template，工具 schema</td><td>checkpoint SHA、模板文本、原始 token IDs、可训练参数清单</td></tr>
+<tr><td>Prompt 与 rollout</td><td>prompt global batch、每题生成数、并发、temperature、top-p、长度与回合上限</td><td>dispatch / complete / accept 数、生成 token、截断、停止原因和环境秒</td></tr>
+<tr><td>Advantage</td><td><code>advantage_estimator</code> 或等价项、group std、GAE γ/λ、dynamic sampling</td><td>全零/全一组率、优势均值/方差、每域有效组率</td></tr>
+<tr><td>Policy loss</td><td>clip、ratio 单位、token/sequence/fixed 分母、更新轮数、KL estimator / coef</td><td>ratio 分位数、clip fraction、KL、entropy、有效训练 token</td></tr>
+<tr><td>OPD</td><td>teacher endpoint/model、full/top-k/sampled signal、温度、系数、混合与归一化顺序</td><td>teacher token、评分失败、覆盖率、学生/教师 NLL 与 outcome/OPD 信号冲突</td></tr>
+<tr><td>优化与并行</td><td>lr、scheduler、warmup、grad accumulation；FSDP/ZeRO/Megatron、TP/PP/CP/EP</td><td>global effective batch、optimizer step、OOM / retry、各角色 GPU 时间</td></tr>
+<tr><td>异步一致性</td><td>queue 容量、参数同步、最大 lag、partial rollout、log-prob correction</td><td>behavior / old / current 版本、queue age、segment 版本、拒绝原因</td></tr>
+</tbody>
+</table>
+<pre><code># 启动前必须能回答的配置审计
+assert rollout_token_ids_match_behavior_logprobs
+assert assistant_action_mask_excludes_environment_tokens
+assert global_batch_formula_is_documented
+assert reward_timeout_and_invalid_policies_are_explicit
+assert advantage_and_loss_denominators_are_named
+assert frozen_eval_uses_a_declared_decoding_budget
+assert opd_teacher_signal_matches_tokenizer_and_prefix
+assert async_samples_carry_policy_and_segment_versions</code></pre>
+<p>TRL 文档适合核对 <code>num_generations</code>、长度、reward scaling 和 loss 类型等算法选项；verl / slime / NeMo RL 等还需核对角色资源、rollout 后端、参数同步和 teacher 服务。字段名会随版本变化，本站不提供一份假装跨版本可运行的统一 YAML。第二章给出<a href="s02_rl_algorithms.html#rlvr-recipe">RLVR 配方与诊断</a>，第三章给出<a href="s03_opd_self_distillation.html#opd-recipe">OPD 配方与诊断</a>。</p>
 </section>
 <section id="async">
 <h2>同步、解耦、完全异步：吞吐和新鲜度的取舍</h2>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2505.24298v5" title="AReaL: A Large-Scale Asynchronous Reinforcement Learning System for Language Reasoning · Fu, Wei, Gao, Jiaxuan, Shen, Xujie 等 · 2025/05/30 · 2505.24298v5">AReaL</a>。</p></section>
+
 <p>同步模式一轮采完再更新，慢任务会拖住整批；解耦模式分配独立采样与训练资源，但仍可能在轮次同步；完全异步让 queue 中的轨迹持续进入训练，训练同时更新参数和采样器。</p>
 <p>AReaL 的论文研究大规模异步推理 RL；Relax 则用服务隔离和 TransferQueue 组织多模态异步数据。故障隔离、数据队列和 backpressure 是系统机制，不能自动消除 off-policy 学习偏差。<a href="index.html#ref-45">[45]</a> <a href="index.html#ref-46">[46]</a></p>
 <h3>verl 的 fully async recipe</h3>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>。</p></section>
+
 <p>文档包括 AgentLoop / inference server、MessageQueue 和 ParameterSynchronizer，以及 <code>require_batches</code>、<code>trigger_parameter_sync_step</code>、<code>staleness_threshold</code> 和 partial rollout。<code>staleness_threshold</code> 控制 backlog 配额比例，不是“最多落后几个 checkpoint”；大于 0 时可出现跨版本 partial 样本。<a href="index.html#ref-51">[51]</a></p>
 <p>该文档在 Qwen2.5-7B、128 GPU 的作者测量中给出约 2.35–2.67× 加速。模型、资源、同步基线和任务不同，不能拿这个数与另一框架 README 相除组成速度榜。终评还要看有效训练 token、任务质量与总 GPU 小时。</p>
 <pre><code># 教学记录，非任意框架通用配置
@@ -67,6 +103,8 @@ accepted_token_count, rejected_token_count, retry_reason</code></pre>
 </section>
 <section id="three-policy">
 <h2>三类偏移：策略版本、数值实现、完成顺序</h2>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>。</p></section>
+
 <div class="equation" role="math" aria-label="三策略校正">μ：实际rollout行为分布
 πold：训练侧旧策略；πθ：训练侧当前策略
 πθ/μ = (πθ/πold) · (πold/μ)
@@ -87,11 +125,15 @@ accepted_token_count, rejected_token_count, retry_reason</code></pre>
 <p>长任务可以中断生成、等待工具、继续 rollout；期间模型参数可能更新。常见 continuation 需重新 prefill 当前历史来重建 KV。V4.1 披露专门的跨 checkpoint 状态处理，MiMo 讨论 re-prefill；这不是所有框架通用的“缓存一直有效”。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-27">[27]</a></p>
 <p>KV 来自旧权重的投影和历史层状态。换权重后复用可能造成模型函数混合，是否可接受取决于特定算法与实现。记录每段策略版本、历史、重算和缓存来源，才能判断概率计算对应哪个真实分布。</p>
 <h3>Agent Lightning v1：保存真实调用，而不是假定一条长 prompt</h3>
+<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2508.03680" title="Agent Lightning: Train ANY AI Agents with Reinforcement Learning · Luo, Xufang, Zhang, Yuge, He, Zhiyuan 等 · 2025/08/05 · 2508.03680">Agent Lightning</a>。</p></section>
+
 <p>v1 的 Trainer、API Gateway 与 Rollout Controller 支持已有 harness；模型调用可能因 compaction 或子 Agent 产生非嵌套上下文。必须保存每次 exact prompt / response token IDs，文本看似前缀相同不保证 token 前缀相同。<a href="index.html#ref-47">[47]</a> <a href="index.html#ref-64">[64]</a></p>
 <p>只有精确 token-prefix 条件成立，调用才能合法合并。一次 episode 产生很多训练调用时，sample-mean 会使调用多的任务权重更大；episode-mean 与 token-mean 取舍应由目标决定，不能无条件推荐“拼成长序列”。2025 原 LightningRL 的分层路线属于历史来源，v1 的当前实现另行说明。<a href="index.html#ref-48">[48]</a></p>
 </section>
 <section id="slime-opd">
 <h2>固定源码实例：slime 怎样把教师信号加到 advantage</h2>
+<section id="citation-sources-9" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://arxiv.org/abs/1909.08053" title="Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism · Shoeybi, Mohammad, Patwary, Mostofa, Puri, Raul 等 · 2019/09/17 · 1909.08053">Megatron-LM</a>；<a href="https://docs.nvidia.com/megatron-core/developer-guide/latest/index.html" title="Megatron Core · 官方文档 / 原始出版页">Megatron Core</a>。</p></section>
+
 <p>本次核对 commit <code>79aa41a884ab0bf65222c94418f6357d3c31192b</code> 的 OPD 文档、rollout 入口和 Megatron loss。以下为 <code>loss.py</code> 715–719 行原始摘录，Apache-2.0。<a href="index.html#ref-55">[55]</a></p>
 <pre><code>reverse_kls = []
 for i, adv in enumerate(advantages):
@@ -124,6 +166,9 @@ for i, adv in enumerate(advantages):
 <p>GPU 利用率高不等于训练更有效。并列报告总 rollout token、接受/拒绝 token、教师评分 token、训练有效 token、环境秒、重试、同步与队列等待，再给 GPU 小时和终评成功率。</p>
 <p>代码、科学、GUI 任务的成本分布不同。最终比较每次成功的总成本和每单位计算的独立成功增量；吞吐仅用于解释系统瓶颈。完整实验设计在<a href="s06_task_cases_experiments.html#experiments">第六章</a>。</p>
 </section>
+<!-- READING:HISTORY:START --><details data-reading-history><summary>框架表扩展前的冻结说明</summary>
+<p>小预算算法学习先确保能精确检查 token / loss；工业大模型再匹配 Megatron / FSDP、rollout 引擎、环境并发与同步方案。已有复杂 harness 则优先保留真实 API 调用语义，避免为训练把整段运行重新拼成一个不存在的 prompt。</p>
+</details><!-- READING:HISTORY:END -->
 </main>
 </body>
 </html>

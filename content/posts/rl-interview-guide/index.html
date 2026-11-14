@@ -797,6 +797,8 @@
     <p>RL 论文中符号混乱且不统一，这里做一份<strong>权威参照表</strong>。后续所有公式均基于此处定义。</p>
 
     <h3>第一层：环境与交互基础</h3>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
     <table>
         <tr><th>符号</th><th>读法</th><th>含义</th><th>举例</th></tr>
         <tr><td>$s$ 或 $s_t$</td><td>state</td><td>时刻 $t$ 的状态</td><td>棋盘局面 / 已生成的 token 序列</td></tr>
@@ -808,6 +810,8 @@
     </table>
 
     <h3>第二层：回报（Return）</h3>
+<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
     <table>
         <tr><th>符号</th><th>含义</th><th>公式</th><th>直觉</th></tr>
         <tr><td>$G_t$</td><td>从 $t$ 开始的累积折扣回报</td><td>$G_t = \sum_{k=0}^{T-t-1}\gamma^k r_{t+k}$</td><td>"从现在起，未来总共能拿多少分"</td></tr>
@@ -819,6 +823,8 @@
     </div>
 
     <h3>第三层：价值函数</h3>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
     <table>
         <tr><th>符号</th><th>名称</th><th>公式</th><th>直觉</th></tr>
         <tr><td>$V^\pi(s)$</td><td>状态价值函数</td><td>$\mathbb{E}_\pi[G_t|s_t=s]$</td><td>"在状态 $s$，按策略 $\pi$ 走，<strong>平均</strong>能拿多少总分"</td></tr>
@@ -862,6 +868,8 @@
     </svg>
 
     <h3>第四层：策略相关</h3>
+<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" title="Policy Gradient theorem · 官方文档 / 原始出版页">Policy Gradient theorem</a>。</p></section>
+
     <table>
         <tr><th>符号</th><th>含义</th><th>直觉</th></tr>
         <tr><td>$\pi$</td><td>策略（给定状态 → 输出动作的规则）</td><td>agent 的"大脑"</td></tr>
@@ -872,6 +880,8 @@
     </table>
 
     <h3>第五层：PPO 专用</h3>
+<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>。</p></section>
+
     <table>
         <tr><th>符号</th><th>含义</th><th>直觉</th></tr>
         <tr><td>$\pi_{\theta_{old}}$</td><td>旧策略（采数据时的版本）</td><td>"上一版模型"</td></tr>
@@ -889,6 +899,8 @@
     </div>
 
     <h3>第六层：RLHF / DPO 专用</h3>
+<section id="citation-sources-9" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1706.03741" title="Deep reinforcement learning from human preferences · Christiano, Paul, Leike, Jan, Brown, Tom B. 等 · 2017/06/12 · 1706.03741">Human preference learning</a>。</p></section>
+
     <table>
         <tr><th>符号</th><th>含义</th><th>直觉</th></tr>
         <tr><td>$x$</td><td>prompt（用户输入）</td><td>问题/指令</td></tr>
@@ -903,15 +915,19 @@
     </table>
 
     <h3>第七层：GRPO 专用</h3>
+<section id="citation-sources-10" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
     <table>
         <tr><th>符号</th><th>含义</th><th>直觉</th></tr>
-        <tr><td>$G$</td><td>group size（组大小，通常 64）</td><td>同一 prompt 采样几条回答</td></tr>
+        <tr><td>$G$</td><td>group size（按配方与预算选择）</td><td>同一 prompt 采样几条回答；公开实验从个位数到数十条，不存在脱离任务的统一值</td></tr>
         <tr><td>$\{y_1,\ldots,y_G\}$</td><td>一组回答</td><td>对同一题的多次作答</td></tr>
         <tr><td>$r_i$</td><td>第 $i$ 个回答的 reward 得分</td><td>RM 或规则给的分数</td></tr>
         <tr><td>$\hat{A}_i$</td><td>第 $i$ 个回答的 advantage</td><td>组内标准化后的相对好坏</td></tr>
     </table>
 
     <h3>符号混淆速查</h3>
+<section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/1312.5602" title="Playing Atari with Deep Reinforcement Learning · Mnih, Volodymyr, Kavukcuoglu, Koray, Silver, David 等 · 2013/12/19 · 1312.5602">DQN</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
     <table>
         <tr><th>容易混淆</th><th>如何区分</th></tr>
         <tr><td>$r_t$（奖励）vs $r_t(\theta)$（概率比）</td><td>带 $(\theta)$ 是概率比</td></tr>
@@ -928,6 +944,8 @@
     <h2>2. 核心概念与公式</h2>
 
     <h3>MDP 五元组</h3>
+<section id="citation-sources-13" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
     <div class="formula-box">
         <div class="label">定义</div>
         $$\text{MDP} = (S, A, P, R, \gamma)$$
@@ -945,6 +963,8 @@
     </div>
 
     <h3>Bellman 方程</h3>
+<section id="citation-sources-14" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
     <div class="formula-box key">
         <div class="label">递归关系</div>
         $$V^\pi(s) = \sum_a \pi(a|s) \left[R(s,a) + \gamma \sum_{s'} P(s'|s,a)\, V^\pi(s')\right]$$
@@ -960,6 +980,8 @@
     </div>
 
     <h3>On-Policy vs Off-Policy 分类</h3>
+<section id="citation-sources-15" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（14 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1502.05477" title="Trust Region Policy Optimization · Schulman, John, Levine, Sergey, Moritz, Philipp 等 · 2015/02/19 · 1502.05477">TRPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://arxiv.org/abs/1312.5602" title="Playing Atari with Deep Reinforcement Learning · Mnih, Volodymyr, Kavukcuoglu, Koray, Silver, David 等 · 2013/12/19 · 1312.5602">DQN</a>；<a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>；<a href="https://arxiv.org/abs/1802.09477" title="Addressing Function Approximation Error in Actor-Critic Methods · Fujimoto, Scott, van Hoof, Herke, Meger, David · 2018/02/26 · 1802.09477">TD3</a>；<a href="https://arxiv.org/abs/1801.01290" title="Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor · Haarnoja, Tuomas, Zhou, Aurick, Abbeel, Pieter 等 · 2018/01/04 · 1801.01290">SAC</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>；<a href="https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" title="Policy Gradient theorem · 官方文档 / 原始出版页">Policy Gradient theorem</a>。</p></details></section>
+
 
     <p>RL 算法按<strong>数据采集策略</strong>与<strong>学习策略</strong>的关系，分为 On-Policy 和 Off-Policy 两大类。这是面试中最常见的分类问题之一。</p>
 
@@ -1173,6 +1195,8 @@
 <!-- ==================== Section 3: PG to PPO ==================== -->
 <section id="pg-to-ppo">
     <h2>3. 策略梯度（Policy Gradient）到 PPO 演进</h2>
+<section id="citation-sources-16" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" title="Policy Gradient theorem · 官方文档 / 原始出版页">Policy Gradient theorem</a>。</p></section>
+
 
     <h3>演进路线图</h3>
     <div class="evolution">
@@ -1201,6 +1225,8 @@
 
     <!-- REINFORCE -->
     <h3>Step 1: REINFORCE（Williams, 1992 — 蒙特卡洛策略梯度）</h3>
+<section id="citation-sources-18" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>；<a href="https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" title="Policy Gradient theorem · 官方文档 / 原始出版页">Policy Gradient theorem</a>。</p></section>
+
 
     <h4>目标函数</h4>
     <p>整个 RL 要优化的东西——策略的<strong>期望总回报</strong>：</p>
@@ -1462,6 +1488,8 @@ abla 1 = 0$。这个结论后续会反复使用——Baseline 能减、Advantage
 
     <!-- Baseline + Advantage -->
     <h3>Step 2: 引入 Baseline → Advantage</h3>
+<section id="citation-sources-19" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" title="Policy Gradient theorem · 官方文档 / 原始出版页">Policy Gradient theorem</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
 
     <h4>解决什么问题</h4>
     <p>REINFORCE 方差太大。</p>
@@ -1543,6 +1571,8 @@ abla 1 = 0$。这个结论后续会反复使用——Baseline 能减、Advantage
 
     <!-- Actor-Critic -->
     <h3>Step 3: Actor-Critic（演员-评论家方法）</h3>
+<section id="citation-sources-20" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" title="Policy Gradient theorem · 官方文档 / 原始出版页">Policy Gradient theorem</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>。</p></section>
+
 
     <h4>解决什么问题</h4>
     <p>Step 2（REINFORCE + Baseline）需要等整条轨迹跑完才能算 $G_t$，无法在线逐步更新。能不能每走一步就更新？</p>
@@ -1724,6 +1754,8 @@ abla 1 = 0$。这个结论后续会反复使用——Baseline 能减、Advantage
 
     <!-- TRPO -->
     <h3>Step 4: TRPO（Trust Region Policy Optimization，信任域策略优化）</h3>
+<section id="citation-sources-21" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1502.05477" title="Trust Region Policy Optimization · Schulman, John, Levine, Sergey, Moritz, Philipp 等 · 2015/02/19 · 1502.05477">TRPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>；<a href="https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" title="Policy Gradient theorem · 官方文档 / 原始出版页">Policy Gradient theorem</a>。</p></section>
+
 
     <h4>解决什么问题</h4>
     <p>策略更新步长过大会崩溃。</p>
@@ -1853,6 +1885,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
     <!-- PPO teaser -->
     <h3>Step 5: PPO（Proximal Policy Optimization，近端策略优化）— 用 Clip 替代 KL</h3>
+<section id="citation-sources-22" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1502.05477" title="Trust Region Policy Optimization · Schulman, John, Levine, Sergey, Moritz, Philipp 等 · 2015/02/19 · 1502.05477">TRPO</a>。</p></section>
+
 
     <div class="formula-box highlight">
         <div class="label">PPO-Clip 核心公式</div>
@@ -1888,8 +1922,12 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 <!-- ==================== Section 4: PPO Detail ==================== -->
 <section id="ppo-detail">
     <h2>4. PPO（Proximal Policy Optimization）完全详解</h2>
+<section id="citation-sources-23" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
+
 
     <h3>Clip 机制逐情况分析</h3>
+<section id="citation-sources-24" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
+
 
     <div class="comparison-grid">
         <div class="comparison-card">
@@ -1967,6 +2005,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>GAE：Advantage 的实用计算方法</h3>
+<section id="citation-sources-25" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>。</p></section>
+
 
     <p>理论上 $A^\pi(s,a) = Q(s,a) - V(s)$ 是精确值，实践中只能用采样数据来估计 $\hat{A}_t$。下面对比四种方式——其中 **"MC + Baseline" 就是 Step 2 中使用的估计方式**，"纯 MC" 是 REINFORCE 原版（无 baseline，已不实用），TD 和 GAE 则是 Actor-Critic / PPO / GRPO 等现代方法的核心：</p>
 
@@ -2016,6 +2056,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>PPO 完整训练循环</h3>
+<section id="citation-sources-26" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
+
     <!-- PPO 完整训练循环图 -->
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 340" style="width:100%;max-width:660px;margin:10px auto 20px;display:block;">
       <defs>
@@ -2073,6 +2115,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </svg>
 
     <h3>PPO 总目标函数</h3>
+<section id="citation-sources-27" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2103.00020" title="Learning Transferable Visual Models From Natural Language Supervision · Radford, Alec, Kim, Jong Wook, Hallacy, Chris 等 · 2021/02/26 · 2103.00020">CLIP</a>。</p></section>
+
     <div class="formula-box">
         <div class="label">三项加权</div>
         $$L^{total} = \underbrace{L^{CLIP}}_{\text{策略更新}} - c_1 \cdot \underbrace{L^{VF}}_{\text{Critic 训练}} + c_2 \cdot \underbrace{S[\pi_\theta]}_{\text{熵奖励}}$$
@@ -2086,17 +2130,25 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>PPO 在 RLHF 中的应用</h3>
+<section id="citation-sources-28" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
     <p>PPO 是 RLHF 第三步（策略优化阶段）使用的核心算法。RLHF 使用 <strong>ORM（Outcome Reward Model，结果奖励模型）</strong>——只在整条回复生成完毕后打分，中间步骤只有 KL 惩罚。详见 <a href="#rlhf" style="color:var(--accent);font-weight:600;">第 6 节 RLHF 完整流程</a>。关于 ORM vs PRM（过程奖励模型）的区别也在那里。</p>
 </section>
 
 <!-- ==================== Section 5: GRPO ==================== -->
 <section id="grpo">
     <h2>5. GRPO（Group Relative Policy Optimization，组相对策略优化）详解</h2>
+<section id="citation-sources-29" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 
     <h3>动机：PPO 在 LLM 中的痛点</h3>
+<section id="citation-sources-30" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
+
     <p>PPO 需要 Critic 网络估计 $V(s)$。在 LLM 场景中，Critic 和 Actor 一样大（几十亿参数），<strong>显存直接翻倍</strong>。GRPO 的贡献：用一个极简的方法替代 Critic。</p>
 
     <h3>GRPO 核心做法</h3>
+<section id="citation-sources-31" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
 
     <div class="step-card">
         <div class="step-number">1</div>
@@ -2203,6 +2255,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>GRPO vs PPO 对比</h3>
+<section id="citation-sources-32" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
+
     <table>
         <tr><th>维度</th><th>PPO</th><th>GRPO</th></tr>
         <tr><td>Advantage 来源</td><td>Critic 网络估计 $V(s)$（token 级别）</td><td>组内 reward 标准化（序列级别）</td></tr>
@@ -2214,6 +2268,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </table>
 
     <h3>DeepSeek-R1 中的实践</h3>
+<section id="citation-sources-33" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
     <table>
         <tr><th>设计选择</th><th>做法</th><th>原因</th></tr>
         <tr><td>组大小</td><td>$G = 64$</td><td>越大 advantage 估计越稳定</td></tr>
@@ -2225,6 +2281,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 <!-- ==================== Section 6: RLHF ==================== -->
 <section id="rlhf">
     <h2>6. RLHF（Reinforcement Learning from Human Feedback，人类反馈强化学习）完整流程</h2>
+<section id="citation-sources-34" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03741" title="Deep reinforcement learning from human preferences · Christiano, Paul, Leike, Jan, Brown, Tom B. 等 · 2017/06/12 · 1706.03741">Human preference learning</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>；<a href="https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" title="Policy Gradient theorem · 官方文档 / 原始出版页">Policy Gradient theorem</a>。</p></section>
+
 
     <div class="step-card">
         <div class="step-number">1</div>
@@ -2327,8 +2385,12 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 <!-- ==================== Section 7: RLVR ==================== -->
 <section id="rlvr">
     <h2>7. RLVR（Reinforcement Learning with Verifiable Rewards，可验证奖励强化学习）范式详解</h2>
+<section id="citation-sources-35" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
 
     <h3>什么是 RLVR？</h3>
+<section id="citation-sources-36" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
     <p><strong>RLVR = Reinforcement Learning with Verifiable Rewards</strong>，即"用可验证的奖励信号做强化学习"。它不是一个具体算法，而是一个<strong>训练范式</strong>——描述的是 reward 从哪来，而不是怎么优化。</p>
 
     <div class="formula-box key">
@@ -2341,6 +2403,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>RLVR 在整体知识体系中的位置</h3>
+<section id="citation-sources-37" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
     <!-- RLVR 知识体系位置图 -->
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 380" style="width:100%;max-width:680px;margin:10px auto 20px;display:block;">
       <defs>
@@ -2426,6 +2490,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </svg>
 
     <h3>为什么 RLVR 突然火了？</h3>
+<section id="citation-sources-38" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>。</p></section>
+
     <p>传统 RLHF 依赖训练出来的 Reward Model，有三个致命问题：</p>
     <table>
         <tr><th>问题</th><th>表现</th><th>RLVR 如何解决</th></tr>
@@ -2435,11 +2501,15 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </table>
 
     <h3>RLVR 的标志性发现（DeepSeek-R1）</h3>
+<section id="citation-sources-39" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
     <div class="box-insight">
         从 base model 出发，<strong>仅用 RLVR（数学题对错作为 reward）</strong>，不经过 SFT，模型能自发涌现：Chain-of-Thought 推理、自我纠错、反思回溯、分步验证。这打破了"需要先 SFT 教会推理格式"的传统假设。
     </div>
 
     <h3>RLVR 的 Reward 设计</h3>
+<section id="citation-sources-40" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
     <p>RLVR 中 reward 的典型形式：</p>
     <div class="formula-box">
         <div class="label">可验证 Reward 的常见设计</div>
@@ -2463,6 +2533,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>RLVR 的适用边界</h3>
+<section id="citation-sources-41" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
     <table>
         <tr><th>可以用 RLVR</th><th>不能用 RLVR</th></tr>
         <tr><td>数学题（答案可验证）</td><td>开放式对话（无标准答案）</td></tr>
@@ -2477,6 +2549,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>RLVR vs RLHF 完整对比</h3>
+<section id="citation-sources-42" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/1706.03741" title="Deep reinforcement learning from human preferences · Christiano, Paul, Leike, Jan, Brown, Tom B. 等 · 2017/06/12 · 1706.03741">Human preference learning</a>。</p></section>
+
     <table>
         <tr><th>维度</th><th>RLHF</th><th>RLVR</th></tr>
         <tr><td>Reward 来源</td><td>训练出来的 Reward Model</td><td>可验证的规则/程序</td></tr>
@@ -2490,6 +2564,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </table>
 
     <h3>RLVR 的进阶话题</h3>
+<section id="citation-sources-43" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
 
     <h4>Outcome Reward vs Process Reward</h4>
     <p>标准 RLVR 只看最终答案对错（Outcome-level），但也可以做更细粒度的过程监督：</p>
@@ -2508,6 +2584,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>面试中怎么讲 RLVR</h3>
+<section id="citation-sources-44" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
     <div class="box-interview">
         "RLVR 是用可验证的奖励信号做强化学习的范式，区别于 RLHF 依赖训练出来的 Reward Model。优势是 reward 完全准确、不可被 hack，代价是只能用在答案可验证的任务上。DeepSeek-R1 证明了 RLVR + GRPO 能从 base model 涌现推理能力，是当前提升 LLM 推理能力的主流范式。"
     </div>
@@ -2521,11 +2599,17 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 <!-- ==================== Section 7: RLHF ==================== -->
 <section id="dpo">
     <h2>8. DPO（Direct Preference Optimization，直接偏好优化）公式推导</h2>
+<section id="citation-sources-45" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>。</p></section>
+
 
     <h3>核心洞察</h3>
+<section id="citation-sources-46" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>。</p></section>
+
     <p>DPO 证明了：<strong>不需要单独训练 Reward Model，偏好数据可以直接优化策略。</strong></p>
 
     <h3>推导过程</h3>
+<section id="citation-sources-47" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>。</p></section>
+
 
     <h4>Step 1: RLHF 目标的解析解</h4>
     <div class="formula-box">
@@ -2636,11 +2720,15 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>为什么一个损失同时完成"打分+优化"？</h3>
+<section id="citation-sources-48" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>。</p></section>
+
     <div class="box-insight">
         <strong>核心洞察：π* 和 r(x,y) 有解析关系。</strong>Step 1-2 证明了最优策略 π* 和最优 reward 之间存在确定公式：$r(x,y) = \beta\log\frac{\pi^*(y|x)}{\pi_{ref}(y|x)} + \text{常数}$。反过来，如果 π_θ 逼近 π*，那用 π_θ 代进去算出的"隐式 reward"就逼近最优 reward。所以 DPO 的逻辑链是：最小化损失 → π_θ → π* → 隐式 reward → 最优 reward。跳过了"先训练 RM 再训练策略"两步，一步到位。
     </div>
 
     <h3>梯度的直觉</h3>
+<section id="citation-sources-49" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>。</p></section>
+
     <div class="formula-box">
         <div class="label">DPO 梯度</div>
         $$\nabla_\theta L \propto -\beta\;\underbrace{\sigma(\hat{r}_l - \hat{r}_w)}_{\text{自适应权重}}\;\left[\underbrace{\nabla_\theta\log\pi_\theta(y_w|x)}_{\text{增大好回答概率}} - \underbrace{\nabla_\theta\log\pi_\theta(y_l|x)}_{\text{减小坏回答概率}}\right]$$
@@ -3165,6 +3253,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <h2>9. Reward 设计方法论</h2>
 
     <h3>Reward 来源的完整谱系</h3>
+<section id="citation-sources-52" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/1706.03741" title="Deep reinforcement learning from human preferences · Christiano, Paul, Leike, Jan, Brown, Tom B. 等 · 2017/06/12 · 1706.03741">Human preference learning</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
     <table>
         <tr><th>类型</th><th>做法</th><th>适用场景</th><th>代表</th></tr>
         <tr><td>手工设计</td><td>人为定义奖励规则</td><td>目标可量化（游戏、机器人）</td><td>CartPole、围棋</td></tr>
@@ -3177,6 +3267,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </table>
 
     <h3>Reward Shaping 的风险与理论</h3>
+<section id="citation-sources-53" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://people.eecs.berkeley.edu/~russell/papers/icml99-shaping.pdf" title="Reward shaping · 官方文档 / 原始出版页">Reward shaping</a>。</p></section>
+
     <p><strong>风险：</strong>shaping 不当 → reward hacking。例如给"靠近目标"加分，agent 在目标旁反复晃动刷分而不完成任务。</p>
     <div class="formula-box">
         <div class="label">安全的 Reward Shaping（Ng 1999）</div>
@@ -3197,6 +3289,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     <h2>10. 算法对比总结</h2>
 
     <h3>策略优化算法对比</h3>
+<section id="citation-sources-55" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1502.05477" title="Trust Region Policy Optimization · Schulman, John, Levine, Sergey, Moritz, Philipp 等 · 2015/02/19 · 1502.05477">TRPO</a>；<a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://arxiv.org/abs/1801.01290" title="Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor · Haarnoja, Tuomas, Zhou, Aurick, Abbeel, Pieter 等 · 2018/01/04 · 1801.01290">SAC</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>。</p></section>
+
     <table>
         <tr><th>算法</th><th>核心思想</th><th>优势</th><th>劣势</th><th>适用场景</th></tr>
         <tr><td><strong>REINFORCE</strong></td><td>回报加权梯度</td><td>简单、理论优美</td><td>方差大、效率差</td><td>教学</td></tr>
@@ -3208,6 +3302,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </table>
 
     <h3>对齐算法对比</h3>
+<section id="citation-sources-56" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+
     <table>
         <tr><th>算法</th><th>需要 RM？</th><th>数据需求</th><th>复杂度</th><th>效果上限</th></tr>
         <tr><td><strong>RLHF (PPO)</strong></td><td>是（显式）</td><td>pairwise 偏好</td><td>高（4 个模型）</td><td>最强（在线采样）</td></tr>
@@ -3228,6 +3324,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </div>
 
     <h3>算法数据使用方式对比</h3>
+<section id="citation-sources-58" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1502.05477" title="Trust Region Policy Optimization · Schulman, John, Levine, Sergey, Moritz, Philipp 等 · 2015/02/19 · 1502.05477">TRPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>。</p></section>
+
     <table>
         <thead>
             <tr><th>算法</th><th>年份</th><th>核心思路</th><th>每批轨迹数</th><th>每批更新</th><th>代表应用</th></tr>
@@ -3251,14 +3349,30 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 <!-- ==================== Section 10.5: Classic RL Algorithms ==================== -->
 <section id="classic-rl">
     <h2>11. 经典 RL 算法详解（DQN / DDPG / TD3 / SAC）</h2>
+<section id="citation-sources-60" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://arxiv.org/abs/1312.5602" title="Playing Atari with Deep Reinforcement Learning · Mnih, Volodymyr, Kavukcuoglu, Koray, Silver, David 等 · 2013/12/19 · 1312.5602">DQN</a>；<a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>；<a href="https://arxiv.org/abs/1802.09477" title="Addressing Function Approximation Error in Actor-Critic Methods · Fujimoto, Scott, van Hoof, Herke, Meger, David · 2018/02/26 · 1802.09477">TD3</a>；<a href="https://arxiv.org/abs/1801.01290" title="Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor · Haarnoja, Tuomas, Zhou, Aurick, Abbeel, Pieter 等 · 2018/01/04 · 1801.01290">SAC</a>。</p></section>
+
     <p>前面章节聚焦 Policy Gradient 系列（适合 LLM 对齐），这里补齐 <strong>Value-based</strong> 和 <strong>Off-policy Actor-Critic</strong> 算法族，面试中经常作为"RL 基本功"考察。</p>
 
     <div class="box-insight">
         <strong>算法族谱：</strong>Value-based（DQN）→ 确定性策略（DDPG）→ 修正高估（TD3）→ 最大熵（SAC）。演进主线是：<strong>从离散动作 → 连续动作 → 更稳定 → 更好探索</strong>。
     </div>
 
+    <h3>其他经典谱系速查</h3>
+    <p>下表用于保证面试知识面完整，主线仍是 RLVR、Agentic RL 与 OPD。回答时先说问题设定，再说代表算法和关键假设。</p>
+    <table>
+        <tr><th>谱系</th><th>代表工作</th><th>核心问题</th><th>与当前 LLM 后训练的关系</th></tr>
+        <tr><td><strong>Offline RL</strong></td><td>BCQ、CQL、IQL</td><td>只用固定数据学习，抑制数据支持外动作的价值高估</td><td>适合历史轨迹复用；需处理行为分布覆盖，不能直接等同 DPO</td></tr>
+        <tr><td><strong>序列建模 RL</strong></td><td>Decision Transformer</td><td>把 return、state、action 当序列做条件生成</td><td>连接轨迹建模与 Transformer；目标回报条件不自动解决分布外泛化</td></tr>
+        <tr><td><strong>规划 + 自博弈</strong></td><td>AlphaZero、MuZero</td><td>MCTS 与 policy/value 学习；MuZero 额外学习潜在动力学</td><td>解释 test-time search、world model 与策略改进，但系统成本不同于 GRPO rollout</td></tr>
+        <tr><td><strong>Multi-Agent RL</strong></td><td>MADDPG、VDN、QMIX、MAPPO</td><td>非平稳性、集中训练分散执行、信用分解</td><td>多 Agent 协作/博弈基础；不能把单 Agent 的 group sampling 当 MARL</td></tr>
+        <tr><td><strong>Distributional RL</strong></td><td>C51、QR-DQN</td><td>学习 return 分布而非仅期望值</td><td>帮助理解风险敏感决策与不确定性；不是“输出多个 reward”的同义词</td></tr>
+        <tr><td><strong>Model-based RL</strong></td><td>Dyna、PETS、Dreamer</td><td>学习或使用环境模型进行规划和数据扩增</td><td>与 Agent world model、模拟环境相连；模型偏差会被规划放大</td></tr>
+    </table>
+
     <!-- DQN -->
     <h3>DQN — Deep Q-Network (Mnih et al., 2015)</h3>
+<section id="citation-sources-61" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1312.5602" title="Playing Atari with Deep Reinforcement Learning · Mnih, Volodymyr, Kavukcuoglu, Koray, Silver, David 等 · 2013/12/19 · 1312.5602">DQN</a>；<a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>；<a href="https://arxiv.org/abs/1802.09477" title="Addressing Function Approximation Error in Actor-Critic Methods · Fujimoto, Scott, van Hoof, Herke, Meger, David · 2018/02/26 · 1802.09477">TD3</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
 
     <h4>核心思想</h4>
     <p>用神经网络近似动作价值函数 $Q(s,a;\theta)$，选动作时取 $a^* = \arg\max_a Q(s,a)$。本质是把 Q-learning 的 Q-table 换成深度网络。</p>
@@ -3361,6 +3475,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
     <!-- DDPG -->
     <h3>DDPG — Deep Deterministic Policy Gradient (Lillicrap et al., 2016)</h3>
+<section id="citation-sources-62" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>；<a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://arxiv.org/abs/1312.5602" title="Playing Atari with Deep Reinforcement Learning · Mnih, Volodymyr, Kavukcuoglu, Koray, Silver, David 等 · 2013/12/19 · 1312.5602">DQN</a>。</p></section>
+
 
     <h4>核心思想</h4>
     <p>把 DQN 扩展到<strong>连续动作空间</strong>。用确定性策略 $\mu_\theta(s)$ 直接输出动作值（而非概率分布），结合 off-policy Actor-Critic 框架。</p>
@@ -3396,6 +3512,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
     <!-- TD3 -->
     <h3>TD3 — Twin Delayed DDPG (Fujimoto et al., 2018)</h3>
+<section id="citation-sources-63" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1802.09477" title="Addressing Function Approximation Error in Actor-Critic Methods · Fujimoto, Scott, van Hoof, Herke, Meger, David · 2018/02/26 · 1802.09477">TD3</a>；<a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>。</p></section>
+
 
     <h4>核心思想</h4>
     <p>针对 DDPG 的 Q 值高估和训练不稳定，提出三个精巧修复。</p>
@@ -3425,6 +3543,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
     <!-- SAC -->
     <h3>SAC — Soft Actor-Critic (Haarnoja et al., 2018)</h3>
+<section id="citation-sources-64" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1801.01290" title="Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor · Haarnoja, Tuomas, Zhou, Aurick, Abbeel, Pieter 等 · 2018/01/04 · 1801.01290">SAC</a>；<a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>；<a href="https://arxiv.org/abs/1802.09477" title="Addressing Function Approximation Error in Actor-Critic Methods · Fujimoto, Scott, van Hoof, Herke, Meger, David · 2018/02/26 · 1802.09477">TD3</a>。</p></section>
+
 
     <h4>核心思想</h4>
     <p><strong>最大熵强化学习</strong>——不仅最大化累积奖励，还最大化策略的熵（随机性），鼓励探索。</p>
@@ -3467,6 +3587,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 
     <!-- Summary Comparison -->
     <h3>四算法对比总结</h3>
+<section id="citation-sources-65" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1312.5602" title="Playing Atari with Deep Reinforcement Learning · Mnih, Volodymyr, Kavukcuoglu, Koray, Silver, David 等 · 2013/12/19 · 1312.5602">DQN</a>；<a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>；<a href="https://arxiv.org/abs/1802.09477" title="Addressing Function Approximation Error in Actor-Critic Methods · Fujimoto, Scott, van Hoof, Herke, Meger, David · 2018/02/26 · 1802.09477">TD3</a>；<a href="https://arxiv.org/abs/1801.01290" title="Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor · Haarnoja, Tuomas, Zhou, Aurick, Abbeel, Pieter 等 · 2018/01/04 · 1801.01290">SAC</a>。</p></section>
+
     <table>
         <tr><th>算法</th><th>年份</th><th>动作空间</th><th>Policy</th><th>On/Off</th><th>核心创新</th><th>适用场景</th></tr>
         <tr><td><strong>DQN</strong></td><td>2015</td><td>离散</td><td>隐式 (argmax Q)</td><td>Off</td><td>Replay + Target Net</td><td>Atari 游戏</td></tr>
@@ -3476,6 +3598,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
     </table>
 
     <h3>为什么 LLM 对齐用 PPO/GRPO 而不是这些？</h3>
+<section id="citation-sources-66" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（8 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1312.5602" title="Playing Atari with Deep Reinforcement Learning · Mnih, Volodymyr, Kavukcuoglu, Koray, Silver, David 等 · 2013/12/19 · 1312.5602">DQN</a>；<a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>；<a href="https://arxiv.org/abs/1802.09477" title="Addressing Function Approximation Error in Actor-Critic Methods · Fujimoto, Scott, van Hoof, Herke, Meger, David · 2018/02/26 · 1802.09477">TD3</a>；<a href="https://arxiv.org/abs/1801.01290" title="Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor · Haarnoja, Tuomas, Zhou, Aurick, Abbeel, Pieter 等 · 2018/01/04 · 1801.01290">SAC</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></details></section>
+
     <div class="box-interview">
         <ul style="margin:0;padding-left:20px;">
             <li><strong>动作空间不匹配</strong>：DQN 需 argmax 遍历动作（词表太大不可行）；DDPG/TD3/SAC 面向连续动作空间（token 是离散的）</li>
@@ -3483,7 +3607,7 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
             <li><strong>On-policy 采样成本可接受</strong>：LLM 推理快（vLLM 加速），重新 rollout 比维护巨大 replay buffer 更实际</li>
             <li><strong>KL 约束是核心需求</strong>：LLM 对齐需要锚定 reference model，PPO/GRPO 天然支持 KL penalty，off-policy 方法不自然</li>
         </ul>
-        <p style="margin-top:8px;"><strong>唯一例外：</strong>ILQL / Offline RL for LLM 等工作尝试用 off-policy 方法做 LLM 对齐，但效果普遍不如 PPO/DPO/GRPO。</p>
+        <p style="margin-top:8px;"><strong>补充路线：</strong>ILQL 等工作探索用离线 RL 训练语言策略。它们适合研究固定日志复用和数据支持约束，但与 PPO、DPO、GRPO 的数据、目标和评测条件不同，不能脱离具体实验给出统一优劣排序。</p>
     </div>
 </section>
 
@@ -3607,6 +3731,8 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
 <!-- ==================== Section 13: FAQ ==================== -->
 <section id="faq">
     <h2>13. 高频面试问答</h2>
+<section id="citation-sources-68" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（14 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1502.05477" title="Trust Region Policy Optimization · Schulman, John, Levine, Sergey, Moritz, Philipp 等 · 2015/02/19 · 1502.05477">TRPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://arxiv.org/abs/1312.5602" title="Playing Atari with Deep Reinforcement Learning · Mnih, Volodymyr, Kavukcuoglu, Koray, Silver, David 等 · 2013/12/19 · 1312.5602">DQN</a>；<a href="https://arxiv.org/abs/1509.02971" title="Continuous control with deep reinforcement learning · Lillicrap, Timothy P., Hunt, Jonathan J., Pritzel, Alexander 等 · 2015/09/09 · 1509.02971">DDPG</a>；<a href="https://arxiv.org/abs/1801.01290" title="Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor · Haarnoja, Tuomas, Zhou, Aurick, Abbeel, Pieter 等 · 2018/01/04 · 1801.01290">SAC</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/1706.03741" title="Deep reinforcement learning from human preferences · Christiano, Paul, Leike, Jan, Brown, Tom B. 等 · 2017/06/12 · 1706.03741">Human preference learning</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>；<a href="https://people.eecs.berkeley.edu/~russell/papers/icml99-shaping.pdf" title="Reward shaping · 官方文档 / 原始出版页">Reward shaping</a>。</p></details></section>
+
 
     <div class="step-card">
         <h4>Q: On-policy vs Off-policy？</h4>
@@ -3716,6 +3842,10 @@ abla_\theta L\big|_{\theta_{old}}^T(\theta-\theta_{old}) \approx L(\theta)$。�
         <p>(1) <strong>Critic 估计不准</strong>——value loss 权重太小或 learning rate 太大导致 Critic 不收敛，Advantage 计算错误；(2) <strong>Clip $\epsilon$ 太大</strong>——约束失效，策略更新过猛；(3) <strong>Batch size 太小</strong>——Advantage 估计方差大；(4) <strong>Learning rate 太大</strong>——策略更新后偏离 $\pi_{old}$ 太远，importance sampling 权重爆炸；(5) <strong>GAE $\lambda$ 不合适</strong>——$\lambda$ 太大引入高方差，太小引入高偏差。工程实践：先用小 learning rate + 大 batch + 适中 $\epsilon$（0.1-0.2），稳定后再调参。</p>
     </div>
 </section>
+
+<!-- READING:HISTORY:START --><details data-reading-history><summary>离线 RL 比较修订前的冻结表述</summary>
+<p><strong>唯一例外：</strong>ILQL / Offline RL for LLM 等工作尝试用 off-policy 方法做 LLM 对齐，但效果普遍不如 PPO/DPO/GRPO。</p>
+</details><!-- READING:HISTORY:END -->
 
 <footer>
     <p><strong>推荐学习资源</strong></p>

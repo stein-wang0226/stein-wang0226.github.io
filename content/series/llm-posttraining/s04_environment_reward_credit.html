@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>04 · RL 环境与奖励：过程监督和多步信用分配</title>
-<meta name="description" content="区分结果奖励、PRM/value/advantage/teacher信号，分析 Harbor 独立验证、PURE/Cliff/GiGPO/RLDS/KnowGPO 和 MiMo GAR，结合代码科学GUI。">
+<meta name="description" content="区分结果奖励、PRM/value/advantage/teacher信号，分析 Harbor、GiGPO/RLDS/KnowGPO、GraphGPO/ReBel/EFCA/MileGPO 和 GAR。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
@@ -49,6 +49,8 @@ artifacts = ["/app/output/result.json", "/app/output/provenance.json"]
 </section>
 <section id="signal-types">
 <h2>五类反馈：名称相近，预测对象不同</h2>
+<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
 <table>
 <thead><tr><th>信号</th><th>它回答什么</th><th>不应自动推断什么</th></tr></thead>
 <tbody>
@@ -63,6 +65,8 @@ artifacts = ["/app/output/result.json", "/app/output/provenance.json"]
 </section>
 <section id="prm">
 <h2>过程监督：从 PRM800k 到标注、选择与训练的分歧</h2>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
 <p>Let’s Verify Step by Step 通过步骤标注研究过程监督，PRM800k 是经典入口。Qwen 的 Lessons 指出 MC continuation 标注、LLM judge 和人类过程正确性之间存在差异；best-of-N 排序表现也不等价于在线训练中的抗投机能力。<a href="index.html#ref-37">[37]</a> <a href="index.html#ref-38">[38]</a></p>
 <table>
 <thead><tr><th>标签来源</th><th>价值</th><th>误差与成本</th></tr></thead>
@@ -84,11 +88,15 @@ PURE 转换示意：r*ᵢ = softmax(−rᵢ/T)ᵢ · rᵢ
 T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
 <p>这适合研究逻辑推理的弱链路，但可恢复 terminal Agent 中，前面一个错误动作以后可能被修复。若直接把最差历史步骤当整条任务上限，会惩罚有价值的恢复。迁移需验证是否符合任务的不可逆性假设。</p>
 <h3>Cliff：识别首个 pitfall 边界</h3>
+<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 <p>Cliff 使用验证的教师解法辅助判断第一次出错位置，边界前后施加不同信用；坏教师时回退 GRPO，overlong 也有单独处理。附录含误判案例，说明首错定位本身不是可靠真值。<a href="index.html#ref-40">[40]</a></p>
 <p>科学设计若错用 contrast 且未修复，后续步骤会沿错误方向；代码先跑出错误再修好，则不满足“首错后全废”。应按任务分别测试边界质量、恢复率和反事实影响，避免把数学推导的假设自动应用到交互任务。</p>
 </section>
 <section id="long-credit">
 <h2 id="reading-section-8">多步信用分配：重复状态、子任务与知识条件基线</h2>
+<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>。</p></section>
+
 <table>
 <thead><tr><th>路线</th><th>信用对象</th><th>何时有帮助</th><th>限制</th></tr></thead>
 <tbody>
@@ -101,8 +109,26 @@ T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
 <p>GiGPO 的 anchor 要求与决策相关状态等价：相同页面可能有不同隐藏数据库、权限或先前动作；同一 shell 路径可能有不同文件内容。错误判等会将不可比较的动作混成一组。</p>
 <p>子任务粒度太细，定位成本与噪声增加；太粗又退回 episode 广播。RLDS 的收益随任务不同而变化，支持在自己任务族做 taxonomy、reward share 和定位器的独立消融，不支持承诺通用提升。</p>
 </section>
+<section id="credit-frontier">
+<h2>2026 信用分配趋势：从整轨迹广播到环境证据</h2>
+<p>当前前沿不是简单再造一个 GRPO 缩写，而是在回答“中间步骤的信用证据从哪里来”。下表按证据结构归类；这些论文主要在 ALFWorld、WebShop 等环境验证，尚不能直接外推到开放代码仓库、浏览器或科学任务。</p>
+<table>
+<thead><tr><th>趋势簇</th><th>代表方法</th><th>新增证据</th><th>适用边界</th></tr></thead>
+<tbody>
+<tr><td>轨迹图与分支比较</td><td>GraphGPO <a href="index.html#ref-67">[67]</a>、MileGPO <a href="index.html#ref-70">[70]</a></td><td>合并重复状态，比较到目标的图距离、里程碑、陷阱和同状态分支</td><td>状态必须可规范化并可靠判等；重复状态少时图证据变弱，错误合并会污染优势</td></tr>
+<tr><td>显式 belief</td><td>ReBel <a href="index.html#ref-68">[68]</a></td><td>结构化 belief、后续观察一致性和 belief-aware grouping</td><td>适合部分可观测任务；belief 格式本身会改变策略输出和监督，不能当作免费隐藏状态</td></tr>
+<tr><td>环境反馈多时间尺度</td><td>EFCA <a href="index.html#ref-69">[69]</a></td><td>即时反馈、近期 action-feedback 历史与最终 outcome 共同重加权 return</td><td>环境文本或状态变化必须能区分进展、无效动作和循环；噪声反馈仍会误导</td></tr>
+<tr><td>固定子任务或知识条件</td><td>RLDS、KnowGPO</td><td>预定义阶段、reward share、训练时额外知识或定位器</td><td>需要 taxonomy / 知识可得且无留出泄漏；维护成本随任务族增加</td></tr>
+<tr><td>学习 value / 单轨迹</td><td>turn GAE、single-rollout SAPO、SAO</td><td>critic 预测未来回报，减少每题多条长 rollout</td><td>将生成成本换成 value 训练和偏差；异步时还要处理 policy lag</td></tr>
+</tbody>
+</table>
+<p>GraphGPO 使用任务内 rollout 图和到成功状态的距离构造边级优势；MileGPO 再加入里程碑/陷阱可靠性和同状态分支校准。ReBel 把部分可观测下的 belief 漂移显式化；EFCA 从环境响应提取短期进展和中期重复模式。它们共同说明一个趋势：<strong>优先复用交互中已有的状态、分支、反馈和历史，而不是给每个 token 训练一个通用 PRM</strong>。但“无需额外标注”不等于没有额外假设，状态判等、belief schema、反馈解析和图构建都需要单独验证。</p>
+<div class="callout"><strong>面试选型：</strong>可可靠判等且同题多 rollout 重合多，用图/分支路线；部分可观测且错误来自状态误解，考虑 belief 信号；环境返回可解析反馈，考虑多时间尺度信用；轨迹极贵且重复状态少，评估 critic / 单轨迹路线。最终都保留 terminal verifier 作为任务语义锚点。</div>
+</section>
 <section id="gar">
 <h2>MiMo GAR：同样通过的代码路径，质量仍有差别</h2>
+
+
 <p>MiMo-V2.6 §4.3.2 的 Grader-Augmented Reinforcement 为混合成功/失败的代码组提供质量因子：grader 结合任务、仓库、patch、tests 等信息判断成功路径质量，在通过路径的 advantage 上做调整。<a href="index.html#ref-27">[27]</a></p>
 <div class="equation" role="math" aria-label="GAR正优势质量重加权">未截断的教学形式：
 λ = Σ_pass Aᵢ / Σ_pass fᵢ Aᵢ

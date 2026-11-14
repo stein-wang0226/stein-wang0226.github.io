@@ -662,10 +662,12 @@
 
         <!-- ======================= 引言 ======================= -->
         <h2 class="section-title" id="intro">引言：为什么 Agentic RL 成为最热的方向</h2>
+<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>；<a href="https://arxiv.org/abs/2504.13837" title="Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? · Yue, Yang, Chen, Zhiqi, Lu, Rui 等 · 2025/04/18 · 2504.13837">Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?</a>。</p></section>
+
 
         <p>2024-2026 年，LLM 后训练（post-training）范式经历了三次跃迁：<strong>RLHF</strong>（人类反馈）→ <strong>RLVR</strong>（可验证奖励）→ <strong>Agentic RL</strong>（智能体交互奖励）。DeepSeek-R1 用 GRPO 让模型涌现出推理能力，Kimi k1.5 将长链思维与 RL 对齐，Qwen3 实现了混合推理模式的 RL 训练——这些开源报告证明了 RL 后训练的巨大潜力。</p>
 
-        <p>然而，2025 年中的 <strong>RLVR Ceiling</strong> 研究（arXiv:2504.13837）揭示了一个关键瓶颈：纯推理 RL 的性能上限不超过 base model 的 pass@k。这意味着如果模型只能在静态文本上做推理，RL 无法超越"暴力采样"。<strong>Agentic RL</strong>——让模型在交互环境中通过工具调用、多轮对话、代码执行来解决问题——成为突破这一天花板的关键路径。</p>
+        <p>然而，2025 年的 <strong>RLVR Ceiling</strong> 研究（arXiv:<a href="https://arxiv.org/abs/2504.13837" title="Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? · Yue, Yang, Chen, Zhiqi, Lu, Rui 等 · 2025/04/18 · 2504.13837">2504.13837</a>）在其模型、任务与采样设定下观察到：RL 后的能力提升受 base model 采样支持约束，不能把 pass@1 增益直接解释为产生了 base model 在足够大 pass@k 下从未出现的解法。这是理解静态推理 RL 的重要警示，不是覆盖所有 RLVR 的普适定理。<strong>Agentic RL</strong>进一步优化工具选择、信息获取和环境状态转换，使学习对象超出一次静态文本回答。</p>
 
         <div class="box-insight">
             <p>2026 年的范式共识：<strong>Agent = Model + Harness</strong>。RL 不再只优化"生成什么"，而是优化"如何与环境交互"——包括何时调用工具、如何规划多步行动、怎样从失败中恢复。这使得 Agentic RL 成为大厂基模组面试的核心考察方向。</p>
@@ -790,6 +792,8 @@
         </details><!-- READING:HISTORY:END -->
         <!-- ======================= Part II ======================= -->
         <h2 class="section-title" id="part2"><span class="num">II</span> 经典算法族谱</h2>
+<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 
         <p>当前 LLM RL 训练算法可分为三大家族：<strong>PPO（Critic-based）</strong>、<strong>DPO（Preference-based）</strong>、<strong>GRPO（Group-based / Critic-Free）</strong>。每个家族都有多个变体，针对不同的训练挑战做了针对性改进。</p>
 
@@ -1015,6 +1019,8 @@
 
         <!-- 族谱对比表 -->
         <h3>2.5 三大家族核心对比</h3>
+<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/1706.03741" title="Deep reinforcement learning from human preferences · Christiano, Paul, Leike, Jan, Brown, Tom B. 等 · 2017/06/12 · 1706.03741">Human preference learning</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>；<a href="https://arxiv.org/abs/2504.20073" title="RAGEN: Understanding Self-Evolution in LLM Agents via Multi-Turn Reinforcement Learning · Wang, Zihan, Wang, Kangrui, Wang, Qineng 等 · 2025/04/24 · 2504.20073">RAGEN / StarPO</a>。</p></section>
+
 
         <table>
             <thead>
@@ -1036,11 +1042,13 @@
 
         <!-- RLVR Ceiling -->
         <h3 id="rlvr-ceiling">3.1 RLVR Ceiling：纯推理 RL 的天花板</h3>
+<section id="citation-sources-10" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>；<a href="https://arxiv.org/abs/2504.13837" title="Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? · Yue, Yang, Chen, Zhiqi, Lu, Rui 等 · 2025/04/18 · 2504.13837">Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?</a>。</p></section>
+
 
         <div class="card red">
-            <div class="card-title">核心结论 <span class="tag tag-red">arXiv:2504.13837 · NeurIPS 2025</span></div>
-            <p>清华 LeapLab 的研究揭示了一个令人不安的事实：<strong>纯推理 RL（RLVR）的性能上限不超过 base model 的 best-of-N (pass@k) 采样</strong>。换句话说，如果模型只在静态文本上做推理（数学题、代码题），RL 训练不会比"暴力采样取最好"更强。</p>
-            <p>这个结论意味着：如果目标只是提升推理质量，RL 可能只是在用更少的计算资源达到与 best-of-N 相同的水平，而非真正超越。</p>
+            <div class="card-title">核心结论 <span class="tag tag-red">arXiv:<a href="https://arxiv.org/abs/2504.13837" title="Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? · Yue, Yang, Chen, Zhiqi, Lu, Rui 等 · 2025/04/18 · 2504.13837">2504.13837</a> · NeurIPS 2025</span></div>
+            <p>该研究在所测模型、数学任务和采样预算下发现：<strong>RL 后模型的 pass@1 提升没有超出 base model 在足够大 best-of-N / pass@k 中已经表现出的解题支持</strong>。它支持“RL 主要重分配已有解法的概率质量”这一解释，但结论依赖模型、任务、训练与评测预算。</p>
+            <p>因此应比较 base pass@k、RL pass@1 / pass@k 与固定推理预算，判断提升来自概率重分配、搜索效率还是新的环境信息；不能把单项研究改写成所有 RLVR 的数学上限。</p>
         </div>
 
         <div class="box-insight">
@@ -1049,6 +1057,8 @@
 
         <!-- Credit Assignment -->
         <h3 id="credit">3.2 信用分配问题（Credit Assignment）</h3>
+<section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（8 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://arxiv.org/abs/2604.18401v1" title="StepPO: Step-Aligned Policy Optimization for Agentic Reinforcement Learning · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401v1">StepPO v1</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>；<a href="https://arxiv.org/abs/2512.17008" title="Turn-PPO: Turn-Level Advantage Estimation with PPO for Improved Multi-Turn RL in Agentic LLMs · Li, Junbo, Zhou, Peng, Meng, Rui 等 · 2025/12/18 · 2512.17008">Turn-PPO: Turn-Level Advantage Estimation with PPO for Improved Multi-Turn RL in Agentic LLMs</a>；<a href="https://arxiv.org/abs/2505.10978" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978">Group-in-Group Policy Optimization for LLM Agent Training</a>。</p></details></section>
+
 
         <p>Agentic RL 的核心难题之一是<strong>长链交互中的信用分配</strong>：一个 20 轮的 Agent 交互中，最终任务成功/失败的 reward 应该归因到哪些具体步骤？</p>
 
@@ -1059,20 +1069,22 @@
             </div>
             <div class="card">
                 <div class="card-title">Turn-level <span class="tag tag-amber">EACL 2026</span></div>
-                <p>以 Agent 的一轮交互（action + observation）为单位计算 advantage。<strong>Turn-level AE</strong>（arXiv:2512.17008）将每轮视为一个"macro action"，用 GAE 在 turn 级别传播 credit。</p>
+                <p>以 Agent 的一轮交互（action + observation）为单位计算 advantage。<strong>Turn-level AE</strong>（arXiv:<a href="https://arxiv.org/abs/2512.17008" title="Turn-PPO: Turn-Level Advantage Estimation with PPO for Improved Multi-Turn RL in Agentic LLMs · Li, Junbo, Zhou, Peng, Meng, Rui 等 · 2025/12/18 · 2512.17008">2512.17008</a>）将每轮视为一个"macro action"，用 GAE 在 turn 级别传播 credit。</p>
             </div>
             <div class="card">
                 <div class="card-title">Step-level <span class="tag tag-green">AAAI / 2025-2026</span></div>
-                <p>StepPO（arXiv:2604.18401）将"step"定义为 step-native MDP 中的原子操作，用 step-level GAE 配合长度归一化的重要性采样。比 turn-level 更精细，比 token-level 更稳定。</p>
+                <p>StepPO（arXiv:<a href="https://arxiv.org/abs/2604.18401" title="CAPO: Critic-Guided Action-Aligned Policy Optimization for Advancing LLM Agent Capabilities · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401">2604.18401</a>）将"step"定义为 step-native MDP 中的原子操作，用 step-level GAE 配合长度归一化的重要性采样。比 turn-level 更精细，比 token-level 更稳定。</p>
             </div>
             <div class="card">
                 <div class="card-title">Group-in-Group <span class="tag tag-pink">NeurIPS 2025</span></div>
-                <p>GiGPO（arXiv:2505.10978）在 GRPO 的基础上提出双层分组：内层 group 在同一 prompt 下采样多条 trajectory，外层 group 跨 prompt 做 advantage normalization。解决多轮 Agent 的优势估计问题。</p>
+                <p>GiGPO（arXiv:<a href="https://arxiv.org/abs/2505.10978" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978">2505.10978</a>）在 GRPO 的基础上提出双层分组：内层 group 在同一 prompt 下采样多条 trajectory，外层 group 跨 prompt 做 advantage normalization。解决多轮 Agent 的优势估计问题。</p>
             </div>
         </div>
 
         <!-- Multi-turn RL -->
         <h3 id="multi-turn">3.3 多轮 RL（Multi-turn Reinforcement Learning）</h3>
+<section id="citation-sources-12" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://arxiv.org/abs/2604.18401v1" title="StepPO: Step-Aligned Policy Optimization for Agentic Reinforcement Learning · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401v1">StepPO v1</a>；<a href="https://arxiv.org/abs/2504.20073" title="RAGEN: Understanding Self-Evolution in LLM Agents via Multi-Turn Reinforcement Learning · Wang, Zihan, Wang, Kangrui, Wang, Qineng 等 · 2025/04/24 · 2504.20073">RAGEN / StarPO</a>。</p></section>
+
 
         <div class="card teal">
             <div class="card-title">核心挑战</div>
@@ -1099,6 +1111,8 @@
 
         <!-- Tool-Use RL -->
         <h3 id="tool-rl">3.4 工具调用 RL（Tool-Use RL）</h3>
+<section id="citation-sources-13" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.02255" title="MathVista: Evaluating Mathematical Reasoning of Foundation Models in Visual Contexts · Lu, Pan, Bansal, Hritik, Xia, Tony 等 · 2023/10/03 · 2310.02255">MathVista</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+
 
         <p>让 LLM 学会<strong>何时</strong>调用工具、<strong>如何</strong>解读工具返回的结果，是 Agentic RL 的核心能力之一。</p>
 
@@ -1119,6 +1133,8 @@
 
         <!-- Off-Policy -->
         <h3 id="offpolicy">3.5 Off-Policy 优化</h3>
+<section id="citation-sources-14" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>；<a href="https://arxiv.org/abs/2606.01249" title="Trust Region On-Policy Distillation · Xing, Xingrun, Wang, Haoqing, Gao, Boyan 等 · 2026/05/31 · 2606.01249">Trust Region On-Policy Distillation</a>。</p></section>
+
 
         <p>在大规模 RL 训练中，rollout（采样）和 training（更新）往往异步进行。rollout 使用的策略 $\pi_{\theta_{\text{old}}}$ 和当前训练策略 $\pi_\theta$ 之间存在 gap，这就是 off-policy 问题。</p>
 
@@ -1132,7 +1148,7 @@
                 <p><strong>Corrected IS Policy Optimization</strong>：对 IS ratio 进行 bias correction，减少 off-policy 数据引入的偏差。在保持数据利用率的同时控制训练稳定性。</p>
             </div>
             <div class="card">
-                <div class="card-title">OPD / TrOPD <span class="tag tag-green">2025 · arXiv:2606.01249</span></div>
+                <div class="card-title">OPD / TrOPD <span class="tag tag-green">2025 · arXiv:<a href="https://arxiv.org/abs/2606.01249" title="Trust Region On-Policy Distillation · Xing, Xingrun, Wang, Haoqing, Gao, Boyan 等 · 2026/05/31 · 2606.01249">2606.01249</a></span></div>
                 <p><strong>Online Policy Distillation</strong>：将 off-policy 数据通过蒸馏方式利用——用 off-policy trajectory 构造 teacher signal，然后用 KL 蒸馏训练当前策略。TrOPD 加入信任域约束 + FKL outlier 过滤，比标准 OPD 提升 3-6pp。</p>
             </div>
             <div class="card">
@@ -1143,14 +1159,18 @@
 
         <!-- ======================= Part IV ======================= -->
         <h2 class="section-title" id="part4"><span class="num">IV</span> 前沿算法创新</h2>
+<section id="citation-sources-15" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+
 
         <p>GRPO/PPO改进可作用于采样、优势、ratio、loss聚合和系统执行等不同位置；位置不同不代表严格正交或可以无条件组合，需要联合检查采样分布、估计偏差与权重。</p>
 
         <!-- GSPO -->
         <h3 id="gspo">4.1 GSPO — Group Sequence Policy Optimization</h3>
+<section id="citation-sources-16" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-review-note"><strong>来源复核（2026-11-14）：</strong>版本与定义：GSPO 的 ratio 是长度归一化的序列概率比（token log-ratio 的平均再取指数），并非不加归一的完整轨迹概率乘积。</p><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>。</p></section>
+
 
         <div class="card teal">
-            <div class="card-title">GSPO <span class="tag tag-teal">Qwen Team · arXiv:2507.18071</span></div>
+            <div class="card-title">GSPO <span class="tag tag-teal">Qwen Team · arXiv:<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">2507.18071</a></span></div>
             <p><strong>问题</strong>：GRPO 在 sequence 级别使用同一个 advantage $\hat{A}_i$ 来加权整个 sequence 的所有 token，导致 sequence 内部"好 token"和"坏 token"得到相同的梯度方向。</p>
             <p><strong>方案</strong>：在 sequence 级别做 GRPO（组内相对排名），但将 advantage 在 sequence 内部按 token-level log-prob 差异进行二次分配。相当于"sequence 间 GRPO + sequence 内 token-level credit"。</p>
             <p><strong>效果</strong>：在 Qwen 系列的 RL 训练中取代原始 GRPO，提升了长 sequence 的训练效率。</p>
@@ -1158,9 +1178,11 @@
 
         <!-- StepPO -->
         <h3 id="steppo">4.2 StepPO — Step-Aligned Policy Optimization</h3>
+<section id="citation-sources-17" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-review-note"><strong>来源复核（2026-11-14）：</strong>版本修订：2604.18401v1 的题名为 StepPO；v5 已改为 CAPO（Critic-Guided Action-Aligned Policy Optimization）。本节旧 StepPO 名称对应 v1，不能用未固定版本的链接将其当作当前题名；“最系统”是本章判断。</p><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://arxiv.org/abs/2604.18401v1" title="StepPO: Step-Aligned Policy Optimization for Agentic Reinforcement Learning · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401v1">StepPO v1</a>。</p></section>
+
 
         <div class="card teal">
-            <div class="card-title">StepPO <span class="tag tag-teal">arXiv:2604.18401 · 2026</span></div>
+            <div class="card-title">StepPO <span class="tag tag-teal">arXiv:<a href="https://arxiv.org/abs/2604.18401" title="CAPO: Critic-Guided Action-Aligned Policy Optimization for Advancing LLM Agent Capabilities · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401">2604.18401</a> · 2026</span></div>
             <p><strong>核心创新</strong>：将 Agent 的多轮交互建模为 <strong>step-native MDP</strong>——每个 "step"（一组 action + observation）是一个 MDP 原子操作，而非将整条 trajectory 视为一个 episode。</p>
             <p><strong>技术方案</strong>：</p>
             <ul style="margin: 10px 0 10px 20px;">
@@ -1173,9 +1195,11 @@
 
         <!-- ARPO -->
         <h3 id="arpo">4.3 ARPO — Adaptive Rollout Policy Optimization</h3>
+<section id="citation-sources-18" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-review-note"><strong>来源复核（2026-11-14）：</strong>名称修订：ARPO 原论文全名为 Agentic Reinforced Policy Optimization；entropy-based adaptive rollout 是其中的机制，非算法全名。</p><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2507.19849v1" title="Agentic Reinforced Policy Optimization · Dong, Guanting, Mao, Hangyu, Ma, Kai 等 · 2025/07/26 · 2507.19849v1">ARPO</a>；<a href="https://arxiv.org/abs/2507.19849" title="Agentic Reinforced Policy Optimization · Dong, Guanting, Mao, Hangyu, Ma, Kai 等 · 2025/07/26 · 2507.19849">Agentic Reinforced Policy Optimization</a>。</p></section>
+
 
         <div class="card teal">
-            <div class="card-title">ARPO <span class="tag tag-teal">arXiv:2507.19849 · 2025</span></div>
+            <div class="card-title">ARPO <span class="tag tag-teal">arXiv:<a href="https://arxiv.org/abs/2507.19849" title="Agentic Reinforced Policy Optimization · Dong, Guanting, Mao, Hangyu, Ma, Kai 等 · 2025/07/26 · 2507.19849">2507.19849</a> · 2025</span></div>
             <p><strong>问题</strong>：固定长度的 rollout 效率低——简单问题不需要长 rollout，复杂问题需要更多探索。</p>
             <p><strong>方案</strong>：<strong>熵自适应 Rollout</strong>——监控策略熵 $H(\pi_\theta)$，当熵低于阈值时提前终止 rollout（策略已经"确定"了），将计算资源集中在高熵（不确定）的样本上。</p>
             <p><strong>效果</strong>：在保持训练效果的同时，rollout 计算量减少 20-30%。</p>
@@ -1183,9 +1207,11 @@
 
         <!-- GiGPO -->
         <h3 id="gigpo">4.4 GiGPO — Group-in-Group Policy Optimization</h3>
+<section id="citation-sources-19" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-review-note"><strong>来源复核（2026-11-14）：</strong>机制修订：GiGPO 的双层是 episode-level trajectory group 与 step-level anchor-state group；不是“内层同 prompt、外层跨 prompt 归一化”。局部比较要求对应环境状态可比。</p><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>；<a href="https://arxiv.org/abs/2505.10978" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978">Group-in-Group Policy Optimization for LLM Agent Training</a>。</p></section>
+
 
         <div class="card teal">
-            <div class="card-title">GiGPO <span class="tag tag-teal">arXiv:2505.10978 · NeurIPS 2025</span></div>
+            <div class="card-title">GiGPO <span class="tag tag-teal">arXiv:<a href="https://arxiv.org/abs/2505.10978" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978">2505.10978</a> · NeurIPS 2025</span></div>
             <p><strong>问题</strong>：标准 GRPO 在同一 prompt 下采样 G 条独立回复做优势估计。但 Agentic 场景中，一个 prompt 对应多条<strong>交互式 trajectory</strong>（每条 trajectory 包含多轮 action-observation），标准 GRPO 无法区分"trajectory 间差异"和"trajectory 内部差异"。</p>
             <p><strong>方案</strong>：双层分组——</p>
             <ul style="margin: 10px 0 10px 20px;">
@@ -1197,6 +1223,8 @@
 
         <!-- Orthogonal stacking -->
         <h3 id="ortho">4.5 正交叠加：多维度改进的自由组合</h3>
+<section id="citation-sources-20" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-review-note"><strong>来源复核（2026-11-14）：</strong>组合边界：这些设计维度可作为消融轴，但“可与任何方法自由组合”未经证明；advantage、ratio、mask、采样分布及聚合方式之间有耦合。</p><details><summary>相关原论文与官方资料（8 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>；<a href="https://arxiv.org/abs/2604.18401v1" title="StepPO: Step-Aligned Policy Optimization for Agentic Reinforcement Learning · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401v1">StepPO v1</a>；<a href="https://arxiv.org/abs/2507.19849v1" title="Agentic Reinforced Policy Optimization · Dong, Guanting, Mao, Hangyu, Ma, Kai 等 · 2025/07/26 · 2507.19849v1">ARPO</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2504.20073" title="RAGEN: Understanding Self-Evolution in LLM Agents via Multi-Turn Reinforcement Learning · Wang, Zihan, Wang, Kangrui, Wang, Qineng 等 · 2025/04/24 · 2504.20073">RAGEN / StarPO</a>。</p></details></section>
+
 
         <div class="box-insight">
             <p>以下按四个工程维度整理组合候选；“正交”仅作模块划分的直觉，不是理论可交换或无交互的证明。</p>
@@ -1224,33 +1252,35 @@
 
         <!-- 2026 New Algorithms -->
         <h3 id="algo-2026">4.6 2026 前沿新算法</h3>
+<section id="citation-sources-21" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-review-note"><strong>来源复核（2026-11-14）：</strong>来源边界：CISPO 原始出处为 MiniMax-M1（2025），不是所有采用其思想的模型自行提出；本节工业加速倍数须核对各团队的原始报告与运行条件。</p><details><summary>相关原论文与官方资料（11 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>；<a href="https://doi.org/10.1007/BF00992696" title="REINFORCE · 官方文档 / 原始出版页">REINFORCE</a>；<a href="https://arxiv.org/abs/2506.13585v1" title="MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention · 2025/06/16 · 2506.13585v1">CISPO / MiniMax-M1</a>；<a href="https://arxiv.org/abs/2509.21240" title="Tree Search for LLM Agent Reinforcement Learning · Ji, Yuxiang, Ma, Ziyu, Wang, Yong 等 · 2025/09/25 · 2509.21240">Tree Search for LLM Agent Reinforcement Learning</a>；<a href="https://arxiv.org/abs/2605.02178" title="T$^2$PO: Uncertainty-Guided Exploration Control for Stable Multi-Turn Agentic Reinforcement Learning · Wang, Haixin, Cui, Hejie, Zhang, Chenwei 等 · 2026/05/04 · 2605.02178">T$^2$PO: Uncertainty-Guided Exploration Control for Stable Multi-Turn Agentic Reinforcement Learning</a>；<a href="https://arxiv.org/abs/2604.11056" title="Where Hindsight Credit Can Reside: A Signed-Capacity View of Token Updates in RLVR · He, Yuhang, Wu, Haodong, Liu, Siyi 等 · 2026/04/13 · 2604.11056">Where Hindsight Credit Can Reside: A Signed-Capacity View of Token Updates in RLVR</a>；<a href="https://arxiv.org/abs/2509.21826" title="ResT: Reshaping Token-Level Policy Gradients for Tool-Use Large Language Models · Lin, Zihan, Wang, Xiaohan, Cao, Jie 等 · 2025/09/26 · 2509.21826">ResT: Reshaping Token-Level Policy Gradients for Tool-Use Large Language Models</a>；<a href="https://arxiv.org/abs/2604.06268" title="RAGEN-2: Reasoning Collapse in Agentic RL · Wang, Zihan, Gui, Chi, Jin, Xing 等 · 2026/04/07 · 2604.06268">RAGEN-2: Reasoning Collapse in Agentic RL</a>。</p></details></section>
+
 
         <div class="compare-grid">
             <div class="card">
                 <div class="card-title">Tree-GRPO <span class="tag tag-teal">ICLR 2026</span></div>
-                <p>将 GRPO 的 chain-based rollout 替换为 <strong>tree-search rollout</strong>：每个交互步骤作为树节点，共享前缀高效采样。树内优化等价于 step-level DPO。arXiv:2509.21240</p>
+                <p>将 GRPO 的 chain-based rollout 替换为 <strong>tree-search rollout</strong>：每个交互步骤作为树节点，共享前缀高效采样。树内优化等价于 step-level DPO。arXiv:<a href="https://arxiv.org/abs/2509.21240" title="Tree Search for LLM Agent Reinforcement Learning · Ji, Yuxiang, Ma, Ziyu, Wang, Yong 等 · 2025/09/25 · 2509.21240">2509.21240</a></p>
             </div>
             <div class="card">
                 <div class="card-title">T²PO <span class="tag tag-amber">ICML 2026 Spotlight</span></div>
-                <p><strong>不确定性引导探索</strong>：token-level 不确定性监控 + 重采样无效 turn，双层优化防止多轮 RL 训练崩溃。arXiv:2605.02178</p>
+                <p><strong>不确定性引导探索</strong>：token-level 不确定性监控 + 重采样无效 turn，双层优化防止多轮 RL 训练崩溃。arXiv:<a href="https://arxiv.org/abs/2605.02178" title="T$^2$PO: Uncertainty-Guided Exploration Control for Stable Multi-Turn Agentic Reinforcement Learning · Wang, Haixin, Cui, Hejie, Zhang, Chenwei 等 · 2026/05/04 · 2605.02178">2605.02178</a></p>
             </div>
         </div>
 
         <div class="compare-grid">
             <div class="card">
                 <div class="card-title">EAPO <span class="tag tag-green">2026.04</span></div>
-                <p><strong>熵感知信用分配</strong>：证明 token 可携带的 credit 上界由其熵决定（CMI）。四象限分解 + 动态调整学习信号：放大不确定 token 的 advantage，压缩确定性 token。arXiv:2604.11056</p>
+                <p><strong>熵感知信用分配</strong>：证明 token 可携带的 credit 上界由其熵决定（CMI）。四象限分解 + 动态调整学习信号：放大不确定 token 的 advantage，压缩确定性 token。arXiv:<a href="https://arxiv.org/abs/2604.11056" title="Where Hindsight Credit Can Reside: A Signed-Capacity View of Token Updates in RLVR · He, Yuhang, Wu, Haodong, Liu, Siyi 等 · 2026/04/13 · 2604.11056">2604.11056</a></p>
             </div>
             <div class="card">
                 <div class="card-title">ResT <span class="tag tag-pink">ICLR 2026</span></div>
-                <p><strong>工具调用 token 重加权</strong>：发现结构化低熵 token 是工具调用 reward 的主要决定因素。熵感知重加权从结构正确逐步转移到语义推理。4B 模型超 GPT-4o 4.11%。arXiv:2509.21826</p>
+                <p><strong>工具调用 token 重加权</strong>：发现结构化低熵 token 是工具调用 reward 的主要决定因素。熵感知重加权从结构正确逐步转移到语义推理。4B 模型超 GPT-4o 4.11%。arXiv:<a href="https://arxiv.org/abs/2509.21826" title="ResT: Reshaping Token-Level Policy Gradients for Tool-Use Large Language Models · Lin, Zihan, Wang, Xiaohan, Cao, Jie 等 · 2025/09/26 · 2509.21826">2509.21826</a></p>
             </div>
         </div>
 
         <div class="compare-grid">
             <div class="card">
                 <div class="card-title">RAGEN-2 <span class="tag tag-teal">2026.04</span></div>
-                <p><strong>发现 "Template Collapse"</strong>：agent 输出看似多样但实际不依赖输入的失败模式。<strong>SNR-Aware Filtering</strong>：训练时优先选择信息量大的 prompt，持续提升成功率。arXiv:2604.06268</p>
+                <p><strong>发现 "Template Collapse"</strong>：agent 输出看似多样但实际不依赖输入的失败模式。<strong>SNR-Aware Filtering</strong>：训练时优先选择信息量大的 prompt，持续提升成功率。arXiv:<a href="https://arxiv.org/abs/2604.06268" title="RAGEN-2: Reasoning Collapse in Agentic RL · Wang, Zihan, Gui, Chi, Jin, Xing 等 · 2026/04/07 · 2604.06268">2604.06268</a></p>
             </div>
             <div class="card">
                 <div class="card-title">Forge + CISPO <span class="tag tag-amber">MiniMax · 2026</span></div>
@@ -1302,6 +1332,8 @@
 
         <!-- ======================= Part V: OPD ======================= -->
         <h2 class="section-title" id="part5"><span class="num">V</span> OPD — On-Policy Distillation（在策略蒸馏）</h2>
+<section id="citation-sources-22" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>。</p></section>
+
 
         <div class="integration-overview" id="opd-overview"><p>OPD在学生访问的状态上学习教师条件分布；“on-policy”首先说明状态来自谁。完整词表、采样token、KL方向和多教师/自蒸馏路线见<a href="/llm-posttraining/s03_opd_self_distillation.html">OPD主讲章</a>。本页继续保留Sparse-to-Dense流程和多轮Agent变体的分类。</p></div>
         <!-- READING:HISTORY:START --><details data-reading-history><summary>整合前OPD定义与算法比较 · 2026-11-14</summary>
@@ -1351,6 +1383,8 @@
 
         </details><!-- READING:HISTORY:END -->
         <h3 id="opd-pipeline">5.3 Sparse-to-Dense 完整 Pipeline</h3>
+<section id="citation-sources-23" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-review-note"><strong>来源复核（2026-11-14）：</strong>推断边界：Sparse-to-Dense 为该论文的经验原则；ExOPD 的 reward scaling 不等于把交叉熵 loss 整体乘 α，后者可能仅改变梯度尺度，不能据此保证超越教师。</p><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2605.12483" title="Beyond GRPO and On-Policy Distillation: An Empirical Sparse-to-Dense Reward Principle for Language-Model Post-Training · Xu, Yuanda, Sang, Hejian, Zhou, Zhengze 等 · 2026/05/12 · 2605.12483">Beyond GRPO and On-Policy Distillation: An Empirical Sparse-to-Dense Reward Principle for Language-Model Post-Training</a>。</p></section>
+
 
         <div class="card teal">
             <div class="card-title">Sparse-to-Dense 完整 Pipeline（面试高频考点）</div>
@@ -1364,36 +1398,38 @@
                 <p><strong>Stage 3 · Sparse RL（学生精炼）</strong>：学生模型用 GRPO + sparse reward 做最终精炼，突破教师天花板。此时学生已继承教师能力，sparse RL 可以在教师能力基础上继续探索。</p>
                 <p style="text-align:center;font-size:1.2em;margin:8px 0;">$\pi_\theta \xrightarrow{\text{GRPO + sparse reward}} \pi_\theta^*$（超越教师）</p>
             </div>
-            <p><strong>效果</strong>：7B 学生通过此 pipeline 在 MATH 上达到 79.3%，AIME 达到 25.2%（arXiv:2605.12483）。ExOPD 的 reward scaling 进一步让学生<strong>直接超越教师</strong>：$\mathcal{L}^{\text{ExOPD}} = -\alpha \cdot \mathbb{E}[\sum_t \log \pi_T(\cdot)]$，当 $\alpha > 1$ 时学生可以超越教师分布。</p>
+            <p><strong>效果</strong>：7B 学生通过此 pipeline 在 MATH 上达到 79.3%，AIME 达到 25.2%（arXiv:<a href="https://arxiv.org/abs/2605.12483" title="Beyond GRPO and On-Policy Distillation: An Empirical Sparse-to-Dense Reward Principle for Language-Model Post-Training · Xu, Yuanda, Sang, Hejian, Zhou, Zhengze 等 · 2026/05/12 · 2605.12483">2605.12483</a>）。ExOPD 的 reward scaling 进一步让学生<strong>直接超越教师</strong>：$\mathcal{L}^{\text{ExOPD}} = -\alpha \cdot \mathbb{E}[\sum_t \log \pi_T(\cdot)]$，当 $\alpha > 1$ 时学生可以超越教师分布。</p>
         </div>
 
         <h3 id="opd-variants">5.4 OPD 前沿变体</h3>
+<section id="citation-sources-24" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（8 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2508.18265" title="InternVL3.5: Advancing Open-Source Multimodal Models in Versatility, Reasoning, and Efficiency · 2025/08/25 · 2508.18265">InternVL3.5</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://arxiv.org/abs/2606.01249" title="Trust Region On-Policy Distillation · Xing, Xingrun, Wang, Haoqing, Gao, Boyan 等 · 2026/05/31 · 2606.01249">Trust Region On-Policy Distillation</a>；<a href="https://arxiv.org/abs/2602.12125" title="Learning beyond Teacher: Generalized On-Policy Distillation with Reward Extrapolation · Yang, Wenkai, Liu, Weijie, Xie, Ruobing 等 · 2026/02/12 · 2602.12125">Learning beyond Teacher: Generalized On-Policy Distillation with Reward Extrapolation</a>；<a href="https://arxiv.org/abs/2603.11137" title="Scaling Reasoning Efficiently via Relaxed On-Policy Distillation · Ko, Jongwoo, Abdali, Sara, Kim, Young Jin 等 · 2026/03/11 · 2603.11137">Scaling Reasoning Efficiently via Relaxed On-Policy Distillation</a>；<a href="https://arxiv.org/abs/2605.12483" title="Beyond GRPO and On-Policy Distillation: An Empirical Sparse-to-Dense Reward Principle for Language-Model Post-Training · Xu, Yuanda, Sang, Hejian, Zhou, Zhengze 等 · 2026/05/12 · 2605.12483">Beyond GRPO and On-Policy Distillation: An Empirical Sparse-to-Dense Reward Principle for Language-Model Post-Training</a>；<a href="https://arxiv.org/abs/2606.30406" title="MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · Ma, Wenhan, Wei, Jianyu, Zhao, Liang 等 · 2026/06/29 · 2606.30406">MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training</a>。</p></details></section>
+
 
         <div class="compare-grid">
             <div class="card">
-                <div class="card-title">TrOPD <span class="tag tag-teal">arXiv:2606.01249 · 2026.05</span></div>
+                <div class="card-title">TrOPD <span class="tag tag-teal">arXiv:<a href="https://arxiv.org/abs/2606.01249" title="Trust Region On-Policy Distillation · Xing, Xingrun, Wang, Haoqing, Gao, Boyan 等 · 2026/05/31 · 2606.01249">2606.01249</a> · 2026.05</span></div>
                 <p><strong>Trust-Region On-Policy Distillation</strong>：识别标准 OPD 的关键失败模式——师生分布差异大时 teacher 梯度不可靠。三重机制：①信任域约束（仅用可靠 teacher token）②分布外区域用 forward-KL 近似 ③off-policy prefix 引导探索。比 OPD/EOPD/REOPOLD <strong>+3~6pp</strong>。</p>
             </div>
             <div class="card">
-                <div class="card-title">ExOPD <span class="tag tag-amber">arXiv:2602.12125 · 2026.02</span></div>
+                <div class="card-title">ExOPD <span class="tag tag-amber">arXiv:<a href="https://arxiv.org/abs/2602.12125" title="Learning beyond Teacher: Generalized On-Policy Distillation with Reward Extrapolation · Yang, Wenkai, Liu, Weijie, Xie, Ruobing 等 · 2026/02/12 · 2602.12125">2602.12125</a> · 2026.02</span></div>
                 <p><strong>超越教师</strong>：证明标准 OPD 是 dense KL-RL 的特例（reward 和正则权重均为 1）。引入 <strong>reward scaling > 1</strong>，让学生超越教师。多专家合并时学生超越所有单一教师。</p>
             </div>
         </div>
 
         <div class="compare-grid">
             <div class="card">
-                <div class="card-title">REOPOLD <span class="tag tag-green">arXiv:2603.11137 · 2026.03</span></div>
+                <div class="card-title">REOPOLD <span class="tag tag-green">arXiv:<a href="https://arxiv.org/abs/2603.11137" title="Scaling Reasoning Efficiently via Relaxed On-Policy Distillation · Ko, Jongwoo, Abdali, Sara, Kim, Young Jin 等 · 2026/03/11 · 2603.11137">2603.11137</a> · 2026.03</span></div>
                 <p>将 OPD 重构为 policy optimization：teacher-student log-ratio 作为 dense token reward。三重稳定化：reward clipping + entropy-based 动态 token 采样 + explore-to-refine 训练策略。<strong>6.7~12× 更高 sample efficiency</strong>。7B 学生匹配 32B 教师。</p>
             </div>
             <div class="card">
-                <div class="card-title">Beyond GRPO & OPD <span class="tag tag-pink">arXiv:2605.12483 · 2026.05</span></div>
+                <div class="card-title">Beyond GRPO & OPD <span class="tag tag-pink">arXiv:<a href="https://arxiv.org/abs/2605.12483" title="Beyond GRPO and On-Policy Distillation: An Empirical Sparse-to-Dense Reward Principle for Language-Model Post-Training · Xu, Yuanda, Sang, Hejian, Zhou, Zhengze 等 · 2026/05/12 · 2605.12483">2605.12483</a> · 2026.05</span></div>
                 <p><strong>Sparse-to-Dense 原则</strong>：GRPO 和 OPD 是互补阶段而非竞争。GRPO = sparse reward 用于教师发现，OPD = dense 监督用于学生压缩。完整 pipeline：教师 GRPO → 学生 OPD → 学生 sparse reward。79.3% MATH / 25.2% AIME。</p>
             </div>
         </div>
 
         <div class="compare-grid">
             <div class="card">
-                <div class="card-title">MOPD <span class="tag tag-teal">arXiv:2606.30406 · 2026.06</span></div>
+                <div class="card-title">MOPD <span class="tag tag-teal">arXiv:<a href="https://arxiv.org/abs/2606.30406" title="MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · Ma, Wenhan, Wei, Jianyu, Zhao, Liang 等 · 2026/06/29 · 2606.30406">2606.30406</a> · 2026.06</span></div>
                 <p><strong>Multi-Teacher OPD</strong>：面向多领域能力整合，而非单 teacher 压缩。流程是 General SFT → 各领域独立 RL teacher（Math / IF / SWE / Tool Use 等）→ 学生 on-policy rollout → 按 prompt 领域路由到对应 teacher 做 per-token reverse-KL 蒸馏。Qwen3-30B-A3B 上 normalised score <strong>0.937</strong>，高于 Mix-RL 0.882、Cascade RL 0.775、Off-Policy Finetune 0.824；MiMo-V2-Flash 上多数 benchmark 匹配或超过 teacher。</p>
             </div>
             <div class="card">
@@ -1403,18 +1439,20 @@
         </div>
 
         <h3 id="opd-agentic">5.5 Agentic OPD 变体（多轮 Agent 蒸馏）</h3>
+<section id="citation-sources-25" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（9 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://arxiv.org/abs/2605.07725" title="SOD: Step-wise On-policy Distillation for Small Language Model Agents · Zhong, Qiyong, Zheng, Mao, Song, Mingyang 等 · 2026/05/08 · 2605.07725">SOD: Step-wise On-policy Distillation for Small Language Model Agents</a>；<a href="https://arxiv.org/abs/2607.05804" title="TurnOPD: Making On-Policy Distillation Turn-Aware for Efficient Long-Horizon Agent Training · Zhou, Yuhang, Zheng, Kai, Li, Haoling 等 · 2026/07/07 · 2607.05804">TurnOPD: Making On-Policy Distillation Turn-Aware for Efficient Long-Horizon Agent Training</a>；<a href="https://arxiv.org/abs/2606.27814" title="ATOD: Annealed Turn-Aware On-Policy Distillation for Multi-Turn Agentic Tasks · Tan, Qitai, Zong, Zefang, Li, Mo 等 · 2026/06/26 · 2606.27814">ATOD: Annealed Turn-Aware On-Policy Distillation for Multi-Turn Agentic Tasks</a>；<a href="https://arxiv.org/abs/2605.01347" title="MAD-OPD: Breaking the Ceiling in On-Policy Distillation via Multi-Agent Debate · Wang, Jianze, Liu, Ying, Chen, Jinlong 等 · 2026/05/02 · 2605.01347">MAD-OPD: Breaking the Ceiling in On-Policy Distillation via Multi-Agent Debate</a>；<a href="https://arxiv.org/abs/2601.18734" title="Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models · Zhao, Siyan, Xie, Zhihui, Liu, Mengchen 等 · 2026/01/26 · 2601.18734">Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models</a>；<a href="https://arxiv.org/abs/2602.12275" title="On-Policy Context Distillation for Language Models · Ye, Tianzhu, Dong, Li, Wu, Xun 等 · 2026/02/12 · 2602.12275">On-Policy Context Distillation for Language Models</a>；<a href="https://arxiv.org/abs/2607.05184" title="Rethinking On-Policy Self-Distillation for Thinking Models · Kaur, Simran, Ri, Narutatsu, He, Yinghui 等 · 2026/07/06 · 2607.05184">Rethinking On-Policy Self-Distillation for Thinking Models</a>。</p></details></section>
+
 
         <div class="card teal">
             <div class="card-title">Agentic OPD 变体</div>
             <table>
                 <thead><tr><th>变体</th><th>arXiv</th><th>核心创新</th></tr></thead>
                 <tbody>
-                    <tr><td><strong>SOD</strong></td><td>2605.07725</td><td>Step-wise OPD：多轮 agent 中单个错误工具调用导致 cascade drift，动态按 step 重加权 teacher 影响</td></tr>
-                    <tr><td><strong>TurnOPD</strong></td><td>2607.05804</td><td>Turn-Aware OPD：自适应 rollout 深度预算 + 渐进 turn-归一化 loss，解决多轮全 horizon 浪费</td></tr>
-                    <tr><td><strong>ATOD</strong></td><td>2606.27814</td><td>Annealed OPD：早期 teacher-guided 蒸馏退火到后期 reward-based RL 探索，<strong>+2.16 超教师</strong></td></tr>
-                    <tr><td><strong>MAD-OPD / OPAD</strong></td><td>2605.01347</td><td>Multi-Agent Debate 替代单教师 + On-Policy Agentic Distillation（step-level sampling for agents）</td></tr>
-                    <tr><td><strong>OPSD</strong></td><td>2601.18734</td><td>Self-Distilled Reasoner：单模型同时做 teacher（看 privileged 信息）和 student（只看 query），token 效率优于 RL 方法</td></tr>
-                    <tr><td><strong>Context Distillation</strong></td><td>2602.12275</td><td>Microsoft Research（Li Dong, Furu Wei）：on-policy 序列 + context-aware teacher 的 KL 最小化，将 solution trace 知识内化到模型</td></tr>
+                    <tr><td><strong>SOD</strong></td><td><a href="https://arxiv.org/abs/2605.07725" title="SOD: Step-wise On-policy Distillation for Small Language Model Agents · Zhong, Qiyong, Zheng, Mao, Song, Mingyang 等 · 2026/05/08 · 2605.07725">2605.07725</a></td><td>Step-wise OPD：多轮 agent 中单个错误工具调用导致 cascade drift，动态按 step 重加权 teacher 影响</td></tr>
+                    <tr><td><strong>TurnOPD</strong></td><td><a href="https://arxiv.org/abs/2607.05804" title="TurnOPD: Making On-Policy Distillation Turn-Aware for Efficient Long-Horizon Agent Training · Zhou, Yuhang, Zheng, Kai, Li, Haoling 等 · 2026/07/07 · 2607.05804">2607.05804</a></td><td>Turn-Aware OPD：自适应 rollout 深度预算 + 渐进 turn-归一化 loss，解决多轮全 horizon 浪费</td></tr>
+                    <tr><td><strong>ATOD</strong></td><td><a href="https://arxiv.org/abs/2606.27814" title="ATOD: Annealed Turn-Aware On-Policy Distillation for Multi-Turn Agentic Tasks · Tan, Qitai, Zong, Zefang, Li, Mo 等 · 2026/06/26 · 2606.27814">2606.27814</a></td><td>Annealed OPD：早期 teacher-guided 蒸馏退火到后期 reward-based RL 探索，<strong>+2.16 超教师</strong></td></tr>
+                    <tr><td><strong>MAD-OPD / OPAD</strong></td><td><a href="https://arxiv.org/abs/2605.01347" title="MAD-OPD: Breaking the Ceiling in On-Policy Distillation via Multi-Agent Debate · Wang, Jianze, Liu, Ying, Chen, Jinlong 等 · 2026/05/02 · 2605.01347">2605.01347</a></td><td>Multi-Agent Debate 替代单教师 + On-Policy Agentic Distillation（step-level sampling for agents）</td></tr>
+                    <tr><td><strong>OPSD</strong></td><td><a href="https://arxiv.org/abs/2601.18734" title="Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models · Zhao, Siyan, Xie, Zhihui, Liu, Mengchen 等 · 2026/01/26 · 2601.18734">2601.18734</a></td><td>Self-Distilled Reasoner：单模型同时做 teacher（看 privileged 信息）和 student（只看 query），token 效率优于 RL 方法</td></tr>
+                    <tr><td><strong>Context Distillation</strong></td><td><a href="https://arxiv.org/abs/2602.12275" title="On-Policy Context Distillation for Language Models · Ye, Tianzhu, Dong, Li, Wu, Xun 等 · 2026/02/12 · 2602.12275">2602.12275</a></td><td>Microsoft Research（Li Dong, Furu Wei）：on-policy 序列 + context-aware teacher 的 KL 最小化，将 solution trace 知识内化到模型</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1424,16 +1462,18 @@
         </div>
 
         <div class="card" style="border-left: 3px solid #ef4444;">
-            <div class="card-title">⚠ 重要负面结果：Privileged Self-Distillation 伤害 Thinking Models <span class="tag tag-red">Princeton · 2026.07 · arXiv:2607.05184</span></div>
+            <div class="card-title">⚠ 重要负面结果：Privileged Self-Distillation 伤害 Thinking Models <span class="tag tag-red">Princeton · 2026.07 · arXiv:<a href="https://arxiv.org/abs/2607.05184" title="Rethinking On-Policy Self-Distillation for Thinking Models · Kaur, Simran, Ri, Narutatsu, He, Yinghui 等 · 2026/07/06 · 2607.05184">2607.05184</a></span></div>
             <p>Kaur et al. 发现：让 thinking model 做 privileged self-distillation（teacher 看到正确答案、student 只看 query）反而<strong>严重损害长推理能力</strong>——avg@16 准确率下降最高达 <strong>17%</strong>。机制分析表明，privileged teacher 会惩罚 reconsideration tokens（验证、回溯、修正），而这些恰恰是 thinking model 的核心优势。在 Qwen3 和 OLMo 上跨 AIME24/AIME25/HMMT25 一致验证。<strong>启示：对 reasoning model 做 OPD 时，必须仔细评估 privileged information 是否真的有益。</strong></p>
         </div>
         <h2 class="section-title" id="part6"><span class="num">VI</span> 开源大模型 RL 实践</h2>
 
         <!-- DeepSeek-R1 -->
         <h3 id="deepseek-r1">6.1 DeepSeek-R1</h3>
+<section id="citation-sources-27" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2606.19348" title="DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence · DeepSeek-AI, Xu, Anyi, Lin, Bangcai 等 · 2026/04/26 · 2606.19348">DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence</a>。</p></section>
+
 
         <div class="card teal">
-            <div class="card-title">DeepSeek-R1 <span class="tag tag-teal">arXiv:2501.12948 · Nature 2025</span></div>
+            <div class="card-title">DeepSeek-R1 <span class="tag tag-teal">arXiv:<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">2501.12948</a> · Nature 2025</span></div>
             <p>DeepSeek-R1 是 GRPO 的标志性应用，首次在大规模 LLM 上证明了<strong>纯 RL 可以涌现出推理能力</strong>。</p>
             <p><strong>训练流程</strong>：</p>
             <ol style="margin: 10px 0 10px 20px;">
@@ -1455,7 +1495,7 @@
         </div>
 
         <div class="card teal">
-            <div class="card-title">DeepSeek V4 <span class="tag tag-amber">2026.04 · arXiv:2606.19348</span></div>
+            <div class="card-title">DeepSeek V4 <span class="tag tag-amber">2026.04 · arXiv:<a href="https://arxiv.org/abs/2606.19348" title="DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence · DeepSeek-AI, Xu, Anyi, Lin, Bangcai 等 · 2026/04/26 · 2606.19348">2606.19348</a></span></div>
             <p>DeepSeek 最新旗舰模型，从推理模型进化为 <strong>通用 agentic 智能</strong>：</p>
             <ul style="margin: 10px 0 10px 20px;">
                 <li><strong>架构</strong>：V4-Pro 1.6T 总参/49B 活跃，V4-Flash 284B/13B，均支持 <strong>1M token</strong> 上下文</li>
@@ -1468,9 +1508,11 @@
 
         <!-- Kimi -->
         <h3 id="kimi">6.2 Kimi k1.5 / K2</h3>
+<section id="citation-sources-28" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>；<a href="https://arxiv.org/abs/2501.12599" title="Kimi k1.5: Scaling Reinforcement Learning with LLMs · Kimi Team, Du, Angang, Gao, Bofei 等 · 2025/01/22 · 2501.12599">Kimi k1.5: Scaling Reinforcement Learning with LLMs</a>；<a href="https://arxiv.org/abs/2602.02276" title="Kimi K2.5: Visual Agentic Intelligence · Kimi Team, Bai, Tongtong, Bai, Yifan 等 · 2026/02/02 · 2602.02276">Kimi K2.5: Visual Agentic Intelligence</a>。</p></section>
+
 
         <div class="card teal">
-            <div class="card-title">Kimi k1.5 <span class="tag tag-teal">arXiv:2501.12599</span></div>
+            <div class="card-title">Kimi k1.5 <span class="tag tag-teal">arXiv:<a href="https://arxiv.org/abs/2501.12599" title="Kimi k1.5: Scaling Reinforcement Learning with LLMs · Kimi Team, Du, Angang, Gao, Bofei 等 · 2025/01/22 · 2501.12599">2501.12599</a></span></div>
             <p><strong>核心贡献</strong>：将 <strong>long thinking</strong>（长链思维）与 RL 对齐结合。Kimi k1.5 在推理时生成极长的思考链（可达数万 token），然后用 RL 优化思考质量。</p>
             <p><strong>关键技术</strong>：</p>
             <ul style="margin: 10px 0 10px 20px;">
@@ -1485,7 +1527,7 @@
             <p>K2 系列从 agentic RL 进化到 <strong>multi-agent swarm</strong>：</p>
             <ul style="margin: 10px 0 10px 20px;">
                 <li><strong>K2</strong>（2025.07）：MoE 1T/32B，Agentic RL + MuonClip，SWE-bench 65.8%</li>
-                <li><strong>K2.5</strong>（2026.02，arXiv:2602.02276）：Visual Agentic Intelligence，100 sub-agents / 1,500 steps，SWE-bench 71.4%</li>
+                <li><strong>K2.5</strong>（2026.02，arXiv:<a href="https://arxiv.org/abs/2602.02276" title="Kimi K2.5: Visual Agentic Intelligence · Kimi Team, Bai, Tongtong, Bai, Yifan 等 · 2026/02/02 · 2602.02276">2602.02276</a>）：Visual Agentic Intelligence，100 sub-agents / 1,500 steps，SWE-bench 71.4%</li>
                 <li><strong>K2.6</strong>（2026.04）：<strong>Agent Swarm</strong> 架构——300 并行 sub-agents / 4,000 协调 steps，Claw Groups 多 agent 协作工作空间，SWE-bench Verified <strong>80.2%</strong></li>
             </ul>
             <p>关键进化：从单 agent RL → multi-agent coordination → swarm intelligence。K2.6 的 Agent Swarm 是首个展示数千步协调的开源系统。</p>
@@ -1493,6 +1535,8 @@
 
         <!-- Qwen3 -->
         <h3 id="qwen3">6.3 Qwen3</h3>
+<section id="citation-sources-29" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>；<a href="https://arxiv.org/abs/2603.00729" title="Qwen3-Coder-Next Technical Report · Cao, Ruisheng, Chen, Mouxiang, Chen, Jiawei 等 · 2026/02/28 · 2603.00729">Qwen3-Coder-Next Technical Report</a>。</p></section>
+
 
         <div class="card teal">
             <div class="card-title">Qwen3 <span class="tag tag-teal">2025</span></div>
@@ -1507,7 +1551,7 @@
         </div>
 
         <div class="card teal">
-            <div class="card-title">Qwen3-Coder-Next <span class="tag tag-amber">2026.03 · arXiv:2603.00729</span></div>
+            <div class="card-title">Qwen3-Coder-Next <span class="tag tag-amber">2026.03 · arXiv:<a href="https://arxiv.org/abs/2603.00729" title="Qwen3-Coder-Next Technical Report · Cao, Ruisheng, Chen, Mouxiang, Chen, Jiawei 等 · 2026/02/28 · 2603.00729">2603.00729</a></span></div>
             <p>极致效率的 coding agent：<strong>80B 总参 / 仅 3B 活跃</strong>，在消费级硬件（&lt;60GB）上达到前沿水平。</p>
             <ul style="margin: 10px 0 10px 20px;">
                 <li><strong>环境合成</strong>：专用 agent 从 PR 直接生成可运行 Docker 容器作为训练数据</li>
@@ -1520,6 +1564,8 @@
 
         <!-- GLM -->
         <h3 id="glm">6.4 GLM-4.5 / GLM-5 / GLM-5.2</h3>
+<section id="citation-sources-30" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（17 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>；<a href="https://arxiv.org/abs/2404.19737" title="Better &amp; Faster Large Language Models via Multi-token Prediction · 2024/04/30 · 2404.19737">Multi-Token Prediction</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://arxiv.org/abs/2307.13854" title="WebArena: A Realistic Web Environment for Building Autonomous Agents · Zhou, Shuyan, Xu, Frank F., Zhu, Hao 等 · 2023/07/25 · 2307.13854">WebArena</a>；<a href="https://arxiv.org/abs/2404.07972" title="OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments · Xie, Tianbao, Zhang, Danyang, Chen, Jixuan 等 · 2024/04/11 · 2404.07972">OSWorld</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>；<a href="https://arxiv.org/abs/2602.15763" title="GLM-5: from Vibe Coding to Agentic Engineering · GLM-5-Team, :, Zeng, Aohan 等 · 2026/02/17 · 2602.15763">GLM-5: from Vibe Coding to Agentic Engineering</a>；<a href="https://arxiv.org/abs/2607.07508" title="Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning · Hou, Zhenyu, Li, Yujiang, Tang, Jie 等 · 2026/07/08 · 2607.07508">Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning</a>；<a href="https://arxiv.org/abs/2607.01232" title="Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training · Zhang, Zijian, Hu, Rizhen, Glentis, Athanasios 等 · 2026/07/01 · 2607.01232">Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training</a>；<a href="https://arxiv.org/abs/2411.00820" title="AutoGLM: Autonomous Foundation Agents for GUIs · Liu, Xiao, Qin, Bo, Liang, Dongzhu 等 · 2024/10/28 · 2411.00820">AutoGLM: Autonomous Foundation Agents for GUIs</a>；<a href="https://arxiv.org/abs/2411.02337" title="WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning · Qi, Zehan, Liu, Xiao, Iong, Iat Long 等 · 2024/11/04 · 2411.02337">WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning</a>；<a href="https://arxiv.org/abs/2508.14040" title="ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents · Lai, Hanyu, Liu, Xiao, Zhao, Yanxiao 等 · 2025/08/19 · 2508.14040">ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents</a>；<a href="https://arxiv.org/abs/2604.26752" title="GLM-5V-Turbo: Toward a Native Foundation Model for Multimodal Agents · V Team, Hong, Wenyi, Gu, Xiaotao 等 · 2026/04/29 · 2604.26752">GLM-5V-Turbo: Toward a Native Foundation Model for Multimodal Agents</a>。</p></details></section>
+
 
         <div class="card teal">
             <div class="card-title">GLM-4.5 <span class="tag tag-teal">Zhipu AI · 2025</span></div>
@@ -1540,7 +1586,7 @@
                 <li><strong>Stage 3 — General RL</strong>：hybrid reward 系统（rule-based + outcome + generative models）+ Human-in-the-loop style alignment</li>
                 <li><strong>Stage 4 — On-Policy Cross-Stage Distillation</strong>：缓解能力退化，保留前序阶段学到的技能</li>
             </ul>
-            <p style="font-size:0.88em;color:var(--text-dim);">Intelligence Index v4.0 得分 50（开源第一），LMArena Text + Code Arena 双第一。ARC 基准（含 SWE-bench）相比 GLM-4.7 提升约 20%，与 Claude Opus 4.5 和 GPT-5.2 对标。arXiv:2602.15763</p>
+            <p style="font-size:0.88em;color:var(--text-dim);">Intelligence Index v4.0 得分 50（开源第一），LMArena Text + Code Arena 双第一。ARC 基准（含 SWE-bench）相比 GLM-4.7 提升约 20%，与 Claude Opus 4.5 和 GPT-5.2 对标。arXiv:<a href="https://arxiv.org/abs/2602.15763" title="GLM-5: from Vibe Coding to Agentic Engineering · GLM-5-Team, :, Zeng, Aohan 等 · 2026/02/17 · 2602.15763">2602.15763</a></p>
         </div>
 
         <div class="card teal">
@@ -1549,14 +1595,14 @@
             <ul style="margin: 10px 0 10px 20px;">
                 <li><strong>架构</strong>：MoE 750B-A40B（744B 总参/40B 激活），<strong>1M context</strong>，128K output</li>
                 <li><strong>IndexShare</strong>：轻量 indexer 跨 4 层稀疏注意力复用，per-token FLOPs 降低 <strong>2.9×</strong></li>
-                <li><strong>Single-Rollout Asynchronous Optimization</strong>（arXiv:2607.07508）：核心创新 —— 用<strong>单条 rollout 采样</strong>替代传统 group-wise 采样，配合<strong>双侧 token-level clipping</strong>稳定 off-policy 异步更新。解决传统异步 RL 中 group sampling 不适配 agent workflow 的问题，在 SWE-Bench Verified、BeyondAIME、IMOAnswerBench 上超越 GRPO 变体</li>
+                <li><strong>Single-Rollout Asynchronous Optimization</strong>（arXiv:<a href="https://arxiv.org/abs/2607.07508" title="Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning · Hou, Zhenyu, Li, Yujiang, Tang, Jie 等 · 2026/07/08 · 2607.07508">2607.07508</a>）：核心创新 —— 用<strong>单条 rollout 采样</strong>替代传统 group-wise 采样，配合<strong>双侧 token-level clipping</strong>稳定 off-policy 异步更新。解决传统异步 RL 中 group sampling 不适配 agent workflow 的问题，在 SWE-Bench Verified、BeyondAIME、IMOAnswerBench 上超越 GRPO 变体</li>
                 <li><strong>异步 RL 基础设施 "Slime"</strong>：rollout 与 training 解耦到不同硬件，千次迭代保持稳定</li>
                 <li>SWE-bench Verified <strong>72.8%</strong>，FrontierSWE <strong>74.4</strong>，AIME 2026 <strong>99.2</strong></li>
             </ul>
         </div>
 
         <div class="card" style="border-left: 3px solid var(--primary);">
-            <div class="card-title">研究洞察：RL 训练只需更新单层？<span class="tag tag-pink">arXiv:2607.01232 · 2026.07</span></div>
+            <div class="card-title">研究洞察：RL 训练只需更新单层？<span class="tag tag-pink">arXiv:<a href="https://arxiv.org/abs/2607.01232" title="Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training · Zhang, Zijian, Hu, Rizhen, Glentis, Athanasios 等 · 2026/07/01 · 2607.01232">2607.01232</a> · 2026.07</span></div>
             <p>Zhang et al. 发现 Transformer 中 RL 增益的分布<strong>高度集中</strong>：提出 <strong>Layer Contribution</strong> 指标（单层独立训练恢复全参数 RL 收益的比例），在 Qwen2.5/Qwen3 七个模型（1.5B-8B）上用 GRPO、Dr.GRPO、GiGPO 三种算法验证：</p>
             <ul style="margin: 10px 0 10px 20px;">
                 <li>高贡献层集中在<strong>网络中部 40%-60%</strong>，边界层（靠近输入/输出）贡献 &lt;30%</li>
@@ -1572,10 +1618,10 @@
             <table>
                 <thead><tr><th>工作</th><th>时间</th><th>核心贡献</th></tr></thead>
                 <tbody>
-                    <tr><td><strong>AutoGLM</strong></td><td>2024.11 · arXiv:2411.00820</td><td>GUI agent：planner/grounder 解耦架构 + <strong>self-evolving online curriculum RL</strong>。VAB-WebArena-Lite <strong>59.1%</strong>（超越 GPT-4o），OpenTable 任务 <strong>96.2%</strong> 完成率，AndroidLab <strong>36.2%</strong></td></tr>
-                    <tr><td><strong>WebRL</strong></td><td>2024.11 · ICLR 2025 · arXiv:2411.02337</td><td>LLM Web Agent 自进化 RL：<strong>actor-critic 变异失败指令</strong>生成训练数据 + KL 约束策略更新 + 经验回放。解决 agent 训练数据稀缺问题</td></tr>
-                    <tr><td><strong>ComputerRL</strong></td><td>2025.08 · arXiv:2508.14040</td><td>桌面级 RL：<strong>API-GUI 混合动作空间</strong> + 数千并行 Docker 虚拟桌面 + <strong>Step-Level GRPO</strong> + <strong>Entropulse</strong>（RL/SFT 交替维持探索熵）。9B 模型 OSWorld <strong>48.1%</strong> SOTA（超越 OpenAI CUA o3 的 42.9%）</td></tr>
-                    <tr><td><strong>GLM-5V-Turbo</strong></td><td>2026.04 · arXiv:2604.26752</td><td>多模态 agent：CogViT + MMTP + 30+ 任务联合 RL</td></tr>
+                    <tr><td><strong>AutoGLM</strong></td><td>2024.11 · arXiv:<a href="https://arxiv.org/abs/2411.00820" title="AutoGLM: Autonomous Foundation Agents for GUIs · Liu, Xiao, Qin, Bo, Liang, Dongzhu 等 · 2024/10/28 · 2411.00820">2411.00820</a></td><td>GUI agent：planner/grounder 解耦架构 + <strong>self-evolving online curriculum RL</strong>。VAB-WebArena-Lite <strong>59.1%</strong>（超越 GPT-4o），OpenTable 任务 <strong>96.2%</strong> 完成率，AndroidLab <strong>36.2%</strong></td></tr>
+                    <tr><td><strong>WebRL</strong></td><td>2024.11 · ICLR 2025 · arXiv:<a href="https://arxiv.org/abs/2411.02337" title="WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning · Qi, Zehan, Liu, Xiao, Iong, Iat Long 等 · 2024/11/04 · 2411.02337">2411.02337</a></td><td>LLM Web Agent 自进化 RL：<strong>actor-critic 变异失败指令</strong>生成训练数据 + KL 约束策略更新 + 经验回放。解决 agent 训练数据稀缺问题</td></tr>
+                    <tr><td><strong>ComputerRL</strong></td><td>2025.08 · arXiv:<a href="https://arxiv.org/abs/2508.14040" title="ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents · Lai, Hanyu, Liu, Xiao, Zhao, Yanxiao 等 · 2025/08/19 · 2508.14040">2508.14040</a></td><td>桌面级 RL：<strong>API-GUI 混合动作空间</strong> + 数千并行 Docker 虚拟桌面 + <strong>Step-Level GRPO</strong> + <strong>Entropulse</strong>（RL/SFT 交替维持探索熵）。9B 模型 OSWorld <strong>48.1%</strong> SOTA（超越 OpenAI CUA o3 的 42.9%）</td></tr>
+                    <tr><td><strong>GLM-5V-Turbo</strong></td><td>2026.04 · arXiv:<a href="https://arxiv.org/abs/2604.26752" title="GLM-5V-Turbo: Toward a Native Foundation Model for Multimodal Agents · V Team, Hong, Wenyi, Gu, Xiaotao 等 · 2026/04/29 · 2604.26752">2604.26752</a></td><td>多模态 agent：CogViT + MMTP + 30+ 任务联合 RL</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1585,6 +1631,8 @@
 
         <!-- Coding Agent RL -->
         <h3 id="coding-agents">7.1 Coding Agent RL 全景</h3>
+<section id="citation-sources-32" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>；<a href="https://arxiv.org/abs/2506.13585v1" title="MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention · 2025/06/16 · 2506.13585v1">CISPO / MiniMax-M1</a>；<a href="https://arxiv.org/abs/2605.26494" title="The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence · Chen, Aili, Li, Aonian, Zhou, Baichuan 等 · 2026/05/26 · 2605.26494">The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence</a>。</p></section>
+
 
         <p>2025-2026 年，coding agent 成为 Agentic RL 最重要的落地场景。SWE-bench Verified 成为衡量 agent 能力的核心 benchmark，头部系统已突破 70%+ 的解决率。</p>
 
@@ -1643,7 +1691,7 @@
         </div>
 
         <div class="card teal">
-            <div class="card-title">MiniMax M2.5 <span class="tag tag-teal">MiniMax · 2026.02 · arXiv:2605.26494</span></div>
+            <div class="card-title">MiniMax M2.5 <span class="tag tag-teal">MiniMax · 2026.02 · arXiv:<a href="https://arxiv.org/abs/2605.26494" title="The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence · Chen, Aili, Li, Aonian, Zhou, Baichuan 等 · 2026/05/26 · 2605.26494">2605.26494</a></span></div>
             <p><strong>$1/小时的前沿模型</strong>：229.9B 总参/9.8B 活跃，以极致成本效率著称。</p>
             <ul style="margin: 10px 0 10px 20px;">
                 <li><strong>Forge 框架</strong>：agent-native RL，训练-推理引擎完全解耦，~40× 训练加速</li>
@@ -1686,11 +1734,11 @@
             </div>
             <div class="card">
                 <div class="card-title">TorchForge <span class="tag tag-amber">PyTorch/Meta · 2025</span></div>
-                <p><strong>PyTorch 官方</strong> Agentic RL 库，GPU-cloud 规模训练。</p>
+                <p>PyTorch-native Agentic RL 架构探索；官方仓库现已标注<strong>开发暂停并向 TorchTitan 汇总</strong>。</p>
                 <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
                     <li>PyTorch-native 设计，与 torch.distributed 深度集成</li>
                     <li>专为大规模 agentic rollout 优化</li>
-                    <li>标志着 Agentic RL 进入主流基础设施</li>
+                    <li>保留同步/异步抽象的研究参考价值，不作为新项目的活跃首选</li>
                 </ul>
             </div>
         </div>
@@ -1727,7 +1775,7 @@
         </div>
 
         <div class="box-insight">
-            <p><strong>2025-2026 基础设施格局</strong>：veRL 是事实标准（最多开源工作基于此），TorchForge 代表 PyTorch 官方的主流信号，Agent Lightning 解决"已有 Agent 如何加 RL"的集成问题。三者形成 <code>训练核心</code> → <code>PyTorch 原生</code> → <code>框架胶水</code> 的互补层次。</p>
+            <p><strong>2025-2026 基础设施格局</strong>：veRL 是主流开源训练框架之一；Agent Lightning、ART 等路线解决“已有 Agent 如何接入 RL”；TRL 适合较小规模算法实验。TorchForge 曾代表 PyTorch-native Agentic RL 架构探索，但开发已暂停。框架应按算法、训练后端、rollout 引擎、harness 接入和异步语义选型。</p>
         </div>
 
         <!-- Infra -->
@@ -1746,7 +1794,9 @@
 
         </details><!-- READING:HISTORY:END -->
         <!-- GitHub Repos -->
-        <h3 id="github-repos">7.4 推荐开源 Repo（按 Star 排序）</h3>
+        <h3 id="github-repos">7.4 推荐开源 Repo（Star 仅为历史快照）</h3>
+<section id="citation-sources-33" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（15 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>；<a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>；<a href="https://docs.ray.io/en/latest/" title="Ray · 官方文档 / 原始出版页">Ray</a>；<a href="https://github.com/OpenRLHF/OpenRLHF" title="OpenRLHF · 官方文档 / 原始出版页">OpenRLHF</a>；<a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>；<a href="https://arxiv.org/abs/2504.20073" title="RAGEN: Understanding Self-Evolution in LLM Agents via Multi-Turn Reinforcement Learning · Wang, Zihan, Wang, Kangrui, Wang, Qineng 等 · 2025/04/24 · 2504.20073">RAGEN / StarPO</a>。</p></details></section>
+
 
         <div class="card teal">
             <div class="card-title">核心训练框架</div>
@@ -1755,7 +1805,7 @@
                 <tbody>
                     <tr><td><strong>deepseek-ai/DeepSeek-R1</strong></td><td>~92k</td><td>GRPO 标志性项目，推理 RL 的起点</td></tr>
                     <tr><td><strong>huggingface/open-r1</strong></td><td>~26k</td><td>DeepSeek-R1 开源复现，完整 SFT+GRPO pipeline</td></tr>
-                    <tr><td><strong>verl-project/verl</strong></td><td>~22k</td><td>事实标准 RL 训练库（PPO/GRPO/DAPO/RLOO），671B 规模</td></tr>
+                    <tr><td><strong>verl-project/verl</strong></td><td>~22k</td><td>主流开源 RL 训练库之一（PPO/GRPO/DAPO/RLOO）；能力按当前 recipe 与后端核对</td></tr>
                     <tr><td><strong>huggingface/trl</strong></td><td>~19k</td><td>HF 生态 RL 库，GRPO/DPO/Reward 训练最易上手</td></tr>
                     <tr><td><strong>OpenPipe/ART</strong></td><td>~10k</td><td>Serverless Agentic RL，多步 agent GRPO 训练 + 即时部署</td></tr>
                     <tr><td><strong>OpenRLHF/OpenRLHF</strong></td><td>~10k</td><td>Ray + vLLM 架构，生产级 RLHF 框架</td></tr>
@@ -1793,12 +1843,14 @@
 
         <!-- GUI / Web / Desktop Agent RL -->
         <h3 id="gui-agents">7.5 GUI / Web / Desktop Agent RL</h3>
+<section id="citation-sources-34" aria-label="章节来源" data-citation-audit="20261114"><details><summary>相关原论文与官方资料（9 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1602.01783" title="Asynchronous Methods for Deep Reinforcement Learning · Mnih, Volodymyr, Badia, Adrià Puigdomènech, Mirza, Mehdi 等 · 2016/02/04 · 1602.01783">Actor-Critic / A3C</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2307.13854" title="WebArena: A Realistic Web Environment for Building Autonomous Agents · Zhou, Shuyan, Xu, Frank F., Zhu, Hao 等 · 2023/07/25 · 2307.13854">WebArena</a>；<a href="https://arxiv.org/abs/2404.07972" title="OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments · Xie, Tianbao, Zhang, Danyang, Chen, Jixuan 等 · 2024/04/11 · 2404.07972">OSWorld</a>；<a href="https://arxiv.org/abs/2411.00820" title="AutoGLM: Autonomous Foundation Agents for GUIs · Liu, Xiao, Qin, Bo, Liang, Dongzhu 等 · 2024/10/28 · 2411.00820">AutoGLM: Autonomous Foundation Agents for GUIs</a>；<a href="https://arxiv.org/abs/2411.02337" title="WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning · Qi, Zehan, Liu, Xiao, Iong, Iat Long 等 · 2024/11/04 · 2411.02337">WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning</a>；<a href="https://arxiv.org/abs/2508.14040" title="ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents · Lai, Hanyu, Liu, Xiao, Zhao, Yanxiao 等 · 2025/08/19 · 2508.14040">ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents</a>；<a href="https://arxiv.org/abs/2505.16421" title="WebAgent-R1: Training Web Agents via End-to-End Multi-Turn Reinforcement Learning · Wei, Zhepei, Yao, Wenlin, Liu, Yao 等 · 2025/05/22 · 2505.16421">WebAgent-R1: Training Web Agents via End-to-End Multi-Turn Reinforcement Learning</a>；<a href="https://arxiv.org/abs/2601.22149" title="DynaWeb: Model-Based Reinforcement Learning of Web Agents · Ding, Hang, Liu, Peidong, Wang, Junqiao 等 · 2026/01/29 · 2601.22149">DynaWeb: Model-Based Reinforcement Learning of Web Agents</a>。</p></details></section>
+
 
         <p>除 coding agent 外，<strong>GUI 操控 agent</strong>（网页浏览、桌面控制、手机操作）是 Agentic RL 的第二大落地场景。核心挑战在于：视觉感知的连续动作空间、超长 horizon（几十到上百步）、以及环境状态的高维度。Zhipu/THUDM 在这一方向形成了最完整的开源研究矩阵。</p>
 
         <div class="compare-grid">
             <div class="card">
-                <div class="card-title">AutoGLM <span class="tag tag-teal">Zhipu · 2024.11 · arXiv:2411.00820</span></div>
+                <div class="card-title">AutoGLM <span class="tag tag-teal">Zhipu · 2024.11 · arXiv:<a href="https://arxiv.org/abs/2411.00820" title="AutoGLM: Autonomous Foundation Agents for GUIs · Liu, Xiao, Qin, Bo, Liang, Dongzhu 等 · 2024/10/28 · 2411.00820">2411.00820</a></span></div>
                 <p><strong>GUI Foundation Agent</strong>：将规划（planner）与定位（grounder）解耦为两个独立模块，分别优化。</p>
                 <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
                     <li>训练：<strong>Self-evolving online curriculum RL</strong>——actor-critic 框架自动生成难度递进的训练任务</li>
@@ -1808,7 +1860,7 @@
                 </ul>
             </div>
             <div class="card">
-                <div class="card-title">WebRL <span class="tag tag-amber">THUDM · ICLR 2025 · arXiv:2411.02337</span></div>
+                <div class="card-title">WebRL <span class="tag tag-amber">THUDM · ICLR 2025 · arXiv:<a href="https://arxiv.org/abs/2411.02337" title="WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning · Qi, Zehan, Liu, Xiao, Iong, Iat Long 等 · 2024/11/04 · 2411.02337">2411.02337</a></span></div>
                 <p><strong>Web Agent 自进化 RL</strong>：解决 agent 训练数据稀缺的核心问题。</p>
                 <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
                     <li>Actor-Critic 架构：<strong>变异失败指令</strong>生成新训练数据（将"预订餐厅"失败转化为"搜索餐厅"等更简单的子任务）</li>
@@ -1820,7 +1872,7 @@
         </div>
 
         <div class="card teal">
-            <div class="card-title">ComputerRL <span class="tag tag-green">Zhipu/Tsinghua · 2025.08 · arXiv:2508.14040</span></div>
+            <div class="card-title">ComputerRL <span class="tag tag-green">Zhipu/Tsinghua · 2025.08 · arXiv:<a href="https://arxiv.org/abs/2508.14040" title="ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents · Lai, Hanyu, Liu, Xiao, Zhao, Yanxiao 等 · 2025/08/19 · 2508.14040">2508.14040</a></span></div>
             <p><strong>桌面级 Computer Use Agent 的端到端 RL 训练</strong>，训练出 OSWorld SOTA：</p>
             <ul style="margin: 10px 0 10px 20px;">
                 <li><strong>API-GUI 混合动作空间</strong>：统一编程式 API 调用和直接 GUI 操作（点击/拖拽/键入），克服纯 GUI 接口的 人类中心偏差。混合空间平均成功率 <strong>26.2%</strong> vs 纯 GUI <strong>11.2%</strong></li>
@@ -1833,7 +1885,7 @@
 
         <div class="compare-grid">
             <div class="card">
-                <div class="card-title">WebAgent-R1 <span class="tag tag-teal">2025.05 · arXiv:2505.16421</span></div>
+                <div class="card-title">WebAgent-R1 <span class="tag tag-teal">2025.05 · arXiv:<a href="https://arxiv.org/abs/2505.16421" title="WebAgent-R1: Training Web Agents via End-to-End Multi-Turn Reinforcement Learning · Wei, Zhepei, Yao, Wenlin, Liu, Yao 等 · 2025/05/22 · 2505.16421">2505.16421</a></span></div>
                 <p><strong>端到端多轮 RL 训练 Web Agent</strong>：仅需 binary completion signal，无需 step annotation。</p>
                 <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
                     <li>异步环境交互 + behavior cloning warm-start</li>
@@ -1842,7 +1894,7 @@
                 </ul>
             </div>
             <div class="card">
-                <div class="card-title">DynaWeb <span class="tag tag-amber">2026.01 · arXiv:2601.22149</span></div>
+                <div class="card-title">DynaWeb <span class="tag tag-amber">2026.01 · arXiv:<a href="https://arxiv.org/abs/2601.22149" title="DynaWeb: Model-Based Reinforcement Learning of Web Agents · Ding, Hang, Liu, Peidong, Wang, Junqiao 等 · 2026/01/29 · 2601.22149">2601.22149</a></span></div>
                 <p><strong>Model-Based RL for Web Agents</strong>：构建合成"世界模型"模拟网页状态，agent 在模拟环境中排练。</p>
                 <ul style="margin: 5px 0 5px 16px; font-size: 0.9em;">
                     <li>真实专家 demo + 模拟动作混合训练</li>
@@ -1869,6 +1921,8 @@
             <p><strong>GUI Agent RL 的技术演进</strong>：从 AutoGLM 的 planner/grounder 解耦（2024.11）→ WebRL 的自进化课程（ICLR 2025）→ ComputerRL 的 step-level GRPO + Entropulse（2025.08），三篇工作来自同一个团队（Zhipu/THUDM），形成了<strong>web → mobile → desktop</strong> 的全场景覆盖。核心共性是：<strong>异步 rollout</strong> + <strong>自动课程学习</strong> + <strong>探索熵维持</strong>。这与 coding agent RL 的 <strong>同步 group sampling</strong> 形成鲜明对比——GUI agent 的轨迹更长、环境交互更慢，迫使训练框架走向异步解耦。</p>
         </div>
         <h2 class="section-title" id="part8"><span class="num">VIII</span> 面试高频 QA</h2>
+<section id="citation-sources-35" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-review-note"><strong>来源复核（2026-11-14）：</strong>历史问答修订：旧 QA 中 D_KL(πθ∥πθ)=0，不能充当参考策略 KL 正则；OPD 的交叉熵、reverse-KL 与采样分布梯度也不可无条件等同。CISPO 是 clipped importance sampling 权重配 stop-gradient / log-prob 梯度，不是估计偏差再从梯度减去。相关完整目标以原论文及现代后训练章节为准。</p><details><summary>相关原论文与官方资料（23 项）</summary><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>；<a href="https://arxiv.org/abs/2210.03629" title="ReAct: Synergizing Reasoning and Acting in Language Models · Yao, Shunyu, Zhao, Jeffrey, Yu, Dian 等 · 2022/10/06 · 2210.03629">ReAct</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>；<a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>；<a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="http://incompleteideas.net/book/the-book-2nd.html" title="MDP / Bellman · 官方文档 / 原始出版页">MDP / Bellman</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>；<a href="https://docs.ray.io/en/latest/" title="Ray · 官方文档 / 原始出版页">Ray</a>；<a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>；<a href="https://arxiv.org/abs/2604.18401v1" title="StepPO: Step-Aligned Policy Optimization for Agentic Reinforcement Learning · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401v1">StepPO v1</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2506.13585v1" title="MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention · 2025/06/16 · 2506.13585v1">CISPO / MiniMax-M1</a>；<a href="https://arxiv.org/abs/2504.20073" title="RAGEN: Understanding Self-Evolution in LLM Agents via Multi-Turn Reinforcement Learning · Wang, Zihan, Wang, Kangrui, Wang, Qineng 等 · 2025/04/24 · 2504.20073">RAGEN / StarPO</a>；<a href="https://arxiv.org/abs/2508.03680" title="Agent Lightning: Train ANY AI Agents with Reinforcement Learning · Luo, Xufang, Zhang, Yuge, He, Zhiyuan 等 · 2025/08/05 · 2508.03680">Agent Lightning</a>；<a href="https://arxiv.org/abs/2504.13837" title="Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? · Yue, Yang, Chen, Zhiqi, Lu, Rui 等 · 2025/04/18 · 2504.13837">Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?</a>；<a href="https://arxiv.org/abs/2512.17008" title="Turn-PPO: Turn-Level Advantage Estimation with PPO for Improved Multi-Turn RL in Agentic LLMs · Li, Junbo, Zhou, Peng, Meng, Rui 等 · 2025/12/18 · 2512.17008">Turn-PPO: Turn-Level Advantage Estimation with PPO for Improved Multi-Turn RL in Agentic LLMs</a>。</p></details></section>
+
 
         <details class="qa-card" open>
             <summary>GRPO 为什么不需要 Critic？与 PPO 的本质区别是什么？<span class="difficulty diff-mid">中等</span><span class="freq-tag">高频</span></summary>
@@ -1883,8 +1937,8 @@
         <details class="qa-card">
             <summary>什么是 RLVR Ceiling？Agentic RL 如何突破它？<span class="difficulty diff-hard">困难</span><span class="freq-tag">高频</span></summary>
             <div class="answer">
-                <p><strong>RLVR Ceiling</strong>（arXiv:2504.13837）证明：对于纯推理任务（静态文本输入 → 文本输出），RL 训练后的模型性能不会超过 base model 的 best-of-N (pass@k) 采样。直觉：RL 只能重新分配模型已有的概率质量，无法让模型生成"能力之外"的答案。</p>
-                <p><strong>Agentic RL 不受此限制</strong>，因为：</p>
+                <p><strong>RLVR Ceiling</strong>（arXiv:<a href="https://arxiv.org/abs/2504.13837" title="Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? · Yue, Yang, Chen, Zhiqi, Lu, Rui 等 · 2025/04/18 · 2504.13837">2504.13837</a>）在特定模型、数学任务和采样设定下观察到：RL 后的 pass@1 改进仍落在 base model 的 best-of-N / pass@k 支持范围内，提示 RL 可能主要重分配已有解法的概率质量。这不是覆盖全部 RLVR 配方的普适定理。</p>
+                <p><strong>Agentic RL 改变了问题设定</strong>，因为：</p>
                 <ul style="margin: 8px 0 8px 20px;">
                     <li>Agent 可以<strong>与环境交互获取新信息</strong>（执行代码得到运行结果、调用 API 获取外部知识），这些信息不在 base model 的参数或 prompt 中</li>
                     <li>RL 优化的不仅是"生成什么"，还有"如何获取信息"——工具调用策略、多轮交互规划等</li>
@@ -1934,8 +1988,8 @@
         <details class="qa-card">
             <summary>StepPO 和 Turn-level AE 的区别？<span class="difficulty diff-mid">中等</span><span class="freq-tag">中频</span></summary>
             <div class="answer">
-                <p><strong>Turn-level AE</strong>（arXiv:2512.17008）：将 Agent 的每一轮交互（thought + action + observation）视为一个 macro action，在 turn 边界计算 GAE。粒度较粗，一个 turn 可能包含多个逻辑步骤。</p>
-                <p><strong>StepPO</strong>（arXiv:2604.18401）：将"step"定义为 step-native MDP 中的原子操作。一个 step 可能跨越多个 turn（如：plan → execute → verify 是一个完整的 step），也可能是一个 turn 中的子步骤。StepPO 还引入了<strong>长度归一化 IS</strong> 和 <strong>step-aligned clip</strong>，是更系统的解决方案。</p>
+                <p><strong>Turn-level AE</strong>（arXiv:<a href="https://arxiv.org/abs/2512.17008" title="Turn-PPO: Turn-Level Advantage Estimation with PPO for Improved Multi-Turn RL in Agentic LLMs · Li, Junbo, Zhou, Peng, Meng, Rui 等 · 2025/12/18 · 2512.17008">2512.17008</a>）：将 Agent 的每一轮交互（thought + action + observation）视为一个 macro action，在 turn 边界计算 GAE。粒度较粗，一个 turn 可能包含多个逻辑步骤。</p>
+                <p><strong>StepPO</strong>（arXiv:<a href="https://arxiv.org/abs/2604.18401" title="CAPO: Critic-Guided Action-Aligned Policy Optimization for Advancing LLM Agent Capabilities · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401">2604.18401</a>）：将"step"定义为 step-native MDP 中的原子操作。一个 step 可能跨越多个 turn（如：plan → execute → verify 是一个完整的 step），也可能是一个 turn 中的子步骤。StepPO 还引入了<strong>长度归一化 IS</strong> 和 <strong>step-aligned clip</strong>，是更系统的解决方案。</p>
                 <p>简单说：Turn-level AE 是 PPO 的简单适配（在 turn 边界插入 GAE），StepPO 是从 MDP 建模层面重新设计的完整方案。</p>
             </div>
         </details>
@@ -2009,12 +2063,12 @@
             <div class="answer">
                 <p>2025-2026 年的 Agentic RL 开源生态可分为四层：</p>
                 <ol style="margin: 8px 0 8px 20px;">
-                    <li><strong>训练核心框架</strong>：veRL（HybridFlow，事实标准，Ray + FSDP + vLLM 集成）和 TorchForge（PyTorch 官方，GPU-cloud 规模）。支持 PPO/GRPO/DPO + Agentic RL 扩展</li>
+                    <li><strong>训练核心框架</strong>：veRL、slime、AReaL、OpenRLHF、NeMo RL 等各自组合 Ray / Megatron / FSDP 与 vLLM / SGLang；不存在由 star 数确定的唯一事实标准。TorchForge 的开发已暂停并向 TorchTitan 汇总，只保留架构参考价值</li>
                     <li><strong>框架胶水层</strong>：Agent Lightning（Microsoft，drop-in RL for any agent）、TRL v1.0（HF 生态，tool-use agent 训练）。解决"已有 Agent 系统如何加 RL"</li>
                     <li><strong>环境基础设施</strong>：NVIDIA NeMo Gym（Rollout-as-a-Service）、OpenEnv（HF 社区标准化环境）、E2B/Modal（sandbox 即服务）。提供安全隔离的代码执行 / 浏览器 / API 环境</li>
                     <li><strong>代表性模型</strong>：Qwen3-Coder（80.2% SWE-bench，Forge + CISPO）、DeepSWE（完全开源，GRPO++）、Kimi K2（65.8%，MuonClip）、SWE-RL（NeurIPS'25，首个学术 RL coding agent）</li>
                 </ol>
-                <p>关键趋势：RL 训练从研究原型走向工程化——veRL/TorchForge 提供标准化训练循环，Agent Lightning 降低集成门槛，NeMo Gym 提供数据与环境基础设施。</p>
+                <p>关键趋势：RL 训练从单机算法原型走向多角色工程系统——主流训练框架组织 actor / rollout / reward / teacher，Agent Lightning 与 ART 降低既有 harness 接入门槛，环境平台负责隔离执行与可验证反馈。</p>
             </div>
         </details>
 
@@ -2037,94 +2091,95 @@
             <div class="card-title">核心论文</div>
             <ol style="margin: 10px 0 10px 20px; font-size: 0.88em; line-height: 2;">
                 <li>Schulman et al., <em>Proximal Policy Optimization Algorithms</em>, 2017. <span class="tag tag-teal">PPO</span></li>
-                <li>Rafailov et al., <em>Direct Preference Optimization</em>, NeurIPS 2023. arXiv:2305.18290 <span class="tag tag-amber">DPO</span></li>
-                <li>DeepSeek-AI, <em>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL</em>, 2025. arXiv:2501.12948 <span class="tag tag-green">GRPO</span></li>
-                <li>Moonshot AI, <em>Kimi k1.5: Scaling Reinforcement Learning with LLMs</em>, 2025. arXiv:2501.12599</li>
+                <li>Rafailov et al., <em>Direct Preference Optimization</em>, NeurIPS 2023. arXiv:<a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">2305.18290</a> <span class="tag tag-amber">DPO</span></li>
+                <li>DeepSeek-AI, <em>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL</em>, 2025. arXiv:<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">2501.12948</a> <span class="tag tag-green">GRPO</span></li>
+                <li>Moonshot AI, <em>Kimi k1.5: Scaling Reinforcement Learning with LLMs</em>, 2025. arXiv:<a href="https://arxiv.org/abs/2501.12599" title="Kimi k1.5: Scaling Reinforcement Learning with LLMs · Kimi Team, Du, Angang, Gao, Bofei 等 · 2025/01/22 · 2501.12599">2501.12599</a></li>
                 <li>Qwen Team, <em>Qwen3 Technical Report</em>, 2025. <span class="tag tag-teal">GSPO</span></li>
                 <li>Zhipu AI, <em>GLM-4.5: Reasoning, Coding, and Agentic Abilities</em>, 2025.</li>
-                <li>Zhipu AI, <em>GLM-5: From Vibe Coding to Agentic Engineering</em>, 2026. arXiv:2602.15763</li>
-                <li>Yu et al., <em>Does Reinforcement Learning Really Incentivize Reasoning Capabilities in LLMs Beyond the Base Model?</em>, NeurIPS 2025. arXiv:2504.13837 <span class="tag tag-red">RLVR Ceiling</span></li>
-                <li>GiGPO: <em>Group-in-Group Policy Optimization for LLM Agent Training</em>, NeurIPS 2025. arXiv:2505.10978</li>
-                <li>GSPO: <em>Group Sequence Policy Optimization</em>, Qwen Team. arXiv:2507.18071</li>
-                <li>ARPO: arXiv:2507.19849, 2025.</li>
-                <li>StepPO: <em>Step-Aligned Policy Optimization for Agentic RL</em>, 2026. arXiv:2604.18401</li>
+                <li>Zhipu AI, <em>GLM-5: From Vibe Coding to Agentic Engineering</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2602.15763" title="GLM-5: from Vibe Coding to Agentic Engineering · GLM-5-Team, :, Zeng, Aohan 等 · 2026/02/17 · 2602.15763">2602.15763</a></li>
+                <li>Yu et al., <em>Does Reinforcement Learning Really Incentivize Reasoning Capabilities in LLMs Beyond the Base Model?</em>, NeurIPS 2025. arXiv:<a href="https://arxiv.org/abs/2504.13837" title="Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? · Yue, Yang, Chen, Zhiqi, Lu, Rui 等 · 2025/04/18 · 2504.13837">2504.13837</a> <span class="tag tag-red">RLVR Ceiling</span></li>
+                <li>GiGPO: <em>Group-in-Group Policy Optimization for LLM Agent Training</em>, NeurIPS 2025. arXiv:<a href="https://arxiv.org/abs/2505.10978" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978">2505.10978</a></li>
+                <li>GSPO: <em>Group Sequence Policy Optimization</em>, Qwen Team. arXiv:<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">2507.18071</a></li>
+                <li>ARPO: arXiv:<a href="https://arxiv.org/abs/2507.19849" title="Agentic Reinforced Policy Optimization · Dong, Guanting, Mao, Hangyu, Ma, Kai 等 · 2025/07/26 · 2507.19849">2507.19849</a>, 2025.</li>
+                <li>StepPO: <em>Step-Aligned Policy Optimization for Agentic RL</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2604.18401" title="CAPO: Critic-Guided Action-Aligned Policy Optimization for Advancing LLM Agent Capabilities · Wang, Daoyu, Li, Qingchuan, Cheng, Mingyue 等 · 2026/04/20 · 2604.18401">2604.18401</a></li>
                 <li>Step-GRPO, AAAI 2025. <em>Enhancing Reasoning Quality via Step-level Rewards</em>.</li>
-                <li>Turn-level AE: <em>Turn-Level Advantage Estimation with PPO for Multi-Turn Dialogue</em>, EACL 2026. arXiv:2512.17008</li>
-                <li>TrOPD: arXiv:2606.01249, 2025. <em>Trust-Region Online Policy Distillation</em>.</li>
-                <li>RAGEN (StarPO): <em>State-Thinking-Actions-Reward Policy Optimization</em>, 2025. arXiv:2504.20073</li>
-                <li>Wei et al., <em>SWE-RL: Scaling LLM Reasoning for Real-World Software Engineering</em>, NeurIPS 2025. arXiv:2502.18449</li>
+                <li>Turn-level AE: <em>Turn-Level Advantage Estimation with PPO for Multi-Turn Dialogue</em>, EACL 2026. arXiv:<a href="https://arxiv.org/abs/2512.17008" title="Turn-PPO: Turn-Level Advantage Estimation with PPO for Improved Multi-Turn RL in Agentic LLMs · Li, Junbo, Zhou, Peng, Meng, Rui 等 · 2025/12/18 · 2512.17008">2512.17008</a></li>
+                <li>TrOPD: arXiv:<a href="https://arxiv.org/abs/2606.01249" title="Trust Region On-Policy Distillation · Xing, Xingrun, Wang, Haoqing, Gao, Boyan 等 · 2026/05/31 · 2606.01249">2606.01249</a>, 2025. <em>Trust-Region Online Policy Distillation</em>.</li>
+                <li>RAGEN (StarPO): <em>State-Thinking-Actions-Reward Policy Optimization</em>, 2025. arXiv:<a href="https://arxiv.org/abs/2504.20073" title="RAGEN: Understanding Self-Evolution in LLM Agents via Multi-Turn Reinforcement Learning · Wang, Zihan, Wang, Kangrui, Wang, Qineng 等 · 2025/04/24 · 2504.20073">2504.20073</a></li>
+                <li>Wei et al., <em>SWE-RL: Scaling LLM Reasoning for Real-World Software Engineering</em>, NeurIPS 2025. arXiv:<a href="https://arxiv.org/abs/2502.18449" title="SWE-RL: Advancing LLM Reasoning via Reinforcement Learning on Open Software Evolution · Wei, Yuxiang, Duchenne, Olivier, Copet, Jade 等 · 2025/02/25 · 2502.18449">2502.18449</a></li>
                 <li>DeepSWE, Together AI 2025. <em>Fully Open-source Coding Agent with GRPO++</em>.</li>
-                <li>Kimi-Dev, Moonshot AI 2025. <em>Agentless Training as Skill Prior for SWE-Agents</em>. arXiv:2509.23045</li>
-                <li>Qwen3-Coder, Alibaba 2025. <em>Execution-Driven RL for Coding Agents</em>. arXiv:2603.00729</li>
+                <li>Kimi-Dev, Moonshot AI 2025. <em>Agentless Training as Skill Prior for SWE-Agents</em>. arXiv:<a href="https://arxiv.org/abs/2509.23045" title="Kimi-Dev: Agentless Training as Skill Prior for SWE-Agents · Yang, Zonghan, Wang, Shengjie, Fu, Kelin 等 · 2025/09/27 · 2509.23045">2509.23045</a></li>
+                <li>Qwen3-Coder, Alibaba 2025. <em>Execution-Driven RL for Coding Agents</em>. arXiv:<a href="https://arxiv.org/abs/2603.00729" title="Qwen3-Coder-Next Technical Report · Cao, Ruisheng, Chen, Mouxiang, Chen, Jiawei 等 · 2026/02/28 · 2603.00729">2603.00729</a></li>
                 <li>veRL (HybridFlow): <em>Flexible RL Post-Training Framework</em>, EMNLP 2025 Demo.</li>
-                <li>TorchForge, PyTorch/Meta 2025. <em>PyTorch-native Agentic RL Library</em>.</li>
-                <li>Agent Lightning, Microsoft Research 2025. arXiv:2508.03680</li>
+                <li>TorchForge, PyTorch/Meta. <a href="https://github.com/meta-pytorch/torchforge/blob/b32f06b6417a6d3e7ed50355036a1133e000d932/README.md" style="color:var(--primary);"><em>PyTorch-native Agentic RL Library</em></a>；2026-04 官方 README 标注开发暂停并向 TorchTitan 汇总。</li>
+                <li>OpenPipe, <a href="https://github.com/OpenPipe/ART/blob/534620a41b82ed89667f4642cc0b8e1d00e2269b/README.md" style="color:var(--primary);"><em>ART: Agent Reinforcement Trainer</em></a>；现有多步 Agent 接入 GRPO 的客户端/训练后端路线。</li>
+                <li>Agent Lightning, Microsoft Research 2025. arXiv:<a href="https://arxiv.org/abs/2508.03680" title="Agent Lightning: Train ANY AI Agents with Reinforcement Learning · Luo, Xufang, Zhang, Yuge, He, Zhiyuan 等 · 2025/08/05 · 2508.03680">2508.03680</a></li>
                 <li>ToolRL: <em>Reward is All Tool Learning Needs</em>, NeurIPS 2025.</li>
-                <li><em>A Practitioner's Guide to Multi-turn Agentic RL</em>, Fireworks AI, NeurIPS 2025. arXiv:2510.01132</li>
-                <li>DeepSeek-V4, 2026. <em>Towards Highly Efficient Million-Token Context Intelligence</em>. arXiv:2606.19348</li>
+                <li><em>A Practitioner's Guide to Multi-turn Agentic RL</em>, Fireworks AI, NeurIPS 2025. arXiv:<a href="https://arxiv.org/abs/2510.01132" title="A Practitioner&#x27;s Guide to Multi-turn Agentic Reinforcement Learning · Wang, Ruiyi, Ammanabrolu, Prithviraj · 2025/10/01 · 2510.01132">2510.01132</a></li>
+                <li>DeepSeek-V4, 2026. <em>Towards Highly Efficient Million-Token Context Intelligence</em>. arXiv:<a href="https://arxiv.org/abs/2606.19348" title="DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence · DeepSeek-AI, Xu, Anyi, Lin, Bangcai 等 · 2026/04/26 · 2606.19348">2606.19348</a></li>
                 <li>GLM-5.2, Zhipu AI, 2026. z.ai/blog/glm-5.2</li>
-                <li>Hou et al., <em>Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning</em>, 2026. arXiv:2607.07508 <span class="tag tag-teal">GLM-5.2 Async RL</span></li>
-                <li>Zhang et al., <em>Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training</em>, 2026. arXiv:2607.01232 <span class="tag tag-pink">Layer Contribution</span></li>
-                <li>AutoGLM: <em>Autonomous Foundation Agents for GUIs</em>, Zhipu AI, 2024. arXiv:2411.00820 <span class="tag tag-amber">GUI Agent</span></li>
-                <li>WebRL: <em>Training LLM Web Agents via Self-Evolving Online Curriculum RL</em>, THUDM, ICLR 2025. arXiv:2411.02337</li>
-                <li>GLM-5V-Turbo, 2026. <em>Native Foundation Model for Multimodal Agents</em>. arXiv:2604.26752</li>
-                <li>ComputerRL, Zhipu/Tsinghua, 2025. arXiv:2508.14040</li>
-                <li>Polar: <em>Agentic RL on Any Harness at Scale</em>, NVIDIA, 2026. arXiv:2605.24220</li>
-                <li>ProRL Agent: <em>Rollout-as-a-Service for RL Training of Multi-Turn LLM Agents</em>, NVIDIA, 2026. arXiv:2603.18815</li>
-                <li>WebAgent-R1: <em>Training Web Agents via End-to-End Multi-Turn RL</em>, 2025. arXiv:2505.16421</li>
-                <li>DynaWeb: <em>Model-Based RL of Web Agents</em>, 2026. arXiv:2601.22149</li>
-                <li>Entrocraft: <em>Addressing Performance Saturation via Precise Entropy Curve Control</em>, 2026. arXiv:2604.26326</li>
-                <li>SORL: <em>Stabilizing Off-Policy Training for Long-Horizon LLM Agents</em>, 2025. arXiv:2511.20718</li>
-                <li>MT-GRPO/GTPO: <em>Multi-Turn RL for Tool-Calling Agents with Iterative Reward Calibration</em>, 2026. arXiv:2604.02869</li>
-                <li>MathForge (DGPO+MQR), ICLR 2026. <em>Difficulty-Aware GRPO and Multi-Aspect Question Reformulation</em>. arXiv:2601.20614</li>
-                <li>OPSD: <em>Self-Distilled Reasoner: On-Policy Self-Distillation for LLMs</em>, 2026. arXiv:2601.18734</li>
-                <li>On-Policy Context Distillation, Microsoft Research, 2026. arXiv:2602.12275</li>
-                <li>Rethinking OPSD for Thinking Models, Princeton, 2026. arXiv:2607.05184</li>
-                <li>Kimi K2.5, Moonshot AI, 2026. <em>Visual Agentic Intelligence</em>. arXiv:2602.02276</li>
-                <li>MiniMax-M2 Series, 2026. <em>Mini Activations Unleashing Max Potential</em>. arXiv:2605.26494</li>
-                <li>Tree-GRPO, ICLR 2026. <em>Tree Search for LLM Agent RL</em>. arXiv:2509.21240</li>
-                <li>T²PO, ICML 2026 Spotlight. <em>Uncertainty-Guided Exploration for Stable Multi-Turn Agentic RL</em>. arXiv:2605.02178</li>
-                <li>EAPO, 2026. <em>Polarity-Entropy Analysis for Token-Level Credit</em>. arXiv:2604.11056</li>
-                <li>ResT, ICLR 2026. <em>Reshaping Token-Level Policy Gradients for Tool-Use</em>. arXiv:2509.21826</li>
-                <li>RAGEN-2, 2026. <em>Reasoning Collapse and SNR-Aware Filtering</em>. arXiv:2604.06268</li>
-                <li>HiPER, ICML 2026. <em>Hierarchical RL with Explicit Credit Assignment</em>. arXiv:2602.16165</li>
-                <li>SPIRAL, ICLR 2026. <em>Self-Play on Zero-Sum Games for Reasoning</em>. arXiv:2506.24119</li>
-                <li>RLAnything, ICML 2026. <em>Dynamic RL System</em>. arXiv:2602.02488</li>
-                <li>SRPO/RRPO, 2026. <em>Credit Assignment with Resets</em>. arXiv:2605.25507</li>
-                <li>Credit Assignment Survey, 2026. <em>From Reasoning to Agentic</em>. arXiv:2604.09459</li>
-                <li>AgentFlow (Flow-GRPO), ICLR 2026 Oral. <em>In-the-Flow Agentic System Optimization</em>. arXiv:2510.05592</li>
-                <li>MemAgent, ICLR 2026 Oral. <em>Multi-Conv RL-based Memory Agent</em>. arXiv:2507.02259</li>
-                <li>LLMs Get Lost In Multi-Turn Conversation, ICLR 2026 Oral. arXiv:2505.06120</li>
-                <li>Do We Need Adam?, ICML 2026 Oral. <em>SGD for RL Fine-Tuning</em>. arXiv:2602.07729</li>
-                <li>Maximum Likelihood RL, ICML 2026 Oral. arXiv:2602.02710</li>
+                <li>Hou et al., <em>Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2607.07508" title="Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning · Hou, Zhenyu, Li, Yujiang, Tang, Jie 等 · 2026/07/08 · 2607.07508">2607.07508</a> <span class="tag tag-teal">GLM-5.2 Async RL</span></li>
+                <li>Zhang et al., <em>Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2607.01232" title="Is One Layer Enough? Training A Single Transformer Layer Can Match Full-Parameter RL Training · Zhang, Zijian, Hu, Rizhen, Glentis, Athanasios 等 · 2026/07/01 · 2607.01232">2607.01232</a> <span class="tag tag-pink">Layer Contribution</span></li>
+                <li>AutoGLM: <em>Autonomous Foundation Agents for GUIs</em>, Zhipu AI, 2024. arXiv:<a href="https://arxiv.org/abs/2411.00820" title="AutoGLM: Autonomous Foundation Agents for GUIs · Liu, Xiao, Qin, Bo, Liang, Dongzhu 等 · 2024/10/28 · 2411.00820">2411.00820</a> <span class="tag tag-amber">GUI Agent</span></li>
+                <li>WebRL: <em>Training LLM Web Agents via Self-Evolving Online Curriculum RL</em>, THUDM, ICLR 2025. arXiv:<a href="https://arxiv.org/abs/2411.02337" title="WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning · Qi, Zehan, Liu, Xiao, Iong, Iat Long 等 · 2024/11/04 · 2411.02337">2411.02337</a></li>
+                <li>GLM-5V-Turbo, 2026. <em>Native Foundation Model for Multimodal Agents</em>. arXiv:<a href="https://arxiv.org/abs/2604.26752" title="GLM-5V-Turbo: Toward a Native Foundation Model for Multimodal Agents · V Team, Hong, Wenyi, Gu, Xiaotao 等 · 2026/04/29 · 2604.26752">2604.26752</a></li>
+                <li>ComputerRL, Zhipu/Tsinghua, 2025. arXiv:<a href="https://arxiv.org/abs/2508.14040" title="ComputerRL: Scaling End-to-End Online Reinforcement Learning for Computer Use Agents · Lai, Hanyu, Liu, Xiao, Zhao, Yanxiao 等 · 2025/08/19 · 2508.14040">2508.14040</a></li>
+                <li>Polar: <em>Agentic RL on Any Harness at Scale</em>, NVIDIA, 2026. arXiv:<a href="https://arxiv.org/abs/2605.24220" title="Polar: Agentic RL on Any Harness at Scale · Xu, Binfeng, Zhang, Hao, Zhang, Shaokun 等 · 2026/05/22 · 2605.24220">2605.24220</a></li>
+                <li>ProRL Agent: <em>Rollout-as-a-Service for RL Training of Multi-Turn LLM Agents</em>, NVIDIA, 2026. arXiv:<a href="https://arxiv.org/abs/2603.18815" title="ProRL Agent: Rollout-as-a-Service for RL Training of Multi-Turn LLM Agents · Zhang, Hao, Liu, Mingjie, Zhang, Shaokun 等 · 2026/03/19 · 2603.18815">2603.18815</a></li>
+                <li>WebAgent-R1: <em>Training Web Agents via End-to-End Multi-Turn RL</em>, 2025. arXiv:<a href="https://arxiv.org/abs/2505.16421" title="WebAgent-R1: Training Web Agents via End-to-End Multi-Turn Reinforcement Learning · Wei, Zhepei, Yao, Wenlin, Liu, Yao 等 · 2025/05/22 · 2505.16421">2505.16421</a></li>
+                <li>DynaWeb: <em>Model-Based RL of Web Agents</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2601.22149" title="DynaWeb: Model-Based Reinforcement Learning of Web Agents · Ding, Hang, Liu, Peidong, Wang, Junqiao 等 · 2026/01/29 · 2601.22149">2601.22149</a></li>
+                <li>Entrocraft: <em>Addressing Performance Saturation via Precise Entropy Curve Control</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2604.26326" title="Addressing Performance Saturation for LLM RL via Precise Entropy Curve Control · Li, Bolian, Wang, Yifan, Ding, Yi 等 · 2026/04/29 · 2604.26326">2604.26326</a></li>
+                <li>SORL: <em>Stabilizing Off-Policy Training for Long-Horizon LLM Agents</em>, 2025. arXiv:<a href="https://arxiv.org/abs/2511.20718" title="Stabilizing Off-Policy Training for Long-Horizon LLM Agent via Turn-Level Importance Sampling and Clipping-Triggered Normalization · Li, Chenliang, Elmahdy, Adel, Boyd, Alex 等 · 2025/11/25 · 2511.20718">2511.20718</a></li>
+                <li>MT-GRPO/GTPO: <em>Multi-Turn RL for Tool-Calling Agents with Iterative Reward Calibration</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2604.02869" title="Multi-Turn Reinforcement Learning for Tool-Calling Agents with Iterative Reward Calibration · Modecrua, Wachiravit, Kaewtawee, Krittanon, Pachtrachai, Krittin 等 · 2026/04/03 · 2604.02869">2604.02869</a></li>
+                <li>MathForge (DGPO+MQR), ICLR 2026. <em>Difficulty-Aware GRPO and Multi-Aspect Question Reformulation</em>. arXiv:<a href="https://arxiv.org/abs/2601.20614" title="Harder Is Better: Boosting Mathematical Reasoning via Difficulty-Aware GRPO and Multi-Aspect Question Reformulation · Dai, Yanqi, Ji, Yuxiang, Zhang, Xiao 等 · 2026/01/28 · 2601.20614">2601.20614</a></li>
+                <li>OPSD: <em>Self-Distilled Reasoner: On-Policy Self-Distillation for LLMs</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2601.18734" title="Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models · Zhao, Siyan, Xie, Zhihui, Liu, Mengchen 等 · 2026/01/26 · 2601.18734">2601.18734</a></li>
+                <li>On-Policy Context Distillation, Microsoft Research, 2026. arXiv:<a href="https://arxiv.org/abs/2602.12275" title="On-Policy Context Distillation for Language Models · Ye, Tianzhu, Dong, Li, Wu, Xun 等 · 2026/02/12 · 2602.12275">2602.12275</a></li>
+                <li>Rethinking OPSD for Thinking Models, Princeton, 2026. arXiv:<a href="https://arxiv.org/abs/2607.05184" title="Rethinking On-Policy Self-Distillation for Thinking Models · Kaur, Simran, Ri, Narutatsu, He, Yinghui 等 · 2026/07/06 · 2607.05184">2607.05184</a></li>
+                <li>Kimi K2.5, Moonshot AI, 2026. <em>Visual Agentic Intelligence</em>. arXiv:<a href="https://arxiv.org/abs/2602.02276" title="Kimi K2.5: Visual Agentic Intelligence · Kimi Team, Bai, Tongtong, Bai, Yifan 等 · 2026/02/02 · 2602.02276">2602.02276</a></li>
+                <li>MiniMax-M2 Series, 2026. <em>Mini Activations Unleashing Max Potential</em>. arXiv:<a href="https://arxiv.org/abs/2605.26494" title="The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence · Chen, Aili, Li, Aonian, Zhou, Baichuan 等 · 2026/05/26 · 2605.26494">2605.26494</a></li>
+                <li>Tree-GRPO, ICLR 2026. <em>Tree Search for LLM Agent RL</em>. arXiv:<a href="https://arxiv.org/abs/2509.21240" title="Tree Search for LLM Agent Reinforcement Learning · Ji, Yuxiang, Ma, Ziyu, Wang, Yong 等 · 2025/09/25 · 2509.21240">2509.21240</a></li>
+                <li>T²PO, ICML 2026 Spotlight. <em>Uncertainty-Guided Exploration for Stable Multi-Turn Agentic RL</em>. arXiv:<a href="https://arxiv.org/abs/2605.02178" title="T$^2$PO: Uncertainty-Guided Exploration Control for Stable Multi-Turn Agentic Reinforcement Learning · Wang, Haixin, Cui, Hejie, Zhang, Chenwei 等 · 2026/05/04 · 2605.02178">2605.02178</a></li>
+                <li>EAPO, 2026. <em>Polarity-Entropy Analysis for Token-Level Credit</em>. arXiv:<a href="https://arxiv.org/abs/2604.11056" title="Where Hindsight Credit Can Reside: A Signed-Capacity View of Token Updates in RLVR · He, Yuhang, Wu, Haodong, Liu, Siyi 等 · 2026/04/13 · 2604.11056">2604.11056</a></li>
+                <li>ResT, ICLR 2026. <em>Reshaping Token-Level Policy Gradients for Tool-Use</em>. arXiv:<a href="https://arxiv.org/abs/2509.21826" title="ResT: Reshaping Token-Level Policy Gradients for Tool-Use Large Language Models · Lin, Zihan, Wang, Xiaohan, Cao, Jie 等 · 2025/09/26 · 2509.21826">2509.21826</a></li>
+                <li>RAGEN-2, 2026. <em>Reasoning Collapse and SNR-Aware Filtering</em>. arXiv:<a href="https://arxiv.org/abs/2604.06268" title="RAGEN-2: Reasoning Collapse in Agentic RL · Wang, Zihan, Gui, Chi, Jin, Xing 等 · 2026/04/07 · 2604.06268">2604.06268</a></li>
+                <li>HiPER, ICML 2026. <em>Hierarchical RL with Explicit Credit Assignment</em>. arXiv:<a href="https://arxiv.org/abs/2602.16165" title="HiPER: Hierarchical Reinforcement Learning with Explicit Credit Assignment for Large Language Model Agents · Peng, Jiangweizhi, Liu, Yuanxin, Zhou, Ruida 等 · 2026/02/18 · 2602.16165">2602.16165</a></li>
+                <li>SPIRAL, ICLR 2026. <em>Self-Play on Zero-Sum Games for Reasoning</em>. arXiv:<a href="https://arxiv.org/abs/2506.24119" title="SPIRAL: Self-Play on Zero-Sum Games Incentivizes Reasoning via Multi-Agent Multi-Turn Reinforcement Learning · Liu, Bo, Guertler, Leon, Yu, Simon 等 · 2025/06/30 · 2506.24119">2506.24119</a></li>
+                <li>RLAnything, ICML 2026. <em>Dynamic RL System</em>. arXiv:<a href="https://arxiv.org/abs/2602.02488" title="RLAnything: Forge Environment, Policy, and Reward Model in Completely Dynamic RL System · Wang, Yinjie, Xie, Tianbao, Shen, Ke 等 · 2026/02/02 · 2602.02488">2602.02488</a></li>
+                <li>SRPO/RRPO, 2026. <em>Credit Assignment with Resets</em>. arXiv:<a href="https://arxiv.org/abs/2605.25507" title="Credit Assignment with Resets in Language Model Reasoning · Samanta, Ankur, Magesh, Akshayaa, Jain, Ayush 等 · 2026/05/25 · 2605.25507">2605.25507</a></li>
+                <li>Credit Assignment Survey, 2026. <em>From Reasoning to Agentic</em>. arXiv:<a href="https://arxiv.org/abs/2604.09459" title="From Reasoning to Agentic: Credit Assignment in Reinforcement Learning for Large Language Models · Zhang, Chenchen · 2026/04/10 · 2604.09459">2604.09459</a></li>
+                <li>AgentFlow (Flow-GRPO), ICLR 2026 Oral. <em>In-the-Flow Agentic System Optimization</em>. arXiv:<a href="https://arxiv.org/abs/2510.05592" title="In-the-Flow Agentic System Optimization for Effective Planning and Tool Use · Li, Zhuofeng, Zhang, Haoxiang, Han, Seungju 等 · 2025/10/07 · 2510.05592">2510.05592</a></li>
+                <li>MemAgent, ICLR 2026 Oral. <em>Multi-Conv RL-based Memory Agent</em>. arXiv:<a href="https://arxiv.org/abs/2507.02259" title="MemAgent: Reshaping Long-Context LLM with Multi-Conv RL-based Memory Agent · Yu, Hongli, Chen, Tinghong, Feng, Jiangtao 等 · 2025/07/03 · 2507.02259">2507.02259</a></li>
+                <li>LLMs Get Lost In Multi-Turn Conversation, ICLR 2026 Oral. arXiv:<a href="https://arxiv.org/abs/2505.06120" title="LLMs Get Lost In Multi-Turn Conversation · Laban, Philippe, Hayashi, Hiroaki, Zhou, Yingbo 等 · 2025/05/09 · 2505.06120">2505.06120</a></li>
+                <li>Do We Need Adam?, ICML 2026 Oral. <em>SGD for RL Fine-Tuning</em>. arXiv:<a href="https://arxiv.org/abs/2602.07729" title="Do We Need Adam? Surprisingly Strong and Sparse Reinforcement Learning with SGD in LLMs · Mukherjee, Sagnik, Yuan, Lifan, Jayasinha, Pavan 等 · 2026/02/07 · 2602.07729">2602.07729</a></li>
+                <li>Maximum Likelihood RL, ICML 2026 Oral. arXiv:<a href="https://arxiv.org/abs/2602.02710" title="Maximum Likelihood Reinforcement Learning · Tajwar, Fahim, Zeng, Guanning, Zhou, Yueer 等 · 2026/02/02 · 2602.02710">2602.02710</a></li>
                 <li>GTPO / GRPO-S, ICML 2026. <em>Token and Sequence-Level Reward Shaping</em>.</li>
                 <li>WS-GRPO, ICML 2026. <em>Weakly-Supervised GRPO for Rollout-Efficient Reasoning</em>.</li>
-                <li>Advantage Collapse in GRPO, ICML 2026. arXiv:2605.21125</li>
+                <li>Advantage Collapse in GRPO, ICML 2026. arXiv:<a href="https://arxiv.org/abs/2605.21125" title="Advantage Collapse in Group Relative Policy Optimization: Diagnosis and Mitigation · He, Xixiang, Sun, Qiyao, Cheng, Ao 等 · 2026/05/20 · 2605.21125">2605.21125</a></li>
                 <li>EchoRL, ICML 2026. <em>Reinforcement Learning via Rollout Echoing</em>.</li>
-                <li>FlowRL, ICLR 2026. <em>Matching Reward Distributions for LLM Reasoning</em>. arXiv:2509.15207</li>
-                <li>InT, ICLR 2026. <em>Self-Proposed Interventions for Credit Assignment</em>. arXiv:2601.14209</li>
-                <li>AgentGym-RL, ICLR 2026. <em>ScalingInter-RL for Long-Horizon Agents</em>. arXiv:2509.08755</li>
-                <li>MUA-RL, ICLR 2026. <em>Multi-turn User-interacting Agent RL</em>. arXiv:2508.18669</li>
-                <li>E2H Reasoner, ICLR 2026. <em>Curriculum RL from Easy to Hard</em>. arXiv:2506.06632</li>
-                <li>RL Scaling Behaviors, ACL 2026. arXiv:2509.25300</li>
-                <li>TrOPD: <em>Trust Region On-Policy Distillation</em>, 2026. arXiv:2606.01249</li>
-                <li>ExOPD: <em>Learning Beyond Teacher via Generalized OPD</em>, 2026. arXiv:2602.12125</li>
-                <li>REOPOLD: <em>Scaling Reasoning Efficiently via Relaxed OPD</em>, 2026. arXiv:2603.11137</li>
-                <li>Beyond GRPO and OPD: <em>Sparse-to-Dense Reward Principle</em>, 2026. arXiv:2605.12483</li>
-                <li>SOD: <em>Step-wise On-Policy Distillation for Agents</em>, 2026. arXiv:2605.07725</li>
-                <li>TurnOPD: <em>Turn-Aware OPD for Multi-Turn Agents</em>, 2026. arXiv:2607.05804</li>
-                <li>ATOD: <em>Annealed Turn-aware OPD for Multi-Turn Agents</em>, 2026. arXiv:2606.27814</li>
-                <li>MAD-OPD: <em>Breaking OPD Ceiling via Multi-Agent Debate</em>, 2026. arXiv:2605.01347</li>
-                <li>Rethinking OPD, Tsinghua THUNLP, 2026. arXiv:2604.13016</li>
-                <li>OPD Survey: <em>A Survey of On-Policy Distillation for LLMs</em>, 2026. arXiv:2604.00626</li>
-                <li>SimPO: <em>Simple Preference Optimization with Reference-Free Reward</em>, 2024. arXiv:2405.14734</li>
+                <li>FlowRL, ICLR 2026. <em>Matching Reward Distributions for LLM Reasoning</em>. arXiv:<a href="https://arxiv.org/abs/2509.15207" title="FlowRL: Matching Reward Distributions for LLM Reasoning · Zhu, Xuekai, Cheng, Daixuan, Zhang, Dinghuai 等 · 2025/09/18 · 2509.15207">2509.15207</a></li>
+                <li>InT, ICLR 2026. <em>Self-Proposed Interventions for Credit Assignment</em>. arXiv:<a href="https://arxiv.org/abs/2601.14209" title="InT: Self-Proposed Interventions Enable Credit Assignment in LLM Reasoning · Yang, Matthew Y. R., Bai, Hao, Wu, Ian 等 · 2026/01/20 · 2601.14209">2601.14209</a></li>
+                <li>AgentGym-RL, ICLR 2026. <em>ScalingInter-RL for Long-Horizon Agents</em>. arXiv:<a href="https://arxiv.org/abs/2509.08755" title="AgentGym-RL: Training LLM Agents for Long-Horizon Decision Making through Multi-Turn Reinforcement Learning · Xi, Zhiheng, Huang, Jixuan, Liao, Chenyang 等 · 2025/09/10 · 2509.08755">2509.08755</a></li>
+                <li>MUA-RL, ICLR 2026. <em>Multi-turn User-interacting Agent RL</em>. arXiv:<a href="https://arxiv.org/abs/2508.18669" title="MUA-RL: Multi-turn User-interacting Agent Reinforcement Learning for agentic tool use · Zhao, Weikang, Wang, Xili, Ma, Chengdi 等 · 2025/08/26 · 2508.18669">2508.18669</a></li>
+                <li>E2H Reasoner, ICLR 2026. <em>Curriculum RL from Easy to Hard</em>. arXiv:<a href="https://arxiv.org/abs/2506.06632" title="Curriculum Reinforcement Learning from Easy to Hard Tasks Improves LLM Reasoning · Parashar, Shubham, Gui, Shurui, Li, Xiner 等 · 2025/06/07 · 2506.06632">2506.06632</a></li>
+                <li>RL Scaling Behaviors, ACL 2026. arXiv:<a href="https://arxiv.org/abs/2509.25300" title="Scaling Behaviors of LLM Reinforcement Learning Post-Training: An Empirical Study in Mathematical Reasoning · Tan, Zelin, Geng, Hejia, Yu, Xiaohang 等 · 2025/09/29 · 2509.25300">2509.25300</a></li>
+                <li>TrOPD: <em>Trust Region On-Policy Distillation</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2606.01249" title="Trust Region On-Policy Distillation · Xing, Xingrun, Wang, Haoqing, Gao, Boyan 等 · 2026/05/31 · 2606.01249">2606.01249</a></li>
+                <li>ExOPD: <em>Learning Beyond Teacher via Generalized OPD</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2602.12125" title="Learning beyond Teacher: Generalized On-Policy Distillation with Reward Extrapolation · Yang, Wenkai, Liu, Weijie, Xie, Ruobing 等 · 2026/02/12 · 2602.12125">2602.12125</a></li>
+                <li>REOPOLD: <em>Scaling Reasoning Efficiently via Relaxed OPD</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2603.11137" title="Scaling Reasoning Efficiently via Relaxed On-Policy Distillation · Ko, Jongwoo, Abdali, Sara, Kim, Young Jin 等 · 2026/03/11 · 2603.11137">2603.11137</a></li>
+                <li>Beyond GRPO and OPD: <em>Sparse-to-Dense Reward Principle</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2605.12483" title="Beyond GRPO and On-Policy Distillation: An Empirical Sparse-to-Dense Reward Principle for Language-Model Post-Training · Xu, Yuanda, Sang, Hejian, Zhou, Zhengze 等 · 2026/05/12 · 2605.12483">2605.12483</a></li>
+                <li>SOD: <em>Step-wise On-Policy Distillation for Agents</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2605.07725" title="SOD: Step-wise On-policy Distillation for Small Language Model Agents · Zhong, Qiyong, Zheng, Mao, Song, Mingyang 等 · 2026/05/08 · 2605.07725">2605.07725</a></li>
+                <li>TurnOPD: <em>Turn-Aware OPD for Multi-Turn Agents</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2607.05804" title="TurnOPD: Making On-Policy Distillation Turn-Aware for Efficient Long-Horizon Agent Training · Zhou, Yuhang, Zheng, Kai, Li, Haoling 等 · 2026/07/07 · 2607.05804">2607.05804</a></li>
+                <li>ATOD: <em>Annealed Turn-aware OPD for Multi-Turn Agents</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2606.27814" title="ATOD: Annealed Turn-Aware On-Policy Distillation for Multi-Turn Agentic Tasks · Tan, Qitai, Zong, Zefang, Li, Mo 等 · 2026/06/26 · 2606.27814">2606.27814</a></li>
+                <li>MAD-OPD: <em>Breaking OPD Ceiling via Multi-Agent Debate</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2605.01347" title="MAD-OPD: Breaking the Ceiling in On-Policy Distillation via Multi-Agent Debate · Wang, Jianze, Liu, Ying, Chen, Jinlong 等 · 2026/05/02 · 2605.01347">2605.01347</a></li>
+                <li>Rethinking OPD, Tsinghua THUNLP, 2026. arXiv:<a href="https://arxiv.org/abs/2604.13016" title="Rethinking On-Policy Distillation of Large Language Models: Phenomenology, Mechanism, and Recipe · Li, Yaxuan, Zuo, Yuxin, He, Bingxiang 等 · 2026/04/14 · 2604.13016">2604.13016</a></li>
+                <li>OPD Survey: <em>A Survey of On-Policy Distillation for LLMs</em>, 2026. arXiv:<a href="https://arxiv.org/abs/2604.00626" title="A Survey of On-Policy Distillation for Large Language Models · Song, Mingyang, Zheng, Mao · 2026/04/01 · 2604.00626">2604.00626</a></li>
+                <li>SimPO: <em>Simple Preference Optimization with Reference-Free Reward</em>, 2024. arXiv:<a href="https://arxiv.org/abs/2405.14734" title="SimPO: Simple Preference Optimization with a Reference-Free Reward · Meng, Yu, Xia, Mengzhou, Chen, Danqi · 2024/05/23 · 2405.14734">2405.14734</a></li>
             </ol>
         </div>
 
         <div class="card">
             <div class="card-title">综述与学习资源</div>
             <ol style="margin: 10px 0 10px 20px; font-size: 0.88em; line-height: 2;">
-                <li><em>The Landscape of Agentic Reinforcement Learning for LLMs: A Survey</em>, arXiv:2509.02547v5</li>
+                <li><em>The Landscape of Agentic Reinforcement Learning for LLMs: A Survey</em>, arXiv:<a href="https://arxiv.org/abs/2509.02547v5" title="The Landscape of Agentic Reinforcement Learning for LLMs: A Survey · Zhang, Guibin, Geng, Hejia, Yu, Xiaohang 等 · 2025/09/02 · 2509.02547v5">2509.02547v5</a></li>
                 <li><em>Agentic RL with Implicit Step Rewards</em>, ICLR 2026 (Oral). Credit assignment from terminal rewards.</li>
                 <li><em>Awesome RL for Large Reasoning Models</em>, <a href="https://github.com/TsinghuaC3I/Awesome-RL-for-LRMs" style="color:var(--primary);">GitHub</a></li>
                 <li><em>Awesome RLVR</em>, <a href="https://github.com/opendilab/awesome-RLVR" style="color:var(--primary);">GitHub</a></li>
@@ -2138,6 +2193,16 @@
             <a href="index.html">← 返回首页</a>
             <a href="rl-interview-guide.html">RL 面试速查手册 →</a>
         </div>
+        <!-- READING:HISTORY:START --><details data-reading-history><summary>本次事实修订前的冻结表述</summary>
+            <p>然而，2025 年中的 <strong>RLVR Ceiling</strong> 研究（arXiv:2504.13837）揭示了一个关键瓶颈：纯推理 RL 的性能上限不超过 base model 的 pass@k。这意味着如果模型只能在静态文本上做推理，RL 无法超越"暴力采样"。<strong>Agentic RL</strong>——让模型在交互环境中通过工具调用、多轮对话、代码执行来解决问题——成为突破这一天花板的关键路径。</p>
+            <p>清华 LeapLab 的研究揭示了一个令人不安的事实：<strong>纯推理 RL（RLVR）的性能上限不超过 base model 的 best-of-N (pass@k) 采样</strong>。换句话说，如果模型只在静态文本上做推理（数学题、代码题），RL 训练不会比"暴力采样取最好"更强。</p>
+            <p>这个结论意味着：如果目标只是提升推理质量，RL 可能只是在用更少的计算资源达到与 best-of-N 相同的水平，而非真正超越。</p>
+            <p><strong>2025-2026 基础设施格局</strong>：veRL 是事实标准（最多开源工作基于此），TorchForge 代表 PyTorch 官方的主流信号，Agent Lightning 解决"已有 Agent 如何加 RL"的集成问题。三者形成 <code>训练核心</code> → <code>PyTorch 原生</code> → <code>框架胶水</code> 的互补层次。</p>
+            <p><strong>RLVR Ceiling</strong>（arXiv:2504.13837）证明：对于纯推理任务（静态文本输入 → 文本输出），RL 训练后的模型性能不会超过 base model 的 best-of-N (pass@k) 采样。直觉：RL 只能重新分配模型已有的概率质量，无法让模型生成"能力之外"的答案。</p>
+            <ul><li><strong>训练核心框架</strong>：veRL（HybridFlow，事实标准，Ray + FSDP + vLLM 集成）和 TorchForge（PyTorch 官方，GPU-cloud 规模）。支持 PPO/GRPO/DPO + Agentic RL 扩展</li></ul>
+            <p>关键趋势：RL 训练从研究原型走向工程化——veRL/TorchForge 提供标准化训练循环，Agent Lightning 降低集成门槛，NeMo Gym 提供数据与环境基础设施。</p>
+            <ul><li>TorchForge, PyTorch/Meta 2025. <em>PyTorch-native Agentic RL Library</em>.</li></ul>
+        </details><!-- READING:HISTORY:END -->
     </main>
 </div>
 
