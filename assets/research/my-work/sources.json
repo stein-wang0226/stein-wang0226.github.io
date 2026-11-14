@@ -1,0 +1,988 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-14",
+  "scope": "Project methods and retained reports; repository sources share authorship and are not independent replications.",
+  "sources": [
+    {
+      "project": "Holon",
+      "commit": "7de0f4d67f9d18d166e715f6e4e200de22cb21ea",
+      "private": true,
+      "retrieved": "2026-11-14",
+      "report": "docs/reports/Holon_Unified_Report_202611.html",
+      "original_url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/reports/Holon_Unified_Report_202611.html",
+      "original_bytes": 1414145,
+      "original_sha256": "38dad9427c12e3522bee780c3cf08cc5ef876e38a0d1094ff1a72dbe98222df9",
+      "archive": "/assets/research/my-work/holon-original.html.txt",
+      "blog_source": "content/posts/my-work-holon/full-report.html",
+      "license": "Author-provided project report; no new redistribution license asserted.",
+      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS to report wrapper, made Holon directory sticky within report, added source notice.",
+      "rewritten_links": [
+        {
+          "original": "../archive/project-reference-20261111/README.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/archive/project-reference-20261111/README.md"
+        },
+        {
+          "original": "../../data/configs/cpt_mm/generated/train_all_cluster_rep50_multipair.resolved.calibration.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/configs/cpt_mm/generated/train_all_cluster_rep50_multipair.resolved.calibration.json"
+        },
+        {
+          "original": "../../data/configs/cpt_mm/generated/train_all_cluster_rep70_multipair.resolved.calibration.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/configs/cpt_mm/generated/train_all_cluster_rep70_multipair.resolved.calibration.json"
+        },
+        {
+          "original": "../../data/configs/cpt_mm/generated/train_all_cluster_rep90_multipair.resolved.calibration.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/configs/cpt_mm/generated/train_all_cluster_rep90_multipair.resolved.calibration.json"
+        },
+        {
+          "original": "../../data/configs/cpt_mm/generated/train_all_exact_sequence_100.resolved.calibration.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/configs/cpt_mm/generated/train_all_exact_sequence_100.resolved.calibration.json"
+        },
+        {
+          "original": "../benchmark/PROTEINGYM_REP50_REP70_REP90_MULTIPAIR_EIGHTWAY_CKPT73530.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEINGYM_REP50_REP70_REP90_MULTIPAIR_EIGHTWAY_CKPT73530.md"
+        },
+        {
+          "original": "../../README.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/README.md"
+        },
+        {
+          "original": "../../data/configs/cpt_mm/generated/train_t2p_trembl_1_99.resolved.calibration.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/configs/cpt_mm/generated/train_t2p_trembl_1_99.resolved.calibration.json"
+        },
+        {
+          "original": "../../data/configs/cpt_mm/generated/train_all_trembl_4_4_92.resolved.calibration.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/configs/cpt_mm/generated/train_all_trembl_4_4_92.resolved.calibration.json"
+        },
+        {
+          "original": "../benchmark/MOT_1P7B_CORPUS_AB_CKPT84661.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/MOT_1P7B_CORPUS_AB_CKPT84661.md"
+        },
+        {
+          "original": "../../results/cpt-eval/protein-text-negative-ladder-v2/ps8_psc_checkpoint_comparison_result_registry.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/results/cpt-eval/protein-text-negative-ladder-v2/ps8_psc_checkpoint_comparison_result_registry.json"
+        },
+        {
+          "original": "../benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_MULTISEED_REPLICATION.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_MULTISEED_REPLICATION.md"
+        },
+        {
+          "original": "../todos/gcp_dplm_hybrid_codec_afdb24m_todo_20260812.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/todos/gcp_dplm_hybrid_codec_afdb24m_todo_20260812.md"
+        },
+        {
+          "original": "../benchmark/PROTEIN_QWEN3_CODEC_R3_2B_AUDIT_20260802.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEIN_QWEN3_CODEC_R3_2B_AUDIT_20260802.md"
+        },
+        {
+          "original": "../reviews/protein_qwen3_codec_scaling_code_review_20260809.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/reviews/protein_qwen3_codec_scaling_code_review_20260809.md"
+        },
+        {
+          "original": "../data/afdb24m_release_pipeline_20260809.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/afdb24m_release_pipeline_20260809.md"
+        },
+        {
+          "original": "../../AGENTS.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/AGENTS.md"
+        },
+        {
+          "original": "../../README.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/README.md"
+        },
+        {
+          "original": "../../archive/remote-branches/zhaocp_q3/docs/ZHAOCP_ALIGN_SUMMARY_CN.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/archive/remote-branches/zhaocp_q3/docs/ZHAOCP_ALIGN_SUMMARY_CN.md"
+        },
+        {
+          "original": "../../config/cpt-s1/README.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/config/cpt-s1/README.md"
+        },
+        {
+          "original": "../../config/cpt-s1/cpt_qwen3_0.6B_instruction_default.yaml",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/config/cpt-s1/cpt_qwen3_0.6B_instruction_default.yaml"
+        },
+        {
+          "original": "../../config/cpt-s1/scaling_transfer_profiles.yaml",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/config/cpt-s1/scaling_transfer_profiles.yaml"
+        },
+        {
+          "original": "../../config/sft/sft_gen_localization.yaml",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/config/sft/sft_gen_localization.yaml"
+        },
+        {
+          "original": "../../data/data_utils.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/data_utils.py"
+        },
+        {
+          "original": "../../data/dataset_base.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/dataset_base.py"
+        },
+        {
+          "original": "../../data/protein_datasets/interleave_prot_text_dataset.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/protein_datasets/interleave_prot_text_dataset.py"
+        },
+        {
+          "original": "../../data/protein_datasets/tp_dataset.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/data/protein_datasets/tp_dataset.py"
+        },
+        {
+          "original": "../CPT_STAGE_ANALYSIS.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/CPT_STAGE_ANALYSIS.md"
+        },
+        {
+          "original": "../PROTEIN_STRUCTURE_TRAINING_EVAL_MANUAL_20260826.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/PROTEIN_STRUCTURE_TRAINING_EVAL_MANUAL_20260826.md"
+        },
+        {
+          "original": "../RESEARCH_SCALING_EXPERIMENT_DESIGN_REPORT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/RESEARCH_SCALING_EXPERIMENT_DESIGN_REPORT.md"
+        },
+        {
+          "original": "../SCALING_LAW_RESULTS.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/SCALING_LAW_RESULTS.md"
+        },
+        {
+          "original": "../SECURITY_PUBLISHING.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/SECURITY_PUBLISHING.md"
+        },
+        {
+          "original": "../alignment/PROTEINGYM_FULL217_FLEXIBLE_TEXT_ABLATION_CKPT73530.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/alignment/PROTEINGYM_FULL217_FLEXIBLE_TEXT_ABLATION_CKPT73530.md"
+        },
+        {
+          "original": "../archive/PROJECT_ARCHIVE_INDEX_20261111.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/archive/PROJECT_ARCHIVE_INDEX_20261111.md"
+        },
+        {
+          "original": "../archive/legacy-branch-review-20261111.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/archive/legacy-branch-review-20261111.md"
+        },
+        {
+          "original": "../benchmark/C30_P123_DESCRIPTION.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/C30_P123_DESCRIPTION.md"
+        },
+        {
+          "original": "../benchmark/MOT_0P6B_VS_1P7B_MULTIMODAL_COMPARISON.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/MOT_0P6B_VS_1P7B_MULTIMODAL_COMPARISON.md"
+        },
+        {
+          "original": "../benchmark/MOT_1P7B_CORPUS_AB_CKPT84661.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/MOT_1P7B_CORPUS_AB_CKPT84661.md"
+        },
+        {
+          "original": "../benchmark/OOD_SAFE_BALANCED_V2_CKPT73530.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/OOD_SAFE_BALANCED_V2_CKPT73530.md"
+        },
+        {
+          "original": "../benchmark/PROTEINGYM_CKP_ABLATION_TWELVEWAY_CKPT73530.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEINGYM_CKP_ABLATION_TWELVEWAY_CKPT73530.md"
+        },
+        {
+          "original": "../benchmark/PROTEINGYM_MINI15_PROTEIN_SPECIFIC_RATIO_SWEEP_CKPT73530.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEINGYM_MINI15_PROTEIN_SPECIFIC_RATIO_SWEEP_CKPT73530.md"
+        },
+        {
+          "original": "../benchmark/PROTEINGYM_MINI15_SEVENWAY_CKPT73530.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEINGYM_MINI15_SEVENWAY_CKPT73530.md"
+        },
+        {
+          "original": "../benchmark/PROTEINGYM_MM_CONDITION_PAIRS_V1.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEINGYM_MM_CONDITION_PAIRS_V1.md"
+        },
+        {
+          "original": "../benchmark/PROTEIN_STRUCTURE_AND_STRUCTURE_TEXT_BENCHMARK_SUITE_20260831.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEIN_STRUCTURE_AND_STRUCTURE_TEXT_BENCHMARK_SUITE_20260831.md"
+        },
+        {
+          "original": "../benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_DATASET_STATUS.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_DATASET_STATUS.md"
+        },
+        {
+          "original": "../benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_PS8_PSC_RESULT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_PS8_PSC_RESULT.md"
+        },
+        {
+          "original": "../benchmark/QWEN_TEXT_PROTEINGYM_ASSAYS15_RESULTS.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/QWEN_TEXT_PROTEINGYM_ASSAYS15_RESULTS.md"
+        },
+        {
+          "original": "../benchmark/QWEN_TEXT_PROTEINGYM_EVAL.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/QWEN_TEXT_PROTEINGYM_EVAL.md"
+        },
+        {
+          "original": "../benchmark/benchmark_leaderboards/c30.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/benchmark_leaderboards/c30.json"
+        },
+        {
+          "original": "../benchmark/benchmark_leaderboards/conditionpairs.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/benchmark_leaderboards/conditionpairs.json"
+        },
+        {
+          "original": "../benchmark/benchmark_leaderboards/negative-ladder.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/benchmark_leaderboards/negative-ladder.json"
+        },
+        {
+          "original": "../benchmark/benchmark_leaderboards/proteingym.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/benchmark_leaderboards/proteingym.json"
+        },
+        {
+          "original": "../benchmark/benchmark_leaderboards/temporal-p123.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/benchmark_leaderboards/temporal-p123.json"
+        },
+        {
+          "original": "../benchmark/benchmark_leaderboards/wt-conditioned.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/benchmark_leaderboards/wt-conditioned.json"
+        },
+        {
+          "original": "../codebase_architecture.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/codebase_architecture.md"
+        },
+        {
+          "original": "../data/dplm_cpt_structure_data_delivery_20260822.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/dplm_cpt_structure_data_delivery_20260822.md"
+        },
+        {
+          "original": "../data/fim_training_examples/examples.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/fim_training_examples/examples.json"
+        },
+        {
+          "original": "../data/gigaref_training_examples/examples.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/gigaref_training_examples/examples.json"
+        },
+        {
+          "original": "../data/p123_t2p_training_examples/examples.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/p123_t2p_training_examples/examples.json"
+        },
+        {
+          "original": "../data/p123_training_examples/examples.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/p123_training_examples/examples.json"
+        },
+        {
+          "original": "../data/p123_uniref_joint.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/p123_uniref_joint.md"
+        },
+        {
+          "original": "../data/paper_v9_cap1_training_examples/examples.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/paper_v9_cap1_training_examples/examples.json"
+        },
+        {
+          "original": "../data/paper_v9_cap5_training_examples/examples.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/paper_v9_cap5_training_examples/examples.json"
+        },
+        {
+          "original": "../data/protein_io_training_examples/examples.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/protein_io_training_examples/examples.json"
+        },
+        {
+          "original": "../data/sepit_sft_data_delivery_20260827.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/sepit_sft_data_delivery_20260827.md"
+        },
+        {
+          "original": "../data/thebiocollection_training_examples/examples.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/thebiocollection_training_examples/examples.json"
+        },
+        {
+          "original": "../data/token_mix_calibration.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/token_mix_calibration.md"
+        },
+        {
+          "original": "../data/training_length_distribution_alignment.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/training_length_distribution_alignment.md"
+        },
+        {
+          "original": "../experiments/mot-ablation/registry.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/experiments/mot-ablation/registry.json"
+        },
+        {
+          "original": "../inter_docs/V9_DATA_PIPELINE_REPORT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/inter_docs/V9_DATA_PIPELINE_REPORT.md"
+        },
+        {
+          "original": "../interaction_data/HOLON_TRAINING_REPORT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/interaction_data/HOLON_TRAINING_REPORT.md"
+        },
+        {
+          "original": "../model/asymmetric_mot_design.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/model/asymmetric_mot_design.md"
+        },
+        {
+          "original": "../model/deepseek_v4_holon_transfer.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/model/deepseek_v4_holon_transfer.md"
+        },
+        {
+          "original": "../model/kimi_k3_scaling_efficiency_transfer.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/model/kimi_k3_scaling_efficiency_transfer.md"
+        },
+        {
+          "original": "../model/qwen3_lm_head_tying_loss_ablation.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/model/qwen3_lm_head_tying_loss_ablation.md"
+        },
+        {
+          "original": "../moe/HOLON_MOE_V5_NAN_DIAG_REPORT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/moe/HOLON_MOE_V5_NAN_DIAG_REPORT.md"
+        },
+        {
+          "original": "../mot/HOLON_MOT_CPT_S1_CTX_MIX_COMPARISON.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/mot/HOLON_MOT_CPT_S1_CTX_MIX_COMPARISON.md"
+        },
+        {
+          "original": "../mot/HOLON_MOT_CPT_S1_INST_EVAL_SUMMARY.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/mot/HOLON_MOT_CPT_S1_INST_EVAL_SUMMARY.md"
+        },
+        {
+          "original": "../mot/HOLON_MOT_CPT_S1_PROTEIN_STRUCT_JOINT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/mot/HOLON_MOT_CPT_S1_PROTEIN_STRUCT_JOINT.md"
+        },
+        {
+          "original": "../mot/HOLON_MOT_DATA_IMBALANCE_DIAGNOSIS.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/mot/HOLON_MOT_DATA_IMBALANCE_DIAGNOSIS.md"
+        },
+        {
+          "original": "../mot/HOLON_MOT_PDFBENCH_DATA_LEAKAGE.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/mot/HOLON_MOT_PDFBENCH_DATA_LEAKAGE.md"
+        },
+        {
+          "original": "../mot/HOLON_MOT_PROTEINGYM_MINI_FULL_GAP.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/mot/HOLON_MOT_PROTEINGYM_MINI_FULL_GAP.md"
+        },
+        {
+          "original": "../optimization/A11_ABLATION_RESULTS.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/optimization/A11_ABLATION_RESULTS.md"
+        },
+        {
+          "original": "../optimization/A11_MUON_ABLATION.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/optimization/A11_MUON_ABLATION.md"
+        },
+        {
+          "original": "../optimization/DEEPSPEED_MUON_PHASE3_VALIDATION.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/optimization/DEEPSPEED_MUON_PHASE3_VALIDATION.md"
+        },
+        {
+          "original": "../optimization/MoT_FLOPs_ANALYSIS.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/optimization/MoT_FLOPs_ANALYSIS.md"
+        },
+        {
+          "original": "../optimization/NATIVE_MUON_PROTEIN_RECIPE_SELECTION.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/optimization/NATIVE_MUON_PROTEIN_RECIPE_SELECTION.md"
+        },
+        {
+          "original": "Holon_Document_Catalog_20261111.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/reports/Holon_Document_Catalog_20261111.json"
+        },
+        {
+          "original": "Holon_Technical_Report.pdf",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/reports/Holon_Technical_Report.pdf"
+        },
+        {
+          "original": "../scaling/ISOFLOPS_MUON_C3E20.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/scaling/ISOFLOPS_MUON_C3E20.md"
+        },
+        {
+          "original": "../scaling/SCALING_LAW_FULL_REPORT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/scaling/SCALING_LAW_FULL_REPORT.md"
+        },
+        {
+          "original": "../scaling/cpt_scaling_transfer.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/scaling/cpt_scaling_transfer.md"
+        },
+        {
+          "original": "../scaling/gcp_dplm_hybrid_codec_cameo_results_20260816.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/scaling/gcp_dplm_hybrid_codec_cameo_results_20260816.md"
+        },
+        {
+          "original": "../scaling/protein_structure_codec_scaling_stage_summary_20260812.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/scaling/protein_structure_codec_scaling_stage_summary_20260812.md"
+        },
+        {
+          "original": "../../eval/README.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/eval/README.md"
+        },
+        {
+          "original": "../../eval/alignment/mismatch_metrics.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/eval/alignment/mismatch_metrics.py"
+        },
+        {
+          "original": "../../eval/alignment/score_c30_p123_description.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/eval/alignment/score_c30_p123_description.py"
+        },
+        {
+          "original": "../../eval/prot/generation_contract.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/eval/prot/generation_contract.py"
+        },
+        {
+          "original": "../../eval/sequence/README_proteingym_eval.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/eval/sequence/README_proteingym_eval.md"
+        },
+        {
+          "original": "../../eval/sequence/protein_scorer.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/eval/sequence/protein_scorer.py"
+        },
+        {
+          "original": "../../eval/tokenizer_contract.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/eval/tokenizer_contract.py"
+        },
+        {
+          "original": "../../modeling/holon/holon.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/modeling/holon/holon.py"
+        },
+        {
+          "original": "../../modeling/holon/qwen3_navit.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/modeling/holon/qwen3_navit.py"
+        },
+        {
+          "original": "../../results/cpt-eval/ar-fim-1p7b-mm-v03-20260920-r001/RESULT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/results/cpt-eval/ar-fim-1p7b-mm-v03-20260920-r001/RESULT.md"
+        },
+        {
+          "original": "../../results/cpt-eval/ar-fim-1p7b-mm-v03-20260920-r001/investigation/REPORT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/results/cpt-eval/ar-fim-1p7b-mm-v03-20260920-r001/investigation/REPORT.md"
+        },
+        {
+          "original": "../../results/cpt-eval/ar-fim-1p7b-mm-v03-20260920-r001/investigation/training_audit/REPORT.md",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/results/cpt-eval/ar-fim-1p7b-mm-v03-20260920-r001/investigation/training_audit/REPORT.md"
+        },
+        {
+          "original": "../../results/cpt-eval/protein-text-negative-ladder-v2/ps8_psc_checkpoint_comparison_result_registry.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/results/cpt-eval/protein-text-negative-ladder-v2/ps8_psc_checkpoint_comparison_result_registry.json"
+        },
+        {
+          "original": "../../results/cpt-eval/protein-text-negative-ladder-v2/reference_l0_l3_result_registry.json",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/results/cpt-eval/protein-text-negative-ladder-v2/reference_l0_l3_result_registry.json"
+        },
+        {
+          "original": "../../scripts/reports/report_depth.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/scripts/reports/report_depth.py"
+        },
+        {
+          "original": "../../train/deepspeed_update_guard.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/deepspeed_update_guard.py"
+        },
+        {
+          "original": "../../train/distributed_checkpoint_state.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/distributed_checkpoint_state.py"
+        },
+        {
+          "original": "../../train/finetune_classification.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/finetune_classification.py"
+        },
+        {
+          "original": "../../train/finetune_generative_classification.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/finetune_generative_classification.py"
+        },
+        {
+          "original": "../../train/muon.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/muon.py"
+        },
+        {
+          "original": "../../train/optimizer_utils.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/optimizer_utils.py"
+        },
+        {
+          "original": "../../train/parameter_count.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/parameter_count.py"
+        },
+        {
+          "original": "../../train/pretrain_unified_nebula.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/pretrain_unified_nebula.py"
+        },
+        {
+          "original": "../../train/token_budget.py",
+          "url": "https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/train/token_budget.py"
+        }
+      ],
+      "unavailable_sources": [
+        {
+          "original": "../../../Protext-Eval/FRAMEWORK.md",
+          "target": "../Protext-Eval/FRAMEWORK.md"
+        },
+        {
+          "original": "../../../Protext-Eval/results/main_table_v1/README.md",
+          "target": "../Protext-Eval/results/main_table_v1/README.md"
+        },
+        {
+          "original": "../../../Protext-Eval/textprot_eval/core/evaluator.py",
+          "target": "../Protext-Eval/textprot_eval/core/evaluator.py"
+        }
+      ],
+      "reviewed_files": [
+        {
+          "path": "README.md",
+          "bytes": 55086
+        },
+        {
+          "path": "docs/CPT_STAGE_ANALYSIS.md",
+          "bytes": 27466
+        },
+        {
+          "path": "docs/FORWARD_ROUTING.md",
+          "bytes": 1273
+        },
+        {
+          "path": "docs/PROTEIN_SFT_PLAN_CN.md",
+          "bytes": 14939
+        },
+        {
+          "path": "docs/benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_PS8_PSC_RESULT.md",
+          "bytes": 4627
+        },
+        {
+          "path": "docs/data/token_mix_calibration.md",
+          "bytes": 24192
+        },
+        {
+          "path": "docs/model/asymmetric_mot_design.md",
+          "bytes": 36584
+        },
+        {
+          "path": "docs/reports/Holon_Unified_Report_202611.html",
+          "bytes": 1414145
+        },
+        {
+          "path": "docs/scaling/cpt_scaling_transfer.md",
+          "bytes": 9526
+        },
+        {
+          "path": "modeling/holon/qwen3_navit.py",
+          "bytes": 53981
+        }
+      ],
+      "runtime_evaluation_executed": false
+    },
+    {
+      "project": "ProtAgent",
+      "commit": "d66fa7c287d196d5c26ec23e53c02327c5bbc6a8",
+      "private": true,
+      "retrieved": "2026-11-14",
+      "report": "docs/assets/reports/ProtAgent_Technical_Report_202611.html",
+      "original_url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/assets/reports/ProtAgent_Technical_Report_202611.html",
+      "original_bytes": 41953,
+      "original_sha256": "b963c1874ef39c03f0b33f16232aa276cbf5996138459e24f3cd1048d421516a",
+      "archive": "/assets/research/my-work/protagent-original.html.txt",
+      "blog_source": "content/posts/my-work-protagent/full-report.html",
+      "license": "Author-provided project report; no new redistribution license asserted.",
+      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS to report wrapper, made Holon directory sticky within report, added source notice.",
+      "rewritten_links": [
+        {
+          "original": "../../paper/protagent_paper.pdf",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/protagent_paper.pdf"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../paper/protagent_paper.pdf",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/protagent_paper.pdf"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../internal/FRAMEWORK.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/internal/FRAMEWORK.md"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../paper/arxiv2026/appendix.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex"
+        },
+        {
+          "original": "../../../supplementary/code_data/data/DATA_CARD.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/data/DATA_CARD.md"
+        },
+        {
+          "original": "../../data/LOCAL_DATA_GUIDE.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/data/LOCAL_DATA_GUIDE.md"
+        },
+        {
+          "original": "../../paper/arxiv2026/appendix.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex"
+        },
+        {
+          "original": "../../../supplementary/code_data/configs/closed_loop_main.yaml",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/configs/closed_loop_main.yaml"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../paper/arxiv2026/appendix.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex"
+        },
+        {
+          "original": "../../../supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py"
+        },
+        {
+          "original": "../../infra/SFT_RL_INFRASTRUCTURE.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/infra/SFT_RL_INFRASTRUCTURE.md"
+        },
+        {
+          "original": "../../infra/NATIVE_TOOLS_ISSUE_AND_FIX.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/infra/NATIVE_TOOLS_ISSUE_AND_FIX.md"
+        },
+        {
+          "original": "../../../protagent/tools/registry.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/tools/registry.py"
+        },
+        {
+          "original": "../../../protagent/tools/executor.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/tools/executor.py"
+        },
+        {
+          "original": "../../../protagent/tools/preflight.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/tools/preflight.py"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../paper/arxiv2026/appendix.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../../supplementary/code_data/configs/pfua_main.yaml",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/configs/pfua_main.yaml"
+        },
+        {
+          "original": "../../../protagent/training/sec1_reward.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/training/sec1_reward.py"
+        },
+        {
+          "original": "../../paper/arxiv2026/appendix.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex"
+        },
+        {
+          "original": "../../../supplementary/code_data/README.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/README.md"
+        },
+        {
+          "original": "../../../supplementary/code_data/configs/closed_loop_main.yaml",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/configs/closed_loop_main.yaml"
+        },
+        {
+          "original": "../../data/CHECKPOINT_REGISTRY.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/data/CHECKPOINT_REGISTRY.md"
+        },
+        {
+          "original": "../../../supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../paper/arxiv2026/appendix.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex"
+        },
+        {
+          "original": "../../../supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py"
+        },
+        {
+          "original": "../../../supplementary/code_data/scripts/analyze_ood100_eval.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/scripts/analyze_ood100_eval.py"
+        },
+        {
+          "original": "../../paper/protagent_paper.pdf",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/protagent_paper.pdf"
+        },
+        {
+          "original": "../../paper/arxiv2026/ProtAgent_arXiv.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/ProtAgent_arXiv.tex"
+        },
+        {
+          "original": "../../paper/arxiv2026/appendix.tex",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex"
+        },
+        {
+          "original": "../../../supplementary/code_data/README.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/README.md"
+        },
+        {
+          "original": "../../infra/SFT_RL_INFRASTRUCTURE.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/infra/SFT_RL_INFRASTRUCTURE.md"
+        },
+        {
+          "original": "../../infra/NATIVE_TOOLS_ISSUE_AND_FIX.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/infra/NATIVE_TOOLS_ISSUE_AND_FIX.md"
+        },
+        {
+          "original": "../../../protagent/tools/registry.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/tools/registry.py"
+        },
+        {
+          "original": "../../../protagent/tools/executor.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/tools/executor.py"
+        },
+        {
+          "original": "../../../protagent/training/sec1_reward.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/training/sec1_reward.py"
+        },
+        {
+          "original": "../../../supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py"
+        },
+        {
+          "original": "../../data/LOCAL_DATA_GUIDE.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/data/LOCAL_DATA_GUIDE.md"
+        },
+        {
+          "original": "../../data/CHECKPOINT_REGISTRY.md",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/data/CHECKPOINT_REGISTRY.md"
+        },
+        {
+          "original": "../../paper/arxiv2026/references.bib",
+          "url": "https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/references.bib"
+        }
+      ],
+      "unavailable_sources": [],
+      "reviewed_files": [
+        {
+          "path": "README.md",
+          "bytes": 19446
+        },
+        {
+          "path": "docs/assets/reports/ProtAgent_Technical_Report_202611.html",
+          "bytes": 41953
+        },
+        {
+          "path": "docs/paper/PAPER_EVIDENCE_MATRIX.md",
+          "bytes": 38086
+        },
+        {
+          "path": "docs/paper/arxiv2026/appendix.tex",
+          "bytes": 39371
+        },
+        {
+          "path": "docs/plans/TRAINING_PIPELINE_STATUS.md",
+          "bytes": 8035
+        },
+        {
+          "path": "protagent/training/reward.py",
+          "bytes": 19967
+        },
+        {
+          "path": "supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py",
+          "bytes": 23085
+        }
+      ],
+      "runtime_evaluation_executed": false
+    },
+    {
+      "project": "harbor-task-sync",
+      "commit": "0efe0d276c6f4f2d804897843620ba7cb73974e7",
+      "private": true,
+      "retrieved": "2026-11-14",
+      "report": "docs/GEO-Harbor-Bench-Method-Report.html",
+      "original_url": "https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/GEO-Harbor-Bench-Method-Report.html",
+      "original_bytes": 42457,
+      "original_sha256": "1b1bd2c7bab7c46a6ccb98a2d8ac49f764c9d7aeb4b84e26056f4dea9ad8f529",
+      "archive": "/assets/research/my-work/harbor-original.html.txt",
+      "blog_source": "content/posts/my-work-harbor/full-report.html",
+      "license": "Author-provided project report; no new redistribution license asserted.",
+      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS to report wrapper, made Holon directory sticky within report, added source notice.",
+      "rewritten_links": [
+        {
+          "original": "unified-production.md",
+          "url": "https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/unified-production.md"
+        },
+        {
+          "original": "refinement-mvp-implementation.md",
+          "url": "https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/refinement-mvp-implementation.md"
+        },
+        {
+          "original": "../research/refinement-overview.html",
+          "url": "https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/research/refinement-overview.html"
+        },
+        {
+          "original": "README.md",
+          "url": "https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/README.md"
+        }
+      ],
+      "unavailable_sources": [],
+      "reviewed_files": [
+        {
+          "path": "README.md",
+          "bytes": 11601
+        },
+        {
+          "path": "docs/GEO-Harbor-Bench-Method-Report.html",
+          "bytes": 42457
+        },
+        {
+          "path": "docs/production-status.md",
+          "bytes": 82271
+        },
+        {
+          "path": "docs/refinement-chain-design.md",
+          "bytes": 37326
+        },
+        {
+          "path": "docs/refinement-mvp-implementation.md",
+          "bytes": 10487
+        },
+        {
+          "path": "docs/refinement-v1-status.md",
+          "bytes": 142030
+        },
+        {
+          "path": "research/refinement-overview.html",
+          "bytes": 18617
+        }
+      ],
+      "runtime_evaluation_executed": false
+    },
+    {
+      "project": "trainable-dllm-overview",
+      "commit": "28ed9621c93951f6032ce8a2ae28c115779ee918",
+      "private": true,
+      "retrieved": "2026-11-14",
+      "report": "docs/reports/trainable-dllm-technical-report.html",
+      "original_url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/reports/trainable-dllm-technical-report.html",
+      "original_bytes": 2298865,
+      "original_sha256": "1a9a865b7f446fb87b139424363fcdc886c385b31e34c2252560f75a978b50d7",
+      "archive": "/assets/research/my-work/dllm-original.html.txt",
+      "blog_source": "content/posts/my-work-dllm/full-report.html",
+      "license": "Author-provided project report; no new redistribution license asserted.",
+      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS to report wrapper, made Holon directory sticky within report, added source notice.",
+      "rewritten_links": [
+        {
+          "original": "../../papers/arr/main.pdf",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/papers/arr/main.pdf"
+        },
+        {
+          "original": "../../experiments/structured/src/train_prompt_respond.py",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/structured/src/train_prompt_respond.py"
+        },
+        {
+          "original": "../../experiments/structured/src/conf",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/structured/src/conf"
+        },
+        {
+          "original": "../../experiments/lm1b/main.py",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/main.py"
+        },
+        {
+          "original": "../../experiments/lm1b/configs",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/configs"
+        },
+        {
+          "original": "../../experiments/lm1b/dataloader.py",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/dataloader.py"
+        },
+        {
+          "original": "../../experiments/structured/src/models_prompt_respond.py",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/structured/src/models_prompt_respond.py"
+        },
+        {
+          "original": "../../experiments/lm1b/diffusers/scatter_diffusion.py",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/diffusers/scatter_diffusion.py"
+        },
+        {
+          "original": "../../experiments/lm1b/diffusers/jigsaw_diffusion.py",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/diffusers/jigsaw_diffusion.py"
+        },
+        {
+          "original": "../../experiments/lm1b/metrics.py",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/metrics.py"
+        },
+        {
+          "original": "../reproduction.md",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/reproduction.md"
+        },
+        {
+          "original": "../../results/arr/index.tsv",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/results/arr/index.tsv"
+        },
+        {
+          "original": "../verification.md",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/verification.md"
+        },
+        {
+          "original": "../../papers/arr/main.pdf",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/papers/arr/main.pdf"
+        },
+        {
+          "original": "../../papers/arr/main.tex",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/papers/arr/main.tex"
+        },
+        {
+          "original": "../../papers/arr/appendix.tex",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/papers/arr/appendix.tex"
+        },
+        {
+          "original": "../../results/arr/lm1b_gen_ppl.csv",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/results/arr/lm1b_gen_ppl.csv"
+        },
+        {
+          "original": "../imports.json",
+          "url": "https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/imports.json"
+        }
+      ],
+      "unavailable_sources": [],
+      "reviewed_files": [
+        {
+          "path": "README.md",
+          "bytes": 1393
+        },
+        {
+          "path": "docs/reports/trainable-dllm-technical-report.html",
+          "bytes": 2298865
+        },
+        {
+          "path": "docs/reproduction.md",
+          "bytes": 6279
+        },
+        {
+          "path": "docs/verification.md",
+          "bytes": 3423
+        },
+        {
+          "path": "experiments/lm1b/MODEL_ALGO_SUMMARY.md",
+          "bytes": 6318
+        },
+        {
+          "path": "experiments/lm1b/configs/algo/jigsaw_prefix.yaml",
+          "bytes": 967
+        },
+        {
+          "path": "experiments/lm1b/configs/algo/scatdiff.yaml",
+          "bytes": 337
+        },
+        {
+          "path": "experiments/lm1b/diffusers/jigsaw_diffusion.py",
+          "bytes": 43669
+        },
+        {
+          "path": "experiments/lm1b/diffusers/scatter_diffusion.py",
+          "bytes": 12327
+        },
+        {
+          "path": "experiments/lm1b/models/scatdit.py",
+          "bytes": 21476
+        },
+        {
+          "path": "results/arr/lm1b_gen_ppl.csv",
+          "bytes": 4630
+        }
+      ],
+      "runtime_evaluation_executed": false
+    }
+  ]
+}

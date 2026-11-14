@@ -412,6 +412,10 @@
       "url": "/blog/"
     },
     {
+      "label": "My Work",
+      "url": "/my-work/"
+    },
+    {
       "label": "CV",
       "url": "/cv/"
     }
@@ -494,6 +498,12 @@
   ],
   "pages": [
     {
+      "id": "my-work",
+      "title": "My Work",
+      "source": "content/pages/my-work.md",
+      "url": "/my-work/"
+    },
+    {
       "id": "about",
       "title": "About",
       "source": "content/pages/about.md",
@@ -517,6 +527,26 @@
     ]
   },
   "assets": [
+    {
+      "source": "assets/research/my-work/sources.json",
+      "url": "/assets/research/my-work/sources.json"
+    },
+    {
+      "source": "assets/research/my-work/holon-original.html.txt",
+      "url": "/assets/research/my-work/holon-original.html.txt"
+    },
+    {
+      "source": "assets/research/my-work/protagent-original.html.txt",
+      "url": "/assets/research/my-work/protagent-original.html.txt"
+    },
+    {
+      "source": "assets/research/my-work/harbor-original.html.txt",
+      "url": "/assets/research/my-work/harbor-original.html.txt"
+    },
+    {
+      "source": "assets/research/my-work/dllm-original.html.txt",
+      "url": "/assets/research/my-work/dllm-original.html.txt"
+    },
     {
       "source": "content/posts/harbor-framework-guide/assets/scalingx-datasets.json",
       "url": "/harbor-framework-guide/assets/scalingx-datasets.json"

@@ -1,0 +1,16 @@
+.site-page .my-work-folder{max-width:1040px}
+.site-page .work-header{max-width:800px;padding-bottom:24px}
+.site-page .work-header h1{font-size:clamp(44px,7vw,76px);margin-bottom:20px}
+.site-page .work-header .intro{font-size:19px;color:var(--site-ink);line-height:1.8}
+.site-page .work-context{max-width:800px;color:var(--site-muted);font-size:15px}
+.site-page .work-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 44px;margin:40px 0 60px}
+.site-page .work-project{border-top:2px solid var(--site-dark-teal);padding:24px 0 32px;min-width:0;display:flex;flex-direction:column}
+.site-page .work-project .work-field{font:13px/1.6 var(--site-heading);color:var(--site-muted);margin:0}
+.site-page .work-project h2{font-size:25px;margin:12px 0 16px;line-height:1.5}
+.site-page .work-project h2 a{text-decoration:none;color:var(--site-ink)}
+.site-page .work-project p:not(.work-field){font-size:15px;line-height:1.9;margin:0 0 20px}
+.site-page .work-tags{display:flex;flex-wrap:wrap;gap:6px 14px;font:12px/1.7 var(--site-heading);color:var(--site-muted);margin-bottom:22px}
+.site-page .work-read{font:14px/1.8 var(--site-heading);margin-top:auto;align-self:flex-start;min-height:32px}
+.site-page .my-work-folder table{font-size:14px}
+.site-page .my-work-folder :focus-visible{outline:3px solid var(--site-dark-teal);outline-offset:4px}
+@media(max-width:640px){.site-page .work-grid{grid-template-columns:1fr;gap:0;margin-top:28px}.site-page .work-header .intro{font-size:17px}.site-page .work-project h2{font-size:23px}}

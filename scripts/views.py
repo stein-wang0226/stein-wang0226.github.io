@@ -216,6 +216,30 @@ def render_home(ctx):
              styles=("/assets/site/profile.css",))
 
 
+def render_my_work(ctx, record, meta, body):
+    """Assemble the project folder from the existing catalog, without another registry."""
+    projects = [row for row in ctx.entries
+                if "Personal Project" in row.get("tags", []) and row["status"] == "published"]
+    cards = []
+    for row in projects:
+        cards.append('<article class="work-project">'
+                     f'<p class="work-field">{esc(next(t["label"] for t in ctx.site["topics"] if t["id"] == row["topic"]))}</p>'
+                     f'<h2><a href="{ctx.rel(record["url"], row["url"])}">{esc(row["title"])}</a></h2>'
+                     f'<p>{esc(row["summary"])}</p>'
+                     '<div class="work-tags">' + "".join(
+                         f'<span>{esc(tag)}</span>' for tag in row["tags"]
+                         if tag not in {"Personal Project", "My Work"}) + '</div>'
+                     f'<a class="work-read" href="{ctx.rel(record["url"], row["url"])}">阅读方法与研究报告</a>'
+                     '</article>')
+    content = ctx.md(body).replace("<!-- WORK:PROJECTS -->",
+                                  '<div class="work-grid">' + "".join(cards) + '</div>')
+    ctx.page(record["url"], record["title"],
+             '<div class="my-work-folder"><header class="work-header">'
+             f'<h1>{esc(meta["title"])}</h1><p class="intro">{esc(meta["description"])}</p>'
+             '</header>' + content + '</div>', meta["description"], lang="zh-CN",
+             styles=("/assets/site/my-work.css",))
+
+
 def render_blog(ctx):
     rows = public_entries(ctx)
     local = ordered([e for e in rows if e["origin"] == "local"

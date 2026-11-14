@@ -57,6 +57,22 @@ make preview PORT=8766
 
 ## 个人资料及 PDF
 
+### My Work 项目报告
+
+顶部 `/my-work/` 是独立项目目录；权威入口为 `content/pages/my-work.md`，
+导航仍由 `content/site.json` 管理。目录卡片从 `catalog.json` 中带
+`Personal Project` 标签的公开文章生成，不维护第二份项目登记。
+
+四篇方法总结位于 `content/posts/my-work-{holon,protagent,harbor,dllm}/index.md`；
+对应 `full-report.html` 保留完整科学报告，作为 `reading_role=reference` 登记。
+更新原报告时同时核对相对链接、原 CSS 的正文作用域、公式/图表比例和原交互。
+`assets/research/my-work/sources.json` 保存来源 commit、复核文件、缺失工件、
+长度与 SHA；`*-original.html.txt` 是逐字节原件，下载链接指定 HTML 文件名。
+
+来源仓库的可见性与博客发布独立；项目链接需要权限时保持明确说明。
+科研复核范围与运行验证分别记录，不将 smoke、格式检查或历史统计当作新实验结果。
+2026-11-14 接入范围与验收见 [项目报告记录](my-work-reports-20261114.md)。
+
 个人履历只根据作者提供的信息更新。论文 Markdown 是论文列表唯一来源；SemDLM 与 SemDLM+ 是不同记录。
 在线 CV 与研究简历 PDF 分别维护。`assets/Curriculum_Vitae.pdf` 为作者提供的英文研究简历，
 `assets/Yuxiang-Wang-Resume-zh.pdf` 为中文研究简历；检查教育、经历、论文与联系方式后替换，

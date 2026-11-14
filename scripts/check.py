@@ -24,16 +24,19 @@ class Document(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.path, self.ids, self.links, self.errors = path, set(), [], []
         self.nav, self.title, self.base = 0, 0, None
+        self.svg_depth = 0
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "svg":
+            self.svg_depth += 1
         if attrs.get("id"):
             if attrs["id"] in self.ids:
                 self.errors.append(f"duplicate id #{attrs['id']}")
             self.ids.add(attrs["id"])
         if tag == "a" and attrs.get("name"):
             self.ids.add(attrs["name"])
-        self.title += tag == "title"
+        self.title += tag == "title" and self.svg_depth == 0
         self.nav += tag == "nav" and attrs.get("aria-label") == "主导航"
         if tag == "base":
             self.base = attrs.get("href")
@@ -46,7 +49,13 @@ class Document(HTMLParser):
             self.links.extend(part.strip().split()[0] for part in attrs["srcset"].split(",")
                               if part.strip())
 
-    handle_startendtag = handle_starttag
+    def handle_endtag(self, tag):
+        if tag == "svg":
+            self.svg_depth = max(0, self.svg_depth - 1)
+
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
 
 
 def digest(path):

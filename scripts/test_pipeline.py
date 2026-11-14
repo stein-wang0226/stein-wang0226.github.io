@@ -14,7 +14,7 @@ from datetime import date, timedelta
 
 from catalog import load_content
 from citations import derive, source_identity
-from check import validate
+from check import Document, validate
 from new_post import create
 from pipeline import build
 from render import ROOT, input_digest
@@ -26,6 +26,18 @@ def tree(path):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_document_title_and_accessible_svg_titles(self):
+        doc = Document(Path("report.html"))
+        doc.feed('<html><head><title>Report</title></head><body>'
+                 '<svg><title>Scientific diagram</title><svg><title>Inset</title></svg></svg>'
+                 '<svg/><a href="#evidence">Evidence</a><div id="evidence"></div></body></html>')
+        self.assertEqual(doc.title, 1)
+        self.assertEqual(doc.svg_depth, 0)
+        self.assertIn("evidence", doc.ids)
+        self.assertIn("#evidence", doc.links)
+        doc.feed("<title>Duplicate document title</title>")
+        self.assertEqual(doc.title, 2)
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="blog-integration-")
         self.base = Path(self.tmp.name)

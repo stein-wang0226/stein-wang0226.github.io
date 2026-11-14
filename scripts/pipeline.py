@@ -53,6 +53,10 @@ def render_academic(ctx):
              lang="en")
     for record in ctx.site["pages"]:
         meta, body = load_md(ctx.root / record["source"])
+        if record["id"] == "my-work":
+            from views import render_my_work
+            render_my_work(ctx, record, meta, body)
+            continue
         addition = ""
         if record["id"] == "cv":
             addition = '<h2 id="publications">Publications</h2><ul>' + "".join(

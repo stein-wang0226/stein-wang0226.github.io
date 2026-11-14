@@ -156,13 +156,17 @@ class BuildContext:
     def navigation(self, path):
         path = route_path(path)
         links = []
+        work_page = next((p for p in self.site.get("pages", []) if p["id"] == "my-work"), None)
+        work_prefix = route_path(work_page["url"]).removesuffix("index.html") if work_page else None
         for item in self.site["navigation"]:
             target = route_path(item["url"])
             active = path == target or (
+                work_prefix and target == route_path(work_page["url"]) and path.startswith(work_prefix)
+            ) or (
                 target == "blog/index.html" and any(
                     entry["origin"] == "local" and route_path(entry["url"]) == path
                     for entry in self.entries
-                )
+                ) and not (work_prefix and path.startswith(work_prefix))
             )
             current = ' aria-current="page"' if active else ""
             links.append(f'<a href="{html.escape(rel(path, item["url"]), quote=True)}"{current}>'

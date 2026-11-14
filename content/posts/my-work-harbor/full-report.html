@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO-Harbor-Bench: LLM 角色接力驱动的生信评测任务自动产线</title>
+<style>:root{
+    --bg: #ffffff;
+    --surface: #f8fafb;
+    --navy: #0a1628;
+    --navy-soft: #1b2d45;
+    --coral: #e63946;
+    --teal: #1d7a6a;
+    --teal-light: #2a9d8f;
+    --gray-100: #f4f5f7;
+    --gray-200: #e2e5ea;
+    --gray-400: #8892a4;
+    --gray-600: #4a5468;
+    --code-bg: #0f1923;
+    --code-fg: #e4e8ee;
+    --code-accent: #7fdbca;
+    --code-string: #ecc48d;
+    --code-keyword: #c792ea;
+  }
+.work-original-report *{ box-sizing: border-box; margin: 0; padding: 0; }
+.work-original-report{
+    font-family: 'Newsreader', 'Noto Serif SC', Georgia, serif;
+    font-optical-sizing: auto;
+    background: var(--bg);
+    color: var(--navy);
+    line-height: 1.85;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
+  }
+.work-original-report /* Top accent stripe */
+  body::before{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--coral) 0%, var(--coral) 40%, var(--teal) 60%, var(--teal) 100%);
+    margin-bottom: 3.5rem;
+    margin-left: -2rem;
+    width: calc(100% + 4rem);
+  }
+.work-original-report /* Staggered reveal */
+  @keyframes fadeUp{
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+.work-original-report h1,.work-original-report .subtitle,.work-original-report .tldr,.work-original-report h2,.work-original-report h3,.work-original-report p,.work-original-report table,.work-original-report .artifact-block,.work-original-report .figure-box,.work-original-report .decision-box{
+    animation: fadeUp 0.6s ease-out both;
+  }
+.work-original-report h1{ animation-delay: 0.05s; }
+.work-original-report .subtitle{ animation-delay: 0.1s; }
+.work-original-report .tldr{ animation-delay: 0.15s; }
+.work-original-report h1{
+    font-family: 'Fraunces', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    font-optical-sizing: auto;
+    color: var(--navy);
+    margin-bottom: 0.4rem;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+.work-original-report .subtitle{
+    font-family: 'Newsreader', serif;
+    font-size: 0.9rem;
+    color: var(--gray-400);
+    margin-bottom: 2.5rem;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+.work-original-report .tldr{
+    background: linear-gradient(135deg, #fff5f5 0%, #fff9f0 100%);
+    border-left: 4px solid var(--coral);
+    padding: 1.2rem 1.6rem;
+    margin: 2rem 0 2.5rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    box-shadow: 0 2px 12px rgba(230, 57, 70, 0.06);
+  }
+.work-original-report .tldr strong{
+    color: var(--coral);
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+.work-original-report h2{
+    font-family: 'Fraunces', serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--gray-200);
+    position: relative;
+    letter-spacing: -0.01em;
+  }
+.work-original-report h2::after{
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 48px;
+    height: 2px;
+    background: var(--coral);
+  }
+.work-original-report h3{
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--teal);
+    margin-top: 2rem;
+    margin-bottom: 0.7rem;
+    letter-spacing: -0.01em;
+  }
+.work-original-report p{
+    margin-bottom: 1.1rem;
+    font-weight: 400;
+  }
+.work-original-report p strong{
+    font-weight: 600;
+    color: var(--navy-soft);
+  }
+.work-original-report /* Tables */
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+.work-original-report thead th{
+    background: var(--navy);
+    color: #fff;
+    padding: 0.7rem 0.9rem;
+    text-align: left;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+.work-original-report thead th:first-child{ border-radius: 6px 0 0 0; }
+.work-original-report thead th:last-child{ border-radius: 0 6px 0 0; }
+.work-original-report td{
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+  }
+.work-original-report tr:hover td{ background: var(--gray-100); }
+.work-original-report tr td:last-child strong{ color: var(--teal); }
+.work-original-report .highlight-row td{
+    background: #fff5f5 !important;
+    border-left: 3px solid var(--coral);
+  }
+.work-original-report /* Artifact blocks — dark terminal style */
+  .artifact-block{
+    background: var(--code-bg);
+    border: 1px solid #1e2d3d;
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    box-shadow: 0 4px 20px rgba(10, 22, 40, 0.15);
+    position: relative;
+  }
+.work-original-report .artifact-block::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal-light), var(--code-accent));
+    border-radius: 8px 8px 0 0;
+  }
+.work-original-report .artifact-block pre{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.76rem;
+    line-height: 1.65;
+    margin: 0;
+    white-space: pre;
+    color: var(--code-fg);
+  }
+.work-original-report .artifact-caption{
+    font-family: 'Newsreader', serif;
+    font-size: 0.8rem;
+    color: var(--gray-400);
+    font-style: italic;
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #1e2d3d;
+  }
+.work-original-report /* Figure box */
+  .figure-box{
+    background: var(--surface);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 1.8rem 1rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+.work-original-report .figure-caption{
+    font-family: 'Newsreader', serif;
+    font-size: 0.82rem;
+    color: var(--gray-600);
+    margin-top: 1rem;
+    font-style: italic;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+.work-original-report /* Decision boxes */
+  .decision-box{
+    background: #fffbf7;
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid var(--coral);
+    border-radius: 0 8px 8px 0;
+    padding: 1.2rem 1.4rem;
+    margin: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+.work-original-report .decision-box::before{
+    content: '?';
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    font-family: 'Fraunces', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--coral);
+    opacity: 0.07;
+    line-height: 1;
+  }
+.work-original-report .decision-box strong{
+    color: var(--coral);
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+  }
+.work-original-report /* Glossary note */
+  .glossary{
+    font-size: 0.82rem;
+    color: var(--gray-400);
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.7rem 1rem;
+    background: var(--gray-100);
+    border-radius: 6px;
+    line-height: 1.7;
+  }
+.work-original-report .document-note{
+    margin: 1.5rem 0;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    background: var(--surface);
+    font: 0.85rem/1.8 system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+    overflow-wrap: anywhere;
+  }
+.work-original-report .document-note p{ margin-bottom: 0.6rem; }
+.work-original-report .document-note p:last-child{ margin-bottom: 0; }
+.work-original-report .document-note a{ color: var(--teal); }
+@media (max-width: 640px){.work-original-report{ padding: 0 1rem 3rem; }
+.work-original-report body::before{ margin-left: -1rem; width: calc(100% + 2rem); margin-bottom: 2rem; }
+.work-original-report h1{ font-size: 1.65rem; overflow-wrap: anywhere; }
+.work-original-report p,.work-original-report li,.work-original-report td{ overflow-wrap: anywhere; }
+.work-original-report table{ display: block; max-width: 100%; overflow-x: auto; }
+.work-original-report .document-note,.work-original-report .tldr{ padding: 1rem; }
+
+  }
+.work-original-report /* Print */
+  @media print{
+    body { max-width: none; padding: 1.5cm; }
+    body::before { display: none; }
+    .tldr, table, .artifact-block, .decision-box { break-inside: avoid; }
+    .artifact-block { background: #f5f5f5 !important; border: 1px solid #ddd; }
+    .artifact-block pre { color: #222 !important; }
+    * { animation: none !important; }
+  }
+
+</style>
+<style>.work-import-notice{position:relative;z-index:2;box-sizing:border-box;max-width:1040px;margin:24px auto;padding:20px 24px;background:#f7f5f0;border-left:3px solid #0f766e;color:#1a1a2e;font:14px/1.85 "PingFang SC",sans-serif}.work-import-notice p{margin:6px 0}.work-import-notice a{color:#0f766e}@media(max-width:700px){.work-import-notice{margin:18px;padding:16px}}.work-original-report nav[aria-label="报告目录"]{position:sticky;inset:auto;top:20px;float:left;height:calc(100vh - 40px)}.work-report .reading-intro{border:0;margin:0 auto;padding:18px 32px}.work-report .reading-intro>h1,.work-report .reading-intro>p:not(.reading-path):not(.reading-meta){display:none}@media(max-width:760px){.work-original-report nav[aria-label="报告目录"]{position:relative;top:auto;float:none;height:auto}}</style></head>
+<body class="site-body work-report"><aside class="work-import-notice"><p><a href="index.html">返回项目方法总结</a> · <a href="../../assets/research/my-work/harbor-original.html.txt" download="harbor-original.html">下载原始 HTML</a> · <a href="../../assets/research/my-work/sources.json">来源版本清单</a></p><p>来源：harbor-task-sync @ 0efe0d276c6f。完整正文、公式与嵌入图表保留；相对源码链接固定到 GitHub 版本，需要仓库权限。快照未包含的工件链接保留为文字，详情见来源清单。</p></aside><div class="work-original-report">
+
+<h1>GEO-Harbor-Bench：LLM 角色接力驱动的生信评测任务自动产线</h1>
+<p class="subtitle">Method Report — 原稿标注 2026-08-23 · Pipeline update — 原稿标注 2026-09-30 · 文档归位 2026-11-05</p>
+
+<div class="document-note">
+  <p><strong>文档定位：</strong>本页是 GEO-Harbor 整体方法的汇报主文档，保留用户提供的原稿主体与方法示意；不是生产启动清单，也不替代任务记录、冻结协议或当前运行证据。</p>
+  <p><strong>历史数据边界：</strong>正文中的“当前／最新”、740 ready、413 done、70%+／91.0% 成功率、成本、模型分工和具体 case 均按原稿口径保留。本次未重新核验这些统计的批次、分母、价格来源与完整执行证据，不作为 2026-11-05 的实时读数或因果效果证明。生产效率、package 检查通过与科学质量／难度认证必须分别解读。</p>
+  <p><strong>现行代码与 Refinement：</strong>Byted／Ali 共同使用 <code>Unified-produce</code>，本机配置与运行数据分离；<code>Unified-coordination</code> 仅同步 GSE 历史。已封账 V5.2 原题／child 均为 5/5 + 3/4、难度 drop=0，正式 accepted child=0；不能把本页生产成果当作 Refinement 有效性证据。</p>
+  <p>操作与当前结果：<a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/unified-production.md">统一生产规程</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/refinement-mvp-implementation.md">Refinement 链路与结果</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/research/refinement-overview.html">Refinement HTML</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/README.md">维护文档入口</a>。</p>
+</div>
+
+<div class="tldr">
+  <strong>TL;DR</strong>&nbsp;&nbsp;我们设计了一条"LLM 角色接力 + 落盘产物驱动"的自动化评测任务产线，能将公开 GEO/SRA 研究批量转化为确定性判分的生物信息学 benchmark 任务。核心洞察是把“出题”拆成候选发现、深审、造题、静态门禁、盲测、评审与 Harbor package 验收的可追溯链路。当前本地已有 <strong>740</strong> 个可生产任务（ready：原始数据完整、通过深审、可进入生产闭环）和 <strong>413</strong> 个完成任务包（done）；核心生产成功率是 <strong>ready → done</strong>，已从早期约 <strong>10%</strong> 提升到保守 <strong>70%+</strong>（成熟闭环验证镜像读数 91.0%）。费用按 <strong>GPT-5.6-Sol 单价口径</strong>低估测算，当前单位 done 约 <strong>$13–27</strong>；实际生产可混用 GPT-5.6-Terra 与 GPT-5.5，成本还有下探空间。
+</div>
+
+<h2>Motivation</h2>
+
+<p>当前 AI agent 在生物信息学领域的能力评测面临一个根本矛盾：高质量的评测任务需要领域专家花费大量时间手工构造（一道好题可能需要一位博士生一周的时间），但规模化评测却需要数百道覆盖不同分析轴的任务。这使得评测集的构建成为 benchmark 迭代的瓶颈。</p>
+
+<div class="glossary"><em>术语约定：GEO（Gene Expression Omnibus）是 NCBI 的公开组学数据仓库，每条研究以 GSE 编号标识；docker/podman 是当前本地隔离执行 solver / verifier 的沙箱口径；Terminal-Bench 3（简称 TB3）是 Harbor 框架的标准化评测任务格式；Codex CLI 是以非交互模式调用 LLM 的命令行工具。</em></div>
+
+<p>现有方法的不足在于：人工出题无法保证判分的确定性和可复现性；简单的"答案查表比对"容易被 reward hacking 绕过；题面过度指定统计方法则会退化为"翻译题"——agent 仅需机械编程而无需科学判断。我们需要一条能批量产出"难度来自科学而非体积"的任务的自动化链路。</p>
+
+<h2>Key Insight</h2>
+
+<p>我们的核心观察是：评测任务的构造本身可以被建模为一条信息逐步丰富、逐步冻结的流水线——类似于工业装配线上的"站位"设计。每个站位（LLM 角色）只接收它需要的信息、只产出结构化的落盘产物，而站位之间的信息隔离恰好构成了题目安全性的天然屏障。</p>
+
+<p>用一个类比：这像是一家出版社的编辑流程——选题编辑（explorer）筛选稿件，审稿人（auditor）做深度评审，作者（author）撰写正文，校对员（gates）做格式检查，匿名审稿人（solver）盲审，终审编辑（judger）下最终结论。每个环节看到的材料不同、权限不同，但产物环环相扣。</p>
+
+<h2>Approach</h2>
+
+<h3>方法总览</h3>
+
+<p>GEO-Harbor-Bench 将 NCBI GEO 公开研究转化为 Terminal-Bench 3 风格任务。核心原则只有三条：角色隔离、静态门禁前置、跨模型评审。</p>
+
+<div class="figure-box">
+  <svg viewBox="0 0 700 785" style="width:100%;max-width:680px;height:auto;">
+    <defs>
+      <marker id="arr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" fill="#0a1628"/>
+      </marker>
+      <marker id="arr-coral" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" fill="#e63946"/>
+      </marker>
+      <linearGradient id="phase-grad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#f8fafb"/>
+        <stop offset="100%" stop-color="#f0f4f7"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Phase 1 -->
+    <rect x="30" y="8" width="640" height="188" rx="12" fill="url(#phase-grad)" stroke="#e2e5ea" stroke-width="1.5"/>
+    <rect x="30" y="8" width="640" height="4" rx="2" fill="#1d7a6a"/>
+    <text x="55" y="38" font-family="Fraunces,serif" font-size="12" font-weight="700" fill="#1d7a6a">PHASE 1</text>
+    <text x="120" y="38" font-family="Newsreader,serif" font-size="12" fill="#4a5468">候选发现</text>
+
+    <rect x="200" y="52" width="300" height="32" rx="6" fill="#0a1628"/>
+    <text x="350" y="72" text-anchor="middle" font-family="Newsreader,serif" font-size="11" fill="#fff">NCBI esearch 七轴全库检索</text>
+    <text x="530" y="72" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7fdbca">29.2万 GSE</text>
+    <line x1="350" y1="86" x2="350" y2="100" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="160" y="102" width="380" height="30" rx="6" fill="#fff" stroke="#e2e5ea"/>
+    <text x="350" y="121" text-anchor="middle" font-family="Newsreader,serif" font-size="10.5" fill="#0a1628">确定性硬初筛（样本 4-120 · PMID · 补充文件 · 测序类）</text>
+    <text x="570" y="121" font-family="IBM Plex Mono,monospace" font-size="9" fill="#8892a4">~2186</text>
+    <line x1="350" y1="134" x2="350" y2="148" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="180" y="150" width="340" height="30" rx="6" fill="#fff" stroke="#e2e5ea"/>
+    <text x="350" y="169" text-anchor="middle" font-family="Newsreader,serif" font-size="10.5" fill="#0a1628">geo_explorer 打分（5维×5分，GPT-5.5）</text>
+    <text x="350" y="190" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="#8892a4">total ≥ 18 → 48 → 6 进审计</text>
+
+    <!-- Connector -->
+    <line x1="350" y1="196" x2="350" y2="218" stroke="#0a1628" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Phase 2 -->
+    <rect x="30" y="218" width="640" height="148" rx="12" fill="url(#phase-grad)" stroke="#e2e5ea" stroke-width="1.5"/>
+    <rect x="30" y="218" width="640" height="4" rx="2" fill="#1d7a6a"/>
+    <text x="55" y="248" font-family="Fraunces,serif" font-size="12" font-weight="700" fill="#1d7a6a">PHASE 2</text>
+    <text x="120" y="248" font-family="Newsreader,serif" font-size="12" fill="#4a5468">研究深审</text>
+
+    <rect x="180" y="258" width="340" height="30" rx="6" fill="#0a1628"/>
+    <text x="350" y="277" text-anchor="middle" font-family="Newsreader,serif" font-size="10.5" fill="#fff">study_auditor 角色（GPT-5.6-sol）</text>
+    <line x1="350" y1="290" x2="350" y2="302" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="100" y="304" width="500" height="26" rx="6" fill="#fff" stroke="#e2e5ea"/>
+    <text x="350" y="321" text-anchor="middle" font-family="Newsreader,serif" font-size="9.5" fill="#0a1628">七道硬门：数据存在 / 设计可用 / ≥3步分析 / oracle可脚本 / ≤2GB / 唯一 / 再分发</text>
+    <line x1="350" y1="332" x2="350" y2="340" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="200" y="342" width="300" height="20" rx="5" fill="#d4edda" stroke="#1d7a6a" stroke-width="0.8"/>
+    <text x="350" y="356" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#1d7a6a">study_audit.json · quality ≥ 80 → proceed</text>
+
+    <!-- Connector -->
+    <line x1="350" y1="366" x2="350" y2="390" stroke="#0a1628" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Phase 3 -->
+    <rect x="30" y="390" width="640" height="380" rx="12" fill="url(#phase-grad)" stroke="#e2e5ea" stroke-width="1.5"/>
+    <rect x="30" y="390" width="640" height="4" rx="2" fill="#e63946"/>
+    <text x="55" y="420" font-family="Fraunces,serif" font-size="12" font-weight="700" fill="#e63946">PHASE 3</text>
+    <text x="120" y="420" font-family="Newsreader,serif" font-size="12" fill="#4a5468">造题 → 早评 → 盲测 → 评审闭环</text>
+
+    <rect x="200" y="432" width="300" height="28" rx="6" fill="#0a1628"/>
+    <text x="350" y="450" text-anchor="middle" font-family="Newsreader,serif" font-size="10.5" fill="#fff">task_author（GPT-5.6-sol）→ task_package/</text>
+    <line x1="350" y1="462" x2="350" y2="474" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="210" y="476" width="280" height="26" rx="6" fill="#fff" stroke="#e2e5ea"/>
+    <text x="350" y="493" text-anchor="middle" font-family="Newsreader,serif" font-size="10" fill="#0a1628">零 token 门禁（10 道检查，&lt;1 秒）</text>
+    <line x1="350" y1="504" x2="350" y2="514" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="170" y="516" width="360" height="26" rx="6" fill="#fce4ec" stroke="#f48fb1"/>
+    <text x="350" y="533" text-anchor="middle" font-family="Newsreader,serif" font-size="10" fill="#0a1628">题面早评：三维快审（难度/可规格化/可验证，不烧沙箱）</text>
+    <line x1="350" y1="544" x2="350" y2="554" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="170" y="556" width="360" height="26" rx="6" fill="#eaf4fb" stroke="#90caf9"/>
+    <text x="350" y="573" text-anchor="middle" font-family="Newsreader,serif" font-size="10" fill="#0a1628">盲测：docker/podman 沙箱 solver（只见 instruction + 公开数据）</text>
+    <line x1="350" y1="584" x2="350" y2="594" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="180" y="596" width="340" height="26" rx="6" fill="#eaf4fb" stroke="#90caf9"/>
+    <text x="350" y="613" text-anchor="middle" font-family="Newsreader,serif" font-size="10" fill="#0a1628">独立判分：docker/podman verifier（oracle + solution 双路径复算）</text>
+    <line x1="350" y1="624" x2="350" y2="634" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="180" y="636" width="340" height="26" rx="6" fill="#fce4ec" stroke="#f48fb1"/>
+    <text x="350" y="653" text-anchor="middle" font-family="Newsreader,serif" font-size="10" fill="#0a1628">rubric 全量评审：Claude Opus 5（跨家族，7+4 维）</text>
+    <line x1="350" y1="664" x2="350" y2="676" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="170" y="678" width="360" height="26" rx="6" fill="#d4edda" stroke="#1d7a6a"/>
+    <text x="350" y="695" text-anchor="middle" font-family="Newsreader,serif" font-size="10" fill="#0a1628">Harbor package 自包含验收：结构 / fixture / tests / provenance</text>
+    <line x1="350" y1="706" x2="350" y2="718" stroke="#0a1628" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- Verdict -->
+    <rect x="160" y="720" width="380" height="34" rx="8" fill="#fff" stroke="#0a1628" stroke-width="1.5"/>
+    <text x="235" y="741" text-anchor="middle" font-family="Fraunces,serif" font-size="11" font-weight="700" fill="#1d7a6a">done → 入库</text>
+    <text x="350" y="741" text-anchor="middle" font-family="Fraunces,serif" font-size="11" font-weight="700" fill="#e63946">revise ↩</text>
+    <text x="470" y="741" text-anchor="middle" font-family="Fraunces,serif" font-size="11" font-weight="700" fill="#8892a4">eliminate ✕</text>
+
+    <!-- Revise loop -->
+    <path d="M 400 737 C 610 737, 630 590, 630 500 C 630 450, 600 432, 560 445" fill="none" stroke="#e63946" stroke-width="1.8" stroke-dasharray="5,4" marker-end="url(#arr-coral)"/>
+    <text x="648" y="595" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#e63946" transform="rotate(90,648,595)">max 3 rounds</text>
+  </svg>
+  <p class="figure-caption">图 1. GEO-Harbor-Bench 生产链路：候选筛选 → 深度审计 → 造题/门禁/盲测/评审 → Harbor package 自包含验收 → done 入库。</p>
+</div>
+
+<h3>评审 rubric 体系：每个站位的判分维度</h3>
+
+<p>质量控制采用<strong>分层裁决</strong>：越靠近昂贵盲测，判据越严格；每个站位只回答一个可被证据支撑的问题。</p>
+
+<table>
+  <thead><tr><th>站位</th><th>判分者（模型）</th><th>评审维度</th><th>裁决规则</th></tr></thead>
+  <tbody>
+    <tr><td>Phase 1 · 候选打分</td><td>geo_explorer（gpt-5.5）</td><td>5 维 × 1–5 分：data_access / design / depth / size / axis_fit（满分 25）</td><td>total ≥ 18 进审计</td></tr>
+    <tr><td>Phase 2 · 研究深审</td><td>study_auditor（gpt-5.6-sol）</td><td>七道硬门 + proposal 七维预评 + quality_score</td><td>七门全过且 quality ≥ 80 → proceed</td></tr>
+    <tr><td>Phase 3 · 题面早评（盲测前）</td><td>rubric judger（claude-opus-5）</td><td>只看 difficult / well_specified / outcome_verified：题面是否清楚、是否按结果判分、是否值得进盲测</td><td>well_specified / outcome_verified 不达标直接 revise；difficult 用作难度预警，不烧沙箱</td></tr>
+    <tr><td>Phase 3 · 零 token 静态门禁</td><td>确定性脚本（无 LLM）</td><td>10 道：skill 三件套（lint / validate / checklist）、instruction_gate 泄漏计分、题面质量、结构检查、environment 可重放性、oracle 自检、test.sh 信号、calibration 覆盖、calibration-verifier 一致性、dockerfile</td><td>失败 → fixes.md 打回 author，零成本前置拦截</td></tr>
+    <tr><td>Phase 3 · 全量评审（盲测后）</td><td>rubric judger（claude-opus-5，异族）</td><td>proposal 7 维 + implementation 4 关键项 + trial_analysis 失败归因</td><td>release 关键维度全 accept 才 pass；difficult 进入难度分桶，不单独阻塞 release；3 轮不过换候选</td></tr>
+    <tr><td>Phase 3 · 盲测判分</td><td>verifier（docker/podman；确定性双代码路径）</td><td>无 rubric：读取 solver 输出，对照冻结 oracle / accepted paths 逐契约复算；solution 只作参考路径自检</td><td>reward ∈ {0,1}；容差按具体任务的多路径校准与字段契约冻结，不采用全局统一容差</td></tr>
+  </tbody>
+</table>
+
+<p><strong>当前实现与 rubric 主干对齐。</strong><code>run_judger.py</code> 使用 TB-Science proposal 七维、implementation 四关键项和 trial-analysis 八类归因；<code>gates.py</code> 负责零 token 门禁和 Harbor package 自包含验收。准入上更保守：规格、可验证性、可复现、隔离和 tests 对齐是硬门；<code>difficult</code> 主要用于难度分桶，不拿“太简单”单独否定一个已自洽任务。</p>
+
+<p><strong>核心 rubric：proposal 七维 + implementation 四关键项。</strong>每一维都写明正例锚点、反例锚点与一票否决条件，把「看起来合理」压成可引用证据：</p>
+
+<table>
+  <thead><tr><th>维度</th><th>正例锚点</th><th>一票否决条件（reject_if）</th></tr></thead>
+  <tbody>
+    <tr><td>verifiable</td><td>判分对照具体输出文件可程序化校验；精确匹配或独立复算 + 写明依据的容差</td><td>答案无法程序化检查或依赖主观阅读</td></tr>
+    <tr><td>well_specified</td><td>两位合理评审会写出同一 verifier；输入/输出/判分规则无歧义</td><td>verifier 契约存在歧义</td></tr>
+    <tr><td>solvable</td><td>oracle 可跑通；依赖可离线固定；容器内可构建</td><td>无可验证的可行解</td></tr>
+    <tr><td>difficult</td><td>难度来自非平凡科学推理、上游证据恢复或可判别的技术难点</td><td>非专家可在 1h 内机械完成；难度 = 文件大 / 冷知识 / LLM 特有 trick</td></tr>
+    <tr><td>scientifically_grounded</td><td>真实研究工作流，科学家可受雇做这件事</td><td>科学性仅为包装（披科学词汇的通用编码题）</td></tr>
+    <tr><td>scope</td><td>task.toml 的 domain/field 与实际生物学一致</td><td>不属于目标科学域</td></tr>
+    <tr><td>outcome_verified</td><td>按最终结果判分；instruction 只描述要什么</td><td>存在过程性判分或工具强制（Required workflow 段）</td></tr>
+  </tbody>
+</table>
+
+<p>implementation 层在当前代码里落为四个 release 硬门：反作弊隔离、功能性判分、确定性复现、tests 与 instruction 对齐。</p>
+
+<p>rubric 的作用是把主观判断压成证据判断：每维都有正例锚点、反例锚点和一票否决线；触线即回到修订链路。</p>
+
+<h3>题面早评：盲测之前的质量前闸</h3>
+
+<p>早评是盲测前的低成本质量前闸：只判断题面是否值得进入昂贵沙箱，不看 solution/tests。</p>
+
+<ul>
+  <li><strong>只评三维：</strong>difficult、well_specified、outcome_verified；没有盲测轨迹的维度不强判。</li>
+  <li><strong>硬阻塞：</strong>well_specified 不达标直接打回，因为这通常意味着“题面开放空间大于校准覆盖”。</li>
+  <li><strong>防泄题：</strong>评审工作区白名单构建，solution/ 与 tests/ 不进入；反馈也不能写具体方法、参数、阈值。</li>
+  <li><strong>价值：</strong>把规格不清、配方泄漏、难度造假挡在盲测前，不烧沙箱、不消耗盲测预算。</li>
+</ul>
+
+<h3>盲测失败的八类归因路由</h3>
+
+<p>盲测失败后不直接“重写一遍”，而是先进入 trial_analysis 路由。八类归因对应不同修复动作：</p>
+
+<ul>
+  <li><strong>task_specification：</strong>题面不清或目标不闭合 → 修题并重新冻结。</li>
+  <li><strong>oracle_discoverability：</strong>公开证据不足或入口难找 → 补证据/改任务，不强行放行。</li>
+  <li><strong>verifier_correctness：</strong>判分器误拒合法解 → 修 verifier 与校准包络。</li>
+  <li><strong>reward_hacking：</strong>存在投机路径 → 加固反作弊与输出契约。</li>
+  <li><strong>difficulty_crux：</strong>失败来自真实科学难点 → 可作为有效难度保留。</li>
+  <li><strong>near_miss：</strong>接近正确但落在边界 → 扩展多路径校准或收紧容差说明。</li>
+  <li><strong>low_timeout：</strong>资源/时间预算不足 → 调整预算，不当作科学失败。</li>
+  <li><strong>refusals：</strong>题面触发拒答或误解 → 改写题面表达。</li>
+</ul>
+
+<p><strong>实证：</strong>247 个 proposal 评审记录显示，difficult 的 uncertain 可弱接受；well_specified 的 uncertain 是硬阻塞（0/8 通过），通常意味着题面自由度超过校准覆盖。</p>
+
+<h3>关键设计决策</h3>
+
+<p><strong>为什么拆成多个角色？</strong> 为了物理隔离信息：solver 看不到 tests/solution，评审员也不能从 oracle 反推答案。</p>
+
+<p><strong>为什么需要双代码路径？</strong> 这一步不是 NOP，也不是把 solution 当作盲测结果；solver 只提交输出，verifier 在 docker/podman 中对照冻结 oracle / accepted paths 复算，solution 只用于参考路径自检，避免同源 bug 造成“永远满分”的假题。</p>
+
+<p><strong>为什么前置门禁重要？</strong> 零 token 门禁在沙箱前拦截结构错误、配方泄漏和依赖缺失，避免无效盲测。</p>
+
+<h3>交付产物：task package 目录结构</h3>
+
+<p>最终交付的是自包含 Harbor task package。核心原则很简单：<strong>考生只看题面和公开数据；答案、判分器和出题证据随包保存，但在盲测时物理隔离。</strong></p>
+
+<div class="artifact-block">
+  <p class="artifact-caption">Harbor package 根目录：<code>tasks/&lt;slug&gt;/author/task_package/</code></p>
+<pre>tasks/&lt;slug&gt;/author/task_package/
+├── instruction.md                 # solver 可见：题面与输出要求
+├── task.toml                      # 机器可读契约、资源预算、artifact 声明
+├── environment/
+│   └── data/                      # solver 可见：公开 fixture 与 checksum
+├── solution/                      # 盲测物理排除：oracle 参考解
+├── tests/                         # 盲测物理排除：verifier、test.sh、独立数据副本
+└── authoring/
+    ├── calibration-summary.json   # 合法路径 / known-wrong / 校准边界
+    └── provenance/                # GEO 来源、深审结论、数据转换记录</pre>
+</div>
+
+<p>导出时丢弃逐轮草稿、盲测留档和临时探针；保留题面、运行环境、判分器、参考解法与 authoring 证据链。这样上游既能直接运行任务，也能复核“这道题为什么成立”。</p>
+
+<h2>Case Study: CRISPR-MHC-II-Screen 合成任务示例</h2>
+
+<p>这个 case 主要展示流水线最终合成出的 Harbor 任务长什么样：它不是论文复述，也不是固定代码配方，而是把真实 GEO 研究转化为可盲测、可判分、可复核的任务包。</p>
+
+<h3>合成后的题面核心</h3>
+<div class="artifact-block">
+<pre>任务背景：
+GSE304150 是一个围绕 MHC-II 表达调控的 CRISPR 全基因组筛选实验。
+输入数据为 sgRNA read count matrix，覆盖 A375 与 WM115+IFNγ 两个细胞设置，
+并区分 MHC-II high / low 细胞群体。
+
+输入：
+- raw count matrix：77,441 guides × 10 samples
+- sgRNA-to-gene annotation
+- sample metadata：cell line、MHC-II 分选状态、replicate
+
+目标：
+从原始计数出发，识别促进或抑制 MHC-II 表达的候选调控基因。
+solver 可以自行选择合理的归一化、效应量估计和统计检验方法，
+但必须输出可复算的 gene-level 结果。
+
+输出：
+- gene-level ranking
+- effect direction / effect size
+- significance or support evidence
+- short interpretation of top hits
+
+判分重点：
+结果是否能稳定恢复 MHC-II 通路核心信号，并满足输出 schema 与复算约束。</pre>
+</div>
+
+<h3>为什么这个任务成立</h3>
+<ul>
+  <li><strong>真实科学问题：</strong>从 CRISPR screen 中识别 MHC-II 表达调控因子，问题本身具有清晰生物学意义。</li>
+  <li><strong>输入可复算：</strong>任务基于 sgRNA 级原始计数矩阵，而不是只给最终 hit list。</li>
+  <li><strong>开放但可判：</strong>不指定唯一统计配方，保留 solver 的方法选择空间；同时用 gene-level ranking、效应方向和显著性证据约束输出。</li>
+  <li><strong>生物学 sanity check：</strong>HLA-DRA、RFXAP、RFXANK、RFX5、CIITA、CD74 等 MHC-II 相关信号应在结果中得到合理支持。</li>
+</ul>
+
+<h3>合成过程只保留关键转折</h3>
+<p>候选审计确认原始计数矩阵可得；早版题面因方法写得过细被门禁拦截；修订版只保留科学目标、输入输出契约和判分边界，并登记多条合法解法路径。最终任务通过盲测、verifier 复算与评审闭环，形成自包含 Harbor package。</p>
+
+<h2>Preliminary Results</h2>
+
+<p>结果口径直接看生产转化：<strong>ready → done</strong>。ready = 原始数据完整、通过深审、可进入生产闭环；done = 通过验证并完成 Harbor package 自包含验收。</p>
+
+<table>
+  <thead>
+  <tr>
+    <th>指标</th>
+    <th>数值</th>
+    <th>意义</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>可生产任务（ready）规模</td>
+    <td><strong>740</strong> 个去重后的 GEO 可生产任务；其中当前批次 <strong>668</strong> 个</td>
+    <td>已经进入 700+ 级别的生产供给池</td>
+  </tr>
+  <tr>
+    <td>完成任务包（done）库存</td>
+    <td><strong>413</strong> 个规范 GSE done 任务；413/413 已完成自包含 Harbor package</td>
+    <td>已通过验证、完成 package 验收并登记入库</td>
+  </tr>
+  <tr class="highlight-row">
+    <td>ready → done 成功率</td>
+    <td>从早期约 <strong>10%</strong> 提升到保守 <strong>70%+</strong>；成熟闭环验证阶段镜像读数 <strong>91.0%</strong></td>
+    <td>这是最核心的生产效率提升</td>
+  </tr>
+  <tr>
+    <td>成功率提升</td>
+    <td>约 <strong>+60</strong> 个百分点</td>
+    <td>无效闭环和返工显著减少，单位 done 成本同步下降</td>
+  </tr>
+  <tr>
+    <td>候选 → ready 出池率</td>
+    <td><strong>26.3%</strong> 候选→ready 出池率</td>
+    <td>这是前端筛选效率，不是 ready→done 成功率</td>
+  </tr>
+  <tr>
+    <td>基础设施损耗</td>
+    <td><strong>3.6%</strong> 基础设施错误率</td>
+    <td>失败主因已从基础设施转向可解释的科学/校准路由</td>
+  </tr>
+  </tbody>
+</table>
+
+<p>单题 demo 的价值在于定位瓶颈：数据预热、依赖预装、verifier 复算和批量调度，比单纯更换模型更关键。</p>
+
+<h2>Related Work &amp; Positioning</h2>
+
+<table>
+  <thead>
+  <tr>
+    <th>维度</th>
+    <th>SWE-bench / WebArena</th>
+    <th>BioAgentBench</th>
+    <th>GEO-Harbor-Bench (Ours)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>任务来源</td>
+    <td>人工挑选 GitHub issues / 网页操作</td>
+    <td>专家手工设计生信分析</td>
+    <td><strong>从公开 GEO 自动发现+构造</strong></td>
+  </tr>
+  <tr>
+    <td>判分方式</td>
+    <td>单元测试 pass/fail</td>
+    <td>答案表比对</td>
+    <td><strong>双代码路径独立复算</strong></td>
+  </tr>
+  <tr>
+    <td>难度保证</td>
+    <td>取决于原始 issue 难度</td>
+    <td>人工标定</td>
+    <td><strong>配方泄漏门禁 + 多路径校准</strong></td>
+  </tr>
+  <tr>
+    <td>可扩展性</td>
+    <td>依赖人工筛选</td>
+    <td>受专家产能限制</td>
+    <td><strong>自动化流水线，已有 219 候选池</strong></td>
+  </tr>
+  <tr>
+    <td>领域覆盖</td>
+    <td>软件工程 / Web 操作</td>
+    <td>特定生信流程</td>
+    <td><strong>七轴覆盖（RNA-seq, CRISPR, ATAC, 甲基化等）</strong></td>
+  </tr>
+  </tbody>
+</table>
+
+<p>GEO-Harbor-Bench 与已有生信 benchmark 的核心差异在于 <strong>将"出题"本身自动化</strong>——不是自动做题，而是自动出题并验证题目质量。这使得评测集能以远低于人工成本的速度扩展，同时通过三级防御（门禁 + 盲测 + 跨模型评审）维持题目质量。</p>
+
+<h2>Production Pipeline Update：解决双端矛盾并提高有效产出</h2>
+
+<div class="tldr">
+  <strong>更新结论</strong>&nbsp;&nbsp;最新生产链路已经从“单题修补”升级为“ready → done”的连续产线。ready 指原始数据完整、通过深审、可进入生产闭环；done 指完成验证和 Harbor package 自包含验收。当前本地已有 700+ ready 任务和 413 个 done package；ready→done 成功率从早期约 10% 提升到保守 <strong>70%+</strong>。
+</div>
+
+<h3>当前新链路：从候选发现到 ready/done 沉淀</h3>
+
+<p>新链路拆成六步：候选供给、审计筛选、Author 造题、校准覆盖、闭环验证、交付登记。题面只写科学目标，不泄漏统计配方。</p>
+
+<div class="artifact-block"><pre>GEO/SRA 候选
+  → 审计筛选：数据可得、科学问题成立、输出可判
+  → Author 造题：只写目标，不泄漏方法配方
+  → 校准覆盖：合法路径接受，错误路径拒绝
+  → 闭环验证：docker/podman 中 verifier 复算 + 证据链复核
+  → ready 池：原始数据完整、通过深审、可进入生产闭环
+  → done 入库：Harbor package 自包含验收通过</pre></div>
+
+<p>关键变化：每步都有可复核证据；失败能定位到数据、题面、校准、verifier、基础设施或科学设计，而不是笼统归因给模型。</p>
+
+<h3>主要卡点：双端矛盾如何解决</h3>
+
+<p>最大卡点是双端矛盾：题面要开放，verifier 又要确定性判分。写太细会变成配方翻译题；写太开放又会导致校准覆盖不足。</p>
+
+<p>解决方式是拆开治理：题面保留合理自由度，校准登记可执行路径。reference、accepted、known-wrong 与边界 case 一起约束 verifier，既保住科学难度，也避免隐藏唯一答案。</p>
+
+<h3>真正有效的优化</h3>
+
+<table>
+  <thead><tr><th>优化点</th><th>怎么改</th><th>为什么有效</th></tr></thead>
+  <tbody>
+    <tr><td>开放空间显式登记</td><td>把题面允许的分析自由度写入校准契约，而不是靠 prompt 暗示。</td><td>消除了“题面允许但 verifier 未覆盖”的结构性矛盾。</td></tr>
+    <tr><td>执行式校准</td><td>合法路径必须真实运行并通过；错误路径必须真实运行并拒绝；结果绑定任务包指纹。</td><td>从文字承诺变成可复放证据，降低误接收和误拒绝。</td></tr>
+    <tr><td>前置边界审计</td><td>提前检查候选集、字段来源、零值/缺失、阈值、并列和取整等边界问题。</td><td>把大量可静态发现的问题挡在昂贵盲测之前。</td></tr>
+    <tr><td>状态机与回收机制</td><td>区分审计暂停、闭环暂停、基础设施失败、ready、done 等状态；基础设施失败可恢复，科学失败不误判。</td><td>避免把网络、下载、容器或队列故障误记为科学拒绝。</td></tr>
+    <tr><td>双端 Git 同步规则（2026-11-05 更新）</td><td>Byted 与 Ali 共用 <code>Unified-produce</code> 的审核 SHA，仅本机环境配置不同；<code>Unified-coordination</code> 独立保存规范 GSE 并集。</td><td>旧环境分支已退役；旧目录与本地恢复包保留用于回滚。运行库存、历史结果和凭据不进入代码主线。</td></tr>
+  </tbody>
+</table>
+
+<h3>链路优化效果：成功率与单位成本</h3>
+
+<table>
+  <thead><tr><th>指标</th><th>当前读数</th><th>解释</th></tr></thead>
+  <tbody>
+    <tr><td>可生产任务（ready）规模</td><td><strong>668</strong> 个当前批次 ready；跨批次去重后 <strong>740</strong> 个 GEO ready。</td><td>原始数据完整、通过深审、可进入生产闭环。</td></tr>
+    <tr><td>done 库存</td><td><strong>413</strong> 个规范 GSE done；413/413 package complete。</td><td>已通过 Harbor package 自包含验收。</td></tr>
+    <tr><td>主成功率口径</td><td><strong>ready → done</strong> 从早期约 <strong>10%</strong> 提升到保守 <strong>70%+</strong>；成熟闭环验证镜像读数 <strong>91.0%</strong>。</td><td>这是本报告最核心的生产效率指标。</td></tr>
+    <tr><td>候选出池率</td><td><strong>26.3%</strong> 候选→ready 出池率；审计放行率 <strong>28.9%</strong>。</td><td>这是前端供给筛选效率，不是 ready→done 成功率。</td></tr>
+    <tr><td>基础设施损耗</td><td>基础设施错误率 <strong>3.6%</strong>。</td><td>失败主要不再由不可控基础设施主导，便于恢复与复跑。</td></tr>
+  </tbody>
+</table>
+
+<p>成本按本地 <strong>4,601</strong> 条 usage 记录粗估；下表采用偏低估的典型主链路口径，不把所有重试和 adjudication 全额摊入。</p>
+
+<table>
+  <thead><tr><th>口径</th><th>input tokens</th><th>output tokens</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>单次主生产尝试</td><td><strong>约 1.0–2.0M</strong></td><td><strong>约 20–30K</strong></td><td>偏低估口径；用于汇报典型成本，不作为预算上限。</td></tr>
+    <tr><td>早期单位 done</td><td><strong>约 10–20M</strong></td><td><strong>约 0.20–0.30M</strong></td><td>按 ready→done 约 10% 折算：每个 done 约 10 次主尝试。</td></tr>
+    <tr><td>当前单位 done</td><td><strong>约 1.4–2.9M</strong></td><td><strong>约 29–43K</strong></td><td>按 ready→done 70%+ 折算：每个 done 约 1.4 次主尝试。</td></tr>
+    <tr><td>相对改善</td><td colspan="2"><strong>约 79% token 成本下降</strong></td><td>主要来自成功率提升与零 token 门禁减少无效盲测。</td></tr>
+  </tbody>
+</table>
+
+<p>原稿金额按 <strong>GPT-5.6-Sol 单价口径</strong>估算：长上下文档 <code>$8.5 / 1M input</code>、<code>$38.25 / 1M output</code>。本次未核验该价格来源或刷新实际账单；使用其他模型后的成功率和成本需独立测量，不能假定成功率不变。</p>
+
+<table>
+  <thead><tr><th>口径</th><th>input 费用</th><th>output 费用</th><th>合计估算</th></tr></thead>
+  <tbody>
+    <tr><td>单次主生产尝试</td><td>约 <strong>$8.5–17</strong></td><td>约 <strong>$0.8–1.1</strong></td><td>约 <strong>$9–18</strong></td></tr>
+    <tr><td>早期单位 done</td><td>约 <strong>$85–170</strong></td><td>约 <strong>$8–11</strong></td><td>约 <strong>$93–181</strong></td></tr>
+    <tr><td>当前单位 done</td><td>约 <strong>$12–25</strong></td><td>约 <strong>$1.1–1.6</strong></td><td>约 <strong>$13–27</strong></td></tr>
+  </tbody>
+</table>
+
+<p>注：金额按 Sol input/output 计价；预算预留可按 2–4M input + 30–60K output 放大，实际混合模型生产会更低。</p>
+
+<h3>解释边界</h3>
+
+<p>这些数字说明生产链路效率，不等同于最终 benchmark 难度认证；正式交付仍需独立难度测量。</p>
+
+<h2>Takeaway：这次应重点展示的链路价值</h2>
+
+<div class="tldr">
+  <strong>汇报口径</strong>&nbsp;&nbsp;新链路的价值不是“多写 prompt”或“多堆模型调用”，而是把开放科学问题与确定性判分拆开治理：题面保留真实分析自由度，校准与 verifier 负责覆盖合法路径和拒绝错误路径。这个结构性优化把 ready→done 成功率从早期约 10% 提升到保守 70%+；费用表按 GPT-5.6-Sol 单价估算，实际生产若混用 GPT-5.6-Terra / GPT-5.5，成本还有进一步下降空间。
+</div>
+
+<p>后续只需补充：跨模型难度测量、批次状态刷新和交付包质量抽检；候选清单、阈值争论和沙箱日志留在附录。</p>
+
+</div></body>
+</html>
