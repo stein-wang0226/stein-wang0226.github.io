@@ -559,6 +559,33 @@
         .strong-green { color: var(--accent3); font-weight: 600; }
         .strong-purple { color: var(--accent2); font-weight: 600; }
         .strong-orange { color: var(--accent4); font-weight: 600; }
+
+        /* Codex source walkthrough: scoped to these three sections. */
+        .codex-case a { color: var(--accent2); text-underline-offset: 3px; }
+        .codex-case code { overflow-wrap: anywhere; font-size: 0.88em; }
+        .codex-case pre code { overflow-wrap: normal; font-size: inherit; }
+        .codex-case .source-note { color: var(--text-dim); font-size: 0.86rem; }
+        .codex-case details {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; margin: 1.25rem 0; padding: 1rem 1.25rem;
+        }
+        .codex-case summary { cursor: pointer; color: var(--accent2); font-weight: 600; }
+        .codex-case summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+        .codex-case details[open] summary { margin-bottom: 1rem; }
+        .codex-case figure {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; margin: 1.5rem 0;
+        }
+        .codex-case .codex-flow { display: block; width: 100%; max-width: 600px; height: auto; margin: auto; }
+        .codex-case figcaption { color: var(--text-dim); font-size: 0.86rem; margin-top: 1rem; }
+        .codex-case .codex-flow text { font-family: 'Sora', 'Noto Sans SC', sans-serif; }
+        .codex-case .table-wrap table { min-width: 650px; }
+        .codex-case .compare-grid { align-items: start; }
+        @media (max-width: 600px) {
+            .codex-case figure { padding: 0.5rem; }
+            .codex-case h2 { font-size: 1.7rem; }
+            .codex-case details { padding: 0.9rem; }
+        }
     </style>
 <link rel="stylesheet" href="assets/site/site.css">
 <link rel="canonical" href="https://stein-wang0226.github.io/agent-harness-guide.html">
@@ -568,7 +595,7 @@
 <a class="site-skip" href="#site-main">跳转到正文</a><nav class="site-nav" aria-label="主导航"><a class="site-brand" href="index.html">Yuxiang Wang <span aria-hidden="true">/</span> Stein’s Notes</a><div class="site-links"><a href="index.html">首页</a><a href="about/index.html">关于</a><a href="publications/index.html">论文</a><a href="notes/index.html" aria-current="page">笔记</a><a href="cv/index.html">CV</a></div></nav>
 <!-- SITE:NAV:END -->
 <section class="content-guide" aria-label="阅读准备">
-<h2>阅读准备</h2><p><strong>范围：</strong>理解 Agent 从工具执行到训练的系统链路；先修 Python、LLM 推理和基础 RL。建议先读架构与模块，再读 rollout、隔离环境和 reward，最后看训练集成。</p>
+<h2>阅读准备</h2><p><strong>范围：</strong>理解 Agent 从工具执行到训练的系统链路；先修 Python、LLM 推理和基础 RL。建议先读架构与模块，再读 rollout、隔离环境和 reward，最后看训练集成。只想理解一个实际 Agent，可直接读 <a href="#codex-loop">Codex 运行循环</a> → <a href="#codex-context">上下文管理</a> → <a href="#codex-memory">跨会话记忆</a>；这三节不要求 RL 基础。</p>
 <p><strong>核心链路与产物：</strong>任务输入 → 工具调用与环境反馈 → 多轮轨迹 → reward → 训练样本及评估。正文中的接口和代码是理解实现的示例，部署时还需结合所用框架版本验证。</p>
 </section>
 <div id="site-main" tabindex="-1"></div>
@@ -578,7 +605,7 @@
     <div class="hero-content">
         <h1>Agent Harness</h1>
         <p class="subtitle">
-            LLM Agent 训练基础设施的架构设计、核心原理与工程实践全景解析
+            从运行循环、上下文与记忆，到 Agent 训练基础设施
         </p>
         <div class="hero-badges">
             <span class="badge badge-blue">Architecture Design</span>
@@ -588,7 +615,7 @@
             <span class="badge badge-pink">Reward Engineering</span>
         </div>
         <p style="color: var(--text-dim); font-size: 0.9rem;">
-            基于 VERL / ROLL / RAGEN / Agent-R1 / VerlTool 等前沿框架，结合 ProtAgent 实战经验
+            Codex 开源源码实例 · VERL / ROLL 等训练框架 · ProtAgent 与课程案例
         </p>
     </div>
     <span class="scroll-hint">向下滚动探索</span>
@@ -612,6 +639,9 @@
         <li><a href="#frontier">前沿进展</a></li>
         <li><a href="#case">案例: ProtAgent</a></li>
         <li><a href="#lab">实验课</a></li>
+        <li><a href="#codex-loop">Codex 运行循环</a></li>
+        <li><a href="#codex-context">上下文管理</a></li>
+        <li><a href="#codex-memory">跨会话记忆</a></li>
         <li><a href="#refs">参考资源</a></li>
     </ul>
 </nav>
@@ -621,11 +651,11 @@
 <!-- ==================== 1. 概念辨析 ==================== -->
 <section id="what">
     <h2><span class="num badge-blue">01</span> 什么是 Agent Harness</h2>
-    <p class="section-desc">Agent Harness 是 LLM Agent 训练过程中管理交互循环、环境沙箱、轨迹收集和 Reward 计算的<strong>训练层基础设施</strong>，区别于面向应用层的 Agent Framework。</p>
+    <p class="section-desc">Agent Harness 是包围模型的<strong>运行与控制系统</strong>：组织指令和上下文、执行工具、处理权限与中断、保存和恢复状态。用于训练时，再接入轨迹收集、Reward 与策略更新。Codex 是运行侧的具体实例；下文四层架构和五大组件主要讨论训练侧。</p>
 
     <div class="compare-grid">
         <div class="vs-box">
-            <div class="vs-title" style="border-color: var(--accent);">Agent Harness（训练层）</div>
+            <div class="vs-title" style="border-color: var(--accent);">Agent Harness（本表聚焦训练侧）</div>
             <ul>
                 <li>管理 RL 训练中的 Agent-Environment 交互循环</li>
                 <li>隔离工具执行环境（Sandbox）</li>
@@ -650,10 +680,10 @@
 
     <div class="highlight-box highlight-blue">
         <div class="hl-title">类比理解</div>
-        <p>LangChain 相当于 PyTorch 的 <span class="inline-code">nn.Module</span>（定义模型结构），Harness 相当于 PyTorch 的 <span class="inline-code">Trainer</span>（管理训练循环）。二者是上下游关系，不是竞争关系。</p>
+        <p>在训练场景中，可把 Agent 定义类比为 <span class="inline-code">nn.Module</span>，训练 Harness 类比为 <span class="inline-code">Trainer</span>。这只是训练侧的类比：应用 Framework 也可能提供运行 Harness，两者功能会重叠。Codex 的工具、上下文与恢复机制不依赖 RL 训练循环。</p>
     </div>
 
-    <h3>Harness 的五大核心组件</h3>
+    <h3>训练 Harness 的五大核心组件</h3>
     <div class="card-grid">
         <div class="card">
             <div class="card-title"><div class="card-icon" style="background:rgba(13,148,136,0.2);color:var(--accent);">1</div> AgentLoop / Orchestrator</div>
@@ -681,7 +711,7 @@
 <!-- ==================== 2. 四层架构 ==================== -->
 <section id="arch">
     <h2><span class="num badge-purple">02</span> 四层架构设计</h2>
-    <p class="section-desc">一个完整的 Agent Harness 从底层到顶层分为四层，各层通过标准化接口解耦，支持独立演进和替换。</p>
+    <p class="section-desc">面向 Agent RL 的一种四层设计：各层通过标准化接口解耦，支持独立演进和替换。运行型 Harness 可以只包含推理、工具与状态管理。</p>
 
     <div class="layer-stack">
         <div class="layer l4">
@@ -1640,9 +1670,216 @@ reward_weights:
     </div>
 </section>
 
-<!-- ==================== 16. 参考资源 ==================== -->
+<!-- ==================== 16–18. Codex 源码实例 ==================== -->
+<section id="codex-loop" class="codex-case">
+    <h2><span class="num badge-blue">16</span> Codex 实例：一次任务如何运行</h2>
+    <p class="section-desc">以“修复仓库中的一个测试失败”为贯穿示例，看模型怎样持续执行、在长任务中保留进度、在下次任务中复用经验。示例用于解释源码，并非本页实测结果。</p>
+    <div class="highlight-box highlight-blue">
+        <div class="hl-title">先掌握三个结论</div>
+        <p><strong>循环让模型持续行动；上下文管理控制每次推理看见什么；记忆保存以后值得复用什么。</strong>当前 prompt、历史记录、任务笔记和长期经验各有存储与读取路径。模型参数没有因此自动更新。</p>
+        <p class="source-note">核对日期：2026-11-14。源码固定到 <a href="https://github.com/openai/codex/tree/c2c1ebba0a7985ebee065c5492233a843b84c4c6">openai/codex · c2c1ebb</a>（2026-11-14 02:55 UTC）；下列链接均指向该提交。</p>
+    </div>
+
+    <figure>
+        <svg class="codex-flow" viewBox="0 0 600 540" role="img" aria-label="Codex 一次任务中的模型与工具循环" aria-describedby="codex-loop-desc">
+            <desc id="codex-loop-desc">任务与项目规则进入上下文，模型生成工具调用，工具在权限约束下执行，结果进入当前历史并保存原始记录，再检查是否继续和是否换窗，直到形成答复。</desc>
+            <defs><marker id="codex-loop-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="#0f766e"/></marker></defs>
+            <g fill="#f0fdfa" stroke="#d6d3cd">
+                <rect x="40" y="18" width="520" height="80" rx="12"/>
+                <rect x="40" y="122" width="520" height="80" rx="12"/>
+                <rect x="40" y="226" width="520" height="80" rx="12"/>
+                <rect x="40" y="330" width="520" height="80" rx="12"/>
+                <rect x="40" y="434" width="520" height="80" rx="12"/>
+            </g>
+            <g stroke="#0f766e" stroke-width="2" fill="none" marker-end="url(#codex-loop-arrow)">
+                <path d="M300 98 V116"/><path d="M300 202 V220"/><path d="M300 306 V324"/><path d="M300 410 V428"/>
+                <path d="M560 475 H582 V162 H566"/>
+            </g>
+            <g text-anchor="middle" fill="#1a1a2e" font-size="23">
+                <text x="300" y="51">任务 + 项目规则 + 当前环境</text>
+                <text x="300" y="155">模型生成：工具调用或答复</text>
+                <text x="300" y="259">工具路由 → 权限约束下执行</text>
+                <text x="300" y="363">结果回填 + 原始记录保存</text>
+                <text x="300" y="467">继续推理 / 换窗后继续 / 完成</text>
+            </g>
+            <g text-anchor="middle" fill="#78716c" font-size="19">
+                <text x="300" y="79">AGENTS.md、cwd 等参与上下文装配</text>
+                <text x="300" y="183">run_turn → run_sampling_request</text>
+                <text x="300" y="287">如读取文件、运行测试、修改代码</text>
+                <text x="300" y="391">当前模型输入可截断，rollout 保留原文</text>
+                <text x="300" y="495">有 follow-up 或新输入时继续循环</text>
+            </g>
+        </svg>
+        <figcaption>按控制流归纳，省略 hooks、重试和子 Agent。右侧回路表达继续推理；工具的并发执行仍需服从注册的能力与依赖。</figcaption>
+    </figure>
+
+    <h3>沿着一次测试修复读源码</h3>
+    <ol>
+        <li><strong>进入任务。</strong>发现项目根目录到 cwd 路径上的 <code>AGENTS.md</code>，在字节预算内组合规则；与环境等信息一起装配当前上下文。规则未变化时不重复发送；变化时发送替换提示及新的完整规则。这里的“diff”是状态增量，并不等于逐行文本补丁。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/agents_md.rs#L126-L274">发现规则</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/context/world_state/agents_md.rs#L44-L79">增量注入</a></li>
+        <li><strong>读文件、跑测试。</strong><code>run_turn</code> 发起模型采样；工具调用通过 router 分派执行器，结果进入历史。持续执行由 follow-up、待处理输入和换窗条件控制。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/session/turn.rs#L650-L805">循环与继续条件</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/tools/router.rs#L267-L435">工具路由</a></li>
+        <li><strong>管理测试日志。</strong>进入 live history 的工具输出可按策略截断，持久化 rollout 保留完整 payload。发送前还需修复 call/output 配对、移除孤立输出，以及剔除模型不支持的媒体。历史是带约束的数据结构，不能随意拼接字符串。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/context_manager/history.rs#L628-L640">截断边界</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/context_manager/history.rs#L1185-L1202">历史规范化</a></li>
+    </ol>
+    <p><strong>设计启示：</strong>把“模型当下看见的输入”与“可追溯的原始事实”分开。长日志可以暂时缩短，关键错误、用户纠正和文件修改仍应有可恢复的依据。</p>
+    <details>
+        <summary>展开：最短源码阅读路线</summary>
+        <div class="code-block">
+            <div class="code-header"><span>目录摘录 · 按实际 crate 分工</span></div>
+            <pre><code>codex-rs/
+├── core/src/session/turn.rs             # 推理、工具回填与继续条件
+├── core/src/context_manager/history.rs  # live history 与结构约束
+├── core/src/compact_token_budget.rs     # 无摘要换窗入口
+├── ext/history-notes/src/              # 托管 history / notes 客户端
+├── memories/write/src/                 # 跨会话记忆的后台写入
+├── ext/memories/src/                   # 新会话中的记忆读取
+└── state/src/runtime/memories.rs        # DB 选择、使用记录与保留</code></pre>
+        </div>
+        <p class="source-note">先从 <code>run_turn</code> 跟到 <code>run_auto_compact</code>，再看 <code>start_new_context_window</code>；最后把 memory 的写入与读取分开读。README 或旧教程中的路径可能早于 crate 拆分。</p>
+    </details>
+</section>
+
+<section id="codex-context" class="codex-case">
+    <h2><span class="num badge-purple">17</span> 上下文管理：压缩、换窗与恢复</h2>
+    <p class="section-desc">当测试修复需要大量文件与日志，窗口会增长。源码存在两条不同路径：生成交接摘要，或直接重建一个新窗口。</p>
+    <div class="compare-grid">
+        <div class="vs-box">
+            <div class="vs-title">路径 A · 摘要压缩</div>
+            <p><code>token_budget</code> 未启用时，按 provider 能力走本地或远程 compaction。公开的本地 prompt 要求留下进度与决策、约束与偏好、下一步、关键数据和引用。</p>
+            <p><strong>收益：</strong>给后续推理一份短交接。<strong>代价：</strong>摘要可能遗漏细节；具体保留行为依路径而异，远程服务实现不在此仓库。</p>
+            <p class="source-note"><a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/session/turn.rs#L1687-L1744">分支入口</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/prompts/templates/compact/prompt.md">本地交接 prompt</a></p>
+        </div>
+        <div class="vs-box">
+            <div class="vs-title">路径 B · Token-budget 换窗</div>
+            <p>启用后，<code>run_auto_compact</code> 调用换窗入口，跳过摘要生成。新窗口重新装配 world state 与符合规则的 retained client items，分配窗口 ID，再重算 token 使用量。</p>
+            <p><strong>收益：</strong>减少自动摘要环节。<strong>代价：</strong>未保留的过程细节需要通过可用的历史、笔记或工作文件恢复。代码仓库、文件和环境不会因换窗被清空。</p>
+            <p class="source-note"><a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/compact_token_budget.rs#L55-L61">换窗入口</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/session/mod.rs#L5459-L5508">重建窗口</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/tools/handlers/new_context_window_spec.rs#L8-L18">环境不受影响</a></p>
+        </div>
+    </div>
+    <div class="highlight-box highlight-orange">
+        <div class="hl-title">哪些行为不能当作所有 Codex 的默认配置？</div>
+        <p><code>token_budget</code> 在 feature 表中是开发中、默认关闭；模型元数据或符合条件的实验配置还可能启用它。history/notes 扩展另需配置、OpenAI provider 与 Codex backend 认证。看到源码存在功能，不代表任意模型、API key 或本地部署都能用。</p>
+        <p class="source-note"><a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/features/src/lib.rs#L2265-L2275">feature 状态</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/session/token_budget.rs#L22-L55">实验启用条件</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/session/token_budget.rs#L134-L173">模型默认值</a></p>
+    </div>
+
+    <h3>换窗前留下什么，换窗后怎样找回？</h3>
+    <p>在贯穿示例中，一份有用的任务笔记应记录“已经确认哪个测试失败、改过哪些文件、排除了什么、下一条验证命令是什么”。笔记提供短入口，历史提供证据，工作文件提供当前真实状态。</p>
+    <div class="code-block">
+        <div class="code-header"><span>交接内容示例 · 非 Codex 强制字段或已执行结果</span></div>
+        <pre><code>目标：修复 test_parser_empty_input，保留公共 API。
+已确认：失败来自空输入分支；尚未运行全量测试。
+已改动：src/parser.rs；需要检查 diff，避免重复修改。
+失败证据：保存对应 history window_id / item_id。
+下一步：运行该测试，再核对相邻边界条件。
+验收：目标与相关测试通过，报告实际验证范围。</code></pre>
+    </div>
+    <p>history 工具可列窗口、筛选条目、按字面子串搜索，再用 <code>window_id + item_id</code> 有界读取原文；notes 工具提供虚拟路径上的查找、读取、追加和替换。恢复的顺序可设计为<strong>读短笔记 → 找相关历史 → 核对当前文件 → 继续验证</strong>。</p>
+    <p class="source-note"><a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/ext/history-notes/src/tools.rs#L87-L100">工具注册</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/ext/history-notes/src/requests.rs#L81-L238">读取与搜索合同</a></p>
+    <details>
+        <summary>展开：预算、短提示与一致性边界</summary>
+        <div class="code-block">
+            <div class="code-header"><span>Rust 源码节选 · start_new_context_window</span></div>
+            <pre><code>let rendered = world_state.render_full_with_host_roster().await;
+let (window_number, window_ids) = self.state.lock().await.start_new_context_window();
+let (context_updates, world_state_snapshot) =
+    self.assemble_initial_context(step_context, rendered).await;
+let context_items =
+    crate::context_manager::updates::merge_world_state_updates(context_updates)
+        .into_iter()
+        .map(ResponseItemEnvelope::new)
+        .chain(retained_client_items.into_values())
+        .collect();</code></pre>
+        </div>
+        <p class="source-note"><a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/session/mod.rs#L5478-L5487">OpenAI Codex 源码</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/LICENSE">Apache-2.0</a>。上游已选择的 retained items 与重新装配的 context 合并；这段直接说明新窗口仍然有输入。</p>
+        <ul>
+            <li><strong>触发阈值：</strong><code>ModelInfo::auto_compact_token_limit</code> 默认按已解析窗口的 90% 计算，并受配置上限约束；实际触发还考虑 Total / BodyAfterPrefix 范围、预留 buffer 和完整窗口硬上限。不能概括为固定“80% 就压缩”。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/protocol/src/openai_models.rs#L579-L591">默认计算</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/session/context_window.rs">实际预算</a></li>
+            <li><strong>短提示：</strong>扩展向托管 backend 请求 <code>alpha/notes/v2/thread_hint</code>，最大 4,000 UTF-8 bytes。客户端的门控、请求与截断可核实；服务器怎样选择和生成 hint 无法从开源仓库确认。默认窗口元数据走 developer 消息，另有配置可改为具名工具输出。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/ext/history-notes/src/extension.rs#L31-L140">hint 客户端</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/context/token_budget_context.rs#L33-L107">窗口元数据</a></li>
+            <li><strong>一致性：</strong>请求说明将 history 列表/搜索，以及 notes 列表/搜索标为最终一致；notes 成功写入后读取立即可见。写工具不支持并行。刚写完却搜索不到时，应先直接读取已知路径。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/ext/history-notes/src/requests.rs#L1-L24">一致性约定</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/ext/history-notes/src/tools.rs#L94-L100">串行写入</a></li>
+        </ul>
+    </details>
+</section>
+
+<section id="codex-memory" class="codex-case">
+    <h2><span class="num badge-green">18</span> 跨会话记忆：提炼、整理与读取</h2>
+    <p class="section-desc">测试修复完成后，“本仓库运行测试所需的步骤”可能在下次任务中有用；本次失败日志与未完成清单则主要属于当前任务。跨会话 memory 负责选择、组织这些历史经验。</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>状态层</th><th>保存什么</th><th>怎样使用</th></tr></thead>
+            <tbody>
+                <tr><td>当前 context</td><td>本次推理可见的规则、消息、工具结果</td><td>直接参与模型输入；受窗口预算约束</td></tr>
+                <tr><td>历史 / rollout</td><td>原始交互与工具 payload</td><td>按窗口和条目追溯；托管 history 工具有启用条件</td></tr>
+                <tr><td>history/notes 的笔记</td><td>主动写下的进度、决策、证据指针</td><td>通过工具恢复任务；其长期保留规则不能仅由客户端推断</td></tr>
+                <tr><td>memories 管线</td><td>旧会话摘要、复用经验与索引</td><td>后台提炼整理，新会话读取短摘要与相关来源</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <figure>
+        <svg class="codex-flow" viewBox="0 0 600 432" role="img" aria-label="Codex 跨会话记忆写入与读取链路" aria-describedby="codex-memory-desc">
+            <desc id="codex-memory-desc">符合条件的旧会话进入第一阶段提炼，数据库按保留窗口、使用次数和近期性选择输入，第二阶段整理摘要和来源，随后新会话注入短摘要并按需读取。</desc>
+            <defs><marker id="codex-memory-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="#0f766e"/></marker></defs>
+            <g fill="#f0fdfa" stroke="#d6d3cd">
+                <rect x="30" y="16" width="540" height="80" rx="12"/>
+                <rect x="30" y="120" width="540" height="80" rx="12"/>
+                <rect x="30" y="224" width="540" height="80" rx="12"/>
+                <rect x="30" y="328" width="540" height="80" rx="12"/>
+            </g>
+            <g stroke="#0f766e" stroke-width="2" marker-end="url(#codex-memory-arrow)"><path d="M300 96 V114"/><path d="M300 200 V218"/><path d="M300 304 V322"/></g>
+            <g text-anchor="middle" fill="#1a1a2e" font-size="23">
+                <text x="300" y="49">Phase 1 · 从旧 rollout 提炼</text>
+                <text x="300" y="153">DB · 保留筛选与 Top-N 选择</text>
+                <text x="300" y="257">Phase 2 · 同步来源并整理</text>
+                <text x="300" y="361">新会话 · 注入短摘要，按需读来源</text>
+            </g>
+            <g text-anchor="middle" fill="#78716c" font-size="19">
+                <text x="300" y="77">有条件的后台任务，先脱敏再保存</text>
+                <text x="300" y="181">usage_count → 使用 / 来源近期性</text>
+                <text x="300" y="285">workspace diff + consolidation agent</text>
+                <text x="300" y="389">历史经验仍需与当前仓库状态核对</text>
+            </g>
+        </svg>
+        <figcaption>写入与读取是两条路径。自动整理发生在符合条件的根会话启动后的后台任务中，并非每次答复结束都同步“记住一切”。</figcaption>
+    </figure>
+
+    <h3>源码真正实现了什么？</h3>
+    <ol>
+        <li><strong>写入有门控。</strong>跳过 ephemeral、非根 Agent 和关闭 memories 的会话；还需状态 DB、可用配额与合格历史。Phase 1 并行处理选中的旧 rollout，按版本解析输出并脱敏。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/memories/write/src/start.rs#L20-L102">启动与门控</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/memories/write/src/phase1.rs#L48-L90">提炼调度</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/memories/write/src/phase1_output.rs#L33-L55">输出脱敏</a></li>
+        <li><strong>整理前先选择。</strong>DB 保留最近使用过、或从未使用但来源仍较新的条目；再按使用次数与近期性选择 Top-N。Phase 2 同步来源，计算相对上次成功基线的文件差异，必要时启动 consolidation agent。这个选择环节是 SQL 规则，不能据此宣称使用向量检索或连续衰减权重。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/state/src/runtime/memories.rs#L445-L500">筛选与排序</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/memories/write/src/phase2.rs#L53-L184">整理流程</a></li>
+        <li><strong>新会话先读短入口。</strong>读取 <code>memory_summary.md</code>，按 token 上限截断，选取对应版本的读路径模板后加入 developer instructions。是否继续读取来源取决于任务需要；memory 只是历史证据，文件与测试结果可能已经变化。<a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/ext/memories/src/prompts.rs#L31-L63">读取与注入</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/ext/memories/templates/memories/read_path_v2.md">V2 使用指引</a></li>
+    </ol>
+
+    <details>
+        <summary>展开：Memory V1 / V2 的产物差异</summary>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>环节</th><th>V1</th><th>V2</th></tr></thead>
+                <tbody>
+                    <tr><td>Phase 1</td><td><code>raw_memory</code> + rollout summary / slug</td><td>summary / slug，不解析 raw memory；summary 上限 9,000 UTF-8 bytes</td></tr>
+                    <tr><td>整理方向</td><td>raw memories、<code>MEMORY.md</code>、短摘要、rollout summaries；模板允许整理 skills</td><td>以 <code>memory_summary.md</code> 与准确来源指针为中心；模板要求完整摘要显著低于 10,000 UTF-8 bytes</td></tr>
+                    <tr><td>新会话</td><td>短索引引导进一步查手册与来源</td><td>注入摘要；需要更多证据时读匹配的 rollout summary</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p>本提交中，memories feature 为 stable、默认关闭。已启用且没有旧 V1 目录的新 profile，在未显式选择版本、未退出过渡条件时会选 V2。因此，旧文章中的“大手册 + 自动 skills”不能套用到所有当前配置。</p>
+        <p class="source-note"><a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/memories/write/src/phase1_output.rs">两版输出合同</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/memories/write/templates/memories/consolidation.md">V1 模板</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/memories/write/templates/memories/consolidation_v2.md">V2 模板</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/core/src/config/mod.rs#L3754-L3767">新 profile 选择</a> · <a href="https://github.com/openai/codex/blob/c2c1ebba0a7985ebee065c5492233a843b84c4c6/codex-rs/features/src/lib.rs#L1460-L1464">feature 状态</a></p>
+    </details>
+    <div class="highlight-box highlight-green">
+        <div class="hl-title">怎样把这个实例用于自己的 Harness？</div>
+        <p><strong>先做四件事：</strong>保存原始事件；约束当前上下文大小；用进度与证据指针支持恢复；从跨任务仍有效的经验中整理记忆。读取历史经验后，用当前文件或工具结果确认关键事实。上节课程实验的加权检索公式是教学设计，不能当作 Codex 的实现公式。</p>
+        <p><strong>待执行的对照实验：</strong>在同一仓库、模型与任务预算下，比较摘要压缩、带笔记的换窗、再加跨会话记忆；记录任务成功率、重复读取/重复修改、纠正遗漏、输入 token 与恢复耗时。先检查功能确实可用，并把环境故障与策略失败分开统计。本页未运行这些实验，不给性能结论。</p>
+    </div>
+</section>
+
+<!-- ==================== 19. 参考资源 ==================== -->
 <section id="refs">
-    <h2><span class="num badge-blue">16</span> 参考资源</h2>
+    <h2><span class="num badge-blue">19</span> 参考资源</h2>
+
+    <div class="sources">
+        <h4>Codex：源码为主，官方文档补充，社区解读用于对照</h4>
+        <ul>
+            <li><a href="https://github.com/openai/codex/tree/c2c1ebba0a7985ebee065c5492233a843b84c4c6">openai/codex 固定源码提交</a> — 本页第 16–18 节逐项链接到实现与模板；实际产品能力仍取决于版本、配置、模型与 backend。</li>
+            <li><a href="https://developers.openai.com/blog/codex-as-a-platform">Codex as a platform</a> · <a href="https://developers.openai.com/codex/memories">Memories 官方文档</a> · <a href="https://developers.openai.com/codex/config-reference">配置参考</a> — 产品说明与配置边界。</li>
+            <li><a href="https://github.com/walkinglabs/learn-harness-engineering/blob/a9342ff471f2c0e60be0c08b9f4a7c502df4e442/docs/zh/harness-designs/codex/index.md">learn-harness-engineering · Codex</a> · <a href="https://www.53ai.com/news/OpenSourceLLM/2026102790874.html">53AI 参考文章</a> — 社区材料；路径、默认配置与 memory 产物以本页固定提交核对结果为准。</li>
+        </ul>
+    </div>
 
     <div class="sources">
         <h4>开源框架</h4>
@@ -1685,7 +1922,7 @@ reward_weights:
 <footer>
     <p>Agent Harness 深度解析 · 架构设计、原理与工程实践</p>
     <p style="margin-top:0.5rem;">基于 VERL / ROLL / RAGEN / Agent-R1 / VerlTool 等前沿框架 · 结合 ProtAgent 实战经验</p>
-    <p style="margin-top:0.5rem;font-size:0.8rem;">2026.05</p>
+    <p style="margin-top:0.5rem;font-size:0.8rem;">原训练笔记：2026.05 · Codex 源码实例补充：2026.11.14</p>
 </footer>
 
 </body>
