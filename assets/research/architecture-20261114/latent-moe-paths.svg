@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="360pt" viewBox="0 0 864 360" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Stein's Notes / architecture_figures.py</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 360
+L 864 360
+L 864 0
+L 0 0
+z
+" style="fill: #fcfbf7"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 35.424 176.4774
+L 187.488 176.4774
+Q 188.5248 176.4774 188.5248 175.4568
+L 188.5248 105.3756
+Q 188.5248 104.355 187.488 104.355
+L 35.424 104.355
+Q 34.3872 104.355 34.3872 105.3756
+L 34.3872 175.4568
+Q 34.3872 176.4774 35.424 176.4774
+z
+" clip-path="url(#pb5a9694d07)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 228.96 176.4774
+L 384.48 176.4774
+Q 385.5168 176.4774 385.5168 175.4568
+L 385.5168 105.3756
+Q 385.5168 104.355 384.48 104.355
+L 228.96 104.355
+Q 227.9232 104.355 227.9232 105.3756
+L 227.9232 175.4568
+Q 227.9232 176.4774 228.96 176.4774
+z
+" clip-path="url(#pb5a9694d07)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 425.952 176.4774
+L 636.768 176.4774
+Q 637.8048 176.4774 637.8048 175.4568
+L 637.8048 105.3756
+Q 637.8048 104.355 636.768 104.355
+L 425.952 104.355
+Q 424.9152 104.355 424.9152 105.3756
+L 424.9152 175.4568
+Q 424.9152 176.4774 425.952 176.4774
+z
+" clip-path="url(#pb5a9694d07)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 678.24 176.4774
+L 830.304 176.4774
+Q 831.3408 176.4774 831.3408 175.4568
+L 831.3408 105.3756
+Q 831.3408 104.355 830.304 104.355
+L 678.24 104.355
+Q 677.2032 104.355 677.2032 105.3756
+L 677.2032 175.4568
+Q 677.2032 176.4774 678.24 176.4774
+z
+" clip-path="url(#pb5a9694d07)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 35.424 298.9494
+L 187.488 298.9494
+Q 188.5248 298.9494 188.5248 297.9288
+L 188.5248 227.8476
+Q 188.5248 226.827 187.488 226.827
+L 35.424 226.827
+Q 34.3872 226.827 34.3872 227.8476
+L 34.3872 297.9288
+Q 34.3872 298.9494 35.424 298.9494
+z
+" clip-path="url(#pb5a9694d07)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 228.96 298.9494
+L 384.48 298.9494
+Q 385.5168 298.9494 385.5168 297.9288
+L 385.5168 227.8476
+Q 385.5168 226.827 384.48 226.827
+L 228.96 226.827
+Q 227.9232 226.827 227.9232 227.8476
+L 227.9232 297.9288
+Q 227.9232 298.9494 228.96 298.9494
+z
+" clip-path="url(#pb5a9694d07)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 425.952 298.9494
+L 636.768 298.9494
+Q 637.8048 298.9494 637.8048 297.9288
+L 637.8048 227.8476
+Q 637.8048 226.827 636.768 226.827
+L 425.952 226.827
+Q 424.9152 226.827 424.9152 227.8476
+L 424.9152 297.9288
+Q 424.9152 298.9494 425.952 298.9494
+z
+" clip-path="url(#pb5a9694d07)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 678.24 298.9494
+L 830.304 298.9494
+Q 831.3408 298.9494 831.3408 297.9288
+L 831.3408 227.8476
+Q 831.3408 226.827 830.304 226.827
+L 678.24 226.827
+Q 677.2032 226.827 677.2032 227.8476
+L 677.2032 297.9288
+Q 677.2032 298.9494 678.24 298.9494
+z
+" clip-path="url(#pb5a9694d07)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="fill: #172d35; font: 700 16px 'DejaVu Sans'; text-anchor: start" x="35.424" y="41.418" transform="rotate(-0 35.424 41.418)">LatentMoE: route narrower representations, then project back</text>
+   </g>
+   <g id="text_2">
+    <text style="fill: #0f766e; font: 700 12px 'DejaVu Sans'; text-anchor: start" x="35.424" y="87.0048" transform="rotate(-0 35.424 87.0048)">Nemotron 3 Ultra</text>
+   </g>
+   <g id="text_3">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="111.456" y="128.033648" transform="rotate(-0 111.456 128.033648)">Hidden input</text>
+   </g>
+   <g id="text_4">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="111.456" y="155.790191" transform="rotate(-0 111.456 155.790191)">d = 8192</text>
+   </g>
+   <g id="text_5">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="306.72" y="127.99068" transform="rotate(-0 306.72 127.99068)">Down projection</text>
+   </g>
+   <g id="text_6">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="306.72" y="155.790191" transform="rotate(-0 306.72 155.790191)">r = 2048</text>
+   </g>
+   <g id="text_7">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="531.36" y="128.033648" transform="rotate(-0 531.36 128.033648)">Routed experts</text>
+   </g>
+   <g id="text_8">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="531.36" y="155.790191" transform="rotate(-0 531.36 155.790191)">512 experts / top 22</text>
+   </g>
+   <g id="text_9">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="754.272" y="127.99068" transform="rotate(-0 754.272 127.99068)">Up projection</text>
+   </g>
+   <g id="text_10">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="754.272" y="155.790191" transform="rotate(-0 754.272 155.790191)">back to d = 8192</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 189.490219 140.076
+Q 208.225356 140.076 225.171639 140.076
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 220.771639 137.876
+L 225.171639 140.076
+L 220.771639 142.276
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 386.482219 140.076
+Q 405.217356 140.076 422.163639 140.076
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 417.763639 137.876
+L 422.163639 140.076
+L 417.763639 142.276
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 638.770219 140.076
+Q 657.505356 140.076 674.451639 140.076
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 670.051639 137.876
+L 674.451639 140.076
+L 670.051639 142.276
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_11">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="228.96" y="190.4256" transform="rotate(-0 228.96 190.4256)">Width ratio r/d = 0.25; payload ratio only under fixed assignment / precision</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #0f766e; font: 700 12px 'DejaVu Sans'; text-anchor: start" x="35.424" y="209.4768" transform="rotate(-0 35.424 209.4768)">Kimi K3 / K3.1</text>
+   </g>
+   <g id="text_13">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="111.456" y="250.505648" transform="rotate(-0 111.456 250.505648)">Hidden input</text>
+   </g>
+   <g id="text_14">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="111.456" y="278.262191" transform="rotate(-0 111.456 278.262191)">d = 7168</text>
+   </g>
+   <g id="text_15">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="306.72" y="250.46268" transform="rotate(-0 306.72 250.46268)">Down projection</text>
+   </g>
+   <g id="text_16">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="306.72" y="278.262191" transform="rotate(-0 306.72 278.262191)">r = 3584</text>
+   </g>
+   <g id="text_17">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="531.36" y="250.505648" transform="rotate(-0 531.36 250.505648)">Routed experts</text>
+   </g>
+   <g id="text_18">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="531.36" y="278.262191" transform="rotate(-0 531.36 278.262191)">896 experts / top 16</text>
+   </g>
+   <g id="text_19">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="754.272" y="250.46268" transform="rotate(-0 754.272 250.46268)">Up projection</text>
+   </g>
+   <g id="text_20">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="754.272" y="278.262191" transform="rotate(-0 754.272 278.262191)">back to d = 7168</text>
+   </g>
+   <g id="patch_13">
+    <path d="M 189.490219 262.548
+Q 208.225356 262.548 225.171639 262.548
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 220.771639 260.348
+L 225.171639 262.548
+L 220.771639 264.748
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 386.482219 262.548
+Q 405.217356 262.548 422.163639 262.548
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 417.763639 260.348
+L 422.163639 262.548
+L 417.763639 264.748
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 638.770219 262.548
+Q 657.505356 262.548 674.451639 262.548
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 670.051639 260.348
+L 674.451639 262.548
+L 670.051639 264.748
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_21">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="228.96" y="312.8976" transform="rotate(-0 228.96 312.8976)">Width ratio r/d = 0.5; payload ratio only under fixed assignment / precision</text>
+   </g>
+   <g id="text_22">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="35.424" y="344.8764" transform="rotate(-0 35.424 344.8764)">Sources: Nemotron [33, 50-51], Kimi [5, 47]. Shared paths, normalization and additional gates omitted.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pb5a9694d07">
+   <rect x="21.6" y="10.8" width="829.44" height="340.2"/>
+  </clipPath>
+ </defs>
+</svg>

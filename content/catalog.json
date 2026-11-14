@@ -47,11 +47,11 @@
       "id": "llm-research-map-2026",
       "kind": "series",
       "title": "LLM 研究地图：数据、Agent RL、架构与推理",
-      "summary": "五章连接 Agent 数据与 benchmark、长程 RL、DeepSeek V4.1、扩散推理及 GUI / 科学 Agent；附博客覆盖审计、43 项来源和10份原始报告。",
+      "summary": "七章连接 Agent 数据、RL、推理与场景，扩展 Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma 架构及 AttnRes / mHC、LatentMoE、Muon；附71项来源和15份原件。",
       "source": "content/series/llm-research-map-2026/index.html",
       "url": "/llm-research-map-2026/",
       "topic": "agent", "type": "series-tutorial",
-      "tags": ["LLM", "Agent", "Data", "Benchmark", "Harbor", "Agentic RL", "DeepSeek V4.1", "Diffusion"],
+      "tags": ["LLM", "Agent", "Data", "Benchmark", "Harbor", "Agentic RL", "DeepSeek V4.1", "Diffusion", "Qwen", "Kimi", "Nemotron", "GLM", "MiniMax", "MiMo", "Step", "Gemma", "Architecture", "Muon"],
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": null, "order": null, "featured": true,
@@ -97,7 +97,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-research-map-2026", "order": 3, "featured": false,
-      "related": ["agent-task-synthesis", "transformer-decoder-flow", "distributed-training-guide", "research-inference-diffusion"]
+      "related": ["research-architecture-landscape", "research-architecture-training", "agent-task-synthesis", "transformer-decoder-flow", "distributed-training-guide", "research-inference-diffusion"]
     },
     {
       "id": "research-inference-diffusion",
@@ -111,7 +111,7 @@
       "origin": "local", "status": "published", "review_status": "reviewed",
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-research-map-2026", "order": 4, "featured": false,
-      "related": ["dlm-speculative", "dlm-block", "research-base-architecture", "llm-training-sft-rft"]
+      "related": ["research-architecture-landscape", "dlm-speculative", "dlm-block", "research-base-architecture", "llm-training-sft-rft"]
     },
     {
       "id": "research-agent-frontiers",
@@ -126,6 +126,34 @@
       "updated": "2026-11-14", "updated_source": null,
       "series": "llm-research-map-2026", "order": 5, "featured": false,
       "related": ["agent-benchmark-map", "agent-task-synthesis", "research-agent-data", "research-agentic-rl", "vlm-knowledge-interview", "llm-training-sft-rft"]
+    },
+    {
+      "id": "research-architecture-landscape",
+      "kind": "chapter",
+      "title": "06 · 前沿模型架构：Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step 与 Gemma",
+      "summary": "按历史状态、实际层数量、全局检索、专家与多模态比较八个工业模型家族及Gemma；区分固定报告、模型配置、kernel测量与闭源披露，附结构图与规格数据。",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "url": "/llm-research-map-2026/s06_architecture_landscape.html",
+      "topic": "llm-foundations", "type": "principles",
+      "tags": ["Architecture", "Qwen3.8", "Qwen3.5", "Kimi K3.1", "Nemotron 3 Ultra", "GLM-5.3", "MiniMax M3.1", "MiMo-V2.6", "Step 3.7", "Gemma 4", "GDN", "KDA", "QSA", "DSA", "MSA", "SWA", "MoE", "GPT-6.1", "Opus 5.5", "Gemini 4"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "llm-research-map-2026", "order": 6, "featured": false,
+      "related": ["research-architecture-training", "research-base-architecture", "research-inference-diffusion", "transformer-decoder-flow", "distributed-training-guide"]
+    },
+    {
+      "id": "research-architecture-training",
+      "kind": "chapter",
+      "title": "07 · 架构与训练机制：AttnRes、mHC、LatentMoE、Muon、低精度与递归深度",
+      "summary": "推导残差深度选择、双随机流混合、latent专家和Muon矩阵更新；拆解参数分组、分布式梯度、FP4对象与Huginn循环深度，并连接Agentic RL和等算力消融。",
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "url": "/llm-research-map-2026/s07_architecture_training.html",
+      "topic": "training-inference", "type": "principles",
+      "tags": ["AttnRes", "Attention Residuals", "mHC", "Gated Residual", "LatentMoE", "Stable LatentMoE", "Muon", "MuonClip", "Muown", "Polar Express", "FP4", "NVFP4", "MXFP4", "Recurrent Depth", "Huginn", "Agentic RL"],
+      "origin": "local", "status": "published", "review_status": "reviewed",
+      "updated": "2026-11-14", "updated_source": null,
+      "series": "llm-research-map-2026", "order": 7, "featured": false,
+      "related": ["research-architecture-landscape", "research-base-architecture", "distributed-training-guide", "research-agentic-rl", "llm-training-pretraining"]
     },
     {
       "id": "llm-training-lifecycle",
@@ -276,7 +304,7 @@
       "series": null,
       "order": null,
       "featured": true,
-      "related": ["research-base-architecture", "distributed-training-guide", "llm-interview-bank"]
+      "related": ["research-architecture-landscape", "research-architecture-training", "research-base-architecture", "distributed-training-guide", "llm-interview-bank"]
     },
     {
       "id": "rl-interview-guide",
@@ -336,7 +364,7 @@
       "series": null,
       "order": null,
       "featured": false,
-      "related": ["research-base-architecture", "research-agentic-rl", "transformer-decoder-flow", "agent-harness-guide"]
+      "related": ["research-architecture-training", "research-architecture-landscape", "research-base-architecture", "research-agentic-rl", "transformer-decoder-flow", "agent-harness-guide"]
     },
     {
       "id": "llm-interview-bank",

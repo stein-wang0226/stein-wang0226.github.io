@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="360pt" viewBox="0 0 864 360" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Stein's Notes / architecture_figures.py</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 360
+L 864 360
+L 864 0
+L 0 0
+z
+" style="fill: #fcfbf7"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 175.248 118.6434
+L 398.736 118.6434
+Q 399.7836 118.6434 399.7836 117.6228
+L 399.7836 64.5516
+Q 399.7836 63.531 398.736 63.531
+L 175.248 63.531
+Q 174.2004 63.531 174.2004 64.5516
+L 174.2004 117.6228
+Q 174.2004 118.6434 175.248 118.6434
+z
+" clip-path="url(#p78309888c5)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 444.132 118.6434
+L 688.572 118.6434
+Q 689.6196 118.6434 689.6196 117.6228
+L 689.6196 64.5516
+Q 689.6196 63.531 688.572 63.531
+L 444.132 63.531
+Q 443.0844 63.531 443.0844 64.5516
+L 443.0844 117.6228
+Q 443.0844 118.6434 444.132 118.6434
+z
+" clip-path="url(#p78309888c5)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 175.248 188.7246
+L 398.736 188.7246
+Q 399.7836 188.7246 399.7836 187.704
+L 399.7836 134.6328
+Q 399.7836 133.6122 398.736 133.6122
+L 175.248 133.6122
+Q 174.2004 133.6122 174.2004 134.6328
+L 174.2004 187.704
+Q 174.2004 188.7246 175.248 188.7246
+z
+" clip-path="url(#p78309888c5)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 444.132 188.7246
+L 688.572 188.7246
+Q 689.6196 188.7246 689.6196 187.704
+L 689.6196 134.6328
+Q 689.6196 133.6122 688.572 133.6122
+L 444.132 133.6122
+Q 443.0844 133.6122 443.0844 134.6328
+L 443.0844 187.704
+Q 443.0844 188.7246 444.132 188.7246
+z
+" clip-path="url(#p78309888c5)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 175.248 258.8058
+L 398.736 258.8058
+Q 399.7836 258.8058 399.7836 257.7852
+L 399.7836 204.714
+Q 399.7836 203.6934 398.736 203.6934
+L 175.248 203.6934
+Q 174.2004 203.6934 174.2004 204.714
+L 174.2004 257.7852
+Q 174.2004 258.8058 175.248 258.8058
+z
+" clip-path="url(#p78309888c5)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 444.132 258.8058
+L 688.572 258.8058
+Q 689.6196 258.8058 689.6196 257.7852
+L 689.6196 204.714
+Q 689.6196 203.6934 688.572 203.6934
+L 444.132 203.6934
+Q 443.0844 203.6934 443.0844 204.714
+L 443.0844 257.7852
+Q 443.0844 258.8058 444.132 258.8058
+z
+" clip-path="url(#p78309888c5)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 175.248 328.887
+L 398.736 328.887
+Q 399.7836 328.887 399.7836 327.8664
+L 399.7836 274.7952
+Q 399.7836 273.7746 398.736 273.7746
+L 175.248 273.7746
+Q 174.2004 273.7746 174.2004 274.7952
+L 174.2004 327.8664
+Q 174.2004 328.887 175.248 328.887
+z
+" clip-path="url(#p78309888c5)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 444.132 328.887
+L 688.572 328.887
+Q 689.6196 328.887 689.6196 327.8664
+L 689.6196 274.7952
+Q 689.6196 273.7746 688.572 273.7746
+L 444.132 273.7746
+Q 443.0844 273.7746 443.0844 274.7952
+L 443.0844 327.8664
+Q 443.0844 328.887 444.132 328.887
+z
+" clip-path="url(#p78309888c5)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="fill: #172d35; font: 700 16px 'DejaVu Sans'; text-anchor: start" x="32.076" y="38.016" transform="rotate(-0 32.076 38.016)">History representation and access are separate design choices</text>
+   </g>
+   <g id="text_2">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="32.076" y="87.0048" transform="rotate(-0 32.076 87.0048)">Token KV / MLA</text>
+   </g>
+   <g id="text_3">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="286.992" y="82.446848" transform="rotate(-0 286.992 82.446848)">Write / retain</text>
+   </g>
+   <g id="text_4">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="286.992" y="103.399391" transform="rotate(-0 286.992 103.399391)">History -&gt; per-token entries</text>
+   </g>
+   <g id="text_5">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="566.352" y="82.446848" transform="rotate(-0 566.352 82.446848)">Read</text>
+   </g>
+   <g id="text_6">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="566.352" y="103.399391" transform="rotate(-0 566.352 103.399391)">Query reads historical KV</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 400.733712 91.0872
+Q 421.432926 91.0872 440.343286 91.0872
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 435.943286 88.8872
+L 440.343286 91.0872
+L 435.943286 93.2872
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_7">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="175.248" y="133.272" transform="rotate(-0 175.248 133.272)">KV grows with N; MLA narrows each entry</text>
+   </g>
+   <g id="text_8">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="32.076" y="157.086" transform="rotate(-0 32.076 157.086)">GDN / KDA / Mamba</text>
+   </g>
+   <g id="text_9">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="286.992" y="152.528049" transform="rotate(-0 286.992 152.528049)">Write / retain</text>
+   </g>
+   <g id="text_10">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="286.992" y="173.480591" transform="rotate(-0 286.992 173.480591)">History -&gt; recurrent state</text>
+   </g>
+   <g id="text_11">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="566.352" y="152.528049" transform="rotate(-0 566.352 152.528049)">Read</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="566.352" y="173.480591" transform="rotate(-0 566.352 173.480591)">Query reads finite state</text>
+   </g>
+   <g id="patch_11">
+    <path d="M 400.733712 161.1684
+Q 421.432926 161.1684 440.343286 161.1684
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 435.943286 158.9684
+L 440.343286 161.1684
+L 435.943286 163.3684
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_13">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="175.248" y="203.3532" transform="rotate(-0 175.248 203.3532)">Recurrent decode state need not grow with N</text>
+   </g>
+   <g id="text_14">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="32.076" y="227.1672" transform="rotate(-0 32.076 227.1672)">QSA / DSA / MSA</text>
+   </g>
+   <g id="text_15">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="286.992" y="222.609248" transform="rotate(-0 286.992 222.609248)">Write / retain</text>
+   </g>
+   <g id="text_16">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="286.992" y="243.561791" transform="rotate(-0 286.992 243.561791)">History -&gt; searchable entries</text>
+   </g>
+   <g id="text_17">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="566.352" y="222.609248" transform="rotate(-0 566.352 222.609248)">Read</text>
+   </g>
+   <g id="text_18">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="566.352" y="243.561791" transform="rotate(-0 566.352 243.561791)">Select candidates -&gt; attention</text>
+   </g>
+   <g id="patch_12">
+    <path d="M 400.733712 231.2496
+Q 421.432926 231.2496 440.343286 231.2496
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 435.943286 229.0496
+L 440.343286 231.2496
+L 435.943286 233.4496
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_19">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="175.248" y="273.4344" transform="rotate(-0 175.248 273.4344)">Selector + gather + attention all have costs</text>
+   </g>
+   <g id="text_20">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="32.076" y="297.2484" transform="rotate(-0 32.076 297.2484)">SWA + global</text>
+   </g>
+   <g id="text_21">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="286.992" y="292.690449" transform="rotate(-0 286.992 292.690449)">Write / retain</text>
+   </g>
+   <g id="text_22">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="286.992" y="313.642991" transform="rotate(-0 286.992 313.642991)">Recent window + global layers</text>
+   </g>
+   <g id="text_23">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="566.352" y="292.690449" transform="rotate(-0 566.352 292.690449)">Read</text>
+   </g>
+   <g id="text_24">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="566.352" y="313.642991" transform="rotate(-0 566.352 313.642991)">Local and global paths coexist</text>
+   </g>
+   <g id="patch_13">
+    <path d="M 400.733712 301.3308
+Q 421.432926 301.3308 440.343286 301.3308
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 435.943286 299.1308
+L 440.343286 301.3308
+L 435.943286 303.5308
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_25">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="175.248" y="343.5156" transform="rotate(-0 175.248 343.5156)">A window does not replace the full history path</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p78309888c5">
+   <rect x="21.6" y="10.8" width="838.08" height="340.2"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -1,6 +1,6 @@
 研究原件来源、署名与许可 · 2026-11-14
 
-本目录保存10份原始PDF，未裁切、改写或修改字节，完整题名与作者页保留。
+本目录保存15份原始PDF，未裁切、改写或修改字节，完整题名与作者页保留。
 sources.json登记原题名、作者、固定版本、canonical URL、许可、下载来源、
 访问日期、字节数与SHA-256。博客综述不代表原作者认可。
 研究地图：https://stein-wang0226.github.io/llm-research-map-2026/
@@ -20,7 +20,7 @@ HF原件与arXiv版本分别登记；未声称两者字节相同。原件修改�
 
 CC BY 4.0原论文
 
-下列9份原件依来源标注的Creative Commons Attribution 4.0 International分享：
+下列14份原件依来源标注的Creative Commons Attribution 4.0 International分享：
 https://creativecommons.org/licenses/by/4.0/
 各论文完整署名见原件题名页与sources.json中的authors_as_displayed。
 该清单已按原文校正作者姓名，去除机构编号及脚注标记。全部修改状态：无。
@@ -80,6 +80,36 @@ https://creativecommons.org/licenses/by/4.0/
    Yanzhe Zhang, Binyuan Hui, Ofir Press, Ludwig Schmidt, Diyi Yang
    https://arxiv.org/abs/2504.21798v1
    swesmith-2504.21798v1.pdf
+
+10. Nemotron 3 Ultra: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning
+    作者：NVIDIA；完整署名见原件题名页与sources.json，修改状态：无。
+    https://arxiv.org/abs/2606.15007v1
+    nemotron-ultra-2606.15007v1.pdf
+
+11. Gated Delta Networks: Improving Mamba2 with Delta Rule
+    作者：Songlin Yang, Jan Kautz, Ali Hatamizadeh；修改状态：无。
+    https://arxiv.org/abs/2412.06464v3
+    gdn-2412.06464v3.pdf
+
+12. LatentMoE: Toward Optimal Accuracy per FLOP and Parameter in Mixture of Experts
+    作者：Venmugil Elango, Nidhi Bhatia, Roger Waleffe, Rasoul Shafipour,
+    Tomer Asida, Abhinav Khattar, Nave Assaf, Maximilian Golub, Joey Guman,
+    Tiyasa Mitra, Ritchie Zhao, Ritika Borkar, Ran Zilberstein, Mostofa Patwary,
+    Mohammad Shoeybi, Bita Rouhani；修改状态：无。
+    https://arxiv.org/abs/2601.18089v1
+    latent-moe-2601.18089v1.pdf
+
+13. GLM-5: from Vibe Coding to Agentic Engineering
+    作者：GLM-5 Team及原件列出的贡献者；完整名单见原件与sources.json。
+    修改状态：无。
+    https://arxiv.org/abs/2602.15763v1
+    glm5-2602.15763v1.pdf
+
+14. Gemma 4 Technical Report
+    作者：Gemma Team及原件列出的贡献者；完整名单见原件与sources.json。
+    修改状态：无。
+    https://arxiv.org/abs/2607.02770v1
+    gemma4-2607.02770v1.pdf
 
 其他来源仅提供外部链接，未在本站转载PDF。
 arXiv perpetual non-exclusive license未被当作普通转载许可。

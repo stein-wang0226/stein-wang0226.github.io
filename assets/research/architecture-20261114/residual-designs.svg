@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="367.2pt" viewBox="0 0 864 367.2" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Stein's Notes / architecture_figures.py</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 367.2
+L 864 367.2
+L 864 0
+L 0 0
+z
+" style="fill: #fcfbf7"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 187.488 122.2614
+L 419.04 122.2614
+Q 420.0768 122.2614 420.0768 121.2408
+L 420.0768 63.4068
+Q 420.0768 62.3862 419.04 62.3862
+L 187.488 62.3862
+Q 186.4512 62.3862 186.4512 63.4068
+L 186.4512 121.2408
+Q 186.4512 122.2614 187.488 122.2614
+z
+" clip-path="url(#pd37f4c0aa0)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 470.88 122.2614
+L 733.536 122.2614
+Q 734.5728 122.2614 734.5728 121.2408
+L 734.5728 63.4068
+Q 734.5728 62.3862 733.536 62.3862
+L 470.88 62.3862
+Q 469.8432 62.3862 469.8432 63.4068
+L 469.8432 121.2408
+Q 469.8432 122.2614 470.88 122.2614
+z
+" clip-path="url(#pd37f4c0aa0)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 187.488 193.023
+L 419.04 193.023
+Q 420.0768 193.023 420.0768 192.0024
+L 420.0768 134.1684
+Q 420.0768 133.1478 419.04 133.1478
+L 187.488 133.1478
+Q 186.4512 133.1478 186.4512 134.1684
+L 186.4512 192.0024
+Q 186.4512 193.023 187.488 193.023
+z
+" clip-path="url(#pd37f4c0aa0)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 470.88 193.023
+L 733.536 193.023
+Q 734.5728 193.023 734.5728 192.0024
+L 734.5728 134.1684
+Q 734.5728 133.1478 733.536 133.1478
+L 470.88 133.1478
+Q 469.8432 133.1478 469.8432 134.1684
+L 469.8432 192.0024
+Q 469.8432 193.023 470.88 193.023
+z
+" clip-path="url(#pd37f4c0aa0)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 187.488 263.7846
+L 419.04 263.7846
+Q 420.0768 263.7846 420.0768 262.764
+L 420.0768 204.93
+Q 420.0768 203.9094 419.04 203.9094
+L 187.488 203.9094
+Q 186.4512 203.9094 186.4512 204.93
+L 186.4512 262.764
+Q 186.4512 263.7846 187.488 263.7846
+z
+" clip-path="url(#pd37f4c0aa0)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 470.88 263.7846
+L 733.536 263.7846
+Q 734.5728 263.7846 734.5728 262.764
+L 734.5728 204.93
+Q 734.5728 203.9094 733.536 203.9094
+L 470.88 203.9094
+Q 469.8432 203.9094 469.8432 204.93
+L 469.8432 262.764
+Q 469.8432 263.7846 470.88 263.7846
+z
+" clip-path="url(#pd37f4c0aa0)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 187.488 334.5462
+L 419.04 334.5462
+Q 420.0768 334.5462 420.0768 333.5256
+L 420.0768 275.6916
+Q 420.0768 274.671 419.04 274.671
+L 187.488 274.671
+Q 186.4512 274.671 186.4512 275.6916
+L 186.4512 333.5256
+Q 186.4512 334.5462 187.488 334.5462
+z
+" clip-path="url(#pd37f4c0aa0)" style="fill: #ffffff; stroke: #0f766e; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 470.88 334.5462
+L 733.536 334.5462
+Q 734.5728 334.5462 734.5728 333.5256
+L 734.5728 275.6916
+Q 734.5728 274.671 733.536 274.671
+L 470.88 274.671
+Q 469.8432 274.671 469.8432 275.6916
+L 469.8432 333.5256
+Q 469.8432 334.5462 470.88 334.5462
+z
+" clip-path="url(#pd37f4c0aa0)" style="fill: #ffffff; stroke: #477d9b; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="fill: #172d35; font: 700 16px 'DejaVu Sans'; text-anchor: start" x="31.968" y="38.232" transform="rotate(-0 31.968 38.232)">Residual designs change which representations a layer reads</text>
+   </g>
+   <g id="text_2">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="31.968" y="88.5816" transform="rotate(-0 31.968 88.5816)">Standard residual</text>
+   </g>
+   <g id="text_3">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="303.264" y="82.635632" transform="rotate(-0 303.264 82.635632)">Available state</text>
+   </g>
+   <g id="text_4">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="303.264" y="105.493295" transform="rotate(-0 303.264 105.493295)">Current stream x</text>
+   </g>
+   <g id="text_5">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="602.208" y="82.635632" transform="rotate(-0 602.208 82.635632)">Operation</text>
+   </g>
+   <g id="text_6">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="602.208" y="105.493295" transform="rotate(-0 602.208 105.493295)">x + F(Norm(x))</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 421.042852 91.9836
+Q 444.962189 91.9836 467.092671 91.9836
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 462.692671 89.7836
+L 467.092671 91.9836
+L 462.692671 94.1836
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_7">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="187.488" y="132.8076" transform="rotate(-0 187.488 132.8076)">Fixed additive path</text>
+   </g>
+   <g id="text_8">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="31.968" y="159.3432" transform="rotate(-0 31.968 159.3432)">Attention Residuals</text>
+   </g>
+   <g id="text_9">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="303.264" y="153.397232" transform="rotate(-0 303.264 153.397232)">Available state</text>
+   </g>
+   <g id="text_10">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="303.264" y="176.254895" transform="rotate(-0 303.264 176.254895)">Earlier layer / block states</text>
+   </g>
+   <g id="text_11">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="602.208" y="153.397232" transform="rotate(-0 602.208 153.397232)">Operation</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="602.208" y="176.254895" transform="rotate(-0 602.208 176.254895)">Softmax over depth</text>
+   </g>
+   <g id="patch_11">
+    <path d="M 421.042852 162.7452
+Q 444.962189 162.7452 467.092671 162.7452
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 462.692671 160.5452
+L 467.092671 162.7452
+L 462.692671 164.9452
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_13">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="187.488" y="203.5692" transform="rotate(-0 187.488 203.5692)">Select previous representations</text>
+   </g>
+   <g id="text_14">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="31.968" y="230.1048" transform="rotate(-0 31.968 230.1048)">mHC</text>
+   </g>
+   <g id="text_15">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="303.264" y="224.158832" transform="rotate(-0 303.264 224.158832)">Available state</text>
+   </g>
+   <g id="text_16">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="303.264" y="247.016495" transform="rotate(-0 303.264 247.016495)">n parallel residual streams</text>
+   </g>
+   <g id="text_17">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="602.208" y="224.158832" transform="rotate(-0 602.208 224.158832)">Operation</text>
+   </g>
+   <g id="text_18">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="602.208" y="247.016495" transform="rotate(-0 602.208 247.016495)">Constrained mixing + F</text>
+   </g>
+   <g id="patch_12">
+    <path d="M 421.042852 233.5068
+Q 444.962189 233.5068 467.092671 233.5068
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 462.692671 231.3068
+L 467.092671 233.5068
+L 462.692671 235.7068
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_19">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="187.488" y="274.3308" transform="rotate(-0 187.488 274.3308)">Doubly stochastic residual mixing</text>
+   </g>
+   <g id="text_20">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="31.968" y="300.8664" transform="rotate(-0 31.968 300.8664)">Gated Residual</text>
+   </g>
+   <g id="text_21">
+    <text style="fill: #0f766e; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="303.264" y="294.920433" transform="rotate(-0 303.264 294.920433)">Available state</text>
+   </g>
+   <g id="text_22">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="303.264" y="317.778095" transform="rotate(-0 303.264 317.778095)">4 residual branches</text>
+   </g>
+   <g id="text_23">
+    <text style="fill: #477d9b; font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="602.208" y="294.920433" transform="rotate(-0 602.208 294.920433)">Operation</text>
+   </g>
+   <g id="text_24">
+    <text style="fill: #172d35; font: 10px 'DejaVu Sans'; text-anchor: middle" x="602.208" y="317.778095" transform="rotate(-0 602.208 317.778095)">Elementwise gate read</text>
+   </g>
+   <g id="patch_13">
+    <path d="M 421.042852 304.2684
+Q 444.962189 304.2684 467.092671 304.2684
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 462.692671 302.0684
+L 467.092671 304.2684
+L 462.692671 306.4684
+" style="fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_25">
+    <text style="fill: #172d35; font: 9px 'DejaVu Sans'; text-anchor: start" x="187.488" y="345.0924" transform="rotate(-0 187.488 345.0924)">Qwen GR: channel-wise reading</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pd37f4c0aa0">
+   <rect x="21.6" y="11.016" width="829.44" height="347.004"/>
+  </clipPath>
+ </defs>
+</svg>

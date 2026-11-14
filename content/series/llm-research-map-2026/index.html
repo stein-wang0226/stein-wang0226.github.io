@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LLM 研究地图：数据、Agent RL、架构与推理</title>
-<meta name="description" content="截至2026年11月14日的博客覆盖审计与五章研究专题，连接Agent数据、Harbor评测、长程RL、DeepSeek V4.1、扩散推理、GUI和科学Agent。">
+<meta name="description" content="截至2026年11月14日的七章研究专题，连接Agent数据、RL、扩散推理与场景，并比较DeepSeek、Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma及残差、MoE、Muon机制。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
 <p class="eyebrow">Stein’s Notes · Research review · 2026-11-14</p>
 <h2>把前沿快讯接成可验证的研究链路</h2>
 <p class="lead">当前笔记已经有训练全链路、Agentic RL、Harness、Transformer、分布式训练和扩散模型基础。DeepSeek V4.1、1017、Kimi K3.1 也已出现在滚动追踪中。下一步最值得补的是<strong>数据如何成为可靠任务、结果如何变成训练信号、架构如何降低真实 Agent 的执行成本</strong>。</p>
-<div class="callout"><strong>阅读结论：</strong>优先深入 Agent 数据与 benchmark、长程信用分配及异步 RL；用 DeepSeek V4.1 贯通架构、任务生产和后训练系统；用 DFlash / DSpark / AdaFlash 连接已有 DLM 研究；再扩展 GUI、科学 Agent、skills 和持续学习。优先级来自本站覆盖与作者方向的编辑判断，不是论文证明的领域排名。</div>
+<div class="callout"><strong>阅读结论：</strong>优先深入Agent数据与benchmark、长程信用分配及异步RL；架构部分由DeepSeek专章扩展到Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step和Gemma，再深入AttnRes / mHC、LatentMoE、Muon与低精度。用DFlash / DSpark / AdaFlash连接DLM，进一步讨论GUI、科学Agent与持续学习。优先级是本站的编辑判断。</div>
 <figure>
 <div class="flow" aria-label="研究链路，按顺序阅读">
 <div class="stage"><b>数据与评测</b><small>问题 → 可运行环境 → 独立验证<br>数据集和 benchmark 分开管理</small></div>
@@ -24,11 +24,11 @@
 <figcaption>这是一条研究组织路径。实际迭代存在反馈：训练失败会改变数据合成，推理成本会改变 rollout 预算，场景迁移会暴露 verifier 和状态表示的缺口。</figcaption>
 </figure>
 <div class="metric-grid">
-<div class="card"><span class="metric">33 + 10</span><p>33 篇固定版本原论文 / 技术报告，10 项官方或项目合作方文档。引用编号共用本页索引。</p></div>
-<div class="card"><span class="metric">10 份原件</span><p>本地保存 DeepSeek 官方报告与9篇 CC BY 原论文；来源、版本、许可和 SHA-256 可下载核对。</p></div>
+<div class="card"><span class="metric">47 + 24</span><p>47篇固定版本原论文 / 技术报告，24项官方、合作方文档或固定模型卡 / 配置。71项引用共用本页索引。</p></div>
+<div class="card"><span class="metric">15 份原件</span><p>保存DeepSeek官方报告与14篇CC BY原论文，新增Nemotron、GDN、LatentMoE、GLM-5和Gemma 4；版本、许可与SHA可核对。</p></div>
 </div>
 <p class="note">调研截止 2026-11-14。论文数字均为作者报告，本次未复现训练或 benchmark；建议实验全部标为待执行。动态文档只代表访问时口径，不把版本不同的榜单拼成同一实验。</p>
-<p>深入补充：<a href="../agent-data-benchmarks/">Agent任务合成与Benchmark两章专题</a>，覆盖十二条生产路线、经典分类速查与TB 4.1 / Science / Challenges、HarborIndex、DeepSWE、AA的版本及评分。本系列第03章已增加CED / CSA2 / FP4及缓存对比图；原43项引用保留。</p>
+<p>新增架构阅读：<a href="s06_architecture_landscape.html">第06章 · 多家族模型架构地图</a>与<a href="s07_architecture_training.html">第07章 · 残差、MoE、优化器与训练机制</a>，附4张图和可下载规格数据。<a href="../agent-data-benchmarks/">Agent任务合成与Benchmark两章专题</a>继续覆盖十二条生产路线、经典评测及TB / HarborIndex / AA口径；第03章保留CED / CSA2 / FP4详细拆解，原43项引用号不变。</p>
 </section>
 <section id="coverage">
 <h2>当前博客怎样补，才能形成清晰分工</h2>
@@ -39,7 +39,7 @@
 <tr><td><a href="../llm-frontier-2026.html">前沿追踪</a></td><td>版本、出处、增量信号</td><td>快讯链接到机制长文；记录后续修订与证据边界</td><td>P0</td></tr>
 <tr><td><a href="../agent-harness-guide.html">Agent Harness</a></td><td>工具、sandbox、rollout、reward</td><td>独立 verifier、artifact 合同、adapter parity、失败与成本审计</td><td>P0</td></tr>
 <tr><td><a href="../agentic-rl-guide.html">Agentic RL</a> / <a href="../rl-interview-guide.html">RL 手册</a></td><td>基础算法与推导</td><td>四维目标比较、RLDS / KnowGPO / SAPO、异质数据、版本滞后</td><td>P0</td></tr>
-<tr><td><a href="../transformer-decoder-flow.html">Decoder</a> / <a href="../distributed-training-guide.html">分布式训练</a></td><td>张量流与并行框架</td><td>CED / CSA2 / FP4、KDA / LatentMoE、缓存和端到端成本</td><td>P1</td></tr>
+<tr><td><a href="../transformer-decoder-flow.html">Decoder</a> / <a href="../distributed-training-guide.html">分布式训练</a></td><td>张量流与并行框架</td><td>多家族历史状态与层计划、AttnRes / mHC / GR、LatentMoE、Muon、低精度和真实任务成本</td><td>P1</td></tr>
 <tr><td><a href="../dlm-survey/">DLM 14章</a></td><td>扩散理论、解码与训练</td><td>扩散 drafter、块内依赖、验证精确性、实际并发条件</td><td>P1</td></tr>
 <tr><td><a href="../vlm-knowledge-interview.html">VLM</a> / <a href="../llm-interview-bank.html">题库</a></td><td>知识与问答</td><td>GUI 恢复、科学任务、skills 和持续学习的正式专题</td><td>P1</td></tr>
 </tbody>
@@ -47,14 +47,16 @@
 <p>本次审计前为10个公开本地笔记集合、18个系列章节；独立子站和历史材料另计。已有旧文的未知数字和未完成答案仍保留原来的复核标记，本次增补不代表全部旧内容已重新审定。</p>
 </section>
 <section id="chapters">
-<h2>五章阅读路径</h2>
+<h2>七章阅读路径</h2>
 <div class="chapter-grid">
 <a class="card" href="s01_agent_data_bench.html"><span class="eyebrow">01 / Data &amp; evaluation</span><h3>Agent 数据与 benchmark</h3><p>SWE-smith → NexForge / EvoSyn / ProgramGym；Harbor 任务、独立验证、污染、迁移一致性与榜单审计。</p></a>
 <a class="card" href="s02_agentic_rl.html"><span class="eyebrow">02 / Learning &amp; systems</span><h3>Agentic RL：目标、信用与异步</h3><p>GRPO / GSPO / CISPO，GiGPO / RLDS / KnowGPO / SAPO；异质数据与 rollout–trainer 对齐。</p></a>
 <a class="card" href="s03_base_architecture.html"><span class="eyebrow">03 / Base architecture</span><h3>DeepSeek V4.1 架构拆解</h3><p>CED、CSA2、FP4、bounded replay、Engram；区分 V4.1 v1 与1017更新，并比较 Kimi K3。</p></a>
 <a class="card" href="s04_inference_diffusion.html"><span class="eyebrow">04 / Inference &amp; diffusion</span><h3>推理成本与扩散投机解码</h3><p>DFlash → DSpark → AdaFlash；精确验证、OPD、并发、接受长度与真实任务成本。</p></a>
 <a class="card" href="s05_agent_frontiers.html"><span class="eyebrow">05 / Applications &amp; adaptation</span><h3>GUI、科学 Agent 与持续学习</h3><p>OSWorld 2.0、AIRS-Bench、SkillsBench 1.1、Macaron、PARL / 多教师；连接作者公开研究。</p></a>
-<div class="card"><span class="eyebrow">阅读建议</span><h3>按研究问题进入</h3><p>做 Harbor 任务：01 → 02。做基模 / 推理：03 → 04。做 GUI / 科学 Agent：01 → 05 → 02。基础概念回到已有教程。</p></div>
+<a class="card" href="s06_architecture_landscape.html"><span class="eyebrow">06 / Architecture landscape</span><h3>前沿模型架构地图</h3><p>Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step与Gemma：历史状态、层计划、MoE、多模态及闭源披露边界。</p></a>
+<a class="card" href="s07_architecture_training.html"><span class="eyebrow">07 / Architecture &amp; training</span><h3>残差、MoE、优化器与训练机制</h3><p>AttnRes / mHC / GR、Stable LatentMoE、Muon / Muown、数值精度与Huginn递归深度；公式、工程条件与等算力对照。</p></a>
+<div class="card"><span class="eyebrow">阅读建议</span><h3>按研究问题进入</h3><p>做Harbor任务：01 → 02。做基模：06 → 07 → 03；做推理继续04。做GUI / 科学Agent：01 → 05 → 02。基础概念回到已有教程。</p></div>
 </div>
 </section>
 <section id="priorities">
@@ -67,20 +69,21 @@
 <tr><td>P0 · 异步训练有效样本率</td><td>完成顺序偏置、版本 lag、目标 token、MoE routing / kernel 对齐分别观测</td><td>GPU 利用率增加就代表学习效率增加</td></tr>
 <tr><td>P1 · 架构服务真实 Agent</td><td>工具轮次、前缀命中、短轮返回、输入输出比、IO、队列和成功成本</td><td>KV 某口径缩小就等于总成本同比缩小</td></tr>
 <tr><td>P1 · GUI 与科学 Agent</td><td>状态与恢复、确定性复现、数据划分、有效提交与科学正确性；绑定公开案例</td><td>最终文件存在或自然语言解释流畅就代表任务完成</td></tr>
-<tr><td>P2 · 优化器、深度和 kernel</td><td>Muon 更新公式与正交化近似、数值精度、吞吐和等算力消融；loop / residual 路线分开对比</td><td>从一则快讯或单一规模实验推断通用最优</td></tr>
+<tr><td>P1 · 架构与训练机制</td><td>第06–07章已完成多家族、残差、LatentMoE、Muon和递归深度综述；下一步实现等token / 等算力消融与kernel实测</td><td>从单团队结果、参数量或维度比推断通用最优</td></tr>
 </tbody>
 </table>
-<p>本次完成前五个方向的机制综述和实验设计；Muon / loop / kernel 仍是后续选题，尚未完成独立数学与复现实验专题。新商用模型若没有公开结构和训练细节，只记录官方能力、版本和使用约束，不补猜测参数。</p>
+<p>七章已覆盖上述方向的机制综述与实验设计；第06–07章进一步补齐模型家族、残差、专家、矩阵更新与递归深度。训练和kernel复现实验仍未执行。闭源前沿按公开披露登记，例如Gemini Argon公开稀疏MoE Transformer；更细结构与未公开参数保留未知。</p>
 <details><summary>建议的维护节奏</summary><p>每次快讯登记版本和来源；当一个方向出现不同团队的机制或可运行代码，再更新专题。每月复查 benchmark 与工具版本，过时结果保留快照并说明不可直接横比；每季度选择一个小规模实验，交付配置、原始轨迹、失败归因和成本，而不是只增加模型名称。</p></details>
 </section>
 <section id="archive">
 <h2>技术报告与引用如何保留</h2>
 <p><a href="../assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf">下载 DeepSeek V4.1 官方技术报告</a>。归档来自官方 Hugging Face revision <code>314113f8a7dadb388215396ba5fbee2c610a04d6</code>，未经修改；论文章节引用采用 arXiv <code>2609.19969v1</code>。两种来源分别登记，不宣称文件与 arXiv 逐字节相同。</p>
-<p>全部来源及原件 SHA：<a href="../assets/research/2026-11-14/sources.json">sources.json</a>。转载与署名：<a href="../assets/research/2026-11-14/NOTICE.txt">原件来源 / 许可说明</a>；<a href="../assets/research/2026-11-14/DeepSeek-MIT-LICENSE.txt">DeepSeek 完整 MIT notice</a>。其余9份原件采用 CC BY 4.0，完整作者及题名页保留，来源清单登记署名。只提供链接的论文没有在本站转载原件。</p>
+<p>新增原件：<a href="../assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf">Nemotron 3 Ultra</a>、<a href="../assets/research/2026-11-14/gdn-2412.06464v3.pdf">Gated Delta Networks</a>、<a href="../assets/research/2026-11-14/latent-moe-2601.18089v1.pdf">LatentMoE</a>、<a href="../assets/research/2026-11-14/glm5-2602.15763v1.pdf">GLM-5</a>、<a href="../assets/research/2026-11-14/gemma4-2607.02770v1.pdf">Gemma 4</a>。共15份，下载字节不变。</p>
+<p>全部来源及原件SHA：<a href="../assets/research/2026-11-14/sources.json">sources.json</a>。转载与署名：<a href="../assets/research/2026-11-14/NOTICE.txt">原件来源 / 许可说明</a>；<a href="../assets/research/2026-11-14/DeepSeek-MIT-LICENSE.txt">DeepSeek完整MIT notice</a>。其余14份原件采用CC BY 4.0，完整作者及题名页保留，清单登记署名。仅提供链接的论文未转载原件，权重许可不自动用于报告。</p>
 </section>
 <section id="sources">
 <h2>原始来源索引</h2>
-<p class="note">本系列五章共用编号。论文固定到下列版本；官方 / 合作方页面访问日期均为2026-11-14。标题、作者原显示、使用位置、许可、归档字节与哈希见可下载清单。论文、模型卡和团队发布可以交叉核对，但不能算三个独立复现实验。</p>
+<p class="note">本系列七章共用编号，原1–43保留，新增44–71。论文固定版本；官方 / 合作方访问日期均为2026-11-14，模型配置固定revision。标题、署名、使用位置、许可与哈希见清单。同一团队论文、模型卡和发布页面可以核对规格，但不能算三个独立复现实验。</p>
 <ol class="sources">
 <li id="ref-1"><a href="https://arxiv.org/html/2609.19969v1">DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression</a> · §2架构、§3.2缓存、§5数据与RL。<a href="../assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf">官方PDF快照</a>。</li>
 <li id="ref-2"><a href="https://arxiv.org/html/2606.19348v1">DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence</a> · V4.1的架构前序。</li>
@@ -114,7 +117,7 @@
 <li id="ref-30"><a href="https://arxiv.org/html/2602.02276v1">Kimi K2.5: Visual Agentic Intelligence</a> · PARL与Agent Swarm。</li>
 <li id="ref-31"><a href="https://arxiv.org/html/2506.13585v1">MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention</a> · CISPO原始出处。</li>
 <li id="ref-32"><a href="https://arxiv.org/html/2610.02039v1">CARM: Cancellation-Aware Response Masking for LLM Reinforcement Learning</a> · log-ratio抵消与mask诊断。</li>
-<li id="ref-33"><a href="https://arxiv.org/html/2606.15007v1">Nemotron 3 Ultra</a> · Hybrid Mamba–Transformer / MoE与专家OPD。</li>
+<li id="ref-33"><a href="https://arxiv.org/html/2606.15007v1">Nemotron 3 Ultra</a> · Hybrid Mamba–Transformer / MoE、LatentMoE、训练稳定性与专家OPD。<a href="../assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf">PDF</a>。</li>
 <li id="ref-34"><a href="https://harbor-index.org/">Introducing Harbor-Index 1.0</a> · 官方困难切片与audit / fix / re-run。</li>
 <li id="ref-35"><a href="https://www.harborframework.com/docs/task-format">Harbor task format</a> · 目录、artifacts、reward输出。</li>
 <li id="ref-36"><a href="https://www.harborframework.com/news/separate-verifier-sandboxes">Verify Harbor tasks in a separate sandbox</a> · 显式产物交接。</li>
@@ -125,6 +128,34 @@
 <li id="ref-41"><a href="https://www.skillsbench.ai/blogs/skillsbench-1-1">SkillsBench 1.1 release</a> · 87 tasks / 8 domains / 18 paired configurations。</li>
 <li id="ref-42"><a href="https://snorkel.ai/leaderboard/os-world-2-0/">OSWorld 2.0 — research partner overview</a> · 108长程任务、31自托管网站、预算口径。</li>
 <li id="ref-43"><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/314113f8a7dadb388215396ba5fbee2c610a04d6/README.md">DeepSeek V4.1官方模型卡</a> · 固定revision、实现与MIT许可。</li>
+<li id="ref-44"><a href="https://qwen.ai/blog?id=qwen3.8-flash-next">Qwen3.8-Flash-Next: A New Architecture, Towards Ultimate Cost-Efficiency</a> · 2026-08-26。</li>
+<li id="ref-45"><a href="https://arxiv.org/abs/2608.30320v1">On the Design of Qwen3.8-Next Architecture: Evaluation, Efficiency, and Training Stability</a> · arXiv v1；<a href="https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/69885871a64393807d988b27b1b5e380e8f28526/tech_report.pdf">官方固定PDF</a>封面2026-08-26，来源清单分别登记。</li>
+<li id="ref-46"><a href="https://huggingface.co/Qwen/Qwen3.8-Flash-Next/blob/812d96e10a0dd82b69d749e68693698cf6c36daa/README.md">Qwen3.8-Flash-Next model card</a> · <a href="https://huggingface.co/Qwen/Qwen3.8-Flash-Next/blob/812d96e10a0dd82b69d749e68693698cf6c36daa/config.json">固定config</a>。</li>
+<li id="ref-47"><a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro/blob/d9e99b0792a5e93b78ea9bea62a68167e36ddd9e/README.md">Kimi-K3.1-Pro model card</a> · <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro/blob/d9e99b0792a5e93b78ea9bea62a68167e36ddd9e/config.json">固定config</a>。</li>
+<li id="ref-48"><a href="https://arxiv.org/abs/2510.26692v1">Kimi Linear: An Expressive, Efficient Attention Architecture</a> · KDA与chunkwise算法。</li>
+<li id="ref-49"><a href="https://arxiv.org/abs/2412.06464v3">Gated Delta Networks: Improving Mamba2 with Delta Rule</a> · <a href="../assets/research/2026-11-14/gdn-2412.06464v3.pdf">PDF</a>。</li>
+<li id="ref-50"><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16/blob/77df655d5e9f8362164ed14dd8b48f8bce657498/README.md">Nemotron 3 Ultra model card</a> · <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16/blob/77df655d5e9f8362164ed14dd8b48f8bce657498/config.json">固定config</a>。</li>
+<li id="ref-51"><a href="https://arxiv.org/abs/2601.18089v1">LatentMoE: Toward Optimal Accuracy per FLOP and Parameter in Mixture of Experts</a> · <a href="../assets/research/2026-11-14/latent-moe-2601.18089v1.pdf">PDF</a>。</li>
+<li id="ref-52"><a href="https://arxiv.org/abs/2602.15763v1">GLM-5: from Vibe Coding to Agentic Engineering</a> · <a href="../assets/research/2026-11-14/glm5-2602.15763v1.pdf">PDF</a>；5.3新结构另引模型卡。</li>
+<li id="ref-53"><a href="https://huggingface.co/zai-org/GLM-5.3-Flash/blob/46a050bec13002ad29ee795c16e61cf4fa3c4a9c/README.md">GLM-5.3-Flash model card</a> · <a href="https://huggingface.co/zai-org/GLM-5.3-Flash/blob/46a050bec13002ad29ee795c16e61cf4fa3c4a9c/config.json">固定config</a>。</li>
+<li id="ref-54"><a href="https://arxiv.org/abs/2606.13392v2">MiniMax Sparse Attention</a> · group-specific block选择，kernel实验范围单列。</li>
+<li id="ref-55"><a href="https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash/blob/ce7f4df87d2e05262f5775f373dac4772f134041/README.md">MiniMax-M3.1-Flash model card</a> · <a href="https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash/blob/ce7f4df87d2e05262f5775f373dac4772f134041/config.json">固定config</a>。</li>
+<li id="ref-56"><a href="https://arxiv.org/abs/2610.11959v1">MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement</a> · SWA / GA、drafter、Muown与QAT。</li>
+<li id="ref-57"><a href="https://arxiv.org/abs/2602.10604v1">Step 3.5 Flash: Open Frontier-Level Intelligence with 11B Active Parameters</a> · SWA、MoE、MTP与训练数值细节。</li>
+<li id="ref-58"><a href="https://huggingface.co/stepfun-ai/Step-3.7-Flash/blob/5f6244077ac62e04eec3f320501ff8c2b293373a/README.md">Step-3.7-Flash model card</a> · <a href="https://huggingface.co/stepfun-ai/Step-3.7-Flash/blob/5f6244077ac62e04eec3f320501ff8c2b293373a/config.json">固定config</a>；与3.5报告分开。</li>
+<li id="ref-59"><a href="https://arxiv.org/abs/2607.02770v1">Gemma 4 Technical Report</a> · <a href="../assets/research/2026-11-14/gemma4-2607.02770v1.pdf">PDF</a>。</li>
+<li id="ref-60"><a href="https://arxiv.org/abs/2603.15031v1">Attention Residuals</a> · Full / Block AttnRes。</li>
+<li id="ref-61"><a href="https://arxiv.org/abs/2512.24880v1">mHC: Manifold-Constrained Hyper-Connections</a> · 双随机约束及实现成本。</li>
+<li id="ref-62"><a href="https://arxiv.org/abs/2502.16982v1">Muon is Scalable for LLM Training</a> · 矩阵更新、scale和分布式实现。</li>
+<li id="ref-63"><a href="https://arxiv.org/abs/2507.20534v1">Kimi K2: Open Agentic Intelligence</a> · MuonClip。</li>
+<li id="ref-64"><a href="https://arxiv.org/abs/2502.05171v1">Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach</a> · Huginn。</li>
+<li id="ref-65"><a href="https://rocm.blogs.amd.com/artificial-intelligence/glm53flash-mi300x-vllm/README.html">Parallelism for Long-Context Serving: GLM-5.3-Flash on MI300X</a> · 2026-11-11，随机token服务测量。</li>
+<li id="ref-66"><a href="https://z.ai/blog/glm-5.3-flash">GLM-5.3-Flash: Frontier Intelligence, Flash Cost</a> · 2026-08-26。</li>
+<li id="ref-67"><a href="https://openai.com/index/introducing-gpt-6-1-sol/">Introducing GPT-6.1 Sol</a> · 官方披露，访问2026-11-14。</li>
+<li id="ref-68"><a href="https://www.anthropic.com/claude-opus-5-5-system-card">System Card: Claude Opus 5.5</a> · 2026-09-22。</li>
+<li id="ref-69"><a href="https://deepmind.google/models/model-cards/gemini-4-carbon/">Gemini 4 Carbon Model Card</a> · 2026-11-10。</li>
+<li id="ref-70"><a href="https://deepmind.google/models/model-cards/gemini-4-argon/">Gemini 4 Argon Model Card</a> · 2026-10-13。</li>
+<li id="ref-71"><a href="https://huggingface.co/Qwen/Qwen3.5-397B-A17B/blob/8472618112abcbd45acbcdc58436aff4233c23f7/README.md">Qwen3.5-397B-A17B model card</a> · <a href="https://huggingface.co/Qwen/Qwen3.5-397B-A17B/blob/8472618112abcbd45acbcdc58436aff4233c23f7/config.json">固定config</a>。</li>
 </ol>
 </section>
 </main>

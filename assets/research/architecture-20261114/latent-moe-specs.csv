@@ -1,0 +1,3 @@
+model,hidden,latent,routed_experts,top_k,dimension_ratio,sources
+Nemotron 3 Ultra,8192,2048,512,22,0.25,33;50;51
+Kimi K3 / K3.1,7168,3584,896,16,0.5,5;47

@@ -375,3 +375,59 @@ title检查失败。本次未改写或提交该线程的正文。为避免其影
 原共享目录中的其他未提交内容保留，不能把共享工作树称为干净。
 隔离快照同时排除另一线程的Harness目录摘要与保留记录更新，
 仅提交本专题关联链接；最终隔离迁移检查再次通过。
+
+## 2026-11-14 · 多家族架构与训练机制扩展
+
+范围：研究地图由五章扩为七章，追加第06章多家族模型架构与第07章训练机制；
+原五章顺序、URL及引用1–43保留。第03章增加新章节入口和跨路线比较。
+Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma分别分析，
+并记录GPT-6.1、Opus 5.5、Gemini 4的披露边界。
+目录、搜索、首页摘要与维护说明同步；当前71项来源（47篇论文 + 24项官方文档 / 配置）、
+15份原件。新增4张SVG、2份CSV和来源JSON，全部显式注册为公开资源。
+
+- `make OUTPUT=/tmp/my-blogs-architecture-build check`：70 HTML页 / 123公开文件，
+  链接、锚点、章节、目录、资源及前沿标记通过。
+- `python3 docs/verify-content-migration.py --require-clean`：23项原SHA相同、
+  18项已登记历史变化，299原始锚点、59标记保留；当前12本地集合、27章、6篇论文。
+  本次只新增和修订非原始基线的研究系列，未刷新旧文SHA。
+- `python3 scripts/architecture_figures.py`：4 SVG + 2 CSV + JSON；
+  连续生成7文件逐字节一致。15份原PDF长度与SHA均匹配，共51,576,539 bytes。
+- Chrome实际交互：18项布局（首页 / 博客 / 研究地图 / 03 / 06 / 07 ×
+  390 / 768 / 1440px）、44项入口 / 章节 / 搜索 / 键盘 / 图表 / 下载 / 资源检查、
+  5页无JavaScript阅读，共67项通过，无页面脚本错误。
+  12个新增家族 / 机制关键词可搜索，七章前后导航与固定引用可跳转；
+  图表加载、原始宽高比、放大页面、两份CSV下载及12个新增公开资源SHA均检查。
+
+实际预览 `http://127.0.0.1:8774/`；脚本及证据：
+`/tmp/my-blogs-browser-tests/architecture-check.js`、`architecture-report.json`、
+`architecture-index-1440.png`、`architecture-layers-1440.png`、
+`architecture-latent-1440.png`、`architecture-landscape-390.png`。
+已查看四张截图：现有Stein’s Notes纸色、字体和青绿风格保留，
+长表在容器内滚动，科研图不拉伸。
+
+测试脚本曾误用首页featured卡片选择器，实际入口位于普通研究地图卡片；
+无脚本测试亦曾只读取导读容器，现改为实际正文容器。
+两次都是验收假设修正，产品源码无需调整；通过项按名称去重，失败尝试不累计。
+迁移检查第一次与图表生成并行，因尚未生成资源而报missing source；
+生成完成后串行重跑通过，最终以完整产物验收。
+
+浏览器输入快照：commit `8fbf29df7cdb5878b854d62a305727bef6149287`，
+`dirty: true`，input digest
+`27859a146c91ac073b5058f6ca354ac48bbe1fc620b9f276c91b490700f44db6`。
+随后仅追加维护和验收记录；最终发布版本另由Actions与线上manifest确认。
+本章数字为来源规格、来源团队实验或明示推导；本站没有执行训练 / benchmark复现，
+不把kernel加速、latent维度比或层数量当作跨模型Agent性能排名。
+
+### 本次提交的隔离核对
+
+提交前发现共享工作区另一任务新增项目管理 / Profile材料和独立架构草稿，
+并与本次共用README和maintenance。独立工作树
+`/tmp/my-blogs-architecture-release-validation` 从 `8fbf29d` 建立，
+只装配本次架构文章、来源、资源与维护说明；共享文档仅保留本次明确的hunk。
+其他任务文件及其未提交文档变化保留在原工作区，不随本次发布。
+最终提交范围通过暂存差异核对，部署仍以Actions与线上版本为准。
+
+独立快照再次构建70页 / 123文件并通过迁移核对，input digest仍为
+`27859a146c91ac073b5058f6ca354ac48bbe1fc620b9f276c91b490700f44db6`。
+对122项manifest文件比较，仅HTML资源查询参数及博客data-catalog-version不同；
+归一化这些缓存版本后全部一致，正文、导航、数据和资源字节没有其他变化。

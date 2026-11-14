@@ -41,6 +41,18 @@
     "featured": ["2026-semantic-dlm-plus", "protagent", "2026-locality-aware-dlm", "cua-recovery"]
   },
   "assets": [
+    {"source": "assets/research/architecture-20261114/history-paths.svg", "url": "/assets/research/architecture-20261114/history-paths.svg"},
+    {"source": "assets/research/architecture-20261114/hybrid-layer-counts.svg", "url": "/assets/research/architecture-20261114/hybrid-layer-counts.svg"},
+    {"source": "assets/research/architecture-20261114/latent-moe-paths.svg", "url": "/assets/research/architecture-20261114/latent-moe-paths.svg"},
+    {"source": "assets/research/architecture-20261114/residual-designs.svg", "url": "/assets/research/architecture-20261114/residual-designs.svg"},
+    {"source": "assets/research/architecture-20261114/hybrid-layer-counts.csv", "url": "/assets/research/architecture-20261114/hybrid-layer-counts.csv"},
+    {"source": "assets/research/architecture-20261114/latent-moe-specs.csv", "url": "/assets/research/architecture-20261114/latent-moe-specs.csv"},
+    {"source": "assets/research/architecture-20261114/figure-data.json", "url": "/assets/research/architecture-20261114/figure-data.json"},
+    {"source": "assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf", "url": "/assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf"},
+    {"source": "assets/research/2026-11-14/gdn-2412.06464v3.pdf", "url": "/assets/research/2026-11-14/gdn-2412.06464v3.pdf"},
+    {"source": "assets/research/2026-11-14/latent-moe-2601.18089v1.pdf", "url": "/assets/research/2026-11-14/latent-moe-2601.18089v1.pdf"},
+    {"source": "assets/research/2026-11-14/glm5-2602.15763v1.pdf", "url": "/assets/research/2026-11-14/glm5-2602.15763v1.pdf"},
+    {"source": "assets/research/2026-11-14/gemma4-2607.02770v1.pdf", "url": "/assets/research/2026-11-14/gemma4-2607.02770v1.pdf"},
     {"source": "assets/research/agent-data-benchmarks/ced-path.svg", "url": "/assets/research/agent-data-benchmarks/ced-path.svg"},
     {"source": "assets/research/agent-data-benchmarks/csa2-layer-plan.svg", "url": "/assets/research/agent-data-benchmarks/csa2-layer-plan.svg"},
     {"source": "assets/research/agent-data-benchmarks/global-kv-bytes.svg", "url": "/assets/research/agent-data-benchmarks/global-kv-bytes.svg"},

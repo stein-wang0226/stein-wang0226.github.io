@@ -1,0 +1,6 @@
+model,local_type,local_count,global_type,global_count,sources
+Qwen3.8-Flash-Next,GDN,36,QSA,12,45;46
+Kimi K3.1 Pro,KDA,69,Gated DSA,24,47
+GLM-5.3-Flash,KDA,34,DSA/MLA,11,53
+MiMo-V2.6 Pro,SWA,60,GA,10,56
+MiMo-V2.6 Flash,SWA,39,GA,9,56

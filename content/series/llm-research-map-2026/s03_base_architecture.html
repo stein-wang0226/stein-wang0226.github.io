@@ -12,6 +12,7 @@
 <p class="eyebrow">03 · Base architecture · 2026-11-14</p>
 <h2>先固定版本：V4 → V4.1 → 1017</h2>
 <p class="lead">V4.1适合作为当前博客的架构贯通案例：长上下文、多轮工具返回和大量rollout，使prefill计算、KV驻留、跨层复用和缓存IO成为真实Agent成本的一部分。其核心变化是CED、CSA2与KV压缩；后训练同时加强数据生产和执行系统。<a href="index.html#ref-1">[1]</a></p>
+<div class="callout"><strong>架构专题已扩展：</strong>本章继续专门拆解DeepSeek。多家族比较见<a href="s06_architecture_landscape.html">第06章：Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma</a>；残差、LatentMoE、Muon、低精度和递归深度见<a href="s07_architecture_training.html">第07章</a>。</div>
 <table>
 <thead><tr><th>来源</th><th>本章采用的口径</th><th>不能混用什么</th></tr></thead>
 <tbody>
@@ -148,16 +149,19 @@ global total = (1.5 + 1) × 356 = 890 B/token</div>
 <p>来源：[1] §2.1、§2.4.1、§3.1.2–3.2.1、§4.2.1。学习上可以把“参数稀疏 / 状态压缩 / 跨层复用 / 存储放置”作为四个独立维度，逐一连接已有分布式训练章节。</p>
 </section>
 <section id="alternatives">
-<h2>另一条基模路线：Kimi K3与Nemotron</h2>
+<h2>与其他架构路线怎样对照</h2>
 <table>
 <thead><tr><th>路线</th><th>公开机制</th><th>适合补进博客的比较问题</th></tr></thead>
 <tbody>
 <tr><td>DeepSeek V4.1</td><td>CED、CSA2、FP4、bounded replay、Engram</td><td>跨层冗余和长上下文缓存怎样减少；短轮恢复成本是什么</td></tr>
 <tr><td>Kimi K3 <code>2607.24653v1</code></td><td>2.8T / 104B，KDA、Attention Residuals、Stable LatentMoE；896 routed experts中激活16</td><td>线性 / 混合状态、残差传递与latent专家改变哪类计算；总参数与通信怎样管理</td></tr>
 <tr><td>Nemotron 3 Ultra</td><td>Hybrid Mamba–Transformer / MoE、专家后训练与OPD</td><td>序列状态、Attention和专家整合如何共同影响长程Agent</td></tr>
+<tr><td>Qwen / GLM / MiniMax</td><td>GDN / KDA、QSA / DSA / MSA与不同残差设计</td><td>历史压成状态、缓存entry与query候选，分别改变哪一部分成本</td></tr>
+<tr><td>MiMo / Step / Gemma</td><td>SWA / global混合、drafter / MTP、多模态与KV sharing</td><td>小窗口、投机执行、端侧输入怎样服务真实任务</td></tr>
 </tbody>
 </table>
 <p>K3路线采用固定报告，不替代滚动页的K3.1当前版本快讯。以上都是独立工业例子；没有同硬件、精度、并发和工作负载的本地复现，不画跨模型speedup排名。<a href="index.html#ref-5">[5]</a> <a href="index.html#ref-33">[33]</a></p>
+<p>新增家族的版本、完整层数量和引用依据见<a href="s06_architecture_landscape.html#families">第06章模型表</a>；GR / AttnRes / mHC、LatentMoE及矩阵优化对照见<a href="s07_architecture_training.html">第07章</a>。这些机制各有实验口径，不能与本章890B/token拼成统一速度榜。</p>
 </section>
 <section id="experiments">
 <h2>待执行：把架构优势放进真实工作负载</h2>

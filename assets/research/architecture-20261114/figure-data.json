@@ -1,0 +1,133 @@
+{
+  "as_of": "2026-11-14",
+  "measurement": false,
+  "layer_counts": [
+    {
+      "model": "Qwen3.8-Flash-Next",
+      "local_type": "GDN",
+      "local_count": 36,
+      "global_type": "QSA",
+      "global_count": 12,
+      "sources": "45;46"
+    },
+    {
+      "model": "Kimi K3.1 Pro",
+      "local_type": "KDA",
+      "local_count": 69,
+      "global_type": "Gated DSA",
+      "global_count": 24,
+      "sources": "47"
+    },
+    {
+      "model": "GLM-5.3-Flash",
+      "local_type": "KDA",
+      "local_count": 34,
+      "global_type": "DSA/MLA",
+      "global_count": 11,
+      "sources": "53"
+    },
+    {
+      "model": "MiMo-V2.6 Pro",
+      "local_type": "SWA",
+      "local_count": 60,
+      "global_type": "GA",
+      "global_count": 10,
+      "sources": "56"
+    },
+    {
+      "model": "MiMo-V2.6 Flash",
+      "local_type": "SWA",
+      "local_count": 39,
+      "global_type": "GA",
+      "global_count": 9,
+      "sources": "56"
+    }
+  ],
+  "latent_moe": [
+    {
+      "model": "Nemotron 3 Ultra",
+      "hidden": 8192,
+      "latent": 2048,
+      "routed_experts": 512,
+      "top_k": 22,
+      "dimension_ratio": 0.25,
+      "sources": "33;50;51"
+    },
+    {
+      "model": "Kimi K3 / K3.1",
+      "hidden": 7168,
+      "latent": 3584,
+      "routed_experts": 896,
+      "top_k": 16,
+      "dimension_ratio": 0.5,
+      "sources": "5;47"
+    }
+  ],
+  "layer_scope": "Transformer block composition, not sequential layer plan, FLOPs or performance",
+  "payload_derivation": "r/d only when token assignment and bytes per value are fixed",
+  "payload_excludes": [
+    "metadata",
+    "shared experts",
+    "projections",
+    "padding",
+    "replication",
+    "network protocol",
+    "load imbalance"
+  ],
+  "sources": [
+    {
+      "number": 5,
+      "title": "Kimi K3: Open Frontier Intelligence",
+      "version": "2607.24653v1",
+      "canonical_url": "https://arxiv.org/abs/2607.24653v1"
+    },
+    {
+      "number": 33,
+      "title": "Nemotron 3 Ultra: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning",
+      "version": "2606.15007v1",
+      "canonical_url": "https://arxiv.org/abs/2606.15007v1"
+    },
+    {
+      "number": 45,
+      "title": "On the Design of Qwen3.8-Next Architecture: Evaluation, Efficiency, and Training Stability",
+      "version": "2608.30320v1",
+      "canonical_url": "https://arxiv.org/abs/2608.30320v1"
+    },
+    {
+      "number": 46,
+      "title": "Qwen/Qwen3.8-Flash-Next model card and config",
+      "version": "812d96e10a0dd82b69d749e68693698cf6c36daa",
+      "canonical_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next/blob/812d96e10a0dd82b69d749e68693698cf6c36daa/README.md"
+    },
+    {
+      "number": 47,
+      "title": "moonshotai/Kimi-K3.1-Pro model card and config",
+      "version": "d9e99b0792a5e93b78ea9bea62a68167e36ddd9e",
+      "canonical_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro/blob/d9e99b0792a5e93b78ea9bea62a68167e36ddd9e/README.md"
+    },
+    {
+      "number": 50,
+      "title": "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16 model card and config",
+      "version": "77df655d5e9f8362164ed14dd8b48f8bce657498",
+      "canonical_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16/blob/77df655d5e9f8362164ed14dd8b48f8bce657498/README.md"
+    },
+    {
+      "number": 51,
+      "title": "LatentMoE: Toward Optimal Accuracy per FLOP and Parameter in Mixture of Experts",
+      "version": "2601.18089v1",
+      "canonical_url": "https://arxiv.org/abs/2601.18089v1"
+    },
+    {
+      "number": 53,
+      "title": "zai-org/GLM-5.3-Flash model card and config",
+      "version": "46a050bec13002ad29ee795c16e61cf4fa3c4a9c",
+      "canonical_url": "https://huggingface.co/zai-org/GLM-5.3-Flash/blob/46a050bec13002ad29ee795c16e61cf4fa3c4a9c/README.md"
+    },
+    {
+      "number": 56,
+      "title": "MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement",
+      "version": "2610.11959v1",
+      "canonical_url": "https://arxiv.org/abs/2610.11959v1"
+    }
+  ]
+}

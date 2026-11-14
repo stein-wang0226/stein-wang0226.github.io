@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>前沿模型架构地图：Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step 与 Gemma</title>
+<meta name="description" content="截至2026-11-14，按历史状态、全局检索、层计划、MoE、多模态与服务成本拆解八个工业模型家族和Gemma端侧路线，区分固定报告、配置与闭源披露边界。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="overview">
+<p class="eyebrow">06 · Architecture landscape · 2026-11-14</p>
+<h2>从单个模型案例，扩展到不同团队的架构选择</h2>
+<p class="lead">DeepSeek V4.1是一个具体案例，不能覆盖整个基模方向。本章把Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step及Gemma接到同一组问题：<strong>历史保存成什么、哪些层访问全局、专家在哪个维度计算、多模态如何进入主干，以及这些选择怎样影响真实任务成本</strong>。</p>
+<div class="callout"><strong>先读三点：</strong>线性状态、压缩KV、稀疏检索、滑动窗口解决的是不同问题；“混合架构”必须展开到实际层计划；模型能力还取决于数据、训练和执行系统，不能从参数量或Attention名称推导榜单排名。</div>
+<p class="note">截止2026-11-14。公开规格以团队报告和固定模型配置为依据；没有同硬件、同精度、同工作负载的本站复现。第03章保留DeepSeek详细拆解，第07章解释残差、LatentMoE和优化器。七章引用共用<a href="index.html#sources">71项来源索引</a>。</p>
+<table>
+<thead><tr><th>比较对象</th><th>应回答的问题</th><th>需要单独计量</th></tr></thead>
+<tbody>
+<tr><td>序列状态</td><td>存每个token、压缩entry，还是固定大小的递归矩阵？</td><td>全局KV、局部窗口、递归状态、恢复与分支快照</td></tr>
+<tr><td>跨层与计算深度</td><td>复用KV、选择前层表示，还是重复执行共享权重？</td><td>投影、残差激活、层间通信、实际执行深度</td></tr>
+<tr><td>参数与专家</td><td>总量、每token激活量、查表容量怎样分开？</td><td>权重驻留、专家dispatch、负载偏斜和跨卡通信</td></tr>
+<tr><td>多模态与训练</td><td>输入由encoder编码还是直接projection？哪些矩阵用低精度？</td><td>视觉/音频token、encoder成本、GEMM、量化误差和验证质量</td></tr>
+</tbody>
+</table>
+</section>
+<section id="families">
+<h2>模型家族速查：版本、主干和证据分别登记</h2>
+<table>
+<thead><tr><th>家族 / 当前分析版本</th><th>公开参数口径</th><th>结构主线</th><th>本章证据</th></tr></thead>
+<tbody>
+<tr><td><a href="s03_base_architecture.html">DeepSeek V4.1-Flash</a></td><td>552B主干 + 196B Engram；prefill / decode为8B / 16B active</td><td>CED、CSA2跨层稀疏检索、FP4 KV、bounded replay、mHC</td><td>固定v1完整报告<a href="index.html#ref-1">[1]</a>；1017能力更新另计</td></tr>
+<tr><td><a href="#qwen">Qwen3.8-Flash-Next / Qwen3.5</a></td><td>3.8为125B主干 + 51B n-gram表、6B active；3.5代表款397B / 17B</td><td>GDN + 周期global；3.8加入QSA、4路GR及查表容量</td><td>发布、报告及两版固定config <a href="index.html#ref-44">[44–46]</a> <a href="index.html#ref-71">[71]</a></td></tr>
+<tr><td><a href="#kimi">Kimi K3 / K3.1 Pro</a></td><td>2.8T总量 / 104B active</td><td>KDA + Gated MLA → Gated DSA；AttnRes、Stable LatentMoE</td><td>K3完整报告<a href="index.html#ref-5">[5]</a>；K3.1固定card / config <a href="index.html#ref-47">[47]</a></td></tr>
+<tr><td><a href="#nemotron">Nemotron 3 Ultra</a></td><td>550B总量 / 55B active</td><td>Mamba–Transformer–MoE混合，LatentMoE、MTP、NVFP4训练</td><td>完整报告及固定config <a href="index.html#ref-33">[33]</a> <a href="index.html#ref-50">[50]</a></td></tr>
+<tr><td><a href="#glm">GLM-5 → GLM-5.3-Flash</a></td><td>5.3为320B / 18B</td><td>KDA + DSA / MLA、IndexPool4、mHC</td><td>5的报告与5.3配置分开 <a href="index.html#ref-52">[52–53]</a>；独立服务测量<a href="index.html#ref-65">[65]</a></td></tr>
+<tr><td><a href="#minimax">MiniMax M3.1-Flash</a></td><td>428B / 23B；1M context</td><td>MSA按GQA group选择历史block；前三Attention层也转MSA</td><td>MSA v2论文与M3.1固定配置<a href="index.html#ref-54">[54–55]</a></td></tr>
+<tr><td><a href="#mimo">MiMo-V2.6 Pro / Flash</a></td><td>Pro 1.02T / 42B；Flash 310B / 15B</td><td>SWA + GA、无shared专家、diffusion drafter、Muown、MXFP4 QAT</td><td>V2.6固定技术报告<a href="index.html#ref-56">[56]</a></td></tr>
+<tr><td><a href="#step">Step 3.5 / 3.7 Flash</a></td><td>3.5为196B / 11B；3.7约198B含196B文本 + 1.8B视觉</td><td>SWA / Full、细粒度MoE、MTP；3.7扩展视觉和上下文</td><td>3.5报告与3.7配置分开<a href="index.html#ref-57">[57–58]</a></td></tr>
+<tr><td><a href="#gemma">Gemma 4系列</a></td><td>E2B / E4B、12B、26B-A4B、31B各有独立结构</td><td>Local / Global、KV sharing；12B为encoder-free多模态</td><td>完整技术报告<a href="index.html#ref-59">[59]</a></td></tr>
+</tbody>
+</table>
+<p>这是结构与证据地图，表中active不是统一FLOPs单位，也不是部署显存。DeepSeek的查表参数、Qwen的host n-gram表、Step的视觉参数均单列；Nemotron的108个子模块不与Transformer block数直接横比。</p>
+</section>
+<section id="state">
+<h2>先理解四条历史访问路径</h2>
+<figure>
+<object class="research-chart wide" type="image/svg+xml" data="../assets/research/architecture-20261114/history-paths.svg" aria-label="逐token KV、递归状态、稀疏检索与局部全局混合四条路径"><p>逐token保存可直接访问历史；GDN / KDA / Mamba更新有限递归状态；QSA / DSA / MSA筛选缓存候选；SWA与global层交替使用局部和全局历史。混合模型可以同时采用多条路径。</p></object>
+<figcaption>机制图来自[1]、[45]、[48–49]、[33]、[54]、[56–59]的综合整理。位置、矩阵和箭头表示对象关系，没有模拟性能数据。MLA压缩每token的表示；递归状态压缩累积历史；稀疏Attention减少本次读取的候选，这三种“压缩”需分开。</figcaption>
+<p class="figure-links"><a href="../assets/research/architecture-20261114/history-paths.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
+</figure>
+<p>稠密global Attention通常保存随长度N增长的KV；MLA改变每token的保存维度。GDN / KDA维护有限矩阵状态，递归decode状态大小不随N逐token增长，但训练仍要处理整条序列，混合global层仍有KV。DSA / QSA / MSA保留可检索历史，只让query读取候选；indexer、选block和gather本身仍有成本。SWA只直接读取窗口，跨层传播和global层决定远距离信息怎样进入结果。</p>
+<h3>GDN → KDA：从整体遗忘到按通道控制</h3>
+<p>采用Kimi Linear的张量方向，<code>S ∈ R^(d_k×d_v)</code>，输出为<code>Sᵀq</code>。普通线性累积把<code>kvᵀ</code>加入状态；delta rule用当前key所预测的value误差定向更新。GDN加入标量遗忘α；KDA把它扩展为按key通道的对角门控。<a href="index.html#ref-49">[49]</a> <a href="index.html#ref-48">[48] §2–3</a></p>
+<div class="equation" role="math" aria-label="GDN和KDA的递归状态公式">GDN: S_t = α_t (I − β_t k_t k_tᵀ) S_(t−1) + β_t k_t v_tᵀ
+KDA: S_t = (I − β_t k_t k_tᵀ) Diag(α_t) S_(t−1) + β_t k_t v_tᵀ
+read: o_t = S_tᵀ q_t
+state shape per head: d_k × d_v; gate and rank-one update are ordered</div>
+<p>对角门控与rank-one矩阵一般不能交换顺序。有限状态也不能无损保留任意历史；论文与工业模型保留global层以加强直接检索。Kimi K3另把log-decay下界设为−5，并改进输出gate，使chunkwise计算更适合Tensor Core；这是特定数值范围设计，不意味着KDA变成softmax Attention。<a href="index.html#ref-5">[5] §2.1</a></p>
+<h3>实际层数量：不要用一个“3:1”替代全部型号</h3>
+<figure>
+<object class="research-chart layers" type="image/svg+xml" data="../assets/research/architecture-20261114/hybrid-layer-counts.svg" aria-label="五个公开模型的递归或局部层与全局层数量"><p>Qwen3.8为36 GDN + 12 QSA；Kimi K3.1为69 KDA + 24 Gated DSA；GLM-5.3为34 KDA + 11 DSA/MLA；MiMo Pro为60 SWA + 10 GA，Flash为39 SWA + 9 GA。</p></object>
+<figcaption>按报告 / 固定配置计数，分别标注类型；横轴是block数量，不是FLOPs或速度。图仅展示组成，不表示实际层顺序。MiMo Pro与Flash的完整层表不同，不能统一写成5:1或7:1。来源：[45–47]、[53]、[56]。</figcaption>
+<p class="figure-links"><a href="../assets/research/architecture-20261114/hybrid-layer-counts.svg" target="_blank" rel="noopener">放大查看 / SVG</a><a href="../assets/research/architecture-20261114/hybrid-layer-counts.csv" download>层数量 CSV</a><a href="../assets/research/architecture-20261114/figure-data.json">图表数据与口径 JSON</a></p>
+</figure>
+</section>
+<section id="qwen">
+<h2>Qwen：混合状态、稀疏global与主干外的容量</h2>
+<p>Qwen3.5-397B-A17B固定模型卡已经采用Gated DeltaNet与global Attention混合。Qwen3.8-Flash-Next进一步把问题拆成三部分：36个GDN层处理递归状态，12个global槽保留检索；CPT阶段把原full Attention替换为<strong>Qwen Sparse Attention（QSA）</strong>；用4路Gated Residual和另51B n-gram embedding表增加信息传递与条件容量。<a href="index.html#ref-71">[71]</a> <a href="index.html#ref-44">[44–46]</a></p>
+<table>
+<thead><tr><th>机制</th><th>来源描述</th><th>理解时的边界</th></tr></thead>
+<tbody>
+<tr><td>GDN + global</td><td>48层：36 GDN、12 global槽</td><td>递归层没有逐token global KV，不代表整个模型没有全局缓存</td></tr>
+<tr><td>QSA</td><td>压缩比4；indexer budget 2048；在CPT引入</td><td>预算和压缩比不能直接换算成4倍端到端速度</td></tr>
+<tr><td>Gated Residual</td><td>残差扩为4路，elementwise gate读取</td><td>与mHC双随机混合、AttnRes深度选择不是相同操作</td></tr>
+<tr><td>N-gram表</td><td>125B主模型之外51B，放在accelerator外</td><td>容量与访问带宽分别计；不能只按125B估总参数存储</td></tr>
+</tbody>
+</table>
+<p>固定config仍用<code>full_attention</code>字符串标记global槽。读源码时必须继续追到实际模块与kernel，不能据此认定发布模型执行稠密Attention。完整报告还强调训练稳定性与效率消融；指标属于其设定的模型、预算和负载，不能移到别的家族。官方固定PDF封面日期2026-08-26，arXiv v1提交2026-08-31，两者分别登记。<a href="index.html#ref-45">[45]</a> <a href="index.html#ref-46">[46]</a></p>
+<p><strong>适合学习的连接：</strong>先用<a href="../transformer-decoder-flow.html">Decoder张量流</a>标出global KV，再替换一部分层为GDN；最后考虑GR和查表容量如何影响activation traffic、通信与参数放置。</p>
+</section>
+<section id="kimi">
+<h2>Kimi：KDA、深度选择与Stable LatentMoE共同扩展</h2>
+<p>Kimi K3报告公开2.8T总参数、104B active、原生视觉及1M上下文。它并非只换Attention：KDA负责高效序列混合，周期Gated MLA提供global访问，Attention Residuals选择前层表示，Stable LatentMoE把专家计算放进更窄的latent空间。<a href="index.html#ref-5">[5]</a></p>
+<p>K3.1 Pro固定配置列出93层，即<strong>69 KDA + 24 Gated DSA</strong>；模型卡说明从K3的full-attention Gated MLA层改为Gated DSA。因此K3完整报告能解释基础机制，但K3.1当前global路径应引用新card/config。不能把K3实验表直接重命名为K3.1结果。<a href="index.html#ref-47">[47]</a></p>
+<table>
+<thead><tr><th>结构</th><th>具体公开设计</th><th>要追问什么</th></tr></thead>
+<tbody>
+<tr><td>KDA</td><td>通道遗忘、lower-bounded log-decay、输出gate；与chunk算法共同设计</td><td>状态恢复、多分支rollout、长历史检索怎样管理？</td></tr>
+<tr><td>AttnRes</td><td>沿深度选择此前表示，而非固定累加全部残差</td><td>保存哪些block summary？选择与跨pipeline访问成本是多少？</td></tr>
+<tr><td>Stable LatentMoE</td><td>hidden 7168 → latent 3584；896 routed、top16、2 shared；RMSNorm、SiTU-GLU、Quantile Balancing</td><td>通信维度和专家数同时变化，质量与负载是否匹配？</td></tr>
+<tr><td>训练优化</td><td>K3 Per-head Muon；K2使用MuonClip</td><td>按head拆矩阵与QK clipping是不同措施，不能合并成一个名称</td></tr>
+</tbody>
+</table>
+<p>论文中“scaling efficiency”包含架构和配方的综合作用；不能称为KDA单模块的速度倍数。进一步推导见<a href="s07_architecture_training.html#latent-moe">LatentMoE</a>和<a href="s07_architecture_training.html#muon">Muon</a>。</p>
+</section>
+<section id="nemotron">
+<h2>Nemotron：混合子模块、LatentMoE与训练稳定性</h2>
+<p>Nemotron 3 Ultra的550B / 55B主干混合Mamba、Attention和MoE。报告/配置中的<strong>108</strong>是这几类子模块的总计，不是108个与Kimi相同的Transformer block。LatentMoE把8192维表示下投影到2048，512个routed experts中选择22个，从专家内部计算与dispatch宽度两个方向调整成本。<a href="index.html#ref-33">[33] §2</a> <a href="index.html#ref-50">[50]</a> <a href="index.html#ref-51">[51]</a></p>
+<p>报告的NVFP4应用于fprop / dgrad / wgrad中的大矩阵乘，保留部分高精度对象。更值得记录的反例是§2.7披露的后期训练不稳定：切换BF16并没有解决问题。因此“低精度训练成功”需要连同失败阶段、保护项和恢复策略阅读，不能推导全模型FP4或认为切回高精度总能恢复。<a href="index.html#ref-33">[33] §2.7</a></p>
+<p>MTP也要分训练与发布：预训练使用两个共享权重MTP头，released config为一个共享模块。支持1M与默认启用1M同样不同；固定config默认262144，模型卡提供更长上下文的额外设置。部署对照必须记录实际启用值。<a href="index.html#ref-50">[50]</a></p>
+<p><a href="../assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf">下载完整报告</a>。架构之外，专家后训练与OPD怎样整合能力，可接到<a href="../llm-training-lifecycle/s03_sft_rft.html">SFT / RFT章节</a>；不能把后训练增益全归因于Mamba。</p>
+</section>
+<section id="glm">
+<h2>GLM：旧报告、新配置与独立服务测量分层阅读</h2>
+<p>GLM-5的技术报告以Agentic Engineering为目标，公开DSA、训练与长程Agent系统。GLM-5.3-Flash进一步采用KDA与DSA / MLA混合：320B / 18B，45层中34 KDA、11 global层；FFN侧是3 dense + 42 MoE，288 routed、top8、1 shared，并使用IndexPool4和mHC。<a href="index.html#ref-52">[52]</a> <a href="index.html#ref-53">[53]</a> <a href="index.html#ref-66">[66]</a></p>
+<p>Attention类型与FFN类型是两张层表。原GLM-5报告不能证明5.3每个新增结构；新模型卡/config负责当前规格，旧论文负责技术前序。</p>
+<h3>AMD服务测量：能支持哪类结论？</h3>
+<table>
+<thead><tr><th>固定测试条件</th><th>DP8 + EP8</th><th>TP8</th><th>用途与限制</th></tr></thead>
+<tbody>
+<tr><td>8×MI300X；vLLM 0.31.0；96k输入 / 32k输出；并发256</td><td>4719 output tok/s</td><td>2317 output tok/s</td><td>AMD 2026-11-11的随机token服务测试；支持该配置的并行策略比较，不能当作Agent成功率或普遍速度比</td></tr>
+</tbody>
+</table>
+<p>这是与模型团队不同来源的系统测量，补充了配置核对，但测试输入、并发和输出分布决定结果。真实Agent有工具等待、短轮、prefix复用和不同完成时间，需重新测量。<a href="index.html#ref-65">[65]</a></p>
+</section>
+<section id="minimax">
+<h2>MiniMax：按GQA group选block的MSA</h2>
+<p>MiniMax Sparse Attention把长历史划分成block，让<strong>不同GQA group分别选择相关block</strong>再执行Attention。它保留可被query检索的历史；不是KDA那种有限递归状态，也不等同MLA的latent KV表示。<a href="index.html#ref-54">[54] v2</a></p>
+<p>M3.1-Flash公开428B / 23B、1M context，并将前三个full Attention层改为MSA；其MoE层分布仍保留前三个dense FFN。因此“前三层已经稀疏”需说明是在Attention侧，不能写成这三层FFN也变成MoE。<a href="index.html#ref-55">[55]</a></p>
+<div class="callout caution"><strong>加速数字的对象：</strong>MSA论文的109B、3T训练对照，以及H800上1M长度kernel的14.2× / 7.6×，不是428B M3.1完整Agent任务的端到端加速。论文的kernel、模型实验和新发布模型要分别标明。</div>
+<p>值得展开的研究问题是group-specific候选是否减少共享检索的损失、选择器能否找到远距离关键信息，以及block gather是否适合实际硬件。比较时同时测候选召回、长上下文质量、indexer和Attention时间；没有这些量，单个稀疏率难以解释成本。</p>
+</section>
+<section id="mimo">
+<h2>MiMo：局部 / 全局主干与扩散drafter共同设计</h2>
+<p>MiMo-V2.6 Pro为1.02T / 42B、70层（60 SWA + 10 GA），Flash为310B / 15B、48层（39 SWA + 9 GA）；两者窗口128、无shared experts。小窗口降低局部历史访问，global层补充远距离访问，但Pro / Flash的完整层表不同。<a href="index.html#ref-56">[56]</a></p>
+<p>其diffusion drafter有5层，在anchor之后预测7个token、窗口1024。这里的drafter是主模型之外的投机组件，不能把“7个token并行预测”写成主模型不再自回归，也不能省略验证成本。它与本站DFlash / DSpark / AdaFlash综述形成直接连接。<a href="s04_inference_diffusion.html">第04章：投机验证与任务成本</a></p>
+<p>训练阶段同样分工：预训练AdamW；mid-training将hidden矩阵切到Muown，embedding、head、router继续AdamW；MXFP4 QAT在mid-training引入。权重、激活、梯度及KV的精度是不同对象。公开蒸馏模型与RL代码也不等于Pro / Flash所有权重全部开放。<a href="index.html#ref-56">[56]</a></p>
+<p>这一家族特别适合研究<strong>同一主模型固定时，drafter、QAT与服务并发怎样改变接受长度和总成功成本</strong>；如果同时更换主干和后训练checkpoint，就只能评估系统整体。</p>
+</section>
+<section id="step">
+<h2>Step：局部Attention、MTP与矩阵更新的数值细节</h2>
+<p>Step 3.5 Flash报告196B总量、11B active，SWA / Full为3:1、窗口512，并使用3个MTP模块。Step 3.7 Flash固定模型卡则给出约198B，包含196B文本与1.8B视觉、45层、256K上下文。<a href="index.html#ref-57">[57]</a> <a href="index.html#ref-58">[58]</a></p>
+<p>应同时保留“3.5训练报告”和“3.7当前配置”，不能用前者冒充后者单独完整报告。视觉分支还增加输入编码和token成本，仅比较文本active不足以解释GUI任务效率。</p>
+<p>3.5报告给出实用的数值反例：Polar Express迭代在BF16中出现罕见outlier，把<strong>该迭代</strong>改到FP16后不再出现。范围应限定到这一正交化近似及其测试，不推广成所有模型矩阵采用FP16。Muon相关更新如何拆矩阵、选精度和分布式执行，见<a href="s07_architecture_training.html#muon">第07章</a>。</p>
+</section>
+<section id="gemma">
+<h2>Gemma 4：端侧、多模态和KV复用也是架构前沿</h2>
+<p>架构研究不能只围绕数百B或万亿参数。Gemma 4把E2B / E4B、12B、26B-A4B、31B放在不同部署目标下，采用Local / Global混合、KV sharing等设计，但<strong>型号例外很多</strong>，有效参数、总参数和MoE active也不能混作一个数。<a href="index.html#ref-59">[59]</a></p>
+<table>
+<thead><tr><th>设计</th><th>报告说明</th><th>学习与比较问题</th></tr></thead>
+<tbody>
+<tr><td>Local / Global</td><td>4:1或5:1取决于型号</td><td>局部窗口、global层数和目标上下文必须一起记录</td></tr>
+<tr><td>KV sharing / global K=V</td><td>减少部分重复状态；并非全部型号完全相同</td><td>哪些层生成、哪些层复用？是否改变projection或质量？</td></tr>
+<tr><td>12B encoder-free</td><td>48×48×3图像patch、40ms音频块通过projection进入LLM</td><td>省掉独立encoder后，主干承担什么输入建模成本？</td></tr>
+<tr><td>端侧部署</td><td>家族包含不同有效容量与结构</td><td>显存、延迟、能耗、离线可用性与质量共同决定选择</td></tr>
+</tbody>
+</table>
+<p>“Gemma 4都没有encoder”是错误概括；encoder-free具体指12B路线。对GUI或移动Agent，截图与音频输入频率、token预算及恢复能力，可能比单次文本吞吐更影响使用体验。<a href="../assets/research/2026-11-14/gemma4-2607.02770v1.pdf">下载技术报告</a>。</p>
+</section>
+<section id="closed">
+<h2>闭源前沿：记录披露内容，保留未知项</h2>
+<table>
+<thead><tr><th>公开版本</th><th>可引用材料</th><th>本章保留的边界</th></tr></thead>
+<tbody>
+<tr><td>GPT-6.1 Sol</td><td>OpenAI官方发布<a href="index.html#ref-67">[67]</a></td><td>能力与产品接口可记录；未公开的层计划、专家数、参数量不补猜测</td></tr>
+<tr><td>Claude Opus 5.5</td><td>Anthropic system card<a href="index.html#ref-68">[68]</a></td><td>评测、安全与部署说明不能替代完整架构技术报告</td></tr>
+<tr><td>Gemini 4 Argon / Carbon</td><td>官方model cards<a href="index.html#ref-69">[69–70]</a></td><td>Argon明确披露稀疏MoE Transformer，Carbon基于Argon；更细层表、专家数和缓存细节仍未披露</td></tr>
+</tbody>
+</table>
+<p>开源Agent harness中的notes、history、memory或“重新开始一个窗口”，不构成闭源模型使用Loop Transformer的证据。跨会话记忆属于执行系统；共享权重递归深度属于模型计算，见<a href="s07_architecture_training.html#depth">下一章</a>与<a href="../agent-harness-guide.html#codex-context">Harness上下文管理</a>。</p>
+</section>
+<section id="reading">
+<h2>阅读和实验怎样形成可复用的结论</h2>
+<p>先按<strong>具体机制</strong>读原论文，再按<strong>完整模型</strong>读配方，最后按<strong>执行系统</strong>看工作负载。推荐顺序：GDN / Kimi Linear → Qwen与Kimi → LatentMoE / AttnRes / mHC → Nemotron与GLM → MSA、MiMo、Step、Gemma → DeepSeek专章回看缓存所有权。</p>
+<table>
+<thead><tr><th>待执行对照</th><th>固定条件</th><th>应交付的结果</th></tr></thead>
+<tbody>
+<tr><td>历史访问</td><td>同规模 / 数据 / token预算；改变局部、递归与global层计划</td><td>检索与真实任务质量、state / KV内存、prefill / decode时间</td></tr>
+<tr><td>多轮Agent服务</td><td>同任务、harness、工具、checkpoint和生成预算；冷 / 热prefix、低 / 高并发</td><td>成功率、P50/P95、prefix命中、state恢复、工具与队列时间、成功成本</td></tr>
+<tr><td>MoE部署</td><td>同权重 / 精度 / 服务实现；改变TP / EP / DP及token分布</td><td>dispatch通信、专家负载、尾部延迟、显存与实际任务分数</td></tr>
+<tr><td>端侧多模态</td><td>同截图 / 音频频率与任务；记录输入处理及token规则</td><td>encoder / 主干时间、能耗、峰值内存、恢复与完成质量</td></tr>
+</tbody>
+</table>
+<p class="note">这些实验尚未执行。来源团队的规格、单团队消融、独立服务测量和本章综合分析是四种不同证据。已保存原件、固定版本和许可见<a href="index.html#archive">来源归档</a>；机制公式和训练工程见<a href="s07_architecture_training.html">第07章</a>。</p>
+</section>
+</main>
+</body>
+</html>

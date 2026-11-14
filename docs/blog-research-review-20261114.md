@@ -118,4 +118,18 @@ DeepSeek 报告从官方 Hugging Face 仓库 revision `314113f8a7dadb388215396ba
 
 六个入口在 `content/catalog.json` 登记，五章按order 1–5生成前后章导航，并跨Agent、RL、LLM基础与扩散分类参与章节搜索。首页与博客推荐使用目录数据生成；相关旧文通过目录related接入新专题，既有正文、URL、科研公式与AUTO标记未修改。原迁移基线及差异清单未重建。
 
+## 后续扩展：多家族架构与训练机制
+
+用户指出架构部分不应主要覆盖DeepSeek，因此追加第06、07章；原五章地址、顺序和引用1–43保留。
+第06章分析Qwen3.8 / 3.5、Kimi K3 / K3.1、Nemotron 3 Ultra、
+GLM-5 / 5.3、MiniMax M3.1 / MSA、MiMo-V2.6、Step 3.5 / 3.7和Gemma 4，
+并记录GPT-6.1、Opus 5.5、Gemini 4的公开披露边界。
+第07章解释AttnRes / mHC / GR、Stable LatentMoE、Muon及其参数与数值分工、
+低精度对象、Huginn递归深度及与Agentic RL的系统联系。
+
+当前共七章、71项来源（47篇论文 / 24项官方文档及固定模型配置）、15份原件。
+新增4张SVG与2份规格CSV、来源JSON；数字明示为报告规格或推导，训练与服务实验仍待执行。
+来源版本、关键修订和许可依据见 `docs/architecture-research-20261114.md`；
+实际检查与发布状态另见 `docs/validation.md`。
+
 13项公开归档资源在 `content/site.json` 显式登记：10份PDF、来源JSON、许可说明TXT及完整MIT notice。公开署名与转载说明见 `assets/research/2026-11-14/NOTICE.txt`，按原文校正归档论文的完整作者姓名，去除机构编号和脚注。校验及发布状态另记 `docs/validation.md`，只采用本轮实际结果。
