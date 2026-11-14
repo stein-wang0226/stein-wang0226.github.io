@@ -90,3 +90,10 @@ Pages Source 应设置为 GitHub Actions；部署作业依赖构建与校验成�
 
 `mllm-interview-notes`、`llm-study-notes` 仍是独立子站。
 旧学术主题及示例留在原仓库，MIT 许可保留于 `licenses/academic-pages-MIT.txt`。
+
+## 后训练专题
+
+`content/series/llm-posttraining/` 维护六章 SFT / RL / OPD、环境信用、
+异步框架与任务案例；公开入口 `/llm-posttraining/`。来源与数学核对见
+`docs/posttraining-research-20261114.md`，图数据和教学契约在
+`assets/research/posttraining-20261114/`。实验矩阵标为待执行，不表示模型训练已复现。

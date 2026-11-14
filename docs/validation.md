@@ -1,5 +1,24 @@
 # 本地整理验收记录
 
+## 2026-11-14 · 后训练六章专题
+
+入口 `/llm-posttraining/`。66项原始来源、六章正文、两张解析/报告图与可下载数据，
+三类教学任务、轨迹契约与E0–E6待执行矩阵；旧训练系列与研究地图增加深入链接。
+来源位置和边界见 `docs/posttraining-research-20261114.md`。
+
+独立发布快照基于已提交主站组装，不包含同目录并行开发文件。实际通过：
+
+- `make OUTPUT=/tmp/my-blogs-posttraining-build check`：77页、138项公开文件。
+- 迁移保留：23项原始SHA一致、18项既有有意变化；299个原锚点、59个原标记保留。
+- 19项数学/数据核验：reverse-KL有限差分、Soft SAPO、GRPO解析概率、GAR、比例求和。
+- 390/768/1440宽度27项布局、34项实际交互、7页无JS阅读；无pageerror。
+- 两张图的手机放大入口实际打开SVG；五种下载逐字节哈希一致。
+
+已查看桌面OPD及手机算力图截图；保持Stein’s Notes配色，图表比例不变。
+临时浏览器证据 `/tmp/my-blogs-browser-tests/posttraining-report.json`。
+这些验收不包含GPU训练、科学实验或论文性能复现；案例均为design_only。
+发布完成状态由Actions与线上build-info记录另行核对。
+
 2026-11-14 首次本地验收完成。维护仓库为 `site/`，当时内容已具备本地发布准备条件；
 首次验收时尚未提交、推送或远端部署。后续发布状态以 Actions 与线上 `build-info.json`
 为准。本记录不将阅读和迁移检查等同于科研事实全面核验。

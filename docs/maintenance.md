@@ -81,3 +81,10 @@ GitHub Profile 的可维护介绍稿和字段建议位于 `docs/github-profile/`
 `content/series/dlm-survey/generate.py` 仅用于指定原始单页的新目录导入；不用于覆盖现有 14 章。
 `docs/content-migration-manifest.json` 是整理前不可重建的迁移基线。
 当前整理的有意内容差异单独记录；不要重新生成原始基线掩盖变化。
+
+## 后训练资料维护
+
+`llm-posttraining` 的六章按监督、RL目标、OPD、奖励环境、异步系统、任务案例分工。
+新报告更新对应机制和来源，不在训练全链路重复写长篇正文；旧章保留深入链接。
+修改参考列表时同步公开 `posttraining-20261114/sources.json` 的编号、版本和使用章节；
+案例与实验未运行时保留 `design_only` 和空结果，不填写预期值当作实测。

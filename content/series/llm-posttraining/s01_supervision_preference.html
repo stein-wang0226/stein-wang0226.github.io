@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>01 · SFT、两种 RFT、偏好优化与工业链路</title>
+<meta name="description" content="分析监督目标、恢复轨迹、拒绝采样与强化 RFT、DPO/SimPO/ORPO/KTO，结合代码修复及最新工业后训练配方。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="taxonomy">
+<h2>先分开四条轴：数据、反馈、目标与参数更新方式</h2>
+<p class="lead">“有好答案”不自动决定做哪种后训练。完整动作示范可以做 SFT；同题好坏候选可以做偏好优化；当前策略和 verifier 可以构成 RL；教师条件分布可以构成 OPD。LoRA、全参数和量化则回答更新哪些参数、如何存储，属于另一条轴。</p>
+<table>
+<thead><tr><th>方法</th><th>状态与反馈来源</th><th>目标</th><th>主要适用条件</th></tr></thead>
+<tbody>
+<tr><td>SFT</td><td>示范的历史与目标动作</td><td>masked cross-entropy</td><td>协议和示范可信，覆盖足够广</td></tr>
+<tr><td>Rejection sampling Fine-Tuning</td><td>先搜索、验证、留下候选</td><td>筛选数据上的 SFT</td><td>能验证，且能采到可靠解法</td></tr>
+<tr><td>DPO 等偏好方法</td><td>成对或好/坏标签</td><td>相对偏好目标</td><td>标签一致，候选与部署状态相关</td></tr>
+<tr><td>Reinforcement Fine-Tuning</td><td>在线策略采样与 grader</td><td>reward 驱动策略更新</td><td>任务可探索，grader 可靠</td></tr>
+<tr><td>OPD</td><td>学生状态与教师分布</td><td>条件分布差异</td><td>教师信号、状态支持与预算可用</td></tr>
+</tbody>
+</table>
+<div class="callout"><strong>RFT 必须写全名。</strong>拒绝采样微调先筛数据再监督；OpenAI 的 Reinforcement Fine-Tuning 指 grader 驱动的强化训练。不能因为两者都会“采样和评分”，就把后续优化目标混为一谈。<a href="index.html#ref-17">[17]</a> <a href="index.html#ref-18">[18]</a></div>
+</section>
+<section id="sft-objective">
+<h2>SFT：目标 token、条件历史和样本权重</h2>
+<p>令 <code>hᵢ</code> 是预测第 i 个 token 时的历史，<code>mᵢ</code> 是目标 mask。对 Agent，通常学习 assistant 的动作、参数、解释和结束标记；system / user / tool 内容作为条件历史。具体角色边界由真实 chat template 决定。</p>
+<div class="equation" role="math" aria-label="监督损失">L_token = − Σₙ Σᵢ mₙᵢ log πθ(aₙᵢ | hₙᵢ) / Σₙ Σᵢ mₙᵢ
+L_episode = − (1/N) Σₙ [Σᵢ mₙᵢ log πθ(aₙᵢ | hₙᵢ) / Σᵢ mₙᵢ]</div>
+<p>两个分母并不等价。token-mean 使较长的目标轨迹拥有更多总权重；episode-mean 给每条 episode 相同权重，单 token 的权重随长度下降。长恢复链路与短成功路径混合时，要报告实际采用哪一种，不能只写“assistant-only SFT”。</p>
+<figure><div class="mask-grid" aria-label="工具调用训练片段与监督目标">
+<div><b>任务与 schema · mask 0</b>“修复空输入崩溃”；工具说明、文件内容、约束。</div>
+<div class="target"><b>Assistant · mask 1</b>读取实现、运行测试、生成补丁和最终回复。</div>
+<div><b>工具观察 · mask 0</b>真实 traceback、diff、测试结果，保留作后续条件。</div>
+</div><figcaption>mask=0 屏蔽该位置的预测损失，工具观察仍通过 attention 影响后续动作；不等于删除观察或切断全部梯度。</figcaption></figure>
+<p>离线训练使用示范前缀，即 teacher forcing；推理使用学生自己的动作历史。学生一个错误工具参数就可能进入示范没有覆盖的状态，随后持续偏离。这是补恢复数据、在线 RL 和 OPD 的共同动机，但三者提供的目标不同。</p>
+<h3>实现检查：模板、打包和截断</h3>
+<p>TRL 的 <code>assistant_only_loss</code> 需要模板提供可识别的 generation tags；开关本身不能纠正模板错误。Packing 还要检查不同样本 attention 的隔离语义，不能仅看 padding 节省。截断若切掉最后动作或结束标记，会把“未完成”训练成常见模式。<a href="index.html#ref-49">[49]</a></p>
+<pre><code># 教学检查，不是任意模型可直接运行的完整 recipe
+decode(input_ids)                     # 看清真实模板与工具调用
+decode(input_ids[labels != -100])      # 看清实际学习的目标
+assert target_contains_stop_boundary
+assert tool_observation_is_context
+check_packing_attention_boundaries()
+audit_truncation_by_role_and_task_family()</code></pre>
+<p>同时保存 tokenizer / template 版本、输入 token 和有效目标 token。train loss 降低只说明对这些目标拟合更好，不能替代未见任务、错误恢复和最终产物评测。</p>
+</section>
+<section id="recovery">
+<h2>恢复训练：保留学生失败历史，监督可靠纠正</h2>
+<p>教学任务：函数 <code>mean([])</code> 应抛出明确的 <code>ValueError</code>，非空列表保持原行为。学生第一次只在调用方捕获除零，工具回报单元测试仍失败；教师读真实错误后在函数入口处理空输入，再运行回归。训练要区分“失败状态的上下文价值”和“失败动作是否值得模仿”。</p>
+<table>
+<thead><tr><th>轨迹段</th><th>教学 mask</th><th>原因</th></tr></thead>
+<tbody>
+<tr><td>原任务、实现、学生错误补丁、真实失败观察</td><td>保留上下文，目标 0</td><td>让模型看见自己可能进入的状态，避免把错误补丁当正例</td></tr>
+<tr><td>教师定位问题、修正补丁、验证调用</td><td>可靠 assistant 目标 1</td><td>学习如何根据已有失败恢复</td></tr>
+<tr><td>测试输出</td><td>上下文 0</td><td>来自真实环境，后续回复依赖它</td></tr>
+<tr><td>确认完成的最终回复</td><td>产物验证后目标 1</td><td>完成声明和测试证据一致</td></tr>
+</tbody>
+</table>
+<p>ReTerm §3.1 明确只对教师恢复 token 做 SFT，学生失败历史提供上下文；§3.2 的 ReTerm-GRPO 是另一个在线优化分支。GLM-5 也讨论成功轨迹内部的不良动作筛选。这些证据支持精细监督，不能推成“所有失败 token 永远都不应训练”。<a href="index.html#ref-16">[16]</a> <a href="index.html#ref-22">[22]</a></p>
+<p>教师恢复需要可重放和终评：修复后的公开测试通过，不代表没有修改测试或破坏其他输入。监督准入应结合独立测试、文件变更范围和恢复轨迹质量；错误观察覆盖按任务族统计，不按“轨迹最终成功”一刀切。</p>
+</section>
+<section id="rejection">
+<h2>拒绝采样 RFT：把搜索成本与数据偏移算进去</h2>
+<figure><div class="flow" aria-label="拒绝采样微调链路">
+<div class="stage"><b>候选搜索</b><small>固定任务、模型、温度<br>每题多次尝试</small></div>
+<div class="stage"><b>独立验证</b><small>产物、测试、违规检查<br>成功与拒绝原因</small></div>
+<div class="stage"><b>筛选与配额</b><small>去重、来源族与难度<br>覆盖成功和恢复</small></div>
+<div class="stage"><b>静态 SFT</b><small>验证动作交叉熵<br>新的留出集验收</small></div>
+</div><figcaption>DeepSeek-R1 在推理 RL 后构建拒绝采样数据，再做包含其他能力的 SFT；这体现循环，不是所有模型统一的阶段顺序。<a href="index.html#ref-18">[18]</a></figcaption></figure>
+<div class="equation" role="math" aria-label="拒绝采样后的任务分布">若每题尝试 K 次、单次通过率为 pₓ：
+至少一个可保留解法的概率 = 1 − (1 − pₓ)^K
+若保留全部成功轨迹：期望条数 = K pₓ</div>
+<p>同样的 K 会让容易题贡献更多训练条数，难题可能完全消失。只保留每题一条减少条数偏移，却不能救回零成功题；补教师、调整难度、增加预算或放弃任务需要分别记录。弱 verifier 还会筛进投机解法。</p>
+<p>报告候选总 token、执行与判分时间、通过率、去重率和最终监督 token。同样大小的 SFT 数据可能消耗完全不同的搜索算力；与 RL 比较时，仅对齐保留下来的数据量会隐藏差异。</p>
+</section>
+<section id="preference">
+<h2>偏好优化：从 DPO 到无需成对标签的 KTO</h2>
+<p>设 <code>y+</code> 与 <code>y−</code> 是同一任务的偏好轨迹。DPO 将相对于参考策略的对数概率差转成偏好分类，标准离线版本没有每步环境探索。<a href="index.html#ref-12">[12]</a></p>
+<div class="equation" role="math" aria-label="DPO损失">L_DPO = − log σ(β [log πθ(y+|x)/πref(y+|x)
+                         − log πθ(y−|x)/πref(y−|x)])</div>
+<p>教学 chosen 是函数入口检查空输入且回归通过；rejected 是直接把所有异常吞掉、返回 0。标签应反映任务约束，而非回复更礼貌。Agent 的 <code>log π(y|x)</code> 只累计策略生成动作的概率，工具输出作为条件；不能把环境观察也当作模型选择。</p>
+<table>
+<thead><tr><th>方法</th><th>反馈与关键机制</th><th>参考模型</th><th>使用时的边界</th></tr></thead>
+<tbody>
+<tr><td>DPO <a href="index.html#ref-12">[12]</a></td><td>成对偏好，参考相对 log-prob 差</td><td>需要</td><td>离线覆盖和标签质量；β 与长度、概率和数据共同作用</td></tr>
+<tr><td>SimPO <a href="index.html#ref-13">[13]</a></td><td>平均 token log-prob 作为隐式 reward，加入偏好 margin</td><td>不需要</td><td>长度归一化改变目标，不是简单删掉 DPO 的 reference</td></tr>
+<tr><td>ORPO <a href="index.html#ref-14">[14]</a></td><td>chosen 的 SFT，加 odds-ratio 偏好惩罚</td><td>不需要</td><td>同时提升示范拟合和偏好差；其 odds 语义不同于直接 log-ratio</td></tr>
+<tr><td>KTO <a href="index.html#ref-15">[15]</a></td><td>非成对 desirable / undesirable 标签，参考 KL baseline</td><td>需要</td><td>好坏样本比例和权重需要校准，不等于任意二值任务 reward 的在线 RL</td></tr>
+</tbody>
+</table>
+<div class="equation" role="math" aria-label="SimPO概念目标">rθ(x,y) = β / |y| · log πθ(y|x)
+L_SimPO = − log σ(rθ(x,y+) − rθ(x,y−) − γ)</div>
+<p>新策略遇到静态偏好对没有出现的环境状态时，仍可能无法恢复。在线收集偏好可更新数据覆盖，但属于额外过程；不能由此认为离线 DPO 已完成 PPO / GRPO 的探索功能。偏好、执行正确性和成本最好分别报告。</p>
+</section>
+<section id="reinforcement-rft">
+<h2>强化 RFT：grader 必须对应任务意义</h2>
+<p>OpenAI Cookbook 用生命科学描述生成短答案，讨论 exact、fuzzy 和 model graders。这个案例说明 grader 的可用形态，不证明字符串相似就能判断科学正确；模型 grader 需要留出标注校准，不能只在训练答案上验收。<a href="index.html#ref-17">[17]</a></p>
+<p>教学代码任务更适合执行测试与变更限制：先判环境是否正常，再判补丁是否正确；错误类型、超时与基础设施故障分别记录。强化 RFT 是反馈循环的称呼，具体采用何种 actor/critic、ratio 或 baseline，要由实现文档说明，不从 API 命名推断。</p>
+<p>RLHF、RLVR 主要区分反馈来源；PPO、GRPO 主要区分优化目标；异步训练描述执行系统。把它们分开，才能判断失败应该改标签、补数据、换算法，还是修运行环境。</p>
+</section>
+<section id="industry">
+<h2>工业后训练已经是带分支的训练图</h2>
+<table>
+<thead><tr><th>公开报告</th><th>明确披露的路线</th><th>读者应提取的机制</th></tr></thead>
+<tbody>
+<tr><td>R1 / Qwen3 <a href="index.html#ref-18">[18]</a> <a href="index.html#ref-19">[19]</a></td><td>cold start → 推理 RL → 拒绝采样/融合 SFT → 通用或最终 RL</td><td>RL 产生监督数据，SFT 兼顾模式和通用能力</td></tr>
+<tr><td>Llama 3 <a href="index.html#ref-20">[20]</a></td><td>SFT、偏好与迭代数据组织</td><td>人工偏好和指令质量，离线优化路径</td></tr>
+<tr><td>Kimi K2 <a href="index.html#ref-21">[21]</a></td><td>工具环境与 Agent 数据、SFT / RL</td><td>任务与工具分布同训练系统一起设计</td></tr>
+<tr><td>GLM-5 / Coder-Next <a href="index.html#ref-22">[22]</a> <a href="index.html#ref-23">[23]</a></td><td>行为训练、长程 Agent RL、专家/多 scaffold</td><td>动作筛选、环境覆盖和异步采样；统一学生的跨框架迁移</td></tr>
+<tr><td>V4 / V4.1 <a href="index.html#ref-24">[24]</a> <a href="index.html#ref-25">[25]</a></td><td>专家 SFT / RL → 完整词表 OPD；V4.1 使用 40+ 教师</td><td>专家优化与统一模型交付分开，多任务并发和教师路由</td></tr>
+<tr><td>Nemotron Ultra <a href="index.html#ref-26">[26]</a></td><td>SFT / 统一 RLVR → multi-teacher OPD</td><td>结果反馈与 sampled-token 教师整合</td></tr>
+<tr><td>MiMo-V2.6 <a href="index.html#ref-27">[27]</a></td><td>大规模 RL、GAR 质量信号、MOPD2 多前缀多教师</td><td>同样最终通过的路径仍有质量差异，prefix 覆盖与调度影响学习</td></tr>
+</tbody>
+</table>
+<p>表中只总结披露内容。报告最终分数同时受起始模型、任务、推理预算和 harness 影响，不能证明某阶段单独带来多少增益，也不能推断未公开配比。后续章把这些路线分解成可以单独比较的实验变量。</p>
+</section>
+<section id="handoff">
+<h2>进入 RL 或 OPD 前应交付什么</h2>
+<p>交付 checkpoint、tokenizer、template、工具 schema、训练谱系、数据来源族和独立评测。先确认策略能执行动作、正确使用工具观察、按证据结束；否则大量全失败组可能只反映协议尚未学会。</p>
+<p>下一步读<a href="s02_rl_algorithms.html">RL 目标</a>；若已具备可靠教师，读<a href="s03_opd_self_distillation.html">OPD 与自蒸馏</a>。三类完整任务与预算对照在<a href="s06_task_cases_experiments.html">第六章</a>。</p>
+</section>
+</main>
+</body>
+</html>

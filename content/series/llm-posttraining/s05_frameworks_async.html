@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>05 · 后训练框架、异步分布式与训练对齐</title>
+<meta name="description" content="比较十类后训练框架，解释训练/rollout/环境/teacher分工、policy lag、三策略校正、调度偏移、partial rollout、slime OPD固定源码与Agent Lightning v1。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="roles">
+<h2>后训练是多个服务的循环，不只是一次 backward</h2>
+<p class="lead">训练节点更新权重，推理节点生成轨迹，环境执行动作，verifier 判结果，teacher / critic 提供额外信号。任务长度与服务速度不同，决定同步等待、异步缓存、并发配额和参数传输的成本。</p>
+<figure><div class="flow" aria-label="分布式后训练服务循环">
+<div class="stage"><b>采样服务</b><small>当前/旧版本模型<br>token IDs、behavior log-prob</small></div>
+<div class="stage"><b>任务与评分服务</b><small>工具环境、verifier<br>teacher / value / grader</small></div>
+<div class="stage"><b>轨迹队列</b><small>版本、域、长度、状态<br>筛选、配额、准入</small></div>
+<div class="stage"><b>训练与同步</b><small>优势、loss、optimizer<br>checkpoint → sampler</small></div>
+</div><figcaption>同步/异步描述各服务何时等待；算法目标仍需单独定义。系统处理环境故障、重试和版本状态，不应静默把它们变成 reward。</figcaption></figure>
+<table>
+<thead><tr><th>并行维度</th><th>主要解决什么</th><th>Agent 后训练额外关心</th></tr></thead>
+<tbody>
+<tr><td>DP / FSDP / ZeRO</td><td>样本并行，分片参数、梯度和优化器状态</td><td>变长样本、有效 token 数、分母和 global batch</td></tr>
+<tr><td>TP / PP / CP</td><td>切矩阵、层或上下文，承载大模型与长序列</td><td>训练和推理布局转换、pipeline 等待、长工具输出</td></tr>
+<tr><td>MoE EP</td><td>专家分布与 dispatch / combine</td><td>routing 一致性、专家负载、通信和概率差异</td></tr>
+<tr><td>Rollout 并发</td><td>同时生成、执行多个任务</td><td>KV 容量、环境等待、长短任务公平性</td></tr>
+<tr><td>Teacher / grader 并发</td><td>额外反馈吞吐</td><td>prefix 重算、词表张量、rate limit、失败重试</td></tr>
+</tbody>
+</table>
+<p>Full fine-tuning 下 Adam 的状态、master weights、activations 与通信都需核算；不能只按模型权重决定 GPU 数。colocation / hybrid 复用 GPU 可减少闲置，但训练与 rollout 争内存；独立部署减少干扰，却增加权重同步和排队成本。</p>
+</section>
+<section id="framework-map">
+<h2>框架地图：按接入方式、后端和版本边界选择</h2>
+<p>下表依据 2026-11-14 固定 README 与官方文档。支持列表不是所有模型 × 后端 × 算法 × pipeline 的全组合保证，也不用于跨框架速度排名。</p>
+<table>
+<thead><tr><th>框架</th><th>训练 / 推理组织</th><th>值得看的能力</th><th>选型时核对</th></tr></thead>
+<tbody>
+<tr><td>TRL <a href="index.html#ref-49">[49]</a> <a href="index.html#ref-50">[50]</a> <a href="index.html#ref-65">[65]</a></td><td>Transformers trainer 体系、PEFT，GRPO 可用推理加速后端</td><td>SFT / preference / GRPO 的目标选项便于小规模实验</td><td>版本、template mask、loss_type、scale_rewards、ratio 单位；不把一个选项称完整工业 recipe</td></tr>
+<tr><td>verl <a href="index.html#ref-58">[58]</a></td><td>FSDP / Megatron；vLLM / SGLang 等 rollout</td><td>AgentLoop、异步 queue / 参数同步、三策略校正</td><td>所用 recipe 与 backend，partial / staleness 的具体语义</td></tr>
+<tr><td>slime <a href="index.html#ref-56">[56]</a></td><td>Megatron 训练、SGLang rollout</td><td>灵活 rollout 接口、同 tokenizer 教师评分与 OPD</td><td>teacher 接入、response 对齐、advantage 顺序与采样目标</td></tr>
+<tr><td>AReaL <a href="index.html#ref-57">[57]</a></td><td>Megatron / FSDP2 / Archon；SGLang / vLLM</td><td>fully async、解耦采样与训练</td><td>当前 README 与 2025 论文区别；具体模型后端适配</td></tr>
+<tr><td>OpenRLHF <a href="index.html#ref-59">[59]</a></td><td>Ray、vLLM、DeepSpeed ZeRO-3</td><td>同步/异步/partial/hybrid、RLHF 与 REINFORCE 相关路线</td><td>资源放置、所选算法的最新脚本；README 的 FlashREINFORCE 支持不等于本次读过其论文</td></tr>
+<tr><td>NeMo RL <a href="index.html#ref-60">[60]</a></td><td>AutoModel / Megatron Bridge；vLLM / SGLang / Megatron 推理</td><td>MOPD、same-tokenizer 与独立 cross-tokenizer recipe</td><td>专门分支或 recipe 的支持范围；CUDA IPC 等数据路径条件</td></tr>
+<tr><td>ROLL <a href="index.html#ref-61">[61]</a></td><td>Ray 多角色；FSDP2 / Megatron，vLLM / SGLang</td><td>多任务 pipeline 与调度</td><td>某些 async pipeline 仍标 under implementation，逐 pipeline 核对</td></tr>
+<tr><td>RLinf <a href="index.html#ref-62">[62]</a></td><td>FSDP / Megatron / Megatron Bridge，多加速器</td><td>v0.4 的文本、视觉、机器人任务</td><td>模型、硬件、算法和后端对应支持，不自动全部通用</td></tr>
+<tr><td>SkyRL <a href="index.html#ref-63">[63]</a></td><td>当前 monorepo：skyrl-train 与 skyrl-tx</td><td>异步训练及 Tinker-compatible backend 路线</td><td>实际采用哪个 package，避免混用配置与启动方式</td></tr>
+<tr><td>Agent Lightning v1 <a href="index.html#ref-47">[47]</a> <a href="index.html#ref-64">[64]</a></td><td>Trainer + API Gateway + Rollout Controller；已有 harness 接入</td><td>真实模型调用、上下文压缩/子 Agent 的精确样本记录</td><td>v1 已重写，不能照搬 v0.x 的 LightningRL 架构</td></tr>
+</tbody>
+</table>
+<p>小预算算法学习先确保能精确检查 token / loss；工业大模型再匹配 Megatron / FSDP、rollout 引擎、环境并发与同步方案。已有复杂 harness 则优先保留真实 API 调用语义，避免为训练把整段运行重新拼成一个不存在的 prompt。</p>
+</section>
+<section id="async">
+<h2>同步、解耦、完全异步：吞吐和新鲜度的取舍</h2>
+<p>同步模式一轮采完再更新，慢任务会拖住整批；解耦模式分配独立采样与训练资源，但仍可能在轮次同步；完全异步让 queue 中的轨迹持续进入训练，训练同时更新参数和采样器。</p>
+<p>AReaL 的论文研究大规模异步推理 RL；Relax 则用服务隔离和 TransferQueue 组织多模态异步数据。故障隔离、数据队列和 backpressure 是系统机制，不能自动消除 off-policy 学习偏差。<a href="index.html#ref-45">[45]</a> <a href="index.html#ref-46">[46]</a></p>
+<h3>verl 的 fully async recipe</h3>
+<p>文档包括 AgentLoop / inference server、MessageQueue 和 ParameterSynchronizer，以及 <code>require_batches</code>、<code>trigger_parameter_sync_step</code>、<code>staleness_threshold</code> 和 partial rollout。<code>staleness_threshold</code> 控制 backlog 配额比例，不是“最多落后几个 checkpoint”；大于 0 时可出现跨版本 partial 样本。<a href="index.html#ref-51">[51]</a></p>
+<p>该文档在 Qwen2.5-7B、128 GPU 的作者测量中给出约 2.35–2.67× 加速。模型、资源、同步基线和任务不同，不能拿这个数与另一框架 README 相除组成速度榜。终评还要看有效训练 token、任务质量与总 GPU 小时。</p>
+<pre><code># 教学记录，非任意框架通用配置
+dispatch_policy_version
+segment_policy_versions          # partial rollout可能包含多个版本
+trainer_snapshot_version
+parameter_sync_event
+queue_age_seconds, backlog_count
+domain, difficulty_bucket, completion_order
+accepted_token_count, rejected_token_count, retry_reason</code></pre>
+</section>
+<section id="three-policy">
+<h2>三类偏移：策略版本、数值实现、完成顺序</h2>
+<div class="equation" role="math" aria-label="三策略校正">μ：实际rollout行为分布
+πold：训练侧旧策略；πθ：训练侧当前策略
+πθ/μ = (πθ/πold) · (πold/μ)
+       策略更新比       训练/采样分布校正</div>
+<p>策略版本延迟使 rollout 用旧权重；同版本差异还来自精度、kernel、MoE routing、template、截断与采样温度。相同 checkpoint SHA 不能保证 log-prob 完全一致。verl 的三策略路线与 bypass 路线分别处理不同假设，需要按 recipe 解释。<a href="index.html#ref-52">[52]</a></p>
+<p>教学 token 的 μ=0.20、πold=0.22、πθ=0.24，更新比为 1.091、实现校正比为 1.10，总比为 1.20。若只看 πθ/πold，就漏掉采样与训练的差异；这个算例不代表真实框架误差大小。</p>
+<div class="callout caution"><strong>重要性采样不能创造缺失支持。</strong>behavior log-prob 必须对应实际 token IDs、模板和采样分布。top-k / top-p 会截掉部分支持，temperature 改变分布；未采到或被彻底排除的动作，不能仅靠一个有限 ratio 恢复。</div>
+<p>长 trajectory 的 ratio 乘积容易高方差；几何平均、clip、mask 或 residual filter 改变目标与样本利用。它们是稳定训练的近似，不应自动称“完全无偏校正”。</p>
+<h3>完成顺序偏移不属于 token ratio</h3>
+<p>短代码任务先返回，长科学任务还在跑；如果训练持续吃“先到的样本”，科学域占比会下降。即使所有 token 的 log-prob 完全准确，也不会自动补回缺失的域。V4.1 将完成顺序和数值对齐分开讨论；MiMo 用域预算、时长和接受率调节并发。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-27">[27]</a></p>
+<div class="equation" role="math" aria-label="域并发预算示意">MiMo调度关系示意：
+域资源预算 ∝ 目标batch量 Bᵢ × 平均耗时 tᵢ / 接受率ᵢ
+长任务或高拒绝率域，需要更多并发才能维持目标准入占比。</div>
+<p>同时统计 dispatch、完成、接受和实际训练四层域占比。dynamic sampling、lag filter 和基础设施重试都会改变接受率；拒绝和等待成本算入总预算。</p>
+</section>
+<section id="partial-rollout">
+<h2>Partial rollout 与上下文压缩：旧 KV 不能默认跨权重复用</h2>
+<p>长任务可以中断生成、等待工具、继续 rollout；期间模型参数可能更新。常见 continuation 需重新 prefill 当前历史来重建 KV。V4.1 披露专门的跨 checkpoint 状态处理，MiMo 讨论 re-prefill；这不是所有框架通用的“缓存一直有效”。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-27">[27]</a></p>
+<p>KV 来自旧权重的投影和历史层状态。换权重后复用可能造成模型函数混合，是否可接受取决于特定算法与实现。记录每段策略版本、历史、重算和缓存来源，才能判断概率计算对应哪个真实分布。</p>
+<h3>Agent Lightning v1：保存真实调用，而不是假定一条长 prompt</h3>
+<p>v1 的 Trainer、API Gateway 与 Rollout Controller 支持已有 harness；模型调用可能因 compaction 或子 Agent 产生非嵌套上下文。必须保存每次 exact prompt / response token IDs，文本看似前缀相同不保证 token 前缀相同。<a href="index.html#ref-47">[47]</a> <a href="index.html#ref-64">[64]</a></p>
+<p>只有精确 token-prefix 条件成立，调用才能合法合并。一次 episode 产生很多训练调用时，sample-mean 会使调用多的任务权重更大；episode-mean 与 token-mean 取舍应由目标决定，不能无条件推荐“拼成长序列”。2025 原 LightningRL 的分层路线属于历史来源，v1 的当前实现另行说明。<a href="index.html#ref-48">[48]</a></p>
+</section>
+<section id="slime-opd">
+<h2>固定源码实例：slime 怎样把教师信号加到 advantage</h2>
+<p>本次核对 commit <code>79aa41a884ab0bf65222c94418f6357d3c31192b</code> 的 OPD 文档、rollout 入口和 Megatron loss。以下为 <code>loss.py</code> 715–719 行原始摘录，Apache-2.0。<a href="index.html#ref-55">[55]</a></p>
+<pre><code>reverse_kls = []
+for i, adv in enumerate(advantages):
+    reverse_kl = student_log_probs[i] - teacher_log_probs[i]
+    advantages[i] = adv - args.opd_kl_coef * reverse_kl
+    reverse_kls.append(reverse_kl)</code></pre>
+<p>若学生对某 token 的概率高于教师，<code>log pS−log pT</code> 为正，教师项降低它的 advantage；相反则提高。这里是 sampled-token 蒸馏信号进入 policy-gradient，不是完整词表 KL 直接反传。</p>
+<p>同文件 829–836 行在基础 advantage 后应用 OPD；839 行之后还可归一化 advantage。顺序会影响信号尺度：归一化一个混合项不等价于独立归一化任务和教师项。教师数组还需按 response 位置裁剪，与动作 mask、token IDs 对齐。</p>
+<pre><code># 该commit中的配置入口，仅列字段，不是完整可运行命令
+--use-opd
+--opd-type ...
+--opd-kl-coef ...
+# 教师接入支持SGLang评分服务或额外Megatron teacher模型；
+# 具体值、模型路径和并行资源由对应文档/recipe确定。</code></pre>
+<p>SGLang teacher 路线对 exact input IDs 评分，使用 <code>max_new_tokens=0</code> 取得条件概率；teacher 与 student tokenizer 必须相容。这说明集成 OPD 需要真实概率信号，不能拿一个只返回答案文本的普通 API 代替同样算法。</p>
+</section>
+<section id="compute">
+<h2>算力构成：教师、grader、重试和拒绝样本都计入</h2>
+<figure>
+<svg viewBox="0 0 800 195" role="img" aria-labelledby="compute-title" style="display:block;width:100%;height:auto">
+<desc id="compute-title">MiMo-V2.6报告中Pro的RL算力构成：rollout 43.8%，training 43.5%，grader 12.7%</desc>
+<rect width="800" height="195" fill="#fcfbf7"/><g font-family="system-ui,sans-serif" font-size="15" fill="#172d35">
+<text x="30" y="33">MiMo-V2.6 Pro · RL compute split · 作者报告</text>
+<rect x="30" y="58" width="324.12" height="46" fill="#0f766e"/><rect x="354.12" y="58" width="321.9" height="46" fill="#86ada0"/><rect x="676.02" y="58" width="93.98" height="46" fill="#d8b879"/>
+<text x="55" y="87" fill="white">Rollout 43.8%</text><text x="395" y="87">Training 43.5%</text><text x="695" y="87" font-size="13">12.7%</text>
+<text x="30" y="138">第三段：Grader 12.7%</text><text x="30" y="172" fill="#52666b" font-size="13">单份报告的算力口径；不表示美元成本或其他模型的统一构成。</text>
+</g></svg>
+<figcaption>Rollout 43.8% · Training 43.5% · Grader 12.7%。MiMo-V2.6 §4.1 Figure 3。<a href="index.html#ref-27">[27]</a> <a href="../assets/research/posttraining-20261114/mimo-compute.svg" target="_blank" rel="noopener">放大查看图表</a> · <a href="../assets/research/posttraining-20261114/mimo-compute.csv" download>下载原始比例</a>。</figcaption>
+</figure>
+<p>GPU 利用率高不等于训练更有效。并列报告总 rollout token、接受/拒绝 token、教师评分 token、训练有效 token、环境秒、重试、同步与队列等待，再给 GPU 小时和终评成功率。</p>
+<p>代码、科学、GUI 任务的成本分布不同。最终比较每次成功的总成本和每单位计算的独立成功增量；吞吐仅用于解释系统瓶颈。完整实验设计在<a href="s06_task_cases_experiments.html#experiments">第六章</a>。</p>
+</section>
+</main>
+</body>
+</html>

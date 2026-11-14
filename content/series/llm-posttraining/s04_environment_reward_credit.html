@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>04 · RL 环境、奖励、过程监督与长程信用</title>
+<meta name="description" content="区分结果奖励、PRM/value/advantage/teacher信号，分析 Harbor 独立验证、PURE/Cliff/GiGPO/RLDS/KnowGPO 和 MiMo GAR，结合代码科学GUI。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="environment">
+<h2>RL 环境是任务状态机，也是训练分布的一部分</h2>
+<p class="lead">环境规定模型能观察什么、能做哪些动作、动作如何改变状态、什么时候结束、如何评分。一个好的奖励函数依赖可信环境；环境把答案泄漏或把服务故障当策略失败时，再先进的 RL 目标也会学错。</p>
+<figure><div class="flow" aria-label="Agent环境与独立终评">
+<div class="stage"><b>固定任务与初态</b><small>镜像、输入、版本<br>权限、预算、可用工具</small></div>
+<div class="stage"><b>动作与真实反馈</b><small>策略输出 → 执行<br>观察、错误与状态变更</small></div>
+<div class="stage"><b>终止与产物交接</b><small>自然停止 / 预算边界<br>只交接允许的文件或状态</small></div>
+<div class="stage"><b>独立 verifier</b><small>受保护的测试与参考<br>结果、违规与错误类型</small></div>
+</div><figcaption>训练环境、策略行为、verifier 和调度器各自有版本；“一个 Dockerfile”不足以定义可复现实验。</figcaption></figure>
+<table>
+<thead><tr><th>情况</th><th>谁的问题</th><th>训练记录与处理</th></tr></thead>
+<tbody>
+<tr><td>无效工具名 / 参数</td><td>策略或协议不一致</td><td>若协议正确，可计策略失败；模板漂移先修协议</td></tr>
+<tr><td>产物错误、规定预算耗尽</td><td>真实任务失败</td><td>按任务规则打分，记录失败位置和截断类型</td></tr>
+<tr><td>容器拉取失败、服务宕机</td><td>基础设施</td><td>单列、重试或排除任务更新；重试成本仍计入</td></tr>
+<tr><td>测试逻辑错误 / 不确定参考</td><td>verifier</td><td>隔离任务、修复并重验，避免当作模型负样本</td></tr>
+</tbody>
+</table>
+<p>时间预算导致的正常 timeout 与服务故障引起的 timeout 不同；重试不能静默消除失败统计。训练和评测统一明确结束、状态重置、网络可达性与资源限制，才可比较模型。</p>
+</section>
+<section id="harbor">
+<h2>Harbor：把 Agent 工作区与 verifier 分开</h2>
+<p>当前 Harbor 文档的任务含 <code>instruction.md</code>、<code>task.toml</code>、环境、解法和 tests。测试脚本把分数写入 <code>/logs/verifier/reward.txt</code> 或 <code>reward.json</code>；两者都有时 JSON 优先。具体字段与共享/独立模式按固定 Harbor 版本核对。<a href="index.html#ref-53">[53]</a> <a href="index.html#ref-54">[54]</a></p>
+<pre><code># 教学布局；不是已经跑通的Harbor任务包
+scientific-task/
+  instruction.md
+  task.toml
+  environment/Dockerfile
+  solution/solve.sh
+  tests/Dockerfile            # 独立verifier镜像包含受保护的测试
+  tests/test.sh
+  tests/reference/           # 科学参考与容差，不暴露给Agent</code></pre>
+<p>独立 verifier 启动新环境，不继承 Agent 工作区全部文件系统；通过任务声明的 <code>artifacts</code> 交接选定产物。TOML 顶层键需写在各 section 之前，否则可能意外落入前一个表。<code>tests/Dockerfile</code> 或指定镜像包含测试；不要把不同模式的 tests 上传规则混用。</p>
+<pre><code># 教学片段：顶层artifacts放在[environment]等表之前
+artifacts = ["/app/output/result.json", "/app/output/provenance.json"]
+# 其余task.toml字段须按实际Harbor版本生成和验证。</code></pre>
+<p>当前 task init 默认倾向独立模式，但旧任务缺相应配置或 verifier 环境时仍可能是 shared；升级框架不能证明历史任务全已隔离。共享模式尤其需防 Agent 写测试、读取隐藏参考或伪造 reward 文件。</p>
+<p>科学任务对最终统计量和 provenance 重新验证，代码任务对 patch 应用与隐藏回归重新验证，GUI 任务由受保护的持久化状态检查。Agent 的“完成了”、文件存在或按钮点击本身都不是最终成功证据。</p>
+</section>
+<section id="signal-types">
+<h2>五类反馈：名称相近，预测对象不同</h2>
+<table>
+<thead><tr><th>信号</th><th>它回答什么</th><th>不应自动推断什么</th></tr></thead>
+<tbody>
+<tr><td>Outcome reward</td><td>最终产物是否满足任务</td><td>哪个中间动作导致结果</td></tr>
+<tr><td>Process reward model（PRM）</td><td>当前步骤正确性或过程质量</td><td>后续必然成功，或它可直接当 value</td></tr>
+<tr><td>Value / Q</td><td>当前状态/动作后预计未来回报</td><td>这个数学步骤局部一定正确</td></tr>
+<tr><td>Advantage</td><td>当前动作相对 baseline 好多少</td><td>原始 reward 或人工真值</td></tr>
+<tr><td>Teacher log-prob / 文本反馈</td><td>教师偏好动作、补充条件或错误解释</td><td>独立验证的真实任务成功</td></tr>
+</tbody>
+</table>
+<p>对数学推导，一个错误步骤以后也许被模型纠正并得到对的答案；“从这里多次续写的成功率”包含 continuation policy 的能力，不等于当前步骤正确性。反过来，一个正确中间步骤后面也可能失败。这是 PRM 标注与 value 估计的重要区别。</p>
+</section>
+<section id="prm">
+<h2>过程监督：从 PRM800k 到标注、选择与训练的分歧</h2>
+<p>Let’s Verify Step by Step 通过步骤标注研究过程监督，PRM800k 是经典入口。Qwen 的 Lessons 指出 MC continuation 标注、LLM judge 和人类过程正确性之间存在差异；best-of-N 排序表现也不等价于在线训练中的抗投机能力。<a href="index.html#ref-37">[37]</a> <a href="index.html#ref-38">[38]</a></p>
+<table>
+<thead><tr><th>标签来源</th><th>价值</th><th>误差与成本</th></tr></thead>
+<tbody>
+<tr><td>人类步骤标注</td><td>可明确错误原因和局部正确性</td><td>昂贵、细粒度一致性与专业领域知识</td></tr>
+<tr><td>MC 多次续写</td><td>可自动估计该 prefix 的可完成性</td><td>受续写策略和采样预算影响，非纯步骤正确性</td></tr>
+<tr><td>LLM judge / consensus</td><td>扩展覆盖、给解释与结构化评分</td><td>自洽不等于真值；需可信留出标注与对抗样本</td></tr>
+<tr><td>执行式 step check</td><td>代码/科学/GUI 某些状态有客观检查</td><td>检查是否足够、是否可投机、是否泄漏终评</td></tr>
+</tbody>
+</table>
+<p>三种评测分别做：对人类过程标签的判断质量；推理时 BoN 的选中成功率；在线 RL 的真实终评、投机与稳定性。只选一种表现好的指标，不能证明适用于全部用途。</p>
+</section>
+<section id="pure-cliff">
+<h2>PURE 与 Cliff：稠密奖励也可能强化坏过程</h2>
+<h3>PURE：求和会奖励重复“正确步骤”</h3>
+<p>如果每个看起来正确的小步骤都有正 reward，模型可能把一个步骤拆成很多片、重复安全陈述或拖长推理，以增加总和。PURE 研究以最差后续步骤为中心的目标，抑制此类投机。<a href="index.html#ref-39">[39]</a></p>
+<div class="equation" role="math" aria-label="PURE过程奖励">求和风险：Return = Σᵢ rᵢ，重复高分步骤可能增益
+PURE 转换示意：r*ᵢ = softmax(−rᵢ/T)ᵢ · rᵢ
+T → 0 时集中于最低分步骤；γ=1时对应最差步骤式回报</div>
+<p>这适合研究逻辑推理的弱链路，但可恢复 terminal Agent 中，前面一个错误动作以后可能被修复。若直接把最差历史步骤当整条任务上限，会惩罚有价值的恢复。迁移需验证是否符合任务的不可逆性假设。</p>
+<h3>Cliff：识别首个 pitfall 边界</h3>
+<p>Cliff 使用验证的教师解法辅助判断第一次出错位置，边界前后施加不同信用；坏教师时回退 GRPO，overlong 也有单独处理。附录含误判案例，说明首错定位本身不是可靠真值。<a href="index.html#ref-40">[40]</a></p>
+<p>科学设计若错用 contrast 且未修复，后续步骤会沿错误方向；代码先跑出错误再修好，则不满足“首错后全废”。应按任务分别测试边界质量、恢复率和反事实影响，避免把数学推导的假设自动应用到交互任务。</p>
+</section>
+<section id="long-credit">
+<h2>长程信用：重复状态、子任务和知识条件 baseline</h2>
+<table>
+<thead><tr><th>路线</th><th>信用对象</th><th>何时有帮助</th><th>限制</th></tr></thead>
+<tbody>
+<tr><td>GiGPO <a href="index.html#ref-41">[41]</a></td><td>episode 宏优势 + 相同 anchor state 内动作微优势</td><td>状态可判等、不同轨迹常经过同一锚点</td><td>同截图不保证同状态；开放仓库/GUI 的重复率可能低</td></tr>
+<tr><td>RLDS <a href="index.html#ref-42">[42]</a></td><td>固定子任务 taxonomy、reward shares、分子任务组优势和反思定位</td><td>任务有可识别阶段和可信定位器</td><td>ScienceWorld/FrozenLake 较明确，部分 HotpotQA/DeepResearch 增益在噪声内</td></tr>
+<tr><td>KnowGPO <a href="index.html#ref-43">[43]</a></td><td>知识条件 baseline</td><td>训练时额外知识帮助归因，部署仍用原任务</td><td>知识只用于训练，不得泄漏留出答案；定位与校准仍需检查</td></tr>
+<tr><td>Single-rollout value 路线 <a href="index.html#ref-10">[10]</a> <a href="index.html#ref-11">[11]</a></td><td>回合未来价值与 GAE</td><td>长 rollout 贵，能学习可靠 critic</td><td>value 误差、共享干扰、off-policy 与 mask</td></tr>
+</tbody>
+</table>
+<p>GiGPO 的 anchor 要求与决策相关状态等价：相同页面可能有不同隐藏数据库、权限或先前动作；同一 shell 路径可能有不同文件内容。错误判等会将不可比较的动作混成一组。</p>
+<p>子任务粒度太细，定位成本与噪声增加；太粗又退回 episode 广播。RLDS 的收益随任务不同而变化，支持在自己任务族做 taxonomy、reward share 和定位器的独立消融，不支持承诺通用提升。</p>
+</section>
+<section id="gar">
+<h2>MiMo GAR：同样通过的代码路径，质量仍有差别</h2>
+<p>MiMo-V2.6 §4.3.2 的 Grader-Augmented Reinforcement 为混合成功/失败的代码组提供质量因子：grader 结合任务、仓库、patch、tests 等信息判断成功路径质量，在通过路径的 advantage 上做调整。<a href="index.html#ref-27">[27]</a></p>
+<div class="equation" role="math" aria-label="GAR正优势质量重加权">未截断的教学形式：
+λ = Σ_pass Aᵢ / Σ_pass fᵢ Aᵢ
+A'ᵢ = λ fᵢ Aᵢ（通过样本）
+于是 Σ_pass A'ᵢ = Σ_pass Aᵢ
+实际配方还有λ上限、重中心化和invalid grade回退。</div>
+<p>例如两条通过轨迹优势均为 1，质量因子为 1 和 0.5，则 λ=4/3，重加权为 4/3 和 2/3，总正优势仍为 2。实际 cap 与 re-centering 会影响这个恒等式，不能把教学算例当完整实现。</p>
+<p>通过与否首先由可靠 grader / verifier 更新 reward 和统计；成功路径质量加权是另一层。grader 偏好“补丁短”可能压制必要重构，偏好“测试多”可能奖励无效测试。需通过独立终评与质量留出标注识别 grader 漏洞。</p>
+</section>
+<section id="cases">
+<h2>三个任务的奖励漏洞与过程检查</h2>
+<table>
+<thead><tr><th>任务</th><th>容易被投机的奖励</th><th>更可信的检查</th></tr></thead>
+<tbody>
+<tr><td>代码修复</td><td>公开测试通过 / 输出“PASS”</td><td>独立镜像应用 patch，隐藏回归、文件变更限制和输出真实执行</td></tr>
+<tr><td>科学差异分析</td><td>显著基因越多越好、统计文件存在</td><td>ID 对齐、design rank、contrast 方向、独立参考和 FDR 字段一致</td></tr>
+<tr><td>GUI 改草稿事件时间</td><td>点击保存、界面显示新值</td><td>指定事件 ID 的持久化状态、权限、目标时区与其他字段未变</td></tr>
+</tbody>
+</table>
+<p>过程检查只针对可验证的中间不变量，不奖励“说做了”。例如科学任务先检查样本 ID 再拟合，比给每句分析解释都打正分更可审计；GUI 等待网络响应是运行环节，不能按等待次数累计策略 reward。</p>
+<p>把硬约束是否通过、结果 reward、过程质量和成本分别记录。权重组合需要事先声明并消融，不能在看到留出结果后调整到最好。完整输入、轨迹和训练对照见<a href="s06_task_cases_experiments.html">第六章</a>。</p>
+</section>
+</main>
+</body>
+</html>

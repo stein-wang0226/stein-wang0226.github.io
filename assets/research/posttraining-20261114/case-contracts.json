@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-14",
+  "execution_status": "design_only",
+  "note": "Teaching designs, not executed training tasks or real rollout logs. Pin data, models, images, tools, verifier and budgets before execution.",
+  "cases": [
+    {
+      "id": "code-empty-input",
+      "family": "code-repair",
+      "input": ["repository", "issue: mean([]) raises ValueError; nonempty behavior unchanged", "tool-schema"],
+      "output": ["patch", "completion-explanation"],
+      "steps": ["inspect", "baseline-test", "edit", "regression", "independent-verification"],
+      "hard_constraints": ["do not edit tests", "do not edit unrelated code or dependencies"],
+      "verifier": ["apply patch in clean protected environment", "hidden input tests", "changed-file allowlist"],
+      "split_unit": ["repository", "issue-source", "solution-cluster"],
+      "reward": null,
+      "measured_cost": null
+    },
+    {
+      "id": "science-fixed-contrast",
+      "family": "scientific-analysis",
+      "input": ["public licensed count matrix", "sample metadata", "predefined filtering, design and contrast"],
+      "output": ["gene statistics", "provenance including input hashes and software"],
+      "steps": ["ID join", "design-rank check", "contrast check", "fit", "multiple-testing adjustment", "independent-verification"],
+      "hard_constraints": ["no heldout answers in student context", "no reward for more significant genes"],
+      "verifier": ["separate sandbox", "selected artifacts only", "independent statistical reference", "prespecified numerical tolerance and schema"],
+      "split_unit": ["study", "source", "template", "code-lineage"],
+      "biological_claim": null,
+      "reward": null,
+      "measured_cost": null
+    },
+    {
+      "id": "gui-draft-event-time",
+      "family": "gui",
+      "input": ["resettable local test app", "synthetic draft event ID", "target start time and timezone", "permissions"],
+      "output": ["persisted event state", "completion-explanation"],
+      "steps": ["identify event", "check permissions", "edit time", "save", "confirm persisted state"],
+      "hard_constraints": ["target ID only", "draft only", "preserve specified other fields", "no production sends"],
+      "verifier": ["protected state oracle", "timezone conversion", "unchanged-field comparison"],
+      "split_unit": ["app", "layout", "template", "locale"],
+      "reward": null,
+      "measured_cost": null
+    }
+  ],
+  "trajectory_schema_example": {
+    "execution_status": "design_only",
+    "task_id": "code-empty-input",
+    "split": "train",
+    "environment_version": null,
+    "verifier_version": null,
+    "calls": [{
+      "call_id": "call-1",
+      "prompt_token_ids": [],
+      "response_token_ids": [],
+      "response_mask": [],
+      "behavior_log_probs": [],
+      "policy_version": null,
+      "observation_refs": []
+    }],
+    "outcome_reward": null,
+    "infrastructure_status": "not_executed",
+    "teacher_signal_kind": null,
+    "artifact_hashes": {},
+    "cost": null
+  }
+}

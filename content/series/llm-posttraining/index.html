@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM 后训练：SFT、RL、OPD 与 Agent 训练系统</title>
+<meta name="description" content="六章从监督、偏好和策略梯度深入 OPD、自蒸馏、过程奖励、异步分布式系统，结合代码修复、Harbor 科学与 GUI 任务。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="overview">
+<p class="eyebrow">Post-training research · 2026-11-14</p>
+<h2>后训练的核心：在什么状态上，用什么信号，更新什么行为</h2>
+<p class="lead">SFT 学习示范，RL 从任务结果学习，OPD 在学生遇到的状态上学习教师分布。工业方案把这三类信号交替组合，再由环境、奖励、异步调度和独立评测决定最终能否交付一个可靠 Agent。</p>
+<figure>
+<div class="flow" aria-label="后训练的循环，而非固定单线阶段">
+<div class="stage"><b>可靠起点</b><small>示范与恢复数据<br>SFT / 偏好 / 拒绝采样</small></div>
+<div class="stage"><b>任务探索</b><small>当前策略 → 工具环境<br>结果、过程与文本反馈</small></div>
+<div class="stage"><b>更新与汇总</b><small>RL / OPD / 自蒸馏<br>专家整合、回放、课程</small></div>
+<div class="stage"><b>独立验收</b><small>留出任务与可靠 verifier<br>泛化、遗忘、成功成本</small></div>
+</div>
+<figcaption>RL 可生成新的 SFT 数据；OPD 可整合经过 RL 的专家；失败状态可进入恢复训练。学习目标、状态分布和执行系统分别核对，不能把所有方法都归为“用好答案微调”。</figcaption>
+</figure>
+<div class="callout"><strong>阅读时抓住五个变量：</strong>状态从谁来，目标 token 是什么，反馈由谁提供，advantage 与 loss 如何聚合，最终如何独立验收。相同算法名不保证相同实验；不同模型报告也不能直接组成性能排行榜。</div>
+</section>
+<section id="read">
+<h2>六章阅读路径</h2>
+<div class="chapter-grid">
+<a class="card" href="s01_supervision_preference.html"><span class="eyebrow">01 / 可靠行为</span><h3>SFT、两种 RFT 与偏好优化</h3><p>角色 mask、恢复轨迹、数据分布、DPO / SimPO / ORPO / KTO，连接 Qwen、Kimi、GLM、DeepSeek 与 MiMo 工业链路。</p></a>
+<a class="card" href="s02_rl_algorithms.html"><span class="eyebrow">02 / 策略更新</span><h3>RL 目标与主流算法</h3><p>PPO / GAE、RLOO、GRPO、DAPO、Dr. GRPO、GSPO、CISPO、两种 SAPO 与 SAO，拆解 ratio、baseline、分母和信用。</p></a>
+<a class="card" href="s03_opd_self_distillation.html"><span class="eyebrow">03 / 教师与自蒸馏</span><h3>OPD：分布、梯度与前沿路线</h3><p>完整词表与采样梯度、MOPD / MOPD2、OPSD / SDPO / SDPG、Guided-OPD / TISD，分析工业分歧与能力遗忘。</p></a>
+<a class="card" href="s04_environment_reward_credit.html"><span class="eyebrow">04 / 反馈与信用</span><h3>RL 环境、奖励与过程监督</h3><p>独立 verifier、PRM / value / advantage 的差别，PURE / Cliff / GiGPO / RLDS / KnowGPO，代码与科学任务的奖励漏洞。</p></a>
+<a class="card" href="s05_frameworks_async.html"><span class="eyebrow">05 / 训练系统</span><h3>框架、异步分布式与训练对齐</h3><p>TRL、verl、slime、AReaL、OpenRLHF、NeMo RL、ROLL、RLinf、SkyRL、Agent Lightning；策略延迟、调度和固定源码。</p></a>
+<a class="card" href="s06_task_cases_experiments.html"><span class="eyebrow">06 / 完整任务案例</span><h3>从任务输入到训练与交付</h3><p>代码修复、Harbor 科学分析和 GUI 状态修改三条链路；可下载轨迹契约、对照矩阵、训练诊断与成本口径。</p></a>
+</div>
+<p>初学者先读<a href="../llm-training-lifecycle/">训练全链路</a>；算法细节从第二章开始，OPD 从第三章开始。任务合成与评测基础见<a href="../agent-data-benchmarks/">Agent 数据与 Benchmark</a>，运行循环和上下文管理见<a href="../agent-harness-guide.html#codex-loop">Codex Harness 案例</a>。</p>
+</section>
+<section id="findings">
+<h2>这轮调研最值得保留的判断</h2>
+<p><strong>OPD 的关键是学生状态，而不只是教师更强。</strong> 静态教师示范覆盖理想路径；学生 rollout 暴露自己的失败 prefix。MOPD2、Guided-OPD 与 TISD 又通过前缀、接管和轨迹分支改变状态覆盖。它们是否“on-policy”，要说明是整条 episode 还是仅新增 continuation。<a href="#ref-30">[30]</a> <a href="#ref-27">[27]</a> <a href="#ref-34">[34]</a> <a href="#ref-35">[35]</a></p>
+<p><strong>稠密反馈不等于更可信。</strong> PRM、文本反馈、特权答案和教师 logits 可以提供比二值成败更丰富的信号，也会引入步骤误判、泄漏、奖励投机和偏离真实任务。最终评分仍应来自独立产物或状态验证。<a href="#ref-32">[32]</a> <a href="#ref-38">[38]</a> <a href="#ref-39">[39]</a></p>
+<p><strong>异步吞吐要和有效学习一起核算。</strong> 样本的策略版本延迟、同版本训练与推理数值差异、完成顺序导致的任务偏移是三类问题。importance ratio 主要处理概率分布差异，不能自动补回调度中消失的长任务。<a href="#ref-25">[25]</a> <a href="#ref-51">[51]</a> <a href="#ref-52">[52]</a></p>
+<p><strong>工业报告有实质分歧，应通过实验判断。</strong> DeepSeek V4 / V4.1 使用完整词表 OPD，Nemotron Ultra 报告其部分 Agent 实验更偏好 sampled-token。OPDArena 又提醒教师保留能力和目标任务增益不总是同步。这里保留配置、来源和失败解释，而不宣布通用赢家。<a href="#ref-24">[24]</a> <a href="#ref-25">[25]</a> <a href="#ref-26">[26]</a> <a href="#ref-36">[36]</a></p>
+<p class="note">调研截止 2026-11-14，引用 66 项原论文、团队报告、官方文档或固定源码。数值属于原作者报告或明确标注的解析推导；本站没有执行 GPU 后训练。三类任务案例与对照矩阵是教学设计，不能当作真实训练日志或性能结果。</p>
+</section>
+<section id="downloads">
+<h2>资料与可复核口径</h2>
+<p><a href="../assets/research/posttraining-20261114/sources.json" download>来源索引 JSON</a> · <a href="../assets/research/posttraining-20261114/group-signal.csv" download>GRPO 有效组概率 CSV</a> · <a href="../assets/research/posttraining-20261114/mimo-compute.csv" download>MiMo RL 算力构成 CSV</a> · <a href="../assets/research/posttraining-20261114/case-contracts.json" download>教学案例与轨迹契约</a> · <a href="../assets/research/posttraining-20261114/experiment-matrix.csv" download>待执行实验矩阵</a></p>
+<p>数学推导和来源定位记录在仓库 <code>docs/posttraining-research-20261114.md</code>。案例契约中的 <code>execution_status=design_only</code> 表明尚未执行训练；诊断字段没有填入虚构的 reward、成功率或 GPU 小时。</p>
+</section>
+<section id="sources">
+<h2>原始资料索引</h2>
+<p class="note">各章共用编号。论文固定版本，仓库固定 commit；动态文档采用 2026-11-14 访问口径，不视为与仓库 SHA 同步部署。</p>
+<ol class="sources">
+<li id="ref-1"><a href="https://arxiv.org/abs/1707.06347v2">Proximal Policy Optimization Algorithms</a> · Schulman 等；§3–5，概率比与 clipped surrogate。</li>
+<li id="ref-2"><a href="https://arxiv.org/html/1506.02438v6">High-Dimensional Continuous Control Using Generalized Advantage Estimation</a> · Schulman 等；§3，TD residual、GAE 与偏差/方差。</li>
+<li id="ref-3"><a href="https://arxiv.org/html/2402.03300v1">DeepSeekMath</a> · DeepSeek；§4，GRPO baseline 与原始序列平均目标。</li>
+<li id="ref-4"><a href="https://arxiv.org/html/2402.14740v2">Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs</a> · Ahmadian 等；RLOO、采样 baseline 与 RLHF 对照。</li>
+<li id="ref-5"><a href="https://arxiv.org/html/2503.14476v1">DAPO: An Open-Source LLM Reinforcement Learning System at Scale</a> · ByteDance / 合作团队；§3，四项训练设计。</li>
+<li id="ref-6"><a href="https://arxiv.org/html/2503.20783v1">Understanding R1-Zero-Like Training: A Critical Perspective</a> · Liu 等；归一化分析与 Dr. GRPO。</li>
+<li id="ref-7"><a href="https://arxiv.org/html/2507.18071v2">Group Sequence Policy Optimization</a> · Qwen；§3，几何平均 ratio、序列 clipping。</li>
+<li id="ref-8"><a href="https://arxiv.org/html/2506.13585v1">MiniMax-M1</a> · MiniMax；CISPO 的 detached clipped importance weights。</li>
+<li id="ref-9"><a href="https://arxiv.org/html/2511.20347v1">Soft Adaptive Policy Optimization</a> · Qwen / 合作团队；软门控及正负优势温度。</li>
+<li id="ref-10"><a href="https://arxiv.org/html/2608.19842v1">Single-Rollout Autoregressive Policy Optimization</a> · SAPO；共享自回归 policy/value、turn GAE 与 SARSA；同名不同方法。</li>
+<li id="ref-11"><a href="https://arxiv.org/html/2607.07508v1">Single-Rollout Asynchronous Optimization for Agentic Reinforcement Learning</a> · SAO；外部 critic、skip-observation GAE、严格 IS mask。</li>
+<li id="ref-12"><a href="https://arxiv.org/html/2305.18290v3">Direct Preference Optimization: Your Language Model is Secretly a Reward Model</a> · Rafailov 等；§4，偏好目标。</li>
+<li id="ref-13"><a href="https://arxiv.org/html/2405.14734v2">SimPO: Simple Preference Optimization with a Reference-Free Reward</a> · Meng 等；长度归一化、margin。</li>
+<li id="ref-14"><a href="https://arxiv.org/html/2403.07691v2">ORPO: Monolithic Preference Optimization without Reference Model</a> · Hong 等；SFT 与 odds-ratio preference。</li>
+<li id="ref-15"><a href="https://arxiv.org/html/2402.01306v3">KTO: Model Alignment as Prospect Theoretic Optimization</a> · Ethayarajh 等；非成对好/坏标签与参考 KL。</li>
+<li id="ref-16"><a href="https://arxiv.org/html/2610.18484v1">ReTerm: Recovery Training for Self-Improving Terminal Agents</a> · §3.1–3.2，教师恢复 token 的 SFT、另列 ReTerm-GRPO。</li>
+<li id="ref-17"><a href="https://cookbook.openai.com/examples/reinforcement_fine_tuning">OpenAI · Reinforcement Fine-Tuning Cookbook</a> · Theophile Sautory，2025-05-23；生命科学短答案、exact/fuzzy/model graders。</li>
+<li id="ref-18"><a href="https://arxiv.org/html/2501.12948v1">DeepSeek-R1</a> · DeepSeek；§2，cold start、推理 RL、拒绝采样、SFT 与最终 RL。</li>
+<li id="ref-19"><a href="https://arxiv.org/html/2505.09388v1">Qwen3 Technical Report</a> · Qwen；§4，四阶段后训练。</li>
+<li id="ref-20"><a href="https://arxiv.org/html/2407.21783v1">The Llama 3 Herd of Models</a> · Meta；§4，SFT / DPO 与迭代数据。</li>
+<li id="ref-21"><a href="https://arxiv.org/html/2507.20534v1">Kimi K2: Open Agentic Intelligence</a> · Moonshot；Agent 数据、环境、SFT / RL。</li>
+<li id="ref-22"><a href="https://arxiv.org/html/2602.15763v1">GLM-5: From Vibe Coding to Agentic Engineering</a> · Z.ai；§3–4，轨迹筛选与异步 Agent RL。</li>
+<li id="ref-23"><a href="https://arxiv.org/html/2603.00729v1">Qwen3-Coder-Next Technical Report</a> · Qwen；§3–4，多 scaffold、专家与蒸馏。</li>
+<li id="ref-24"><a href="https://arxiv.org/html/2606.19348v1">DeepSeek-V4 Technical Report</a> · DeepSeek；§5.1.2，专家与完整词表 OPD。</li>
+<li id="ref-25"><a href="https://arxiv.org/html/2609.19969v1">DeepSeek-V4.1 Technical Report</a> · DeepSeek；§5.2.1–5.2.4，异步对齐、调度、40+ 教师 OPD；<a href="../assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf">归档原件</a>。</li>
+<li id="ref-26"><a href="https://arxiv.org/html/2606.15007v1">Nemotron 3 Ultra</a> · NVIDIA；§3.3.5，sampled-token MOPD 与 preliminary full/top-k 对照；<a href="../assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf">归档原件</a>。</li>
+<li id="ref-27"><a href="https://arxiv.org/html/2610.11959v1">MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement</a> · Xiaomi；§4.1 / 4.3.2、5.6、6.3–6.4，GAR、MOPD2、调度与算力构成。</li>
+<li id="ref-28"><a href="https://arxiv.org/html/2306.13649v3">On-policy Distillation of Language Models: Learning from Self-Generated Mistakes</a> · Agarwal 等；GKD，多种 divergence 与生成分布。</li>
+<li id="ref-29"><a href="https://arxiv.org/html/2306.08543v4">MiniLLM: Knowledge Distillation of Large Language Models</a> · Gu 等；reverse-KL 与 policy-gradient 蒸馏。</li>
+<li id="ref-30"><a href="https://thinkingmachines.ai/blog/on-policy-distillation/">On-Policy Distillation</a> · Kevin Lu / Thinking Machines Lab，2025-10-27；sampled-token、即时蒸馏反馈。</li>
+<li id="ref-31"><a href="https://arxiv.org/html/2601.18734v2">Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models</a> · OPSD；特权解法上下文、no-grad teacher、KL/JSD。</li>
+<li id="ref-32"><a href="https://arxiv.org/html/2601.20802v1">Reinforcement Learning via Self-Distillation</a> · SDPO；环境文本反馈、成功 sibling 与 logit 蒸馏。</li>
+<li id="ref-33"><a href="https://arxiv.org/html/2606.04036v1">Self-Distilled Policy Gradient</a> · SDPG；局部梯度推导、正优势 gate、schedule 与参考正则。</li>
+<li id="ref-34"><a href="https://arxiv.org/html/2606.15912v2">On-Policy Distillation with Curriculum Turn-level Guidance for Multi-turn Agents</a> · Guided-OPD；teacher 接管课程、student reverse / teacher forward KL。</li>
+<li id="ref-35"><a href="https://arxiv.org/html/2609.30878v1">TISD: On-Policy Self-Distillation with Trajectory Intervention</a> · KAIST；失败轨迹 KL 峰值处分支、后缀重采样与不同预算口径。</li>
+<li id="ref-36"><a href="https://arxiv.org/html/2610.25651v1">OPDArena: Understanding Learning and Forgetting in On-Policy Distillation</a> · Microsoft Research / 合作团队；五个 Qwen Base、Top-16 approximation、目标/分布外能力。</li>
+<li id="ref-37"><a href="https://arxiv.org/html/2305.20050v1">Let’s Verify Step by Step</a> · Lightman 等；PRM800k、过程监督与推理时选择。</li>
+<li id="ref-38"><a href="https://arxiv.org/html/2501.07301v1">The Lessons of Developing Process Reward Models in Mathematical Reasoning</a> · Qwen；步骤正确性、MC 标注与评测分歧。</li>
+<li id="ref-39"><a href="https://arxiv.org/html/2504.15275v1">Stop Summation: Min-Form Credit Assignment Is All Process Reward Model Needs for Reasoning</a> · PURE；最差步骤目标与奖励投机。</li>
+<li id="ref-40"><a href="https://arxiv.org/html/2609.02817v1">Cliff: Learning Process Rewards from the First Mistake</a> · AWS / 合作团队；首个 pitfall 边界、坏教师回退与附录误判。</li>
+<li id="ref-41"><a href="https://arxiv.org/html/2505.10978v1">Group-in-Group Policy Optimization for LLM Agent Training</a> · GiGPO；episode 与重复 anchor-state 信用。</li>
+<li id="ref-42"><a href="https://arxiv.org/html/2609.27035v1">Reinforcement Learning with Decomposed Subtasks</a> · RLDS；子任务优势和反思定位；<a href="../assets/research/2026-11-14/rlds-2609.27035v1.pdf">归档原件</a>。</li>
+<li id="ref-43"><a href="https://arxiv.org/html/2610.22331v1">Knowledge-Guided Credit Assignment for Multi-Turn Agentic Reinforcement Learning</a> · KnowGPO；知识条件 baseline、训练信息与部署边界。</li>
+<li id="ref-44"><a href="https://arxiv.org/html/2602.21534v3">ARLArena: A Unified Framework for Stable Agentic Reinforcement Learning</a> · SAMPO；统一 testbed 的组合设计，非单组件因果证据；<a href="../assets/research/2026-11-14/arlarena-2602.21534v3.pdf">归档原件</a>。</li>
+<li id="ref-45"><a href="https://arxiv.org/html/2505.24298v2">AReaL: A Large-Scale Asynchronous Reinforcement Learning System for Language Reasoning</a> · inclusionAI；解耦 PPO、策略延迟。</li>
+<li id="ref-46"><a href="https://arxiv.org/html/2604.11554v1">Relax: An Asynchronous Reinforcement Learning Engine for Omni-Modal Post-Training at Scale</a> · 服务隔离与 TransferQueue；版本号与文内日期不一致，采用固定版本定位。</li>
+<li id="ref-47"><a href="https://arxiv.org/html/2608.17528v1">Agent Lightning v1.0: Towards Harnessed Agentic RL</a> · Microsoft；Trainer / API Gateway / Rollout Controller、真实调用和 token-prefix 合并。</li>
+<li id="ref-48"><a href="https://arxiv.org/html/2508.03680v1">Agent Lightning: Train ANY AI Agents with Reinforcement Learning</a> · Microsoft，2025；原 LightningRL，不能代替 v1.0 实现说明。</li>
+<li id="ref-49"><a href="https://huggingface.co/docs/trl/main/en/sft_trainer">TRL · SFT Trainer</a> · assistant-only loss、template generation tags、packing；动态 main 文档。</li>
+<li id="ref-50"><a href="https://huggingface.co/docs/trl/main/en/grpo_trainer">TRL · GRPO Trainer</a> · reward scaling、loss type、ratio 粒度；动态 main 文档。</li>
+<li id="ref-51"><a href="https://verl.readthedocs.io/en/latest/advance/fully_async.html">verl · Fully Async Policy Trainer</a> · 2026-05-25 更新说明；queue、参数同步、backlog 配额、partial rollout。</li>
+<li id="ref-52"><a href="https://verl.readthedocs.io/en/latest/algo/rollout_corr.html">verl · Rollout Correction</a> · 三策略概率、bypass 与截断校正。</li>
+<li id="ref-53"><a href="https://docs.harborframework.com/tasks/overview">Harbor · Task Overview</a> · 任务布局、环境、顶层 artifacts 与 verifier 模式。</li>
+<li id="ref-54"><a href="https://docs.harborframework.com/tasks/verifier">Harbor · Verifier</a> · reward 文件、独立 verifier sandbox、选定产物交接。</li>
+<li id="ref-55"><a href="https://github.com/THUDM/slime/blob/79aa41a884ab0bf65222c94418f6357d3c31192b/slime/backends/megatron_utils/loss.py#L684-L722">slime · OPD advantage 源码</a> · Apache-2.0；同 SHA 的 <a href="https://github.com/THUDM/slime/blob/79aa41a884ab0bf65222c94418f6357d3c31192b/docs/en/advanced/on-policy-distillation.md">OPD 文档</a>与<a href="https://github.com/THUDM/slime/blob/79aa41a884ab0bf65222c94418f6357d3c31192b/slime/rollout/on_policy_distillation.py">教师评分入口</a>。</li>
+<li id="ref-56"><a href="https://github.com/THUDM/slime/blob/79aa41a884ab0bf65222c94418f6357d3c31192b/README.md">slime · README @ 79aa41a</a> · Megatron / SGLang、rollout 接口；Apache-2.0。</li>
+<li id="ref-57"><a href="https://github.com/inclusionAI/AReaL/blob/11b6fb0ca9ea47a55e2fc3929c24b8d43693fd80/README.md">AReaL · README @ 11b6fb0</a> · Megatron / FSDP2 / Archon，SGLang / vLLM；Apache-2.0。</li>
+<li id="ref-58"><a href="https://github.com/volcengine/verl/blob/61adb0c7eb90730306e7794c2bf248331211e657/README.md">verl · README @ 61adb0c</a> · FSDP / Megatron 与 rollout 后端；Apache-2.0。</li>
+<li id="ref-59"><a href="https://github.com/OpenRLHF/OpenRLHF/blob/26494490bc237f6c3af62dab6117e6bbb0a78dba/README.md">OpenRLHF · README @ 2649449</a> · Ray / vLLM / DeepSpeed ZeRO-3、async / partial / hybrid；Apache-2.0。</li>
+<li id="ref-60"><a href="https://github.com/NVIDIA-NeMo/RL/blob/bb9ed784e4bb2129dc57b04e26d6f06a51c39194/README.md">NeMo RL · README @ bb9ed78</a> · AutoModel / Megatron Bridge、多教师与不同 tokenizer 路线；Apache-2.0。</li>
+<li id="ref-61"><a href="https://github.com/alibaba/ROLL/blob/7c0ded3d621ad4f45fb4d6675914de5eae8918eb/README.md">ROLL · README @ 7c0ded3</a> · 多角色 Ray、FSDP2 / Megatron、各 pipeline 支持边界；Apache-2.0。</li>
+<li id="ref-62"><a href="https://github.com/RLinf/RLinf/blob/6a7dcbd88c4b4f166e31144f63fd6959f4cac3a5/README.md">RLinf · README @ 6a7dcbd</a> · v0.4、文本 / 视觉 / 机器人、多硬件；Apache-2.0。</li>
+<li id="ref-63"><a href="https://github.com/NovaSky-AI/SkyRL/blob/3e8700fb49ab47bb8fc5674ebf604ed8ac04c951/README.md">SkyRL · README @ 3e8700f</a> · skyrl-train / skyrl-tx 与异步；Apache-2.0。</li>
+<li id="ref-64"><a href="https://github.com/microsoft/agent-lightning/blob/2070bad5113e52f1aa2e5bdba822d4b24b197c05/README.md">Agent Lightning · README @ 2070bad</a> · v1 当前重写实现；MIT。</li>
+<li id="ref-65"><a href="https://github.com/huggingface/trl/blob/8ad18ec1b6493b85cf9fffbd87d376767ceb8611/README.md">TRL · README @ 8ad18ec</a> · trainer 体系；Apache-2.0，动态文档另列。</li>
+<li id="ref-66"><a href="https://arxiv.org/html/2606.30406v1">MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training</a> · 多教师能力整合，区别于 MiMo-V2.6 的 Multi-Prefix MOPD2 扩展。</li>
+</ol>
+</section>
+</main>
+</body>
+</html>

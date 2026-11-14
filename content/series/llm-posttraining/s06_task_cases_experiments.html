@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>06 · 代码、Harbor 科学、GUI：从任务到后训练交付</title>
+<meta name="description" content="用三类具体任务解释SFT/RFT/RL/OPD/过程信用和异步系统，附科学独立验证、轨迹字段、消融矩阵、诊断与成功成本。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="status">
+<h2>把同一个任务的输入、动作、反馈与训练目标接起来</h2>
+<p class="lead">下面三个案例是教学设计，未执行 GPU 训练，也没有伪造真实轨迹和成绩。它们说明如何将前五章的目标落实为数据、环境、反馈和可复核交付。</p>
+<p><a href="../assets/research/posttraining-20261114/case-contracts.json" download>下载案例与轨迹契约</a> · <a href="../assets/research/posttraining-20261114/experiment-matrix.csv" download>下载待执行实验矩阵</a>。实际任务须另外锁定数据许可、模型/镜像/verifier 版本和训练预算。</p>
+</section>
+<section id="code-case">
+<h2>案例 A：修复空输入崩溃，同时保留非空行为</h2>
+<p>输入是一个小仓库、issue 和工具协议：<code>mean([])</code> 应抛出 <code>ValueError</code>，其他数字列表继续返回平均值；禁止改测试、依赖与无关函数。允许读取、patch、运行测试，输出提交补丁与说明。</p>
+<pre><code># 教学初始实现
+def mean(values):
+    return sum(values) / len(values)
+
+# 满足本任务的最小候选修复
+def mean(values):
+    if not values:
+        raise ValueError("empty input")
+    return sum(values) / len(values)</code></pre>
+<table>
+<thead><tr><th>回合</th><th>动作和观察</th><th>训练价值</th></tr></thead>
+<tbody>
+<tr><td>1 · 理解状态</td><td>读函数与 issue，运行基线，观察 ZeroDivisionError</td><td>SFT 学工具协议与定位；观察作为上下文</td></tr>
+<tr><td>2 · 首次修复失败</td><td>只在调用方捕获异常；函数直接测试仍失败</td><td>学生失败 prefix，供恢复训练 / SDPO / OPD</td></tr>
+<tr><td>3 · 根据反馈恢复</td><td>在函数入口处理空列表；运行非空回归</td><td>教师恢复 token 可作 SFT；局部教师分布可作 OPD</td></tr>
+<tr><td>4 · 独立终评</td><td>干净镜像应用 patch，隐藏测试与变更限制通过</td><td>独立 outcome reward；不以最终回复为分数</td></tr>
+</tbody>
+</table>
+<h3>同任务怎样进入不同训练方法</h3>
+<table>
+<thead><tr><th>方法</th><th>数据与目标</th><th>会学不到什么</th></tr></thead>
+<tbody>
+<tr><td>SFT / 恢复 SFT</td><td>可靠示范；失败历史为 context，恢复动作监督</td><td>没有覆盖的新错误状态</td></tr>
+<tr><td>拒绝采样 RFT</td><td>多次尝试，经独立 verifier 筛选后 CE</td><td>被丢弃失败路径的相对好坏</td></tr>
+<tr><td>DPO</td><td>同题可靠补丁 chosen、吞异常捷径 rejected</td><td>离线候选以外的探索</td></tr>
+<tr><td>GRPO / RLOO</td><td>同题多候选，最终通过形成 advantage</td><td>全失败组只用二值结果时无法区分错误</td></tr>
+<tr><td>OPD / SDPO</td><td>学生失败 prefix，教师或反馈条件 self-teacher 的概率</td><td>教师校准不足、无有效反馈或支持缺失时不能保证正确</td></tr>
+<tr><td>GAR / step checks</td><td>对通过路径质量重加权，验证不变量</td><td>弱质量 grader 可被补丁风格和重复测试投机</td></tr>
+</tbody>
+</table>
+<p>独立终评应覆盖空、单元素、负数、重复值和规定数值类型，检查测试目录没有被改。真实仓库按项目、问题来源和解法簇隔离 train / heldout；同一个模板的不同文件名不应当作全新泛化任务。</p>
+<p>该案例连接 ReTerm 的恢复思路、MiMo 的成功质量信号与 OPD 学生状态；它本身不是这些论文的原始实验。<a href="index.html#ref-16">[16]</a> <a href="index.html#ref-27">[27]</a> <a href="index.html#ref-30">[30]</a></p>
+</section>
+<section id="science-case">
+<h2>案例 B：Harbor 科学分析，验证设计和统计产物</h2>
+<p>任务输入为允许公开的 count matrix、样本 metadata 和预先定义的分析要求：在指定统计方法、协变量和 contrast 下，输出基因统计表及 provenance。这里没有假定任何真实生物结论，也不填虚构显著基因数。</p>
+<figure><div class="flow" aria-label="科学分析任务的输入到验收">
+<div class="stage"><b>输入与 ID</b><small>矩阵列 ↔ metadata样本<br>缺失、重复、顺序检查</small></div>
+<div class="stage"><b>固定分析设计</b><small>过滤、design、contrast<br>模型与软件版本</small></div>
+<div class="stage"><b>拟合与产物</b><small>统计量、效应、p / FDR<br>运行参数与输入哈希</small></div>
+<div class="stage"><b>独立复核</b><small>受保护参考与容差<br>方向、字段、完整性</small></div>
+</div><figcaption>任务设计用于串联科学环境、训练信号和独立 verifier；更广的任务来源与 split 讨论见<a href="../agent-data-benchmarks/s01_task_synthesis.html">任务合成专题</a>。</figcaption></figure>
+<table>
+<thead><tr><th>过程</th><th>具体不变量</th><th>可能失败与反馈</th></tr></thead>
+<tbody>
+<tr><td>样本对齐</td><td>按 ID 显式 join，列与行集合一一对应</td><td>不按 ID，只按行序；文本反馈指出错位样本</td></tr>
+<tr><td>设计构建</td><td>预定协变量、design 满秩、足够自由度</td><td>条件与 batch 混淆；不能仅看模型“跑完”</td></tr>
+<tr><td>contrast</td><td>指定 treated−control 的方向与因子编码</td><td>效应符号反向；独立参考与方向检查</td></tr>
+<tr><td>统计与多重检验</td><td>方法、过滤与调整范围固定，字段一致</td><td>把 pvalue 当 padj、重复调整或选择性报告</td></tr>
+<tr><td>最终产物</td><td>schema、唯一基因 ID、覆盖、数值容差和 provenance</td><td>表存在但内容错、NaN处理不符、输入哈希错</td></tr>
+</tbody>
+</table>
+<h3>信号设计：结果、过程和特权信息各有边界</h3>
+<p>Outcome 由独立 verifier 在指定产物上验证。过程信号只奖励预定可检查不变量，例如 ID 对齐与 design 合法性；不奖励“显著基因更多”。数学误差容差按统计方法、数值精度和库版本制定，不能以宽容差掩盖 contrast 错误。</p>
+<p>SFT 数据应来自实际可重放的分析过程；拒绝采样经独立参考筛选；RLDS 可按输入/设计/拟合/验收分子任务，但奖励份额与定位噪声要消融；SDPO 可用 runtime error 或 verifier 文本反馈；OPSD 的参考解法仅供训练教师 context，不能出现在留出任务学生输入。</p>
+<p>受保护 verifier 使用新 sandbox 和选定 artifacts，避免读取全部 Agent 工作区；按 Harbor 固定版本测试任务模式。按研究、数据来源、分析模板和代码谱系切分，避免同一研究不同基因子集分别进入训练和评测。<a href="index.html#ref-53">[53]</a> <a href="index.html#ref-54">[54]</a></p>
+<p>科学失败需区分环境包安装、资源不足、模型方法错误、统计设计错误和生物解释未经证实。前四类可由可执行任务判定；解释的科学真实性还需专业审阅，不能仅由一个 LLM judge 当终评真值。</p>
+</section>
+<section id="gui-case">
+<h2>案例 C：GUI 修改指定草稿事件时间并保存</h2>
+<p>在可重置的本地测试应用中，将指定 draft 事件 <code>event_id</code> 改为给定时区下的开始时间，保持标题、参与者和结束时长等约束。使用合成测试数据，避免把生产日历或实际发送动作混入教学实验。</p>
+<table>
+<thead><tr><th>阶段</th><th>模型观察 / 动作</th><th>环境与独立验证</th></tr></thead>
+<tbody>
+<tr><td>定位</td><td>根据截图/DOM 找对应事件与权限状态</td><td>检查真实 ID 与 draft 状态，不能只按相似标题</td></tr>
+<tr><td>编辑</td><td>选择日期、时间和正确时区，保留其他字段</td><td>记录输入控件与页面状态，处理本地化/时区转换</td></tr>
+<tr><td>保存与等待</td><td>执行保存，等待响应，再读取确认</td><td>网络响应等待不按次数累计 reward；区分服务失败</td></tr>
+<tr><td>终评</td><td>给出证据一致的完成回复</td><td>受保护持久化状态验证目标 ID、时间、权限和其他字段</td></tr>
+</tbody>
+</table>
+<p>UI 显示更新可能只是未保存的客户端状态；点击按钮不等于数据库已变。过程检查可验证对象定位和持久化确认，但不能奖励反复打开、点击和等待。任务预算应包含动作数、截图/模型 token、环境时间和 reset 成本。</p>
+<p>SFT 学观察到动作的映射，恢复数据覆盖保存失败和控件状态变化；多轮 RL 学结果驱动决策；Guided-OPD 的逐回合教师可以帮助早期状态覆盖，但部署终评必须全学生执行。GiGPO 若以截图作为 anchor，需额外核验隐藏状态等价。<a href="index.html#ref-34">[34]</a> <a href="index.html#ref-41">[41]</a></p>
+<p>训练按应用、任务模板、布局和语言等维度分层，泛化用未见布局/对象和独立状态 oracle。相同页面换颜色不应被包装成广泛 GUI 泛化；截图正确性、权限和任务结果分别统计。</p>
+</section>
+<section id="trajectory">
+<h2>训练轨迹契约：精确到每次模型调用和环境状态</h2>
+<pre><code>{
+  "execution_status": "design_only",
+  "task_id": "code-empty-input",
+  "task_family": "code-repair",
+  "split": "train",
+  "environment_version": "must-pin-before-execution",
+  "verifier_version": "must-pin-before-execution",
+  "calls": [{
+    "call_id": "call-1",
+    "prompt_token_ids": [],
+    "response_token_ids": [],
+    "response_mask": [],
+    "behavior_log_probs": [],
+    "policy_version": null,
+    "observation_refs": []
+  }],
+  "outcome_reward": null,
+  "infrastructure_status": "not_executed",
+  "teacher_signal_kind": null,
+  "artifact_hashes": {},
+  "cost": null
+}</code></pre>
+<p>空数组与 null 表明未采集数据，不能当作真实日志。运行时长度与位置严格对齐；compaction 后的新 prompt 是新的真实调用，不能用压缩前历史重新计算行为概率。跨版本 partial rollout 逐段记录策略版本。</p>
+<p>额外保存 verifier 文本反馈、过程标签来源、teacher 版本/特权上下文类别、采样配置和拒绝原因。训练用数据不可带入留出答案；终评保存产物哈希、评分理由和成本，不只保留一句成功/失败。</p>
+</section>
+<section id="experiments">
+<h2>待执行矩阵：先可靠 baseline，再一次改变一个关键轴</h2>
+<table>
+<thead><tr><th>实验组</th><th>固定条件</th><th>改变什么</th><th>关键判断</th></tr></thead>
+<tbody>
+<tr><td>E0 · 环境与奖励验收</td><td>任务、参考解法、已知失败/投机样本</td><td>无模型训练；验证 oracle、隔离与重复运行</td><td>reference通过，错误与投机被拒，基础设施异常单列</td></tr>
+<tr><td>E1 · 行为监督</td><td>起始模型、任务来源族、目标预算</td><td>普通 SFT vs 恢复 SFT vs 拒绝采样</td><td>未见失败恢复、独立结果、总搜索与监督成本</td></tr>
+<tr><td>E2 · RL 目标拆解</td><td>同 checkpoint、reward、任务配额、采样量</td><td>baseline / std / 分母 / ratio 分别单改；组合另列</td><td>有效组、长度、clip、逐域成功和稳定性</td></tr>
+<tr><td>E3 · OPD 信号</td><td>同学生、teacher、prefix来源与预算</td><td>full-vocab vs sampled vs top-k；反馈条件另列</td><td>局部梯度实现、目标能力、分布外能力、教师成本</td></tr>
+<tr><td>E4 · 状态覆盖</td><td>teacher、loss、任务来源与训练预算</td><td>自主 OPD vs MOPD2前缀 vs Guided/TISD</td><td>全学生终评，示范/接管/干预的额外成本</td></tr>
+<tr><td>E5 · 信用分配</td><td>固定 rollout、outcome、任务划分</td><td>episode广播 vs step/子任务/anchor/value</td><td>定位校准、恢复、过程投机和真实终评</td></tr>
+<tr><td>E6 · 异步系统</td><td>模型、算法、任务池与硬件</td><td>lag、同版本对齐、完成配额分别消融</td><td>dispatch/接受/训练域占比，有效token、总成本与成功</td></tr>
+</tbody>
+</table>
+<p>同生成 token 比较学习效率；同 GPU / 环境总预算比较可交付收益。至少多个 seed，报告重复运行/采样误差与失败分布。若算法同时改变算力、来源、teacher 和 verifier，只能称整套方案比较。</p>
+<p>设计中没有填具体 GPU 数、学习率或预期提升，因为模型规模、环境速度和预算尚未固定。开始训练前按实际 framework recipe 锁定这些值，再生成可运行配置。</p>
+</section>
+<section id="diagnosis-cost">
+<h2>诊断和成本：平均 reward 之外必须看到什么</h2>
+<table>
+<thead><tr><th>指标组</th><th>记录什么</th><th>用于判断</th></tr></thead>
+<tbody>
+<tr><td>结果与泛化</td><td>固定harness下逐域成功、错误类型、OOD能力、违规</td><td>真实提升、遗忘、reward hacking</td></tr>
+<tr><td>训练信号</td><td>全同reward组、std、advantage、loss分母、entropy、ratio与clip</td><td>有效学习机会和更新稳定性</td></tr>
+<tr><td>教师与过程</td><td>KL、反馈有效性、过程定位校准、teacher成本</td><td>学生更像教师是否真的改善任务</td></tr>
+<tr><td>系统与配额</td><td>queue年龄、策略版本、domain四层占比、重试与拒绝</td><td>异步对齐、completion bias、资源瓶颈</td></tr>
+</tbody>
+</table>
+<div class="equation" role="math" aria-label="成功成本">Cost_total = rollout + training + teacher/critic/grader
+           + environment + retry/rejection + synchronization
+成功成本 = 同一评测协议下总推理/环境成本 / 独立通过任务数
+训练收益另报：留出成功增量 / 训练总GPU小时；基线与预算固定</div>
+<p>成功数为零时成本比不可定义，不填 0；pass@k、单次成功、重复运行平均和 time budget 要分别报告。共享基础设施的计费分摊需说明，不能将算力百分比直接换成美元。</p>
+</section>
+<section id="delivery">
+<h2>交付模型、任务协议和可追溯证据</h2>
+<pre><code>release/
+  model/                    # weights/config/tokenizer
+  protocol/                 # template/tools/sampling/budgets
+  tasks/                    # source/split/environment/verifier manifests
+  evidence/
+    lineage.json            # SFT → RL → OPD等真实谱系
+    data-provenance.json
+    compute-accounting.json
+    evaluation-protocol.json
+    task-results.jsonl
+    failure-analysis.json
+    capability-regressions.json</code></pre>
+<p>最终冻结学生与运行协议，独立重跑终评；教师 KL、训练 reward 和公开测试只作中间证据。公开报告提供路线，自己的实验要回答哪些数据、目标或系统变化实际改善了任务。</p>
+<p class="note">本专题已核对原始来源、公式和实现入口，但三类案例没有执行模型训练。下一步实验不能从教学设计直接推导任何生物结果、模型增益或 GPU 成本。</p>
+</section>
+</main>
+</body>
+</html>

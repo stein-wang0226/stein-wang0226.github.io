@@ -1,0 +1,10 @@
+single_rollout_p,group_size,nonzero_variance_probability,basis
+0.01,8,0.077255305572,analytic independent Bernoulli;not empirical
+0.05,8,0.336579568672,analytic independent Bernoulli;not empirical
+0.1,8,0.569532780000,analytic independent Bernoulli;not empirical
+0.2,8,0.832225280000,analytic independent Bernoulli;not empirical
+0.5,8,0.992187500000,analytic independent Bernoulli;not empirical
+0.8,8,0.832225280000,analytic independent Bernoulli;not empirical
+0.9,8,0.569532780000,analytic independent Bernoulli;not empirical
+0.95,8,0.336579568672,analytic independent Bernoulli;not empirical
+0.99,8,0.077255305572,analytic independent Bernoulli;not empirical
