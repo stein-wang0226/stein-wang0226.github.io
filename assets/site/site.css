@@ -226,7 +226,35 @@ body.site-body{margin:0;background:#f7f5f0}
 .site-page .research-records{font-size:.88rem}
 .site-page .catalog-group{margin:1.75rem 0 2.5rem}
 .site-page .catalog-group>h3{font-size:1.1rem;margin-bottom:1rem}
-.site-page .home-recommendations>.note-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.site-page .home-recommendations>.note-grid{grid-template-columns:1fr;gap:16px}
+.site-page .home-recommendations .note-card{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:minmax(320px,.9fr) minmax(360px,1.25fr);
+  grid-template-areas:"tag tag" "title summary" "footer footer";
+  column-gap:44px;
+  padding:28px 30px;
+}
+.site-page .home-recommendations .note-card .tag{grid-area:tag}
+.site-page .home-recommendations .note-card h2{
+  grid-area:title;
+  align-self:start;
+  margin:16px 0 20px;
+  font-size:25px;
+  line-height:1.48;
+  letter-spacing:0;
+}
+.site-page .home-recommendations .note-card p{
+  grid-area:summary;
+  align-self:start;
+  max-width:72ch;
+  margin:16px 0 20px;
+}
+.site-page .home-recommendations .note-card .card-bottom{grid-area:footer}
+@media(max-width:900px){
+  .site-page .home-recommendations .note-card{display:flex;gap:0}
+  .site-page .home-recommendations .note-card h2{font-size:23px}
+}
 .site-page .reference-controls{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.5rem 0}
 .site-page .reference-controls input,.site-page .reference-controls select{font:inherit;padding:.6rem;border:1px solid #d6d3cd;border-radius:4px;background:#fff;max-width:100%}
 .site-page .reference-controls label{display:flex;flex-direction:column;gap:.25rem;min-width:0}
