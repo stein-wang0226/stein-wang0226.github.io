@@ -10,6 +10,24 @@ Holon 的目标是在同一模型接口中连接蛋白质序列、自然语言�
 
 项目最有价值的方法链是：**模态参数分工 → 蛋白序列预训练 → 双向继续预训练 → 科学指令微调 → 分层验证条件利用**。序列 loss 降低、文本匹配敏感性增加、结构预测改善分别回答不同问题，不能由其中一个数字替代整体科学能力。[1](#ref-1)
 
+<!-- WORK:KNOWLEDGE:START -->
+## 知识讲解：先区分表示、条件与监督 {#work-knowledge}
+
+阅读本项目需要理解三个概念。**Tokenizer** 把氨基酸或文本变成离散编号；它决定序列长度和词表，不能用氨基酸个数直接代替 token 数。**条件建模** 学习“给定描述时哪些蛋白序列更可能”；它不同于把文本和序列各自训练得更流畅。**监督区间** 决定哪些位置产生 loss；一个 token 即使只作上下文，也可能通过注意力影响被监督位置。
+
+P2T 是 `p(text | protein)`，T2P 是 `p(protein | text)`，protein-only 是 `p(protein)`。双向 CPT 共享模型中的部分能力，但两种条件分布不是互为确定性逆函数：相似功能描述可能对应多个序列，同一序列也可能有多种正确描述。结构扩展还要固定 structure codec；codec token、氨基酸残基和三维坐标不是同一层表示。[1](#ref-1)
+
+<figure class="work-mechanism">
+<svg viewBox="0 0 840 210" role="img" aria-labelledby="holon-route-title holon-route-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="holon-route-title">Holon 的表示、路由与监督</title><desc id="holon-route-desc">文本和蛋白 token 经各自参数投影，恢复序列顺序后共同参与注意力，再按目标模态计算交叉熵。</desc>
+<g fill="#f7f5f0" stroke="#a9cec7"><rect x="5" y="25" width="190" height="65" rx="6"/><rect x="5" y="120" width="190" height="65" rx="6"/><rect x="240" y="25" width="175" height="65" rx="6"/><rect x="240" y="120" width="175" height="65" rx="6"/><rect x="460" y="65" width="175" height="80" rx="6"/><rect x="680" y="65" width="155" height="80" rx="6"/></g>
+<g stroke="#0f766e" fill="none" stroke-width="2"><path d="M195 57H240M195 152H240M415 57H437V105H460M415 152H437V105M635 105H680"/></g>
+<g fill="#172d35" text-anchor="middle" font-family="system-ui,sans-serif" font-size="17"><text x="100" y="52">文本 token</text><text x="100" y="75" font-size="13">上下文或预测目标</text><text x="100" y="147">蛋白 token</text><text x="100" y="170" font-size="13">独立词表与序列边界</text><text x="327" y="52">理解侧投影</text><text x="327" y="75" font-size="13">Q / K / V</text><text x="327" y="147">生成侧投影</text><text x="327" y="170" font-size="13">Q / K / V gen</text><text x="547" y="96">恢复原位置</text><text x="547" y="122" font-size="14">注意力与位置编码</text><text x="757" y="96">目标头与 CE</text><text x="757" y="122" font-size="14">按监督位置计算</text></g>
+</svg>
+<figcaption>机制图依据投影装配实现；具体 token 被分到哪一侧由任务布局和索引决定，不能简单把所有蛋白 token 等同于生成侧。<a href="#ref-3">3</a></figcaption>
+</figure>
+<!-- WORK:KNOWLEDGE:END -->
+
 ## 模型如何连接不同模态
 
 文本使用 Qwen 的词表与初始化；蛋白质序列通过蛋白 tokenizer 进入专门的嵌入和输出接口。MoT 在共享序列中根据 token 所属路由选择参数路径，让不同模态使用各自的投影、归一化和 FFN，再将表示恢复到原来的序列顺序参与注意力。这个路由依据模态或任务标记，不应与学习型 top-k MoE router 混为一谈。[2](#ref-2)[3](#ref-3)
@@ -27,6 +45,18 @@ packed sequence + modality indexes
 
 这使跨模态交互和参数隔离可以同时存在，但也引入模态边界、tied head、checkpoint shape 和冻结策略的一致性要求。dense 路线用于检查专门路由的收益与额外成本，MoE 路线则另外研究稀疏容量及优化稳定性。[1](#ref-1)[3](#ref-3)
 
+### 从张量看 MoT 为什么能跨模态交互
+
+设 packed 表示为 `H ∈ R^(T×d)`，`I_und`、`I_gen` 是两类位置的索引。各路径先从 H 取出对应行，计算 `Q_und=H[I_und]W_Q` 和 `Q_gen=H[I_gen]W_Q,gen`，K/V 同理；再把投影结果 scatter 回原来的 T 个位置。多头注意力按头计算：
+
+```text
+Attention(Q,K,V) = softmax(QKᵀ / √d_head + M) V
+```
+
+`M` 表示因果与 packed 样本边界等约束。**参数路径分开，不意味着 attention 矩阵按模态彻底断开。** 在合同允许的上下文范围内，蛋白目标仍能使用文本的 K/V。相反，两个不同样本即使拼在同一 batch，也不能因为物理相邻而相互读答案。GQA 的 Q 与 K/V 头数可能不同，上式是每个注意力头的概括，不声称三个矩阵的最后一维完全一致。
+
+冻结策略也分两层：参数 `requires_grad=False` 与中间表示 `detach` 对梯度路径的影响不同；实际 `freeze_und` 必须与实现、optimizer 参数组和 checkpoint 一起核对。packed 的训练及评测 loss 路径与 KV-cache 生成路径同样不同，调用 `.eval()` 本身不会自动把 packed 输入改成生成接口。[2](#ref-2)[3](#ref-3)
+
 ## 数据与训练阶段
 
 | 阶段 | 输入与监督 | 学习目标 | 需要保留的交接物 |
@@ -39,6 +69,19 @@ packed sequence + modality indexes
 阶段总结依据统一报告与仓库入口；不同实验分支不必顺序执行表中所有阶段。科学 SFT 的计划稿、参考论文设想和已实现分类路径应分别呈现，结构路线也不能由“存在 codec”推断全部端到端实验已完成。[1](#ref-1)[2](#ref-2)
 
 一个 T2P 样本可以将文本条件放在上下文中，以蛋白 token 为主要预测目标；对应 P2T 视图从序列预测描述。双向样本的“配对正确”必须由 accession、序列和清洗规则确认。训练与 C30/Temporal 评测还需要在聚类、来源比例和视图构造上避免泄漏；精确序列不重复并不充分保证同源分布隔离。[1](#ref-1)
+
+### 一个样本怎样从输入走到 loss
+
+下面是布局讲解，模态标记为描述性占位符，不是仓库 tokenizer 的字面 special token：
+
+```text
+T2P: [方向/边界] [功能文本] [蛋白起始] [序列 tokens] [终止]
+     └──────── 条件区 ────────┘ └── 主要监督区 ──┘
+P2T: [方向/边界] [序列 tokens] [文本起始] [功能文本] [终止]
+     └──────── 条件区 ────────┘ └── 主要监督区 ──┘
+```
+
+组装顺序是原始配对 → tokenizer → 边界和方向 → packing → 模态索引与 label shift → CE。对监督位置集合 S，平均 CE 可写作 `−Σ_(i∈S) log pθ(y_i|context)/|S|`。若分别平均 text/protein CE 再加权，目标模态的权重与直接对全部监督 token 求平均可能不同；实际 reduction 和权重必须绑定运行配置。**输入 token 比例、监督 token 比例和 loss 权重是三个独立口径。**[1](#ref-1)[4](#ref-4)
 
 ## 从目标 token 比例到可执行采样
 
@@ -74,6 +117,36 @@ Negative Ladder v2 的正式 checkpoint×tier 终点为
 
 每种 recipe 只有一个训练 seed，实际 token share 尚无独立审计，expanded pool 也不是 strict protein-OOD。因此支持的是冻结样本上的 checkpoint-level 结论，不支持配方因果效应、多种子稳健性或细粒度生物学理解。完整报告保留这个边界与未执行的 replication 设计。[6](#ref-6)
 
+<!-- WORK:EXAMPLE:START -->
+### 用真实结果解释交互效应 {#work-example}
+
+Negative Ladder 的 margin 表示 matched 与 null 条件的 NLL 差异，数值越高表示该协议下更偏好正确配对；它不是生物功能正确率。[6](#ref-6)
+
+| Checkpoint | L0 margin NLL | L3 margin NLL | L3−L0 |
+| --- | ---: | ---: | ---: |
+| PS8，8:0:92 | 0.0981195 | 0.0871261 | −0.0109934 |
+| PSC，4:4:92 | 0.0380793 | 0.0322274 | −0.0058518 |
+
+注册效应就是 `−0.0058518 − (−0.0109934) = +0.0051416`。因此“下降较小”和“绝对 margin 更大”可以同时指向不同 checkpoint。CI 是在冻结样本相关结构下的 block bootstrap 不确定性，不能当成跨训练 seed 的置信区间。
+<!-- WORK:EXAMPLE:END -->
+
+<!-- WORK:REVIEW:START -->
+## 工作总结与尚未闭合的研究问题 {#work-review}
+
+| 工作产物 | 已能说明什么 | 下一步要补什么 |
+| --- | --- | --- |
+| 模态路由与训练/推理接口 | 有可定位的实现、索引与参数分工 | 同数据预算 dense/MoT 消融，冻结与缓存一致性 |
+| 混合 CPT 配方及校准工具 | 声明比例能转换为记录采样并观测暴露 | 实际监督暴露、重复率及跨 rank 汇总审计 |
+| Scaling → CPT 预算映射 | 特定 active path 的算力可换算成训练 tokens | 用当前 telemetry 校准 FLOPs 与有效步数 |
+| Negative Ladder 与分层评测 | 可区分配对敏感性、绝对分数和 tier 交互 | 新训练 seed、strict protein-OOD 与独立生物评审 |
+
+由此可提炼的研究贡献是统一表示接口、可测量的数据配方和有边界的条件利用评测。SFT 与结构路线的完整实验闭合仍要逐条看台账，不能把计划、实现和实测合并成一个“全部完成”的结论。
+
+## 按需补充基础知识
+
+建议先复习 [Attention 与 KV cache](../../llm-architecture/s02_attention_position_cache.html)，再读 [SFT 与监督 mask](../../llm-posttraining/s01_supervision_preference.html)；训练资源问题可接着看 [优化器与训练系统](../../llm-training-lifecycle/s05_training_methods_systems.html)。这些是通用知识讲解，本页的项目事实仍以固定版本来源为准。
+<!-- WORK:REVIEW:END -->
+
 ## 实现入口与复核范围
 
 阅读源码可按 `modeling/holon/ → data/ → train/ → eval/` 顺序：先确认参数路由，再确认输入、loss mask、实际 sampling，最后确认 checkpoint 与 scorer 的布局是否一致。长代码、完整实验总表、结构路线和 ProtText-Eval 的细节在[完整报告](full-report.html)中保留。
@@ -84,9 +157,9 @@ Negative Ladder v2 的正式 checkpoint×tier 终点为
 
 所有仓库链接固定到 `7de0f4d67f9d18d166e715f6e4e200de22cb21ea`，需要私有仓库访问权限。
 
-1. <span id="ref-1"></span>[统一研究报告](https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/reports/Holon_Unified_Report_202611.html)：2026-11-11 深入研究版。
-2. <span id="ref-2"></span>[README：模型、配置与训练入口](https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/README.md)。
-3. <span id="ref-3"></span>[qwen3_navit.py](https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/modeling/holon/qwen3_navit.py#L294-L360)：模态索引与投影装配。
-4. <span id="ref-4"></span>[CPT token mixture calibration](https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/token_mix_calibration.md)：比例、产出率、实测与反馈。
-5. <span id="ref-5"></span>[Scaling → CPT transfer](https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/scaling/cpt_scaling_transfer.md)：active FLOPs 与预算。
-6. <span id="ref-6"></span>[Negative Ladder PS8→PSC 结果](https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_PS8_PSC_RESULT.md)：注册终点、CI 与 claim scope。
+1. <a id="ref-1" href="https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/reports/Holon_Unified_Report_202611.html">统一研究报告</a>：2026-11-11 深入研究版。
+2. <a id="ref-2" href="https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/README.md">README：模型、配置与训练入口</a>。
+3. <a id="ref-3" href="https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/modeling/holon/qwen3_navit.py#L294-L360">qwen3_navit.py</a>：模态索引与投影装配。
+4. <a id="ref-4" href="https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/data/token_mix_calibration.md">CPT token mixture calibration</a>：比例、产出率、实测与反馈。
+5. <a id="ref-5" href="https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/scaling/cpt_scaling_transfer.md">Scaling → CPT transfer</a>：active FLOPs 与预算。
+6. <a id="ref-6" href="https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/docs/benchmark/PROTEIN_TEXT_NEGATIVE_LADDER_V2_PS8_PSC_RESULT.md">Negative Ladder PS8→PSC 结果</a>：注册终点、CI 与 claim scope。

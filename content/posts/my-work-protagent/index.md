@@ -19,6 +19,24 @@ protein + question + skill policy
 
 项目负责领域数据、工具、skills、reward 与评分；ROLL 承担分布式训练与 rollout 运行时。真实工具观察、teacher 示范和 gold annotation 是不同资产，不能让模型生成的“工具样文本”替代程序执行。[2](#ref-2)
 
+<!-- WORK:KNOWLEDGE:START -->
+## 知识讲解：工具轨迹、SFT 与在线 RL {#work-knowledge}
+
+**工具智能体** 的一个动作可以包含多个文本 token；程序执行结束后产生的 observation 是环境返回值。训练序列里出现工具名并不等于真实调用成功。**SFT** 使模型模仿已收集的有效动作和答案；**on-policy RL** 则用当前模型重新采样轨迹，比较其实际结果并更新策略。这两者的数据分布和优化目标不同。
+
+这里没有学习 value critic 的主方法使用 REINFORCE。它通过“奖励高的已采样动作提高概率、奖励低的降低概率”优化期望回报；baseline、normalization、whitening 和 KL 用来控制更新，但不能为缺失的生物事实提供真值。**信用分配** 问的是一次成功或失败应影响哪些早先动作。[1](#ref-1)
+
+<figure class="work-mechanism">
+<svg viewBox="0 0 840 200" role="img" aria-labelledby="protagent-loop-title protagent-loop-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="protagent-loop-title">ProtAgent 的真实工具闭环与训练信号</title><desc id="protagent-loop-desc">策略产生动作，工具执行返回观察，观察加入历史；局部动作奖励和终止答案奖励组成逐步回报用于更新策略。</desc>
+<g fill="#f7f5f0" stroke="#a9cec7"><rect x="5" y="15" width="175" height="65" rx="6"/><rect x="225" y="15" width="175" height="65" rx="6"/><rect x="445" y="15" width="175" height="65" rx="6"/><rect x="665" y="15" width="170" height="65" rx="6"/><rect x="225" y="130" width="395" height="55" rx="6"/></g>
+<g stroke="#0f766e" stroke-width="2" fill="none"><path d="M180 48H225M400 48H445M620 48H665M750 80V105H92V80M312 80V130M750 105V157H620"/></g>
+<g fill="#172d35" text-anchor="middle" font-family="system-ui,sans-serif" font-size="17"><text x="92" y="43">策略与历史</text><text x="92" y="65" font-size="13">蛋白、问题、观察</text><text x="312" y="43">assistant 动作</text><text x="312" y="65" font-size="13">有效调用或最终答案</text><text x="532" y="43">真实工具执行</text><text x="532" y="65" font-size="13">结果、失败与版本</text><text x="750" y="43">新 observation</text><text x="750" y="65" font-size="13">返回历史继续决策</text><text x="422" y="165">局部 reward → 逐步 return → actor 更新</text></g>
+</svg>
+<figcaption>动作和最终答案是策略输出；工具观察作为条件进入下一步，不能对其做 assistant 模仿监督。<a href="#ref-1">1</a><a href="#ref-3">3</a></figcaption>
+</figure>
+<!-- WORK:KNOWLEDGE:END -->
+
 ## 工具、轨迹和监督怎样组织
 
 输入通常含 `sample_id`、`instruction`、`sequence`、任务类型和 metadata。策略根据历史 `h_t=(x,q,a_1,o_1,…,a_{t−1},o_{t−1})` 输出动作，环境执行对应工具并返回观察。skill policy 约束可见工具、必要证据、答案形状和不应出现的注释部分。[1](#ref-1)[2](#ref-2)
@@ -53,6 +71,35 @@ L = − E[A_(t,u) log πθ(y_(t,u)|h_(t,u))] + β KL(πθ || πref)
 源码先按 `traj_id` 分组并按 step 排序，计算 `r_t + gamma × step_lambd × running_return`，随后恢复原样本顺序。主配方 step λ=1；支持 λ 分支不代表主实验使用了所有扩展。return 经配置选择的 normalization 进入 response/token 奖励与 mask，再做 advantage whitening 和 clipping。[4](#ref-4)
 
 identity return normalization 只表示该层不做组相对变换。后续仍可 whiten 优势并裁剪到 ±0.2；这里的 advantage clip 与 PPO 的概率比 clip 不是一回事。episode 方法把整条轨迹的 return 赋给各动作，step 方法保留当前位置之后的回报，因此不会让后续重复动作继承此前已获得的局部奖励。
+
+<!-- WORK:EXAMPLE:START -->
+### 一个有重复调用的轨迹怎样计算信用 {#work-example}
+
+用论文附录的实际局部权重作算式示例；以下是教学轨迹，不是新增 rollout 实测。第一次正确相关工具调用得 `+0.25`，下一次重复调用得 `−0.30`，第三步回答的终止奖励记为 R，γ=λ=1。[3](#ref-3)
+
+| 动作 | 局部 reward | Step return | 同轨迹 Episode return |
+| --- | --- | --- | --- |
+| 首次有效相关调用 | +0.25 | R−0.05 | R−0.05 |
+| 重复调用 | −0.30 | R−0.30 | R−0.05 |
+| 最终答案 | R | R | R−0.05 |
+
+Step return 不再把第一步的 `+0.25` 分给第二步；它仍保留终止答案对早先证据采集动作的影响。真实更新还经过 normalization、token/response mask 和 clipping，因此该表解释的是原始 return，不能直接当成最终 advantage。
+
+无 critic 的 score-function 恒等式给出 `∇θ E[G] = E[G ∇θ log πθ(action|history)]`。一条动作由多个 token 构成时，动作 log probability 是这些策略 token 的 log probability 之和，工具返回内容不在这个和里。可写成局部 surrogate：
+
+```text
+L_actor = −Σ_(t,u) m_(t,u) A_(t,u) log πθ(y_(t,u)|h_(t,u))
+          / configured_denominator + β KL(πθ || πref)
+```
+
+`m` 排除非策略与 padding token；分母按实现固定，不能随意把 token mean 改成 trajectory mean。Group-relative 变换概括为 `(G−mean_group)/(std_group+ε)`，其 group、mean/std 轴由配置确定。Identity 与 group-relative 的区别并不取消后续 whitening；概率比 clipping、优势 clipping 和 KL anchor 也控制不同对象。[4](#ref-4)
+<!-- WORK:EXAMPLE:END -->
+
+### Reward 的正确性为什么仍需要独立评价
+
+终止 reward 包括注释覆盖、工具覆盖、格式、效率与 same-rollout fidelity 等项。论文中的完成工具 guard `−0.45×1[m=0]` 用于抵消纯 schema 增量：`0.45=2×0.15+0.5×0.30`。首次相关调用、重复/无关/malformed 调用及截断在不同 attachment point 计分，不能把终止 reward 复制到每一个原始动作上。[3](#ref-3)
+
+Same-rollout fidelity 检查回答与该次工具结果是否一致；它不能证明工具数据库是真实无误、测试信息未进入数据库，或答案已得到独立生物专家认可。训练优化“可获得的反馈”，评价则需要独立定义目标和分母。
 
 工具与答案 reward 是训练信号。最终评测从 `<answer>` 提取文本，以参考 annotation token recall **严格大于 0.5** 判成功，不能用含格式 bonus 的训练 reward 直接替代评测成功率。[1](#ref-1)[3](#ref-3)
 
@@ -92,12 +139,29 @@ SFT 使用 Megatron；论文 RL actor 使用 FSDP2，rollout 使用 vLLM 并同�
 
 本次对照了报告、论文附录、return 实现和当前状态文件，未重新运行训练或 OOD 评测。优先扩展方向是固定输出的独立生物专家与证据蕴含评审，以及固定起点、预算的跨模型/工具机制实验。
 
+<!-- WORK:REVIEW:START -->
+## 工作总结与复现检查顺序 {#work-review}
+
+| 产物 | 方法价值 | 尚不能推出的结论 |
+| --- | --- | --- |
+| 有效工具轨迹与 assistant-only SFT | 模型学会执行接口及观察到答案的转化 | 所有工具数据库都与测试同源隔离 |
+| Step return 与四臂三种子对照 | 区分回报粒度与 normalization 的影响 | 单个 reward 项的因果贡献 |
+| 全样本 OOD-1000 与禁用工具对照 | 指定协议中后训练和工具可用性相关的收益 | 生物学正确率或跨领域必然收益 |
+| 阶段配置、checkpoint 与证据矩阵 | 划清论文配方和早期开发记录 | 完整权重、轨迹及大数据库已经公开齐全 |
+
+复现先固定输入、模板和 loss mask，再检查真实工具执行及 `traj_id/step`，随后验证 return 附着位置、advantage 和 actor 权重同步，最后冻结 scorer 与模型。评价应同时报告答题率、全样本成功率、有效工具覆盖和独立证据正确性；只对已回答样本求成功率会掩盖拒答或解析失败。
+
+## 按需补充基础知识
+
+[SFT、RFT 与偏好优化](../../llm-posttraining/s01_supervision_preference.html)解释监督来源；[策略梯度与 RL 算法](../../llm-posttraining/s02_rl_algorithms.html)解释优化目标；[环境奖励与多步信用分配](../../llm-posttraining/s04_environment_reward_credit.html)和[异步后训练系统](../../llm-posttraining/s05_frameworks_async.html)分别连接 return 与分布式执行。
+<!-- WORK:REVIEW:END -->
+
 ## 来源与固定版本
 
 仓库固定到 `d66fa7c287d196d5c26ec23e53c02327c5bbc6a8`，源码访问需要权限。
 
-1. <span id="ref-1"></span>[完整技术报告](https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/assets/reports/ProtAgent_Technical_Report_202611.html)。
-2. <span id="ref-2"></span>[README 与领域运行链](https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/README.md)。
-3. <span id="ref-3"></span>[arXiv 稿件附录](https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex)：四臂、阶段、参数与分母。
-4. <span id="ref-4"></span>[ROLL agentic/utils.py](https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py#L62-L108)：按轨迹累积 return；L467–541 优势处理。
-5. <span id="ref-5"></span>[训练状态](https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/plans/TRAINING_PIPELINE_STATUS.md)与[论文证据矩阵](https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/PAPER_EVIDENCE_MATRIX.md)：历史与当前证据区分。
+1. <a id="ref-1" href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/assets/reports/ProtAgent_Technical_Report_202611.html">完整技术报告</a>。
+2. <a id="ref-2" href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/README.md">README 与领域运行链</a>。
+3. <a id="ref-3" href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/arxiv2026/appendix.tex">arXiv 稿件附录</a>：四臂、阶段、参数与分母。
+4. <a id="ref-4" href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/supplementary/code_data/third_party/roll/roll/pipeline/agentic/utils.py#L62-L108">ROLL agentic/utils.py</a>：按轨迹累积 return；L467–541 优势处理。
+5. <a id="ref-5" href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/plans/TRAINING_PIPELINE_STATUS.md">训练状态</a>与<a id="ref-5-matrix" href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/paper/PAPER_EVIDENCE_MATRIX.md">论文证据矩阵</a>：历史与当前证据区分。

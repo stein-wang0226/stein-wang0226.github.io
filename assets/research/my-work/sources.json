@@ -2,6 +2,15 @@
   "schema_version": 1,
   "date": "2026-11-14",
   "scope": "Project methods and retained reports; repository sources share authorship and are not independent replications.",
+  "quality_review": {
+    "date": "2026-11-14",
+    "standard": "docs/content-contract.md, sections 2-5",
+    "record": "docs/my-work-quality-review-20261114.md",
+    "learning_source": "Each project's authoritative index.md",
+    "full_report_assembly": "reading.project_learning reuses KNOWLEDGE, EXAMPLE and REVIEW sections",
+    "examples": "Holon uses recorded margins; reward and mask examples illustrate mechanisms, not new experiments",
+    "new_scientific_experiments": false
+  },
   "sources": [
     {
       "project": "Holon",
@@ -15,7 +24,7 @@
       "archive": "/assets/research/my-work/holon-original.html.txt",
       "blog_source": "content/posts/my-work-holon/full-report.html",
       "license": "Author-provided project report; no new redistribution license asserted.",
-      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS to report wrapper, made Holon directory sticky within report, added source notice.",
+      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS, made Holon directory sticky, added source notice. The reading layer additionally assembles learning and work-review sections from index.md.",
       "rewritten_links": [
         {
           "original": "../archive/project-reference-20261111/README.md",
@@ -560,7 +569,7 @@
       "archive": "/assets/research/my-work/protagent-original.html.txt",
       "blog_source": "content/posts/my-work-protagent/full-report.html",
       "license": "Author-provided project report; no new redistribution license asserted.",
-      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS to report wrapper, made Holon directory sticky within report, added source notice.",
+      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS, added source notice. The reading layer additionally assembles learning and work-review sections from index.md.",
       "rewritten_links": [
         {
           "original": "../../paper/protagent_paper.pdf",
@@ -796,7 +805,7 @@
       "archive": "/assets/research/my-work/harbor-original.html.txt",
       "blog_source": "content/posts/my-work-harbor/full-report.html",
       "license": "Author-provided project report; no new redistribution license asserted.",
-      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS to report wrapper, made Holon directory sticky within report, added source notice.",
+      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS, added source notice. The reading layer additionally assembles learning and work-review sections from index.md.",
       "rewritten_links": [
         {
           "original": "unified-production.md",
@@ -860,7 +869,7 @@
       "archive": "/assets/research/my-work/dllm-original.html.txt",
       "blog_source": "content/posts/my-work-dllm/full-report.html",
       "license": "Author-provided project report; no new redistribution license asserted.",
-      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS to report wrapper, made Holon directory sticky within report, added source notice.",
+      "adaptation": "Preserved scientific body and embedded media; adapted repository-relative hrefs, scoped original CSS, added source notice and LM1B mask clarification. The reading layer additionally assembles learning and work-review sections from index.md.",
       "rewritten_links": [
         {
           "original": "../../papers/arr/main.pdf",

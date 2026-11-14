@@ -72,6 +72,11 @@ make preview PORT=8766
 来源仓库的可见性与博客发布独立；项目链接需要权限时保持明确说明。
 科研复核范围与运行验证分别记录，不将 smoke、格式检查或历史统计当作新实验结果。
 2026-11-14 接入范围与验收见 [项目报告记录](my-work-reports-20261114.md)。
+同日的内容完整度与渲染复查见 [质量复查](my-work-quality-review-20261114.md)。
+方法总结内的 `WORK:KNOWLEDGE / EXAMPLE / REVIEW` 标记是完整报告知识补充的
+唯一来源；`reading.project_learning` 装配时重用这些片段，引用返回总结的来源锚点。
+不要在完整报告另写同一份知识稿。Markdown 正文必须处于
+`site-page reading-markdown` 容器，检查时同时验证真实字体、行高与链接颜色。
 
 个人履历只根据作者提供的信息更新。论文 Markdown 是论文列表唯一来源；SemDLM 与 SemDLM+ 是不同记录。
 在线 CV 与研究简历 PDF 分别维护。`assets/Curriculum_Vitae.pdf` 为作者提供的英文研究简历，

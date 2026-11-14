@@ -19,6 +19,25 @@ public study → candidate discovery → source audit + data scope freeze
 
 最关键的设计是分开治理开放科学问题与确定性判分：公共合同保留合理的方法自由度，私有校准记录合法分析路径及错误反例，verifier 对最终输出检查证据。产线能运行、任务完成、打包验收、科学难度认证与训练收益是不同结论。[1](#ref-1)
 
+<!-- WORK:KNOWLEDGE:START -->
+## 知识讲解：任务合同、oracle 与 verifier {#work-knowledge}
+
+**Benchmark task** 包括输入、问题、环境、输出及判分，而不只是题面。**公共合同** 是求解者能看到且应遵守的规则；**oracle** 是经来源与分析校准的参考结果；**verifier** 是读取求解结果并执行规则的程序。oracle 本身也会出错，所以不能用“与参考脚本逐字一致”替代科学判断。
+
+**Fixture** 是版本冻结、可重放的数据输入。它可以是有依据的公开数据切片，但必须保留转换出处。**盲测** 要隔离求解者与答案材料；由看过答案的 maintainer 跑参考解，是自检。**Refinement** 试图改变科学推理瓶颈，同时保留可解性与合法方法空间。[1](#ref-1)
+
+<figure class="work-mechanism">
+<svg viewBox="0 0 840 220" role="img" aria-labelledby="harbor-contract-title harbor-contract-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="harbor-contract-title">科学任务的公开执行与私有判分边界</title><desc id="harbor-contract-desc">公开来源形成冻结输入和题面，求解者产出答案；私有校准参考与反例约束独立验证器，验证器只在答案冻结后评分。</desc>
+<g fill="#f7f5f0" stroke="#a9cec7"><rect x="5" y="20" width="180" height="65" rx="6"/><rect x="225" y="20" width="180" height="65" rx="6"/><rect x="445" y="20" width="180" height="65" rx="6"/><rect x="665" y="20" width="170" height="65" rx="6"/><rect x="225" y="145" width="180" height="60" rx="6"/><rect x="445" y="145" width="180" height="60" rx="6"/><rect x="665" y="145" width="170" height="60" rx="6"/></g>
+<g fill="none" stroke="#0f766e" stroke-width="2"><path d="M185 52H225M405 52H445M625 52H665M92 85V175H225M405 175H445M625 175H665M750 85V145"/></g>
+<path d="M215 115H835" stroke="#b2b0aa" stroke-dasharray="6 5"/>
+<g fill="#172d35" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16"><text x="95" y="48">公开研究与来源</text><text x="95" y="70" font-size="13">版本、语义、转换记录</text><text x="315" y="48">fixture + 题面</text><text x="315" y="70" font-size="13">求解者可见</text><text x="535" y="48">隔离 Solver</text><text x="535" y="70" font-size="13">合理方法空间</text><text x="750" y="48">冻结答案</text><text x="750" y="70" font-size="13">输出与分析证据</text><text x="315" y="170">私有校准</text><text x="315" y="192" font-size="13">合法路径 + known-wrong</text><text x="535" y="170">独立 Verifier</text><text x="535" y="192" font-size="13">联合一致性与容差</text><text x="750" y="180">评分与失败归因</text></g>
+</svg>
+<figcaption>虚线分隔求解者可见与私有评价材料；隔离必须在运行环境中实现，仅在题面声明“不要看答案”不构成盲测。<a href="#ref-1">1</a></figcaption>
+</figure>
+<!-- WORK:KNOWLEDGE:END -->
+
 ## 公开研究怎样成为任务
 
 候选审计首先确认数据可得、实验设计有效、分析深度足够、运行预算可承受及输出能客观判分。在下载大型原始数据之前冻结输入范围，区分 raw、near-raw、intermediate、processed 与 answer-bearing 数据。源论文的结论是待检验的假设，不能直接写进 oracle。[1](#ref-1)[2](#ref-2)
@@ -47,6 +66,33 @@ public study → candidate discovery → source audit + data scope freeze
 一个反复暴露的缺陷是**逐字段包络接受了无法由任何完整分析产生的拼接结果**。例如每个基因的效应值都来自某条合法 normalization 路径，但整张表混用了不同路径；每个标量都“在范围内”，联合产物却不属于任何合法结果。解决方向是把允许的完整路径或可验证 invariant 纳入合同，而不是机械放宽容差。[3](#ref-3)[4](#ref-4)
 
 对每个任务，最小检查应覆盖正确结果、科学错误、部分错误、边界容差、缺失与稀疏零、重复和 malformed 输出、错误单位或坐标，以及历史盲测失败。任务可判性来自这些具体证据。
+
+<!-- WORK:EXAMPLE:START -->
+### 为什么逐字段容差不能代表完整科学结果 {#work-example}
+
+设两条合法分析路径产生完整结果向量 `y^(A)`、`y^(B)`。把每个分量单独做上下界，会得到矩形接受域 `Π_j[min(y_j^(A),y_j^(B)), max(y_j^(A),y_j^(B))]`。这个区域包含混用 A、B 分量的向量，即使没有任何合法分析能产生该向量。范围越宽不等于评分越科学。
+
+一种可考虑的设计是围绕**完整路径**建立接受域的并集，或检查科学 invariant：
+
+```text
+admissible output ∈ ⋃_a { y : for every j, distance(y_j, y_j^(a)) ≤ ε_j }
+AND identifiers / units / coordinate system / joint invariants are valid
+```
+
+这只是接受域的数学说明，不是所有任务的通用 scorer；集合输出、排序、稀疏计数和统计估计需要各自的距离或一致性规则。容差 `ε` 必须来自实际合法路径及数值误差，不能围绕某次 Solver 失败任意调大。[3](#ref-3)[4](#ref-4)
+
+### 从一个组学任务的输入走到交付
+
+下面是教学流程，不对应新生成任务，也没有新增实验结果。假设科学目标涉及样本分组的差异分析，先公开样本 ID、实验条件、参考注释版本与输入矩阵语义，再要求输出效应、统计证据和标识符。题面字段以实际任务合同为准。
+
+1. 从 accession 和样本元数据确认配对、批次、重复及排除规则；不能只凭文件名猜组别。
+2. 记录公开数据到 fixture 的转换、hash、计数与单位；输入若已经含作者最终 hit list，需要重审 answer-bearing 风险。
+3. 用可接受的分析路径形成校准结果，检查模型设计、归一化、缺失/零和多重检验语义。
+4. 制作 wrong-unit、wrong-group、混拼路径、重复 ID、缺失输出等负例；同时确认合法替代表达能通过。
+5. 只挂载公共数据给 Solver；冻结答案后由独立 Verifier 判分，保存运行命令、结果和失败归因。
+
+这条链路的价值在于每一跳都能对应输入和落盘证据。容器里安装了分析软件、答案格式正确或参考解跑通，都不能单独证明科学可判性。[1](#ref-1)[2](#ref-2)
+<!-- WORK:EXAMPLE:END -->
 
 ## 角色接力、门禁与失败恢复
 
@@ -80,11 +126,35 @@ accept child only if
 
 上述记录来自 2026-11-12 更新的当前主说明；它明确记录 accepted child 仍为 0。这个停止结果同样具有方法价值：归因、反事实和预注册边界阻断了质量缺陷导致的假阳性。不能以大量工程检查、任务交付或通过率下降代替 refinement 有效性。[3](#ref-3)
 
+### pass@k 与难度下降怎样解释
+
+pass@1 是固定预算下单次尝试成功的概率估计；pass@k 表示 k 次机会中至少一次成功。若有 n 次可交换尝试、其中 c 次成功，常用无偏组合估计是 `1−C(n−c,k)/C(n,k)`，前提包括 `n≥k` 及一致的采样协议。真实配对评测有重复与依赖时应按该项目注册协议处理，不可默认所有尝试相互独立。
+
+难度效应可记为 `Δ = pass_parent − pass_child`，但 Δ>0 还需要质量通过和失败归因支持。把一次规格错误造成的全失败当作“很难”，会奖励不可解的题。parent headroom 用于筛选有下降空间的任务；筛选样本与正式样本混用，会让后续效果带入选择偏差。[3](#ref-3)
+
 ## 规模与报告数字怎样阅读
 
 原始 GEO-Harbor 方法报告保留 740 ready、413 done、70%+ / 91.0% 成功率以及成本估计，并已标明这些是原稿历史口径。它没有重新核验批次、分母、价格来源和全部执行证据，因此本页不将其更新为 2026-11-14 的生产读数。[1](#ref-1)
 
 项目简历中“2,000+ task packages”对应作者提供的更大范围交付事实，也不能与本机 GEO 库存直接求比。若要报告当前库存，应从 task-record、campaign 状态和 tracked coordination inventory 重新聚合，分别给出来源、批次、完成、历史打包与本次新增。[5](#ref-5)
+
+<!-- WORK:REVIEW:START -->
+## 工作总结与质量验收的层次 {#work-review}
+
+| 层次 | 应检查的产物 | 能支持的结论 |
+| --- | --- | --- |
+| 来源与输入 | accession、转换记录、冻结 fixture、schema | 数据可得、语义透明、可重放 |
+| 科学合同 | instruction、多路径校准、known-wrong 与 verifier | 明确范围内合法结果可接受、错误可区分 |
+| 独立盲测 | mount 白名单、冻结答案、Verifier 与 Judge 记录 | 指定运行协议中的求解与判分表现 |
+| 生产交付 | lifecycle、task package、历史 inventory | 生命周期可恢复、交付不会重复计入 |
+| 难度或训练效用 | 配对实验、失败归因、训练后留出评价 | 对相应假设的效果证据，不能由前四层替代 |
+
+目前报告的方法价值集中在证据链、公共/私有边界、独立验证与防止伪难度的停止机制。要进一步证明任务改善了模型的科学能力，需要独立训练与留出评测；这不在本次整理的已执行范围内。
+
+## 按需补充基础知识
+
+可结合 [Harbor 框架完整介绍](../../harbor-framework-guide/)理解容器和 runner，再看 [可执行任务合成](../../agent-data-benchmarks/s01_task_synthesis.html)、[科学任务族](../../agent-data-benchmarks/s03_scientific_task_family.html)及[评测指标与基准](../../agent-data-benchmarks/s02_benchmark_map.html)。这些页面补通用知识，具体任务合同仍须查任务本身。
+<!-- WORK:REVIEW:END -->
 
 ## 实现入口与复核范围
 
@@ -96,8 +166,8 @@ accept child only if
 
 GitHub 固定到 `0efe0d276c6f4f2d804897843620ba7cb73974e7`，需要权限。
 
-1. <span id="ref-1"></span>[GEO-Harbor-Bench 方法报告](https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/GEO-Harbor-Bench-Method-Report.html)：原稿历史统计与 2026-11-05 文档说明。
-2. <span id="ref-2"></span>[当前 README](https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/README.md)：来源、运行边界与入口。
-3. <span id="ref-3"></span>[Refinement 主说明](https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/refinement-mvp-implementation.md)：2026-11-12，验收、反事实、v3–v15 与停止边界。
-4. <span id="ref-4"></span>[版本与证据失效设计](https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/refinement-chain-design.md)及[历史 refinement 记录](https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/refinement-v1-status.md)。
-5. <span id="ref-5"></span>[生产记录与打包规则](https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/production-status.md)。作者项目规模另参见站点[在线 CV](../../cv/#autoresearch)，两者统计范围分别保留。
+1. <a id="ref-1" href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/GEO-Harbor-Bench-Method-Report.html">GEO-Harbor-Bench 方法报告</a>：原稿历史统计与 2026-11-05 文档说明。
+2. <a id="ref-2" href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/README.md">当前 README</a>：来源、运行边界与入口。
+3. <a id="ref-3" href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/refinement-mvp-implementation.md">Refinement 主说明</a>：2026-11-12，验收、反事实、v3–v15 与停止边界。
+4. <a id="ref-4" href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/refinement-chain-design.md">版本与证据失效设计</a>及<a id="ref-4-history" href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/refinement-v1-status.md">历史 refinement 记录</a>。
+5. <a id="ref-5" href="https://github.com/stein-wang0226/harbor-task-sync/blob/0efe0d276c6f4f2d804897843620ba7cb73974e7/docs/production-status.md">生产记录与打包规则</a>。作者项目规模另参见站点[在线 CV](../../cv/#autoresearch)，两者统计范围分别保留。

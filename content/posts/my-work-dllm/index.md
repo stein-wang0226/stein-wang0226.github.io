@@ -10,6 +10,23 @@ title: Trainable DLLM：生成顺序与块局部性
 
 方法路线是：**匹配规模与预算的受控模型 → ICL/路径搜索/Sudoku 依赖任务 → attention 与监督区间消融 → LM1B 语言建模 → 原始图表与运行日志对账**。不同任务偏好不同条件可见性，没有一个生成顺序在本报告的所有实验中统一占优。
 
+<!-- WORK:KNOWLEDGE:START -->
+## 知识讲解：生成顺序、可见性与可训练性 {#work-knowledge}
+
+**AR（自回归）** 按固定顺序预测下一 token；训练时使用正确前缀，即 teacher forcing。**Masked diffusion** 从部分缺失的序列预测被遮蔽位置，推理时反复选择、恢复或提交 token。一次 forward 内可并行输出多个位置，不代表它们之间已经建立自回归依赖。
+
+**Block** 是序列分组；**attention mask** 决定当前位置能读哪些 key/value；**loss mask** 决定哪些预测被监督。这三个概念不能混为一谈。可训练性关注固定预算下的收敛、稳定性与样本效率，可表达性关注是否存在能表示目标的参数；两种顺序能表示同一函数，也可能训练得很不一样。[1](#ref-1)
+
+<figure class="work-mechanism">
+<svg viewBox="0 0 840 220" role="img" aria-labelledby="dllm-order-title dllm-order-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="dllm-order-title">三种调度方式的块与位置关系</title><desc id="dllm-order-desc">自回归按序列位置推进，Scatter 按块内 offset 跨块推进，Jigsaw 按低熵选择块并在块内因果提交。调度不等于具体 attention mask。</desc>
+<g fill="#f7f5f0" stroke="#a9cec7"><rect x="5" y="20" width="255" height="170" rx="6"/><rect x="292" y="20" width="255" height="170" rx="6"/><rect x="579" y="20" width="255" height="170" rx="6"/></g>
+<g fill="#172d35" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18"><text x="132" y="51">AR</text><text x="419" y="51">Scatter</text><text x="706" y="51">Jigsaw</text><text x="132" y="95" font-size="16">block 0 → block 1 → …</text><text x="132" y="125" font-size="15">固定左到右位置</text><text x="132" y="162" font-size="13">每次提交下一个 token</text><text x="419" y="95" font-size="16">offset 0 → offset 1 → …</text><text x="419" y="125" font-size="15">同 offset 跨块处理</text><text x="419" y="162" font-size="13">mask 取决于实际实现</text><text x="706" y="95" font-size="16">probe → 选低熵块</text><text x="706" y="125" font-size="15">块内因果生成 → 提交</text><text x="706" y="162" font-size="13">重复选择剩余未提交块</text></g>
+</svg>
+<figcaption>概念调度图，不能替代某个 backbone 的可见性矩阵。LM1B Scatter 的同 offset 跨块边在下面单独核对。<a href="#ref-1">1</a><a href="#ref-2">2</a></figcaption>
+</figure>
+<!-- WORK:KNOWLEDGE:END -->
+
 ## 目标函数与条件可见性
 
 ```text
@@ -22,6 +39,21 @@ Block-Diff: pθ(x) = ∏_k pθ(block_k | earlier clean blocks)
 AR 的 teacher forcing 与因果 mask 为每个位置规定固定预测上下文。MDM 共享模型处理许多随机掩码状态，双向上下文允许从后向前恢复答案，但某些训练状态会缺少关键局部绑定信息。Block-Diff 在块间保持因果顺序、块内去噪，让局部双向建模与前缀提交结合。[1](#ref-1)
 
 这里的吸收式目标是概括形式，实际 noise schedule、SUBS 参数化、loss normalization 和 sampler 需要结合相应实现。不能从公式推断所有分支的计算成本一致。
+
+### 从公式看一次训练更新
+
+对干净序列 x0 采样噪声时间 τ，按该 schedule 将部分 token 替换为 `[MASK]` 得到 xτ。模型输出每个位置的词表分布，但只在监督集合 S 上累积目标 CE。`1/τ` 对不同遮蔽程度作时间权重；其数值稳定性、τ 的范围和实际平均方式应读实现，不能把 τ=0 直接代入。
+
+AR 的目标位置在给定正确前缀下训练；MDM 的目标在不同随机缺失上下文下训练。后者既能利用后面的可见信息，也必须面对缺失关键邻居的状态。Block-Diff 的因式分解是外层块顺序，块内条件分布仍要通过去噪或相应 sampler 得到，不能把它当成一遍 softmax 直接输出整个联合分布。
+
+```text
+clean x0 → sample mask/noise state → visible xτ
+         → attention decides readable context
+         → model distributions → loss mask selects supervised positions
+         → weighted CE → optimizer update
+```
+
+训练输入中含 x0 分支不必然泄漏：要检查目标 query 是否能通过任何允许的 attention 路径读到自己的 gold。只检查 loss mask 排除了某些位置是不够的，因为被排除位置仍可能向目标传递信息。[2](#ref-2)[3](#ref-3)
 
 ## Scatter 与 Jigsaw 的路线
 
@@ -40,6 +72,23 @@ Scatter 把序列分成块，以块内 offset 为推进轴：先处理每块 off
 
 LM1B 训练还可能将 `[x_t || x_0]` 拼接为两个分支；允许访问哪些干净位置由 mask 控制，同目标位置的 gold 不能直接可见。`sample_mode` 切换推理条件，输出裁剪、SUBS 和监督 mask 有各自作用。不能仅因输入含 x0 判定泄漏，也不能因为未掩位置 loss 为零就认为潜在 attention 泄漏无害。[2](#ref-2)[3](#ref-3)
 
+<!-- WORK:EXAMPLE:START -->
+### 用两块序列区分调度和 attention {#work-example}
+
+以下为索引讲解，非新的实验数据。令序列是 `[a0,a1,a2 | b0,b1,b2]`，字母表示块，数字表示 offset。Scatter 的推进轴是 `[a0,b0] → [a1,b1] → [a2,b2]`。但“a1 与 b1 是否互相可见”由模型 mask 决定，不能从推进顺序直接得出。
+
+在读取的 LM1B `scatdiff_mask` 中，xt 的 a1 query：
+
+| key 位置或分支 | 该 mask 是否允许 | 原因 |
+| --- | --- | --- |
+| xt 的 a1 或 b1 | 允许 | 同 side、同 offset；不检查块号 |
+| xt 的 a0 或 b0 | 不由这些规则允许 | xt→xt 规则仅同 offset |
+| x0 的 a0 或 b0 | 允许 | xt query 的 offset 严格大于 x0 key |
+| x0 的 a1 或 b1 | 不允许 | offset 必须严格小于，避免直接读取同层 gold |
+
+这是这一函数的边集合，不是对所有实现的统一描述；后续层的多跳信息流、packing 和 sample mode 仍要结合完整 forward 检查。尤其应区分训练的 x0 侧可见性与推理时实际已经提交的条件。[2](#ref-2)[3](#ref-3)
+<!-- WORK:EXAMPLE:END -->
+
 ## Jigsaw 的训练变体与监督密度
 
 LM1B 的 `jigsaw_prefix` 选择一个 frontier target block：之前的块可见，target 与后面的块被 mask，但只有 target block 进入 loss。它使用 `cross_attn:false`、`attention_mode:causal_unmasked`、`training_mask_mode:prefix_target`，与默认随机 mask 全序列的监督密度不同。[4](#ref-4)
@@ -55,6 +104,12 @@ prefix_target:
 multi_target_prefix:
   same x0 → K distinct frontier views → expanded batch
 ```
+
+### 熵选块为什么不等于选出正确块
+
+给未提交块 b 的位置分布 p，平均预测熵可记为 `H_b = −mean_i Σ_v p_(i,v) log p_(i,v)`；Jigsaw 选择当前 H_b 最低的候选块。低熵表示模型更确信，不等于预测正确；错误但自信的块一旦提交，也会约束后续生成。probe forward 和正式提交均有计算成本。
+
+因此一个充分的消融应固定 backbone、attention、supervised token 数及实际 forward 预算，再比较固定块顺序与熵选择。prefix/fixed/multi 的监督密度不同，只有同时记录 loss 分母、target block 数和重复视图才能解释其差异。[3](#ref-3)[4](#ref-4)
 
 ## 三类受控实验怎样解释局部性
 
@@ -89,6 +144,29 @@ ARR 报告主要使用约 110M 的 backbone、长度 128、BERT-base-uncased tok
 
 Gen-PPL 比较必须记录 checkpoint、top-p、requested T、first-hitting、真实 NFE、样本数和外部 evaluator。某些历史 first-hitting 运行会跳过空步骤，相同 T 未必代表相同有效计算。NFE 相同也可能对应不同输入长度、缓存收益和前向 FLOPs，不能直接称为相同延迟。[1](#ref-1)
 
+### 三种常见指标不能互相替代
+
+PPL 是 `exp(平均 NLL)`；平均时使用什么 tokenizer、哪些 token 和什么估计器决定其可比性。Test-PPL 对留出数据的建模，Gen-PPL 对生成文本的外部评分，二者不可直接排序。扩散的留出似然可能通过上界或估计得到，不能默认它与 AR 精确 NLL 的计算过程一致。
+
+Sudoku 的 cell accuracy 统计棋格正确比例，整盘准确率要求所有目标空格和约束通过；高 cell accuracy 仍可能有大量无效棋盘。Pathfinding 的节点准确率与完整路径匹配也有相同差别。NFE 则只是网络前向次数：不同序列长度、probe、缓存和硬件条件下，每次 forward 的成本不同。
+
+<!-- WORK:REVIEW:START -->
+## 工作总结与未完成的证据闭合 {#work-review}
+
+| 研究产物 | 已有价值 | 优先补齐 |
+| --- | --- | --- |
+| AR/MDM/Scatter/Jigsaw 的受控框架 | 将生成顺序与依赖任务连接 | 固定可见性、监督密度和计算的机制消融 |
+| ICL/Pathfinding/Sudoku 记录 | 可定位的曲线与任务特定失败模式 | 缺失主图运行、seed 选择与逐点 profiling |
+| LM1B 配置、采样和逐格表 | 区分 Test-PPL、Gen-PPL、top-p 与 T | 缺逐样本的 D3PM cell、SEDD 差异及留出评估日志 |
+| CPU/单卡 smoke 与 reload | 小模型路径可运行、状态可恢复 | 按主表预算复现质量，不以 smoke 代替主实验 |
+
+最稳妥的贡献表述是：研究块局部性与条件依赖如何影响训练，并提供可复核实现和任务分解。当前证据不足以把某条顺序推广为所有任务的最优策略，或把采样参数混合的 T sweep 解释成纯计算缩放规律。
+
+## 按需补充基础知识
+
+先读 [离散扩散目标](../../dlm-survey/s02_discrete.html)和[块扩散](../../dlm-survey/s03_block.html)，再看 [扩散方法比较](../../dlm-survey/s10_comparison.html)。注意力实现可接着复习 [Attention、位置编码与 KV cache](../../llm-architecture/s02_attention_position_cache.html)。通用理论和本项目实验记录应分别阅读。
+<!-- WORK:REVIEW:END -->
+
 ## 代码框架与复现状态
 
 结构化实验通过 YAML 选择任务、采样器、骨干、loss 和解码；Accelerate 包装训练。checkpoint 保存模型、optimizer 和 step，验证 JSONL 保存任务指标。LM1B 用 Hydra 选择算法/模型/数据，Lightning 管理训练与重载；推理时要核对 EMA、精度和 attention 后端。[1](#ref-1)[6](#ref-6)
@@ -108,9 +186,9 @@ LM1B: Hydra → tokenizer/packing → diffusion backbone
 
 仓库固定到 `28ed9621c93951f6032ce8a2ae28c115779ee918`；以下源码需要权限。
 
-1. <span id="ref-1"></span>[ARR 技术报告](https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/reports/trainable-dllm-technical-report.html)：原理、原图、受控实验及语言实验。
-2. <span id="ref-2"></span>[LM1B scatdit mask](https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/models/scatdit.py#L31-L60)：同 offset attention 的实际规则。
-3. <span id="ref-3"></span>[Scatter diffusion](https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/diffusers/scatter_diffusion.py)与[Jigsaw diffusion](https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/diffusers/jigsaw_diffusion.py)：输入、监督与采样。
-4. <span id="ref-4"></span>[Jigsaw prefix 配置](https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/configs/algo/jigsaw_prefix.yaml)。
-5. <span id="ref-5"></span>[Gen-PPL 逐格审计](https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/results/arr/lm1b_gen_ppl.csv)。
-6. <span id="ref-6"></span>[Verification record](https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/verification.md)与[复现指南](https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/reproduction.md)：已验证范围、差异与缺失证据。
+1. <a id="ref-1" href="https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/reports/trainable-dllm-technical-report.html">ARR 技术报告</a>：原理、原图、受控实验及语言实验。
+2. <a id="ref-2" href="https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/models/scatdit.py#L31-L60">LM1B scatdit mask</a>：同 offset attention 的实际规则。
+3. <a id="ref-3" href="https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/diffusers/scatter_diffusion.py">Scatter diffusion</a>与<a id="ref-3-jigsaw" href="https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/diffusers/jigsaw_diffusion.py">Jigsaw diffusion</a>：输入、监督与采样。
+4. <a id="ref-4" href="https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/experiments/lm1b/configs/algo/jigsaw_prefix.yaml">Jigsaw prefix 配置</a>。
+5. <a id="ref-5" href="https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/results/arr/lm1b_gen_ppl.csv">Gen-PPL 逐格审计</a>。
+6. <a id="ref-6" href="https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/verification.md">Verification record</a>与<a id="ref-6-reproduction" href="https://github.com/stein-wang0226/trainable-dllm-overview/blob/28ed9621c93951f6032ce8a2ae28c115779ee918/docs/reproduction.md">复现指南</a>：已验证范围、差异与缺失证据。

@@ -9,6 +9,32 @@
 .reading-related h2{font-size:20px;margin:0 0 12px}.reading-related ul,.reading-toc ol,.reading-series-list ol{padding-left:24px}
 .reading-toc summary,.reading-series-list summary{cursor:pointer;color:#0f766e}.reading-toc li,.reading-series-list li{margin:6px 0}
 .reading-content{min-width:0;max-width:100%;overflow-wrap:break-word;display:flow-root}
+/* Markdown has no legacy document CSS: give its prose the site's reading shell. */
+.site-page.reading-markdown{padding-top:8px}
+.site-page.reading-markdown .prose{max-width:900px;margin:0 auto}
+.site-page.reading-markdown .prose>h2{scroll-margin-top:24px}
+.site-page.reading-markdown code{font-family:var(--site-mono);font-size:.88em;overflow-wrap:anywhere}
+.reading-markdown .prose a[href^="#ref-"]::before,.work-learning a[href*="index.html#ref-"]::before{content:"["}
+.reading-markdown .prose a[href^="#ref-"]::after,.work-learning a[href*="index.html#ref-"]::after{content:"]"}
+.site-page.reading-markdown pre code{overflow-wrap:normal}
+.site-page.reading-markdown blockquote{margin:24px 0;padding:12px 20px;border-left:3px solid var(--site-dark-teal);background:#eeeee6}
+.site-page.reading-markdown figure{margin:28px 0}
+.site-page.reading-markdown figcaption{font-size:14px;color:var(--site-muted);line-height:1.7;margin-top:12px}
+.site-page.reading-markdown svg[viewBox]{display:block;width:100%;height:auto}
+.work-mechanism{max-width:100%;overflow-x:auto}
+.work-mechanism svg[viewBox]{min-width:840px}
+.site-page.work-learning{max-width:1100px;margin:24px auto;padding:24px 32px;border:1px solid #d6d3cd;border-top:3px solid #0f766e;background:#f7f5f0}
+.site-page.work-learning>h2{margin:0 0 12px;font-size:25px}
+.site-page.work-learning details{margin:16px 0;border-top:1px solid #d6d3cd;padding-top:12px}
+.site-page.work-learning summary{font-family:var(--site-heading);font-size:16px;cursor:pointer;min-height:32px}
+.site-page.work-learning details h2{font-size:22px;margin-top:24px}
+.site-page.work-learning details h3{font-size:19px}
+.site-page.work-learning code{font-family:var(--site-mono);font-size:.88em}
+.site-page.work-learning figure{margin:24px 0}
+.site-page.work-learning figcaption{font-size:14px;color:var(--site-muted);line-height:1.7}
+.site-page.work-learning svg[viewBox]{display:block;width:100%;height:auto}
+.site-page.work-learning :focus-visible{outline:3px solid #c87e25;outline-offset:3px}
+@media(max-width:900px){.site-page.work-learning{margin:16px 12px;padding:20px}}
 .reading-content img{max-width:100%;height:auto}
 .reading-content svg:not(:where(.katex *,mjx-container *,.MathJax_SVG *)){max-width:100%;height:auto}
 .reading-content .katex-display,.reading-content mjx-container[display="true"]{max-width:100%;overflow-x:auto;overflow-y:hidden}

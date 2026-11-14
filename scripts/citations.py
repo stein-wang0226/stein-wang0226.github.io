@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 from urllib.parse import unquote, urljoin, urlsplit, urlunsplit
 from catalog import load_content
-from render import ROOT, route_path
+from render import ROOT, load_md, md, route_path
 
 REGISTRIES = [
     ("assets/research/agent-data-benchmarks/sources.json", "/agent-data-benchmarks/", "ref-"),
@@ -107,7 +107,9 @@ def derive(root=ROOT, content=None):
         if entry["origin"] != "local" or entry["status"] == "draft":
             continue
         parser = Links(entry)
-        parser.feed((root / entry["source"]).read_text(encoding="utf-8"))
+        source = root / entry["source"]
+        text = md(load_md(source)[1]) if source.suffix == ".md" else source.read_text(encoding="utf-8")
+        parser.feed(text)
         for link in parser.links:
             url = urlsplit(link["url"])
             if url.netloc == "notes.local":

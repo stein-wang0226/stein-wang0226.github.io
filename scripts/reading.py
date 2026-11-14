@@ -3,10 +3,46 @@ import html
 import json
 import re
 from urllib.parse import urljoin, urlsplit
-from render import route_path
+from render import load_md, route_path
 
 GROUPS = {"main": "主线", "extension": "研究扩展",
           "prerequisite": "按需先修与完整推导", "reference": "行业参考"}
+
+
+def project_learning(ctx, entry):
+    """Reuse authoritative project explanations in preserved full reports."""
+    if entry.get("reading_role") != "reference" or "My Work" not in entry.get("tags", []):
+        return ""
+    overview = next((ctx.by_id[i] for i in entry.get("related", [])
+                     if "Personal Project" in ctx.by_id[i].get("tags", [])), None)
+    if not overview:
+        return ""
+    _, source = load_md(ctx.root / overview["source"])
+    link = ctx.rel(entry["url"], overview["url"])
+    parts = []
+    for marker, label in (("KNOWLEDGE", "基础概念与机制图"),
+                          ("EXAMPLE", "具体例子与公式解释"),
+                          ("REVIEW", "工作总结与进一步阅读")):
+        fragment = re.search(rf"<!-- WORK:{marker}:START -->(.*?)<!-- WORK:{marker}:END -->",
+                             source, re.S)
+        if not fragment:
+            raise ValueError(f"{overview['id']}: missing WORK:{marker} learning section")
+        # Reference anchors belong to the authoritative overview, not the legacy report.
+        text = re.sub(r"\]\(#([^)]*)\)", lambda m: f"]({link}#{m[1]})", fragment[1])
+        text = re.sub(r'href="#(ref-[^"]+)"', lambda m: f'href="{link}#{m[1]}"', text)
+        rendered = ctx.md(text)
+        # Markdown slug generation restarts for each fragment; namespace auto headings.
+        rendered = re.sub(r'(<h[1-6]\b[^>]*\bid=")([^"]+)(")',
+                          lambda m: m[1] + (m[2] if m[2].startswith("work-") else
+                                            f"work-guide-{marker.lower()}-{m[2]}") + m[3],
+                          rendered)
+        parts.append(f'<details{" open" if marker == "KNOWLEDGE" else ""}>'
+                     f'<summary>{label}</summary>{rendered}</details>')
+    return ('<section class="site-page work-learning" id="work-study-guide" aria-label="项目知识讲解">'
+            '<h2>知识讲解与工作复盘</h2>'
+            f'<p>先理解概念、算例和证据边界，再读原报告。也可<a href="{link}">阅读完整方法总结</a>'
+            '，或<a href="#work-report-start">直接进入原始完整报告</a>。</p>'
+            + "".join(parts) + '</section><span id="work-report-start"></span>')
 
 
 def chapter_directory(ctx, entry, chapters):
@@ -220,6 +256,8 @@ def decorate(ctx, entry, text):
         if len(related) == 4:
             break
     end += '<aside class="reading-related" aria-label="关联阅读"><h2>关联阅读</h2><ul>' + "".join(related) + "</ul></aside>"
+    # Insert after legacy heading decoration to preserve existing generated anchors.
+    body = project_learning(ctx, entry) + body
     body = ctx.navigation(path) + intro + '<div class="reading-content">' + body + "</div>" + end + ctx.footer(path)
     # Title changes can shift offsets; locate the body again before splicing.
     body_match = re.search(r'(<body\b[^>]*>)(.*)(</body>)', text, re.S | re.I)

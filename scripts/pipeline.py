@@ -110,8 +110,10 @@ def render_artifact(ctx):
             # Ordinary Markdown uses the same reading callback as legacy full HTML.
             text = ('<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">'
                     '<meta name="viewport" content="width=device-width,initial-scale=1">'
-                    f'<title>{html.escape(record["title"])}</title></head><body>'
-                    f'<article class="prose">{md(body)}</article></body></html>')
+                    f'<title>{html.escape(record["title"])}</title></head>'
+                    '<body class="site-body">'
+                    f'<main class="site-page reading-markdown"><article class="prose">{md(body)}'
+                    '</article></main></body></html>')
         text = decorate(ctx, record, text)
         if not isinstance(text, str):
             raise ValueError(f"reading.decorate must return HTML text for {record['id']}")

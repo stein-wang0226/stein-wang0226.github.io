@@ -95,6 +95,26 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(set(first), set(info["files"]) | {"build-info.json"})
         self.assertEqual(bool(status.strip()), info["dirty"])
         self.assertEqual(info["input_digest"], input_digest(self.root))
+        # Markdown must inherit site typography, not just a styled introduction.
+        for slug in ("holon", "protagent", "harbor-task-sync", "trainable-dllm"):
+            page = (self.output / f"my-work/{slug}/index.html").read_text()
+            self.assertIn('<body class="site-body">', page)
+            self.assertIn('<main class="site-page reading-markdown">', page)
+            self.assertIn('<article class="prose">', page)
+        # Existing scientific HTML remains outside the Markdown typography scope.
+        original = (self.output / "my-work/holon/full-report.html").read_text()
+        self.assertNotIn('class="site-page reading-markdown"', original)
+        self.assertIn('id="work-study-guide"', original)
+        self.assertIn('href="index.html#ref-3"', original)
+        bibliography = json.loads((self.output / "blog/references.json").read_text())
+        cited_entries = {u["entry"] for s in bibliography["sources"] for u in s["used_in"]
+                         if "#ref-" in u["citation"]}
+        for project in ("holon", "protagent", "harbor", "dllm"):
+            self.assertIn(f"my-work-{project}", cited_entries)
+        for slug in ("holon", "protagent", "harbor-task-sync", "trainable-dllm"):
+            page = (self.output / f"my-work/{slug}/full-report.html").read_text()
+            for anchor in ("work-knowledge", "work-example", "work-review", "work-report-start"):
+                self.assertIn(f'id="{anchor}"', page)
         self.assertFalse(any(Path(p).parts[0] in {
             "content", "scripts", "templates", "docs", ".automation", ".git"
         } for p in first))
