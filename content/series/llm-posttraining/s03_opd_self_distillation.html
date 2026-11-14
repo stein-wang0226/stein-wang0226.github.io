@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>03 · OPD、多教师与自蒸馏：从条件分布到长程 Agent</title>
+<meta name="description" content="深入 OPD 的状态分布、reverse-KL 与采样梯度，比较 DeepSeek、Nemotron、MiMo MOPD2、OPSD/SDPO/SDPG/Guided-OPD/TISD 和遗忘。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="why-on-policy">
+<h2>OPD 为什么需要学生自己走一遍任务</h2>
+<p class="lead">静态蒸馏让学生模仿教师访问过的路径；OPD 让学生生成动作和历史，再由教师评估这些真实学生 prefix 的下一步分布。它补的是状态分布偏移，不只是把教师答案换成概率。</p>
+<figure><div class="flow" aria-label="OPD的训练循环">
+<div class="stage"><b>学生访问状态</b><small>生成动作 / 工具参数<br>真实环境返回观察</small></div>
+<div class="stage"><b>教师同状态评分</b><small>相同动作前缀<br>分布 / sampled log-prob</small></div>
+<div class="stage"><b>学生更新</b><small>KL 或蒸馏 policy gradient<br>teacher 分支 stop-gradient</small></div>
+<div class="stage"><b>学生独立执行</b><small>部署不提供答案和教师<br>真实 verifier 与能力回归</small></div>
+</div><figcaption>GKD 支持不同 divergence 和生成混合；MiniLLM 与 TML 给出 reverse-KL 蒸馏路径。并非所有 OPD 都使用同一种 loss。<a href="index.html#ref-28">[28]</a> <a href="index.html#ref-29">[29]</a> <a href="index.html#ref-30">[30]</a></figcaption></figure>
+<p>教学代码任务中，教师通常直接修空输入；学生却可能先改调用方，收到 <code>test_empty_input FAILED</code>。静态教师路径没有这个错误历史；OPD 的教师要在这个 prefix 上指出下一动作的分布。教师必须能理解学生的实际状态，不能悄悄换成一条理想历史。</p>
+<div class="equation" role="math" aria-label="OPD固定rollout分布目标">L_OPD(θ) = E[h ~ d_barθ] D(πθ(·|h), πT(·|h))
+d_barθ：生成本批数据的学生快照所访问的 prefix 分布</div>
+<p>一批样本采完后可用固定快照更新；学生随后再采新批。这是一种 on-policy 数据循环，不表示每个 optimizer step 都即时重采所有状态。异步缓存会进一步引入行为策略与当前策略差异。</p>
+</section>
+<section id="full-vocabulary">
+<h2>完整词表 reverse-KL：每个 prefix 的局部梯度</h2>
+<p>令固定 prefix 上的学生概率是 <code>pᵥ</code>、教师概率是 <code>qᵥ</code>，教师分支无梯度。reverse-KL 对学生具有概率的候选施加约束，forward-KL 则按教师概率加权。支持集、温度和词表对齐必须先定义。</p>
+<div class="equation" role="math" aria-label="反向和正向KL">D_reverse = KL(p || q) = Σᵥ pᵥ(log pᵥ − log qᵥ)
+D_forward = KL(q || p) = Σᵥ qᵥ(log qᵥ − log pᵥ)
+若 p = softmax(z)：∂D_reverse/∂zᵥ = pᵥ[(log pᵥ − log qᵥ) − D_reverse]</div>
+<p>最后一式既包含“这个候选相对教师是否过多”，也包含对学生分布求导产生的基线项。它解释了为什么把采样 token 的 <code>log p−log q</code> 直接当普通 loss 反传，不自动得到完整 reverse-KL 梯度。</p>
+<pre><code># 固定学生 prefix 上的完整词表教学伪代码
+student_logp = log_softmax(student(prefix_ids).logits, dim=-1)
+with no_grad():
+    teacher_logp = log_softmax(teacher(prefix_ids).logits, dim=-1)
+student_p = student_logp.exp()
+kl_by_position = (student_p * (student_logp - teacher_logp)).sum(-1)
+loss = masked_mean(kl_by_position, assistant_prediction_mask)
+loss.backward()</code></pre>
+<p>这段只表示 loss，不包括模型并行、温度缩放、数据传输和 off-policy 校正。词表大小 V、有效位置 T 使 logits 张量规模近似 O(TV)，教师额外前向、通信和 peak memory 都应计入预算。相同 architecture 不是必要条件，但 token-level 对齐也不能因 architecture 不同就跳过。</p>
+<details><summary>局部梯度等价不代表完整轨迹目标无偏</summary>
+<p>上式固定 prefix，验证的是局部分布梯度。若目标包含 <code>dθ(h)</code> 本身对 θ 的依赖，完整梯度还含状态访问变化；普通固定轨迹的局部 KL 反传不包含这一项。很多算法使用交替 rollout / update 的 surrogate，需要按实现描述。</p>
+<p>SDPG 明确讨论 fixed-prefix 局部 identity，随后加入 gate、schedule 和参考正则。不能从局部恒等式推断任意多轮 trajectory、截断采样和异步更新都完全等价。<a href="index.html#ref-33">[33]</a></p>
+</details>
+</section>
+<section id="sampled-gradient">
+<h2>采样 token 的蒸馏信号：数值估计和正确梯度是两件事</h2>
+<div class="equation" role="math" aria-label="采样蒸馏梯度">a ~ p：
+D_reverse = Eₐ[log p(a) − log q(a)]
+局部最小化梯度 = Eₐ[(log p(a) − log q(a) − D_reverse) ∇ log p(a)]
+对应上升优势：A_distill = stopgrad(log q(a) − log p(a) + b(h))</div>
+<p>当 b 只依赖状态，baseline 不改变这个局部期望。采样 log-ratio 可以估计 KL 数值；更新则需要 score-function / policy-gradient 的处理。直接对冻结样本上的平均 <code>log p−log q</code> 反传，通常只剩 ∇log p，缺失应有的权重。</p>
+<pre><code># 单prefix、on-policy采样的局部教学示意
+sampled_token = sample(student_probability)
+student_logp = student.log_probability(sampled_token, prefix)
+teacher_logp = teacher.log_probability(sampled_token, prefix)  # no-grad
+adv_distill = detach(teacher_logp - student_logp + state_baseline)
+loss = -adv_distill * student_logp
+# 若rollout来自旧行为策略，需要按真实实现定义ratio、mask与截断。</code></pre>
+<p>TML 的公开实现把教师与学生 log-prob 差作为即时 token 蒸馏反馈，使用 γ=0 的设计，避免把每个 token 的反馈简单累成整条序列的大回报；这不是所有 OPD 的统一折扣规则。其“难以 hack”的讨论是接近教师分布这一目标，不能替代独立任务正确性。<a href="index.html#ref-30">[30]</a></p>
+<h3>完整词表、top-k、sampled-token 的信息与成本</h3>
+<table>
+<thead><tr><th>信号</th><th>知道什么</th><th>实现与误差来源</th></tr></thead>
+<tbody>
+<tr><td>Full vocabulary</td><td>同一 prefix 上每个词表候选的 p / q</td><td>额外教师计算和 O(TV) 张量；数值精度、温度、词表对齐</td></tr>
+<tr><td>Top-k approximation</td><td>选定候选上的分布</td><td>选 teacher 还是 student top-k、尾部质量和重新归一化改变目标</td></tr>
+<tr><td>Sampled-token</td><td>学生实际选中 token 的教师 log-prob</td><td>稀疏与方差；PG、baseline、behavior ratio、mask / clipping</td></tr>
+<tr><td>教师只有生成文本</td><td>教师示范或偏好</td><td>不能声称拥有 token-level full-KL；需换目标或合法取得概率信号</td></tr>
+</tbody>
+</table>
+<p>不同 tokenizer 的词序列没有直接逐 token 相同坐标。跨 tokenizer 蒸馏需要专门的映射或算法；NeMo RL 单列了这类 recipe，不能把它当作普通 same-tokenizer OPD 自动支持。<a href="index.html#ref-60">[60]</a></p>
+</section>
+<section id="industry-mopd">
+<h2>工业多教师：DeepSeek、Nemotron 与 MiMo 的选择不同</h2>
+<table>
+<thead><tr><th>公开路线</th><th>信号与状态</th><th>可以支持的结论</th></tr></thead>
+<tbody>
+<tr><td>DeepSeek V4 <a href="index.html#ref-24">[24]</a></td><td>专家整合、full-vocabulary OPD</td><td>完整分布在其训练方案中用于统一交付</td></tr>
+<tr><td>DeepSeek V4.1 <a href="index.html#ref-25">[25]</a></td><td>40+ 教师、异构架构；动态任务配比、教师启用与并发</td><td>教师学习和系统调度共同影响规模；不同架构不等于免词表对齐</td></tr>
+<tr><td>Nemotron Ultra <a href="index.html#ref-26">[26]</a></td><td>sampled-token MOPD；部分 Agent preliminary 实验 full / top-k 较弱</td><td>作者提出教师对学生 off-support prefix 校准不足的解释；属假说，不是普适机制证明</td></tr>
+<tr><td>MOPD 研究 <a href="index.html#ref-66">[66]</a></td><td>多教师 OPD 的能力整合，MiMo-V2.6 另扩展 MOPD2</td><td>需要按任务选择教师、预算和覆盖，不能只增加教师数量</td></tr>
+</tbody>
+</table>
+<p>教师路由可以按任务域选择数学、代码、GUI 专家，也可混合教师分布。简单概率混合 <code>q=Σwⱼqⱼ</code> 与平均多项 KL 并不相同：后者涉及平均 log-prob，前者是 log 的概率混合。报告需明确目标，而不是只写“多教师平均”。</p>
+<p>“大教师更好”也依赖教师对学生访问状态的适应性。教师自己的 task score 很高，仍可能在学生损坏的 shell 状态上给低质量反馈；此时更强信号可能更稳定地推错。终评要看统一学生的目标能力、原有能力和同成本表现。</p>
+</section>
+<section id="mopd2">
+<h2>MOPD2：增加前缀覆盖，不把所有探索留给自主长 rollout</h2>
+<p>MiMo-V2.6 §5.6 的 Multi-Prefix Multi-Teacher OPD 包含三类采样：标准学生自主 rollout、teacher-prefix OPD、SFT-prefix OPD。对一条含 k 个 assistant 回合的示范，可形成 k 个完整历史 prefix；学生从每个 prefix 新生成一个回合，教师在相同历史上评分。<a href="index.html#ref-27">[27]</a></p>
+<figure><div class="flow" aria-label="MOPD2多前缀训练">
+<div class="stage"><b>选历史来源</b><small>学生自主轨迹<br>教师 / SFT 示例历史</small></div>
+<div class="stage"><b>构造回合 prefix</b><small>动作与真实工具观察<br>一个示例产生多个起点</small></div>
+<div class="stage"><b>学生续写一回合</b><small>新增 continuation 来自学生<br>教师对同历史评分</small></div>
+<div class="stage"><b>蒸馏与终评</b><small>新增 token 目标<br>完整学生 episode 验收</small></div>
+</div><figcaption>示范用于提供状态起点，新增目标来自学生 continuation；它不是简单把固定教师动作做 SFT。前缀来自教师时，整条 episode 仍不是纯学生 on-policy。</figcaption></figure>
+<p>代码任务中，prefix 可以停在“已经读完实现”“收到失败测试”“刚检查补丁”三处。小学生不必先自主完成长链路才能接触后半段；但示范 prefix 的状态可达性、截断和真实环境一致性要核验。学生部署时仍需自己走到这些状态。</p>
+<p>多前缀扩大有效起点，也可能重复同一任务或让高回合数示范贡献更多样本。按任务、episode、prefix 或 token 归一化会改变权重；成本包括生成示范、环境重置、教师评分和丢弃的 continuation。</p>
+</section>
+<section id="self-distillation">
+<h2>自蒸馏：同一模型也能通过更充分的信息当教师</h2>
+<p>“Self” 常指共享或相同模型参数，学生和教师看到的条件可以不同。教师分支得到验证解法、失败反馈或成功 sibling，因此信息更充分；没有外部大教师不等于没有外部监督。</p>
+<table>
+<thead><tr><th>路线</th><th>教师额外条件</th><th>优化与稳定性</th><th>部署边界</th></tr></thead>
+<tbody>
+<tr><td>OPSD <a href="index.html#ref-31">[31]</a></td><td>特权的验证解法；同模型不同 context</td><td>no-grad teacher，full-vocabulary KL / JSD 等</td><td>部署学生不看答案；特权内容仅训练使用</td></tr>
+<tr><td>SDPO <a href="index.html#ref-32">[32]</a></td><td>runtime errors、judge 反馈或组内成功 sibling</td><td>logit-level self-distillation；teacher regularization / EMA 与支持范围重要</td><td>全失败组也可能从有效文本反馈学习；无反馈时没有凭空正确解法</td></tr>
+<tr><td>SDPG <a href="index.html#ref-33">[33]</a></td><td>特权上下文自教师</td><td>outcome PG + 正优势 gate 的 OPD + scheduled β 与 reference UKL</td><td>gate 和 schedule 是实验稳定器，非普遍必需条件</td></tr>
+</tbody>
+</table>
+<div class="equation" role="math" aria-label="SDPG组合结构示意">SDPG 的结构示意：
+L = L_outcome-PG
+  + β(k) · 1[A &gt; 0] · KL(student || privileged-self-teacher)
+  + α · L_reference-UKL
+实际mask、归一化和UKL估计按原文；该式不代替完整算法。</div>
+<p>教学失败反馈 <code>expected ValueError for empty input, got ZeroDivisionError</code> 使同模型在教师分支更清楚错误边界；学生分支只看到普通任务历史。成功 sibling 若使用相同题的正确解法，也属于训练额外信息。必须由独立 verifier 确认解法，且留出题答案不能流入训练。</p>
+<p>文本反馈若含模糊偏好、错 traceback、已泄漏的隐藏测试或错误解法，自蒸馏可能放大误导。teacher no-grad 只防直接梯度环路；若每步立刻使用更新学生当教师，还要评估目标漂移、参考约束和 EMA。</p>
+</section>
+<section id="guided-intervention">
+<h2>Guided-OPD 与 TISD：主动改变学生访问的轨迹</h2>
+<h3>Guided-OPD：按回合渐退教师接管</h3>
+<p>以 β 的概率由教师生成当前回合，课程使 β 逐渐降为 0。学生回合使用 reverse-KL，教师回合使用 forward-KL；早期混合策略让小学生接触更有价值状态，后期转到自主执行。论文在 ALFWorld、ScienceWorld、WebShop 上研究小 Qwen 学生与 Qwen3-30B-A3B 教师。<a href="index.html#ref-34">[34]</a></p>
+<p>教师接管能帮助完成前置步骤，但可能造成依赖。只有 β=0 的学生独立留出评测才能验收迁移；不能把混合 rollout 的成功率当最终学生成功率。</p>
+<h3>TISD：在失败轨迹中找到分支点，再让学生重新探索</h3>
+<p>TISD 用失败轨迹的学生/教师 KL 峰值定位干预候选，教师选择分支 token，学生重采后缀，再做轨迹蒸馏。它增加新的 successor prefix，区别于只在原错误路径上计算局部 loss。高 KL 表示分布分歧，不证明那个 token 必然是根因，也不保证一次干预就能成功。<a href="index.html#ref-35">[35]</a></p>
+<table>
+<thead><tr><th>原报告增量</th><th>明确口径</th><th>不可省略的条件</th></tr></thead>
+<tbody>
+<tr><td>科学任务约 +0.8 个百分点</td><td>相对 SDPO，Avg@128，equal-step</td><td>还增加干预与生成成本</td></tr>
+<tr><td>科学任务约 +0.3 个百分点</td><td>同项研究，equal-time</td><td>与 equal-step 不是同一分母</td></tr>
+<tr><td>代码约 +1.2 个百分点</td><td>三个模型平均、Avg@4</td><td>不能与科学 Avg@128 直接相加或比较</td></tr>
+</tbody>
+</table>
+<p class="note">以上为作者报告，本站没有复现。保留这些口径，是为了说明轨迹干预的额外搜索成本如何影响结论，而不是给所有任务预测增益。</p>
+</section>
+<section id="forgetting">
+<h2>OPDArena：目标能力增加，仍需检查能力保留</h2>
+<p>OPDArena 比较五个 Qwen Base、OpenR1-50k 一轮训练，主要结果取两个 seed 平均。其 OPD 采用 student-weighted Top-16 approximation；完整词表用于部分分布测量，不能把这项实验说成 full-vocabulary OPD。<a href="index.html#ref-36">[36]</a></p>
+<p>研究发现教师类型会影响保留，RLVR teacher 在相关设置中优于 SFT teacher；更大或更多教师不保证更少遗忘。它与原 OPSD 在 prompt、模板、教师和更新实现上存在差别，不能用一个标签覆盖为“自蒸馏无效”。</p>
+<p>分布外 JS 变化与遗忘呈关联，支持增加行为分布与能力回归监测，但不是单独的因果证明。终评至少并列目标域增量、分布外增量、工具协议稳定性和总成本，避免仅凭 teacher KL 越小越好。</p>
+</section>
+<section id="recipe">
+<h2>把 OPD 放进代码修复：一个可比较的训练设计</h2>
+<table>
+<thead><tr><th>环节</th><th>本案例做法</th><th>单独验收</th></tr></thead>
+<tbody>
+<tr><td>起点</td><td>固定可靠 SFT 学生、teacher 与工具协议</td><td>学生能执行测试，teacher 在错误 prefix 上有有效建议</td></tr>
+<tr><td>rollout</td><td>学生改代码并执行真实工具；记录每次 exact token IDs</td><td>动作、观察、策略版本和停止位置一致</td></tr>
+<tr><td>教师评分</td><td>同一学生 prefix；特权答案方案另做一组</td><td>teacher log-prob 对齐实际 token；支持/温度明确</td></tr>
+<tr><td>更新</td><td>分别比较 full-KL、sampled-PG、SDPO；固定 reward 基线</td><td>梯度符号、mask、分母与教师 no-grad 正确</td></tr>
+<tr><td>独立验收</td><td>冻结学生，用未见项目的隐藏回归与变更规则检查</td><td>patch 正确、无测评绕过，目标增量和原有能力同时报告</td></tr>
+</tbody>
+</table>
+<p>教师日志量小不代表成本低；full logits 传输、长 prefix 重算、失败重试和环境恢复都计入。第五章给出<a href="s05_frameworks_async.html#slime-opd">slime 的固定源码</a>，第六章提供<a href="s06_task_cases_experiments.html#experiments">待执行对照矩阵</a>。本章伪代码与案例尚未运行模型训练。</p>
+</section>
+</main>
+</body>
+</html>

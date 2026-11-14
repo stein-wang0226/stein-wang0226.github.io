@@ -41,6 +41,14 @@
     "featured": ["2026-semantic-dlm-plus", "protagent", "2026-locality-aware-dlm", "cua-recovery"]
   },
   "assets": [
+    {"source": "assets/research/posttraining-20261114/sources.json", "url": "/assets/research/posttraining-20261114/sources.json"},
+    {"source": "assets/research/posttraining-20261114/group-signal.csv", "url": "/assets/research/posttraining-20261114/group-signal.csv"},
+    {"source": "assets/research/posttraining-20261114/mimo-compute.csv", "url": "/assets/research/posttraining-20261114/mimo-compute.csv"},
+    {"source": "assets/research/posttraining-20261114/figure-data.json", "url": "/assets/research/posttraining-20261114/figure-data.json"},
+    {"source": "assets/research/posttraining-20261114/group-signal.svg", "url": "/assets/research/posttraining-20261114/group-signal.svg"},
+    {"source": "assets/research/posttraining-20261114/mimo-compute.svg", "url": "/assets/research/posttraining-20261114/mimo-compute.svg"},
+    {"source": "assets/research/posttraining-20261114/case-contracts.json", "url": "/assets/research/posttraining-20261114/case-contracts.json"},
+    {"source": "assets/research/posttraining-20261114/experiment-matrix.csv", "url": "/assets/research/posttraining-20261114/experiment-matrix.csv"},
     {"source": "assets/research/architecture-20261114/history-paths.svg", "url": "/assets/research/architecture-20261114/history-paths.svg"},
     {"source": "assets/research/architecture-20261114/hybrid-layer-counts.svg", "url": "/assets/research/architecture-20261114/hybrid-layer-counts.svg"},
     {"source": "assets/research/architecture-20261114/latent-moe-paths.svg", "url": "/assets/research/architecture-20261114/latent-moe-paths.svg"},

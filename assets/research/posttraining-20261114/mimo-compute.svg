@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 195" role="img" aria-labelledby="compute-title" style="display:block;width:100%;height:auto">
+<desc id="compute-title">MiMo-V2.6报告中Pro的RL算力构成：rollout 43.8%，training 43.5%，grader 12.7%</desc>
+<rect width="800" height="195" fill="#fcfbf7"/><g font-family="system-ui,sans-serif" font-size="15" fill="#172d35">
+<text x="30" y="33">MiMo-V2.6 Pro · RL compute split · 作者报告</text>
+<rect x="30" y="58" width="324.12" height="46" fill="#0f766e"/><rect x="354.12" y="58" width="321.9" height="46" fill="#86ada0"/><rect x="676.02" y="58" width="93.98" height="46" fill="#d8b879"/>
+<text x="55" y="87" fill="white">Rollout 43.8%</text><text x="395" y="87">Training 43.5%</text><text x="695" y="87" font-size="13">12.7%</text>
+<text x="30" y="138">第三段：Grader 12.7%</text><text x="30" y="172" fill="#52666b" font-size="13">单份报告的算力口径；不表示美元成本或其他模型的统一构成。</text>
+</g></svg>

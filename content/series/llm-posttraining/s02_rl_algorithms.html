@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>02 · RL 目标、主流算法与训练偏差</title>
+<meta name="description" content="从策略梯度、PPO/GAE 到 RLOO/GRPO/DAPO/Dr.GRPO/GSPO/CISPO/SAPO，分析长度、异质数据、单轨迹价值学习与真实目标。">
+<link rel="stylesheet" href="../assets/site/training-lifecycle.css">
+</head>
+<body>
+<main class="training-lifecycle">
+<section id="policy-gradient">
+<h2>从最终成败到动作梯度，中间隔着信用分配</h2>
+<p class="lead">Agent episode 包含策略动作和环境观察。模型只控制动作；最后 reward 要转成哪些动作应增加或减少概率的信号，再决定用怎样的概率比、裁剪和分母完成更新。</p>
+<div class="equation" role="math" aria-label="策略梯度">J(θ) = E[τ ~ πθ, environment] [R(τ)]
+∇J = E[Σₜ ∇ log πθ(aₜ | hₜ) · Aₜ]
+Aₜ = Q(hₜ,aₜ) − b(hₜ)；b 不依赖当前采样动作时可作 baseline</div>
+<p>对教学代码任务，最终测试全通过为 1、真实任务失败为 0；删测试文件不能算成功。将整条成功路径都加概率是粗粒度信用：它可能连带强化一次多余读取、错误补丁和后续恢复。细化信用要额外信息，而不只是改优化器。reward 的内容见<a href="s04_environment_reward_credit.html">第四章</a>。</p>
+<p>环境输出不是策略选择，因此通常不进入 policy loss 的 response mask。环境失败是否算任务失败也需先定义；不能让基础设施宕机的 rollout 变成模型“动作不好”的标签。</p>
+</section>
+<section id="ppo-gae">
+<h2>PPO 与 GAE：学习一个状态价值来降低方差</h2>
+<p>PPO 用采样策略 <code>πold</code> 的 rollout 更新 <code>πθ</code>，critic 估计未来回报。GAE 将不同长度的 TD residual 混合，在价值误差与采样方差之间取舍。<a href="index.html#ref-1">[1]</a> <a href="index.html#ref-2">[2]</a></p>
+<div class="equation" role="math" aria-label="GAE和PPO">δₜ = rₜ + γ V(hₜ₊₁) − V(hₜ)
+Âₜ = Σₗ≥0 (γλ)^l δₜ₊ₗ
+ρₜ = πθ(aₜ|hₜ) / πold(aₜ|hₜ)
+J_clip = E[min(ρₜ Âₜ, clip(ρₜ,1−εlow,1+εhigh) Âₜ)]</div>
+<p><code>λ</code> 越小越依赖局部 value，越大越接近 Monte Carlo 回报；并非越大总是越好。critic 数据、更新频率和任务分布决定估计质量。Actor、critic、reference 和 reward model 是逻辑角色，是否各占一份模型或共享 backbone，由框架实现决定。</p>
+<details><summary>Clipping 不是把区间外 token 的梯度全部设为零</summary>
+<p>优势为正，ratio 高于上界后目标停止鼓励继续增大；优势为负，ratio 低于下界后停止鼓励继续降低。另两个区间仍可能有梯度。因此 PPO 的 min-clipping 与“无论优势符号，区间外全部丢弃”的 strict IS mask 不同。</p>
+<p>参考 KL 可以单独加正则或参与奖励；实现位置、估计器和系数改变梯度。不能由“用了 PPO”推断所有 KL 项都一致。</p>
+</details>
+<p>多轮 Agent 的 value 位置也要明确：是在动作前、生成 token 内还是回合后估值；tool observation 可以改变状态，但它的随机反馈不应被当成策略生成 token 逐个施加动作梯度。</p>
+</section>
+<section id="rloo-grpo">
+<h2>RLOO 与 GRPO：用同题候选代替 learned baseline</h2>
+<div class="equation" role="math" aria-label="组相对优势">RLOO：Aᵢ = Rᵢ − (1/(G−1)) Σⱼ≠ᵢ Rⱼ
+GRPO：Aᵢ = (Rᵢ − mean(R₁…R_G)) / (std(R₁…R_G) + ε)</div>
+<p>RLOO 用其他候选的均值避免自己的 reward 进入 baseline；GRPO 用组内中心化和标准差。它们节省显式 critic，却需要同一任务多次采样；单条长 episode 很贵时，省下的 critic 不能直接等价为总成本降低。<a href="index.html#ref-3">[3]</a> <a href="index.html#ref-4">[4]</a></p>
+<table>
+<thead><tr><th>教学组，G=4</th><th>GRPO（总体 std，无 ε）</th><th>RLOO</th><th>解释</th></tr></thead>
+<tbody>
+<tr><td>[1,0,0,0]</td><td>[√3, −1/√3, −1/√3, −1/√3]</td><td>[1,−1/3,−1/3,−1/3]</td><td>有差异，胜者得到正信号</td></tr>
+<tr><td>[0,0,0,0]</td><td>中心化后全 0</td><td>全 0</td><td>仅最终成败无法指出哪条失败更好</td></tr>
+<tr><td>[1,1,1,1]</td><td>中心化后全 0</td><td>全 0</td><td>仅二值 reward 无法区分路径质量</td></tr>
+</tbody>
+</table>
+<p>全同奖励组的 <strong>task policy-gradient</strong> 为零；KL、entropy、OPD 或其他辅助目标仍可能产生梯度。不同实现 std 用总体还是样本估计、ε 多大，也影响具体数值。</p>
+<h3>异质数据：标准化不能保证每个任务都有学习机会</h3>
+<div class="equation" role="math" aria-label="二值奖励有效组概率">独立 Bernoulli 成功，单次成功率 p，组大小 G：
+P(组内同时有成功和失败) = 1 − p^G − (1−p)^G
+G=8：p=0.01 / 0.99 时约 7.7%；p=0.50 时约 99.2%</div>
+<figure>
+<svg viewBox="0 0 800 230" role="img" aria-labelledby="group-chart-title" style="display:block;width:100%;height:auto">
+<desc id="group-chart-title">解析示例：G等于8时，难题和易题拥有非零奖励方差的组比例远低于中等难度题</desc>
+<rect width="800" height="230" fill="#fcfbf7"/><g font-family="system-ui,sans-serif" fill="#172d35" font-size="15">
+<text x="30" y="32">二值奖励有效组概率 · G=8 · 独立采样解析值</text>
+<text x="30" y="78">p = 1%</text><text x="30" y="125">p = 50%</text><text x="30" y="172">p = 99%</text>
+<rect x="135" y="56" width="43.3" height="30" rx="4" fill="#a9c3b7"/><rect x="135" y="103" width="555.6" height="30" rx="4" fill="#0f766e"/><rect x="135" y="150" width="43.3" height="30" rx="4" fill="#a9c3b7"/>
+<text x="190" y="77">7.7%</text><text x="706" y="124">99.2%</text><text x="190" y="171">7.7%</text>
+<text x="30" y="211" fill="#52666b" font-size="13">这是概率推导，非训练实测；相关采样或连续奖励不满足此模型。</text>
+</g></svg>
+<figcaption>任务域、难度、奖励噪声与轨迹长度异质时，均值 reward 不足以描述可用信号。<a href="../assets/research/posttraining-20261114/group-signal.svg" target="_blank" rel="noopener">放大查看图表</a> · <a href="../assets/research/posttraining-20261114/group-signal.csv" download>下载公式数据</a>。</figcaption>
+</figure>
+<p>每题除以自己的标准差还会改变隐式权重：微小但不可靠的奖励差也可能被放大。中心化只处理数值，不会消除任务梯度冲突或 completion bias。需逐域监控全零/全一组、奖励方差、有效动作 token 和错误类型。</p>
+</section>
+<section id="normalization">
+<h2>DAPO、Dr. GRPO：归一化与数据准入也是算法的一部分</h2>
+<table>
+<thead><tr><th>设计</th><th>为什么改</th><th>会带来什么新边界</th></tr></thead>
+<tbody>
+<tr><td>原始 GRPO 的 sequence-mean</td><td>每条样本平均 token loss</td><td>长轨迹单 token 权重更低，长度与奖励相关时存在偏置</td></tr>
+<tr><td>DAPO token-mean <a href="index.html#ref-5">[5]</a></td><td>改变长度聚合，重视长样本的有效 token</td><td>长任务贡献更多总梯度，要配合任务分布解释</td></tr>
+<tr><td>DAPO clip higher</td><td>正向探索使用更宽上界</td><td>仍要监控 entropy、ratio 与失败，不能理解为越宽越好</td></tr>
+<tr><td>DAPO dynamic sampling</td><td>补采并过滤没有成败差异的组</td><td>训练 batch 更有信号，但容易/困难题与补采成本改变</td></tr>
+<tr><td>DAPO overlong shaping</td><td>避免不合理地惩罚接近截断边界的路径</td><td>任务超时、token 截断和自然结束需分开</td></tr>
+<tr><td>Dr. GRPO <a href="index.html#ref-6">[6]</a></td><td>不按每题 std 缩放，固定长度分母处理偏置</td><td>reward 单位和有效长度影响绝对尺度；参数仍需校准</td></tr>
+</tbody>
+</table>
+<p>一项 <code>loss_type="dapo"</code> 不等于复现动态采样、reward shaping 和完整训练 recipe。TRL 暴露 reward scaling、loss aggregation 与 ratio 等不同选项，使用时逐项核对实际代码和版本。<a href="index.html#ref-50">[50]</a></p>
+<div class="equation" role="math" aria-label="三个长度分母">序列平均：(1/G) Σᵢ (1/Tᵢ) Σₜ ℓᵢₜ
+Token 平均：ΣᵢΣₜ ℓᵢₜ / Σᵢ Tᵢ
+固定分母：ΣᵢΣₜ ℓᵢₜ / (G · T_fixed)</div>
+<p>上述是聚合示意，<code>ℓ</code> 还包含 advantage、ratio、mask 和正则。只改分母的对照能解释权重变化；与改 baseline、过滤、任务配额一起上线则只能评价组合方案。</p>
+</section>
+<section id="ratio-methods">
+<h2>GSPO、CISPO、Soft SAPO：控制更新的对象不同</h2>
+<div class="equation" role="math" aria-label="GSPO序列ratio">sᵢ = exp[(1/Tᵢ) Σₜ log(πθ(aᵢₜ|hᵢₜ) / πold(aᵢₜ|hᵢₜ))]
+J_GSPO = meanᵢ min(sᵢ Aᵢ, clip(sᵢ,1−εlow,1+εhigh) Aᵢ)</div>
+<p>GSPO 在序列层裁剪长度归一化几何比率，缓解 token ratio 的不稳定和更新单位不一致。它不是完整轨迹 importance ratio 的乘积，也不保证对所有长程 off-policy 目标无偏。<a href="index.html#ref-7">[7]</a></p>
+<div class="equation" role="math" aria-label="CISPO概念目标">CISPO：J ≈ meanᵢₜ [stopgrad(clip(ρᵢₜ)) · Aᵢₜ · log πθ(aᵢₜ|hᵢₜ)]
+裁剪的是 importance coefficient，并阻止其反传；实际范围见原配方。</div>
+<p>MiniMax-M1 的 CISPO 在 clipped IS 系数上做 detach，再用 log-policy 梯度；不能把它描述为 PPO 的 min 两项裁剪。比率单位、权重边界和 token 聚合都需与报告一致。<a href="index.html#ref-8">[8]</a></p>
+<div class="equation" role="math" aria-label="Soft SAPO软门控">f(ρ) = (4/τ) · sigmoid(τ(ρ−1))；J = mean[f(ρ) A]
+p = sigmoid(τ(ρ−1))
+df/dρ = 4p(1−p)；ρ=1 时门控为 1
+τ 根据 A 的正负选择 τpos / τneg</div>
+<p>Soft Adaptive Policy Optimization 在远离 1 的 ratio 上平滑减弱梯度，而不是硬截断；正负优势可使用不同温度。原报告偏向对负优势采用更强抑制，但这是实验设置，不能宣称“soft”消除了所有偏差。缺失 A 或把 <code>f</code> 直接说成 log-prob loss 都会改变目标。<a href="index.html#ref-9">[9]</a></p>
+</section>
+<section id="single-rollout">
+<h2>单轨迹长程训练：另外一种 SAPO，以及 SAO</h2>
+<table>
+<thead><tr><th>路线</th><th>baseline / 信用</th><th>主要动机与限制</th></tr></thead>
+<tbody>
+<tr><td>Single-Rollout Autoregressive Policy Optimization <a href="index.html#ref-10">[10]</a></td><td>共享 backbone，不同因果边界估 value；turn GAE + SARSA；独立 policy/value loss</td><td>避免每题多条长 rollout；需要控制共享参数干扰、价值估计和边界语义</td></tr>
+<tr><td>Single-Rollout Asynchronous Optimization（SAO）<a href="index.html#ref-11">[11]</a></td><td>外部 critic、高频价值更新、frozen attention / skip-observation GAE</td><td>为异步长程 Agent 构造信号；strict IS 区间外全部 mask，会丢弃样本梯度</td></tr>
+<tr><td>ARLArena / SAMPO <a href="index.html#ref-44">[44]</a></td><td>统一 testbed 的组合策略</td><td>比较组合的稳定性；不能把全部提升归因于其中一个组件</td></tr>
+</tbody>
+</table>
+<div class="callout caution"><strong>SAPO 同名必须区分。</strong>Qwen 的 Soft Adaptive Policy Optimization 研究 ratio 门控；Single-Rollout Autoregressive Policy Optimization 研究单 rollout 的 policy/value 和回合信用。缩写相同，目标和系统不是同一条路线。</div>
+<p>长程任务应比较“每题多候选的 baseline 成本”和“单候选 + critic 成本”。用相同更新步数未必公平：两者探索 token、执行等待和价值训练量不同。需要同生成预算与同总计算预算两个口径。</p>
+</section>
+<section id="case-diagnosis">
+<h2>代码修复案例：先定位信号问题，再决定改什么</h2>
+<table>
+<thead><tr><th>观测</th><th>更直接的解释</th><th>可区分原因的对照</th></tr></thead>
+<tbody>
+<tr><td>绝大多数组全零</td><td>任务太难、工具协议失效、verifier 太弱或环境故障</td><td>先查失败类型；补 cold start / 恢复或课程，再测试 sampling</td></tr>
+<tr><td>简单题全一，补丁质量仍差</td><td>二值成败看不到质量，测试可能不足</td><td>独立回归和违规验证；质量 grader 与最终通过分开</td></tr>
+<tr><td>reward 增但轨迹越来越长</td><td>过程 reward 投机、停止行为或聚合偏置</td><td>只改过程聚合或长度分母；同时记录结果与成本</td></tr>
+<tr><td>同步稳定，异步掉分</td><td>lag、同版本 log-prob 不一致、完成配额偏移</td><td>分别固定版本延迟、kernel 和任务配额</td></tr>
+<tr><td>平均分涨但科学域跌</td><td>任务权重/梯度冲突、奖励噪声或遗忘</td><td>逐域成功、有效组和监督来源；固定采样配额消融</td></tr>
+</tbody>
+</table>
+<p>算法报告应给出：reward、baseline、std、ratio 单位、clip、mask、分母、KL 与数据准入的完整组合。异步实现转到<a href="s05_frameworks_async.html">第五章</a>，信用分配转到<a href="s04_environment_reward_credit.html">第四章</a>，实验矩阵见<a href="s06_task_cases_experiments.html#experiments">第六章</a>。</p>
+</section>
+</main>
+</body>
+</html>

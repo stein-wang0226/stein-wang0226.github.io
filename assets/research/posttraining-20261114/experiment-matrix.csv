@@ -1,0 +1,8 @@
+id,execution_status,fixed,variable,primary_checks,cost_basis
+E0,design_only,"task;reference;known failures","verifier acceptance and isolation","reference pass;adversarial reject;infra separation","environment and repeats"
+E1,design_only,"initial model;source splits;supervision budget","SFT;recovery SFT;rejection sampling","heldout recovery;independent success","search plus target tokens"
+E2,design_only,"checkpoint;reward;task quotas;rollout budget","baseline;std;denominator;ratio separately","zero-variance groups;length;clip;per-domain success","rollout plus training"
+E3,design_only,"student;teacher;prefix sources;budget","full-vocab;sampled;top-k","local gradient;target and OOD;teacher calibration","teacher and training and rollout"
+E4,design_only,"teacher;loss;task sources;budget","autonomous;multi-prefix;guided;intervention","student-only evaluation;state coverage","include demos and interventions"
+E5,design_only,"rollouts;outcome;task split","episode;step;subtask;anchor;value","credit calibration;recovery;hacking","include critic and process labels"
+E6,design_only,"model;algorithm;task pool;hardware","lag;kernel alignment;arrival quotas separately","domain shares;effective tokens;success","include rejected retries and synchronization"

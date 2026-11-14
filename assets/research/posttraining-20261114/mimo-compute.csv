@@ -1,0 +1,4 @@
+component,reported_percent,model,source,scope
+rollout,43.8,MiMo-V2.6 Pro,2610.11959v1 section4.1 figure3,RL compute;not USD or all models
+training,43.5,MiMo-V2.6 Pro,2610.11959v1 section4.1 figure3,RL compute;not USD or all models
+grader,12.7,MiMo-V2.6 Pro,2610.11959v1 section4.1 figure3,RL compute;not USD or all models

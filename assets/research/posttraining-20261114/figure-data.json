@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "figures": [
+    {
+      "file": "group-signal.svg",
+      "data": "group-signal.csv",
+      "basis": "1-p^G-(1-p)^G; independent Bernoulli; not empirical",
+      "displayed_p": [
+        0.01,
+        0.5,
+        0.99
+      ],
+      "G": 8
+    },
+    {
+      "file": "mimo-compute.svg",
+      "data": "mimo-compute.csv",
+      "basis": "author-reported RL compute split, MiMo-V2.6 Pro",
+      "source": "https://arxiv.org/html/2610.11959v1",
+      "position": "section4.1 figure3"
+    }
+  ]
+}
