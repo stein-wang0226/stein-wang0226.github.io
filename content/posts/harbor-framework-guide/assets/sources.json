@@ -89,7 +89,7 @@
       "id": 12,
       "title": "Harbor Adapters · 独立仓库 README",
       "url": "https://github.com/harbor-framework/adapters/blob/40b140eab2aae7375b2369aeddd2f8b3f872e2da/README.md",
-      "scope": "独立adapter结构、约85目录与parity",
+      "scope": "独立adapter结构与parity；README标注85目录，实际src目录计数88见来源44",
       "accessed": "2026-11-14"
     },
     {
@@ -308,6 +308,13 @@
       "url": "https://github.com/harbor-framework/harbor/blob/ec6aeab7fe0eb51df52b4e72c524daf5ea9cc5f4/src/harbor/models/trial/result.py#L140-L148",
       "scope": "固定源码连续摘录，lines 140–148；Apache-2.0",
       "accessed": "2026-11-14"
+    },
+    {
+      "id": 44,
+      "title": "Harbor Adapters · 固定提交的 src 目录",
+      "url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src",
+      "scope": "GitHub contents API：88 个 src 目录；README 标注85，非各上游 latest 版本声明",
+      "accessed": "2026-11-14"
     }
   ],
   "source_excerpts": [
@@ -360,5 +367,452 @@
       28
     ],
     "note": "134acceptedchanges;28measurementdiscrepanciesretainedoldscore"
+  },
+  "adapter_inventory": {
+    "commit": "40b140eab2aae7375b2369aeddd2f8b3f872e2da",
+    "directory_count": 88,
+    "readme_claim": 85,
+    "items": [
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/aa-lcr",
+        "name": "aa-lcr",
+        "path": "src/aa-lcr"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/abc-bench",
+        "name": "abc-bench",
+        "path": "src/abc-bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/ace-bench",
+        "name": "ace-bench",
+        "path": "src/ace-bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/adebench",
+        "name": "adebench",
+        "path": "src/adebench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/aider_polyglot",
+        "name": "aider_polyglot",
+        "path": "src/aider_polyglot"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/aime",
+        "name": "aime",
+        "path": "src/aime"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/algotune",
+        "name": "algotune",
+        "path": "src/algotune"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/arc_agi_2",
+        "name": "arc_agi_2",
+        "path": "src/arc_agi_2"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/autocodebench",
+        "name": "autocodebench",
+        "path": "src/autocodebench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/bfcl",
+        "name": "bfcl",
+        "path": "src/bfcl"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/bigcodebench_hard",
+        "name": "bigcodebench_hard",
+        "path": "src/bigcodebench_hard"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/bird_bench",
+        "name": "bird_bench",
+        "path": "src/bird_bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/bixbench",
+        "name": "bixbench",
+        "path": "src/bixbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/canitedit",
+        "name": "canitedit",
+        "path": "src/canitedit"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/clbench",
+        "name": "clbench",
+        "path": "src/clbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/codepde",
+        "name": "codepde",
+        "path": "src/codepde"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/compilebench",
+        "name": "compilebench",
+        "path": "src/compilebench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/contractbench",
+        "name": "contractbench",
+        "path": "src/contractbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/cooperbench",
+        "name": "cooperbench",
+        "path": "src/cooperbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/crmarena",
+        "name": "crmarena",
+        "path": "src/crmarena"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/crustbench",
+        "name": "crustbench",
+        "path": "src/crustbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/cybergym",
+        "name": "cybergym",
+        "path": "src/cybergym"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/dabstep",
+        "name": "dabstep",
+        "path": "src/dabstep"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/dacode",
+        "name": "dacode",
+        "path": "src/dacode"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/deepsynth",
+        "name": "deepsynth",
+        "path": "src/deepsynth"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/deveval",
+        "name": "deveval",
+        "path": "src/deveval"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/devopsgym",
+        "name": "devopsgym",
+        "path": "src/devopsgym"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/discoverphysics",
+        "name": "discoverphysics",
+        "path": "src/discoverphysics"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/ds1000",
+        "name": "ds1000",
+        "path": "src/ds1000"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/evoeval",
+        "name": "evoeval",
+        "path": "src/evoeval"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/featbench",
+        "name": "featbench",
+        "path": "src/featbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/featurebench",
+        "name": "featurebench",
+        "path": "src/featurebench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/financeagent",
+        "name": "financeagent",
+        "path": "src/financeagent"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/frontier-cs-algorithm",
+        "name": "frontier-cs-algorithm",
+        "path": "src/frontier-cs-algorithm"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/gaia",
+        "name": "gaia",
+        "path": "src/gaia"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/gaia2",
+        "name": "gaia2",
+        "path": "src/gaia2"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/gdb",
+        "name": "gdb",
+        "path": "src/gdb"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/gpqa-diamond",
+        "name": "gpqa-diamond",
+        "path": "src/gpqa-diamond"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/gso",
+        "name": "gso",
+        "path": "src/gso"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/hle",
+        "name": "hle",
+        "path": "src/hle"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/humanevalfix",
+        "name": "humanevalfix",
+        "path": "src/humanevalfix"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/ineqmath",
+        "name": "ineqmath",
+        "path": "src/ineqmath"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/kramabench",
+        "name": "kramabench",
+        "path": "src/kramabench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/kumo",
+        "name": "kumo",
+        "path": "src/kumo"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/labbench",
+        "name": "labbench",
+        "path": "src/labbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/lawbench",
+        "name": "lawbench",
+        "path": "src/lawbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/livecodebench",
+        "name": "livecodebench",
+        "path": "src/livecodebench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/llmsr_bench",
+        "name": "llmsr_bench",
+        "path": "src/llmsr_bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/locomo",
+        "name": "locomo",
+        "path": "src/locomo"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/medagentbench",
+        "name": "medagentbench",
+        "path": "src/medagentbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/ml_dev_bench",
+        "name": "ml_dev_bench",
+        "path": "src/ml_dev_bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/mlgym-bench",
+        "name": "mlgym-bench",
+        "path": "src/mlgym-bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/mmau",
+        "name": "mmau",
+        "path": "src/mmau"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/mmmlu",
+        "name": "mmmlu",
+        "path": "src/mmmlu"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/multi-swe-bench",
+        "name": "multi-swe-bench",
+        "path": "src/multi-swe-bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/omnimath",
+        "name": "omnimath",
+        "path": "src/omnimath"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/osworld",
+        "name": "osworld",
+        "path": "src/osworld"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/pixiu",
+        "name": "pixiu",
+        "path": "src/pixiu"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/programbench",
+        "name": "programbench",
+        "path": "src/programbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/qcircuitbench",
+        "name": "qcircuitbench",
+        "path": "src/qcircuitbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/quixbugs",
+        "name": "quixbugs",
+        "path": "src/quixbugs"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/reasoning-gym",
+        "name": "reasoning-gym",
+        "path": "src/reasoning-gym"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/refav",
+        "name": "refav",
+        "path": "src/refav"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/replicationbench",
+        "name": "replicationbench",
+        "path": "src/replicationbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/research-code-bench",
+        "name": "research-code-bench",
+        "path": "src/research-code-bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/rexbench",
+        "name": "rexbench",
+        "path": "src/rexbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/satbench",
+        "name": "satbench",
+        "path": "src/satbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/scicode",
+        "name": "scicode",
+        "path": "src/scicode"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/scienceagentbench",
+        "name": "scienceagentbench",
+        "path": "src/scienceagentbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/seal0",
+        "name": "seal0",
+        "path": "src/seal0"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/simpleqa",
+        "name": "simpleqa",
+        "path": "src/simpleqa"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/sldbench",
+        "name": "sldbench",
+        "path": "src/sldbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/spider2-dbt",
+        "name": "spider2-dbt",
+        "path": "src/spider2-dbt"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/spreadsheetbench-verified",
+        "name": "spreadsheetbench-verified",
+        "path": "src/spreadsheetbench-verified"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/strongreject",
+        "name": "strongreject",
+        "path": "src/strongreject"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/swebench",
+        "name": "swebench",
+        "path": "src/swebench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/swebench_multilingual",
+        "name": "swebench_multilingual",
+        "path": "src/swebench_multilingual"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/swebenchpro",
+        "name": "swebenchpro",
+        "path": "src/swebenchpro"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/swegym",
+        "name": "swegym",
+        "path": "src/swegym"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/swelancer",
+        "name": "swelancer",
+        "path": "src/swelancer"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/swesmith",
+        "name": "swesmith",
+        "path": "src/swesmith"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/swtbench",
+        "name": "swtbench",
+        "path": "src/swtbench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/tau3-bench",
+        "name": "tau3-bench",
+        "path": "src/tau3-bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/textarena",
+        "name": "textarena",
+        "path": "src/textarena"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/theagentcompany",
+        "name": "theagentcompany",
+        "path": "src/theagentcompany"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/usaco",
+        "name": "usaco",
+        "path": "src/usaco"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/webgen_bench",
+        "name": "webgen_bench",
+        "path": "src/webgen_bench"
+      },
+      {
+        "html_url": "https://github.com/harbor-framework/adapters/tree/40b140eab2aae7375b2369aeddd2f8b3f872e2da/src/widesearch",
+        "name": "widesearch",
+        "path": "src/widesearch"
+      }
+    ]
   }
 }
