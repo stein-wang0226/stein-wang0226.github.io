@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LLM 基础与前沿架构：从张量流到系统设计</title>
-<meta name="description" content="六章从Transformer张量流、Attention与KV、SwiGLU与MoE、残差稳定性讲到混合状态架构和前沿模型比较，连接训练、部署、Agent与研究地图。">
+<title>LLM 架构：Transformer 基础与前沿模型设计</title>
+<meta name="description" content="六章系统讲解 Transformer、Attention与KV、SwiGLU与MoE、残差稳定性、混合状态架构和前沿模型设计，以数据流示例辅助理解，连接训练、部署、Agent与研究地图。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
 <section id="purpose"><p class="eyebrow">Architecture · 2026-11-14</p>
 <h2>先理解模型怎样计算，再理解新结构改变什么</h2>
 <p class="lead">LLM 架构可以拆成六个问题：token 怎样成为表示，位置之间怎样交换信息，每个位置怎样做非线性变换，信息怎样穿过深度，历史怎样保存，以及这些选择怎样影响训练和服务。本系列从可追踪的张量出发，逐步连接最新公开机制。</p>
+<p>专题主线是 Transformer 的核心组件与前沿模型的设计取舍；数据流和张量形状作为具体示例，帮助理解各组件怎样协同计算。</p>
 <p>基础 Transformer 使用注意力读历史、FFN 变换通道、残差承载表示。现代模型可能让 KV 共享或压缩，让专家稀疏激活，让递归状态替代部分完整历史，再用低精度与调度实现工程收益。结构的名字只描述其中一部分；质量、计算、通信和状态要分别分析。</p>
 <figure><div class="flow">
 <div class="stage"><b>输入与目标</b><small>token → embedding → logits<br>因果关系、标签位移</small></div>

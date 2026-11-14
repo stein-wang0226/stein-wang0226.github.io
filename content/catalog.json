@@ -667,7 +667,7 @@
     {
       "id": "llm-architecture",
       "kind": "series",
-      "title": "LLM 基础与前沿架构：从张量流到系统设计",
+      "title": "LLM 架构：Transformer 基础与前沿模型设计",
       "summary": "六章从 token、QKV、causal mask 和 loss 讲到 KV/位置、SwiGLU/MoE、残差与状态递推，连接最新模型证据、工业训练和部署，附推导、源码与自测。",
       "source": "content/series/llm-architecture/index.html",
       "url": "/llm-architecture/",
