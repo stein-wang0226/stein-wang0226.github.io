@@ -32,6 +32,24 @@ u_t(x)&=\mathbb E[u_t(x\mid y)\mid x_t=x].
 =\mathbb E\|u_\theta-\bar U\|^2
 +\mathbb E\|U-\bar U\|^2.\]</div>
 <p>这是 conditional FM 能实际训练的原因；要求可积性与微分/期望交换等条件。<strong>不是每条条件直线都等于网络推理轨迹。</strong>许多条件路径会经过同一点，网络学习的是平均速度。</p>
+<h3 id="flow-full-example">完整高斯算例：条件监督怎样变成边际速度与一步输出</h3>
+<p><strong>给定分布：</strong>一维数据 \(y\sim\mathcal N(2,1)\)，独立噪声 \(\epsilon\sim\mathcal N(0,1)\)，线性路径 \(x_t=ty+(1-t)\epsilon\)，故 \(x_t\sim\mathcal N(2t,t^2+(1-t)^2)\)。这是可解析的连续教学分布，不是语言模型训练实测；时间从噪声0走向数据1。</p>
+<table><thead><tr><th>步骤</th><th>计算</th><th>得到什么</th></tr></thead><tbody>
+<tr><td>一条训练配对</td><td>取 \(y=2,\epsilon=-2,t=0.5\)</td><td>\(x_{0.5}=0\)，条件监督 \(U=y-\epsilon=4\)</td></tr>
+<tr><td>固定同一路径点 \(x_{0.5}=0\)</td><td>\(\mathbb E[x]=1,\operatorname{Var}(x)=0.5,\operatorname{Cov}(y,x)=0.5\)</td><td>\(\mathbb E[y\mid x=0]=2+(0.5/0.5)(0-1)=1\)</td></tr>
+<tr><td>按后验平均条件速度</td><td>\(U=(y-x)/(1-t)=2y\)，且 \(\operatorname{Var}(y\mid x)=1-0.5^2/0.5=0.5\)</td><td>\(\bar U=2\)，\(\operatorname{Var}(U\mid x)=2\)</td></tr>
+<tr><td>假设网络此处输出 \(u=3\)</td><td>\(\mathbb E[(u-U)^2\mid x]=(3-2)^2+2=3\)</td><td>边际损失为1；条件损失多出常数2，二者对 \(u\) 的导数均为2</td></tr>
+<tr><td>用理想边际场做Euler一步</td><td>从 \(t=0.5,x=0\)，步长 \(h=0.1\)</td><td>\(x_{0.6}^{\rm Euler}=0+0.1\times2=0.2\)</td></tr>
+</tbody></table>
+<p>表中 \(x\) 是固定时刻的路径点，\(U\) 是随机条件监督，\(u\) 是网络在该点的标量输出；Cov与Var为协方差与方差。单条配对给出4，但其他端点配对也可能经过同一点，后验平均为2；训练目标不是把每一条样本直线都变成推理轨迹。</p>
+<div class="reading-math">\[
+\begin{aligned}
+u_t(x)&amp;=2+\frac{2t-1}{t^2+(1-t)^2}(x-2t),\\
+x_t&amp;=2t+\sqrt{t^2+(1-t)^2}\,z,\qquad z\sim\mathcal N(0,1).
+\end{aligned}
+\]</div>
+<p>第一式由上面的高斯条件期望得到；第二式是该边际ODE的解析轨迹，沿轨迹 \(z\) 固定。从 \(x_{0.5}=0\) 得 \(z=-\sqrt2\)，因此精确的 \(x_{0.6}=1.2-\sqrt{1.04}\approx0.180196\)。Euler得到0.2，单步误差约0.019804：即使速度场正确，有限步求解仍有误差。这里的 \(z\) 是固定轨迹坐标，不是每一步重新抽取的SDE噪声。</p>
+<figure class="mechanism-map"><figcaption>从可采样训练监督，到不需要真实端点的推理</figcaption><ol class="mechanism-chain"><li><b>端点配对</b><small>(2,−2) → 路径点0、监督4</small></li><li><b>后验平均</b><small>同点所有配对 → 边际速度2</small></li><li><b>回归目标</b><small>条件方差2不改变最优输出</small></li><li><b>积分与核对</b><small>Euler 0.2；解析输出0.180196</small></li></ol></figure>
 <h3 id="continuity">ODE 的概率守恒</h3>
 <p class="math-notation">\(p_t\) 为时刻 \(t\) 的密度，\(\phi:\mathbb R^d\to\mathbb R\) 为光滑测试函数；\(\nabla\phi\) 是空间梯度，\(\nabla\cdot\) 是散度，\(\Delta\) 是拉普拉斯算子（各坐标二阶导数之和），\(\partial_t\) 是时间偏导。SDE 中 \(f_t\) 为漂移向量，\(g_t\) 为标量扩散系数，\(W_t\) 为 \(d\) 维布朗运动；概率流速度 \(u_t\) 与 SDE 漂移不同。</p>
 <p>ODE 为 \(\dot X_t=u_t(X_t)\)。取光滑测试函数 φ，链式法则给出 \(d\mathbb E\phi/dt=\int p_tu_t\cdot\nabla\phi\,dx\)。分部积分、边界项为零：</p>

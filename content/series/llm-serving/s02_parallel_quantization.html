@@ -43,6 +43,28 @@ q=\operatorname{clip}\left(\operatorname{round}(x/s)+z,q_{\min},q_{\max}\right),
 <tr><td>对称，s=0.25，q∈[−7,7]</td><td>0.62</td><td>2</td><td>0.50，绝对误差0.12</td></tr>
 <tr><td>同上，发生饱和</td><td>2.00</td><td>7</td><td>1.75，误差0.25 &gt; s/2</td></tr>
 <tr><td>非对称，s=0.5，z=1，q∈[0,3]</td><td>−0.5、0、0.5、1</td><td>0、1、2、3</td><td>四个值均精确恢复</td></tr></tbody></table>
+<h3 id="quantized-dot-example">完整点积算例：编码权重 → 恢复 → 输出误差</h3>
+<p><strong>输入与简化：</strong>一组权重 \(w=(0.62,-0.87,1.12,2.00)\)，激活 \(a=(2,-1,0.5,1)\)。仅对权重使用上面的对称4-bit教学量化，\(s=0.25,z=0,q\in[-7,7]\)；恢复后用高精度算点积，激活和累积不量化。这里 \(a\) 是输入向量，区别于下一节的投机接受率 \(\alpha\)。</p>
+<table><thead><tr><th>分量</th><th>\(w_i/s\) → 舍入/裁剪 \(q_i\)</th><th>恢复 \(\hat w_i\)</th><th>误差 \(\delta_i=\hat w_i-w_i\)</th><th>输出误差贡献 \(a_i\delta_i\)</th></tr></thead><tbody>
+<tr><td>1：0.62</td><td>2.48 → 2</td><td>0.50</td><td>−0.12</td><td>−0.24</td></tr>
+<tr><td>2：−0.87</td><td>−3.48 → −3</td><td>−0.75</td><td>0.12</td><td>−0.12</td></tr>
+<tr><td>3：1.12</td><td>4.48 → 4</td><td>1.00</td><td>−0.12</td><td>−0.06</td></tr>
+<tr><td>4：2.00</td><td>8 → 裁剪到7</td><td>1.75</td><td>−0.25</td><td>−0.25</td></tr>
+</tbody></table>
+<div class="reading-math">\[
+\begin{aligned}
+y&amp;=a^\top w\\
+&amp;=1.24+0.87+0.56+2.00\\
+&amp;=4.67,\\
+\hat y&amp;=a^\top\hat w\\
+&amp;=1.00+0.75+0.50+1.75\\
+&amp;=4.00,\\
+\hat y-y&amp;=\sum_i a_i\delta_i=-0.67,\\
+|\hat y-y|&amp;\le\sum_i|a_i|\,|\delta_i|.
+\end{aligned}
+\]</div>
+<p>\(i=1,\ldots,4\) 索引点积分量，\(y,\hat y\) 是原权重与恢复权重的标量输出。前三个权重误差均小于 \(s/2=0.125\)，第四个饱和，误差界不再适用；输出误差还被激活幅度加权。GPTQ/AWQ的校准正是要关注输入上的影响，不能只比较权重的平均绝对误差；本例没有实现它们的校准算法。</p>
+<p><strong>存储复算：</strong>若四个整数真正打包为4-bit，数据占2 B；本组再存一个FP32 scale占4 B，合计6 B。四个BF16权重原占8 B；这个极小组并没有4倍总存储收益。实际还要加对齐、未量化部分和所用scale格式，更不能由位宽直接推出点积速度或任务成功率。</p>
 <p><strong>总存储：</strong>数据bit加scale、zero-point、padding和未量化部分。权重低bit不自动改变激活、KV或累积精度。</p>
 <table><thead><tr><th>对象 / 路线</th><th>作用</th><th>限制与验证</th></tr></thead><tbody>
 <tr><td>Weight-only INT4/INT8，GPTQ / AWQ</td><td>减权重容量与带宽；计算可能反量化到更高精度</td><td>分组/校准/outlier、未量化层、kernel形状与batch；INT4不是所有GEMM都4-bit</td></tr>
@@ -52,7 +74,7 @@ q=\operatorname{clip}\left(\operatorname{round}(x/s)+z,q_{\min},q_{\max}\right),
 <tr><td>QLoRA NF4</td><td>冻结底座量化存储用于adapter训练</td><td>不是普适FP4服务配方；merge/requant需另测，见训练05</td></tr>
 </tbody></table>
 <p>GPTQ用近似二阶信息作post-training权重量化；AWQ利用激活信息保护重要权重通道；KIVI分析K按channel、V按token的不对称分组。<a href="#ref-quant">[2–4]</a> 论文中的总峰值显存或吞吐下降不能只按bit比例反算，因为权重、cache、临时区的占比不同。</p>
-<p>低精度不仅验perplexity，还要验工具JSON、长上下文引用、科学design和独立任务成功。量化后目标模型分布改变，即使投机验证对该量化目标精确，也不保证与BF16目标相同。前沿FP4训练/推理对象分拆见<a href="../llm-research-map-2026/s07_architecture_training.html">研究地图07</a>。</p>
+<p>低精度不仅验perplexity，还要验工具JSON、长上下文引用、科学design和独立任务成功。量化后目标模型分布改变，即使投机验证对该量化目标精确，也不保证与BF16目标相同。前沿FP4训练/推理对象分拆见<a href="../llm-research-map-2026/s07_architecture_training.html#precision">架构主题的低精度机制</a>。</p>
 </section>
 <section id="speculation"><h2>投机解码的精确性取决于验证协议</h2>
 <section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2302.01318" title="Accelerating Large Language Model Decoding with Speculative Sampling · Chen, Charlie, Borgeaud, Sebastian, Irving, Geoffrey 等 · 2023/02/02 · 2302.01318">Speculative Sampling</a>；<a href="https://arxiv.org/abs/2211.17192" title="Fast Inference from Transformers via Speculative Decoding · Leviathan, Yaniv, Kalman, Matan, Matias, Yossi · 2022/11/30 · 2211.17192">Speculative Decoding</a>。</p></section>

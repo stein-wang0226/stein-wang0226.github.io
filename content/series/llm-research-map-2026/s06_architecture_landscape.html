@@ -118,7 +118,7 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 <tr><td>训练优化</td><td>K3 Per-head Muon；K2使用MuonClip</td><td>按head拆矩阵与QK clipping是不同措施，不能合并成一个名称</td></tr>
 </tbody>
 </table>
-<p>论文中“scaling efficiency”包含架构和配方的综合作用；不能称为KDA单模块的速度倍数。进一步推导见<a href="s07_architecture_training.html#latent-moe">LatentMoE</a>和<a href="s07_architecture_training.html#muon">Muon</a>。</p>
+<p>论文中“scaling efficiency”包含架构和配方的综合作用；不能称为KDA单模块的速度倍数。进一步推导见本主题的<a href="s07_architecture_training.html#latent-moe">LatentMoE</a>和训练主题的<a href="../llm-training-lifecycle/s05_training_methods_systems.html#muon-industrial">Muon工业配方</a>。</p>
 </section>
 <section id="nemotron">
 <h2>Nemotron：混合子模块、LatentMoE与训练稳定性</h2>
@@ -156,7 +156,7 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 <h2>Step：局部Attention、MTP与矩阵更新的数值细节</h2>
 <p>Step 3.5 Flash报告196B总量、11B active，SWA / Full为3:1、窗口512，并使用3个MTP模块。Step 3.7 Flash固定模型卡则给出约198B，包含196B文本与1.8B视觉、45层、256K上下文。<a href="index.html#ref-57">[57]</a> <a href="index.html#ref-58">[58]</a></p>
 <p>应同时保留“3.5训练报告”和“3.7当前配置”，不能用前者冒充后者单独完整报告。视觉分支还增加输入编码和token成本，仅比较文本active不足以解释GUI任务效率。</p>
-<p><strong>数值反例：</strong>3.5的Polar Express迭代在BF16出现罕见outlier，改<strong>该迭代</strong>到FP16后不再出现。范围限该近似测试；矩阵分组与精度见本页<a href="s07_architecture_training.html#muon">工业Muon配方</a>，不能推广为全模型FP16。</p>
+<p><strong>数值反例：</strong>3.5的Polar Express迭代在BF16出现罕见outlier，改<strong>该迭代</strong>到FP16后不再出现。范围限该近似测试；矩阵分组与精度见训练主题的<a href="../llm-training-lifecycle/s05_training_methods_systems.html#muon-industrial">工业Muon配方</a>，不能推广为全模型FP16。</p>
 </section>
 <section id="gemma">
 <h2>Gemma 4：端侧、多模态和KV复用也是架构前沿</h2>
@@ -199,7 +199,7 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 </tbody>
 </table>
 </details>
-<p class="note">实验尚未执行。规格、团队消融、独立服务测量与综合分析分别标注；原件与许可见<a href="index.html#archive">来源归档</a>，接下来读本页训练机制。</p>
+<p class="note">实验尚未执行。规格、团队消融、独立服务测量与综合分析分别标注；原件与许可见<a href="index.html#archive">来源归档</a>。机制推导可返回本主题前面的<a href="s07_architecture_training.html#residual">残差流与LatentMoE</a>，型号之后继续读<a href="s03_base_architecture.html">DeepSeek缓存专例</a>。</p>
 </section>
 <section id="frontier-evidence" data-frontier-audit="20261114"><h2>多家架构地图的定量入口</h2><p><a href="../llm-architecture/s03_ffn_moe_routing.html#frontier-comparison">LatentMoE 的参数、能力与并发吞吐</a>说明规格不足以预测速度；注意力与残差专题还有各自的受控对照。这里的新设计未执行。</p></section>
 <div class="course-review"><p><strong>面试短答：</strong>比较混合模型先问“保存什么历史、在哪些层读全局、专家怎样分派”。再检查实际版本、默认配置和测试负载；active参数、block数与kernel倍数均不能直接代表总成本。</p></div>

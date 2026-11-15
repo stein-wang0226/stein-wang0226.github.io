@@ -74,7 +74,27 @@ D_j=p_jD,\qquad r_j=\frac{p_jD}{U_j},\qquad
 p_\theta(x_{1:n})=\prod_{i=1}^np_\theta(x_i\mid x_{&lt;i}),\qquad
 L_{\rm LM}=-\frac{\sum_i m_i\log p_\theta(x_i\mid x_{&lt;i})}{\sum_i m_i}.
 \]</div>
-<p>\(m_i\in\{0,1\}\)表示目标是否有效；padding和需隔离的文档起点按配方处理。<strong>两文档例：</strong>将[甲,乙]和[丙,丁]打包时，乙→丙这条跨文档预测应依约屏蔽，丙→丁仍有效；attention也需阻断第二文档读取第一文档。loss mask本身不能完成注意力隔离。</p>
+<p>\(m_i\in\{0,1\}\)表示目标是否有效；padding和需隔离的文档起点按配方处理。下面固定一种独立文档打包规则，同时检查attention隔离和shift后的目标位置。</p>
+<h3 id="packing-full-example">完整packing算例：可见历史与预测标签分别怎样对齐</h3>
+<p><strong>输入与规则：</strong>文档一[甲,乙]、文档二[丙,丁]，打包成长度4的[甲,乙,丙,丁]。本例不插入BOS/EOS、不加padding；文档内部causal attention，文档之间隔离，两个文档首token不作预测目标。若实际配方插入各自的BOS或使用不同边界规则，标签与mask应随之改变。</p>
+<div class="reading-math">\[
+A_{\rm allow}=
+\begin{pmatrix}
+1&amp;0&amp;0&amp;0\\
+1&amp;1&amp;0&amp;0\\
+0&amp;0&amp;1&amp;0\\
+0&amp;0&amp;1&amp;1
+\end{pmatrix},
+\qquad m=(0,1,0,1).
+\]</div>
+<p>\(A_{\rm allow}\) 是 \(4\times4\) 可见性矩阵，行是query位置，列是key位置；1表示允许读取，0表示屏蔽。转换成加到score上的mask时，允许处为0、屏蔽处为 \(-\infty\)。\(m\) 按原序列的<strong>目标token身份</strong>构建，因此shift时也取 \(m[1:]\)，不能仍按logits位置原样相乘。</p>
+<table><thead><tr><th>logits来自位置</th><th>允许读取的输入</th><th>右移标签</th><th>对应loss权重</th><th>示例预测概率</th></tr></thead><tbody>
+<tr><td>0：甲</td><td>甲</td><td>1：乙</td><td>\(m_1=1\)</td><td>\(p(\text{乙}\mid\text{甲})=0.5\)</td></tr>
+<tr><td>1：乙</td><td>甲、乙</td><td>2：丙</td><td>\(m_2=0\)，屏蔽跨文档预测</td><td>不计入loss</td></tr>
+<tr><td>2：丙</td><td>丙</td><td>3：丁</td><td>\(m_3=1\)</td><td>\(p(\text{丁}\mid\text{丙})=0.25\)</td></tr>
+<tr><td>3：丁</td><td>丙、丁</td><td>无下一位置</td><td>截去最后一个logit</td><td>不计入loss</td></tr>
+</tbody></table>
+<p>有效目标只有乙、丁，平均loss为 \((-\log0.5-\log0.25)/2\approx1.039721\) nats/目标token。分母是2，不是四个输入或三个shift位置。只设loss mask仍会让丙/丁读取甲/乙；只设block attention也不会自动删去乙→丙这个训练目标。两者需要分别验收。</p>
 <p>普通文档的多数 token 都是目标。对拼接的独立文档，可以隔离 attention 并屏蔽新文档首 token 的 loss，防止前一文档末尾被用来预测后一文档起点。不同配方可能采用不同边界规则，必须在数据与模型实现中保持一致。</p>
 <pre><code># 概念上的 shift；不是特定框架 API
 input_ids   = [BOS, "CSV", "rows", "exclude", "header", EOS]

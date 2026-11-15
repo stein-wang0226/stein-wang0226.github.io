@@ -1,0 +1,2393 @@
+{
+  "base_commit": "a8f5bcedc72da8b3ed735afe07a7076000321348",
+  "date": "2026-11-15",
+  "scope": "74份源的结构与核心算例抽查；重点细读五个计算主讲及归位后叙述，九份正文有意修改",
+  "scientific_limits": "新增数字是解析教学计算并已独立复算；未重新核验全部前沿发布或论文性能，未执行模型训练/服务实测",
+  "immutable_baselines_modified": false,
+  "numeric_validation": {
+    "scope": "教学计算独立复算；不是模型训练、GPU kernel或服务benchmark",
+    "attention_tilings_and_logit_shifts": [
+      {
+        "tiles": [
+          3
+        ],
+        "shift": 0,
+        "output": 3.0,
+        "states": null
+      },
+      {
+        "tiles": [
+          3
+        ],
+        "shift": 1000,
+        "output": 3.0000000000000178,
+        "states": null
+      },
+      {
+        "tiles": [
+          3
+        ],
+        "shift": -1000,
+        "output": 3.0000000000000178,
+        "states": null
+      },
+      {
+        "tiles": [
+          1,
+          2
+        ],
+        "shift": 0,
+        "output": 3.0,
+        "states": null
+      },
+      {
+        "tiles": [
+          1,
+          2
+        ],
+        "shift": 1000,
+        "output": 3.0000000000000178,
+        "states": null
+      },
+      {
+        "tiles": [
+          1,
+          2
+        ],
+        "shift": -1000,
+        "output": 3.0000000000000178,
+        "states": null
+      },
+      {
+        "tiles": [
+          2,
+          1
+        ],
+        "shift": 0,
+        "output": 3.0,
+        "states": [
+          [
+            0.6931471805599453,
+            1.5,
+            2.5
+          ],
+          [
+            1.3862943611198906,
+            1.75,
+            5.25
+          ]
+        ]
+      },
+      {
+        "tiles": [
+          2,
+          1
+        ],
+        "shift": 1000,
+        "output": 3.0000000000000178,
+        "states": null
+      },
+      {
+        "tiles": [
+          2,
+          1
+        ],
+        "shift": -1000,
+        "output": 3.0000000000000178,
+        "states": null
+      },
+      {
+        "tiles": [
+          1,
+          1,
+          1
+        ],
+        "shift": 0,
+        "output": 3.0,
+        "states": null
+      },
+      {
+        "tiles": [
+          1,
+          1,
+          1
+        ],
+        "shift": 1000,
+        "output": 3.0000000000000178,
+        "states": null
+      },
+      {
+        "tiles": [
+          1,
+          1,
+          1
+        ],
+        "shift": -1000,
+        "output": 3.0000000000000178,
+        "states": null
+      }
+    ],
+    "moe": {
+      "outputs": [
+        [
+          1.3333333333333333,
+          0.0
+        ],
+        [
+          0.0,
+          2.333333333333333
+        ],
+        [
+          1.6666666666666665,
+          1.6666666666666665
+        ],
+        [
+          2.4000000000000004,
+          0.0
+        ]
+      ],
+      "loads": [
+        3,
+        4,
+        1
+      ],
+      "capacity": 3,
+      "dropped_output": [
+        1.6,
+        0.0
+      ],
+      "remote_assignments": [
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      "dispatch_payload_bytes": 12,
+      "combine_payload_bytes": 12
+    },
+    "quantization": {
+      "integers": [
+        2,
+        -3,
+        4,
+        7
+      ],
+      "recovered": [
+        0.5,
+        -0.75,
+        1.0,
+        1.75
+      ],
+      "original_dot": 4.67,
+      "quantized_dot": 4.0,
+      "storage_bytes_including_fp32_scale": 6
+    },
+    "packing": {
+      "visibility": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1
+        ]
+      ],
+      "target_mask": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "shift_mask": [
+        1,
+        0,
+        1
+      ],
+      "loss": 1.0397207708399179
+    },
+    "flow": {
+      "conditional_mean_y": 1.0,
+      "conditional_variance_y": 0.5,
+      "marginal_velocity": 2.0,
+      "conditional_variance_u": 2.0,
+      "conditional_loss_at_3": 3.0,
+      "gradient_fd": 2.0000000000131024,
+      "euler": 0.2,
+      "exact": 0.18019609728144292,
+      "rk4": 0.1801960972814312,
+      "euler_absolute_error": 0.019803902718557087
+    }
+  },
+  "pages": [
+    {
+      "id": "my-work-holon",
+      "source": "content/posts/my-work-holon/index.md",
+      "changed": false,
+      "sha256_before": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "sha256_after": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "## 先记住：统一接口，分轴验收",
+        "## 知识讲解：先区分表示、条件与监督 {#work-knowledge}",
+        "## 模型如何连接不同模态",
+        "### 从张量看 MoT 为什么能跨模态交互",
+        "## 数据与训练阶段",
+        "### 一个样本怎样从输入走到 loss",
+        "## 从目标 token 比例到可执行采样",
+        "## Scaling 与优化怎样迁移到 CPT"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 40,
+          "text": "<g fill=\"#172d35\" text-anchor=\"middle\" font-family=\"system-ui,sans-serif\" font-size=\"17\"><text x=\"100\" y=\"52\">文本 token</text><text x=\"100\" y=\"75\" font-size=\"13\">上下文或预测目标</text><text x=\"100\" y=\"147\">蛋白 token</text><text x=\"100\" y=\"170\" font-size=\"13\">独立词表与序列边界</text><text x=\"327\" y=\"52\">理解侧投影</text><text x=\"327\" y=\"75\" "
+        },
+        {
+          "line_before": 61,
+          "text": "这使跨模态交互和参数隔离可以同时存在，但也引入模态边界、tied head、checkpoint shape 和冻结策略的一致性要求。dense 路线用于检查专门路由的收益与额外成本，MoE 路线则另外研究稀疏容量及优化稳定性。[1](#ref-1)[3](#ref-3)"
+        },
+        {
+          "line_before": 79,
+          "text": "`M` 表示因果与 packed 样本边界等约束。**参数路径分开，不意味着 attention 矩阵按模态彻底断开。** 在合同允许的上下文范围内，蛋白目标仍能使用文本的 K/V。相反，两个不同样本即使拼在同一 batch，也不能因为物理相邻而相互读答案。GQA 的 Q 与 K/V 头数可能不同，上式是每个注意力头的概括，不声称三个矩阵的最后一维完全一致。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-protagent",
+      "source": "content/posts/my-work-protagent/index.md",
+      "changed": false,
+      "sha256_before": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "sha256_after": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "## 先记住：真实工具、逐步信用、独立评价",
+        "## 知识讲解：工具轨迹、SFT 与在线 RL {#work-knowledge}",
+        "## 工具、轨迹和监督怎样组织",
+        "## 逐步回报怎样进入策略梯度",
+        "### 一个有重复调用的轨迹怎样计算信用 {#work-example}",
+        "### Reward 的正确性为什么仍需要独立评价",
+        "## 四臂实验说明了什么",
+        "## 主模型结果与独立协议"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 55,
+          "text": "论文闭环 SFT 使用 987 train / 64 val，训练部分包括 567 action、120 evidence-to-answer 和 300 multi-turn 示例。系统、用户和工具消息作为上下文，只有 assistant 的动作与最终回答进入预测目标："
+        },
+        {
+          "line_before": 84,
+          "text": "用论文附录的实际局部权重作算式示例；以下是教学轨迹，不是新增 rollout 实测。第一次正确相关工具调用得 `+0.25`，下一次重复调用得 `−0.30`，第三步回答的终止奖励记为 R，γ=λ=1。[3](#ref-3)"
+        },
+        {
+          "line_before": 151,
+          "text": "## 训练系统与复现边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-harbor",
+      "source": "content/posts/my-work-harbor/index.md",
+      "changed": false,
+      "sha256_before": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "sha256_after": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "## 先记住：公开合同、完整路径、独立盲测",
+        "## 知识讲解：任务合同、oracle 与 verifier {#work-knowledge}",
+        "## 公开研究怎样成为任务",
+        "## 公共合同与私有评价的边界",
+        "## 多路径 oracle 与完整结果一致性",
+        "### 为什么逐字段容差不能代表完整科学结果 {#work-example}",
+        "### 从一个组学任务的输入走到交付",
+        "## 角色接力、门禁与失败恢复"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 11,
+          "text": "**方法链：公开研究 → 来源/输入冻结 → 造题与校准 → 门禁 → 隔离 Solver → 独立判分 → 交付与版本登记。** 下图强调运行时的信息边界。"
+        },
+        {
+          "line_before": 24,
+          "text": "<title id=\"harbor-contract-title\">科学任务的公开执行与私有判分边界</title><desc id=\"harbor-contract-desc\">公开来源形成冻结输入和题面，求解者产出答案；私有校准参考与反例约束独立验证器，验证器只在答案冻结后评分。</desc>"
+        },
+        {
+          "line_before": 38,
+          "text": "来源图应连接 accession、样本、论文、补充资料、作者代码、参考基因组及注释版本。确定性 fixture 的每次切片、转置、筛选和重命名都要记录输入/输出 hash、脚本、参数、计数和 schema。输入的坐标、单位、样本映射、缺失语义和设计边界必须公开，避免把难度建在隐藏事实上。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-dllm",
+      "source": "content/posts/my-work-dllm/index.md",
+      "changed": false,
+      "sha256_before": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "sha256_after": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "## 先记住：调度、可见性、监督分开控制",
+        "## 知识讲解：生成顺序、可见性与可训练性 {#work-knowledge}",
+        "## 目标函数与条件可见性",
+        "### 从公式看一次训练更新",
+        "## Scatter 与 Jigsaw 的路线",
+        "### 用两块序列区分调度和 attention {#work-example}",
+        "## Jigsaw 的训练变体与监督密度",
+        "### 熵选块为什么不等于选出正确块"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 166,
+          "text": "| 方法 | ARR Test-PPL | ARR Gen-PPL，T=1024 | 证据边界 |"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-holon-full",
+      "source": "content/posts/my-work-holon/full-report.html",
+      "changed": false,
+      "sha256_before": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "sha256_after": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "01 项目定位与结论总览",
+        "1.1 项目的技术演进与本报告的阅读顺序",
+        "02 模型架构：MoT、MoE 与 dense 对照",
+        "2.1 Holon MoT 的条件化机制",
+        "2.2 参数量必须注明口径",
+        "2.3 初始化与 checkpoint 连续性",
+        "2.4 从一个输入样本看 MoT 单层计算",
+        "2.5 可核对的 0.6B 架构快照与参数计算"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 136,
+          "text": "| 研究问题 | 目前支持的结论 | 必须保留的边界"
+        },
+        {
+          "line_before": 158,
+          "text": "| 更大的模型是否全面更好？ | 部分 1.7B/4B 结果的纯序列分数更高；1.7B AR/FIM 同时存在文本条件退化 | 预算、seed、初始化、优化器和输入边界不完全匹配，不作单独规模因果判断"
+        },
+        {
+          "line_before": 224,
+          "text": "| 后续 CPT | Swiss-Prot、TrEMBL、论文交织、P123、AR/FIM | full217、生成、分层理解、Ladder | 各实验保留自己的数据版本与边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-protagent-full",
+      "source": "content/posts/my-work-protagent/full-report.html",
+      "changed": false,
+      "sha256_before": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "sha256_after": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "01 / READING GUIDE主要结论与证据边界",
+        "02 / SYSTEM问题形式化与系统结构",
+        "03 / DATA数据、样本与隔离协议",
+        "同源性审计的范围",
+        "04 / SUPERVISED LEARNINGSFT：动作监督与 label 对齐",
+        "05 / REINFORCEMENT LEARNING从期望回报到逐步策略梯度",
+        "组合奖励：附着位置与无工具 guard",
+        "06 / TRAINING & INFERENCE代码、训练与工具框架"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 60,
+          "text": "从真实工具交互到监督微调与逐步强化学习：理论定义、数据、实验、系统配置和复现边界。"
+        },
+        {
+          "line_before": 62,
+          "text": "01 / READING GUIDE主要结论与证据边界"
+        },
+        {
+          "line_before": 73,
+          "text": "边界：训练 split 隔离不保证工具数据库没有测试序列或同源项。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-harbor-full",
+      "source": "content/posts/my-work-harbor/full-report.html",
+      "changed": false,
+      "sha256_before": "9cd38f47051c7e86dceb560b5f551ef94c2caf70e4ea3225449b4c6d7e5c5b98",
+      "sha256_after": "9cd38f47051c7e86dceb560b5f551ef94c2caf70e4ea3225449b4c6d7e5c5b98",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "1. 研究问题：怎样规模化构造科学任务",
+        "2. 核心机制：信息隔离与工件交接",
+        "3. 方法与判分：先冻结，再盲测",
+        "方法总览",
+        "评审 rubric 体系：每个站位的判分维度",
+        "题面早评：盲测之前的质量前闸",
+        "盲测失败的八类归因路由",
+        "关键设计决策"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 302,
+          "text": "历史数据边界：正文中的“当前／最新”、740 ready、413 done、70%+／91.0% 成功率、成本、模型分工和具体 case 均按原稿口径保留。本次未重新核验这些统计的批次、分母、价格来源与完整执行证据，不作为 2026-11-05 的实时读数或因果效果证明。生产效率、package 检查通过与科学质量／难度认证必须分别解读。"
+        },
+        {
+          "line_before": 503,
+          "text": "near_miss：接近正确但落在边界 → 扩展多路径校准或收紧容差说明。"
+        },
+        {
+          "line_before": 527,
+          "text": "教学例：路径 A 允许输出 (1,10)，路径 B 允许 (2,20)。逐字段“取任一路径都可”会误收 (1,20)；完整路径校验要求两个字段来自同一合法计算。实际科学任务还需校准数值容差、并列、缺失和排序边界。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-dllm-full",
+      "source": "content/posts/my-work-dllm/full-report.html",
+      "changed": false,
+      "sha256_before": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "sha256_after": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "研究设计",
+        "目标函数与因子分解",
+        "AR 与吸收式掩码扩散",
+        "Block-Diff",
+        "Scatter 与 Jigsaw",
+        "Scatter 的注意力与采样",
+        "Jigsaw 的训练与主要变体",
+        "ICL 理论与可识别性"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 209,
+          "text": "| Batch、LR | 64，论文参数表记 2×10⁻⁴ | 实际 YAML 另有 llama 示例用 1×10⁻⁴。聚合前核对运行配置"
+        },
+        {
+          "line_before": 254,
+          "text": "| Scatter 34.26 / 38.58 | p=0.7，T=128 / 256，各 25 样本 | 边界步数使用补跑文件。T=256 从对应 sweep 汇总"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-systems",
+      "source": "content/series/agent-systems/index.html",
+      "changed": false,
+      "sha256_before": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "sha256_after": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "让行动有证据、有预算、有权限",
+        "贯穿案例：RNA-seq分析怎样形成可靠交付",
+        "读完应能做到"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 9,
+          "text": "基础方法之后，接着读GUI、科学Agent、Skills与持续学习：把检索、规划、权限和恢复放进具体场景，逐项核对前沿工作的结果与边界。"
+        },
+        {
+          "line_before": 15,
+          "text": "科学分析需要先确认输入、配对与处理，再规划计算和输出，最后独立验收。下面是教学方案，未执行分析或训练。"
+        },
+        {
+          "line_before": 25,
+          "text": "说明边界：区分提示、检测、门控、隔离与独立终评。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-rag",
+      "source": "content/series/agent-systems/s01_rag_retrieval.html",
+      "changed": false,
+      "sha256_before": "73df192198e07012ee916fe97d6585c863b1d5d7517669414422350b67d5a9d5",
+      "sha256_after": "73df192198e07012ee916fe97d6585c863b1d5d7517669414422350b67d5a9d5",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "RAG的输出应该是一组可追溯的证据",
+        "知识库、会话摘要与长期memory保存不同对象",
+        "索引之前：版本、权限与语义边界",
+        "BM25、dense、融合与rerank分别解决什么",
+        "BM25：词频饱和与长度归一",
+        "Dense：向量关系需要明确度量",
+        "RRF：先融合排名，再用重排器判断",
+        "Agentic RAG：检索是可学习的行动"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 22,
+          "text": "索引之前：版本、权限与语义边界"
+        },
+        {
+          "line_before": 54,
+          "text": "教学算例：取\\(k_1=1.2,b=0.75,\\operatorname{avgdl}=100,f=2\\)。100词文档的\\(\\ell=1\\)，词频项为\\(4.4/3.2=1.375\\)；200词文档的\\(\\ell=1.75\\)，为\\(4.4/4.1\\approx1.073\\)。同样出现两次，长文相对少得分。它适合精确对象匹配，仍不判断句子是否真实。"
+        },
+        {
+          "line_before": 89,
+          "text": "| 路线与固定来源 | 改变的对象 | 证据边界与本文分析"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-planning",
+      "source": "content/series/agent-systems/s02_planning_compute.html",
+      "changed": false,
+      "sha256_before": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "sha256_after": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "规划是选择下一步，搜索是分配备选路径的计算",
+        "ReAct、计划执行与反思的分工",
+        "BoN、beam与MCTS：候选、评分与展开对象不同",
+        "独立采样的收益：先推存在，再看选择",
+        "UCT：利用当前价值，也给少访问分支机会",
+        "过程验证、结果验证与自评分",
+        "环境分支和恢复：不能只复制对话",
+        "预算、停止与工业rollout容量"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 33,
+          "text": "取\\(p=0.2,N=4\\)，候选集中有成功的概率为\\(1-0.8^4=0.5904\\)。若有成功时selector只以0.8概率选对，实际交付成功为\\(0.5904\\times0.8=0.47232\\)。这是明确假设的算例，pass@N是存在性，Best-of-N部署还要测选择器。共享错误前提会使独立假设失效。"
+        },
+        {
+          "line_before": 48,
+          "text": "教学算例：父节点16次；A访问8次、均值0.7，B访问2次、均值0.5，取\\(c=0.5\\)。A得\\(0.7+0.5\\sqrt{\\log16/8}\\approx0.994\\)，B得\\(0.5+0.5\\sqrt{\\log16/2}\\approx1.089\\)，本次选择B探索。一次新回报会更新均值并向父节点回传；过程评分有偏时，UCT并不能把它变成真值。"
+        },
+        {
+          "line_before": 91,
+          "text": "不同输入长度、prefill重算、工具/CPU时间、verification和并行资源改变成本。还需完整预算和端到端测量边界。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-trust",
+      "source": "content/series/agent-systems/s03_trust_safety.html",
+      "changed": false,
+      "sha256_before": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "sha256_after": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "模型提出动作，系统决定是否执行",
+        "先确定攻击者控制什么",
+        "提示、检测、权限与隔离各自能保证什么",
+        "科学任务要求、独立验证与权限控制",
+        "安全评测同时报告任务效用与攻击成功",
+        "CaMeL：同一攻击集上的防护对照",
+        "理解检查与后续",
+        "原始来源与证据边界"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 0,
+          "text": "Agent信任边界、权限与安全评测"
+        },
+        {
+          "line_before": 22,
+          "text": "| 层 | 能做什么 | 保证边界"
+        },
+        {
+          "line_before": 30,
+          "text": "| 模式（来源[1]） | 控制边界 | 取舍与反例"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-serving",
+      "source": "content/series/llm-serving/index.html",
+      "changed": false,
+      "sha256_before": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "sha256_after": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "把结构收益转成可测量的服务结果",
+        "连接训练与Agent执行"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 8,
+          "text": "基础算例之后，继续在本页阅读DFlash → DSpark → AdaFlash，把接受协议、选择偏差和并发测量接回同一条推理主线。"
+        },
+        {
+          "line_before": 9,
+          "text": "模型与状态权重、KV、递归状态 | 结构与长度边界服务调度prefill / decode | 批处理与cache生命周期设备与数值TP / DP / EP / PD | 量化、验证与传输任务与成本TTFT / ITL / goodput | 失败、CPU、成功成本"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "serving-runtime",
+      "source": "content/series/llm-serving/s01_runtime_scheduling.html",
+      "changed": false,
+      "sha256_before": "7c6062293a9b7bfad3a5485326eff6a7a103100fa71242c2e80e3674b0469d65",
+      "sha256_after": "7c6062293a9b7bfad3a5485326eff6a7a103100fa71242c2e80e3674b0469d65",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "每次调度分配的是token计算与状态空间",
+        "Prefill 与 decode 的计算负载不同",
+        "PagedAttention解决物理存储，数学仍读取逻辑历史",
+        "Prefix复用与RadixAttention",
+        "vLLM V1：统一按进度和token预算调度",
+        "长短请求、工具暂停与混合状态",
+        "Kimi K3.1案例：读得更少，不一定存得更少",
+        "回到运行时：按等待与状态类型定位问题"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 45,
+          "text": "共享算例：两请求各35token，前32token完全相同。B=16时，共享2个满页，各有1个私有尾页，共4页64槽；独立分配需6页96槽。部分尾页共享要按具体copy-on-write实现核算，不能只相加逻辑长度。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "serving-parallel",
+      "source": "content/series/llm-serving/s02_parallel_quantization.html",
+      "changed": true,
+      "sha256_before": "b57952ba142e83701bce6265f9abc40f544d835c74451d63f9ca34b41cfea671",
+      "sha256_after": "1c6744450dec3fbe7f7325c3b9fa1a8265e2e4d3f34dbbd4a776c5a1e52d6038",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先说明切分和压缩什么，再讨论加速",
+        "TP、服务副本和EP不能混乘",
+        "Prefill/decode分离：干扰减少，状态传输增加",
+        "量化必须写对象、格式和计算dtype",
+        "投机解码的精确性取决于验证协议",
+        "接受质量加拒绝残差，为什么还原target",
+        "把概率算例走成一轮：候选 → 验证 → 提交 → 缓存恢复",
+        "接受长度为什么不是加速比"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 41,
+          "text": "教学量化算例，不是GPTQ/AWQ实际配置"
+        },
+        {
+          "line_before": 76,
+          "text": "三token词表算例：p=(0.6,0.3,0.1)，q=(0.2,0.5,0.3)"
+        },
+        {
+          "line_before": 82,
+          "text": "把概率算例走成一轮：候选 → 验证 → 提交 → 缓存恢复"
+        }
+      ],
+      "reason": "补权重整数编码、饱和、恢复、点积输出误差和含scale存储账本；低精度链接直达架构precision主讲"
+    },
+    {
+      "id": "serving-capacity",
+      "source": "content/series/llm-serving/s03_capacity_cost.html",
+      "changed": false,
+      "sha256_before": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "sha256_after": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "从服务容量到每个成功任务的总成本",
+        "按对象建立显存账本",
+        "70B、TP4、32K历史的可复算例子",
+        "服务指标的边界和分母",
+        "从服务容量到长程Agent rollout",
+        "每个成功任务的成本：计入失败尝试和各类资源",
+        "可下载的测量协议",
+        "规格来源与边界"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 34,
+          "text": "70B、TP4、32K历史的可复算例子"
+        },
+        {
+          "line_before": 60,
+          "text": "最后一行不是已启用FP8服务，也不是性能结论。表格未包含真实分配对齐；预留16GB是设计变量，不能当作实测workspace。与V4.1的890B/token报告比较时，应区分不同结构/压缩/全局与SWA边界，见专章推导。"
+        },
+        {
+          "line_before": 63,
+          "text": "服务指标的边界和分母"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-posttraining",
+      "source": "content/series/llm-posttraining/index.html",
+      "changed": false,
+      "sha256_before": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "sha256_after": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "后训练的核心：在什么状态上，用什么信号，更新什么行为",
+        "本页怎样学、怎样复习",
+        "掌握检查：能否解释四个边界",
+        "资料与可复核口径",
+        "原始资料索引"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 29,
+          "text": "GRPO完整组算例把reward、优势、ratio、clip和loss贯通；读完任务案例，再用Agentic RL前沿对照检查新工作究竟改变哪一个环节。"
+        },
+        {
+          "line_before": 30,
+          "text": "深入理解：顺着默认展开的推导和算例复算；配方、配置长表按需展开。"
+        },
+        {
+          "line_before": 33,
+          "text": "掌握检查：能否解释四个边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-supervision",
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "changed": false,
+      "sha256_before": "558da3e00220acfc740b5fce01073ad9882c90c02192394b3443e885c930d776",
+      "sha256_after": "558da3e00220acfc740b5fce01073ad9882c90c02192394b3443e885c930d776",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先分开四条轴：数据、反馈、目标与参数更新方式",
+        "SFT：目标 token、条件历史和样本权重",
+        "实现检查：模板、打包和截断",
+        "恢复训练：保留学生失败历史，监督可靠纠正",
+        "拒绝采样 RFT：把搜索成本与数据偏移算进去",
+        "偏好优化：从 DPO 到无需成对标签的 KTO",
+        "从KL正则最优策略到偏好分类",
+        "强化 RFT：grader 必须对应任务意义"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 37,
+          "text": "令 hᵢ 是预测第 i 个 token 时的历史，mᵢ 是目标 mask。对 Agent，通常学习 assistant 的动作、参数、解释和结束标记；system / user / tool 内容作为条件历史。具体角色边界由真实 chat template 决定。"
+        },
+        {
+          "line_before": 49,
+          "text": "mask算例：输入为“题面 → 工具动作 → 观察 → 修复动作”。两个assistant目标token的正确概率为0.5、0.25，则token平均损失为 \\(-(\\log0.5+\\log0.25)/2\\approx1.0397\\)。题面和观察不进入分母，却仍被后续动作Attention读取。"
+        },
+        {
+          "line_before": 135,
+          "text": "配对算例：参考对两候选均为0.5，当前策略为0.6/0.4，\\(\\beta=1\\)。则 \\(z=\\log1.5\\approx0.4055\\)，偏好概率0.6，损失约0.5108，小于两者相等时的0.6931。DPO提高相对偏好差；这不保证chosen的绝对概率单调上升，也不证明能探索未知状态。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "changed": false,
+      "sha256_before": "247f7f19c8190d217ffadbfe97f648078b5fa8b72d1e89b5cc2f175d01a98cb5",
+      "sha256_after": "247f7f19c8190d217ffadbfe97f648078b5fa8b72d1e89b5cc2f175d01a98cb5",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "本章阅读路径：原理、变体、配方、诊断",
+        "从最终成败到动作梯度，中间隔着信用分配",
+        "为什么只用当前动作之后的奖励",
+        "baseline为什么能减，critic又学什么",
+        "PPO 与 GAE：学习一个状态价值来降低方差",
+        "旧策略采样，当前策略怎样复用数据",
+        "为什么clip要看优势正负",
+        "RLOO 与 GRPO：用同题候选代替 learned baseline"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 90,
+          "text": "两步算例：\\(\\gamma=1,\\lambda=0.5\\)，奖励为[0,1]，value为[0.4,0.6,0]，末步terminal。则 \\(\\delta=[0.2,0.4]\\)，\\(\\hat A_1=0.4,\\hat A_0=0.2+0.5\\times0.4=0.4\\)。将 \\(\\lambda\\) 调为0或1，首步优势分别为0.2或0.6。预算截断是否bootstrap要按任务定义，不能把所有timeout都当真实terminal。"
+        },
+        {
+          "line_before": 154,
+          "text": "完整一组算例：reward → advantage → ratio → clip → loss"
+        },
+        {
+          "line_before": 192,
+          "text": "| 设计 | 为什么改 | 会带来什么新边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-opd",
+      "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
+      "changed": false,
+      "sha256_before": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "sha256_after": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "OPD 为什么需要学生自己走一遍任务",
+        "完整词表 reverse-KL：每个 prefix 的局部梯度",
+        "采样 token 的蒸馏信号：数值估计和正确梯度是两件事",
+        "完整词表、top-k、sampled-token 的信息与成本",
+        "工业多教师：DeepSeek、Nemotron 与 MiMo 的选择不同",
+        "Agentic-OPD：从历史checkpoint找互补教师",
+        "MOPD2：增加前缀覆盖，不把所有探索留给自主长 rollout",
+        "自蒸馏：同一模型也能通过更充分的信息当教师"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 54,
+          "text": "| 二候选算例 \\(p=(0.8,0.2),q=(0.5,0.5)\\) | 候选1 | 候选2"
+        },
+        {
+          "line_before": 149,
+          "text": "代价与边界：复用已训练的教师省去另训教师，但存储、路由评测、教师前向和整合更新仍有成本。验证集参与选教师后属于调参环节，最终测试必须独立；历史互补也不保证没有遗忘。"
+        },
+        {
+          "line_before": 153,
+          "text": "选历史来源学生自主轨迹 | 教师 / SFT 示例历史 构造回合 prefix动作与真实工具观察 | 一个示例产生多个起点 学生续写一回合新增 continuation 来自学生 | 教师对同历史评分 蒸馏与终评新增 token 目标 | 完整学生 episode 验收"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-rewards",
+      "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
+      "changed": false,
+      "sha256_before": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "sha256_after": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "RL 环境是任务状态机，也是训练分布的一部分",
+        "奖励的可信边界",
+        "五类反馈：名称相近，预测对象不同",
+        "过程监督：从 PRM800k 到标注、选择与训练的分歧",
+        "PURE 与 Cliff：稠密奖励也可能强化坏过程",
+        "PURE：求和会奖励重复“正确步骤”",
+        "Cliff：识别首个 pitfall 边界",
+        "多步信用分配：重复状态、子任务与知识条件基线"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 14,
+          "text": "固定任务与初态镜像、输入、版本 | 权限、预算、可用工具 动作与真实反馈策略输出 → 执行 | 观察、错误与状态变更 终止与产物交接自然停止 / 预算边界 | 只交接允许的文件或状态 独立 verifier受保护的测试与参考 | 结果、违规与错误类型"
+        },
+        {
+          "line_before": 33,
+          "text": "奖励的可信边界"
+        },
+        {
+          "line_before": 78,
+          "text": "投机算例：步骤分数[0.9,0.9,0.1]求和为1.9；再重复一次0.9，总和增至2.8而错误未修复。上述转换示意在 \\(T\\to0\\) 时聚焦最低分，\\(\\gamma=1\\) 时回报趋于0.1。实际后缀与聚合规则以PURE原文为准。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-frameworks",
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "changed": false,
+      "sha256_before": "88036edb05fa4c214d098d808e97d5e1bd5b9a1693b970d702754c75a6a2f86f",
+      "sha256_after": "88036edb05fa4c214d098d808e97d5e1bd5b9a1693b970d702754c75a6a2f86f",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "后训练是多个服务的循环，不只是一次 backward",
+        "框架地图：按接入方式、后端和版本边界选择",
+        "从算法配方映射到框架配置",
+        "同步、解耦、完全异步：吞吐和新鲜度的取舍",
+        "verl 的 fully async recipe",
+        "三类偏移：策略版本、数值实现、完成顺序",
+        "完成顺序偏移不属于 token ratio",
+        "Partial rollout 与上下文压缩：旧 KV 不能默认跨权重复用"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 36,
+          "text": "框架地图：按接入方式、后端和版本边界选择"
+        },
+        {
+          "line_before": 119,
+          "text": "教学 token 的 μ=0.20、πold=0.22、πθ=0.24，更新比为 1.091、实现校正比为 1.10，总比为 1.20。若只看 πθ/πold，就漏掉采样与训练的差异；这个算例不代表真实框架误差大小。"
+        },
+        {
+          "line_before": 133,
+          "text": "动作生成到边界记录 prefix、环境状态、行为版本"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-cases",
+      "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
+      "changed": false,
+      "sha256_before": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "sha256_after": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "把同一个任务的输入、动作、反馈与训练目标接起来",
+        "案例 A：修复空输入崩溃，同时保留非空行为",
+        "同任务怎样进入不同训练方法",
+        "案例 B：Harbor 科学分析，验证设计和统计产物",
+        "信号设计：结果、过程和特权信息各有边界",
+        "案例 C：GUI 修改指定草稿事件时间并保存",
+        "训练轨迹契约：精确到每次模型调用和环境状态",
+        "待执行矩阵：先可靠 baseline，再一次改变一个关键轴"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 14,
+          "text": "下面三个案例是教学设计，未执行 GPU 训练，也没有伪造真实轨迹和成绩。它们说明如何将前五章的目标落实为数据、环境、反馈和可复核交付。"
+        },
+        {
+          "line_before": 77,
+          "text": "信号设计：结果、过程和特权信息各有边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "training-methods-systems",
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "changed": true,
+      "sha256_before": "2c0cde0f68f69f993de2243ba993f75abc7cdc281877acc5a13696b06ae462e2",
+      "sha256_after": "cbae0ef429b1a1d6d20ec6fdbf5156764e3b0e1312f92ba19724459e2021b01d",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先选择更新对象，再分配集群",
+        "LoRA 与 QLoRA：冻结底座，仍需要反向传播",
+        "AdamW、Muon 与精度：更新规则不等于权重约束",
+        "从 SGD 到 AdamW：方向、尺度与衰减逐步分开",
+        "超参数：含义、起点与常见误用",
+        "可复算的两步例子：偏差修正与权重衰减",
+        "业界与研究路线：优化方向、减少状态、改善矩阵几何",
+        "成本账本：显存、FLOPs、带宽与通信分别计算"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 19,
+          "text": "先修：FFN / MoE、残差与稳定性及RL 循环。本章建立方法和资源账本；Muon工业配方在下文继续，低精度对象与型号边界见架构主题。"
+        },
+        {
+          "line_before": 25,
+          "text": "本文设计流程。后面的128卡和1024卡是规划示例，未运行训练，也不是厂商披露的真实配方。"
+        },
+        {
+          "line_before": 51,
+          "text": "初始化算例：常见 vanilla LoRA 令 B=0、A 非零，则初始增量为0，首步 A 梯度为0，但 B 梯度通常非零；B 更新后 A 才开始学习。取 x=(1,2)、A=(1,0)、B=(0,0)ᵀ、s=1、g=(3,4)，则 Ax=1、∇B=(3,4)ᵀ、∇A=(0,0)。冻结 W₀ 不会让 ∇x 消失。"
+        }
+      ],
+      "reason": "把Muon摘要中的旧跨主题跳转改为本章工业配方，避免来回跳转"
+    },
+    {
+      "id": "scientific-task-family",
+      "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
+      "changed": false,
+      "sha256_before": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "sha256_after": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "任务难度来自科学判断，答案由冻结数据支持",
+        "GSE52778 与 airway：同一研究，输入层并不相同",
+        "三类任务共享研究组，但检验不同能力",
+        "分析要求：先固定比较对象与统计单位",
+        "从count到均值：离散度与offset",
+        "配对design：在同一供体内估计共同处理效应",
+        "Contrast：从自然对数系数到log2FC",
+        "BH：控制一组声明的错误发现率"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 9,
+          "text": "多维 verifier结构、数值、统计口径与解释边界"
+        },
+        {
+          "line_before": 13,
+          "text": "交付状态：研究设计。本章提供合同、schema、来源图与验收方案。未下载FASTQ或计数包、未运行科学分析、未产生reference / oracle / 容差 / 盲测分数，尚不是可发布的Harbor benchmark。"
+        },
+        {
+          "line_before": 30,
+          "text": "本轮只观察了网页内容，未运行GEOquery，也未确认冲突的运行根因；“元数据字段变化导致位置解析失效”是待核验解释。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "cluster-training-evaluation",
+      "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
+      "changed": false,
+      "sha256_before": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "sha256_after": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "固定科学任务要求，分别评估数据、算法与系统的贡献",
+        "每次比较一个改动，明确基线与预算",
+        "异质 GRPO：难度、奖励与长度分别控制",
+        "长度与动作预算：模型上下文不是免费工作区",
+        "128 / 1024 H100方案中的每个角色都要入账",
+        "质量与成本同时量，统计单位保持一致",
+        "配对比较：平均分相同也可能换了一批成功任务",
+        "研究组切分与不确定性：保留依赖结构"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 12,
+          "text": "研究方案，尚未执行。模型训练、科学任务、轨迹采样、benchmark、容差校准和收益测量均未运行。GPU规模 / 超参是本文设计；无法确认的资源量和结果在下载文件中为null。"
+        },
+        {
+          "line_before": 36,
+          "text": "检查可用信号：全对/全错组没有组内相对差异；噪声微小差异也不应当成可信信用。独立二元奖励下的有效组概率和G=8算例在GRPO主讲，本页只维护诊断与对照。"
+        },
+        {
+          "line_before": 52,
+          "text": "展开角色配置、分片假设与容量阻塞项（规划，未运行）"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-architecture",
+      "source": "content/series/llm-architecture/index.html",
+      "changed": false,
+      "sha256_before": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "sha256_after": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先理解模型怎样计算，再理解新结构改变什么",
+        "读完应能做到",
+        "基础来源与实现版本"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 13,
+          "text": "先修：矩阵乘法、概率与反向传播；每个算例先列输入和假设，再展示中间量、输出及检查。"
+        },
+        {
+          "line_before": 37,
+          "text": "Transformers v4.57.1 · Llama 实现，固定提交 8cb5963：本系列核对 QKV 形状、repeat_kv、MLP、RMSNorm 与残差。它是明确版本的示例，不能代替所有工业模型源码。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "architecture-transformer",
+      "source": "content/series/llm-architecture/s01_transformer_foundations.html",
+      "changed": false,
+      "sha256_before": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "sha256_after": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "把一次语言预测走成可检查的数据流",
+        "从 ID 到 logits：各步读写什么",
+        "Causal mask 决定允许使用的证据",
+        "一个 block 如何保留旧表示并加入新信息",
+        "Teacher forcing、shift 与目标 mask",
+        "四类状态决定四种不同成本",
+        "先检查不变量，再设计性能对照",
+        "来源与边界"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 13,
+          "text": "先修：矩阵乘法、softmax 与链式法则。本文默认稠密、causal、pre-norm decoder；不含 cross-attention。原始 Transformer 是 encoder-decoder，本章的现代 decoder 示例依据固定 Llama 实现。[1][8]"
+        },
+        {
+          "line_before": 46,
+          "text": "缩放抑制维度增加时内积尺度增长；它不能保证实际 Q/K 范数稳定。mask 沿 score 的最后一维控制可见 key。位置 i 看得到自身，是因为它要预测位置 i+1；若同时让它看到目标 token，就泄漏了答案。padding、文档边界、prefix-LM 和 FIM 的 mask 需要另外定义。[1] §3.2"
+        },
+        {
+          "line_before": 89,
+          "text": "可复算例：三个监督目标概率为[0.5,0.25,0.5]，平均NLL为 \\((\\log2+\\log4+\\log2)/3\\approx0.9242\\)。若中间目标的mask为0，分子和分母同时移除它，损失为 \\(\\log2\\approx0.6931\\)；条件历史仍包含该token。有效目标数为0的batch需要显式跳过或拒绝，不能直接除以0。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "architecture-attention",
+      "source": "content/series/llm-architecture/s02_attention_position_cache.html",
+      "changed": true,
+      "sha256_before": "6c5ccb71967e2fd40bde89f810c251cabaa5997dc354e5d4ddb76d34880e7004",
+      "sha256_after": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "历史保存、历史选择与计算实现分别优化什么",
+        "为什么点积要除以 \\(\\sqrt{d_h}\\)",
+        "MHA、MQA、GQA：写入头和读取头可以不同",
+        "从形状推导缓存字节",
+        "RoPE 让内积包含相对位移",
+        "局部窗口与稀疏检索改变可见历史",
+        "FlashAttention 和 PagedAttention 的优化对象",
+        "对照方案与自测"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 27,
+          "text": "| 机制 | 共享关系 | KV 存储/投影 | 边界"
+        },
+        {
+          "line_before": 78,
+          "text": "数值例：令 \\(q=k=(1,0)^\\top,\\omega=\\pi/2\\)。相同位置的旋转后内积为1；相差一个位置为0；相差两个位置为−1。将两个位置一起平移一个位置，差值不变，内积仍相同。实际head使用多组频率，不能由这一个周期例子推出任意长距离无损外推。"
+        },
+        {
+          "line_before": 102,
+          "text": "本文建议：固定 checkpoint 时先比较 full forward/KV 解码的一致性，再测同长度同并发的 TTFT、ITL 和峰值内存。改变 MHA/GQA 或窗口属于结构变更，应单独训练或使用有依据的转换配方；不可把未适配模型的质量下降当成机制本身上限。所有这些对照尚未执行。"
+        }
+      ],
+      "reason": "补齐单query从Q/K/V、整行softmax到两块最大值/指数和/加权和及输出的完整复算，解释两项同步重缩放与浮点边界"
+    },
+    {
+      "id": "architecture-moe",
+      "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
+      "changed": true,
+      "sha256_before": "00c9ae53d38b7e2e076cbd64d901abe552009c266a2c86d44efe395ca26da341",
+      "sha256_after": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "通道容量怎样变成稀疏计算",
+        "两矩阵 FFN 与三矩阵 SwiGLU",
+        "Router 决定 token 走向哪些专家",
+        "负载与容量既影响效率，也影响学习机会",
+        "总参数、激活参数与通信分别算账",
+        "LatentMoE 把专家工作空间缩窄",
+        "EP 与其它并行维度的组合",
+        "消融与常见失败"
+      ],
+      "sampled_source_blocks": [],
+      "reason": "将分散路由与容量例改为同批四token的分数、top-2归一、专家重排、输出、overflow和跨rank payload；固定简化专家与丢弃规则"
+    },
+    {
+      "id": "architecture-residual",
+      "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
+      "changed": true,
+      "sha256_before": "dcb06d68ca279f1e1054ac97b98fe385de58e0a88ac2b50bcff01f4b46740042",
+      "sha256_after": "3fcc4e53e5283c5d753a8df6a90a58213356bae41b76465112985bbc62abd4fc",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "稳定性来自一条完整数值路径",
+        "Pre-Norm 与 Post-Norm 的梯度路径",
+        "RMSNorm 保留均值，主要调整幅度",
+        "初始化、QK 与长上下文会改变数值范围",
+        "AttnRes 与 mHC 读取不同对象",
+        "把结构、配方和故障来源拆开对照",
+        "来源",
+        "mHC：稳定约束的同预算能力对照"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 46,
+          "text": "数值例：\\(x=[1,3]\\)，取scale=1、bias=0，教学例忽略epsilon。LN均值2、方差1，输出[−1,1]；RMS的平方均值5，输出约[0.4472,1.3416]。两者都规范幅度，只有LN显式中心化。实际epsilon必须保留以处理零向量。"
+        },
+        {
+          "line_before": 76,
+          "text": "先查输入：坏样本、mask、长度与packing边界。"
+        }
+      ],
+      "reason": "将过时研究地图第07章提示改为本主题前沿残差机制，旧来源URL继续兼容"
+    },
+    {
+      "id": "architecture-hybrid",
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "changed": false,
+      "sha256_before": "0e241c17b2857ae58b025cc25747b8b4c903e333c65325533a72c3765076740d",
+      "sha256_after": "0e241c17b2857ae58b025cc25747b8b4c903e333c65325533a72c3765076740d",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "固定大小状态怎样保留不断增长的历史",
+        "外积状态把历史聚合为关联矩阵",
+        "遗忘控制与定向更新解决不同问题",
+        "Mamba 与 SSD 把状态更新组织成高效计算",
+        "混合层计划决定信息访问与状态预算",
+        "Agent 分支和换窗需要不同的恢复协议",
+        "沿信息损失和真实预算设计对照",
+        "来源"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 54,
+          "text": "KDA 等进一步细化 decay 的方向/粒度，需要检查 gate 是标量、向量还是其它结构；不能把所有“K”或“delta”变体写成同一递推。具体 Kimi/Qwen 配置与披露边界放在型号证据页。"
+        },
+        {
+          "line_before": 71,
+          "text": "| 条件化参数记忆 | Engram 类检索模块 | 模型定义的键/槽读取 | 碰撞、访问和更新边界"
+        },
+        {
+          "line_before": 74,
+          "text": "这些机制的“memory”对象不同。Engram 的模型内部查表/条件记忆不能直接当成会话文件；RAG 在外部检索知识再输入模型，长期 memory 还涉及筛选/巩固/权限。完整边界连接Codex memory与RAG。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "architecture-comparison",
+      "source": "content/series/llm-architecture/s06_model_comparison.html",
+      "changed": true,
+      "sha256_before": "e185cf4f9267ef82f9d7dad9d36a37ea6e00e48b01c95345e07b79f789ea79cc",
+      "sha256_after": "b53a9e98958acaa2245f1498156336e316762d822057a99e8679f8fcd73586e1",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "按机制比较模型，按预算比较收益",
+        "六条比较轴",
+        "架构、训练和服务共同约束",
+        "MTP、投机与 diffusion drafter 的收益边界",
+        "面向科学 Agent 的设计分析",
+        "可解释的比较协议",
+        "证据入口",
+        "规格表之外的能力与服务数据"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 28,
+          "text": "| GLM / MiniMax / MiMo / Step | 不同稀疏/局部计划、专家和优化配方 | 同维度型号比较 | 索引、全局层、共享和量化边界是什么"
+        },
+        {
+          "line_before": 30,
+          "text": "| 闭源 GPT / Claude / Gemini | 仅列官方已披露能力与接口条件 | 披露边界 | 无法披露的结构不纳入数值推导"
+        },
+        {
+          "line_before": 42,
+          "text": "MTP、投机与 diffusion drafter 的收益边界"
+        }
+      ],
+      "reason": "修正加入完整forward后的前五章说法；型号归本主题后续家族对照，跨主题入口仅作为来源参考"
+    },
+    {
+      "id": "agent-data-benchmarks",
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "changed": false,
+      "sha256_before": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "sha256_after": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "合成什么数据，才能测到真正的 Agent 能力",
+        "先分清生产与测量对象",
+        "读完应能做到",
+        "来源索引与维护方式"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 14,
+          "text": "沿一条任务生命周期学习：生产可执行任务，明确科学操作，筛选训练轨迹，最后在独立任务上评测。本页既讲合同与统计原理，也保留来源和实验边界。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-task-synthesis",
+      "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
+      "changed": false,
+      "sha256_before": "17655227a45a0140d03dbf6690dd17d9df30329e2876b3bc0519af4fb08ae4e7",
+      "sha256_after": "17655227a45a0140d03dbf6690dd17d9df30329e2876b3bc0519af4fb08ae4e7",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "从“生成问题”到“生产可学习任务”",
+        "十二条路线：改变的是来源、验收还是分布",
+        "Harbor任务合同：让solver与verifier看到不同资源",
+        "科学任务：把专家protocol变成可观察验收",
+        "数值接近不等于科学结论成立",
+        "需求合成、闭环扩张与失败回收",
+        "NexForge / EvoSyn：覆盖扩张与预算调度分开",
+        "DeepSeek V4.1：多角色生产与独立检查"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 38,
+          "text": "十二条路线的固定版本、规模与证据边界"
+        },
+        {
+          "line_before": 74,
+          "text": "| 边界 | 最低检查 | 典型错误"
+        },
+        {
+          "line_before": 100,
+          "text": "不变量：检查单位、守恒、单调性和边界；接受不同实现也不放过物理约束。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-benchmark-map",
+      "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
+      "changed": false,
+      "sha256_before": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "sha256_after": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先按能力与产物选评测，再看分数",
+        "先读懂pass@1、pass@k与pass^k",
+        "有限n条样本：从失败组合数得到估计",
+        "正确性、有效性与成本分别报告",
+        "当前版本与定位速查",
+        "Terminal-Bench、Science、Challenges怎样分工",
+        "Terminal-Bench 4.1：修复测量工具也会改变榜单",
+        "TB Science 0.1：测专业执行，不只测科学问答"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 55,
+          "text": "| 名称 | 采用的快照 | 对象 / 规模 | 首要边界"
+        },
+        {
+          "line_before": 71,
+          "text": "# 官方4.1集合，示例命令；本文未运行 harbor run -d terminal-bench/terminal-bench@4.1.0 harbor run -d terminal-bench/terminal-bench-cpu@4.1.0 # 报告还需注明：agent/model、harness版本、budget、trials、sandbox"
+        },
+        {
+          "line_before": 118,
+          "text": "| SWE-bench-Live | 滚动真实issue；扩展MultiLang / Windows；Python lite / verified冻结，test滚动 | 带时间边界的近期泛化 | “Live”不代表每个split都月更；引用抓取日期与版本，不拼滚动总数"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-research-map-2026",
+      "source": "content/series/llm-research-map-2026/index.html",
+      "changed": false,
+      "sha256_before": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "sha256_after": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "前沿内容已归入各自的学习主题",
+        "后续最值得独立展开的选题",
+        "技术报告与引用如何保留",
+        "原始来源索引"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 19,
+          "text": "看边界：规格推导、论文实验、独立复现与待执行方案分别记录。"
+        },
+        {
+          "line_before": 58,
+          "text": "掌握检查：能定位新机制的计算对象，能解释对照为何可比，能用反例限定结论，能区分规格、论文实验与待执行方案。训练和kernel复现实验仍未执行。"
+        },
+        {
+          "line_before": 81,
+          "text": "NexForge: Scaling Agent Capabilities through Requirement-Driven Task Synthesis for LLMs · §5对照边界。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-agent-data",
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "changed": false,
+      "sha256_before": "c8d63962b3cc10cde956f2744fa098d878332f5dbc9a3c11f8516bcd7264bb8e",
+      "sha256_after": "c8d63962b3cc10cde956f2744fa098d878332f5dbc9a3c11f8516bcd7264bb8e",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "数据研究的增量：生成空间与学习反馈",
+        "四条数据合成路线，分别补什么",
+        "独立验证环境带来的迁移问题",
+        "迁移一致性：统一格式之后仍要重放",
+        "榜单审计要检查什么",
+        "待执行：从任务验收到合成闭环消融",
+        "合成流水线的定量证据"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 47,
+          "text": "迁移算例：Agent把规范CSV写入声明产物路径，却把SQLite修改留在临时目录。独立verifier能读CSV，不能自动看到数据库变更；原环境“通过”、迁移后“失败”此时属于交接差异。应声明数据库快照或验证可重放导出，不能直接降低grader要求。此例是教学设计，未运行任务。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-agentic-rl",
+      "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
+      "changed": false,
+      "sha256_before": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "sha256_after": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "从算法名录转向四个设计维度",
+        "GRPO、GSPO、CISPO：三种不同的更新对象",
+        "GRPO：同题采样、组内比较",
+        "GSPO：长度归一的序列比例",
+        "CISPO：限幅的是IS权重",
+        "多步信用分配：哪些动作影响了最终结果",
+        "异质数据：组内标准化为什么仍会不平衡",
+        "异步有两种偏差，推理与训练还有第三种不一致"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 41,
+          "text": "研究区别：按长度归一后的序列ratio做门控；它是token ratio的几何平均。多轮Agent必须固定response、turn或episode边界及有效mask；环境转移不能混进LM概率。[20]"
+        },
+        {
+          "line_before": 78,
+          "text": "混合域算例：两个域各派发100组，预计分别只有99.2与7.7组有信号；等量派发并不等于等量学习机会。只保留有效组时，中等域占约92.8%，课程已发生变化。此解析例不计rollout相关性、连续reward与动态策略。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-base-architecture",
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "changed": false,
+      "sha256_before": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "sha256_after": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先固定版本：V4 → V4.1 → 1017",
+        "CED：长prompt主计算放在哪里",
+        "张量来源：global C / Z 与本层 Q / SWA",
+        "CSA2：共享KV、重算索引和复用候选是三件事",
+        "40层的实际计划",
+        "Hierarchical indexer：先选block，再在池内重排",
+        "890 bytes/token究竟包括什么",
+        "FP4格式：主KV与indexer用不同scale"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 84,
+          "text": "算例：历史N=1,000,000时，首层仍扫描全文；后层候选最多16,384，最后选512。候选上限约束的是后层检索，整体成本不变成常数。"
+        },
+        {
+          "line_before": 89,
+          "text": "| 存储 / 成本对象 | V4.1报告口径 | 阅读边界"
+        },
+        {
+          "line_before": 127,
+          "text": "| 重放对象 | 触发与输入 | 写入 / 保留 | 状态恢复边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-inference-diffusion",
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "changed": false,
+      "sha256_before": "c9ad2561a006624ee2f866ccc4ab18b6792ecbb40786e77024453f05ddb8738c",
+      "sha256_after": "c9ad2561a006624ee2f866ccc4ab18b6792ecbb40786e77024453f05ddb8738c",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "推理优化要先选对成本目标",
+        "DFlash → DSpark → AdaFlash：分别改变哪一层",
+        "“精确保留target分布”有条件",
+        "为什么“看完候选，再决定验证多少”可能出错",
+        "OPD：优化接受机会，不等于给最终Agent加reward",
+        "投机推理：并发改变加速收益，接受长度不等于速度",
+        "待执行：一张真正能比较解码方案的实验矩阵"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 47,
+          "text": "| 工作 | 机制 | 主要学习价值 / 边界"
+        },
+        {
+          "line_before": 66,
+          "text": "负对照算例：令p=q，两个token A/B各占1/2。错误调度丢弃B并重新抽草稿，直到A才验证，却仍沿用原q；因为p/q=1，每次都接受A，最终A概率变成1。被改变的是准入分布，接受率100%不能证明输出分布正确。此例只解释选择偏差，不是DSpark的实现。"
+        },
+        {
+          "line_before": 68,
+          "text": "Target边界：对当前量化target精确，不等于对另一精度模型精确；本页bounded replay又是近似状态恢复，不能继承精确投机的结论。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-agent-frontiers",
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "changed": false,
+      "sha256_before": "1ab7d3ef637c54825a7a40f0942b3de6f85e6ecb65e2b65618e772fca8c5c24c",
+      "sha256_after": "1ab7d3ef637c54825a7a40f0942b3de6f85e6ecb65e2b65618e772fca8c5c24c",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "从工具调用走向可验证的场景能力",
+        "GUI：从单次点击准确率到长程恢复",
+        "科学Agent：能运行、能提交、能支持结论是三层能力",
+        "Skills：把流程文件变成可测的干预",
+        "Memory、harness、LoRA：持续学习应分层验收",
+        "并行Agent与多教师：一个减少关键路径，一个整合能力",
+        "待执行：三个与作者方向最贴近的专题"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 76,
+          "text": "持续适配的时间边界"
+        },
+        {
+          "line_before": 78,
+          "text": "Engram与KV的边界见本页条件参数与计算状态。模型/harness同时更新要设单独与组合对照，才能判断收益来源。"
+        },
+        {
+          "line_before": 86,
+          "text": "关键路径算例：两个独立子任务各10秒，串行20秒、理想并行10秒；若协调增加3秒，总耗时13秒，实际约1.54×。子任务资源时间仍至少20秒，协调费用另计。此例未实测，用来区分墙钟提速与总成本。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-architecture-landscape",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "changed": true,
+      "sha256_before": "80c196d691d61b9688b03c8a4fc34be64682b485a43f7856d0317523687aaa6e",
+      "sha256_after": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "从单个模型案例，扩展到不同团队的架构选择",
+        "模型家族速查：版本、主干和证据分别登记",
+        "先理解四条历史访问路径",
+        "GDN → KDA：从整体遗忘到按通道控制",
+        "实际层数量：不要用一个“3:1”替代全部型号",
+        "Qwen：混合状态、稀疏global与主干外的容量",
+        "Kimi：KDA、深度选择与Stable LatentMoE共同扩展",
+        "Nemotron：混合子模块、LatentMoE与训练稳定性"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 76,
+          "text": "顺序算例：取 \\(k=(1,1)/\\sqrt2,\\beta=1\\)，对角gate \\(D=\\operatorname{Diag}(1,0)\\)。只看旧状态的变换："
+        },
+        {
+          "line_before": 95,
+          "text": "| 机制 | 来源描述 | 理解时的边界"
+        },
+        {
+          "line_before": 152,
+          "text": "开放边界：蒸馏模型与RL代码公开不等于Pro/Flash全部权重公开。[56]"
+        }
+      ],
+      "reason": "Muon链接直达训练主讲并修正本页措辞；家族节收束指向前面残差机制及后续DeepSeek缓存专例"
+    },
+    {
+      "id": "research-architecture-training",
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "changed": false,
+      "sha256_before": "ec0fcdcea44bb98cebe6ce501013c276c2456067d0c8b337f4432b30853c3865",
+      "sha256_after": "ec0fcdcea44bb98cebe6ce501013c276c2456067d0c8b337f4432b30853c3865",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "从基础模块走向新的信息传递方式",
+        "从固定残差累加，到选择深度与混合残差流",
+        "Attention Residuals：Attention轴在深度上",
+        "mHC：约束多路残差的混合矩阵",
+        "Qwen GR：读4路流的元素门控",
+        "LatentMoE：减少专家工作维度，容纳更细的专家",
+        "最小通信口径",
+        "Muon：近似正交化的是更新矩阵"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 17,
+          "text": "截至2026-11-14；公式为机制解释，数值为规格或明确推导，未执行本章训练/实验。型号与版本见本页家族节。"
+        },
+        {
+          "line_before": 38,
+          "text": "两表示算例：若 \\(h_1=(2,0),h_2=(0,4)\\)，得分为0与\\(\\log3\\)，权重就是1/4与3/4，模块输入为\\((0.5,3)\\)。选择按表示得分变化，固定残差累加则不会得到这一加权结果。"
+        },
+        {
+          "line_before": 56,
+          "text": "算例含义：同向分量\\((1,1)\\)保持，差异分量缩为一半；并非所有信息都消失，也没有限制F路径。有限轮Sinkhorn只近似约束，应监控行列和误差、gradient norm与失稳频率。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-training-lifecycle",
+      "source": "content/series/llm-training-lifecycle/index.html",
+      "changed": false,
+      "sha256_before": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "sha256_after": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先看链路：能力、行为与反馈如何接起来",
+        "训练知识地图：阶段是一条轴，技术是另一条轴",
+        "沿途究竟交付什么",
+        "读完应掌握的判断",
+        "对原 Midtraining 调研的修订",
+        "原始资料索引"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 27,
+          "text": "复习：先能区分输入 token、目标 token、更新次数与实际成本；再用各节算例和诊断表检查理解。"
+        },
+        {
+          "line_before": 71,
+          "text": "以下数字均为作者报告，本地没有复现模型训练。公开技术报告与预印本不代表独立第三方验证。CSV 示例、mask 伪代码和 Harbor A–E 方案属于教学与待执行建议。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-training-pretraining",
+      "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
+      "changed": true,
+      "sha256_before": "ebfe3b6b648270bc5fe48b80a8bbb82aaf02fa09e308990794cde10b5dc279f2",
+      "sha256_after": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "预训练要得到什么样的起点",
+        "数据治理先定义分布，再定义训练量",
+        "数据混合：配比、重复次数与有效监督分别记账",
+        "Causal LM：每个 token 的条件预测",
+        "FIM：把补全与编辑条件编码进因果序列",
+        "算力预算：参数、token 与实际吞吐",
+        "\\(6NT\\)从哪里来，何时不够用",
+        "Scaling Law：固定算力，怎样分配模型与数据"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 14,
+          "text": "tokenize → pack → mask记录输入、文档边界与预测标签"
+        },
+        {
+          "line_before": 39,
+          "text": "| 样本组织 | 文档边界、文件路径和结构；避免误把互不相关内容视为连续故事 | 序列化格式、边界标记、截断策略"
+        },
+        {
+          "line_before": 66,
+          "text": "算例：代码桶 \\(U=10\\mathrm B\\)、总预算 \\(D=100\\mathrm B\\)、代码占比20%，对应读取20B、平均重复2次。若其直接目标比例为0.5，其他80%输入全部算loss，则代码只占 \\(0.2\\times0.5/(0.2\\times0.5+0.8)=11.1\\%\\) 的目标数。B表示十亿token；这里没有假定每个目标梯度大小相同。"
+        }
+      ],
+      "reason": "将打包概念例展开为四token可见矩阵、未shift目标mask、shift标签与有效分母；分别验attention隔离和跨文档目标屏蔽"
+    },
+    {
+      "id": "llm-training-midtraining",
+      "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
+      "changed": false,
+      "sha256_before": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "sha256_after": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "阶段名称与训练目标要分开看",
+        "工业配方：Nemotron 的混合 CPT → 固定 SFT",
+        "受控证据：逐行核对实验条件",
+        "前沿路线：先看结构与能力保留",
+        "数据与伪代码：一个 CSV 任务的四种视角",
+        "配比、回放和目标权重是三个独立选择",
+        "Harbor：把“值得继续训练吗”变成可检验问题",
+        "来源、原件与证据性质"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 73,
+          "text": "证据边界：相同 SFT 下的提升没有证明等总算力最优。TB2.0 的1点变化应结合重复训练与不确定性；公开 RL 延伸仅有 Lightning-8K 的短、单种子实验，不足以推断长 RL 后仍保持同样排序。"
+        },
+        {
+          "line_before": 82,
+          "text": "| 工作与定位 | 公开数据 / 训练 | 可支持的判断与边界"
+        },
+        {
+          "line_before": 124,
+          "text": "这是原调研中的四类样本，现统一到全链路示例。Task ID、环境版本和 verifier 属于元数据，用于切分、过滤和审计；模型生成的是消息与动作，不应看到留出任务的答案字段。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-training-sft-rft",
+      "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
+      "changed": false,
+      "sha256_before": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "sha256_after": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "阶段角色：先得到能够执行协议的策略",
+        "角色 mask：不拟合观察，仍利用观察",
+        "轨迹准入：最终成功不等于每个动作都值得模仿",
+        "拒绝采样：把搜索得到的可靠路径转成标签",
+        "偏好与教师阶段：交接反馈接口",
+        "交给 RL：可执行动作与可区分反馈"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 41,
+          "text": "算例：两个观察 token 的 mask 都为0，后面两个动作 token 的概率分别为0.5、0.25，则平均 loss 为 \\(-(\\log0.5+\\log0.25)/2\\approx1.040\\)。模型需要根据观察决定过滤条件；移除观察、更改 Attention 或对中间状态 detach 会改变这条计算链，单独设置目标 mask 不会。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-training-rl-evaluation",
+      "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
+      "changed": false,
+      "sha256_before": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "sha256_after": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "把结果接回更新，把验收留在更新之外",
+        "CSV 算例：验证产物和约束",
+        "训练批次交接：保留真正生成这条轨迹的条件",
+        "训练指标和交付指标各回答什么",
+        "预算对照：初始化与额外投入分别检验",
+        "先用症状定位阶段，再选调整",
+        "模型与执行协议一起交付"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 16,
+          "text": "CSV 算例：验证产物和约束"
+        },
+        {
+          "line_before": 51,
+          "text": "配对算例：同100题，旧模型60题成功，新模型65题成功；若10题由失败变成功、5题由成功变失败，则差值为5个百分点。保留这15题的配对结果，才能分析增益来自哪里；两份总分看不到退化题。"
+        },
+        {
+          "line_before": 68,
+          "text": "它与任务主题的sci-posttrain A–E问题不同：后者比较 SFT 之后的结果奖励、步骤信用与 OPD。两份方案均未执行。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-frontier-2026",
+      "source": "content/posts/llm-frontier-2026/index.html",
+      "changed": false,
+      "sha256_before": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
+      "sha256_after": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "动态速览如何成为可积累的知识",
+        "00 本期前沿速览",
+        "01 开源模型最新迭代",
+        "02 闭源前沿模型全景",
+        "03 新架构：Loop Transformer 与循环深度",
+        "3.1 循环深度潜空间推理（Recurrent Depth）FACT",
+        "⚠️ 3.2 「GPT-6(Astra) 使用 Looped Transformer」= 传闻 RUMOR",
+        "3.3 其它架构信号 FACT"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 183,
+          "text": "结果：比较前固定版本、硬件、长度、预算、指标和计时边界。"
+        },
+        {
+          "line_before": 184,
+          "text": "快照边界：条目更新至 2026-11-10；本次学习重编未重新验证全部发布与性能断言。需要当前可部署规格时，须再核对条目的官方来源。"
+        },
+        {
+          "line_before": 206,
+          "text": "速览用于追踪；来源链接和厂商自报不等于本地复现，未知项继续保留边界。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agentic-rl-guide",
+      "source": "content/posts/agentic-rl-guide/index.html",
+      "changed": false,
+      "sha256_before": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "sha256_after": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先定位五个问题",
+        "方法比较：改动位置比缩写更好记",
+        "组合实验：一次只改变一个可解释因素",
+        "一个可复述的局部信用例子",
+        "Agentic OPD：沿教师介入位置比较",
+        "工业报告：只比较相同分母下的证据",
+        "代码、Web与GUI的独有差别",
+        "面试追问"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 16,
+          "text": "能力范围结论的边界：RLVR能力研究在特定设定下观察到概率质量重分配。工具获取新信息改变了状态与任务条件，但本身不能证明任何Agentic RL配方都能突破底座能力上限。"
+        },
+        {
+          "line_before": 19,
+          "text": "| 方法与固定来源 | 主要改动 | 需要检查的边界"
+        },
+        {
+          "line_before": 35,
+          "text": "动作A / 动作B检查边界 / 重写接口"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-survey",
+      "source": "content/series/dlm-survey/index.html",
+      "changed": false,
+      "sha256_before": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
+      "sha256_after": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "掌握检查"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 16,
+          "text": "先修仅需条件概率、交叉熵、矩阵与反向传播。每节先给可复述结论，再展开必要公式、算例与追问。所有算例都是教学计算；本页没有本地模型训练或速度实测。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "transformer-decoder-flow",
+      "source": "content/posts/transformer-decoder-flow/index.html",
+      "changed": false,
+      "sha256_before": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
+      "sha256_after": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "把一次完整 forward 从输入算到输出",
+        "训练前向：整段输入怎样一步步变成 loss",
+        "1. IDs → embedding → 第一个 Pre-Norm",
+        "2. 三组投影 → 拆头 → 旋转Q/K",
+        "3. 打分 → 因果mask → softmax → 加权value",
+        "4. 拼头 → 输出投影 → 两条残差与SwiGLU",
+        "5. 最终Norm → LM head → 标签右移 → 标量loss",
+        "完整数值算例：从两个token算到下一token的概率"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 0,
+          "text": "Transformer 完整前向算例：训练、缓存解码与 PyTorch"
+        },
+        {
+          "line_before": 8,
+          "text": "这是旧版完整前向示例的主讲位置。先沿训练链路走完每个张量，再手算一个小模型的中间值，最后对照 prefill、缓存解码和完整代码。旧版的训练、推理、参数与实现内容在这里接成一条线；原始页面源码完整保留供查证。"
+        },
+        {
+          "line_before": 9,
+          "text": "主体模型采用 bias-free MHA、相邻维配对 RoPE、Pre-RMSNorm、SwiGLU 和独立 LM head。它是便于推导的现代 decoder 示例；原始 Transformer 的 Post-LayerNorm、绝对位置编码和 encoder–decoder 结构需要分别辨认。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "rl-interview-guide",
+      "source": "content/posts/rl-interview-guide/index.html",
+      "changed": false,
+      "sha256_before": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "sha256_after": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "符号：先说清每个量属于谁",
+        "先区分分类轴，再选择算法",
+        "算法卡：30秒说清机制与代价",
+        "GRPO变体：沿改动位置记忆",
+        "参数卡：记数值时一起记分母",
+        "诊断卡：症状→原因→验证",
+        "高频追问：遮住短答再说一遍",
+        "经典旁支：与语言策略的关系"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 5,
+          "text": "先复述，再推导，再诊断。本页用于面试前复习；完整原理、逐步算例和六幅修订教学图集中在后训练与策略学习。读过主讲后，用下面的卡片检验自己能否解释条件与反例。"
+        },
+        {
+          "line_before": 31,
+          "text": "| GRPO / RLOO | 同题采样多条，以组内或留一奖励形成baseline | 全同奖励无相对信号；有限G、std归一和长度分母改变估计 | 组内算例"
+        },
+        {
+          "line_before": 32,
+          "text": "| DPO | 从KL正则最优策略反解reward，同prompt偏好差中消掉归一常数 | 固定偏好数据与参考支持是边界；\\(\\beta\\)有目标含义 | 完整推导"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-harness-guide",
+      "source": "content/posts/agent-harness-guide/index.html",
+      "changed": false,
+      "sha256_before": "110bca77e52aa4d8b577cc2d1d41ca5750faa7e42c1458501e6372f2a2e032d8",
+      "sha256_after": "110bca77e52aa4d8b577cc2d1d41ca5750faa7e42c1458501e6372f2a2e032d8",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "Harness 把模型的一次输出接成可持续任务",
+        "一次任务：请求、工具与状态循环",
+        "先区分四个状态，再看转换",
+        "工具接口：定义、验证、授权、执行分别负责什么",
+        "并发、暂停与恢复：保留操作身份",
+        "上下文：本次模型看见什么",
+        "Context 是可用输入，历史与文件要经过读取才进入其中",
+        "Thread、Session、Turn 与请求"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 8,
+          "text": "先修：Python、一次 LLM 请求及工具调用；本页的代码和任务轨迹是教学示例。"
+        },
+        {
+          "line_before": 48,
+          "text": "| 运行方式 | 典型对象 | 真实边界"
+        },
+        {
+          "line_before": 93,
+          "text": "预算算例：窗口32K，规则/工具6K，保留历史18K，输出与缓冲预留8K，则余额为0。再加入4K工具日志必须减少其他可见材料、缩短日志或换窗；不能把“名义窗口32K”全用于历史。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "distributed-training-guide",
+      "source": "content/posts/distributed-training-guide/index.html",
+      "changed": false,
+      "sha256_before": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "sha256_after": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "选框架前，先确认要切分什么",
+        "DeepSpeed：配置、引擎与 Trainer 保持一致",
+        "FSDP：先选版本，再选分片与保存接口",
+        "Megatron：逻辑模型、进程组与配置一起核对",
+        "诊断顺序：看内存对象和关键路径",
+        "按需完整示例：HF + LoRA + DeepSpeed"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 29,
+          "text": "gradient_clipping=1 是示例，需与Trainer配置对应；BF16依赖硬件支持，仍可能有NaN。不要同时让两个层独立执行optimizer update或loss scaling。"
+        },
+        {
+          "line_before": 82,
+          "text": "# 使用提供公共fully_shard API的PyTorch版本；按对应版本文档。 from torch.distributed.fsdp import fully_shard for layer in model.layers: fully_shard(layer) fully_shard(model) optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5) # FSDP1风格Accelerate配置示例，具体枚举/默认按安装版本核对： distributed_type: FSDP fsdp_config: fsdp_auto_wrap_policy: TRANSFO"
+        },
+        {
+          "line_before": 125,
+          "text": "32卡、TP8×PP2×CP1对应DP2；每副本microbatch1、global256，需要128个microbatch/逻辑更新。示例只解释拓扑和batch，不是可直接执行的完整70B配方。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-interview-bank",
+      "source": "content/posts/llm-interview-bank/index.html",
+      "changed": false,
+      "sha256_before": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "sha256_after": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "使用方法：短答、推导、反例、工程证据",
+        "1. LLM：概率、张量与训练",
+        "2. RLHF 与偏好：信号、目标与分布",
+        "3. RL：梯度、优势、更新与参数",
+        "4. Agentic RL：环境、信用与数据",
+        "5. VLM：视觉条件、空间与评测",
+        "6. Agent：状态、工具与恢复",
+        "7. RAG：索引、检索、证据与生成"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 9,
+          "text": "先遮住答案复述，再展开核对。按知识点合并重复问法，每张卡都给出可复述的答案和进一步追问。完整推导归对应主讲；本页保留关键公式、边界与代码，避免背完名字却解释不了机制。"
+        },
+        {
+          "line_before": 19,
+          "text": "目标决定可见性。Encoder-only 常用双向 MLM；decoder-only 用 prefix 条件的 next-token；encoder-decoder 用 encoder 条件和 causal decoder。训练 decoder 时遮未来、padding 与 packed 样本边界；logits 在 t 对齐标签 t+1，框架内部已经 shift 时不要再 shift 一次。"
+        },
+        {
+          "line_before": 21,
+          "text": "追问：Pre 也可能需要 warmup；现代模型并非全用同一 Norm。链式法则与数值例。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "vlm-knowledge-interview",
+      "source": "content/posts/vlm-knowledge-interview/index.html",
+      "changed": false,
+      "sha256_before": "3df1a2d7a87603bd103db1942acc9a0a4f2397020ef6d96a1229b375649494e9",
+      "sha256_after": "3df1a2d7a87603bd103db1942acc9a0a4f2397020ef6d96a1229b375649494e9",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "1. 核心链路：视觉表示→对齐→条件生成",
+        "1.1 从像素到 token：形状与预算",
+        "1.2 CLIP：为什么匹配对的相似度会上升？",
+        "1.3 SigLIP：省去 softmax，仍需管理负例",
+        "1.4 视觉条件进入 LLM 的三种接口",
+        "1.5 Connector：维度映射与信息预算",
+        "1.6 条件生成 loss：视觉标签被 mask，梯度仍能过去",
+        "1.7 分辨率、merge 与视频：逐项数 token"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 10,
+          "text": "\\[ \\begin{aligned} N&=(H/P)(W/P),\\\\ X_{\\rm patch}&\\in\\mathbb R^{N\\times CP^2},\\\\ Z_0&=X_{\\rm patch}W_p+E_{\\rm pos},\\\\ W_p&\\in\\mathbb R^{CP^2\\times d_v}. \\end{aligned}\\] 算例：224×224、P=14 得 16×16=256 patch；336×336 得 24×24=576。CLS 若存在再加 1；给 LLM 的 token 数还要扣掉被舍弃的 CLS，并应用 merge/resampler，不能直接把 encoder patch 数当最终长度。"
+        },
+        {
+          "line_before": 31,
+          "text": "\\[ \\frac{\\partial L}{\\partial S_{ij}} =\\frac{p_{ij}+q_{ij}-2\\mathbf1[i=j]}{2N}. \\] 两对算例：S=[[2,0],[0,2]]。正确匹配概率 σ(2)=0.8808，双向平均 loss≈0.1269；每个对角 score 梯度≈−0.0596，非对角≈+0.0596。梯度下降会抬匹配 score、压不匹配 score，但总梯度还要通过 scale、向量归一和两个 encoder。"
+        },
+        {
+          "line_before": 37,
+          "text": "能力边界：图文全局匹配可能忽略数量、属性、关系与长文本细节。更大 batch 也不保证所有场景更好。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "rl-interview-guide-legacy",
+      "source": "content/archive/rl-interview-guide/index.html",
+      "changed": false,
+      "sha256_before": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "sha256_after": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "1. 符号系统完全手册",
+        "第一层：环境与交互基础",
+        "第二层：回报（Return）",
+        "第三层：价值函数",
+        "第四层：策略相关",
+        "第五层：PPO 专用",
+        "第六层：RLHF / DPO 专用",
+        "第七层：GRPO 专用"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 1715,
+          "text": "具体数值例子"
+        },
+        {
+          "line_before": 2219,
+          "text": "RLVR 的适用边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-ddpm",
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "changed": false,
+      "sha256_before": "b84f9ac911a60908a61d92bb6e79b24e3064d4220890bfe2dbd64b70a014c11d",
+      "sha256_after": "b84f9ac911a60908a61d92bb6e79b24e3064d4220890bfe2dbd64b70a014c11d",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "第一步：定义前向与反向过程",
+        "第二步：把边际似然改写成下界",
+        "第三步：用贝叶斯关系裂项相消",
+        "第四步：两个高斯相乘，配方求后验",
+        "第五步：均值误差换算成噪声误差",
+        "训练与采样步骤"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 0,
+          "text": "DDPM：五步推导与后验算例"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-flow-sde",
+      "source": "content/series/dlm-survey/s00b_flow_sde.html",
+      "changed": true,
+      "sha256_before": "240c1de5b47904431eab449ded0623db28fe4abe0a2868a22b03b5a11ce9afc9",
+      "sha256_after": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "连续时间的核心：先定义概率路径",
+        "条件路径 → 条件速度",
+        "为什么条件回归能学到边际速度？",
+        "ODE 的概率守恒",
+        "SDE 与概率流 ODE 的连接",
+        "DDPM 的连续极限与逆向",
+        "求解器、端点与少步生成"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 37,
+          "text": "ODE 为 \\(\\dot X_t=u_t(X_t)\\)。取光滑测试函数 φ，链式法则给出 \\(d\\mathbb E\\phi/dt=\\int p_tu_t\\cdot\\nabla\\phi\\,dx\\)。分部积分、边界项为零："
+        }
+      ],
+      "reason": "补可解析高斯例的条件监督、端点后验、边际速度、条件方差、回归梯度与Euler/解析输出对照，区分配对直线与推理场"
+    },
+    {
+      "id": "dlm-overview",
+      "source": "content/series/dlm-survey/s01_overview.html",
+      "changed": false,
+      "sha256_before": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "sha256_after": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先解释模型在做什么，再给它分类",
+        "四个 token 的生成算例",
+        "路线演进，记机制而非型号"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 14,
+          "text": "四个 token 的生成算例"
+        },
+        {
+          "line_before": 18,
+          "text": "能力边界：双向可见不自动保证全局规划、事实正确或消除全部 reversal 错误；这些要通过任务实验验证。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-discrete",
+      "source": "content/series/dlm-survey/s02_discrete.html",
+      "changed": false,
+      "sha256_before": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "sha256_after": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "从转移矩阵到可训练的去噪器",
+        "贝叶斯反向：分子是两段路径概率",
+        "吸收核算例：为什么反向能揭示原值？",
+        "MDLM：反向转移 KL 为什么化成 CE？",
+        "LLaDA：目标不变，规模与采样接口扩大",
+        "离散路线的差别"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 23,
+          "text": "吸收核算例：为什么反向能揭示原值？"
+        },
+        {
+          "line_before": 50,
+          "text": "LLaDA 8B 原论文配方与边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-block",
+      "source": "content/series/dlm-survey/s03_block.html",
+      "changed": false,
+      "sha256_before": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "sha256_after": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "块间顺序，块内迭代",
+        "为什么训练不能看到干净的未来块？",
+        "缓存的充分条件是依赖不再改变",
+        "块长与去噪轮数的算例"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 22,
+          "text": "块长与去噪轮数的算例"
+        },
+        {
+          "line_before": 37,
+          "text": "推导与边界：BD3-LM v1 §3、式4–7。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-continuous",
+      "source": "content/series/dlm-survey/s04_continuous.html",
+      "changed": false,
+      "sha256_before": "f811e607779ce036d79e925c45a4ddd21873c75b965493c5ba57181b24b23a54",
+      "sha256_after": "f811e607779ce036d79e925c45a4ddd21873c75b965493c5ba57181b24b23a54",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "连续去噪之外，还要解决文本接口",
+        "线性路径：方向决定速度符号",
+        "为什么 MSE 不能直接当 CE？",
+        "三组检查定位误差"
+      ],
+      "sampled_source_blocks": [],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-paradigms",
+      "source": "content/series/dlm-survey/s05_paradigms.html",
+      "changed": false,
+      "sha256_before": "3c25b261f4f9bcd942af2dc45c8118e464acc853b654fcc648c89e0d73fe7834",
+      "sha256_after": "3c25b261f4f9bcd942af2dc45c8118e464acc853b654fcc648c89e0d73fe7834",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先固定路径，再比较预测对象",
+        "VP v 的换算是二维旋转",
+        "相同误差在不同坐标下有不同权重",
+        "Score 预测：从条件密度求梯度",
+        "SEDD：离散比率不是归一化分布",
+        "Discrete FM：概率质量流动，不是 token 的欧氏位移"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 49,
+          "text": "| 对象 | 输出 / 监督 | 关键边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-scaling",
+      "source": "content/series/dlm-survey/s06_scaling.html",
+      "changed": false,
+      "sha256_before": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "sha256_after": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "数据效率与计算效率是两个问题",
+        "幂律的最优配比怎样求？",
+        "数据受限的 crossover 怎样解释？",
+        "草稿器也需要泛化"
+      ],
+      "sampled_source_blocks": [],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-speculative",
+      "source": "content/series/dlm-survey/s07_speculative.html",
+      "changed": false,
+      "sha256_before": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "sha256_after": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "先区分“为 AR 做草稿”和“加速 DLM 自身”",
+        "接受长度：用生存概率求期望",
+        "为什么接受 6 个 token 不等于快 6 倍？",
+        "训练与选择：匹配目标，而非追求“过拟合”"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 11,
+          "text": "随机投机的标准接受概率为 \\(\\min(1,p(v)/q(v))\\)，拒绝后需要正残差分布 \\([p-q]_+\\)；完整还原 target 的证明与三词表算例在服务章。贪心前缀匹配与随机精确采样要分别说明。并行 DLM 若只给每位置边际 q，未必已经提供标准 sequential proposal 所需的条件分布。"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-elbo-rl",
+      "source": "content/series/dlm-survey/s08_elbo_rl.html",
+      "changed": false,
+      "sha256_before": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "sha256_after": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "三个概率，不能混用",
+        "下界松度、估计方差和 ratio 偏差",
+        "SPG：优势固定，按符号选择 likelihood 界",
+        "GDSD：从策略倾斜到冻结去噪器教师",
+        "其他后训练路线：按更新对象选择",
+        "训练诊断：先区分三份随机性"
+      ],
+      "sampled_source_blocks": [],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-commercial",
+      "source": "content/series/dlm-survey/s09_commercial.html",
+      "changed": false,
+      "sha256_before": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "sha256_after": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "产品声明怎样变成选型证据？",
+        "一个 burst 输出的延迟算例"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 14,
+          "text": "一个 burst 输出的延迟算例"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-comparison",
+      "source": "content/series/dlm-survey/s10_comparison.html",
+      "changed": false,
+      "sha256_before": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "sha256_after": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "把机制、论文证据与部署判断分开",
+        "一个可解释的比较合同",
+        "研究问题按一个变化轴组织",
+        "六道复述与追问"
+      ],
+      "sampled_source_blocks": [],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-loop-transformer",
+      "source": "content/series/dlm-survey/s11_loop_transformer.html",
+      "changed": false,
+      "sha256_before": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "sha256_after": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "循环的对象是 hidden 状态，不一定是噪声",
+        "参数账本与计算账本",
+        "梯度与稳定性：共享参数接收多次贡献",
+        "自适应停止必须有质量检查"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 29,
+          "text": "| 家族 | 主要接口 | 证据边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-vae",
+      "source": "content/series/dlm-survey/s12_vae.html",
+      "changed": false,
+      "sha256_before": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "sha256_after": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "VAE 把“编码一个点”变成“推断一个分布”",
+        "为什么重参数化能传梯度？",
+        "对角高斯 KL：一个可复算例子",
+        "用干预判断 posterior collapse",
+        "VQ-VAE：最近邻与两条梯度职责",
+        "RQ、FSQ、LFQ：三种不同账本",
+        "现代系统：codec 与生成器职责不同",
+        "CVAE 与动作 chunk：多模态不等于均值"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 28,
+          "text": "对角高斯 KL：一个可复算例子"
+        },
+        {
+          "line_before": 51,
+          "text": "| 方法 | 量化机制 | 每个位置的名义选择空间 | 代价 / 边界"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "harbor-framework-guide",
+      "source": "content/posts/harbor-framework-guide/index.html",
+      "changed": false,
+      "sha256_before": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "sha256_after": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "scope": "目录与学习顺序、核心算例/公式/边界抽查；没有逐条重核全部科研断言",
+      "headings_examined": [
+        "主要判断",
+        "评测项目",
+        "近期变化",
+        "最新评测概览",
+        "Terminal-Bench：4.1 修订与 5.0 计划",
+        "符合图纸的三维实体也应通过",
+        "音乐风格允许合理的延迟解决",
+        "Science：科研工作流与版本进度"
+      ],
+      "sampled_source_blocks": [
+        {
+          "line_before": 121,
+          "text": "来源包括正式 release、当前项目说明、官方进展文章与预印本。下文分别标明发布结果、开发状态、方法研究和 recipe 示例；未运行模型评测、训练或任务复现。"
+        },
+        {
+          "line_before": 233,
+          "text": "这里的 count matrices 与 hidden truth 是原任务作者明确声明的 synthetic data。它模拟实际 droplet 统计以获得可检验真值，不是患者真实数据，也不是本报告生成的模拟性能。示例展示的是科研工作流验收设计，未宣称该任务属于 v0.1 的冻结 70 题或已有公开 solve 成绩。[37]"
+        },
+        {
+          "line_before": 400,
+          "text": "本次核对 17 套文件清单与数据卡、12 套 dataset_stats，并静态阅读 PR 修复及三类科学样本；未运行 Docker、Harbor rollout 或 LLM judge。固定快照与统计口径"
+        }
+      ],
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    }
+  ]
+}

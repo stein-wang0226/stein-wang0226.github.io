@@ -31,13 +31,13 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 | 文章、系列章节、独立子站及关联关系 | `content/catalog.json` |
 | 正文 | `content/posts/<id>/index.html` 或 `index.md` |
 | 扩散系列 14 章 | `content/series/dlm-survey/*.html` |
-| LLM 架构基础 6 章 | `content/series/llm-architecture/*.html`；张量、Attention/KV、FFN/MoE、状态、深度 |
-| LLM 训练全链路 5 章 | `content/series/llm-training-lifecycle/*.html`；四阶段与训练工程 |
-| LLM 后训练 6 章 | `content/series/llm-posttraining/*.html`；SFT/RFT、RL、OPD、奖励信用、异步与任务案例 |
-| Agent 系统 3 章 | `content/series/agent-systems/*.html`；检索、规划预算和信任边界 |
-| Agent 任务合成与 Benchmark 4 章 | `content/series/agent-data-benchmarks/*.html`；任务合成、科学任务族、工业训练方案、Benchmark |
-| LLM 服务工程 3 章 | `content/series/llm-serving/*.html`；调度缓存、优化验证、容量成本 |
-| LLM 研究地图 7 章 | `content/series/llm-research-map-2026/*.html`；数据 / RL / 多家族 / DeepSeek / 架构训练 / 推理扩散 / 场景 |
+| LLM 模型架构 | `content/series/llm-architecture/*.html` 与登记的完整forward源；基础计算、状态、模型家族与前沿机制在同一主题装配 |
+| LLM 训练全链路 | `content/series/llm-training-lifecycle/*.html`；四阶段与训练工程 |
+| LLM 后训练 | `content/series/llm-posttraining/*.html` 与登记的前沿源；SFT/RFT、RL、OPD、奖励信用、异步与任务案例 |
+| Agent 系统 | `content/series/agent-systems/*.html` 与登记的前沿源；检索、规划预算、信任边界与具体场景 |
+| Agent 任务合成与 Benchmark | `content/series/agent-data-benchmarks/*.html` 与登记的前沿源；任务合成、科学任务族、训练方案与独立评测 |
+| LLM 服务工程 | `content/series/llm-serving/*.html` 与登记的前沿源；调度缓存、优化验证、容量成本与新投机方法 |
+| 前沿来源参考与兼容源 | `content/series/llm-research-map-2026/`；入口保存来源索引，正文按catalog归入架构、后训练、推理、数据和Agent主题 |
 | 学习与研究路线、概念主讲位置 | `content/site.json`；公开 `/blog/#learning-paths`、`/blog/#research-focus` |
 | 统一文献查阅 | `scripts/citations.py` 从原 HTML 和专题登记生成 `/blog/references/` 与 JSON |
 | 研究报告原件与引用 | `assets/research/2026-11-14/`；`sources.json` 登记固定版本、来源、许可与 SHA，公开资源登记在 `site.json` |

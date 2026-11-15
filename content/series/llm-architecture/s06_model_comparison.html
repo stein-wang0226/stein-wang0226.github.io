@@ -5,7 +5,7 @@
 <!-- READING:FRAGMENT:START -->
 <figure class="mechanism-map"><figcaption>模型比较：固定版本，比较完整运行账本</figcaption><ol class="mechanism-chain"><li><b>版本与公开规格</b><small>报告、配置、代码与权重</small></li><li><b>计算与状态结构</b><small>Attention、MoE、residual 与 KV</small></li><li><b>同预算任务实验</b><small>固定长度、精度、数据与采样</small></li><li><b>质量 / 时间 / 显存</b><small>解释收益来源及适用条件</small></li></ol><p class="mechanism-note">闭源模型未公开的结构保持未知，不能从性能倒推内部机制。</p></figure>
 <section id="purpose"><h2>按机制比较模型，按预算比较收益</h2>
-<p class="lead">前五章说明了架构中的张量对象。本章把它们放到一张共同的设计表：保存什么历史、计算哪些参数、混合哪些深度、采用什么数值格式，以及需要怎样的训练和服务系统。型号的具体规格在研究地图维护，这里提供比较方法与分析。</p>
+<p class="lead">前面的基础、完整forward与模块推导说明了架构中的张量对象。本章把它们放到一张共同的设计表：保存什么历史、计算哪些参数、混合哪些深度、采用什么数值格式，以及需要怎样的训练和服务系统。型号的具体规格在本主题后面的家族对照中维护，这里先建立比较方法与分析。</p>
 <p>截止日 2026-11-14。公开报告/config 描述的是已披露实现，不自动证明独立复现；闭源模型未披露的结构写“未披露”。不能从产品上下文长度、响应行为或 Agent memory 推断 MoE、SSM、recurrent depth 或内部训练配方。</p></section>
 <section id="axes"><h2>六条比较轴</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.13245" title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints · Ainslie, Joshua, Lee-Thorp, James, de Jong, Michiel 等 · 2023/05/22 · 2305.13245">GQA</a>；<a href="https://arxiv.org/abs/2302.01318" title="Accelerating Large Language Model Decoding with Speculative Sampling · Chen, Charlie, Borgeaud, Sebastian, Irving, Geoffrey 等 · 2023/02/02 · 2302.01318">Speculative Sampling</a>；<a href="https://arxiv.org/abs/2211.17192" title="Fast Inference from Transformers via Speculative Decoding · Leviathan, Yaniv, Kalman, Matan, Matias, Yossi · 2022/11/30 · 2211.17192">Speculative Decoding</a>；<a href="https://arxiv.org/abs/2404.19737" title="Better &amp; Faster Large Language Models via Multi-token Prediction · 2024/04/30 · 2404.19737">Multi-Token Prediction</a>。</p></section>
@@ -66,7 +66,7 @@
 </tbody></table>
 <details><summary>自测：怎样判断一个架构报告的证据强度？</summary><p>区分规格披露、代码可读、可执行配置、作者实测、受控消融和独立复现。前三者支持理解实现，后几者才逐步支持效果归因。团队模型卡与团队博客不能算两次独立复现。</p></details>
 <p><strong>面试复述顺序：</strong>对象与形状→计算/状态/通信→训练与服务瓶颈→同预算证据→未公开或未测部分。</p></section>
-<section id="sources"><h2>证据入口</h2><p>基础论文见<a href="index.html#sources">系列来源</a>；型号/config/原件与新机制固定在<a href="../llm-research-map-2026/index.html#sources">研究地图</a>。本文没有新增模型实测或闭源结构推断，设计分析与来源规格分开呈现。</p></section>
+<section id="sources"><h2>证据入口</h2><p>基础论文见<a href="index.html#sources">系列来源</a>；型号/config/原件与新机制的引用集中保存在<a href="../llm-research-map-2026/index.html#sources">前沿来源参考</a>。本文没有新增模型实测或闭源结构推断，设计分析与来源规格分开呈现。</p></section>
 <section id="frontier-evidence" data-frontier-audit="20261114"><h2>规格表之外的能力与服务数据</h2><p><a href="s03_ffn_moe_routing.html#frontier-comparison">LatentMoE 的能力、激活参数与并发吞吐</a>展示规格与性能的区别。闭源型号、不同训练预算或 harness 不能合并排名。</p></section>
 <!-- READING:FRAGMENT:END -->
 </main></body></html>

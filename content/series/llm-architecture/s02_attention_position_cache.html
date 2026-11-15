@@ -93,6 +93,23 @@ q'_i&=R(i\omega)q_i,\quad k'_j=R(j\omega)k_j,\\
 <section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2205.14135" title="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness · Dao, Tri, Fu, Daniel Y., Ermon, Stefano 等 · 2022/05/27 · 2205.14135">FlashAttention</a>；<a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>；<a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></section>
 
 <p>FlashAttention 通过分块和 online softmax 在 SRAM 中累积输出，避免将大规模 score/概率矩阵反复写入 HBM；原算法保留 dense softmax attention 的数学计算。它没有把 full attention 变成线性计算，也不能自动缩小所有 KV。不同融合顺序与浮点格式仍可能导致数值差异。<a href="index.html#ref-4">[4]</a></p>
+<h3 id="online-softmax-example">完整分块算例：不保存全部权重，怎样得到同一个输出</h3>
+<p><strong>输入：</strong>一个宽度1的query \(q=1\)，三个允许读取的key为 \((0,\log2,\log4)\)，value为 \((1,2,4)\)；\(\sqrt{d_h}=1\)，所以score就是key值。本例只演示单query的online softmax，未运行GPU kernel。</p>
+<p>整行计算的权重为 \((1,2,4)/7\)，输出 \((1+4+16)/7=3\)。现在把前两个候选放进第一块，最后一个放进第二块。维护三个累计量：最大score \(m\)、相对该最大值的指数和 \(\ell\)、加权value和 \(n\)，最终输出 \(n/\ell\)。这里 \(m\) 是数值稳定用的最大值，区别于loss mask。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+m'&amp;=\max(m,\max_{j\in J}s_j),\quad a=e^{m-m'},\\
+\ell'&amp;=a\ell+\sum_{j\in J}e^{s_j-m'},\\
+n'&amp;=an+\sum_{j\in J}e^{s_j-m'}v_j.
+\end{aligned}
+\]</div>
+<p>\(J\) 为新块的候选索引，\(s_j,v_j\) 是其score与value；撇号表示更新后的累计量，\(a\) 将旧块的累计值换到新的最大值基准。多维value时 \(n\) 是与value同维的向量，本例为标量。</p>
+<table><thead><tr><th>处理阶段</th><th>最大值 \(m\)</th><th>指数和 \(\ell\)</th><th>加权和 \(n\)</th></tr></thead><tbody>
+<tr><td>第一块：(0,log2)</td><td>log2</td><td>1/2+1=3/2</td><td>(1/2)×1+1×2=5/2</td></tr>
+<tr><td>第二块：log4；旧量缩放1/2</td><td>log4</td><td>(1/2)×(3/2)+1=7/4</td><td>(1/2)×(5/2)+4=21/4</td></tr>
+<tr><td>最终归一化</td><td>不再更新</td><td colspan="2">\((21/4)/(7/4)=3\)，与整行计算一致</td></tr>
+</tbody></table>
+<p><strong>可复核点：</strong>换最大值时必须同时缩放 \(\ell\) 和 \(n\)，不能把两块分别softmax后直接平均。分块省去了完整score/概率矩阵的持久写回，所有允许的QK与AV计算仍要执行；数学等价也不要求不同浮点kernel逐bit相同。</p>
 <p>PagedAttention 把逻辑 KV 映射到非连续物理块，改善变长请求的碎片与共享；prefix cache 再复用兼容前缀的计算。存储分页不改变 causal mask，命中前缀也没有降低从零 prefill 的内在计算。具体 vLLM/SGLang 调度和源码在<a href="../llm-serving/s01_runtime_scheduling.html">部署第01章</a>维护。</p>
 <div class="callout"><strong>判断一个“提速”：</strong>先写清它改变的是算术次数、HBM IO、持久状态、物理碎片、共享命中、网络传输还是调度等待，再比较相同模型、精度、长度和负载。</div>
 </section>

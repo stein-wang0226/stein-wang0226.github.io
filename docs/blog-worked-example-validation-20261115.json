@@ -1,0 +1,1168 @@
+{
+  "base_commit": "a8f5bcedc72da8b3ed735afe07a7076000321348",
+  "date": "2026-11-15",
+  "scope": "74份源的结构与核心算例抽查；重点细读五个计算主讲及归位后叙述，九份正文有意修改",
+  "scientific_limits": "新增数字是解析教学计算并已独立复算；未重新核验全部前沿发布或论文性能，未执行模型训练/服务实测",
+  "build": {
+    "commit": "a8f5bcedc72da8b3ed735afe07a7076000321348",
+    "dirty": true,
+    "input_digest": "f4c0a27f1394c71a2bbeb6cd69d1ef3f2b9030798987fb8f6ebdf5ad63d78435"
+  },
+  "checks": {
+    "build": {
+      "html_pages": 107,
+      "public_files": 303,
+      "passed": true
+    },
+    "citations": {
+      "source_version_records": 1119,
+      "passed": true
+    },
+    "retention": {
+      "passed": true,
+      "immutable_baselines_modified": false
+    },
+    "integration": {
+      "tests": 17,
+      "passed": true,
+      "elapsed_seconds": 339.699
+    },
+    "reader_pages": 75,
+    "source_checks": 222,
+    "legacy_chapter_checks": 147,
+    "no_script_sources": 74,
+    "plot_dialog_checks": 63,
+    "first_pass_issue": {
+      "page": "llm-serving",
+      "width": 390,
+      "issue": "量化点积公式宽343.03125px，容器314px",
+      "fix": "按点积定义、数值求和与标量结果分行",
+      "final_recheck_passed": true
+    },
+    "final_topic_checks": [
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 71305,
+        "mathOutputs": 310,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 30,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "path": "/llm-training-lifecycle/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 58783,
+        "mathOutputs": 201,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 19,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-serving",
+        "path": "/llm-serving/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 23425,
+        "mathOutputs": 88,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 12,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 40575,
+        "mathOutputs": 354,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 71305,
+        "mathOutputs": 310,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 30,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "path": "/llm-training-lifecycle/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 58783,
+        "mathOutputs": 201,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 19,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-serving",
+        "path": "/llm-serving/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 23425,
+        "mathOutputs": 88,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 12,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 40575,
+        "mathOutputs": 354,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 71305,
+        "mathOutputs": 310,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 30,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "path": "/llm-training-lifecycle/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 58783,
+        "mathOutputs": 201,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 19,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-serving",
+        "path": "/llm-serving/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 23425,
+        "mathOutputs": 88,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 12,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 40575,
+        "mathOutputs": 354,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      }
+    ],
+    "directory_checks": [
+      {
+        "width": 390,
+        "links": 21,
+        "overflow": false
+      },
+      {
+        "width": 768,
+        "links": 21,
+        "overflow": false
+      },
+      {
+        "width": 1440,
+        "links": 21,
+        "overflow": false
+      }
+    ],
+    "focused_examples": [
+      {
+        "visible": true,
+        "heading": "完整分块算例：不保存全部权重，怎样得到同一个输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 22,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-architecture",
+        "anchor": "architecture-attention--online-softmax-example",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-architecture-attention--online-softmax-example-390.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整路由算例：四个 token 怎样派发并恢复输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 22,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-architecture",
+        "anchor": "architecture-moe--moe-full-example",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-architecture-moe--moe-full-example-390.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整packing算例：可见历史与预测标签分别怎样对齐",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 12,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-training-lifecycle",
+        "anchor": "llm-training-pretraining--packing-full-example",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-llm-training-pretraining--packing-full-example-390.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整高斯算例：条件监督怎样变成边际速度与一步输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 29,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "dlm-survey",
+        "anchor": "dlm-flow-sde--flow-full-example",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-dlm-flow-sde--flow-full-example-390.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整点积算例：编码权重 → 恢复 → 输出误差",
+        "expectedOutputPresent": true,
+        "tables": 2,
+        "math": 14,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-serving",
+        "anchor": "serving-parallel--quantized-dot-example",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-serving-parallel--quantized-dot-example-390.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整分块算例：不保存全部权重，怎样得到同一个输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 22,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-architecture",
+        "anchor": "architecture-attention--online-softmax-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "完整路由算例：四个 token 怎样派发并恢复输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 22,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-architecture",
+        "anchor": "architecture-moe--moe-full-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "完整点积算例：编码权重 → 恢复 → 输出误差",
+        "expectedOutputPresent": true,
+        "tables": 2,
+        "math": 14,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-serving",
+        "anchor": "serving-parallel--quantized-dot-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "完整packing算例：可见历史与预测标签分别怎样对齐",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 12,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-training-lifecycle",
+        "anchor": "llm-training-pretraining--packing-full-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "完整高斯算例：条件监督怎样变成边际速度与一步输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 29,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "dlm-survey",
+        "anchor": "dlm-flow-sde--flow-full-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "完整分块算例：不保存全部权重，怎样得到同一个输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 22,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-architecture",
+        "anchor": "architecture-attention--online-softmax-example",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-architecture-attention--online-softmax-example-1440.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整路由算例：四个 token 怎样派发并恢复输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 22,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-architecture",
+        "anchor": "architecture-moe--moe-full-example",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-architecture-moe--moe-full-example-1440.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整点积算例：编码权重 → 恢复 → 输出误差",
+        "expectedOutputPresent": true,
+        "tables": 2,
+        "math": 14,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-serving",
+        "anchor": "serving-parallel--quantized-dot-example",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-serving-parallel--quantized-dot-example-1440.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整packing算例：可见历史与预测标签分别怎样对齐",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 12,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "llm-training-lifecycle",
+        "anchor": "llm-training-pretraining--packing-full-example",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-llm-training-pretraining--packing-full-example-1440.png"
+      },
+      {
+        "visible": true,
+        "heading": "完整高斯算例：条件监督怎样变成边际速度与一步输出",
+        "expectedOutputPresent": true,
+        "tables": 1,
+        "math": 29,
+        "overflow": false,
+        "mathErrors": 0,
+        "parent": "dlm-survey",
+        "anchor": "dlm-flow-sde--flow-full-example",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/worked-example-dlm-flow-sde--flow-full-example-1440.png"
+      }
+    ],
+    "actual_navigation": [
+      {
+        "width": 390,
+        "label": "家族对照→Muon训练主讲",
+        "url": "http://127.0.0.1:8775/llm-training-lifecycle/index.html#training-methods-systems--muon-industrial",
+        "passed": true
+      },
+      {
+        "width": 768,
+        "label": "家族对照→Muon训练主讲",
+        "url": "http://127.0.0.1:8775/llm-training-lifecycle/index.html#training-methods-systems--muon-industrial",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "label": "家族对照→Muon训练主讲",
+        "url": "http://127.0.0.1:8775/llm-training-lifecycle/index.html#training-methods-systems--muon-industrial",
+        "passed": true
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "my-work-holon",
+      "source": "content/posts/my-work-holon/index.md",
+      "changed": false,
+      "sha256": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "reading_url": "/my-work/holon/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-protagent",
+      "source": "content/posts/my-work-protagent/index.md",
+      "changed": false,
+      "sha256": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "reading_url": "/my-work/protagent/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-harbor",
+      "source": "content/posts/my-work-harbor/index.md",
+      "changed": false,
+      "sha256": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "reading_url": "/my-work/harbor-task-sync/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-dllm",
+      "source": "content/posts/my-work-dllm/index.md",
+      "changed": false,
+      "sha256": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "reading_url": "/my-work/trainable-dllm/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-holon-full",
+      "source": "content/posts/my-work-holon/full-report.html",
+      "changed": false,
+      "sha256": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "reading_url": "/my-work/holon/full-report.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-protagent-full",
+      "source": "content/posts/my-work-protagent/full-report.html",
+      "changed": false,
+      "sha256": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "reading_url": "/my-work/protagent/full-report.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-harbor-full",
+      "source": "content/posts/my-work-harbor/full-report.html",
+      "changed": false,
+      "sha256": "9cd38f47051c7e86dceb560b5f551ef94c2caf70e4ea3225449b4c6d7e5c5b98",
+      "reading_url": "/my-work/harbor-task-sync/full-report.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "my-work-dllm-full",
+      "source": "content/posts/my-work-dllm/full-report.html",
+      "changed": false,
+      "sha256": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "reading_url": "/my-work/trainable-dllm/full-report.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-systems",
+      "source": "content/series/agent-systems/index.html",
+      "changed": false,
+      "sha256": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "reading_url": "/agent-systems/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-rag",
+      "source": "content/series/agent-systems/s01_rag_retrieval.html",
+      "changed": false,
+      "sha256": "73df192198e07012ee916fe97d6585c863b1d5d7517669414422350b67d5a9d5",
+      "reading_url": "/agent-systems/#agent-rag",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-planning",
+      "source": "content/series/agent-systems/s02_planning_compute.html",
+      "changed": false,
+      "sha256": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "reading_url": "/agent-systems/#agent-planning",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-trust",
+      "source": "content/series/agent-systems/s03_trust_safety.html",
+      "changed": false,
+      "sha256": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "reading_url": "/agent-systems/#agent-trust",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-serving",
+      "source": "content/series/llm-serving/index.html",
+      "changed": false,
+      "sha256": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "reading_url": "/llm-serving/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "serving-runtime",
+      "source": "content/series/llm-serving/s01_runtime_scheduling.html",
+      "changed": false,
+      "sha256": "7c6062293a9b7bfad3a5485326eff6a7a103100fa71242c2e80e3674b0469d65",
+      "reading_url": "/llm-serving/#serving-runtime",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "serving-parallel",
+      "source": "content/series/llm-serving/s02_parallel_quantization.html",
+      "changed": true,
+      "sha256": "1c6744450dec3fbe7f7325c3b9fa1a8265e2e4d3f34dbbd4a776c5a1e52d6038",
+      "reading_url": "/llm-serving/#serving-parallel",
+      "reason": "补权重整数编码、饱和、恢复、点积输出误差和含scale存储账本；低精度链接直达架构precision主讲"
+    },
+    {
+      "id": "serving-capacity",
+      "source": "content/series/llm-serving/s03_capacity_cost.html",
+      "changed": false,
+      "sha256": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "reading_url": "/llm-serving/#serving-capacity",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-posttraining",
+      "source": "content/series/llm-posttraining/index.html",
+      "changed": false,
+      "sha256": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "reading_url": "/llm-posttraining/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-supervision",
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "changed": false,
+      "sha256": "558da3e00220acfc740b5fce01073ad9882c90c02192394b3443e885c930d776",
+      "reading_url": "/llm-posttraining/#posttraining-supervision",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "changed": false,
+      "sha256": "247f7f19c8190d217ffadbfe97f648078b5fa8b72d1e89b5cc2f175d01a98cb5",
+      "reading_url": "/llm-posttraining/#posttraining-algorithms",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-opd",
+      "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
+      "changed": false,
+      "sha256": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "reading_url": "/llm-posttraining/#posttraining-opd",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-rewards",
+      "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
+      "changed": false,
+      "sha256": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "reading_url": "/llm-posttraining/#posttraining-rewards",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-frameworks",
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "changed": false,
+      "sha256": "88036edb05fa4c214d098d808e97d5e1bd5b9a1693b970d702754c75a6a2f86f",
+      "reading_url": "/llm-posttraining/#posttraining-frameworks",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "posttraining-cases",
+      "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
+      "changed": false,
+      "sha256": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "reading_url": "/llm-posttraining/#posttraining-cases",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "training-methods-systems",
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "changed": true,
+      "sha256": "cbae0ef429b1a1d6d20ec6fdbf5156764e3b0e1312f92ba19724459e2021b01d",
+      "reading_url": "/llm-training-lifecycle/#training-methods-systems",
+      "reason": "把Muon摘要中的旧跨主题跳转改为本章工业配方，避免来回跳转"
+    },
+    {
+      "id": "scientific-task-family",
+      "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
+      "changed": false,
+      "sha256": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "reading_url": "/agent-data-benchmarks/#scientific-task-family",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "cluster-training-evaluation",
+      "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
+      "changed": false,
+      "sha256": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "reading_url": "/agent-data-benchmarks/#cluster-training-evaluation",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-architecture",
+      "source": "content/series/llm-architecture/index.html",
+      "changed": false,
+      "sha256": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "reading_url": "/llm-architecture/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "architecture-transformer",
+      "source": "content/series/llm-architecture/s01_transformer_foundations.html",
+      "changed": false,
+      "sha256": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "reading_url": "/llm-architecture/#architecture-transformer",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "architecture-attention",
+      "source": "content/series/llm-architecture/s02_attention_position_cache.html",
+      "changed": true,
+      "sha256": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
+      "reading_url": "/llm-architecture/#architecture-attention",
+      "reason": "补齐单query从Q/K/V、整行softmax到两块最大值/指数和/加权和及输出的完整复算，解释两项同步重缩放与浮点边界"
+    },
+    {
+      "id": "architecture-moe",
+      "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
+      "changed": true,
+      "sha256": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
+      "reading_url": "/llm-architecture/#architecture-moe",
+      "reason": "将分散路由与容量例改为同批四token的分数、top-2归一、专家重排、输出、overflow和跨rank payload；固定简化专家与丢弃规则"
+    },
+    {
+      "id": "architecture-residual",
+      "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
+      "changed": true,
+      "sha256": "3fcc4e53e5283c5d753a8df6a90a58213356bae41b76465112985bbc62abd4fc",
+      "reading_url": "/llm-architecture/#architecture-residual",
+      "reason": "将过时研究地图第07章提示改为本主题前沿残差机制，旧来源URL继续兼容"
+    },
+    {
+      "id": "architecture-hybrid",
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "changed": false,
+      "sha256": "0e241c17b2857ae58b025cc25747b8b4c903e333c65325533a72c3765076740d",
+      "reading_url": "/llm-architecture/#architecture-hybrid",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "architecture-comparison",
+      "source": "content/series/llm-architecture/s06_model_comparison.html",
+      "changed": true,
+      "sha256": "b53a9e98958acaa2245f1498156336e316762d822057a99e8679f8fcd73586e1",
+      "reading_url": "/llm-architecture/#architecture-comparison",
+      "reason": "修正加入完整forward后的前五章说法；型号归本主题后续家族对照，跨主题入口仅作为来源参考"
+    },
+    {
+      "id": "agent-data-benchmarks",
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "changed": false,
+      "sha256": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "reading_url": "/agent-data-benchmarks/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-task-synthesis",
+      "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
+      "changed": false,
+      "sha256": "17655227a45a0140d03dbf6690dd17d9df30329e2876b3bc0519af4fb08ae4e7",
+      "reading_url": "/agent-data-benchmarks/#agent-task-synthesis",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-benchmark-map",
+      "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
+      "changed": false,
+      "sha256": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "reading_url": "/agent-data-benchmarks/#agent-benchmark-map",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-research-map-2026",
+      "source": "content/series/llm-research-map-2026/index.html",
+      "changed": false,
+      "sha256": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "reading_url": "/llm-research-map-2026/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-agent-data",
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "changed": false,
+      "sha256": "c8d63962b3cc10cde956f2744fa098d878332f5dbc9a3c11f8516bcd7264bb8e",
+      "reading_url": "/agent-data-benchmarks/#research-agent-data",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-agentic-rl",
+      "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
+      "changed": false,
+      "sha256": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "reading_url": "/llm-posttraining/#research-agentic-rl",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-base-architecture",
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "changed": false,
+      "sha256": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "reading_url": "/llm-architecture/#research-base-architecture",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-inference-diffusion",
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "changed": false,
+      "sha256": "c9ad2561a006624ee2f866ccc4ab18b6792ecbb40786e77024453f05ddb8738c",
+      "reading_url": "/llm-serving/#research-inference-diffusion",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-agent-frontiers",
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "changed": false,
+      "sha256": "1ab7d3ef637c54825a7a40f0942b3de6f85e6ecb65e2b65618e772fca8c5c24c",
+      "reading_url": "/agent-systems/#research-agent-frontiers",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "research-architecture-landscape",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "changed": true,
+      "sha256": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
+      "reading_url": "/llm-architecture/#research-architecture-landscape",
+      "reason": "Muon链接直达训练主讲并修正本页措辞；家族节收束指向前面残差机制及后续DeepSeek缓存专例"
+    },
+    {
+      "id": "research-architecture-training",
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "changed": false,
+      "sha256": "ec0fcdcea44bb98cebe6ce501013c276c2456067d0c8b337f4432b30853c3865",
+      "reading_url": "/llm-architecture/#research-architecture-training",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-training-lifecycle",
+      "source": "content/series/llm-training-lifecycle/index.html",
+      "changed": false,
+      "sha256": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "reading_url": "/llm-training-lifecycle/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-training-pretraining",
+      "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
+      "changed": true,
+      "sha256": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
+      "reading_url": "/llm-training-lifecycle/#llm-training-pretraining",
+      "reason": "将打包概念例展开为四token可见矩阵、未shift目标mask、shift标签与有效分母；分别验attention隔离和跨文档目标屏蔽"
+    },
+    {
+      "id": "llm-training-midtraining",
+      "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
+      "changed": false,
+      "sha256": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "reading_url": "/llm-training-lifecycle/#llm-training-midtraining",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-training-sft-rft",
+      "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
+      "changed": false,
+      "sha256": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "reading_url": "/llm-training-lifecycle/#llm-training-sft-rft",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-training-rl-evaluation",
+      "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
+      "changed": false,
+      "sha256": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "reading_url": "/llm-training-lifecycle/#llm-training-rl-evaluation",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-frontier-2026",
+      "source": "content/posts/llm-frontier-2026/index.html",
+      "changed": false,
+      "sha256": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
+      "reading_url": "/llm-frontier-2026.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agentic-rl-guide",
+      "source": "content/posts/agentic-rl-guide/index.html",
+      "changed": false,
+      "sha256": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "reading_url": "/agentic-rl-guide.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-survey",
+      "source": "content/series/dlm-survey/index.html",
+      "changed": false,
+      "sha256": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
+      "reading_url": "/dlm-survey/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "transformer-decoder-flow",
+      "source": "content/posts/transformer-decoder-flow/index.html",
+      "changed": false,
+      "sha256": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
+      "reading_url": "/llm-architecture/#transformer-decoder-flow",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "rl-interview-guide",
+      "source": "content/posts/rl-interview-guide/index.html",
+      "changed": false,
+      "sha256": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "reading_url": "/rl-interview-guide.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "agent-harness-guide",
+      "source": "content/posts/agent-harness-guide/index.html",
+      "changed": false,
+      "sha256": "110bca77e52aa4d8b577cc2d1d41ca5750faa7e42c1458501e6372f2a2e032d8",
+      "reading_url": "/agent-harness-guide.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "distributed-training-guide",
+      "source": "content/posts/distributed-training-guide/index.html",
+      "changed": false,
+      "sha256": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "reading_url": "/distributed-training-guide.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "llm-interview-bank",
+      "source": "content/posts/llm-interview-bank/index.html",
+      "changed": false,
+      "sha256": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "reading_url": "/llm-interview-bank.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "vlm-knowledge-interview",
+      "source": "content/posts/vlm-knowledge-interview/index.html",
+      "changed": false,
+      "sha256": "3df1a2d7a87603bd103db1942acc9a0a4f2397020ef6d96a1229b375649494e9",
+      "reading_url": "/vlm-knowledge-interview.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "rl-interview-guide-legacy",
+      "source": "content/archive/rl-interview-guide/index.html",
+      "changed": false,
+      "sha256": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "reading_url": "/legacy/rl-interview-guide.html",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-ddpm",
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "changed": false,
+      "sha256": "b84f9ac911a60908a61d92bb6e79b24e3064d4220890bfe2dbd64b70a014c11d",
+      "reading_url": "/dlm-survey/#dlm-ddpm",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-flow-sde",
+      "source": "content/series/dlm-survey/s00b_flow_sde.html",
+      "changed": true,
+      "sha256": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
+      "reading_url": "/dlm-survey/#dlm-flow-sde",
+      "reason": "补可解析高斯例的条件监督、端点后验、边际速度、条件方差、回归梯度与Euler/解析输出对照，区分配对直线与推理场"
+    },
+    {
+      "id": "dlm-overview",
+      "source": "content/series/dlm-survey/s01_overview.html",
+      "changed": false,
+      "sha256": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "reading_url": "/dlm-survey/#dlm-overview",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-discrete",
+      "source": "content/series/dlm-survey/s02_discrete.html",
+      "changed": false,
+      "sha256": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "reading_url": "/dlm-survey/#dlm-discrete",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-block",
+      "source": "content/series/dlm-survey/s03_block.html",
+      "changed": false,
+      "sha256": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "reading_url": "/dlm-survey/#dlm-block",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-continuous",
+      "source": "content/series/dlm-survey/s04_continuous.html",
+      "changed": false,
+      "sha256": "f811e607779ce036d79e925c45a4ddd21873c75b965493c5ba57181b24b23a54",
+      "reading_url": "/dlm-survey/#dlm-continuous",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-paradigms",
+      "source": "content/series/dlm-survey/s05_paradigms.html",
+      "changed": false,
+      "sha256": "3c25b261f4f9bcd942af2dc45c8118e464acc853b654fcc648c89e0d73fe7834",
+      "reading_url": "/dlm-survey/#dlm-paradigms",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-scaling",
+      "source": "content/series/dlm-survey/s06_scaling.html",
+      "changed": false,
+      "sha256": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "reading_url": "/dlm-survey/#dlm-scaling",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-speculative",
+      "source": "content/series/dlm-survey/s07_speculative.html",
+      "changed": false,
+      "sha256": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "reading_url": "/dlm-survey/#dlm-speculative",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-elbo-rl",
+      "source": "content/series/dlm-survey/s08_elbo_rl.html",
+      "changed": false,
+      "sha256": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "reading_url": "/dlm-survey/#dlm-elbo-rl",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-commercial",
+      "source": "content/series/dlm-survey/s09_commercial.html",
+      "changed": false,
+      "sha256": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "reading_url": "/dlm-survey/#dlm-commercial",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-comparison",
+      "source": "content/series/dlm-survey/s10_comparison.html",
+      "changed": false,
+      "sha256": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "reading_url": "/dlm-survey/#dlm-comparison",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-loop-transformer",
+      "source": "content/series/dlm-survey/s11_loop_transformer.html",
+      "changed": false,
+      "sha256": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "reading_url": "/dlm-survey/#dlm-loop-transformer",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "dlm-vae",
+      "source": "content/series/dlm-survey/s12_vae.html",
+      "changed": false,
+      "sha256": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "reading_url": "/dlm-survey/#dlm-vae",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    },
+    {
+      "id": "harbor-framework-guide",
+      "source": "content/posts/harbor-framework-guide/index.html",
+      "changed": false,
+      "sha256": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "reading_url": "/harbor-framework-guide/",
+      "reason": "本轮未发现需要改写的结构或算例问题；保留现有主讲、原稿和证据边界"
+    }
+  ]
+}

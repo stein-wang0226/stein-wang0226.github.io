@@ -32,7 +32,7 @@ u(x)&=xW_{\rm up},\\
 s=\operatorname{Router}(x),\quad I=\operatorname{TopK}(s),\qquad
 y=\sum_{e\in I}g_e(x)E_e(x)+E_{\rm shared}(x).
 \]</div>
-<p>\(E_e\)为路由专家；共享路径是否存在、gate的softmax/sigmoid、top-k后归一以及选择bias是否参与输出，均由实现定义。<strong>加权例：</strong>两选中专家输出2和6，归一权重为0.75和0.25，则路由输出为3；共享专家输出若为1，合计为4。</p>
+<p>\(E_e\)为路由专家；共享路径是否存在、gate的softmax/sigmoid、top-k后归一以及选择bias是否参与输出，均由实现定义。下面固定这些选择，把路由、输出、容量与通信接成同一批算例。</p>
 <p>token-choice 路由让每个 token 选择专家，容易造成专家收到的 token 数不均。专家数量 E、top-k、宽度 f、共享专家、层计划共同决定容量；“总参数 1T、激活 30B”并未描述 KV、router、通信、输出头或投机模块。</p>
 <figure><div class="flow">
 <div class="stage"><b>路由</b><small>hidden → scores<br>选择专家/记录 assignment</small></div>
@@ -41,6 +41,22 @@ y=\sum_{e\in I}g_e(x)E_e(x)+E_{\rm shared}(x).
 <div class="stage"><b>Combine</b><small>输出返回 token 位置<br>按 gate 权重汇总</small></div>
 </div><figcaption>专家并行的概念路径。单设备也要重排；不同实现可能采用 AllGather/ReduceScatter 或融合通信，并非一律同一 collective。</figcaption></figure>
 <details><summary>top-k 是可微的吗？</summary><p>离散选择本身通常不对所有候选传播普通连续梯度；选中路径的 gate 和专家参与训练，router 还可从辅助目标获得梯度。不同 straight-through、soft routing、loss-free balancing 的处理不相同。不能因为选择离散就说 router 完全不学习。</p></details>
+<h3 id="moe-full-example">完整路由算例：四个 token 怎样派发并恢复输出</h3>
+<p><strong>输入与简化：</strong>四个二维行向量 \(x_A=(1,0),x_B=(0,1),x_C=(1,1),x_D=(2,0)\)，三个专家、top-2；router 先做 softmax，再将选中权重重新归一化。为看清派发与加权，专家简化为 \(E_1(x)=x,E_2(x)=2x,E_3(x)=3x\)，共享输出取0；真实专家的 SwiGLU 已在上一节展开。本例先执行 dropless 路径，不是任何模型的训练配置。</p>
+<div class="reading-math" role="math">\[
+W_r=\begin{pmatrix}\log4&amp;\log2&amp;0\\0&amp;\log4&amp;\log2\end{pmatrix},
+\qquad s=xW_r.
+\]</div>
+<p>\(W_r\) 是 \(2\times3\) 路由矩阵，log 为自然对数。对A，\(\exp(s)=(4,2,1)\)，softmax 得 \((4/7,2/7,1/7)\)；选择专家1、2后除以 \(6/7\)，得到权重 \(2/3,1/3\)。表中其余行按同一规则计算，选中顺序按分数从大到小。</p>
+<table><caption>路由计算 → 专家 assignment → 恢复 token 顺序</caption><thead><tr><th>输入</th><th>\(\exp(s)\)</th><th>选中专家 / 权重</th><th>加权输出 \(y\)</th></tr></thead><tbody>
+<tr><td>A：(1,0)</td><td>(4,2,1)</td><td>1：2/3；2：1/3</td><td>\((2/3)x_A+(1/3)2x_A=(4/3,0)\)</td></tr>
+<tr><td>B：(0,1)</td><td>(1,4,2)</td><td>2：2/3；3：1/3</td><td>\((2/3)2x_B+(1/3)3x_B=(0,7/3)\)</td></tr>
+<tr><td>C：(1,1)</td><td>(4,8,2)</td><td>2：2/3；1：1/3</td><td>\((2/3)2x_C+(1/3)x_C=(5/3,5/3)\)</td></tr>
+<tr><td>D：(2,0)</td><td>(16,4,1)</td><td>1：4/5；2：1/5</td><td>\((4/5)x_D+(1/5)2x_D=(12/5,0)\)</td></tr>
+</tbody></table>
+<figure class="mechanism-map"><figcaption>同一批 token 在派发前后保留身份和 gate 权重</figcaption><ol class="mechanism-chain"><li><b>原顺序 A、B、C、D</b><small>记录各自的两个 assignment</small></li><li><b>按专家重排</b><small>E₁：A,C,D；E₂：A,B,C,D；E₃：B</small></li><li><b>各专家计算</b><small>返回二维输出，保留 token ID</small></li><li><b>按 token 回收</b><small>加权后恢复 A、B、C、D 顺序</small></li></ol></figure>
+<p><strong>容量检查：</strong>四个 token 产生八条 assignment，专家负载为[3,4,1]。若另采用容量系数 \(c=1\)、每专家槽位 \(C_{\rm slot}=\lceil cNk/E\rceil=\lceil8/3\rceil=3\)，专家2溢出一条；\(N=4\) 是本批 token 数，\(k=2,E=3\)，槽位统计 assignment。假设按A→D顺序丢掉D到专家2的路径且不重新归一，D输出变成 \((4/5)x_D=(8/5,0)\)，与 dropless 的 \((12/5,0)\) 不同。若重新归一或转路由，又是另一种结果。空闲专家的槽位不会自动补给忙碌专家。</p>
+<p><strong>通信检查：</strong>设rank 0持有token A,C和专家1、2，rank 1持有token B,D和专家3。dropless时，B→专家2、D→专家1、D→专家2三条路径跨rank；每条发送二维BF16向量，纯dispatch payload为 \(3\times2\times2=12\) B，combine同形状另12 B。24 B仅为两个方向的表示数据，排除gate/索引元数据、对齐、协议与反向通信；本地assignment不计网络传输。这也说明通信量取决于token和专家的放置。</p>
 </section>
 <section id="balance"><h2>负载与容量既影响效率，也影响学习机会</h2>
 <table><thead><tr><th>机制</th><th>主要目的</th><th>需记录的副作用</th></tr></thead><tbody>
@@ -50,7 +66,7 @@ y=\sum_{e\in I}g_e(x)E_e(x)+E_{\rm shared}(x).
 <tr><td>路由 bias / loss-free balancing</td><td>通过选择偏置调节分派</td><td>bias 更新速度、统计窗口、训练/服务一致性</td></tr>
 </tbody></table>
 <p>Switch 的 top-1、capacity 与 selective precision 是特定训练方案；现代 top-k、多共享专家和动态派发不能照搬全部参数。<a href="index.html#ref-5">[5] Switch</a> 若模型按领域过度集中到少数专家，短期质量与长期利用率可能呈现不同关系；只看平均 token 数会漏掉峰值和不活跃专家。</p>
-<p><strong>容量例：</strong>4个token、2个专家、top-1，容量系数取1，按 \(C=\lceil4/2\rceil=2\) 规划每专家槽位。若分派数为[3,1]，第一个专家超出1条；丢弃、转路由、扩大buffer或dropless执行会产生不同结果。空闲专家的槽位不会自动弥补另一专家的overflow。</p>
+<p><a href="#moe-full-example">上面的完整算例</a>已显示：均匀平均负载不能保证峰值不溢出，丢弃一条路径还会改变对应token的输出。容量公式中的分子要计入top-k产生的assignment数；具体取整和跨rank统计口径仍由实现定义。</p>
 <ul><li><strong>学习：</strong>按层/域查看assignment、gate entropy、梯度和overflow。</li><li><strong>效率：</strong>看最忙专家、GEMM利用率和通信P95；平均均衡可能掩盖峰值。</li><li><strong>一致性：</strong>训练与rollout的router、精度和选择偏置需兼容。</li></ul></section>
 <section id="parameters"><h2>总参数、激活参数与通信分别算账</h2>
 <div class="reading-math" role="math">\[
@@ -79,9 +95,9 @@ P_{\rm projection}\approx2dr.
 <tr><td>Latent 是否损失信息</td><td>先固定 E/k，仅改 r；再评估容量再分配</td><td>投影、payload、梯度与长尾质量</td></tr>
 <tr><td>训练/rollout 概率偏差</td><td>固定权重与输入，比 routing、logprob 和精度</td><td>版本、随机性、mask、router replay</td></tr>
 </tbody></table>
-<p>这些是待执行研究设计。失败包括专家塌缩、overflow 丢学习目标、跨节点通信主导、小 batch GEMM 低效和低精度 router 选择不稳定。对 Agent RL，选择偏差可累积在长轨迹的重要性比率中，见<a href="../llm-research-map-2026/s02_agentic_rl.html">研究地图 RL 章</a>。</p>
+<p>这些是待执行研究设计。失败包括专家塌缩、overflow 丢学习目标、跨节点通信主导、小 batch GEMM 低效和低精度 router 选择不稳定。对 Agent RL，选择偏差可累积在长轨迹的重要性比率中，见<a href="../llm-research-map-2026/s02_agentic_rl.html">后训练主题的Agentic RL对照</a>。</p>
 <details><summary>自测：为什么“激活参数少”不能独立预测延迟？</summary><p>它只近似一部分矩阵计算；权重读写、专家派发、负载尾部、KV、kernel 利用率、共享路径和请求调度都影响时间。不同层和阶段的瓶颈也不相同。</p></details>
-</section><section id="sources"><h2>来源</h2><p><a href="index.html#ref-1">[1] FFN</a>、<a href="index.html#ref-5">[5] GLU / Switch</a>、<a href="index.html#ref-8">[8] 固定 Llama MLP</a>；LatentMoE/最新路由采用<a href="../llm-research-map-2026/s07_architecture_training.html#sources">研究地图固定论文与 config</a>。参数和通信式为限定假设下的推导。</p></section>
+</section><section id="sources"><h2>来源</h2><p><a href="index.html#ref-1">[1] FFN</a>、<a href="index.html#ref-5">[5] GLU / Switch</a>、<a href="index.html#ref-8">[8] 固定 Llama MLP</a>；LatentMoE/最新路由采用<a href="../llm-research-map-2026/s07_architecture_training.html#sources">前沿架构节的固定论文与 config</a>。参数和通信式为限定假设下的推导。</p></section>
 <section id="frontier-comparison" data-frontier-audit="20261114">
 <h2>LatentMoE：激活参数与实际吞吐分别对照</h2>
 <p><a href="https://arxiv.org/html/2601.18089v1">LatentMoE v1，Tables 3、5</a>分别提供能力与服务实验。Table 3 的总参数约 94B、激活参数不同；不能把压缩设置视为同 FLOPs 比较。能力成绩为 %，Math 沿用论文聚合指标名称。</p>

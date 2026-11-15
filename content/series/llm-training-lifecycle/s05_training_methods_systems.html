@@ -78,7 +78,7 @@ U\approx\operatorname{polar}(M'),\quad W'=W-\eta\operatorname{scale}(U),\\
 \text{clip:}\quad G'&amp;=G\min\!\left(1,\frac{c}{\|G\|_2+\epsilon}\right).
 \end{aligned}
 \]</div>
-<p>AdamW 把 weight decay 从自适应梯度分母中解耦，不能简单等同于给 Adam loss 加 L2。Muon 近似正交化的是二维更新矩阵，不要求更新后 W 正交；embedding、输出头和一维参数的分工，以及矩形缩放、动量 / Nesterov、Newton–Schulz实现都影响结果。<a href="#ref-adamw">[3]</a> <a href="../llm-research-map-2026/s07_architecture_training.html#muon">前沿配方与原论文</a>。</p>
+<p>AdamW 把 weight decay 从自适应梯度分母中解耦，不能简单等同于给 Adam loss 加 L2。Muon 近似正交化的是二维更新矩阵，不要求更新后 W 正交；embedding、输出头和一维参数的分工，以及矩形缩放、动量 / Nesterov、Newton–Schulz实现都影响结果。<a href="#ref-adamw">[3]</a> <a href="#muon-industrial">本章的工业配方与原论文</a>。</p>
 <p class="math-notation"><strong>概览符号：</strong>\(W,W'\) 为更新前后参数，\(G\) 为梯度矩阵，\(M'\) 为更新后的动量，\(U\) 为近似 polar 方向；\(\eta\) 是学习率，\(\lambda\) 是权重衰减，\(\widehat m,\widehat v\) 为偏差修正的一阶/二阶原点矩。\(\epsilon\) 防止除零，\(c\) 是梯度范数上限；\(\|G\|_2\) 在裁剪式中指展平全部被裁剪梯度后的欧氏范数。</p>
 <p>矩阵被 TP/FSDP 切片后，独立对每块做 polar 一般不等于整矩阵更新再切片。研究方案应冻结 optimizer 的逻辑矩阵、通信、参数分组和精度，再比较 AdamW / Muon；否则“优化器收益”混入了重计算、并行和更新预算差异。</p>
 <div class="callout"><strong>优化器阅读路线：</strong><a href="#adamw-derivation">SGD → Momentum → Adam → AdamW</a> → <a href="#adamw-example">两步数值例子</a> → <a href="#optimizer-landscape">方法与适用条件</a> → <a href="#optimizer-cost">显存与 FLOPs 账本</a> → <a href="#optimizer-evidence">原论文效率对照</a> → <a href="#optimizer-recipe">训练框架中的落地检查</a>。原理、规格推导与作者实验分别注明；没有统一条件下的实测排名。</div>

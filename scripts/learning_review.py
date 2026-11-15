@@ -12,6 +12,7 @@ SYMBOL_REVIEW = ROOT / "docs/blog-symbol-review-20261115.json"
 STRUCTURE_REVIEW = ROOT / "docs/blog-structure-review-20261115.json"
 CURRICULUM_REVIEW = ROOT / "docs/blog-curriculum-review-20261115.json"
 FORWARD_REVIEW = ROOT / "docs/blog-forward-integration-20261115.json"
+EXAMPLE_REVIEW = ROOT / "docs/blog-worked-example-review-20261115.json"
 
 
 def derive():
@@ -76,6 +77,16 @@ def derive():
                 raise ValueError(f"forward review duplicate or source mismatch: {identifier}")
             seen.add(identifier)
             reasons[identifier] += f" 完整算例与主题整合：{page['reason']}。"
+    if EXAMPLE_REVIEW.exists():
+        sources = {e["id"]: e["source"] for e in entries}
+        pages = json.loads(EXAMPLE_REVIEW.read_text())["pages"]
+        if len(pages) != len(entries) or {p["id"] for p in pages} != set(sources):
+            raise ValueError("worked-example review must cover each local source exactly once")
+        for page in pages:
+            if sources[page["id"]] != page["source"]:
+                raise ValueError(f"worked-example review source mismatch: {page['id']}")
+            if page["changed"]:
+                reasons[page["id"]] += f" 计算链路补充审阅：{page['reason']}。"
     return entries, reasons
 
 
