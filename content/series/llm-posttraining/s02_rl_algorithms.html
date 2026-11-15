@@ -87,7 +87,27 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 \]</div>
 <p class="math-notation"><strong>符号：</strong>\(\delta_t\) 是一步 TD 预测误差，\(\hat A_t\) 是估计优势；\(V(h_t)\) 估计当前状态的未来回报。\(\lambda\in[0,1]\) 控制多步误差的混合，\(\gamma\) 仍控制奖励折扣；\(1-d_t\) 在真实终止时切断下一状态价值和递推。</p>
 <p>没有跨terminal项时展开得到 \(\delta_t+\gamma\lambda\delta_{t+1}+(\gamma\lambda)^2\delta_{t+2}+\cdots\)。无限时域或末端处理正确时，它对应把多步TD优势按 \((1-\lambda)\lambda^{n-1}\) 混合；\(\lambda=1\) 的极限接近MC减baseline，\(\lambda=0\) 只用一步TD。</p>
-<p><strong>两步算例：</strong>\(\gamma=1,\lambda=0.5\)，奖励为[0,1]，value为[0.4,0.6,0]，末步terminal。则 \(\delta=[0.2,0.4]\)，\(\hat A_1=0.4,\hat A_0=0.2+0.5\times0.4=0.4\)。将 \(\lambda\) 调为0或1，首步优势分别为0.2或0.6。预算截断是否bootstrap要按任务定义，不能把所有timeout都当真实terminal。</p>
+<h3 id="gae-full-example">两步完整算例：reward → TD → advantage → actor / critic</h3>
+<p><strong>输入：</strong>两个可控决策 \(t=0,1\)，\(\gamma=1,\lambda=0.5\)，reward=[0,1]，采样时 value=[0.4,0.6,0]，第二步真实终止。工具观察只是下一决策的历史，不另当作策略动作。末端 \(\hat A_2=0\)，从后向前递推：</p>
+<table><thead><tr><th>决策</th><th>TD 残差 \(\delta_t\)</th><th>GAE \(\hat A_t\)</th><th>critic 目标 \(\hat V_t\)</th></tr></thead><tbody>
+<tr><td>末步 \(t=1\)</td><td>\(1-0.6=0.4\)</td><td>0.4</td><td>\(0.6+0.4=1.0\)</td></tr>
+<tr><td>首步 \(t=0\)</td><td>\(0+0.6-0.4=0.2\)</td><td>\(0.2+0.5\times0.4=0.4\)</td><td>\(0.4+0.4=0.8\)</td></tr>
+</tbody></table>
+<p>这里 \(\hat V_t=V_{\rm rollout}(h_t)+\hat A_t\) 是固定的 lambda-return 回归目标，不是新 critic 自己生成的标签。首步 MC 回报为1；\(\lambda=0.5\) 的目标0.8仍混入中间 value，\(\lambda=0/1\) 时首步优势分别为0.2/0.6。</p>
+<p>在 actor 尚未改变、ratio=1、无 KL / 优势归一化且按两决策平均的教学条件下，下一节 PPO 的 actor loss 为<strong>−0.4</strong>。若 critic 仍输出[0.4,0.6]，采用 \(\frac12\operatorname{mean}(V_\phi-\hat V)^2\)，critic loss 为<strong>0.08</strong>，对两个预测值的导数各为−0.2。actor 的优势与 critic 的目标都应停止梯度；共享 backbone 仍分别接收两种 loss 的参数梯度。</p>
+<h4 id="gae-boundary-example">同样在第二步停下，暂停采样与任务终止不同</h4>
+<p>另设第二步只是收集片段到边界，任务还可继续：reward=[0,0]、value=[0.4,0.6,0.8]。应保留下一状态 value 的 bootstrap，但不能把下一条无关样本的优势接进来。令 \(b_t\) 控制是否使用下一 value，\(c_t\) 控制是否递推下一优势：</p>
+<div class="reading-math" role="math" aria-label="bootstrap与片段递推分别控制">\[
+\begin{aligned}
+\delta_t&=r_t+\gamma b_tV(h_{t+1})-V(h_t),\\
+\hat A_t&=\delta_t+\gamma\lambda c_t\hat A_{t+1}.
+\end{aligned}
+\]</div>
+<table><thead><tr><th>第二步边界</th><th>\(b_1,c_1\)</th><th>\(\delta_0,\delta_1\)</th><th>\(\hat A_0,\hat A_1\)</th></tr></thead><tbody>
+<tr><td>任务继续，片段暂停</td><td>1、0</td><td>0.2、0.2</td><td>0.3、0.2</td></tr>
+<tr><td>同一记录误标真实终止</td><td>0、0</td><td>0.2、−0.6</td><td>−0.1、−0.6</td></tr>
+</tbody></table>
+<p><strong>错误的终止标记会改变优势符号。</strong>本例首步 \(b_0=c_0=1\)。如果预算耗尽按任务合同就是失败终止，则应切断 bootstrap；如果只是训练收集暂停、环境可继续且下一 value 有效，则采用片段处理。是否拼接续段由实现决定，不能仅凭字段名 <code>timeout</code> 判断。<a href="s04_environment_reward_credit.html#environment">环境错误与任务终止的判定</a>需先一致。</p>
 <h3 id="ppo-ratio">旧策略采样，当前策略怎样复用数据</h3>
 <!-- READING:RL-DIAGRAM:4 -->
 <!-- READING:RL-DIAGRAM:5 -->

@@ -75,7 +75,18 @@ h_t=\bar A_t h_{t-1}+\bar B_t x_t,\qquad y_t=C_t h_t+Dx_t.
 <p>Qwen、Kimi、Nemotron、MiniMax 等公开家族的 layer pattern、state 和专家路径由<a href="../llm-research-map-2026/s06_architecture_landscape.html#families">型号表</a>维护。配置里的 pattern、共享层与真实 block 数可能不同，计算预算按实际层执行，不按宣传比例独立推算。</p></section>
 <section id="agent-state"><h2>Agent 分支和换窗需要不同的恢复协议</h2>
 <p>树搜索/多采样要从同一 prefix 创建分支。Full KV 可在相容条件下共享前缀页，递归模型则要保存分支起点的状态快照，局部卷积状态也要一致。发生截断或摘要换窗后，重新 prefill 摘要得到的状态与继续完整历史的状态不同；两者不能声称无损等价。</p>
-<p>RL 权重更新还使旧状态过期。rollout 版本、router、mask、位置、adapter、精度与 kernel 要冻结到 episode，跨版本恢复需有明确协议。恢复机制与 policy lag 连接<a href="../llm-research-map-2026/s02_agentic_rl.html#asynchrony">异步 RL</a>。</p></section>
+<h3 id="state-branch-example">完整恢复算例：同一前缀怎样生成两个独立分支</h3>
+<p><strong>输入与简化：</strong>沿用标量SSM，\(h_t=0.5h_{t-1}+x_t,\ y_t=h_t\)，\(h_0=0\)，前缀输入[2,4]。先算 \(h_1=2,h_2=5\)，冻结分支起点 \(h_{\rm prefix}=5\)。A续写输入6，B续写输入−2；这里的输入是教学数值，输出是该SSM的读出，不是完整LLM的词表预测。</p>
+<table><thead><tr><th>执行路径</th><th>恢复的入状态</th><th>更新与当前输出</th></tr></thead><tbody>
+<tr><td>A：从前缀快照开始</td><td>5</td><td>\(0.5\times5+6=8.5\)</td></tr>
+<tr><td>B：从同一快照独立开始</td><td>5</td><td>\(0.5\times5-2=0.5\)</td></tr>
+<tr><td>错误：B接着A的可变状态运行</td><td>8.5</td><td>\(0.5\times8.5-2=2.25\)</td></tr>
+<tr><td>B：重放完整前缀再继续</td><td>重算得到5</td><td>0.5，与快照恢复一致</td></tr>
+</tbody></table>
+<figure class="mechanism-map"><figcaption>分支共享输入历史，各自推进状态</figcaption><ol class="mechanism-chain"><li><b>前缀 [2,4]</b><small>完整计算得到状态5</small></li><li><b>冻结起点快照</b><small>关联权重、位置及其他状态</small></li><li><b>独立续写 A / B</b><small>A输出8.5；B输出0.5</small></li><li><b>继续或丢弃分支</b><small>不得覆盖另一分支的起点</small></li></ol></figure>
+<p><strong>换窗：</strong>若从零只重放最后一个输入4，状态为4；再接A的6，读出8，与完整历史的8.5不同。摘要是新的输入，也没有天然的状态等价保证；KV和递归状态都必须对应实际输入历史。</p>
+<p><strong>换参数：</strong>将状态转移系数改为0.25，完整重放[2,4]应得到4.5，再接6读出<strong>7.125</strong>；直接复用旧状态5会得到7.25。即便保存了原token，也需要重算或一个明确的跨版本状态算法。单个标量快照只含一个数，真实混合block还需各层KV、卷积状态、位置与门控相关状态。</p>
+<p>RL 权重更新使旧状态通常过期。每一生成段都应固定权重、router、mask、位置、adapter、精度与 kernel；跨版本恢复需有明确协议。恢复机制与 policy lag 连接<a href="../llm-posttraining/s05_frameworks_async.html#partial-rollout">Partial rollout 的分段交接</a>。</p></section>
 <section id="evaluation"><h2>沿信息损失和真实预算设计对照</h2>
 <p>本文建议分开测试：单针/多针与关联冲突、长依赖、多跳组合、顺序重排、分支恢复、上下文超出训练长度。先固定参数/数据对比历史机制，再在等训练算力与同服务预算下比较混合层计划。记录 state+KV 总量、prefill/decode、任务质量和每个成功任务成本。</p>
 <p>没有实测时不画模拟性能曲线。GDN、Mamba 报告展示特定实验中的效率与质量，跨家族 token/s 和 benchmark 分数不能直接归因给一个 state 机制。</p>

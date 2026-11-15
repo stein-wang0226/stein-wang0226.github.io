@@ -6362,7 +6362,7 @@
         "entry": "llm-posttraining",
         "anchor": "posttraining-supervision"
       },
-      "reason": "逐页审阅：SFT、模板/packing、恢复、拒绝采样、偏好、反馈与准入全部审阅。原理与算例：mask 梯度；KL 正则最优策略→DPO 分类目标。精简与证据：方法结论分点，保留KTO/恢复训练来源与退化，偏好细讲唯一主讲。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
+      "reason": "逐页审阅：SFT、模板/packing、恢复、拒绝采样、偏好、反馈与准入全部审阅。原理与算例：mask 梯度；KL 正则最优策略→DPO 分类目标。精简与证据：方法结论分点，保留KTO/恢复训练来源与退化，偏好细讲唯一主讲。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：补DPO从回答token条件概率、似然求和、reference差值到loss/梯度；以共享首位置的三参数模型复算一步SGD。"
     },
     {
       "id": "posttraining-algorithms",
@@ -6665,7 +6665,7 @@
         "entry": "llm-posttraining",
         "anchor": "posttraining-algorithms"
       },
-      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件。"
+      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件。 更新与状态链路复查：展开GAE两决策的TD、优势、固定lambda-return目标、actor/critic损失；独立控制bootstrap和片段递推，比较误标terminal后的符号。"
     },
     {
       "id": "posttraining-opd",
@@ -7584,7 +7584,7 @@
         "entry": "llm-posttraining",
         "anchor": "posttraining-frameworks"
       },
-      "reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
+      "reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：用跨v7/v8采样与v8/v9训练的两段轨迹复算两类ratio、乘积/几何平均与clip顺序；说明逐段behavior分母和状态访问边界。"
     },
     {
       "id": "posttraining-cases",
@@ -10029,7 +10029,7 @@
         "entry": "llm-architecture",
         "anchor": "architecture-hybrid"
       },
-      "reason": "逐页审阅：外积、衰减/delta、Mamba/SSD、混合层、分支恢复与对照全部审阅。原理与算例：状态外积；遗忘与定向覆盖反例；SSM标量状态。精简与证据：经验精炼，有限状态压缩边界保留，cache与恢复不自动等价。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
+      "reason": "逐页审阅：外积、衰减/delta、Mamba/SSD、混合层、分支恢复与对照全部审阅。原理与算例：状态外积；遗忘与定向覆盖反例；SSM标量状态。精简与证据：经验精炼，有限状态压缩边界保留，cache与恢复不自动等价。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：用SSM前缀、两分支、错误共享、重放、截窗和换参数的完整数值链说明状态恢复，链接partial rollout主讲。"
     },
     {
       "id": "architecture-comparison",
@@ -27573,7 +27573,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-ddpm"
       },
-      "reason": "逐页审阅：模型→Jensen→裂项→后验→noise loss→采样全部审阅。原理与算例：前向方差递推；t≥2裂项；精度α/β、A14/variance1/14/mean0.89443；固定方差MSE。精简与证据：修正漏α、连续q(x0|x0)=1、有限逆边缘精确Gaussian、simple=ELBO、末步投影数据流形；必要五步推导保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
+      "reason": "逐页审阅：模型→Jensen→裂项→后验→noise loss→采样全部审阅。原理与算例：前向方差递推；t≥2裂项；精度α/β、A14/variance1/14/mean0.89443；固定方差MSE。精简与证据：修正漏α、连续q(x0|x0)=1、有限逆边缘精确Gaussian、simple=ELBO、末步投影数据流形；必要五步推导保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：补加噪输入、噪声loss/导数、解析与预测均值、等方差KL、独立反向噪声及最后一步输出，限定两步日程为教学。"
     },
     {
       "id": "dlm-flow-sde",

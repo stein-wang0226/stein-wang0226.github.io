@@ -116,7 +116,18 @@ accepted_token_count, rejected_token_count, retry_reason</code></pre>
 \underbrace{\frac{\pi_{\rm old}(a\mid h)}{\mu(a\mid h)}}_{\text{训练与采样分布校正}}.
 \]</div>
 <p>策略版本延迟使 rollout 用旧权重；同版本差异还来自精度、kernel、MoE routing、template、截断与采样温度。相同 checkpoint SHA 不能保证 log-prob 完全一致。verl 的三策略路线与 bypass 路线分别处理不同假设，需要按 recipe 解释。<a href="index.html#ref-52">[52]</a></p>
-<p>教学 token 的 μ=0.20、πold=0.22、πθ=0.24，更新比为 1.091、实现校正比为 1.10，总比为 1.20。若只看 πθ/πold，就漏掉采样与训练的差异；这个算例不代表真实框架误差大小。</p>
+<h3 id="async-full-example">一次跨版本交接：两段轨迹怎样重算 ratio</h3>
+<p><strong>输入：</strong>动作 \(a_0\) 在行为版本v7生成，等待工具时发布v8；恢复前用v8重建历史状态，再生成 \(a_1\)。训练端 old 固定v8、current 为v9，reference 另存。以下概率都是同一已采动作、同一真实历史上的教学值，行为概率包括实际采样配置；v8采样端与v8训练端也可能因温度或数值实现不同而不一致。</p>
+<table><caption>行为分母逐段保存，不能由最后一个版本号替代</caption><thead><tr><th>动作 / behavior</th><th>\(\mu\)</th><th>\(\pi_{\rm old}\)</th><th>\(\pi_\theta\)</th><th>更新比 × 校正比</th></tr></thead><tbody>
+<tr><td>\(a_0\) / v7</td><td>0.20</td><td>0.22</td><td>0.24</td><td>\((12/11)\times1.10=1.20\)</td></tr>
+<tr><td>\(a_1\) / v8</td><td>0.50</td><td>0.45</td><td>0.60</td><td>\((4/3)\times0.90=1.20\)</td></tr>
+</tbody></table>
+<p>链路是<strong>精确历史与分段 behavior log-prob → old / current 重算 → 两段 ratio → 按选定目标裁剪、过滤和聚合</strong>。两可控动作的概率乘积之比为 \(1.2^2=1.44\)，而长度归一的几何平均为1.20；两者是不同学习权重。仅使用 current/old 的乘积为 \(16/11\approx1.454545\)，漏掉了校正因子 \(1.10\times0.90=0.99\)。工具观察不加入策略 token 乘积。</p>
+<p>如果把第一段分母错误地改成训练端v8的0.22，得到 \((0.24/0.22)(0.60/0.50)\approx1.309091\)。它不是这条轨迹的真实行为比；一个“最终版本v8”的标签无法重建第一段采样分布。</p>
+<details><summary>裁剪顺序为什么还要写进配方？</summary>
+<p>只演示标量运算，取区间[0.8,1.2]：先裁剪两个 current/old 比，再乘 old/μ，结果是[1.20,1.08]；先相乘再裁剪，得到[1.20,1.20]。因此“都做了校正和clip”不足以确定同一个目标。真实 PPO 还按优势符号取 min；本例不是 verl、GSPO 或任意框架的完整 loss。</p>
+</details>
+<p>检查时逐段核对 token IDs、采样温度/截断、prompt、权重与缓存版本、old/current快照及 loss 的操作顺序。上述乘积只说明固定历史上的动作概率代数；状态访问、域准入和完成顺序偏移仍需另外处理。</p>
 <div class="callout caution"><strong>重要性采样不能创造缺失支持。</strong>behavior log-prob 必须对应实际 token IDs、模板和采样分布。top-k / top-p 会截掉部分支持，temperature 改变分布；未采到或被彻底排除的动作，不能仅靠一个有限 ratio 恢复。</div>
 <p>长 trajectory 的 ratio 乘积容易高方差；几何平均、clip、mask 或 residual filter 改变目标与样本利用。它们是稳定训练的近似，不应自动称“完全无偏校正”。</p>
 <h3>完成顺序偏移不属于 token ratio</h3>

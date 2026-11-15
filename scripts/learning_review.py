@@ -13,6 +13,7 @@ STRUCTURE_REVIEW = ROOT / "docs/blog-structure-review-20261115.json"
 CURRICULUM_REVIEW = ROOT / "docs/blog-curriculum-review-20261115.json"
 FORWARD_REVIEW = ROOT / "docs/blog-forward-integration-20261115.json"
 EXAMPLE_REVIEW = ROOT / "docs/blog-worked-example-review-20261115.json"
+CHAIN_REVIEW = ROOT / "docs/blog-update-state-review-20261115.json"
 
 
 def derive():
@@ -87,6 +88,16 @@ def derive():
                 raise ValueError(f"worked-example review source mismatch: {page['id']}")
             if page["changed"]:
                 reasons[page["id"]] += f" 计算链路补充审阅：{page['reason']}。"
+    if CHAIN_REVIEW.exists():
+        sources = {e["id"]: e["source"] for e in entries}
+        seen = set()
+        for page in json.loads(CHAIN_REVIEW.read_text())["pages"]:
+            identifier = page["id"]
+            if identifier in seen or sources.get(identifier) != page["source"]:
+                raise ValueError(f"update/state review duplicate or source mismatch: {identifier}")
+            seen.add(identifier)
+            if page["changed"]:
+                reasons[identifier] += f" 更新与状态链路复查：{page['reason']}。"
     return entries, reasons
 
 

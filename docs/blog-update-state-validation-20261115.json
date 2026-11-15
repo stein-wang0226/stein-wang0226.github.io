@@ -1,0 +1,672 @@
+{
+  "date": "2026-11-15",
+  "base_commit": "ecfc19824cd3b76ef725b56a8b99fb9670bf453c",
+  "scope": "刷新74源目录/算例清单，重点检查并修改五个更新与状态主讲；本记录只对五份改稿给出审阅凭据",
+  "scientific_limits": "未重新核验全部前沿发布、论文性能或历史统计；新增数字为教学复算，没有训练/服务实测",
+  "build": {
+    "commit": "ecfc19824cd3b76ef725b56a8b99fb9670bf453c",
+    "dirty": true,
+    "input_digest": "4aec2f8d45c90ccc682172624588008ece4b5ef8211edafa469d7fa7f7130c7d"
+  },
+  "checks": {
+    "build": {
+      "html_pages": 107,
+      "public_files": 303,
+      "passed": true
+    },
+    "citations": {
+      "source_version_records": 1119,
+      "passed": true,
+      "observed_command": "scripts/citations.py check",
+      "shell_command_id": "hylqahybli"
+    },
+    "retention": {
+      "passed": true,
+      "immutable_baselines": {
+        "docs/content-migration-manifest.json": "11361df792389fc3c516eebbdbe874911a72f9660c29c630fb7b6442cd01258a",
+        "docs/organization-audit-20261114.json": "2b80203ef8ae46a7e3b9bf8ed40b3766d6359caa1c67663050834985f0012407"
+      },
+      "command": "docs/verify-content-migration.py --require-clean --output /tmp/my-blogs-update-state-20261115"
+    },
+    "integration": {
+      "tests": 17,
+      "passed": true,
+      "elapsed_seconds": 272.874870542
+    },
+    "topics_at_three_widths": [
+      {
+        "id": "llm-posttraining",
+        "path": "/llm-posttraining/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 85811,
+        "mathOutputs": 304,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 23,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 71998,
+        "mathOutputs": 317,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 30,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 41704,
+        "mathOutputs": 382,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-posttraining",
+        "path": "/llm-posttraining/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 85811,
+        "mathOutputs": 304,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 23,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 71998,
+        "mathOutputs": 317,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 30,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 41704,
+        "mathOutputs": 382,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-posttraining",
+        "path": "/llm-posttraining/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 85811,
+        "mathOutputs": 304,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 23,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 71998,
+        "mathOutputs": 317,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 30,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 41704,
+        "mathOutputs": 382,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      }
+    ],
+    "directory_at_three_widths": [
+      {
+        "width": 390,
+        "links": 21,
+        "overflow": false
+      },
+      {
+        "width": 768,
+        "links": 21,
+        "overflow": false
+      },
+      {
+        "width": 1440,
+        "links": 21,
+        "overflow": false
+      }
+    ],
+    "focused_examples": [
+      {
+        "visible": true,
+        "heading": "完整偏好对：token 概率怎样变成 loss 和更新方向",
+        "outputPresent": true,
+        "tables": 2,
+        "math": 28,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-supervision",
+        "anchor": "posttraining-supervision--dpo-full-example",
+        "width": 390
+      },
+      {
+        "visible": true,
+        "heading": "两步完整算例：reward → TD → advantage → actor / critic",
+        "outputPresent": true,
+        "tables": 2,
+        "math": 24,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-algorithms",
+        "anchor": "posttraining-algorithms--gae-full-example",
+        "width": 390
+      },
+      {
+        "visible": true,
+        "heading": "一次跨版本交接：两段轨迹怎样重算 ratio",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 13,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-frameworks",
+        "anchor": "posttraining-frameworks--async-full-example",
+        "width": 390
+      },
+      {
+        "visible": true,
+        "heading": "完整恢复算例：同一前缀怎样生成两个独立分支",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 7,
+        "parent": "llm-architecture",
+        "chapter": "architecture-hybrid",
+        "anchor": "architecture-hybrid--state-branch-example",
+        "width": 390
+      },
+      {
+        "visible": true,
+        "heading": "完整标量算例：加噪 → 预测误差 → 反向采样",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 28,
+        "parent": "dlm-survey",
+        "chapter": "dlm-ddpm",
+        "anchor": "dlm-ddpm--ddpm-full-example",
+        "width": 390
+      },
+      {
+        "visible": true,
+        "heading": "完整偏好对：token 概率怎样变成 loss 和更新方向",
+        "outputPresent": true,
+        "tables": 2,
+        "math": 28,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-supervision",
+        "anchor": "posttraining-supervision--dpo-full-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "两步完整算例：reward → TD → advantage → actor / critic",
+        "outputPresent": true,
+        "tables": 2,
+        "math": 24,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-algorithms",
+        "anchor": "posttraining-algorithms--gae-full-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "一次跨版本交接：两段轨迹怎样重算 ratio",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 13,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-frameworks",
+        "anchor": "posttraining-frameworks--async-full-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "完整恢复算例：同一前缀怎样生成两个独立分支",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 7,
+        "parent": "llm-architecture",
+        "chapter": "architecture-hybrid",
+        "anchor": "architecture-hybrid--state-branch-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "完整标量算例：加噪 → 预测误差 → 反向采样",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 28,
+        "parent": "dlm-survey",
+        "chapter": "dlm-ddpm",
+        "anchor": "dlm-ddpm--ddpm-full-example",
+        "width": 768
+      },
+      {
+        "visible": true,
+        "heading": "完整偏好对：token 概率怎样变成 loss 和更新方向",
+        "outputPresent": true,
+        "tables": 2,
+        "math": 28,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-supervision",
+        "anchor": "posttraining-supervision--dpo-full-example",
+        "width": 1440
+      },
+      {
+        "visible": true,
+        "heading": "两步完整算例：reward → TD → advantage → actor / critic",
+        "outputPresent": true,
+        "tables": 2,
+        "math": 24,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-algorithms",
+        "anchor": "posttraining-algorithms--gae-full-example",
+        "width": 1440
+      },
+      {
+        "visible": true,
+        "heading": "一次跨版本交接：两段轨迹怎样重算 ratio",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 13,
+        "parent": "llm-posttraining",
+        "chapter": "posttraining-frameworks",
+        "anchor": "posttraining-frameworks--async-full-example",
+        "width": 1440
+      },
+      {
+        "visible": true,
+        "heading": "完整恢复算例：同一前缀怎样生成两个独立分支",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 7,
+        "parent": "llm-architecture",
+        "chapter": "architecture-hybrid",
+        "anchor": "architecture-hybrid--state-branch-example",
+        "width": 1440
+      },
+      {
+        "visible": true,
+        "heading": "完整标量算例：加噪 → 预测误差 → 反向采样",
+        "outputPresent": true,
+        "tables": 1,
+        "math": 28,
+        "parent": "dlm-survey",
+        "chapter": "dlm-ddpm",
+        "anchor": "dlm-ddpm--ddpm-full-example",
+        "width": 1440
+      }
+    ],
+    "actual_navigation": [
+      {
+        "width": 390,
+        "label": "状态恢复→Partial rollout",
+        "passed": true,
+        "url": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-frameworks--partial-rollout"
+      },
+      {
+        "width": 390,
+        "label": "GAE边界→环境终止",
+        "passed": true,
+        "url": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-rewards--environment"
+      },
+      {
+        "width": 768,
+        "label": "状态恢复→Partial rollout",
+        "passed": true,
+        "url": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-frameworks--partial-rollout"
+      },
+      {
+        "width": 768,
+        "label": "GAE边界→环境终止",
+        "passed": true,
+        "url": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-rewards--environment"
+      },
+      {
+        "width": 1440,
+        "label": "状态恢复→Partial rollout",
+        "passed": true,
+        "url": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-frameworks--partial-rollout"
+      },
+      {
+        "width": 1440,
+        "label": "GAE边界→环境终止",
+        "passed": true,
+        "url": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-rewards--environment"
+      }
+    ],
+    "no_script_legacy_routes": [
+      {
+        "chapter": "posttraining-supervision",
+        "destination": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-supervision--dpo-full-example",
+        "heading": "完整偏好对：token 概率怎样变成 loss 和更新方向",
+        "passed": true
+      },
+      {
+        "chapter": "posttraining-algorithms",
+        "destination": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-algorithms--gae-full-example",
+        "heading": "两步完整算例：reward → TD → advantage → actor / critic",
+        "passed": true
+      },
+      {
+        "chapter": "posttraining-frameworks",
+        "destination": "http://127.0.0.1:8776/llm-posttraining/index.html#posttraining-frameworks--async-full-example",
+        "heading": "一次跨版本交接：两段轨迹怎样重算 ratio",
+        "passed": true
+      },
+      {
+        "chapter": "architecture-hybrid",
+        "destination": "http://127.0.0.1:8776/llm-architecture/index.html#architecture-hybrid--state-branch-example",
+        "heading": "完整恢复算例：同一前缀怎样生成两个独立分支",
+        "passed": true
+      },
+      {
+        "chapter": "dlm-ddpm",
+        "destination": "http://127.0.0.1:8776/dlm-survey/index.html#dlm-ddpm--ddpm-full-example",
+        "heading": "完整标量算例：加噪 → 预测误差 → 反向采样",
+        "passed": true
+      }
+    ],
+    "final_table_fix": {
+      "issue": "DDPM新增表在390px把长步骤名压成逐字竖排",
+      "fix": "只为该表设置最小宽度和步骤列宽，通过既有reading-table容器横向阅读",
+      "checks": [
+        {
+          "visible": true,
+          "overflow": false,
+          "tableWidth": 608,
+          "scrollContainerWidth": 346,
+          "firstColumnWidth": 176.75,
+          "horizontallyScrollable": true,
+          "wideMath": 0,
+          "mathErrors": 0,
+          "width": 390,
+          "passed": true
+        },
+        {
+          "visible": true,
+          "overflow": false,
+          "tableWidth": 704,
+          "scrollContainerWidth": 704,
+          "firstColumnWidth": 207.046875,
+          "horizontallyScrollable": true,
+          "wideMath": 0,
+          "mathErrors": 0,
+          "width": 768,
+          "passed": true
+        },
+        {
+          "visible": true,
+          "overflow": false,
+          "tableWidth": 1114,
+          "scrollContainerWidth": 1114,
+          "firstColumnWidth": 327.625,
+          "horizontallyScrollable": true,
+          "wideMath": 0,
+          "mathErrors": 0,
+          "width": 1440,
+          "passed": true
+        }
+      ],
+      "note": "其他正文不变；前面的全主题检查仍适用，DDPM表格改动由最后三屏复查覆盖"
+    }
+  },
+  "pages": [
+    {
+      "id": "posttraining-supervision",
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "changed": true,
+      "sha256_before": "558da3e00220acfc740b5fce01073ad9882c90c02192394b3443e885c930d776",
+      "sha256_after": "1d5189256dd5b811190995191897a4a010f207a466c7ecd8aee41e16a77b5186",
+      "headings_before": [
+        "先分开四条轴：数据、反馈、目标与参数更新方式",
+        "SFT：目标 token、条件历史和样本权重",
+        "实现检查：模板、打包和截断",
+        "恢复训练：保留学生失败历史，监督可靠纠正",
+        "拒绝采样 RFT：把搜索成本与数据偏移算进去",
+        "偏好优化：从 DPO 到无需成对标签的 KTO",
+        "从KL正则最优策略到偏好分类",
+        "强化 RFT：grader 必须对应任务意义",
+        "实际后训练流程：不同数据与方法如何组合",
+        "偏好优化与恢复训练：收益、退化与评测边界",
+        "进入 RL 或 OPD 前应交付什么"
+      ],
+      "reason": "补DPO从回答token条件概率、似然求和、reference差值到loss/梯度；以共享首位置的三参数模型复算一步SGD"
+    },
+    {
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "changed": true,
+      "sha256_before": "247f7f19c8190d217ffadbfe97f648078b5fa8b72d1e89b5cc2f175d01a98cb5",
+      "sha256_after": "7358d7e9adf14dcd821acc72336e397c932a6de8a1b46c3b5efadc28bb3336c0",
+      "headings_before": [
+        "本章阅读路径：原理、变体、配方、诊断",
+        "从最终成败到动作梯度，中间隔着信用分配",
+        "为什么只用当前动作之后的奖励",
+        "baseline为什么能减，critic又学什么",
+        "PPO 与 GAE：学习一个状态价值来降低方差",
+        "旧策略采样，当前策略怎样复用数据",
+        "为什么clip要看优势正负",
+        "RLOO 与 GRPO：用同题候选代替 learned baseline",
+        "完整一组算例：reward → advantage → ratio → clip → loss",
+        "异质数据：标准化不能保证每个任务都有学习机会",
+        "DAPO、Dr. GRPO：归一化与数据准入也是算法的一部分",
+        "GSPO、CISPO、Soft SAPO：控制更新的对象不同",
+        "单轨迹长程训练：另外一种 SAPO，以及 SAO",
+        "RLVR 配方：从配置字段到训练诊断",
+        "最小配置骨架：先表达语义，再翻译成框架键名",
+        "论文级数值配方：先看口径，再背数字",
+        "参数背诵表：数字、作用与调参方向",
+        "GRPO 高频追问卡",
+        "从数字回到诊断：训练曲线不能只看 reward",
+        "DAPO 的累积证据：分数改善不等于独立贡献",
+        "代码修复案例：先定位信号问题，再决定改什么"
+      ],
+      "reason": "展开GAE两决策的TD、优势、固定lambda-return目标、actor/critic损失；独立控制bootstrap和片段递推，比较误标terminal后的符号"
+    },
+    {
+      "id": "posttraining-frameworks",
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "changed": true,
+      "sha256_before": "88036edb05fa4c214d098d808e97d5e1bd5b9a1693b970d702754c75a6a2f86f",
+      "sha256_after": "aa695475afb465f0004d1745aa9bbd819d220f991760ee1ce8fe2b8a13bf9b12",
+      "headings_before": [
+        "后训练是多个服务的循环，不只是一次 backward",
+        "框架地图：按接入方式、后端和版本边界选择",
+        "从算法配方映射到框架配置",
+        "同步、解耦、完全异步：吞吐和新鲜度的取舍",
+        "verl 的 fully async recipe",
+        "三类偏移：策略版本、数值实现、完成顺序",
+        "完成顺序偏移不属于 token ratio",
+        "Partial rollout 与上下文压缩：旧 KV 不能默认跨权重复用",
+        "Agent Lightning v1：保存真实调用，而不是假定一条长 prompt",
+        "固定源码实例：slime 怎样把教师信号加到 advantage",
+        "AReaL：同一实验中的异步耗时与质量",
+        "算力构成：教师、grader、重试和拒绝样本都计入"
+      ],
+      "reason": "用跨v7/v8采样与v8/v9训练的两段轨迹复算两类ratio、乘积/几何平均与clip顺序；说明逐段behavior分母和状态访问边界"
+    },
+    {
+      "id": "architecture-hybrid",
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "changed": true,
+      "sha256_before": "0e241c17b2857ae58b025cc25747b8b4c903e333c65325533a72c3765076740d",
+      "sha256_after": "66eaabeaadabf79e38e2616809b0dd77cdfc2d41b49909a436bc3f560c062d75",
+      "headings_before": [
+        "固定大小状态怎样保留不断增长的历史",
+        "外积状态把历史聚合为关联矩阵",
+        "遗忘控制与定向更新解决不同问题",
+        "Mamba 与 SSD 把状态更新组织成高效计算",
+        "混合层计划决定信息访问与状态预算",
+        "Agent 分支和换窗需要不同的恢复协议",
+        "沿信息损失和真实预算设计对照",
+        "来源",
+        "Hybrid 的能力证据"
+      ],
+      "reason": "用SSM前缀、两分支、错误共享、重放、截窗和换参数的完整数值链说明状态恢复，链接partial rollout主讲"
+    },
+    {
+      "id": "dlm-ddpm",
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "changed": true,
+      "sha256_before": "b84f9ac911a60908a61d92bb6e79b24e3064d4220890bfe2dbd64b70a014c11d",
+      "sha256_after": "6ded3b8f24ad8bd83c61c32636b40ed02dbd5868d2e10c5c4e015e64b1451c7d",
+      "headings_before": [
+        "第一步：定义前向与反向过程",
+        "第二步：把边际似然改写成下界",
+        "第三步：用贝叶斯关系裂项相消",
+        "第四步：两个高斯相乘，配方求后验",
+        "第五步：均值误差换算成噪声误差",
+        "训练与采样步骤"
+      ],
+      "reason": "补加噪输入、噪声loss/导数、解析与预测均值、等方差KL、独立反向噪声及最后一步输出，限定两步日程为教学"
+    }
+  ]
+}

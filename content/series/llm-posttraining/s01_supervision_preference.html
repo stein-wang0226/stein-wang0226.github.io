@@ -132,7 +132,36 @@ L_{\rm DPO}&=-\log\sigma(z),\\
 \frac{\partial L}{\partial z}&=\sigma(z)-1.
 \end{aligned}
 \]</div>
-<p><strong>配对算例：</strong>参考对两候选均为0.5，当前策略为0.6/0.4，\(\beta=1\)。则 \(z=\log1.5\approx0.4055\)，偏好概率0.6，损失约0.5108，小于两者相等时的0.6931。DPO提高<strong>相对偏好差</strong>；这不保证chosen的绝对概率单调上升，也不证明能探索未知状态。</p>
+<h3 id="dpo-full-example">完整偏好对：token 概率怎样变成 loss 和更新方向</h3>
+<p><strong>输入：</strong>同一 prompt 的 chosen / rejected 各有两个回答 token，第二个包含结束边界。表内是各自真实历史下，已选 token 的条件概率；prompt 与 padding 不计入回答似然。教学取 \(\beta=0.2\)，reference 冻结，使用原始 DPO 的<strong>回答 log-prob 求和</strong>，不做长度平均。<a href="index.html#ref-12">[12] §4、式7</a></p>
+<table><caption>两候选分别 teacher forcing；省略词表中其他 token</caption><thead><tr><th>候选</th><th>当前两个 token 概率</th><th>参考概率</th><th>回答似然与相对比</th></tr></thead><tbody>
+<tr><td>chosen \(y^+\)</td><td>0.6、0.5</td><td>0.5、0.4</td><td>\(\pi_\theta=0.30,\ \pi_{\rm ref}=0.20\)；比为1.5</td></tr>
+<tr><td>rejected \(y^-\)</td><td>0.4、0.25</td><td>0.5、0.4</td><td>\(\pi_\theta=0.10,\ \pi_{\rm ref}=0.20\)；比为0.5</td></tr>
+</tbody></table>
+<div class="reading-math" role="math" aria-label="DPO回答似然与损失数值">\[
+\begin{aligned}
+\log\pi_\theta(y^\pm\mid x)
+ &=\sum_{i=1}^{2}\log p_{\theta,i}^{\pm},\\
+u_+&=\log1.5,\qquad u_-=\log0.5,\\
+z&=0.2\log3\approx0.219722,\\
+\sigma(z)&\approx0.554711,\qquad L\approx0.589309.
+\end{aligned}
+\]</div>
+<p class="math-notation">\(p_{\theta,i}^{\pm}\) 是候选内第 \(i\) 个回答 token 在其前缀上的条件概率；\(c=\beta[1-\sigma(z)]\) 是该偏好对的梯度系数。概率均为无量纲，log 用自然对数，loss 的单位为 nats。</p>
+<div class="reading-math" role="math" aria-label="DPO对回答log概率的梯度">\[
+\begin{aligned}
+c&\approx0.089058,\\
+\frac{\partial L}{\partial\log p_{\theta,i}^{+}}&=-c,\qquad
+\frac{\partial L}{\partial\log p_{\theta,i}^{-}}=+c.
+\end{aligned}
+\]</div>
+<p>因此梯度下降沿着提高 chosen 相对似然、压低 rejected 相对似然的方向走；这是对 log-prob 的局部导数，实际参数梯度还要经过 softmax 和共享网络，<strong>不能直接给概率加减 \(c\)</strong>。</p>
+<details><summary>把梯度再走到一次实际更新：三个二分类历史位置</summary>
+<p>仅为核对链式法则，第一位置由同一 logit \(g_0\) 给出 chosen 概率 \(p=\sigma(g_0)=0.6\)、rejected 概率 \(1-p=0.4\)；两候选第二位置历史不同，各有独立目标 logit \(g_+,g_-\)，概率为0.5、0.25。另一词的 logit 固定为0，三参数独立，\(\eta=0.1\) 为教学学习率。</p>
+<p>链式法则给出 \(\partial L/\partial g_0=-c\)，\(\partial L/\partial g_+=-c(1-0.5)\)，\(\partial L/\partial g_-=c(1-0.25)\)；逐个执行 \(g'=g-\eta\,\partial L/\partial g\)。更新后 chosen 概率约为[0.602135, 0.501113]，rejected 为[0.397865, 0.248750]；第一位置两概率仍相加为1，重新计算同一对的loss为<strong>0.587872</strong>。</p>
+<p>这是三参数二分类模型的一步SGD，不是实际LLM训练实验或推荐学习率；真实共享网络下不能保证 chosen 的绝对概率每步单调上升。</p>
+</details>
+<figure class="mechanism-map"><figcaption>偏好标签进入梯度的完整链路</figcaption><ol class="mechanism-chain"><li><b>同题偏好对</b><small>分别构造真实前缀与回答 mask</small></li><li><b>当前 / 参考 log-prob</b><small>回答位置求和；参考冻结</small></li><li><b>差值 → sigmoid → loss</b><small>β 缩放相对偏好差</small></li><li><b>链式法则 → 更新</b><small>重算似然；另做独立任务验收</small></li></ol></figure>
 <p>推导依赖偏好模型、参考支持和数据覆盖；\(\beta\) 的含义要与实现约定一致。交互Agent沿历史累加可控动作log-prob时，应明确采用的轨迹代理目标与环境协议，不能把工具观察当成模型采样token。</p>
 <p>教学 chosen 是函数入口检查空输入且回归通过；rejected 是直接把所有异常吞掉、返回 0。标签应反映任务约束，而非回复更礼貌。Agent 的 <code>log π(y|x)</code> 只累计策略生成动作的概率，工具输出作为条件；不能把环境观察也当作模型选择。</p>
 <table>

@@ -80,6 +80,31 @@ c_t&=\frac{\beta_t^2}{2\sigma_t^2\alpha_t(1-\bar\alpha_t)}.
 <li><strong>生成：</strong>采 xT，对各逆向时间点计算 μθ，再采 \(x_{t-1}=\mu_\theta+\sigma_t z\)。</li>
 <li><strong>最后一步：</strong>原算法将附加 z 设为零，这是 decoder/采样约定，不是“精确投影到真实数据流形”的证明。</li>
 <li><strong>少步：</strong>DDIM、ODE或蒸馏需重新定义路径与网格，不能随意删去祖先链的步骤。</li></ol>
+<h3 id="ddpm-full-example">完整标量算例：加噪 → 预测误差 → 反向采样</h3>
+<p><strong>输入：</strong>只为手算采用两步日程，\(\alpha_1=0.8,\alpha_2=0.9\)，故 \(\beta_2=0.1,\bar\alpha_2=0.72\)。取真实 \(x_0=1\)、累计标准噪声的一次抽样 \(\epsilon=0.5\)，假设模型在 \(t=2\) 输出 \(\epsilon_\theta=0.3\)。本例固定反向方差 \(\sigma_2^2=\tilde\beta_2=1/14\)，不裁剪预测的 \(x_0\)。</p>
+<table style="min-width:38rem"><caption>同一组输入贯穿训练损失与反向采样</caption><thead><tr><th style="min-width:7em" scope="col">步骤</th><th scope="col">计算</th><th scope="col">结果</th></tr></thead><tbody>
+<tr><td>训练输入</td><td>\(x_2=\sqrt{0.72}+\sqrt{0.28}\times0.5\)</td><td>1.113103</td></tr>
+<tr><td>噪声简化loss</td><td>\((0.5-0.3)^2\)</td><td>0.04；对预测噪声导数−0.4</td></tr>
+<tr><td>给定真实 \(x_0\) 的后验均值</td><td>上式 \(\tilde\mu_2\)，等价代入真实 \(\epsilon=0.5\)</td><td>1.073711</td></tr>
+<tr><td>模型反向均值</td><td>以预测 \(\epsilon_\theta=0.3\) 代替真实噪声</td><td>1.113552</td></tr>
+<tr><td>一次祖先采样</td><td>独立反向噪声抽样 \(z_2=-0.5\)</td><td>\(x_1=0.979922\)</td></tr>
+</tbody></table>
+<div class="reading-math" role="math" aria-label="DDPM均值与一步反向样本">\[
+\begin{aligned}
+\mu_\theta(x_2,2)
+ &=\frac{x_2-0.1(0.3)/\sqrt{0.28}}{\sqrt{0.9}},\\
+x_1&=\mu_\theta+\frac{z_2}{\sqrt{14}}.
+\end{aligned}
+\]</div>
+<p><strong>损失交叉检查：</strong>此处两个高斯方差相等，KL的固定方差常数为0。权重 \(c_2=5/18\)，所以 \(c_2(0.5-0.3)^2=1/90\approx0.011111\)，也等于 \((\tilde\mu_2-\mu_\theta)^2/(2\sigma_2^2)\)。它与简化loss的0.04不同；带权loss对预测噪声的导数为−1/9。</p>
+<p><strong>最后一步：</strong>假设模型在得到的 \(x_1\) 上输出 \(\epsilon_\theta(x_1,1)=0.1\)，按最后一步附加噪声为0的约定：</p>
+<div class="reading-math" role="math" aria-label="DDPM最后一步输出">\[
+x_0^{\rm sample}
+=\frac{x_1-0.2(0.1)/\sqrt{0.2}}{\sqrt{0.8}}
+\approx1.045586.
+\]</div>
+<p class="math-notation">\(\epsilon=0.5\) 用于构造训练输入，\(z_2=-0.5\) 是另一次反向随机抽样；二者不是同一个噪声。表内均值、状态保留六位小数，计算使用未舍入值。\(x_0^{\rm sample}\) 是模型的采样输出，区别于给定的真实数据 \(x_0=1\)。</p>
+<p><strong>输出未精确回到1，正是本例要检查的边界。</strong>后验解析需要真实 \(x_0\)，生成时用模型预测；即使在教学训练点上知道真实噪声，某次随机反向样本也不等于后验均值。这套两步日程的末端仍有明显信号，不能作为接近标准高斯先验的完整训练配方。所有数字是教学复算，未训练去噪网络。<a href="https://arxiv.org/abs/2006.11239">DDPM 式7–12、算法1–2</a>。</p>
 <div class="course-review" id="interview"><p><strong>追问：为什么训练不用跑 T 步前向？</strong>已知的线性高斯 forward 有闭式边际，采一个 t 即可构造训练对。</p><p><strong>追问：后验精确，为何生成仍有近似？</strong>解析后验额外给定真实 x₀；生成只有 xₜ，需要模型预测，并使用所选方差与有限步 sampler。</p></div>
 <p class="citation-source-links">来源：<a href="https://arxiv.org/abs/2006.11239">DDPM §2–3、式4–12、算法1–2</a>。</p>
 <!-- READING:FRAGMENT:END -->

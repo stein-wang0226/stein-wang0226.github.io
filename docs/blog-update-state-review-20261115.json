@@ -1,0 +1,220 @@
+{
+  "base_commit": "ecfc19824cd3b76ef725b56a8b99fb9670bf453c",
+  "date": "2026-11-15",
+  "scope": "刷新74源目录/算例清单，重点检查并修改五个更新与状态主讲；本记录只对五份改稿给出审阅凭据",
+  "scientific_limits": "未重新核验全部前沿发布、论文性能或历史统计；新增数字为教学复算，没有训练/服务实测",
+  "inventory_sources": 74,
+  "immutable_baselines": {
+    "docs/content-migration-manifest.json": "11361df792389fc3c516eebbdbe874911a72f9660c29c630fb7b6442cd01258a",
+    "docs/organization-audit-20261114.json": "2b80203ef8ae46a7e3b9bf8ed40b3766d6359caa1c67663050834985f0012407"
+  },
+  "numeric_validation": {
+    "scope": "解析教学计算、有限差分和状态重放；不是LLM训练或GPU性能复现",
+    "dpo": {
+      "probability": 0.5547106813378071,
+      "loss": 0.5893085960439549,
+      "shared_logit_gradients": [
+        -0.08905786373243858,
+        -0.04452893186621929,
+        0.06679339779932894
+      ],
+      "chosen_after": [
+        0.6021354728088979,
+        0.5011132214572193
+      ],
+      "rejected_after": [
+        0.3978645271911021,
+        0.24874971620713054
+      ],
+      "loss_after_sgd": 0.5878721833184489,
+      "finite_difference_passed": true
+    },
+    "gae": {
+      "terminal_delta": [
+        0.19999999999999996,
+        0.4
+      ],
+      "terminal_advantages": [
+        0.39999999999999997,
+        0.4
+      ],
+      "critic_targets": [
+        0.8,
+        1.0
+      ],
+      "critic_loss": 0.08000000000000002,
+      "partial_delta": [
+        0.19999999999999996,
+        0.20000000000000007
+      ],
+      "partial_advantages": [
+        0.3,
+        0.20000000000000007
+      ],
+      "incorrect_terminal_delta": [
+        0.19999999999999996,
+        -0.6
+      ],
+      "incorrect_terminal_advantages": [
+        -0.10000000000000003,
+        -0.6
+      ]
+    },
+    "async": {
+      "update_ratios": [
+        1.0909090909090908,
+        1.3333333333333333
+      ],
+      "correction_ratios": [
+        1.0999999999999999,
+        0.9
+      ],
+      "total_ratios": [
+        1.1999999999999997,
+        1.2
+      ],
+      "product": 1.4399999999999997,
+      "geometric_mean": 1.2,
+      "incorrect_behavior_product": 1.3090909090909089,
+      "clip_then_correct": [
+        1.1999999999999997,
+        1.08
+      ],
+      "correct_then_clip": [
+        1.1999999999999997,
+        1.2
+      ]
+    },
+    "state": {
+      "prefix": 5.0,
+      "branch_a": 8.5,
+      "branch_b": 0.5,
+      "contaminated_b": 2.25,
+      "truncated_a": 8.0,
+      "new_parameter_a": 7.125,
+      "stale_parameter_a": 7.25
+    },
+    "ddpm": {
+      "noisy_x2": 1.1131032685303162,
+      "posterior_mean": 1.0737114824000749,
+      "variance": 0.07142857142857142,
+      "model_mean": 1.1135524360445548,
+      "simple_loss": 0.04000000000000001,
+      "gaussian_kl": 0.011111111111111183,
+      "noise_weight": 0.27777777777777796,
+      "sample_x1": 0.9799218150883426,
+      "sample_x0": 1.0455858955862567
+    }
+  },
+  "pages": [
+    {
+      "id": "posttraining-supervision",
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "changed": true,
+      "sha256_before": "558da3e00220acfc740b5fce01073ad9882c90c02192394b3443e885c930d776",
+      "sha256_after": "1d5189256dd5b811190995191897a4a010f207a466c7ecd8aee41e16a77b5186",
+      "headings_before": [
+        "先分开四条轴：数据、反馈、目标与参数更新方式",
+        "SFT：目标 token、条件历史和样本权重",
+        "实现检查：模板、打包和截断",
+        "恢复训练：保留学生失败历史，监督可靠纠正",
+        "拒绝采样 RFT：把搜索成本与数据偏移算进去",
+        "偏好优化：从 DPO 到无需成对标签的 KTO",
+        "从KL正则最优策略到偏好分类",
+        "强化 RFT：grader 必须对应任务意义",
+        "实际后训练流程：不同数据与方法如何组合",
+        "偏好优化与恢复训练：收益、退化与评测边界",
+        "进入 RL 或 OPD 前应交付什么"
+      ],
+      "reason": "补DPO从回答token条件概率、似然求和、reference差值到loss/梯度；以共享首位置的三参数模型复算一步SGD"
+    },
+    {
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "changed": true,
+      "sha256_before": "247f7f19c8190d217ffadbfe97f648078b5fa8b72d1e89b5cc2f175d01a98cb5",
+      "sha256_after": "7358d7e9adf14dcd821acc72336e397c932a6de8a1b46c3b5efadc28bb3336c0",
+      "headings_before": [
+        "本章阅读路径：原理、变体、配方、诊断",
+        "从最终成败到动作梯度，中间隔着信用分配",
+        "为什么只用当前动作之后的奖励",
+        "baseline为什么能减，critic又学什么",
+        "PPO 与 GAE：学习一个状态价值来降低方差",
+        "旧策略采样，当前策略怎样复用数据",
+        "为什么clip要看优势正负",
+        "RLOO 与 GRPO：用同题候选代替 learned baseline",
+        "完整一组算例：reward → advantage → ratio → clip → loss",
+        "异质数据：标准化不能保证每个任务都有学习机会",
+        "DAPO、Dr. GRPO：归一化与数据准入也是算法的一部分",
+        "GSPO、CISPO、Soft SAPO：控制更新的对象不同",
+        "单轨迹长程训练：另外一种 SAPO，以及 SAO",
+        "RLVR 配方：从配置字段到训练诊断",
+        "最小配置骨架：先表达语义，再翻译成框架键名",
+        "论文级数值配方：先看口径，再背数字",
+        "参数背诵表：数字、作用与调参方向",
+        "GRPO 高频追问卡",
+        "从数字回到诊断：训练曲线不能只看 reward",
+        "DAPO 的累积证据：分数改善不等于独立贡献",
+        "代码修复案例：先定位信号问题，再决定改什么"
+      ],
+      "reason": "展开GAE两决策的TD、优势、固定lambda-return目标、actor/critic损失；独立控制bootstrap和片段递推，比较误标terminal后的符号"
+    },
+    {
+      "id": "posttraining-frameworks",
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "changed": true,
+      "sha256_before": "88036edb05fa4c214d098d808e97d5e1bd5b9a1693b970d702754c75a6a2f86f",
+      "sha256_after": "aa695475afb465f0004d1745aa9bbd819d220f991760ee1ce8fe2b8a13bf9b12",
+      "headings_before": [
+        "后训练是多个服务的循环，不只是一次 backward",
+        "框架地图：按接入方式、后端和版本边界选择",
+        "从算法配方映射到框架配置",
+        "同步、解耦、完全异步：吞吐和新鲜度的取舍",
+        "verl 的 fully async recipe",
+        "三类偏移：策略版本、数值实现、完成顺序",
+        "完成顺序偏移不属于 token ratio",
+        "Partial rollout 与上下文压缩：旧 KV 不能默认跨权重复用",
+        "Agent Lightning v1：保存真实调用，而不是假定一条长 prompt",
+        "固定源码实例：slime 怎样把教师信号加到 advantage",
+        "AReaL：同一实验中的异步耗时与质量",
+        "算力构成：教师、grader、重试和拒绝样本都计入"
+      ],
+      "reason": "用跨v7/v8采样与v8/v9训练的两段轨迹复算两类ratio、乘积/几何平均与clip顺序；说明逐段behavior分母和状态访问边界"
+    },
+    {
+      "id": "architecture-hybrid",
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "changed": true,
+      "sha256_before": "0e241c17b2857ae58b025cc25747b8b4c903e333c65325533a72c3765076740d",
+      "sha256_after": "66eaabeaadabf79e38e2616809b0dd77cdfc2d41b49909a436bc3f560c062d75",
+      "headings_before": [
+        "固定大小状态怎样保留不断增长的历史",
+        "外积状态把历史聚合为关联矩阵",
+        "遗忘控制与定向更新解决不同问题",
+        "Mamba 与 SSD 把状态更新组织成高效计算",
+        "混合层计划决定信息访问与状态预算",
+        "Agent 分支和换窗需要不同的恢复协议",
+        "沿信息损失和真实预算设计对照",
+        "来源",
+        "Hybrid 的能力证据"
+      ],
+      "reason": "用SSM前缀、两分支、错误共享、重放、截窗和换参数的完整数值链说明状态恢复，链接partial rollout主讲"
+    },
+    {
+      "id": "dlm-ddpm",
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "changed": true,
+      "sha256_before": "b84f9ac911a60908a61d92bb6e79b24e3064d4220890bfe2dbd64b70a014c11d",
+      "sha256_after": "6ded3b8f24ad8bd83c61c32636b40ed02dbd5868d2e10c5c4e015e64b1451c7d",
+      "headings_before": [
+        "第一步：定义前向与反向过程",
+        "第二步：把边际似然改写成下界",
+        "第三步：用贝叶斯关系裂项相消",
+        "第四步：两个高斯相乘，配方求后验",
+        "第五步：均值误差换算成噪声误差",
+        "训练与采样步骤"
+      ],
+      "reason": "补加噪输入、噪声loss/导数、解析与预测均值、等方差KL、独立反向噪声及最后一步输出，限定两步日程为教学"
+    }
+  ]
+}
