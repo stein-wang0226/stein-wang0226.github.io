@@ -4,7 +4,6 @@
 <meta name="description" content="非可信数据与指令、prompt injection、工具文件网络权限、sandbox与数据流隔离，设计科学Agent的安全负例和可复核评测。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
 <!-- READING:FRAGMENT:START -->
-<figure class="mechanism-map"><figcaption>行动权限：外部数据不能直接成为执行指令</figcaption><ol class="mechanism-chain"><li><b>外部网页 / 文档</b><small>待验证数据；不授予执行权限</small></li><li><b>模型提出工具动作</b><small>明确目标、参数与副作用</small></li><li><b>可信策略层检查</b><small>权限、沙箱与必要授权</small></li><li><b>执行并记录结果</b><small>保留证据与恢复状态</small></li></ol><p class="mechanism-return">拒绝支路：越权动作返回原因；外部文本不能绕过可信检查层。</p></figure>
 <section id="overview"><p class="eyebrow">Trust &amp; permissions · 2026-11-14</p><h2>模型提出动作，系统决定是否执行</h2>
 <p class="lead">工具结果、网页、文件和memory可能含有看起来像指令的文字。Agent必须从它们提取证据，却不能让它们自行授予权限。提示词与模型训练降低误遵循风险；真正的文件、网络和工具能力需要由执行系统约束。</p>
 <p><strong>能力由可信配置授予。</strong>观察可以改变对事实的判断，不能改写授权范围。下面是教学设计与论文证据，未实施攻击测试。</p>
@@ -26,6 +25,18 @@
 <tr><td>sandbox / 最小权限</td><td>限制可读写对象、网络、进程和资源</td><td>容器不能自动保证无secret、无宿主挂载、无外网或无内核风险</td></tr>
 <tr><td>独立终评</td><td>检验最终产物与安全目标</td><td>事后发现不能撤销已发生外发；预防与验收分别设计</td></tr>
 </tbody></table>
+<figure id="agent-trust-boundaries-map" class="mechanism-map">
+<figcaption>数据通道影响模型判断；可信授权通道控制真实副作用</figcaption>
+<p><strong>独立授权通道：</strong>可信任务策略 / 明确用户授权 → controller 的能力、目标对象、凭据与资源约束。外部网页、工具 stdout 和 memory 不能改写这条通道。</p>
+<ol class="mechanism-chain">
+<li><b>外部数据 → 可见上下文</b><small>只读获准内容，保留来源；可能含注入，不视为授权</small></li>
+<li><b>模型 → 动作提案</b><small>可学习模型提出工具、参数和目的；没有直接执行能力</small></li>
+<li><b>可信 controller → 判定</b><small>参照独立策略，检查解析后对象、权限与副作用</small></li>
+<li><b>仅获准动作 → worker</b><small>受限挂载、网络和资源；真实操作及结果留日志</small></li>
+</ol>
+<p class="mechanism-return">拒绝分支：controller → 拒绝原因 → 后续模型上下文，不调用 worker。获准分支：worker 结果 → 后续上下文，仍是观察，不是新授权。</p>
+<p class="mechanism-note">模型、controller 与执行环境是不同职责，不要求各自一定是独立进程。此图是本文设计，未实现或做攻击测试；策略覆盖、标签传播、TOCTOU 与 OS 隔离仍须单独验证，不能从框图推出绝对安全。</p>
+</figure>
 <details><summary>六种隔离模式：限制什么、牺牲什么</summary>
 <table><thead><tr><th>模式（来源[1]）</th><th>控制边界</th><th>取舍与反例</th></tr></thead><tbody>
 <tr><td>action-selector</td><td>选择预先允许的动作</td><td>动作集有限；参数仍需检查</td></tr>

@@ -12,7 +12,10 @@
 </tbody></table>
 <p>因此“块扩散”和“连续扩散”可以同时成立；“预测范式”也不是与离散、连续互斥的第四流派。给一个新模型填完这五行，比背一个家族排名更有用。</p>
 <h3 id="generation">四个 token 的生成算例</h3>
-<figure class="mechanism-map"><figcaption>同一目标“我 喜欢 学习 数学”，两种生成状态</figcaption><ol class="mechanism-chain"><li><b>AR：逐位置</b><small>我 → 我 喜欢 → 我 喜欢 学习 → 完成</small></li><li><b>Masked：初始</b><small>[M] [M] [M] [M]</small></li><li><b>一轮确定部分位置</b><small>我 [M] 学习 [M]</small></li><li><b>后续补齐</b><small>我 喜欢 学习 数学</small></li></ol><p class="mechanism-return">这是一条示意路径，真实填充顺序和每轮数量由采样器决定。</p></figure>
+<figure id="ar-masked-state-map" class="mechanism-map"><figcaption>同一目标“我 喜欢 学习 数学”，两条独立的生成示意</figcaption>
+<p><strong>AR：已提交前缀逐位置增长</strong></p><ol class="mechanism-chain"><li><b>我</b><small>第一个位置已提交</small></li><li><b>我 喜欢</b><small>由前缀预测下一位置</small></li><li><b>我 喜欢 学习</b><small>继续增长前缀</small></li><li><b>我 喜欢 学习 数学</b><small>四个位置完成</small></li></ol>
+<p><strong>Masked：同一四位置状态逐轮揭示</strong></p><ol class="mechanism-chain"><li><b>[M] [M] [M] [M]</b><small>初始未决状态</small></li><li><b>我 [M] 学习 [M]</b><small>示意第一轮提交两个位置</small></li><li><b>我 喜欢 学习 [M]</b><small>示意第二轮再提交一个</small></li><li><b>我 喜欢 学习 数学</b><small>补齐剩余位置</small></li></ol>
+<p class="mechanism-note">两行不是上下衔接的算法；每个箭头表示该行状态的一次推进。Masked 的填充顺序和每轮数量由 sampler 决定，此处仅示意不再修改已提交值的路径；不代表与 AR 等耗时或等分布。</p></figure>
 <ul><li><strong>潜在收益：</strong>多位置并行、可变填充顺序、编辑与补全接口。</li>
 <li><strong>代价：</strong>去噪轮数、全局状态重算、块内相关性、训练与实际采样的差异。</li>
 <li><strong>能力边界：</strong>双向可见不自动保证全局规划、事实正确或消除全部 reversal 错误；这些要通过任务实验验证。</li></ul>

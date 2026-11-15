@@ -525,6 +525,16 @@ V(y)&=\mathbf 1\{y\in\mathcal A\}.
 \end{aligned}
 \]</div>
 <p>教学例：路径 A 允许输出 (1,10)，路径 B 允许 (2,20)。逐字段“取任一路径都可”会误收 (1,20)；完整路径校验要求两个字段来自同一合法计算。实际科学任务还需校准数值容差、并列、缺失和排序边界。</p>
+<figure class="mechanism-map" id="joint-path-map" aria-labelledby="joint-path-map-label">
+<figcaption id="joint-path-map-label">完整路径接受域：允许 A 或 B，不允许逐字段拼接 A 与 B</figcaption>
+<ol class="mechanism-chain mechanism-options">
+<li><b>冻结完整提交 y</b><small>将所有字段一起与已校准路径比较；下面列三个候选结果，不是顺序执行。</small></li>
+<li><b>y=(1,10) → 路径 A</b><small>两个字段共同匹配 A；属于 A 的接受域。</small></li>
+<li><b>y=(2,20) → 路径 B</b><small>两个字段共同匹配 B；属于 B 的接受域。</small></li>
+<li><b>y=(1,20) → 混拼 → 拒绝</b><small>每列落在逐字段范围，却不匹配任一完整合法路径。</small></li>
+</ol>
+<p class="mechanism-note">沿用上文两条离散教学结果，不引入新 oracle 或容差。接受域取完整路径的并集；真实校准还要检查联合不变量，有限路径不能证明覆盖了所有合法结果。</p>
+</figure>
 <ul>
   <li><strong>正控制：</strong>合法路径真实执行并通过，覆盖题面允许的选择。</li>
   <li><strong>负控制：</strong>known-wrong、固定答案和混拼输出执行后必须被拒绝。</li>

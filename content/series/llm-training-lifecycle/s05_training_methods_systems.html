@@ -41,7 +41,7 @@ N_{\mathrm{base}}&amp;=d_{\mathrm{in}}d_{\mathrm{out}}.
 <p>低秩限制施加在增量 ΔW，底座可以是满秩。LoRA 省去冻结参数的梯度和优化器状态；上游 adapter 要获得梯度，仍可能需要穿过后续冻结层反传和保存 / 重算激活。因此“只训练少量参数”不能直接换算为相同比例的训练计算下降。<a href="#ref-lora">[1]</a></p>
 <p class="math-notation"><strong>LoRA 符号：</strong>\(x,y\) 分别是输入/输出列向量，\(d_{\rm in/out}\) 是其宽度；\(W_0\) 是冻结底座，\(A,B\) 是可训练低秩矩阵，\(r\) 是增量秩，\(\alpha/r\) 是缩放。\(N_{\rm adapter/base}\) 为参数元素数；\({}^\top\) 表示转置，\(g\) 是与 \(y\) 同形的输出梯度。</p>
 <p>例如一个8192×8192矩阵，本文选 r=64，可训练量为1,048,576，约为原矩阵的1.56%；这是单矩阵规格推导，不代表全模型比例。若扩展到 Q/K/V/O、SwiGLU 三矩阵、router 或专家，必须分别统计真实形状与是否共享。GQA 的 K/V 矩阵通常更小。</p>
-<figure class="mechanism-map"><figcaption>LoRA：一条冻结路径和一条可训练增量相加</figcaption><ol class="mechanism-chain"><li><b>输入 x：d_in</b><small>同时进入底座 W₀ 与低秩 A</small></li><li><b>底座：W₀x</b><small>参数冻结，仍参与计算与向输入传梯度</small></li><li><b>增量：A x → B(Ax)</b><small>d_in → r → d_out；乘 α/r</small></li><li><b>求和 → 后续 loss</b><small>更新 A/B；上游 adapter 仍需反传</small></li></ol></figure>
+<figure class="mechanism-map" id="lora-branch-map" aria-labelledby="lora-branch-map-label"><figcaption id="lora-branch-map-label">LoRA：一条冻结路径和一条可训练增量相加</figcaption><ol class="mechanism-chain mechanism-compare"><li><b>输入 x：d_in</b><small>同时进入底座 W₀ 与低秩 A</small></li><li><b>底座：W₀x</b><small>参数冻结，仍参与计算与向输入传梯度</small></li><li><b>增量：A x → B(Ax)</b><small>d_in → r → d_out；乘 α/r</small></li><li><b>求和 → 后续 loss</b><small>更新 A/B；上游 adapter 仍需反传</small></li></ol><p class="mechanism-note">中间两格是同一输入的并行计算支路，输出相加；不是先算 W₀x，再把它送入 A。反向在两路汇合到 x，但冻结 W₀ 不作参数更新。</p></figure>
 <p>令输出梯度为 \(g=\partial L/\partial y\)，\(s=\alpha/r\)，先按链式法则得到：</p>
 <div class="reading-math">\[
 \nabla_B L=s\,g(Ax)^\top,\qquad
@@ -367,6 +367,16 @@ t_{\rm lower}=\max\left(\frac FP,\frac Q{B_{\rm HBM}},
 <tr><td>FSDP / ZeRO</td><td>参数、梯度、optimizer状态的冗余</td><td>all-gather / reduce-scatter；不是新增的模型层轴</td></tr>
 </tbody></table></div>
 <p>ZeRO-1/2/3分别进一步分片optimizer、gradient、parameter；具体常驻buffer与临时聚合取决于实现。CP减少序列激活 / Attention工作量，不应假定它独立缩小每rank权重。<a href="#ref-zero">[4]</a>；原通信说明见<a href="../distributed-training-guide.html">分布式指南</a>。</p>
+<figure class="mechanism-map" id="parallel-ownership-map" aria-labelledby="parallel-ownership-map-label">
+<figcaption id="parallel-ownership-map-label">并行布局：谁持有什么，谁与谁交换什么</figcaption>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));gap:16px">
+<div style="padding:14px;border:1px solid #b8cbc3;background:#fff"><b>DDP：不同数据，完整模型副本</b><p>数据 A → 模型副本 A<br>数据 B → 模型副本 B</p><p>A、B 的对应参数梯度 ↔ all-reduce；普通 DDP 各持有完整参数与更新状态，不切模型层。</p></div>
+<div style="padding:14px;border:1px solid #b8cbc3;background:#fff"><b>TP：同一层，矩阵/head 分片协作</b><p>同一批输入 → 层内分片 A ∥ 层内分片 B → 合成该层结果。</p><p>每个 rank 持有指定矩阵片；↔ collective 交换中间结果/梯度，具体归约随 column/row 布局而变。</p></div>
+<div style="padding:14px;border:1px solid #b8cbc3;background:#fff"><b>PP：不同层段，传激活而非全部权重</b><p>同一 microbatch → 前段层 → 后段层 → loss。</p><p>前向激活 → 下一 stage；上一 stage ← 反向激活梯度。各 stage 只负责所属层，内部还可用 TP。</p></div>
+<div style="padding:14px;border:1px solid #b8cbc3;background:#fff"><b>ZeRO/FSDP：匹配的数据并行位置分状态</b><p>对应模型分片的 DP ranks ↔ 状态通信；不是再切一段模型层。</p><p>ZeRO-1 分 optimizer；2 再分梯度；3 再分参数。全分片时，参数 shards → 按需 all-gather；梯度 → reduce-scatter → 所属 rank 更新。</p></div>
+</div>
+<p class="mechanism-note">四格是布局维度对照，不是 DDP → TP → PP → ZeRO 的阶段。TP/PP 组合后，状态分片组对齐相同 stage 和 tensor 位置；此图省略 CP、EP、offload、混合分片域及通信重叠，不能代替实际 process mesh。引用与理想容量账本见邻接正文。</p>
+</figure>
 <h3 id="state-sharding">从状态账本推导分片：N=1B、D=4 算例</h3>
 <p>先不叠加 TP/PP，按 BF16 权重2N、梯度2N、FP32 master+m+v 共12N bytes。D 是分片组大小，理想均匀存储为：</p>
 <table><thead><tr><th>策略</th><th>每 rank 理想持久容量</th><th>N=1B，D=4</th><th>交换什么</th></tr></thead><tbody>

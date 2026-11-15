@@ -17,6 +17,12 @@
 </tbody></table>
 <p>MoE激活参数少不代表全部权重不需常驻。EP和DP常在同一rank集合中重组；服务框架的逻辑并行域与训练MCore域不一定相同，不能套用训练公式当启动命令。固定训练分组推导见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#parallel">训练方法</a>。</p>
 <p>若KV heads少于TP ranks，实现可能复制KV heads，或要求特别分组；不能总用KV/TP。本文MoE基线Qwen3-235B有4个KV heads，TP8路线需要明确复制/分片约定。Dense基线8KV heads在TP4中可均匀分为2个/rank。所有方案仍要核对具体kernel与模型adapter。</p>
+<figure class="mechanism-map" id="serving-parallel-domains"><figcaption>并行域按对象划分：TP、服务 DP、EP 不是三个串行阶段</figcaption><ol class="mechanism-chain mechanism-options">
+<li><b>同一模型与请求集合</b><small>下面展示三种可组合的布局维度；先明确 rank 属于哪个组，不能把逻辑并行度无条件相乘。</small></li>
+<li><b>TP：同一请求，矩阵分片</b><small>一个 TP 组内各 rank 计算部分通道/head，通过 collective 合成结果。8 个 KV heads 在 TP4 可各存 2 个；头数不足时可能复制。</small></li>
+<li><b>Serving DP：不同请求，服务副本</b><small>副本 A 接请求集 A，副本 B 接请求集 B；每个副本可各有自己的 TP 组。权重复制，prefix cache 通常有副本局部性。</small></li>
+<li><b>EP：同一批 token，专家分布</b><small>router assignment → 专家所在 rank → 返回加权 combine；专家负载与 dispatch/combine 通信另计，非专家层采用其自己的并行域。</small></li>
+</ol><p class="mechanism-note">箭头从共同问题分到布局选择，不表示 TP → DP → EP 执行。PP 则按层/stage 切分，是另一维度；组重叠、KV 复制、通信算子与总卡数都必须核对具体框架，本图不是启动配置。</p></figure>
 </section>
 <section id="disaggregation"><h2>Prefill/decode分离：干扰减少，状态传输增加</h2>
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2401.09670" title="DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving · Zhong, Yinmin, Liu, Shengyu, Chen, Junda 等 · 2024/01/18 · 2401.09670">DistServe</a>。</p></section>
@@ -28,6 +34,12 @@ t_{\rm transfer}\ge\frac{M_{\rm state}}{B_{\rm effective}}.
 <p class="math-notation">\(M_{\rm state}\) 是本次实际发送的状态字节数，\(B_{\rm effective}\) 是有效传输带宽（bytes/s），相除得到秒；它不是 batch 大小，\(\ge\) 表示仅给出传输时间下界。</p>
 <p>取状态10GiB、有效链路25GB/s，纯传输下界为\(10\times2^{30}/(25\times10^9)\approx0.4295\)秒。GB与GiB不同；真实还含序列化、scale、分片重排、协议、同步、排队和目标分配。多请求并发传输会共享带宽。</p>
 <p>KV发送方和接收方必须一致理解层布局、dtype/scales、位置、模型版本和block映射。PD两侧TP大小不同，还需重排；跨节点以可用带宽和并发测量，不用NIC标称速度代替端到端吞吐。混合模型可能还需递归/卷积状态，V4.1压缩共享cache也有独特结构。</p>
+<figure class="mechanism-map" id="pd-state-handoff"><figcaption>PD 分离的跨服务边界：发送状态，不是只发送生成文本</figcaption><ol class="mechanism-chain">
+<li><b>入口路由 / 请求元数据</b><small>选定 prefill 与 decode 服务组，绑定请求 ID、模型版本、输入和生成条件。</small></li>
+<li><b>Prefill 服务组</b><small>处理输入，建立各层有效 KV；混合模型还需对应递归/卷积状态。源端负责交接期间的状态有效性。</small></li>
+<li><b>Connector / 状态传输</b><small>发送实际状态、scales、逻辑位置和布局信息；目标分配物理页，必要时重排分片。传输与确认有成本。</small></li>
+<li><b>Decode 服务组</b><small>状态就绪后继续生成，更新本地缓存并向客户端返回 token；目标 block table 不必和源端物理页 ID 相同。</small></li>
+</ol><p class="mechanism-return">后续 token 在 decode 组内循环；不要求每个 token 都重新跨 PD 传全量状态。完成/取消时双方按交接协议释放引用，失败恢复不能假定源状态已安全回收。</p><p class="mechanism-note">概念边界图，不声明某个 connector 已支持这些组合。省略网络拓扑与可重叠 span；上方 10 GiB / 25 GB/s 只是实际传输 payload 对应的时间下界，不是两个服务组的总请求时延。</p></figure>
 <p>本文工业规划先比较共置TP服务，再将PD或EP列为独立消融，避免一次改变所有变量。工具CPU、retrieval与verifier不属于PD两阶段，依然计入Agent墙钟和成本。</p>
 </section>
 <section id="precision"><h2>量化必须写对象、格式和计算dtype</h2>

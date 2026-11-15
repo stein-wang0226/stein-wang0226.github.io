@@ -13,7 +13,6 @@ x_t&=\sqrt{\alpha_t}x_{t-1}+\sqrt{\beta_t}\epsilon_t.
 <div class="reading-math">\[x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon,\quad
 \epsilon\sim\mathcal N(0,I).\]</div>
 <p>反向模型从先验 \(p(x_T)=\mathcal N(0,I)\) 起步，定义 \(p_\theta(x_{t-1}\mid x_t)=\mathcal N(\mu_\theta,\sigma_t^2I)\)。这是模型参数化；未给定 x₀ 的真实有限步反向边际通常是混合分布，不保证精确高斯。</p>
-<figure class="mechanism-map"><figcaption>训练有 x₀；生成只有当前 noisy 状态</figcaption><ol class="mechanism-chain"><li><b>x₀、t、ε</b><small>直接构造训练输入 xₜ</small></li><li><b>预测 εθ</b><small>从 noisy 输入恢复噪声信息</small></li><li><b>均值 μθ</b><small>用已知日程换算反向均值</small></li><li><b>反向采样</b><small>t 递减，添加所定方差</small></li></ol></figure>
 <h3 id="elbo">第二步：把边际似然改写成下界</h3>
 <p class="math-notation">\(\mathbb E_q\) 按前向隐状态路径平均，\(\prod\) 将条件密度相乘；log 为自然对数。KL 的顺序 \(\operatorname{KL}(q\|p)=\mathbb E_q[\log(q/p)]\) 表示以 \(q\) 加权比较两个分布；双竖线是分布分隔符。\(\mathcal L_{\rm VLB}\) 是负的变分下界，最小化它是在最大化该下界。</p>
 <p>反向联合 \(p_\theta(x_{0:T})=p(x_T)\prod_t p_\theta(x_{t-1}\mid x_t)\)。引入已知前向辅助分布 q，对隐变量积分，再用 log 的凹性：</p>
@@ -80,6 +79,25 @@ c_t&=\frac{\beta_t^2}{2\sigma_t^2\alpha_t(1-\bar\alpha_t)}.
 <li><strong>生成：</strong>采 xT，对各逆向时间点计算 μθ，再采 \(x_{t-1}=\mu_\theta+\sigma_t z\)。</li>
 <li><strong>最后一步：</strong>原算法将附加 z 设为零，这是 decoder/采样约定，不是“精确投影到真实数据流形”的证明。</li>
 <li><strong>少步：</strong>DDIM、ODE或蒸馏需重新定义路径与网格，不能随意删去祖先链的步骤。</li></ol>
+<figure id="ddpm-training-sampling-map" class="mechanism-map">
+<figcaption>两条路径，共享可学习的噪声预测器；训练不接着运行反向采样</figcaption>
+<p><strong>训练：真实数据与监督都可得</strong></p>
+<ol class="mechanism-chain">
+<li><b>采 x₀、t、ε</b><small>真实数据；随机时间与标准高斯噪声</small></li>
+<li><b>已知加噪变换</b><small>xₜ = √ᾱₜ x₀ + √(1−ᾱₜ) ε；不学习 q</small></li>
+<li><b>网络 εθ(xₜ,t)</b><small>一次前向得到预测；真实 ε 只作监督</small></li>
+<li><b>噪声 MSE → 更新 θ</b><small>简化 loss 或声明时间权重；梯度回到网络</small></li>
+</ol>
+<p><strong>生成：只有当前状态，不提供真实 x₀ 或 ε</strong></p>
+<ol class="mechanism-chain">
+<li><b>先验 xT / 当前 xₜ</b><small>从标准高斯起步，之后沿用上轮状态</small></li>
+<li><b>同一网络 εθ</b><small>固定参数预测；这里不做训练更新</small></li>
+<li><b>固定坐标换算 μθ</b><small>用 βₜ、αₜ、ᾱₜ 将预测换成均值；不是第二个网络</small></li>
+<li><b>采 xₜ₋₁ = μθ + σₜ zₜ</b><small>另抽独立 zₜ；最后一步按约定不加噪声</small></li>
+</ol>
+<p class="mechanism-return">生成回路：新 xₜ₋₁ → 下一逆向时刻的当前状态；t 递减。zₜ 不复用构造训练输入的 ε。</p>
+<p class="mechanism-note">图采用本节固定方差、原 DDPM 祖先采样约定；真实后验额外需要 x₀，不能把模型均值当作解析真后验。下面的完整算例分别给出 ε=0.5 与 z₂=−0.5。</p>
+</figure>
 <h3 id="ddpm-full-example">完整标量算例：加噪 → 预测误差 → 反向采样</h3>
 <p><strong>输入：</strong>只为手算采用两步日程，\(\alpha_1=0.8,\alpha_2=0.9\)，故 \(\beta_2=0.1,\bar\alpha_2=0.72\)。取真实 \(x_0=1\)、累计标准噪声的一次抽样 \(\epsilon=0.5\)，假设模型在 \(t=2\) 输出 \(\epsilon_\theta=0.3\)。本例固定反向方差 \(\sigma_2^2=\tilde\beta_2=1/14\)，不裁剪预测的 \(x_0\)。</p>
 <table style="min-width:38rem"><caption>同一组输入贯穿训练损失与反向采样</caption><thead><tr><th style="min-width:7em" scope="col">步骤</th><th scope="col">计算</th><th scope="col">结果</th></tr></thead><tbody>

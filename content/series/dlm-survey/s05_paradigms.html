@@ -14,6 +14,16 @@ x_0&=a_tx_t-s_tv_t,\qquad
 \epsilon=s_tx_t+a_tv_t.
 \end{aligned}\]</div>
 <p>取 \(a=0.8,s=0.6,x_0=2,\epsilon=-1\)：\(x_t=1\)，\(v=-2\)；反算 x₀=2、ε=−1。该 v 不是一般 FM 的 \(\dot x_t=\dot a_tx_0+\dot s_t\epsilon\)；只有特定日程和时间重参数下才有对应关系。</p>
+<figure id="vp-coordinate-map" class="mechanism-map">
+<figcaption>一次可学习预测，三条确定性坐标换算；不是依次训练三个模型</figcaption>
+<p><strong>共同起点：</strong>固定当前 \(x_t,t\) 与已知日程 \(a_t,s_t\) → 网络输出 \(\hat v_\theta(x_t,t)\)。以下箭头均从这个共同起点出发，三条支路之间没有执行依赖。</p>
+<ul>
+<li><strong>→ 干净值坐标：</strong>\(\hat x_0=a_tx_t-s_t\hat v\)。例 \(x_t=1,\hat v=-2\) 时得到 2。</li>
+<li><strong>→ 噪声坐标：</strong>\(\hat\epsilon=s_tx_t+a_t\hat v\)。同例得到 −1；不是新抽一份噪声。</li>
+<li><strong>→ score 坐标：</strong>\(\hat s_{\rm score}=-(s_tx_t+a_t\hat v)/s_t\)。同例得到 5/3；这是预测的换算，不声称等于真实边际 score。</li>
+</ul>
+<p class="mechanism-note">本图固定 VP 路径 \(a_t^2+s_t^2=1\)，score 支路要求 \(s_t&gt;0\)；\(s_{\rm score}\) 与日程系数 \(s_t\) 是不同对象。三份输出都与状态同维，不更新 xₜ；实际推进状态还需另选求解器。FM 时间速度与离散比率不属于这张旋转图。损失权重的变化在下一节单独推导。</p>
+</figure>
 <h3 id="loss-weight">相同误差在不同坐标下有不同权重</h3>
 <p>固定 xₜ，用噪声预测换算干净值：</p>
 <div class="reading-math">\[\begin{aligned}

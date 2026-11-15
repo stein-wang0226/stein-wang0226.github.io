@@ -108,6 +108,16 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 <tr><td>同一记录误标真实终止</td><td>0、0</td><td>0.2、−0.6</td><td>−0.1、−0.6</td></tr>
 </tbody></table>
 <p><strong>错误的终止标记会改变优势符号。</strong>本例首步 \(b_0=c_0=1\)。如果预算耗尽按任务合同就是失败终止，则应切断 bootstrap；如果只是训练收集暂停、环境可继续且下一 value 有效，则采用片段处理。是否拼接续段由实现决定，不能仅凭字段名 <code>timeout</code> 判断。<a href="s04_environment_reward_credit.html#environment">环境错误与任务终止的判定</a>需先一致。</p>
+<figure class="mechanism-map" id="gae-boundary-map" aria-labelledby="gae-boundary-map-label">
+<figcaption id="gae-boundary-map-label">GAE 的两道边界：下一 value 与下一优势分别接通</figcaption>
+<ol class="mechanism-chain mechanism-options">
+<li><b>当前决策 t → 下一历史</b><small>先按任务合同判终止，再检查片段是否连续；下面是三种边界，不是执行顺序。</small></li>
+<li><b>片段内部：b=1，c=1</b><small>下一 value → 当前 TD 残差；同一片段的下一优势 → 当前 GAE。</small></li>
+<li><b>采样暂停：b=1，c=0</b><small>有效下一 value → bootstrap；下一优势递推在此断开，不接无关样本。</small></li>
+<li><b>真实终止：b=0，c=0</b><small>两路均断开；当前 TD 只剩 reward − 当前 value。任务合同规定的失败终止也属于此路。</small></li>
+</ol>
+<p class="mechanism-note">图中的暂停采用上表“不拼接续段”的处理。若续段被合法拼接，须重新确定 c；b=1 还要求下一状态 value 有效。b/c 是本文教学开关，不是框架字段名。</p>
+</figure>
 <h3 id="ppo-ratio">旧策略采样，当前策略怎样复用数据</h3>
 <!-- READING:RL-DIAGRAM:4 -->
 <!-- READING:RL-DIAGRAM:5 -->

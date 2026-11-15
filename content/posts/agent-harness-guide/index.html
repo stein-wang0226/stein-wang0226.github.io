@@ -97,7 +97,14 @@
 </details>
 <details id="codex-pruning-source"><summary>原稿 pruning 示例属于 OpenCode</summary><p>PRUNE_PROTECT=40,000、PRUNE_MINIMUM=20,000 和受保护 skill 输出来自 <a href="https://github.com/anomalyco/opencode/blob/fc7e4cf93e660ad5ddabb0c48ecc99e934ebfe95/packages/opencode/src/session/compaction.ts#L238-L283">OpenCode 固定源码</a>；不能写成 Codex 压缩必定先执行的流程。</p></details>
 <h3 id="codex-compaction-paths">两种换窗路径：有摘要与无摘要</h3>
-<figure class="mechanism-map"><figcaption>两条分支都需要重建后续输入；工作环境仍要独立恢复</figcaption><ol class="mechanism-chain"><li><b>历史接近预算</b><small>规则、输出、缓冲共同决定可用空间</small></li><li><b>A：摘要压缩</b><small>本地/远端路径保留交接；细节可能遗漏</small></li><li><b>B：token-budget 换窗</b><small>重装 world state 与 retained client items，无自动摘要</small></li><li><b>新窗口继续任务</b><small>读笔记→找历史→核对文件→验证；A/B 为分支</small></li></ol></figure>
+<figure id="codex-compaction-branches-map" class="mechanism-map"><figcaption>按配置选择 A 或 B，再重建后续输入；不是先摘要、再执行无摘要换窗</figcaption>
+<p><strong>共同入口：</strong>历史接近预算 → run_auto_compact 按 token_budget 配置分流。规则、输出和缓冲共同决定可用空间。</p>
+<ul>
+<li><strong>A · 未启用 token_budget → 摘要 compaction：</strong>按 provider 能力选择本地或远程路径 → 用交接及保留项重建活跃输入；摘要可能丢失细节，远端内部实现不在源码中。</li>
+<li><strong>B · 启用 token_budget → 无摘要换窗：</strong>重装 world state 与 retained client items → 创建窗口 ID、重算用量；这条路径不先自动生成 A 的摘要。</li>
+</ul>
+<p class="mechanism-return">任一分支之后 → 按笔记指针读历史 → 核对当前文件与作业 → 验证后继续。磁盘、进程与外部副作用不因模型窗口重建而自动恢复。</p>
+<p class="mechanism-note">箭头只在各自分支内表示执行顺序；A 与 B 互为此处配置选择，不共享一条顺序链。固定提交的默认与托管功能条件见下文，不推广到所有 provider。</p></figure>
 <ul><li><strong>路径 A：</strong>token_budget 未启用，按 provider 能力选本地或远程 compaction；本地模板保存进度、决策、约束、下一步与引用。远端服务的内部实现不在仓库。</li>
 <li><strong>路径 B：</strong>启用后 run_auto_compact 进入换窗，重装 world state 与 retained items，创建窗口 ID 并重算用量。文件、仓库与环境不会因换窗清空。</li>
 <li><strong>默认边界：</strong>固定提交 token_budget 为开发中、默认关闭，模型元数据/实验条件还可启用；history/notes 另需配置、OpenAI provider 与 backend 认证。</li></ul>

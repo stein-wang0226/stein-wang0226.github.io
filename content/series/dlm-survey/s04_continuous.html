@@ -4,7 +4,10 @@
 <p class="math-notation"><strong>本节符号：</strong>\(z_1\in\mathbb R^d\) 是文本的连续表示，\(\epsilon\) 为同维高斯噪声，\(z_t\) 为插值状态；此处 \(t=0\) 是噪声、\(t=1\) 是数据。\(u_\theta\) 为网络速度，\(\dot z_t\) 为路径速度，\(\|\cdot\|^2\) 为欧氏平方误差，CFM 为条件 Flow Matching。后面的 \(c\) 是给定上下文，\(v\) 是词表项；条件均值 \(\mathbb E[z\mid c]\) 与 token 概率 \(P(x=v\mid c)\) 是不同预测对象。</p>
 <h2 id="interface">连续去噪之外，还要解决文本接口</h2>
 <p><strong>连续语言扩散有两个学习问题：</strong>在连续状态上学习生成，再将状态转成离散文本。去噪 MSE 更低不自动意味着 token 更准确。</p>
-<figure class="mechanism-map"><figcaption>三种连续接口，共同保留独立的重建验收</figcaption><ol class="mechanism-chain"><li><b>文本 x</b><small>embedding 或 encoder 编码</small></li><li><b>表示 z₁</b><small>可保长，也可压缩序列</small></li><li><b>连续生成 zₜ</b><small>噪声 → learned field → 终点</small></li><li><b>文本 decoder</b><small>词表分类或条件序列生成</small></li></ol><p class="mechanism-return">参考路径：真实 x → encoder → decoder，先验证不加扩散时能否恢复文本。</p></figure>
+<figure id="continuous-text-interface-map" class="mechanism-map"><figcaption>真实表示提供训练端点；生成从噪声起步，不读取未知的真实文本</figcaption>
+<p><strong>连续场训练：以下采用本节噪声0、数据1的线性路径</strong></p><ol class="mechanism-chain"><li><b>真实文本 → 编码 z₁</b><small>embedding / encoder 决定表示与长度</small></li><li><b>配对 ε → 路径点 zₜ</b><small>已知插值；计算监督 z₁−ε</small></li><li><b>可学习场 uθ(zₜ,t)</b><small>对条件速度回归</small></li><li><b>CFM loss → 更新 θ</b><small>理想回归输出是后验平均速度</small></li></ol>
+<p><strong>实际生成：编码器无需读待生成的真实 x</strong></p><ol class="mechanism-chain"><li><b>先验 z₀ / 当前 zₜ</b><small>初始化噪声，之后沿用积分状态</small></li><li><b>uθ + 求解器</b><small>网络预测场，求解器推进时间</small></li><li><b>生成终点 z₁sample</b><small>不保证等于某个真实编码值</small></li><li><b>离散文本接口</b><small>分类 / rounding / 序列 decoder；另计成本与误差</small></li></ol>
+<p class="mechanism-return">生成未到 t=1 时：更新后的 z → 当前状态。独立重建对照：真实 x → encoder → 文本接口，不经过噪声与积分。</p><p class="mechanism-note">codec 与场网络是不同模块；codec 是否冻结或联合训练按具体方法说明。图不把连续/离散联合路线画成第三个必经阶段；其双核与条件见下表。</p></figure>
 <table><thead><tr><th>接口</th><th>优势</th><th>独有代价</th></tr></thead><tbody>
 <tr><td>Token embedding</td><td>长度与位置直接对应</td><td>embedding 几何与离散类别不等价，需要 rounding/概率头</td></tr>
 <tr><td>Encoder latent</td><td>能压缩或组织连续状态</td><td>重建误差、额外 codec、先验与训练 latent 的分布差异</td></tr>

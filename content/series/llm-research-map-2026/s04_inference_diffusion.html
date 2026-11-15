@@ -34,15 +34,12 @@
 <h2>DFlash → DSpark → AdaFlash：分别改变哪一层</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2602.06036v1" title="DFlash: Block Diffusion for Flash Speculative Decoding · Chen, Jian, Liang, Yesheng, Liu, Zhijian · 2026/02/05 · 2602.06036v1">DFlash: Block Diffusion for Flash Speculative Decoding</a>；<a href="https://arxiv.org/abs/2607.05147v1" title="DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation · Cheng, Xin, Yu, Xingkai, Shao, Chenze 等 · 2026/07/06 · 2607.05147v1">DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation</a>；<a href="https://arxiv.org/abs/2607.19223v1" title="AdaFlash: Adaptive Speculative Decoding via On-Policy Distilled Diffusion Drafters · Qian, Yu-Yang, Wu, Hao-Cong, Chen, Chen 等 · 2026/07/21 · 2607.19223v1">AdaFlash: Adaptive Speculative Decoding via On-Policy Distilled Diffusion Drafters</a>。</p></section>
 
-<figure>
-<div class="flow" aria-label="扩散drafter和自回归target的投机流程">
-<div class="stage"><b>Draft一个块</b><small>重计算并行生成多个位置<br>保留proposal条件与分布</small></div>
-<div class="stage"><b>块内依赖 / 长度</b><small>顺序轻量head或长度预测<br>按合法调度选择验证范围</small></div>
-<div class="stage"><b>AR target验证</b><small>接受 / 拒绝与残差采样<br>更新已确认的前缀</small></div>
-<div class="stage"><b>继续或适配</b><small>统计真实接受与成本<br>target反馈训练drafter</small></div>
-</div>
-<figcaption>扩散负责proposal，不意味着最终模型就是standalone DLM；target验证与调度规则决定精确性和实际成本。</figcaption>
-</figure>
+<figure class="mechanism-map" id="diffusion-drafter-options"><figcaption>DFlash、DSpark、AdaFlash：三种方法对照，不是每轮依次执行</figcaption><ol class="mechanism-chain mechanism-options">
+<li><b>有效 prefix + 固定 AR target 合同</b><small>先选实际 drafter 方法；共同目标是提出候选，并按相应验证协议提交输出。</small></li>
+<li><b>DFlash：块并行 proposal</b><small>diffusion drafter 并行生成多个候选位置 → AR target 验证；不是 standalone DLM 替代 target。</small></li>
+<li><b>DSpark：重骨干与轻 head 分工</b><small>parallel heavy backbone → lightweight sequential head 恢复块内依赖；confidence / hardware profile 参与合法验证长度调度。</small></li>
+<li><b>AdaFlash：适配 proposal 与长度</b><small>使用经 OPD 适配的 drafter 和长度预测 → target 验证；训练反馈来自学生实际 rollout，不是每个服务周期必做一次权重更新。</small></li>
+</ol><p class="mechanism-return">各方法的有效候选 → 按其协议验收 / 拒绝修正 → 提交新 prefix → 下一周期。需要实际 proposal 条件概率与合法准入；共用这个接口不自动证明三种实现都精确保分布。</p><p class="mechanism-note">这是方法分工图，不混合三篇论文的采样设置。AdaFlash 的在线 trainer 是独立适配支路，须计入资源成本；服务使用哪个 drafter 版本要明确，不能把训练更新当成必经 decode 阶段。</p></figure>
 <table>
 <thead><tr><th>工作</th><th>机制</th><th>主要学习价值 / 边界</th></tr></thead>
 <tbody>

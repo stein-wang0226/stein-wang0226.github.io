@@ -1,0 +1,2775 @@
+{
+  "schema_version": 1,
+  "record_kind": "scoped-diagram-integration",
+  "as_of": "2026-11-15",
+  "base_commit": "d1bfb5b82776e1787510003e5dd6a87643cb1a22",
+  "summary": {
+    "scope": "仅审阅各页 examined 与 reason 明确记录的讲解/图示范围；reviewed 不等于所有科研事实或历史实验已经复现。",
+    "local_sources": 74,
+    "changed_sources": 22,
+    "retained_sources": 52,
+    "added_diagrams": 16,
+    "revised_diagrams": 11,
+    "diagram_count_rule": "按作者 schema 的 added/revised/existing-split-merge-refinement 分类，并与实际旧图删除/替换及新图增量核对；新增 ID 不等于新增图。",
+    "validation_scope": "静态源级集成检查，不包含本轮 build/browser、三屏、无脚本交互或独立科研事实复现。"
+  },
+  "modules": [
+    {
+      "module": "architecture-inference",
+      "input_file": "architecture-inference.json",
+      "input_sha256": "2b94733261a62930be5e83ca2526309dc837cadd4d08b696f6f80b0c9ed2c730",
+      "counts": {
+        "sources": 18,
+        "changed": 6,
+        "retained": 12,
+        "added": 6,
+        "revised": 4
+      }
+    },
+    {
+      "module": "training-data",
+      "input_file": "training-data.json",
+      "input_sha256": "6d916c3d3fda8d7a7414781a1dc357668ebf1ed1e2228d22a3f72de1308bfa4b",
+      "counts": {
+        "sources": 29,
+        "changed": 6,
+        "retained": 23,
+        "added": 6,
+        "revised": 1
+      }
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "input_file": "agent-multimodal-diffusion.json",
+      "input_sha256": "3595a0289c39b713034ec6c5c7a5e4e3681b31319e1953e9b3b470cdf71112c8",
+      "counts": {
+        "sources": 27,
+        "changed": 10,
+        "retained": 17,
+        "added": 4,
+        "revised": 6
+      }
+    }
+  ],
+  "immutable_baselines": {
+    "docs/content-migration-manifest.json": "11361df792389fc3c516eebbdbe874911a72f9660c29c630fb7b6442cd01258a",
+    "docs/organization-audit-20261114.json": "2b80203ef8ae46a7e3b9bf8ed40b3766d6359caa1c67663050834985f0012407"
+  },
+  "shared_style_receipt": {
+    "source": "assets/site/reading.css",
+    "sha256_before": "a66b39bb6699fc8852585888bed34cebcd81364ec7e9af20744db140ed5f2279",
+    "sha256": "16c934726c459f5c2aa9986e4637c3e0a08bfa0a558954bb75060ad8e3b44602",
+    "reason": "2026-11-15 approved T5a: place mobile mechanism-options/mechanism-compare diamond branch markers after the equally specific mechanism-chain down-arrow rule; preserve true sequential chain arrows and all non-mobile styles. Source-level cascade check only; actual 390/768/1440px browser validation remains pending."
+  },
+  "catalog_updates": [
+    {
+      "id": "my-work-harbor-full",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "agent-rag",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "agent-trust",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "serving-runtime",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "serving-parallel",
+      "fields": [
+        "summary"
+      ]
+    },
+    {
+      "id": "posttraining-algorithms",
+      "fields": [
+        "summary"
+      ]
+    },
+    {
+      "id": "posttraining-frameworks",
+      "fields": [
+        "summary"
+      ]
+    },
+    {
+      "id": "training-methods-systems",
+      "fields": [
+        "summary"
+      ]
+    },
+    {
+      "id": "architecture-residual",
+      "fields": [
+        "summary"
+      ]
+    },
+    {
+      "id": "architecture-hybrid",
+      "fields": [
+        "summary"
+      ]
+    },
+    {
+      "id": "agent-task-synthesis",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "research-agent-data",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "research-inference-diffusion",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "research-agent-frontiers",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "research-architecture-training",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "dlm-survey",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "agent-harness-guide",
+      "fields": [
+        "summary"
+      ]
+    },
+    {
+      "id": "vlm-knowledge-interview",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "dlm-ddpm",
+      "fields": [
+        "summary"
+      ]
+    },
+    {
+      "id": "dlm-overview",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "dlm-continuous",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    },
+    {
+      "id": "dlm-paradigms",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    }
+  ],
+  "static_checks": {
+    "status": "passed-source-only",
+    "checks": [
+      "module/base/topic ownership",
+      "74 unique IDs and sources exactly covered",
+      "baseline/current byte SHA and changed flags",
+      "actual content diff paths",
+      "diagram IDs/captions and schema classification",
+      "scoped diff whitespace",
+      "immutable baseline SHA"
+    ],
+    "commands": [
+      "python3 -B /tmp/my-blogs-diagram-review-20261115/t4-integrate.py validate",
+      "python3 -B /tmp/my-blogs-diagram-review-20261115/verify-architecture-inference.py",
+      "python3 -B /tmp/my-blogs-diagram-review-20261115/check-training-data.py",
+      "/Users/bytedance/.cache/stein-notes/venv/bin/python -B /tmp/my-blogs-diagram-review-20261115/verify-agent-multimodal-diffusion.py"
+    ],
+    "receipt_refresh": "passed: exactly 22 ledger reason changes and 22 receipt reason/SHA changes; all other fields/records and prior_reason preserved; repeat refresh byte/mtime identical",
+    "negative_coverage_tests": "passed: 11 duplicate/omitted/mismatched/stale-input cases rejected; stale refresh cases write nothing",
+    "integration_evidence": "/tmp/my-blogs-diagram-review-20261115/t4-static-integration-checks.json"
+  },
+  "handoff": {
+    "independent_static_semantics": "主 agent 确认 27 张新/修图独立静态语义全部通过；非本代理执行结果",
+    "browser_preparation": "主 agent 确认 ready；本轮浏览器/build 仍未执行",
+    "integration": "T4 complete; T5/T6 may start"
+  },
+  "pending": [
+    "390/768/1440px 实际浏览器与无脚本交互",
+    "当前集成源构建、引用/迁移保留及完整集成检查",
+    "提交与发布"
+  ],
+  "pages": [
+    {
+      "module": "architecture-inference",
+      "id": "llm-serving",
+      "source": "content/series/llm-serving/index.html",
+      "changed": false,
+      "sha256_before": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "sha256_after": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "examined": [
+        {
+          "anchor": "purpose",
+          "judgment": "The introduction and existing four-stage flow separate model state, scheduling, device precision, and task cost. It is a course-level dependency map, not a TP/DP execution sequence; detailed process boundaries belong in serving-parallel."
+        },
+        {
+          "anchor": "connections",
+          "judgment": "The learning outcomes distinguish allocation, prefix reuse, and probability correction, with pinned vLLM/SGLang scope. No additional overview diagram would clarify a new object."
+        }
+      ],
+      "reason": "Kept the sufficient course introduction and READING:COURSE marker. Unchanged SHA verified; no new measurements, browser tests, or build claimed.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "serving-runtime",
+      "source": "content/series/llm-serving/s01_runtime_scheduling.html",
+      "changed": true,
+      "sha256_before": "7c6062293a9b7bfad3a5485326eff6a7a103100fa71242c2e80e3674b0469d65",
+      "sha256_after": "3aaa41bee76cda1b77a9671dad63fd74e6a8f940be5fccffd5d0191c3355a29c",
+      "examined": [
+        {
+          "anchor": "phases",
+          "judgment": "The existing three-round A/B/C table explains continuous batching and explicitly denies equal prefill/decode durations. Retained it and the introductory lifecycle chain."
+        },
+        {
+          "anchor": "paging",
+          "judgment": "The single-request [7,2,11] table already explains noncontiguous pages, but the sharing example lacks a view of two block tables pointing to the same physical pages. Added a request-to-pool architecture map, not an A-then-B chain. Executed checks: ceil(35/16)=3; 48-35=13; union of [7,2,11] and [7,2,13] has 4 pages/64 slots versus 6 pages/96 slots without sharing; 26 total private tail slots are unused."
+        },
+        {
+          "anchor": "prefix",
+          "judgment": "match_prefix, lock references, and eviction pseudocode already explain active-reference protection and ended-request retention. The new paging caption connects reference release to retention without duplicating the lifecycle code."
+        },
+        {
+          "anchor": "implementation",
+          "judgment": "Pinned scheduler progress/token_budget and KV manager responsibilities remain scoped as source reading, not runtime testing. No invented current-vLLM state machine added."
+        },
+        {
+          "anchor": "kimi-sparse-traffic",
+          "judgment": "The existing query/index/top-2048/gather chain and separate traffic/storage equations are sufficient. Preserved the author TTFT table and its token-sharding, single-request boundary."
+        }
+      ],
+      "reason": "Added only the missing shared physical-state ownership diagram. Static checks preserved all old IDs, links, comments/markers, tables, code, formulas, scripts/styles, research objects, and all non-diagram content; numerical page checks executed. Build and browser checks deferred to integration.",
+      "diagrams": [
+        {
+          "id": "shared-kv-page-layout",
+          "type": "architecture / semantic HTML mechanism-compare / added",
+          "section": "paging",
+          "label": "两个请求、两张 block table、一份共享物理前缀",
+          "objects_and_arrows": [
+            "Compatible immutable token prefix -> A and B logical views",
+            "A table [7,2,11] -> shared physical pages 7,2 and private page 11",
+            "B table [7,2,13] -> the same shared pages 7,2 and private page 13",
+            "Both address mappings -> unique physical KV pool; no sequential execution or tensor summation"
+          ],
+          "simplifications": [
+            "Teaching page IDs, page size 16, history length 35, and exact compatible 32-token prefix",
+            "Slots only, not byte capacity; metadata, alignment, workspace, and reserves excluded",
+            "Only full prefix pages shared; shared-tail copy-on-write described but not implemented",
+            "Existing two-column comparison layout reused; no global CSS or image resources"
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "architecture-inference",
+      "id": "serving-parallel",
+      "source": "content/series/llm-serving/s02_parallel_quantization.html",
+      "changed": true,
+      "sha256_before": "1c6744450dec3fbe7f7325c3b9fa1a8265e2e4d3f34dbbd4a776c5a1e52d6038",
+      "sha256_after": "ffcae364ab6bdafe64332db107eeae8510c07c86603963a63c9d7a6597f1c29e",
+      "examined": [
+        {
+          "anchor": "parallel",
+          "judgment": "The TP/DP/EP/PP table lists costs but has no object layout. Added branching domains for matrix shards, request-serving replicas, and expert placement; choices may combine but are not sequential phases. Executed structural numeric check: 8 KV heads / TP4 = 2 local heads under the explicitly uniform split, with replication caveat retained for fewer heads than ranks."
+        },
+        {
+          "anchor": "disaggregation",
+          "judgment": "The transfer equation needs a service/process boundary: route -> prefill group -> connector -> decode group. Added that handoff, including version/scales/position/layout, destination page allocation, and release/failure protocol. Executed unit check: 10*2^30/(25*10^9)=0.4294967296 seconds; this is only a payload bandwidth lower bound, not end-to-end latency."
+        },
+        {
+          "anchor": "quantized-dot-example",
+          "judgment": "The full four-component encoding/dequantization/dot-product table already shows output error and scale overhead. Retained its derivation and 6 B versus 8 B storage example; a second linear diagram would add no state ownership insight."
+        },
+        {
+          "anchor": "speculative-trace",
+          "judgment": "The [B,B,C] trace already distinguishes accepted B, rejected B, discarded C, emitted correction A, and A not yet in KV. Kept the introductory chain, exactness proof, and trace rather than adding another draft/verify chain."
+        }
+      ],
+      "reason": "Added two genuinely missing layouts: nonsequential parallel domains and cross-service state transfer. Static preservation, unique/default-visible four-node structure, TP arithmetic, and transfer units checked. No framework compatibility, GPU service, full build, or browser test claimed.",
+      "diagrams": [
+        {
+          "id": "serving-parallel-domains",
+          "type": "branching architecture / semantic HTML mechanism-options / added",
+          "section": "parallel",
+          "label": "并行域按对象划分：TP、服务 DP、EP 不是三个串行阶段",
+          "objects_and_arrows": [
+            "Common model/request problem -> independent TP, serving DP, and EP layout dimensions",
+            "TP rank shards of a shared request -> collective result",
+            "Serving replicas A/B -> disjoint request sets, each potentially owning its own TP group and prefix cache",
+            "Router assignments -> expert ranks -> weighted combine"
+          ],
+          "simplifications": [
+            "Not a launch configuration or an unconditional world-size product",
+            "PP described as a separate layer/stage dimension in the note",
+            "Uniform 8-head/TP4 split is the existing dense teaching case; KV replication and adapter/kernel limits remain",
+            "Existing three-option layout; no global styling"
+          ],
+          "change_kind": "added"
+        },
+        {
+          "id": "pd-state-handoff",
+          "type": "service architecture chain with decode feedback / semantic HTML mechanism-chain / added",
+          "section": "disaggregation",
+          "label": "PD 分离的跨服务边界：发送状态，不是只发送生成文本",
+          "objects_and_arrows": [
+            "Router/request identity and model conditions -> selected prefill group",
+            "Prefill group -> valid per-layer KV and any required hybrid state",
+            "State -> connector transport with scales/positions/layout -> destination allocation and optional shard rearrangement",
+            "Decode group -> local state updates and client output; later tokens loop within decode",
+            "Completion/cancellation -> protocol-based reference release on both sides"
+          ],
+          "simplifications": [
+            "Conceptual interfaces, not a claim that a named connector supports all hybrid layouts",
+            "Source and destination physical page IDs need not match",
+            "Network topology and overlapped spans omitted; bandwidth calculation is only a lower bound",
+            "Sampling a token and calculating its KV remain distinct in the preserved speculative trace"
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "architecture-inference",
+      "id": "serving-capacity",
+      "source": "content/series/llm-serving/s03_capacity_cost.html",
+      "changed": false,
+      "sha256_before": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "sha256_after": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "examined": [
+        {
+          "anchor": "ledger",
+          "judgment": "Existing introductory ledger-to-SLO-to-success-cost chain and object table distinguish weights, KV, recursive state, activations, workspace, and unique physical slots. No hidden ownership gap requires another graphic."
+        },
+        {
+          "anchor": "example",
+          "judgment": "The complete 70B approximation/TP4/32K derivation exposes local heads, GB versus GiB, 29 GB KV budget, capacity upper bound 10, and candidate concurrency 8. Retained the full derivation, length table, and downloadable planning data; did not turn the ideal bound into a measured service result."
+        },
+        {
+          "anchor": "metrics",
+          "judgment": "The timestamp example and definitions distinguish TTFT, ITL, TPOT, and measurement-window throughput. A chain would wrongly make these metrics successive compute stages."
+        },
+        {
+          "anchor": "cost",
+          "judgment": "All-attempt resource sum and success denominator include failures once and leave zero-success cost undefined. The text/table examples are explicit enough; no fabricated price or diagram values added."
+        }
+      ],
+      "reason": "Retained sufficient ledger flow and full numerical budgets. Unchanged SHA verified; capacity and cost reasoning reviewed, not GPU-measured or browser-tested.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "llm-architecture",
+      "source": "content/series/llm-architecture/index.html",
+      "changed": false,
+      "sha256_before": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "sha256_after": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "examined": [
+        {
+          "anchor": "purpose",
+          "judgment": "The introduction already leads from a complete forward example through sequence/channel/depth/state questions. Its four-part concept flow is a learning/dependency map with no equal-time claim, not a replacement for a decoder block architecture."
+        },
+        {
+          "anchor": "connections",
+          "judgment": "Outcomes explicitly separate computation, derivation, state/communication accounting, and evidence. Preserved the local forward-code entry and READING:COURSE assembly."
+        },
+        {
+          "anchor": "sources",
+          "judgment": "Pinned Transformer, GQA, RoPE, Norm, state-model, and Llama references supply the detailed chapters. No new introductory mechanism figure needed."
+        }
+      ],
+      "reason": "Sufficient topic overview; detailed new residual diagrams placed at their actual teaching formulas. Unchanged SHA verified.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "architecture-transformer",
+      "source": "content/series/llm-architecture/s01_transformer_foundations.html",
+      "changed": false,
+      "sha256_before": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "sha256_after": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "examined": [
+        {
+          "anchor": "tensor-flow",
+          "judgment": "Existing chain and detailed flow connect IDs/embedding, QKV/mask, channel transform, and logits/CE, with shape table and note that the head occurs after repeated blocks. A duplicate chain is unnecessary."
+        },
+        {
+          "anchor": "attention-mask",
+          "judgment": "The visible triangular matrix and equal-score value example expose the query/key axes and future-token exclusion. Retained rather than drawing a less precise four-node mask summary."
+        },
+        {
+          "anchor": "block",
+          "judgment": "Two explicit same-shape residual equations and pseudocode show Attention then FFN, each with its own normalization. Detailed bypass comparison belongs in architecture-residual."
+        },
+        {
+          "anchor": "objective",
+          "judgment": "Teacher-forcing/shift alignment, product-to-NLL derivation, and masked denominator example are complete. Loss masking is not confused with attention visibility."
+        },
+        {
+          "anchor": "state",
+          "judgment": "Four lifecycle rows distinguish parameter tables, training activations, request state, and optimizer/gradients. Kept the full state explanation and forward reference; no invented memory proportion."
+        }
+      ],
+      "reason": "Existing diagrams, shape/mask tables, and derivations are sufficient at this introductory depth. Unchanged SHA verified; no numerical re-execution or model test claimed for this unchanged source.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "architecture-attention",
+      "source": "content/series/llm-architecture/s02_attention_position_cache.html",
+      "changed": false,
+      "sha256_before": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
+      "sha256_after": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
+      "examined": [
+        {
+          "anchor": "head-sharing",
+          "judgment": "The MHA/MQA/GQA/MLA alternatives are already a side-by-side table, not a serial chain. Existing GQA project/save/read/aggregate flow explains unrepeated persistent KV versus computation broadcast."
+        },
+        {
+          "anchor": "kv-bytes",
+          "judgment": "Shape-derived K/V capacity and the 192 B example specify that query-head count does not directly multiply persistent KV. Existing ownership explanation is enough; serving-runtime now handles physical shared-page layout."
+        },
+        {
+          "anchor": "position",
+          "judgment": "RoPE rotation matrices and relative displacement derivation are more useful than another short flow. Cache-position/position_ids distinction remains explicit."
+        },
+        {
+          "anchor": "online-softmax-example",
+          "judgment": "The two-block table follows m, l, and n through common rescaling to output 3. It makes the invariant visible and preserves the dense arithmetic versus IO distinction, so no extra arithmetic chain added."
+        },
+        {
+          "anchor": "frontier-comparison",
+          "judgment": "Kimi Linear/GDN-H/MLA author scores retain same-token scope and negative comparisons; no metric changes or synthetic performance figure."
+        }
+      ],
+      "reason": "Sufficient existing cache/attention diagrams and full blockwise derivation. Unchanged SHA verified; no GPU/kernel or browser test claimed.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "architecture-moe",
+      "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
+      "changed": false,
+      "sha256_before": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
+      "sha256_after": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
+      "examined": [
+        {
+          "anchor": "swiglu",
+          "judgment": "Gate and up are explicitly separate projections combined elementwise before down; equations and small example already explain the branching, without suggesting the branches execute serially."
+        },
+        {
+          "anchor": "routing",
+          "judgment": "Existing dispatch/expert/combine flow describes batch reordering and return, not an expert-1/2/3 sequence. Shared experts are separately accounted."
+        },
+        {
+          "anchor": "moe-full-example",
+          "judgment": "The full A/B/C/D table and nearby assignment map retain token identity, gate weights, expert queues, capacity overflow, and remote assignment byte counts. Adding another route map would repeat an already substantive diagram."
+        },
+        {
+          "anchor": "latent",
+          "judgment": "Projection and latent expert summation are explicit; the industrial architecture figure and width comparisons live in research-architecture-training. Retained the boundary that payload ratio is not wall-time speedup."
+        },
+        {
+          "anchor": "frontier-comparison",
+          "judgment": "Separate capability and concurrency-throughput tables retain reversals and different model conditions; no new ranking or historical metric edits."
+        }
+      ],
+      "reason": "Existing route/assignment diagrams plus full numerical example are sufficient. Unchanged SHA verified; no quota-driven additions.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "architecture-residual",
+      "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
+      "changed": true,
+      "sha256_before": "3fcc4e53e5283c5d753a8df6a90a58213356bae41b76465112985bbc62abd4fc",
+      "sha256_after": "29745847d46a33c3ce3e3ee28b935d0ee918cd4200259ba7d7b73e04dd4a810a",
+      "examined": [
+        {
+          "anchor": "norm-position",
+          "judgment": "The old introductory chain put residual x, Norm/F, increment, and addition in a linear row, relying on a prose bypass note. Replaced it with shared-input Pre/Post alternatives that show both bypasses and whether Norm covers the merge. Checked against the unchanged equations J_pre=I+J_F J_N and J_post=J_N(I+J_F); no claim of global stability."
+        },
+        {
+          "anchor": "rmsnorm",
+          "judgment": "The LN versus RMSNorm numerical example and fixed FP32-statistics code are sufficient and remain intact. No second Norm diagram or numerical edits."
+        },
+        {
+          "anchor": "new-residual",
+          "judgment": "The comparison table correctly distinguishes depth history, parallel streams, and element gates. Detailed AttnRes and mHC split/merge diagrams are placed beside the full formulas in research-architecture-training rather than duplicating them here."
+        },
+        {
+          "anchor": "frontier-comparison",
+          "judgment": "mHC/HC/Baseline BBH/GSM8K/MATH table and same-token-not-same-FLOPs limitation remain unchanged; the new diagram does not promote a local constraint into a global gradient guarantee."
+        }
+      ],
+      "reason": "Revised one insufficient bypass layout; kept stability checklist, full Jacobian/Norm derivations, numeric examples, and author metrics. Static preservation and default-visible unique-ID diagram checks passed. Build/browser checks deferred.",
+      "diagrams": [
+        {
+          "id": "norm-bypass-map",
+          "type": "alternative architecture / semantic HTML mechanism-compare / revised",
+          "section": "introductory figure immediately before purpose; explains norm-position",
+          "label": "同一输入的两种残差布局：Norm 是否覆盖旁路",
+          "objects_and_arrows": [
+            "Common x -> two alternative Pre-Norm/Post-Norm layouts",
+            "Pre: x -> add bypass; x -> Norm -> F -> add branch; merged result -> y",
+            "Post: x -> add bypass; x -> F -> add branch; merged result -> Norm -> y",
+            "Alternative outputs -> downstream representation; not sequential execution of Pre then Post"
+          ],
+          "simplifications": [
+            "One residual sublayer, not a full Attention-plus-FFN block",
+            "Same-shape addition required; local Jacobian paths only",
+            "No prediction of global stability, warmup need, or performance",
+            "Reuses responsive two-column comparison; no global CSS"
+          ],
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "architecture-inference",
+      "id": "architecture-hybrid",
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "changed": true,
+      "sha256_before": "66eaabeaadabf79e38e2616809b0dd77cdfc2d41b49909a436bc3f560c062d75",
+      "sha256_after": "d27252caaf1b134a288b577d2c8bff9ae32682884b18647d1877a5942dc85cb1",
+      "examined": [
+        {
+          "anchor": "purpose",
+          "judgment": "The old introductory hybrid chain implied a fixed recursive-layer-then-Attention execution. Replaced with per-layer choices from the actual layer plan, each owning its state; the note separates stacked layer order from a simultaneous per-layer branch."
+        },
+        {
+          "anchor": "gated-delta",
+          "judgment": "Existing old-state/forget-read/error-write/output flow, gated-delta derivations, and [2,3] overwrite example already explain the update mechanism. Preserved them without another generic four-node chain."
+        },
+        {
+          "anchor": "hybrid",
+          "judgment": "The memory-object table separates sequence summary, local/global token history, depth representations, parameters, and external retrieval. Kept it; the revised introduction now agrees with those ownership distinctions."
+        },
+        {
+          "anchor": "state-branch-example",
+          "judgment": "The old A/B state diagram combined branches into one chain node. Revised into an explicit fork from immutable h=5 and private A/B states, with no numerical merge. Executed exact checks: prefix [2,4] -> 5; A=8.5; B=0.5; wrong B after A=2.25; unchanged window and parameter counterexamples also checked (8 versus 8.5; new coefficient 0.25 gives 7.125 versus stale-state 7.25)."
+        }
+      ],
+      "reason": "Revised two misleading layouts, retaining all recursive derivations and restoration tables. Static preservation plus exact SSM arithmetic and default-visible diagram checks passed. No model recovery implementation or browser test claimed.",
+      "diagrams": [
+        {
+          "id": "hybrid-state-layout",
+          "type": "per-layer alternatives / semantic HTML mechanism-options / revised",
+          "section": "introductory figure immediately before purpose",
+          "label": "混合模型的逐层状态：按本层类型读取，不是三步固定流水线",
+          "objects_and_arrows": [
+            "Current layer hidden/history -> route selected by its layer plan",
+            "GDN/KDA: current q/k/v plus old association matrix -> updated matrix -> readout",
+            "SSM: current input plus old state -> selective transition -> readout, with auxiliary convolution state",
+            "Attention: current Q plus historical/current KV -> aggregate",
+            "Each route -> later modules/layers; next token -> that layer's own saved state"
+          ],
+          "simplifications": [
+            "Routes are alternatives for the current layer; actual stacked order comes from config",
+            "No claim that all three modules execute simultaneously or share one memory",
+            "Norm, FFN, gating, and output projections omitted",
+            "Fixed-shape recurrent persistence is not constant training memory or lossless infinite history"
+          ],
+          "change_kind": "revised"
+        },
+        {
+          "id": "state-fork-map",
+          "type": "state fork and branch-management comparison / semantic HTML mechanism-compare / revised",
+          "section": "agent-state / state-branch-example",
+          "label": "从同一不可变快照分叉：A 的更新不能流入 B",
+          "objects_and_arrows": [
+            "Prefix [2,4] -> immutable h=5 checkpoint",
+            "Checkpoint -> A private restore -> input 6 -> h=8.5",
+            "Same checkpoint -> B independent restore -> input -2 -> h=0.5",
+            "Separate (branch,state) records -> continue/select/discard; no state summation and no A -> B edge"
+          ],
+          "simplifications": [
+            "Scalar SSM h'=0.5h+x, output equals state; not LLM logits",
+            "Merge-shaped final card is branch management only, explicitly not a numerical merge",
+            "Real hybrid snapshots need all per-layer KV, recurrent/convolution states, positions, and version conditions",
+            "Existing unchanged wrong-state counterexample yields 2.25"
+          ],
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "architecture-inference",
+      "id": "architecture-comparison",
+      "source": "content/series/llm-architecture/s06_model_comparison.html",
+      "changed": false,
+      "sha256_before": "b53a9e98958acaa2245f1498156336e316762d822057a99e8679f8fcd73586e1",
+      "sha256_after": "b53a9e98958acaa2245f1498156336e316762d822057a99e8679f8fcd73586e1",
+      "examined": [
+        {
+          "anchor": "axes",
+          "judgment": "The six-axis table is already a comparison of independent design objects, not a progression from one architecture to another. No serial model-family graphic needed."
+        },
+        {
+          "anchor": "co-design",
+          "judgment": "The existing task/structure/training/service flow is explicitly a design-feedback relationship with causal attribution deferred to experiments. Kept it instead of inventing throughput proportions."
+        },
+        {
+          "anchor": "mtp",
+          "judgment": "MTP, drafter, and exact acceptance are distinguished and defer detailed methods to the inference topic. The revised drafter-method options belongs there, not duplicated here."
+        },
+        {
+          "anchor": "experiments",
+          "judgment": "Mechanism, fixed-checkpoint service, and end-to-end Agent comparisons have distinct contracts. Existing table and introductory evidence chain suffice; closed-source structure remains unknown."
+        }
+      ],
+      "reason": "Kept sufficient comparison framework and co-design map. Unchanged SHA verified; no additional performance or architecture claims.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "research-base-architecture",
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "changed": false,
+      "sha256_before": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "sha256_after": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "examined": [
+        {
+          "anchor": "ced",
+          "judgment": "Existing conceptual flow and ced-path.svg show encoder H20/global projection, decoder local SWA replay, and full incremental encoder+decoder. The caption already denies that prefill completely skips decoder and separates ownership from scheduling."
+        },
+        {
+          "anchor": "csa2",
+          "judgment": "Full/Reindex/Reuse table and csa2-layer-plan.svg distinguish shared global entries, regenerated top-k, reused candidates, and per-layer Q/SWA. Hierarchical-indexer list gives first scan, candidate pool, and later top-512; no missing chain."
+        },
+        {
+          "anchor": "cache",
+          "judgment": "FP4 format table, 890 B/token full derivation, global-kv-bytes.svg, and bounded-replay.svg already cover bytes, cache ownership, trigger/input/rebuilt state, and approximate recovery. Preserved their exclusion of SWA/weights/workspace and separate HBM versus persistent-cache ratios."
+        },
+        {
+          "anchor": "engram",
+          "judgment": "The parameter/KV/external-memory distinction and implementation-spec table keep Engram placement separate from mHC and CSA2. Detailed mHC tensor branch diagram is added at the general mechanism formula, not beside this model-specific summary."
+        }
+      ],
+      "reason": "Sufficient existing CED, layer-plan, byte-composition, and replay architecture figures. Unchanged SHA verified; examined source diagrams/sections without claiming a rerun of GPU measurements or revalidation of all report facts.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "research-inference-diffusion",
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "changed": true,
+      "sha256_before": "c9ad2561a006624ee2f866ccc4ab18b6792ecbb40786e77024453f05ddb8738c",
+      "sha256_after": "0a764cfe94233a88eb102193aff264a0a74f5957403d4caca4188b507bb1eaad",
+      "examined": [
+        {
+          "anchor": "budget",
+          "judgment": "The existing fixed-quality -> proposal -> verification -> latency chain and 90 ms/5 token counterexample already distinguish acceptance from speed. Retained the complete budget reasoning."
+        },
+        {
+          "anchor": "methods",
+          "judgment": "The old generic flow mixed DFlash proposal, DSpark sequential head/length scheduling, and AdaFlash training feedback into one service cycle. Replaced it with three method alternatives and a shared verification/commit feedback interface; online trainer is not a mandatory per-cycle step."
+        },
+        {
+          "anchor": "exactness",
+          "judgment": "The p=q, reject-B-until-A example already isolates candidate-dependent admission bias. Preserved its probability reasoning and warning that actual q and legal admission are needed; common interfaces do not imply exactness of all implementations."
+        },
+        {
+          "anchor": "opd",
+          "judgment": "Drafter reverse-KL adaptation is distinguished from Agent reward and MOPD capability integration. New method note keeps training/service resources and drafter version separate."
+        },
+        {
+          "anchor": "frontier-comparison",
+          "judgment": "Author speedup and acceptance-length tables retain concurrency reversals, T=0 versus T=1, block 16 versus 7, and trainer-cost limitations. No historical metric edits."
+        }
+      ],
+      "reason": "Revised one conflated method chain into branching comparison with explicit training boundary. Static preservation, unique-ID/default-visible structure, and unchanged numeric tables checked. No sampling-frequency, GPU, build, or browser test claimed.",
+      "diagrams": [
+        {
+          "id": "diffusion-drafter-options",
+          "type": "method alternatives with shared verify/commit loop / semantic HTML mechanism-options / revised",
+          "section": "methods",
+          "label": "DFlash、DSpark、AdaFlash：三种方法对照，不是每轮依次执行",
+          "objects_and_arrows": [
+            "Effective prefix and fixed AR target contract -> chosen drafter method",
+            "DFlash block-parallel diffusion proposal -> target verification",
+            "DSpark parallel heavy backbone -> sequential lightweight heads, with legal admission/length scheduling -> target verification",
+            "AdaFlash OPD-adapted drafter and length predictor -> target verification; trainer feedback is a distinct adaptation branch",
+            "Each valid proposal -> method-specific accept/reject correction -> committed prefix -> next cycle"
+          ],
+          "simplifications": [
+            "A comparison of three papers, not an implementation that chains all three",
+            "Actual conditional q and non-anticipating admission still needed for any exactness claim",
+            "Online trainer resource cost and drafter version not elided",
+            "Different experimental temperatures, block sizes, and metrics remain in the original tables"
+          ],
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "architecture-inference",
+      "id": "research-architecture-landscape",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "changed": false,
+      "sha256_before": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
+      "sha256_after": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
+      "examined": [
+        {
+          "anchor": "overview",
+          "judgment": "The existing classic-to-frontier flow explicitly labels learning order rather than ancestry or runtime execution. Family mechanisms need no new sequential chain."
+        },
+        {
+          "anchor": "state",
+          "judgment": "history-paths.svg compares explicit KV, recurrent matrix, sparse retrieval, and local/global plans; hybrid-layer-counts.svg is labeled composition rather than layer order. The KDA AD-versus-DA derivation retains noncommutativity. These already address the key architecture axes."
+        },
+        {
+          "anchor": "qwen",
+          "judgment": "GDN/global, QSA, four-stream GR, and off-accelerator n-gram table are separated in the existing object table. No diagram that conflates sequence state and residual streams added."
+        },
+        {
+          "anchor": "kimi",
+          "judgment": "K3/K3.1 attention changes and KDA/AttnRes/Stable LatentMoE duties are explicit, with pointers to the exact residual and runtime teaching sections. New general diagrams are placed at those formulas and page layouts."
+        },
+        {
+          "anchor": "glm",
+          "judgment": "Attention and FFN layer tables are explicitly distinct; AMD TP8 versus DP8+EP8 metrics retain source, hardware, length, and concurrency. No redraw of historical performance or unconditional group multiplication."
+        },
+        {
+          "anchor": "minimax",
+          "judgment": "MSA group-specific block selection is distinguished from KDA state and MLA representation, while first-layer Attention and FFN sparsity are not conflated. Existing mechanism comparison covers it."
+        },
+        {
+          "anchor": "gemma",
+          "judgment": "Encoder-free is scoped to 12B, and local/global and KV-sharing exceptions are stated. Retained rather than generating an inaccurate uniform-family architecture."
+        },
+        {
+          "anchor": "closed",
+          "judgment": "Undisclosed layer/expert/cache details remain unknown; Agent windowing is not evidence of recurrent depth."
+        }
+      ],
+      "reason": "Existing history/layout/composition diagrams and per-family tables are sufficient. Unchanged SHA verified; no new family-spec research or browser/GPU test claimed.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "research-architecture-training",
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "changed": true,
+      "sha256_before": "ec0fcdcea44bb98cebe6ce501013c276c2456067d0c8b337f4432b30853c3865",
+      "sha256_after": "4e6d76d730a7d550013ddaf58778dca7b21c4992faec68b49a26da41f1b93792",
+      "examined": [
+        {
+          "anchor": "residual",
+          "judgment": "Existing residual-designs.svg compares available state and operation labels but does not expose key-versus-value branches or res-versus-pre/F/post split/merge. Added those beside the full formulas, keeping the original SVG. Executed AttnRes arithmetic: softmax(0,log3)=(1/4,3/4), weighted (2,0)/(0,4)=(0.5,3). Executed mHC shape checks for n=2 and n=4: res[n,n]X[n,d], pre[1,n]X[n,d], post[n,1]F[1,d] yield matching [n,d]; checked teaching H row/column sums=1 and H(1,-1)=(0.5,-0.5)."
+        },
+        {
+          "anchor": "latent-moe",
+          "judgment": "latent-moe-paths.svg already shows hidden -> latent -> expert computation -> hidden with separate Nemotron/Kimi specifications. Width ratios and communication payload example are sufficient; preserved all values and shared-path caveats."
+        },
+        {
+          "anchor": "muon",
+          "judgment": "This section intentionally delegates optimizer derivations to training. No duplicate optimizer mechanism diagram or expansion outside this architecture task."
+        },
+        {
+          "anchor": "precision",
+          "judgment": "Object-specific KV/GEMM/QAT/optimizer table already separates precision axes. Kept the table rather than illustrating an imaginary all-FP4 model."
+        },
+        {
+          "anchor": "depth",
+          "judgment": "The Pre/Core/Post formula and scalar example lack a visible recurrence/stop edge. Added shared-core iteration loop, separate from AR token generation. Executed scalar recurrence gives 1,1.5,1.75 from h0=0; no monotonic quality claim. Existing traffic arithmetic also checked: n=4 gives (4n+4)d=20d and (2n+2)d=10d, a mapping-traffic reduction only."
+        }
+      ],
+      "reason": "Added three nearby mechanism diagrams for real gaps beyond the existing overview/LatentMoE SVGs. Static preservation, exact numeric/shape checks, default-visible unique IDs, and four-node semantic layout checks passed. Browser, full-site, and model execution deferred.",
+      "diagrams": [
+        {
+          "id": "attnres-depth-read",
+          "type": "split/key-value merge architecture / semantic HTML mechanism-compare / added",
+          "section": "residual / Attention Residuals formula",
+          "label": "AttnRes：同一 token 的历史表示分成 key 与 value 两条路径",
+          "objects_and_arrows": [
+            "Available h_i at fixed token -> normalized-key scoring branch and unnormalized-value branch",
+            "Learned q_l plus RMSNorm(h_i) -> scores -> depth-axis softmax a_l,i",
+            "Original h_i plus corresponding a_l,i -> weighted sum -> current module input",
+            "Full/block candidates differ; neither branch is token-axis KV attention"
+          ],
+          "simplifications": [
+            "Matches the page's conceptual formula; actual block summaries/local accumulation and fusion order follow implementation",
+            "Key normalization is not silently applied to readout values",
+            "No added ordinary residual sum after the depth read",
+            "The two-vector value result (0.5,3) is a checked teaching example, not model performance"
+          ],
+          "change_kind": "added"
+        },
+        {
+          "id": "mhc-stream-layout",
+          "type": "two-branch stream architecture / semantic HTML mechanism-compare / added",
+          "section": "residual / mHC formula",
+          "label": "mHC：旧流混合与模块写回是并行的数据依赖",
+          "objects_and_arrows": [
+            "X_l[n,d] -> res mixing branch and pre/module/post branch",
+            "H_res[n,n]X_l -> old-stream output[n,d]",
+            "H_pre[1,n]X_l -> F input/output[1,d] -> H_post[n,1] -> module writeback[n,d]",
+            "Two matching [n,d] outputs -> streamwise addition -> X_l+1",
+            "Sinkhorn constraint -> res matrix only, not whole nonlinear network"
+          ],
+          "simplifications": [
+            "Single-token row-oriented shape convention from the unchanged formula",
+            "Internal Norm, mapping prediction, and fused kernels omitted",
+            "Parallel denotes data dependency, not GPU scheduling or guaranteed overlap",
+            "Finite Sinkhorn is approximate; Single-Pass mapping reuse and 20d-to-10d traffic remain separate engineering facts"
+          ],
+          "change_kind": "added"
+        },
+        {
+          "id": "recurrent-core-loop",
+          "type": "shared-core chain with explicit conditional loop / semantic HTML mechanism-chain / added",
+          "section": "depth / recurrent-depth",
+          "label": "递归深度：重复执行同一个 core，再做词表读出",
+          "objects_and_arrows": [
+            "x -> Pre -> initial latent h(0)",
+            "Current latent plus model-defined input injection -> same Core_theta -> next latent",
+            "Iteration count < K -> return next latent to Core_theta; complete K -> Post",
+            "Post(h(K)) -> logits; AR next-token loop is a separate axis"
+          ],
+          "simplifications": [
+            "Fixed K from the conceptual formula, not an implemented adaptive stopping rule",
+            "Shared parameters, not K copies of weights",
+            "Latent iterations need not emit CoT text; actual cache/injection/Norm layout omitted",
+            "Scalar 1,1.5,1.75 convergence example checked but not evidence of Huginn quality or speed"
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "architecture-inference",
+      "id": "llm-frontier-2026",
+      "source": "content/posts/llm-frontier-2026/index.html",
+      "changed": false,
+      "sha256_before": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
+      "sha256_after": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
+      "examined": [
+        {
+          "anchor": "frontier-evidence-bridge",
+          "judgment": "The reading bridge and existing paper/version -> mechanism -> evidence -> teaching chapter chain are appropriate for a tracker, not a core architecture derivation. It explicitly limits the snapshot and avoids claiming full current fact revalidation."
+        },
+        {
+          "anchor": "models",
+          "judgment": "Change-position table distinguishes post-training, attention/state, expert capacity, and precision/decoding. Date-based entries and parameter/license snapshots are preserved; no architecture inferred from headline metrics."
+        },
+        {
+          "anchor": "arch",
+          "judgment": "Recurrent depth versus CoT and unconfirmed GPT loop architecture are separately explained with source-linked deep derivations. Added the concrete core-loop diagram at research-architecture-training instead of duplicating it in the rolling tracker."
+        },
+        {
+          "anchor": "optimizer",
+          "judgment": "Core polar-direction, parameter-group, and historical speedrun boundaries are clear; optimizer main chapter owns the full derivation. No new optimizer graph or historical metric change."
+        },
+        {
+          "anchor": "opd",
+          "judgment": "The two teacher-interface alternatives are already a table with separate costs and no sequential implication. No duplicate architecture diagram needed."
+        },
+        {
+          "anchor": "bench",
+          "judgment": "Historical task/trial counts and newer fixed evidence are labeled differently; retained unchanged, without a new live-count claim."
+        }
+      ],
+      "reason": "Tracker role and existing evidence chain are sufficient; preserved every AUTO:INSERT marker, original date, metric, disclosure label, and archive/source link. Unchanged SHA verified; no fresh web research or browser test claimed.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "transformer-decoder-flow",
+      "source": "content/posts/transformer-decoder-flow/index.html",
+      "changed": false,
+      "sha256_before": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
+      "sha256_after": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
+      "examined": [
+        {
+          "anchor": "training-forward",
+          "judgment": "Complete IDs -> embedding/Norm -> QKV/RoPE -> causal attention -> two residuals/SwiGLU -> head/shift/CE derivation and the concrete checkpoint diagram are already the core learning path. Preserved all intermediate tensors rather than replacing with another summary."
+        },
+        {
+          "anchor": "numerical-forward",
+          "judgment": "The full two-token calculation carries attention weights, residual vectors, second Norm, SwiGLU, head logits, probabilities, and separate EOS supervision. It is more informative than an additional diagram and remains unchanged."
+        },
+        {
+          "anchor": "decode-forward",
+          "judgment": "Prefill/decode table explicitly distinguishes emitted token3 from processed/cached prefix S=3 and later S=4/5. It already exposes the central runtime state transition; speculative cache trace references this invariant."
+        },
+        {
+          "anchor": "cache",
+          "judgment": "Two-token incremental mask, logical RoPE offset, and K/V shapes/byte examples distinguish past and current state. No duplicated cache architecture added."
+        },
+        {
+          "anchor": "code",
+          "judgment": "Full PyTorch implementation and its assertions are retained byte-for-byte. Read the code, but did not execute it during T1 and do not claim model/cache-equivalence tests."
+        }
+      ],
+      "reason": "Sufficient complete forward diagrams and state/shape tables; no change to this explicitly protected worked example or original download. Unchanged SHA verified.",
+      "diagrams": []
+    },
+    {
+      "module": "architecture-inference",
+      "id": "llm-interview-bank",
+      "source": "content/posts/llm-interview-bank/index.html",
+      "changed": false,
+      "sha256_before": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "sha256_after": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "examined": [
+        {
+          "anchor": "sec-overview",
+          "judgment": "Existing define-object -> explain-mechanism -> counterexample -> experiment chain matches the retrieval/short-answer role. Preserved question search, expand controls, and original-question download."
+        },
+        {
+          "anchor": "sec-llm",
+          "judgment": "Attention/GQA/RoPE/Norm/SwiGLU/SSM answers specify axes and redirect full derivations to main chapters. Inserting all architecture figures here would duplicate teaching and clutter folded cards."
+        },
+        {
+          "anchor": "sec-infra",
+          "judgment": "KV allocation/reuse/scheduling, PD, quantization, and exact speculative correction are separated and linked to serving. New page-ownership and parallel-domain diagrams belong at those main teaching sections."
+        },
+        {
+          "anchor": "code-attention",
+          "judgment": "The teaching GQA repeat and fully-masked-query check are explicit; kernel broadcasting is not confused with persistent cache duplication. Code unchanged and not executed during T1."
+        },
+        {
+          "anchor": "code-online",
+          "judgment": "Online softmax state and MoE assignment are briefly restated with implementation caveats; full numeric cases remain in architecture chapters. No duplicate short flow added."
+        },
+        {
+          "anchor": "sec-frontier",
+          "judgment": "Open questions distinguish author results, own arithmetic, actual reproduction, and unknown metrics. No fabricated coverage or performance claims introduced."
+        }
+      ],
+      "reason": "Kept sufficient short-answer workflow and main-chapter pointers, avoiding duplicate graphs in a searchable reference. Unchanged SHA verified; no UI interaction or code execution claimed.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "my-work-protagent",
+      "source": "content/posts/my-work-protagent/index.md",
+      "changed": false,
+      "sha256_before": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "sha256_after": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "examined": [
+        {
+          "anchor": "#work-knowledge",
+          "judgment": "The SVG already separates assistant actions, real tool execution, returned observations and the local-reward/return feedback path."
+        },
+        {
+          "anchor": "#work-example",
+          "judgment": "The repeated-call table distinguishes step return from episode return and explicitly keeps raw return separate from whitening, masking and clipping."
+        },
+        {
+          "anchor": "#work-review",
+          "judgment": "The evidence table distinguishes protocol success, biological correctness and reproducibility; another generic training loop would repeat the existing figure."
+        }
+      ],
+      "reason": "Existing tool-loop diagram and complete credit example are sufficient. Reviewed explanation structure, not all historical performance results or remote runs.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "my-work-harbor",
+      "source": "content/posts/my-work-harbor/index.md",
+      "changed": false,
+      "sha256_before": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "sha256_after": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "examined": [
+        {
+          "anchor": "#work-knowledge",
+          "judgment": "The existing two-layer SVG shows public fixture/instruction, isolated solver, frozen answer and private calibration/verifier."
+        },
+        {
+          "anchor": "#work-example",
+          "judgment": "The complete-path union formula and mixed-vector example explain why per-field envelopes are insufficient; the detailed report is the appropriate place for a supporting comparison diagram."
+        },
+        {
+          "anchor": "#work-review",
+          "judgment": "The quality layers distinguish production delivery, blind evaluation and hardening/training effects; no new inventory or difficulty claims are needed."
+        }
+      ],
+      "reason": "The public/private handoff already has a diagram. Keep this concise summary unchanged and add the complete-path visual only in the detailed report.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "my-work-protagent-full",
+      "source": "content/posts/my-work-protagent/full-report.html",
+      "changed": false,
+      "sha256_before": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "sha256_after": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "examined": [
+        {
+          "anchor": "#scope",
+          "judgment": "The introduction distinguishes closed-loop coverage success, PFUA recall and decoding conditions; this review does not revalidate the historical score cards."
+        },
+        {
+          "anchor": "#setting",
+          "judgment": "The training/evaluation SVG and h_t/a_t equations already identify input, real observation, online RL, frozen checkpoint and separate evaluation."
+        },
+        {
+          "anchor": "#reward",
+          "judgment": "The Step/Episode comparison SVG makes future-only return visible and distinguishes policy tokens from observations."
+        },
+        {
+          "anchor": "#deep-dive",
+          "judgment": "The four-arm layout, raw-return example and traj_id/step code path explain return normalization versus subsequent advantage processing."
+        }
+      ],
+      "reason": "Reviewed outline, introduction and key mechanism/evidence sections. Existing diagrams and worked returns are sufficient; did not recheck all historical metrics, seeds, thresholds or remote training evidence.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "my-work-harbor-full",
+      "source": "content/posts/my-work-harbor/full-report.html",
+      "changed": true,
+      "sha256_before": "9cd38f47051c7e86dceb560b5f551ef94c2caf70e4ea3225449b4c6d7e5c5b98",
+      "sha256_after": "959915738859741a90a4306582d6162025e9a9da464348d33d1bd0d56778cd39",
+      "examined": [
+        {
+          "anchor": "#problem",
+          "judgment": "The introduction explicitly preserves historical production/cost claims and separates package checks from scientific quality and hardening."
+        },
+        {
+          "anchor": "#roles",
+          "judgment": "Role descriptions identify public solver resources, hidden tests/solution/authoring and artifact-based handoff; the existing pipeline figure covers the production sequence."
+        },
+        {
+          "anchor": "#joint-path",
+          "judgment": "The acceptance-domain union is central but purely textual; compare complete A and B vectors against the mixed vector without drawing A then B as sequential requirements."
+        }
+      ],
+      "reason": "Add a branching comparison beside the complete-path formula and original example. Leave the report's historical figures, statistics, sources and existing pipeline SVG intact; no full historical metric recheck.",
+      "diagrams": [
+        {
+          "id": "joint-path-map",
+          "type": "branching-comparison",
+          "section": "#joint-path",
+          "label": "完整路径接受域：允许 A 或 B，不允许逐字段拼接 A 与 B",
+          "objects_and_arrows": [
+            "Frozen full submission branches into candidate examples.",
+            "(1,10) -> complete path A acceptance.",
+            "(2,20) -> complete path B acceptance.",
+            "(1,20) -> mixed-path mismatch -> rejection."
+          ],
+          "simplifications": [
+            "Reuse the existing discrete A/B example, not a new oracle or tolerance.",
+            "Real acceptance domains still require jointly calibrated invariants and do not exhaust all valid scientific methods."
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "training-data",
+      "id": "llm-posttraining",
+      "source": "content/series/llm-posttraining/index.html",
+      "changed": false,
+      "sha256_before": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "sha256_after": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "examined": [
+        {
+          "anchor": "#overview",
+          "judgment": "The overview loop distinguishes reliable initialization, environment exploration, RL/OPD updates and independent evaluation; its caption explicitly permits cycles."
+        },
+        {
+          "anchor": "#read",
+          "judgment": "Reading guidance connects the full GRPO example with task cases and frontier methods rather than duplicating chapter mechanisms."
+        },
+        {
+          "anchor": "#findings",
+          "judgment": "State, feedback, system and evidence boundaries are already enumerated; detailed new diagrams belong to their authoritative chapters."
+        }
+      ],
+      "reason": "The course introduction is already concise and adequately visualized. Preserve assembly markers and shared source numbering.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "posttraining-supervision",
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "changed": false,
+      "sha256_before": "1d5189256dd5b811190995191897a4a010f207a466c7ecd8aee41e16a77b5186",
+      "sha256_after": "1d5189256dd5b811190995191897a4a010f207a466c7ecd8aee41e16a77b5186",
+      "examined": [
+        {
+          "anchor": "#sft-objective",
+          "judgment": "The trace-SFT chain and role-mask grid distinguish context from direct CE targets and explain that mask=0 does not detach representations."
+        },
+        {
+          "anchor": "#recovery",
+          "judgment": "The empty-input recovery table preserves failed history as context while supervising verified teacher recovery; no extra generic recovery flow is needed."
+        },
+        {
+          "anchor": "#dpo-full-example",
+          "judgment": "The two-token chosen/rejected example includes frozen reference, summed response log-prob, loss, chain-rule update and an existing complete gradient chain."
+        },
+        {
+          "anchor": "#rejection",
+          "judgment": "Candidate search, independent validation, coverage filtering and static SFT already have a diagram and an easy/hard selection-bias example."
+        }
+      ],
+      "reason": "Existing diagrams and full examples cover the important supervision and preference boundaries. No duplicate DPO or SFT diagram.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "changed": true,
+      "sha256_before": "7358d7e9adf14dcd821acc72336e397c932a6de8a1b46c3b5efadc28bb3336c0",
+      "sha256_after": "3b2f71d2979d3f781e4b69292b1be821ab27e6923a303b52cb035c7d2814a7fa",
+      "examined": [
+        {
+          "anchor": "#ppo-gae",
+          "judgment": "The existing PPO chain and terminal GAE recursion explain actor/critic roles but not the independent collection-boundary flags."
+        },
+        {
+          "anchor": "#gae-boundary-example",
+          "judgment": "The complete paused-versus-terminal example already specifies b/c and the advantage sign reversal; add a three-way boundary comparison beside it."
+        },
+        {
+          "anchor": "#grpo-full-example",
+          "judgment": "The complete group reward/advantage/ratio/clip/loss example already has its own chain and remains untouched."
+        },
+        {
+          "anchor": "#normalization",
+          "judgment": "The options diagram distinguishes alternative aggregation denominators, so another serial training flow would add no explanation."
+        }
+      ],
+      "reason": "Make value bootstrap and next-advantage continuation visually independent without replacing any formula, table or numerical example.",
+      "diagrams": [
+        {
+          "id": "gae-boundary-map",
+          "type": "branching",
+          "section": "#gae-boundary-example",
+          "label": "GAE 的两道边界：下一 value 与下一优势分别接通",
+          "objects_and_arrows": [
+            "Current decision -> boundary classification.",
+            "Inside segment b=1,c=1: next value -> TD residual; next advantage -> GAE.",
+            "Collection pause b=1,c=0: valid next value -> bootstrap, advantage continuation blocked.",
+            "True terminal b=0,c=0: both future paths blocked."
+          ],
+          "simplifications": [
+            "The pause branch assumes segments are not concatenated, matching the existing table.",
+            "b/c are teaching switches, not framework field names.",
+            "Task-defined failure termination also cuts bootstrap; b=1 requires a valid next value."
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "training-data",
+      "id": "posttraining-opd",
+      "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
+      "changed": false,
+      "sha256_before": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "sha256_after": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "examined": [
+        {
+          "anchor": "#full-vocabulary",
+          "judgment": "The existing diagram, softmax derivation and two-candidate example distinguish student probabilities from no-grad teacher probabilities."
+        },
+        {
+          "anchor": "#sampled-gradient",
+          "judgment": "The detached distillation-advantage chain makes score-function weighting explicit; it does not confuse a KL value estimator with its gradient."
+        },
+        {
+          "anchor": "#historical-teachers",
+          "judgment": "HCN selection and LAD filtering already have a dedicated diagram with student-state/top-k limitations."
+        },
+        {
+          "anchor": "#mopd2",
+          "judgment": "The prefix-source/continuation flow and caption separate demonstration history from newly sampled student targets and full-student evaluation."
+        },
+        {
+          "anchor": "#guided-intervention",
+          "judgment": "Guided-OPD and TISD are separately described as different intervention routes, with student-only and budget boundaries; they need not become one generic sequence."
+        }
+      ],
+      "reason": "Existing full-vocabulary, sampled-gradient, HCN, multi-prefix and retention diagrams explain the main objects. Preserve all equations and intervention evidence.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "posttraining-rewards",
+      "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
+      "changed": false,
+      "sha256_before": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "sha256_after": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "examined": [
+        {
+          "anchor": "#environment",
+          "judgment": "The environment/verifier flow and failure table distinguish task termination from infrastructure failure; GAE flag visualization belongs in the algorithm chapter."
+        },
+        {
+          "anchor": "#signal-types",
+          "judgment": "The table clearly distinguishes outcome, PRM, value/Q, advantage and teacher feedback by prediction object."
+        },
+        {
+          "anchor": "#long-credit",
+          "judgment": "The error/test/recovery chain and Q-V example state that fine credit needs extra evidence, not a single success trajectory."
+        },
+        {
+          "anchor": "#gar",
+          "judgment": "The GAR example separates positive-advantage quality reweighting from independent pass/fail, with cap/recentering caveats."
+        }
+      ],
+      "reason": "Existing diagram and comparisons already cover environment feedback and credit distinctions. Do not replot historical RLDS metrics or create unsupported causal arrows.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "posttraining-frameworks",
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "changed": true,
+      "sha256_before": "aa695475afb465f0004d1745aa9bbd819d220f991760ee1ce8fe2b8a13bf9b12",
+      "sha256_after": "9722dd3f685411b5895121dd841bedf1798651af6d5c855107fdc77c3466e494",
+      "examined": [
+        {
+          "anchor": "#roles",
+          "judgment": "The existing service loop covers rollout, environment, teacher/critic/reward and trainer; no duplicate service map."
+        },
+        {
+          "anchor": "#three-policy",
+          "judgment": "Behavior, old, current and reference are logically distinct; the factorization is correct for the same action and history."
+        },
+        {
+          "anchor": "#async-full-example",
+          "judgment": "The v7/v8 rollout and v8/v9 trainer handoff is numerically complete but needs two visible responsibility lanes; retain every example probability and operation order."
+        },
+        {
+          "anchor": "#partial-rollout",
+          "judgment": "The existing pause/resume chain states that KV is weight-dependent and that exact per-call histories matter."
+        }
+      ],
+      "reason": "Add a layered handoff beside the existing ratio table. Keep numerical calculations, framework configurations, reference role and cache caveats unchanged.",
+      "diagrams": [
+        {
+          "id": "async-handoff-map",
+          "type": "layered-handoff",
+          "section": "#async-full-example",
+          "label": "同一任务，两条版本线：采样历史延续，训练快照另行固定",
+          "objects_and_arrows": [
+            "Rollout v7 action a0 -> tool wait/real observation -> v8 re-prefill -> action a1.",
+            "Per-segment behavior records retain mu(a0)=0.20 and mu(a1)=0.50.",
+            "Trainer receives exact tokens/prefixes -> old v8 and current v9 recomputation.",
+            "Same-action/history lanes join -> current/old times old/mu -> selected clipping/filtering/aggregation.",
+            "Trainer weight publication -> rollout, not reference -> behavior denominator."
+          ],
+          "simplifications": [
+            "Lanes show responsibilities, not measured wall-clock timing.",
+            "All probabilities are existing teaching values, not new measurements.",
+            "No automatic old-KV reuse; fixed-history probability algebra does not correct missing domains or completion-order bias."
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "training-data",
+      "id": "posttraining-cases",
+      "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
+      "changed": false,
+      "sha256_before": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "sha256_after": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "examined": [
+        {
+          "anchor": "#code-case",
+          "judgment": "The failure-prefix options diagram already branches into recovery SFT, result RL and OPD rather than chaining alternative goals."
+        },
+        {
+          "anchor": "#science-case",
+          "judgment": "The invariant table distinguishes ID alignment, design rank, contrast direction, multiple testing and provenance without inventing biological results."
+        },
+        {
+          "anchor": "#gui-case",
+          "judgment": "The observation/action/state table distinguishes UI save from persistent-state verification and preserves task constraints."
+        },
+        {
+          "anchor": "#trajectory",
+          "judgment": "The trajectory chain and design_only schema explicitly distinguish empty design fields from collected logs and retain per-call versions."
+        }
+      ],
+      "reason": "Case-specific examples and existing branching/trajectory diagrams already connect inputs, feedback and training targets. Do not diagram the unexecuted matrix as completed experiments.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "training-methods-systems",
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "changed": true,
+      "sha256_before": "cbae0ef429b1a1d6d20ec6fdbf5156764e3b0e1312f92ba19724459e2021b01d",
+      "sha256_after": "34eafc818650fcb52194bf0ca476c9d52b24f12609e60c72d07851f913157480",
+      "examined": [
+        {
+          "anchor": "#peft",
+          "judgment": "The LoRA equation is additive but the existing four-card chain visually serializes W0 and A/B; preserve all node text and change its topology to split/merge."
+        },
+        {
+          "anchor": "#adamw-derivation",
+          "judgment": "The SGD/Momentum/Adam/AdamW relationship flow and full bias-correction derivation are already sufficient."
+        },
+        {
+          "anchor": "#muon-mechanism",
+          "judgment": "The polar example correctly acts on update direction, not weight orthogonality; industrial logical-matrix ownership and cost caveats remain."
+        },
+        {
+          "anchor": "#parallel",
+          "judgment": "The table lists parallel axes but lacks a spatial ownership/communication comparison; add DDP, TP, PP and ZeRO/FSDP responsibility views."
+        },
+        {
+          "anchor": "#state-sharding",
+          "judgment": "Existing N=1B,D=4 capacity table and gather/reduce-scatter chain distinguish persistent from peak memory; keep them intact."
+        }
+      ],
+      "reason": "Correct one misleading existing topology and add an ownership comparison. Keep LoRA formulas/examples, optimizer derivations, capacity numbers and process-group code unchanged.",
+      "diagrams": [
+        {
+          "id": "lora-branch-map",
+          "type": "existing-split-merge-refinement",
+          "section": "#peft",
+          "label": "LoRA：一条冻结路径和一条可训练增量相加",
+          "objects_and_arrows": [
+            "Same x branches to frozen W0x and trainable scaled B(Ax).",
+            "Branch outputs merge by addition -> downstream loss.",
+            "Both branches contribute input gradients; W0 receives no parameter update."
+          ],
+          "simplifications": [
+            "Reuses every original node label and description.",
+            "Vanilla LoRA; dropout, quantization, DoRA and alternate scaling remain outside this diagram."
+          ],
+          "change_kind": "revised"
+        },
+        {
+          "id": "parallel-ownership-map",
+          "type": "layered-ownership-comparison",
+          "section": "#parallel",
+          "label": "并行布局：谁持有什么，谁与谁交换什么",
+          "objects_and_arrows": [
+            "DDP: different data -> full model replicas; matching gradients <-> all-reduce.",
+            "TP: same batch -> layer matrix/head shards in parallel -> combined layer result; layout-dependent collectives.",
+            "PP: microbatch -> early layers -> later layers -> loss; activations forward, activation gradients back to previous stage.",
+            "ZeRO/FSDP: matching DP model positions share state ownership; parameter shards -> on-demand gather, gradients -> reduce-scatter -> owning-rank update."
+          ],
+          "simplifications": [
+            "Four views are composable layout dimensions, not sequential stages.",
+            "For TP/PP combinations, DP sharding groups align stage and tensor position.",
+            "Omits CP, EP, offload, hybrid groups and overlap; no concrete rank count or new capacity measurement.",
+            "ZeRO stages state optimizer, then gradient, then parameter partitioning; actual communication and buffers remain implementation-specific."
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "training-data",
+      "id": "scientific-task-family",
+      "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
+      "changed": false,
+      "sha256_before": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "sha256_after": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "examined": [
+        {
+          "anchor": "#provenance",
+          "judgment": "The source-layer table and existing figure distinguish raw reads, FPKM/answer-bearing audit materials and candidate airway count fixture; version conflict remains explicit."
+        },
+        {
+          "anchor": "#statistics",
+          "judgment": "The paired design matrix, offset/contrast example and four-test BH example already connect inputs to statistical outputs."
+        },
+        {
+          "anchor": "#verifier",
+          "judgment": "The four-layer verifier diagram and method-routing pseudocode distinguish schema/invariants from private method-specific recomputation and anti-leakage checks."
+        },
+        {
+          "anchor": "#splits",
+          "judgment": "Research/donor/source lineage is the independence unit, not prompt or gene; there are no fabricated split counts."
+        }
+      ],
+      "reason": "Existing provenance and verification diagrams plus complete statistical examples are sufficient. Do not duplicate the public/private handoff or claim that fixtures/scorers were executed.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "cluster-training-evaluation",
+      "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
+      "changed": false,
+      "sha256_before": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "sha256_after": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "examined": [
+        {
+          "anchor": "#design",
+          "judgment": "The experiment-axis table keeps credit, sampling, teacher supervision and inference budget as independent comparisons."
+        },
+        {
+          "anchor": "#resources",
+          "judgment": "The resource figure and role table already distinguish trainer, rollout, CPU verifier and persistence, with 128/1024 H100 explicitly planned rather than measured."
+        },
+        {
+          "anchor": "#measurement",
+          "judgment": "The paired A/B example and research-group resampling diagram preserve dependencies and separate training seeds from evaluation repeats."
+        },
+        {
+          "anchor": "#failure",
+          "judgment": "The failure table routes specification, semantics, verifier, infrastructure, hacking and budget errors without equating all failures with policy quality."
+        }
+      ],
+      "reason": "The chapter already visualizes resource and group-evaluation mechanisms. New parallel ownership explanation belongs in training-methods-systems, not a second cluster-plan diagram.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "agent-data-benchmarks",
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "changed": false,
+      "sha256_before": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "sha256_after": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "examined": [
+        {
+          "anchor": "#overview",
+          "judgment": "Introduction connects task production, scientific operations, trajectory screening and independent measurement with explicit design-only boundaries."
+        },
+        {
+          "anchor": "#boundaries",
+          "judgment": "The object table and adjacent mechanism chain separate sources/environments, tasks/verifiers, repeated episodes and held-out benchmarks."
+        },
+        {
+          "anchor": "#mastery",
+          "judgment": "The learning outcomes point to contracts, statistical examples, paired evaluation and failure attribution; no additional overview loop is needed."
+        }
+      ],
+      "reason": "Keep the concise course entrance and course assembly marker unchanged; detailed additions remain in assigned source chapters.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "agent-task-synthesis",
+      "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
+      "changed": true,
+      "sha256_before": "17655227a45a0140d03dbf6690dd17d9df30329e2876b3bc0519af4fb08ae4e7",
+      "sha256_after": "6f40a994b7dbbf4c480797340a4eb6cd7ff53363bea1076aaeaecbe771793785",
+      "examined": [
+        {
+          "anchor": "#objects",
+          "judgment": "Existing synthesis chain and research SVG already cover sources, executable environments, verification, calibration and training assets."
+        },
+        {
+          "anchor": "#contract",
+          "judgment": "The directory/visibility and calibration table explicitly separates solver-visible assets from private solution/tests and artifact handoff."
+        },
+        {
+          "anchor": "#science",
+          "judgment": "Observable/tolerance/calibration flow and numerical tolerance example are already present; keep them unchanged."
+        },
+        {
+          "anchor": "#admission",
+          "judgment": "The admission table describes four different destinations but lacks visual branching; crucially online RL must receive resettable tasks and fresh policy attempts, not relabeled old episodes."
+        }
+      ],
+      "reason": "Add a purpose-specific branching handoff before the existing admission table. Preserve status fields and distinguish infrastructure/invalid-task rejection from normal policy failures. T5 visual blocker fix: at 1440px JS/noJS, auto-fit wraps Critic below CPT (3+1) and a downward marker implies CPT -> Critic. Scope hollow-diamond comparison markers to data-admission-map at all widths; preserve auto-fit, the four independent admission contracts, prose, title, IDs, formulas and sources. Independent browser/pixel recheck remains pending.",
+      "visual_revision": {
+        "stage": "T5",
+        "diagram_id": "data-admission-map",
+        "sha256_before_fix": "dbfc072680662adaaf2e0128b0c1b88559c34910e4f86e5f910bbb5379e9825a",
+        "bytes_before_fix": 24579,
+        "before_bytes": "/tmp/my-blogs-diagram-review-20261115/t5-admission-before/content/series/agent-data-benchmarks/s01_task_synthesis.html",
+        "reason": "T5 visual blocker fix: at 1440px JS/noJS, auto-fit wraps Critic below CPT (3+1) and a downward marker implies CPT -> Critic. Scope hollow-diamond comparison markers to data-admission-map at all widths; preserve auto-fit, the four independent admission contracts, prose, title, IDs, formulas and sources. Independent browser/pixel recheck remains pending.",
+        "browser_pixel_acceptance": "pending-independent-verifier"
+      },
+      "diagrams": [
+        {
+          "id": "data-admission-map",
+          "type": "branching-data-handoff",
+          "section": "#admission",
+          "label": "数据交接是按用途分流，不是把同一日志依次喂给四种训练",
+          "objects_and_arrows": [
+            "Task package + controlled episodes + inherited source split -> purpose-specific admission.",
+            "CPT: source/format audit -> document/structure/trace inputs with declared target masks.",
+            "SFT: replayable demonstration -> action screening -> assistant targets; failed history remains context.",
+            "Online RL: resettable task/verifier -> fresh current-policy attempt -> reward/advantage/action update.",
+            "Critic/preference: auditable outcomes/comparable candidates -> outcome/pair/step labels."
+          ],
+          "simplifications": [
+            "Old episodes support auditing and design; reward metadata does not make them on-policy.",
+            "Four destinations may be combined but are not a mandatory sequence.",
+            "Invalid tasks/infrastructure failures are not ordinary policy-negative labels.",
+            "Fixed benchmarks stay held out and derived samples inherit source-group splits."
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "training-data",
+      "id": "agent-benchmark-map",
+      "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
+      "changed": false,
+      "sha256_before": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "sha256_after": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "examined": [
+        {
+          "anchor": "#map",
+          "judgment": "The introductory diagram ties scores to task, environment, protocol, execution and aggregation rather than model-only ranking."
+        },
+        {
+          "anchor": "#metrics",
+          "judgment": "IID pass@k/pass^k and finite-n combination examples are separate; the five-trial diagram distinguishes existence, actual selector success and mean pass@1."
+        },
+        {
+          "anchor": "#terminal",
+          "judgment": "The version/benchmark sections distinguish measurement revisions and different scientific/project outputs; no need to replot historical registry numbers."
+        },
+        {
+          "anchor": "#selection",
+          "judgment": "The final selection protocol is explicitly unexecuted, with complementary held-out capabilities and fixed budgets."
+        }
+      ],
+      "reason": "The important measurement explanation already has worked examples and diagrams. Preserve version evidence and do not create a generic benchmark flow.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "research-agent-data",
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "changed": true,
+      "sha256_before": "c8d63962b3cc10cde956f2744fa098d878332f5dbc9a3c11f8516bcd7264bb8e",
+      "sha256_after": "211e586ffeaa1a67c534043b2eb8b0678bbe4b0e0bec6d5cff7015daec50fab8",
+      "examined": [
+        {
+          "anchor": "#synthesis",
+          "judgment": "The existing source/environment/calibration/publication flow and four-route table already cover synthesis mechanisms."
+        },
+        {
+          "anchor": "#harbor",
+          "judgment": "The CSV-versus-temporary-SQLite example identifies a real handoff distinction but lacks a diagram; only declared artifacts travel to a separate verifier."
+        },
+        {
+          "anchor": "#parity",
+          "judgment": "Adapter parity requires same-state/action replay and error classification, not just format unification; preserve the existing evidence and version caveats."
+        },
+        {
+          "anchor": "#audit",
+          "judgment": "Request deduplication and grader-entry audit fields distinguish billing and scoring evidence; do not add cost measurements."
+        }
+      ],
+      "reason": "Add a branching transfer-boundary diagram beside the existing migration example. Do not alter artifact field names, paths, old numbers or sources.",
+      "diagrams": [
+        {
+          "id": "artifact-handoff-map",
+          "type": "branching-boundary-handoff",
+          "section": "#harbor",
+          "label": "Separate verifier 的交接边界：传声明产物，不传整台运行环境",
+          "objects_and_arrows": [
+            "Solver state with CSV and temporary SQLite changes -> declared/undeclared paths.",
+            "Declared CSV -> collection -> restoration/read in clean verifier.",
+            "Undeclared SQLite/process/session/temporary state -> no automatic transfer.",
+            "Required database result -> explicitly consistent snapshot/export -> independent replay verification."
+          ],
+          "simplifications": [
+            "Separate mode only; shared mode is an alternative contract, not the next step.",
+            "Transferred artifacts are not automatically correct.",
+            "No new schema keys or universal database-snapshot procedure; actual paths/configuration remain Harbor-version-specific."
+          ],
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "training-data",
+      "id": "research-agentic-rl",
+      "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
+      "changed": false,
+      "sha256_before": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "sha256_after": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "examined": [
+        {
+          "anchor": "#map",
+          "judgment": "The four-axis map and existing chain make advantage, ratio, aggregation and admission distinct design decisions."
+        },
+        {
+          "anchor": "#credit",
+          "judgment": "The credit diagram and method table state the extra grouping/knowledge/value evidence required and distinguish the two SAPO names."
+        },
+        {
+          "anchor": "#heterogeneity",
+          "judgment": "The equal-dispatch effective-group example explains curriculum shift without treating normalization as new information."
+        },
+        {
+          "anchor": "#asynchrony",
+          "judgment": "Completion-order bias, policy age and same-version numerical mismatch are separate; detailed v7/v8 handoff belongs in the authoritative framework chapter."
+        }
+      ],
+      "reason": "Keep this research comparison concise and avoid duplicating the new algorithm/system teaching diagrams.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "llm-training-lifecycle",
+      "source": "content/series/llm-training-lifecycle/index.html",
+      "changed": false,
+      "sha256_before": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "sha256_after": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "examined": [
+        {
+          "anchor": "#overview",
+          "judgment": "The existing learning sequence explicitly allows RL-Zero, RL-to-SFT loops and expert distillation; it does not assert a universal production sequence."
+        },
+        {
+          "anchor": "#training-map",
+          "judgment": "Stage versus technology is a two-axis table with optimizer, scaling and distributed ownership references."
+        },
+        {
+          "anchor": "#artifacts",
+          "judgment": "The checkpoint/data/target/protocol handoff table explains what each stage delivers and what must be checked next."
+        }
+      ],
+      "reason": "The stage introduction and cross-axis knowledge map already serve the course; do not add a second generic lifecycle chart.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "llm-training-pretraining",
+      "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
+      "changed": false,
+      "sha256_before": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
+      "sha256_after": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
+      "examined": [
+        {
+          "anchor": "#packing-full-example",
+          "judgment": "The visible-history matrix and shifted-label table already show that attention isolation and loss-mask identity are separate."
+        },
+        {
+          "anchor": "#compute-derivation",
+          "judgment": "Forward/backward 2NT/4NT and exclusions explain the 6NT approximation without presenting it as measured total cost."
+        },
+        {
+          "anchor": "#scaling-ladder",
+          "judgment": "The existing ladder diagram carries validation conditions through correctness, recipes, scale/time grid and held-out-scale prediction."
+        },
+        {
+          "anchor": "#wsd-schedule",
+          "judgment": "The WSD diagram explicitly describes saved branch points, continuing stable trunk and completed decay endpoints, with branch costs retained."
+        }
+      ],
+      "reason": "Existing complete packing, scaling-ladder and WSD explanations are sufficient. No duplicate flow and no change to formulas, matrix entries, examples or schedules.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "llm-training-midtraining",
+      "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
+      "changed": false,
+      "sha256_before": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "sha256_after": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "examined": [
+        {
+          "anchor": "#recipe",
+          "judgment": "The two-branch same-SFT comparison and mixture table distinguish initialization effects, unique pool and actual input/target budgets."
+        },
+        {
+          "anchor": "#data",
+          "judgment": "The CSV document/repo/change/trace examples and mask grid identify context versus assistant targets; the pseudocode separately aligns attention boundaries and label shift."
+        },
+        {
+          "anchor": "#mixture",
+          "judgment": "The 1000-token example and q_k formula already show why input share is not target share or bucket-loss weight."
+        },
+        {
+          "anchor": "#science-bridge",
+          "judgment": "Scientific documents, tool stdout, artifacts and private references retain different roles; task-family provenance is inherited."
+        }
+      ],
+      "reason": "Existing comparison and role-mask diagrams cover the key midtraining mechanisms. Do not mechanically visualize every historical recipe row.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "llm-training-sft-rft",
+      "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
+      "changed": false,
+      "sha256_before": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "sha256_after": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "examined": [
+        {
+          "anchor": "#sft",
+          "judgment": "The observation-to-attention-to-action-loss chain and Jacobian explain conditional gradient flow despite observation mask=0."
+        },
+        {
+          "anchor": "#quality",
+          "judgment": "The admission rules distinguish keeping failed context from supervising bad actions and inherit source-family splits."
+        },
+        {
+          "anchor": "#rejection",
+          "judgment": "The existing rejection-SFT flow and easy/hard coverage example separate selected-data success from deployed-policy success."
+        },
+        {
+          "anchor": "#handoff",
+          "judgment": "Protocol errors, all-failure and all-success groups have distinct readiness judgments; the configuration is explicitly teaching-only."
+        }
+      ],
+      "reason": "This stage chapter already has the necessary role-gradient and rejection diagrams; retain unique detailed DPO/OPD teaching in posttraining.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "llm-training-rl-evaluation",
+      "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
+      "changed": false,
+      "sha256_before": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "sha256_after": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "examined": [
+        {
+          "anchor": "#loop",
+          "judgment": "The existing training/frozen-evaluation chain and caption keep training feedback separate from final independent tests."
+        },
+        {
+          "anchor": "#reward",
+          "judgment": "The CSV example checks legal zero values, content, path and unchanged input rather than rewarding file existence."
+        },
+        {
+          "anchor": "#systems",
+          "judgment": "The record table preserves behavior probabilities, action spans, exact prefixes and raw failure/cost data; detailed async visualization is in the framework chapter."
+        },
+        {
+          "anchor": "#protocol",
+          "judgment": "Paired success transitions, fixed denominators and different seed types are already explicit."
+        }
+      ],
+      "reason": "Stage handoff and independent evaluation already have a focused diagram; no new generic RL feedback loop.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "agentic-rl-guide",
+      "source": "content/posts/agentic-rl-guide/index.html",
+      "changed": false,
+      "sha256_before": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "sha256_after": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "examined": [
+        {
+          "anchor": "#part3",
+          "judgment": "The research-increment chain and symptom/evidence table already connect exploration, state changes, credit and update/evaluation."
+        },
+        {
+          "anchor": "#credit-example",
+          "judgment": "The same-anchor example retains A/B continuation uncertainty and labels the local MC comparison as teaching, not GiGPO's exact formula or causal proof."
+        },
+        {
+          "anchor": "#part5",
+          "judgment": "Teacher intervention positions are compared in a table with student-state/support/cost boundaries; detailed OPD diagrams are linked."
+        },
+        {
+          "anchor": "#part7",
+          "judgment": "Code, GUI and scientific state/action errors are distinguished by scenario rather than forced into one system architecture."
+        }
+      ],
+      "reason": "This reference's mechanism chains and focused comparisons are adequate; avoid duplicating authoritative posttraining diagrams.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "rl-interview-guide",
+      "source": "content/posts/rl-interview-guide/index.html",
+      "changed": false,
+      "sha256_before": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "sha256_after": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "examined": [
+        {
+          "anchor": "#symbols",
+          "judgment": "The symbol table distinguishes behavior/old/current/reference and PRM/value/verifier; compact formulas remain appropriate for quick review."
+        },
+        {
+          "anchor": "#pg-to-ppo",
+          "judgment": "Algorithm cards link to complete authoritative derivations and diagrams instead of repeating them."
+        },
+        {
+          "anchor": "#faq",
+          "judgment": "The async-role and clipping questions already state key counterexamples; a new diagram here would duplicate the main teaching."
+        },
+        {
+          "anchor": "#classic-rl",
+          "judgment": "The DQN terminal example includes the target-network formula and its limitations; no need to expand this folded side topic."
+        }
+      ],
+      "reason": "Keep quick-reference density and links to the full GAE/async teaching. Archived/original versions remain unchanged.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "distributed-training-guide",
+      "source": "content/posts/distributed-training-guide/index.html",
+      "changed": false,
+      "sha256_before": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "sha256_after": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "examined": [
+        {
+          "anchor": "#deepspeed",
+          "judgment": "ZeRO stage ownership, native versus HF auto resolution and save/offload caveats are clear; new conceptual ownership figure belongs in the linked main chapter."
+        },
+        {
+          "anchor": "#fsdp",
+          "judgment": "FSDP1/FSDP2 interfaces and wrap/optimizer construction order remain version-specific, not asserted as identical to ZeRO."
+        },
+        {
+          "anchor": "#megatron",
+          "judgment": "TP/PP/CP/EP and distributed optimizer have distinct responsibilities; fixed process-group and batch examples already explain the implementation boundary."
+        },
+        {
+          "anchor": "#example",
+          "judgment": "The full LoRA/DeepSpeed code preserves label masks and EOS with an explicit unexecuted-GPU warning; do not replace it with a generic flow."
+        }
+      ],
+      "reason": "Keep this implementation reference unchanged and put the DDP/TP/PP/ZeRO comparison in its existing authoritative conceptual owner.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "rl-interview-guide-legacy",
+      "source": "content/archive/rl-interview-guide/index.html",
+      "changed": false,
+      "sha256_before": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "sha256_after": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "examined": [
+        {
+          "anchor": "#symbols",
+          "judgment": "Historical symbol/value SVG remains an original reference, not the current teaching source."
+        },
+        {
+          "anchor": "#pg-to-ppo",
+          "judgment": "The archived REINFORCE/Actor-Critic diagrams and derivation sequence remain preserved."
+        },
+        {
+          "anchor": "#ppo-detail",
+          "judgment": "The historical clip/GAE/training-loop diagrams do not need new boundary flags; current terminal-versus-pause clarification belongs in posttraining-algorithms."
+        }
+      ],
+      "reason": "Archived source is included in coverage but explicitly immutable for this assignment. Review is limited to outline/key teaching diagrams, not endorsement of every historical statement.",
+      "diagrams": []
+    },
+    {
+      "module": "training-data",
+      "id": "harbor-framework-guide",
+      "source": "content/posts/harbor-framework-guide/index.html",
+      "changed": false,
+      "sha256_before": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "sha256_after": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "examined": [
+        {
+          "anchor": "#summary",
+          "judgment": "The introduction separates evaluation projects from recent framework changes; this review is not a new release/leaderboard audit."
+        },
+        {
+          "anchor": "#architecture",
+          "judgment": "The existing Trial SVG covers separate/shared branches, conditional grading and cleanup; the fixed source excerpt confirms the artifact/stop order."
+        },
+        {
+          "anchor": "#verification",
+          "judgment": "The existing permissions/handoff figure and transfer/Worker excerpts distinguish declared artifacts, protected tests/logs and untrusted child execution."
+        },
+        {
+          "anchor": "#trajectory",
+          "judgment": "The existing reuse/regrade/rerun decision diagram separates alternatives and retains failed/old evidence."
+        }
+      ],
+      "reason": "Existing detailed branching execution, permission and reuse diagrams are materially richer than another generic chain. Keep source unchanged; no full historical metric, release-count or benchmark recheck.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "my-work-holon",
+      "source": "content/posts/my-work-holon/index.md",
+      "changed": false,
+      "sha256_before": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "sha256_after": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "examined": [
+        {
+          "anchor": "#work-knowledge",
+          "judgment": "Reviewed the summary outline and representation/routing explanation. Existing holon-route SVG separates token inputs, understanding/generation QKV projections, index restoration and target CE; its caption correctly warns that protein tokens are not always generation-side tokens. The following tensor explanation adds packed-sample isolation, so another architecture diagram would duplicate this coverage."
+        },
+        {
+          "anchor": "#work-example",
+          "judgment": "Reviewed Negative Ladder matched/mismatch definition, endpoint table and DiD calculation, including absolute margin versus smaller decline and the single-training-seed limitation. The full report already supplies the corresponding evidence plot; a second endpoint chart here is unnecessary."
+        },
+        {
+          "anchor": "#work-review",
+          "judgment": "Reviewed the token-share calibration equations, active-path budget, stage handoffs and unresolved-work table. The text layout explicitly separates P2T/T2P/protein-only alternatives and supervision masks; no new sequential diagram is warranted."
+        }
+      ],
+      "reason": "Retained the useful existing MoT SVG, formulas, layouts and result example. Review covered the method summary and its core explanations, not private upstream code execution or independent reproduction of historical experiments.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "my-work-dllm",
+      "source": "content/posts/my-work-dllm/index.md",
+      "changed": false,
+      "sha256_before": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "sha256_after": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "examined": [
+        {
+          "anchor": "#work-knowledge",
+          "judgment": "Reviewed the complete summary outline and objective/scheduling explanations. Existing dllm-order SVG uses three separate panels for AR, Scatter and Jigsaw; it explicitly does not equate schedule with attention mask. No misleading inter-alternative arrows need repair."
+        },
+        {
+          "anchor": "#work-example",
+          "judgment": "Reviewed the two-block a1 query example: xt same-offset cross-block keys allowed; x0 earlier-offset keys allowed; same-offset gold excluded. The table is more exact than a generic chain and preserves the LM1B-versus-structured-backbone boundary."
+        },
+        {
+          "anchor": "#work-review",
+          "judgment": "Reviewed Jigsaw prefix/fixed/multi supervision, ICL/Pathfinding/Sudoku dependencies and LM1B metric distinctions. Existing layouts and framework text chains are sufficient; mixed top-p, SEDD discrepancy and missing Test-PPL evidence remain visible."
+        }
+      ],
+      "reason": "No material diagram gap after reviewing the summary's mechanism, mask example and evidence boundaries. Kept the existing comparison SVG and complete formulas/examples without changing historical results.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "my-work-holon-full",
+      "source": "content/posts/my-work-holon/full-report.html",
+      "changed": false,
+      "sha256_before": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "sha256_after": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "examined": [
+        {
+          "anchor": "#chapter-1",
+          "judgment": "Scanned the headings of all 21 chapters to establish the outline, then read the introduction, reading order, four evidence categories and research-dependency diagram. Its arrows are explicitly not claims that every stage completed acceptance."
+        },
+        {
+          "anchor": "#chapter-2",
+          "judgment": "Read MoT dual routing and shared attention, dense/MoE comparison, parameter-count cautions and the single-layer explanation/diagram at section 2.4. Existing figures identify deterministic modality parameters, packed sample isolation, state shapes and residual/output paths; no duplicate architecture added."
+        },
+        {
+          "anchor": "#holon-loss",
+          "judgment": "Read position/output-space/reducer definitions and the 2-text/8-protein example. Token mean 2.6 versus sum of modality means 4 is already explained; this is an aggregation comparison, not a sequence to turn into a chain."
+        },
+        {
+          "anchor": "#chapter-5",
+          "judgment": "Read the introduction to token-production-adjusted fetch weights, input-share table and calibration handoff restrictions. Target share, fetch probability and observed run are separate; a diagram without the denominator details would be less useful than the equations."
+        },
+        {
+          "anchor": "#chapter-6",
+          "judgment": "Inspected the scaling-ladder mechanism figure and section 6.4 explanation. It separates HP search, architecture/budget sweeps, fitting and CPT transfer, and explicitly differs from the negative-example ladder. Existing diagram retained."
+        },
+        {
+          "anchor": "#chapter-9",
+          "judgment": "Read likelihood versus variant scoring versus generation definitions, length/EOS contracts and the evaluation artifact-chain position. This already distinguishes computed score from sampled output."
+        },
+        {
+          "anchor": "#chapter-12",
+          "judgment": "Read the margin/IG/interference schematic and registered PS8/PSC endpoint comparison, including the rounding note, DiD direction, bootstrap-versus-training-seed boundary and endpoint-plot caption. The plot connects only L0/L3 and does not interpolate missing tiers; retained it."
+        }
+      ],
+      "reason": "Deliberately bounded review: all-chapter outline scan, introduction and selected core mechanism/evidence-diagram positions only. The 20,734-line full report's embedded historical tables, raw excerpts, all later experiments and every scientific fact were NOT individually re-reviewed or reproduced. Useful routing, layer, scaling and Negative Ladder figures already exist; original report and historical statistics remain unchanged.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "my-work-dllm-full",
+      "source": "content/posts/my-work-dllm/full-report.html",
+      "changed": false,
+      "sha256_before": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "sha256_after": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "examined": [
+        {
+          "anchor": "#question",
+          "judgment": "Reviewed the ten-section outline, task/dependency introduction and objectives. Existing explanatory tables distinguish trainability from representability, structured tasks from LM1B and task-specific outcomes."
+        },
+        {
+          "anchor": "#algorithms",
+          "judgment": "Read Scatter/Jigsaw flow figures and nearby side/offset mask formulas, including the xt a1 to xt b1 edge and prohibition on same-offset x0 gold. Separate flow figures already express two alternatives and their own feedback; no generic combined chain needed."
+        },
+        {
+          "anchor": "#theory",
+          "judgment": "Read the posterior/identifiability derivation and original ICL evidence-figure caption; retained full derivation and embedded research image."
+        },
+        {
+          "anchor": "#structured",
+          "judgment": "Read ICL, reverse-dependency Pathfinding and Sudoku explanation/evidence positions, including seed/missing-run limitations. Original figures are evidence, not replaceable teaching placeholders."
+        },
+        {
+          "anchor": "#framework",
+          "judgment": "Reviewed both existing semantic flow figures and framework/config handoffs. They distinguish structured training from Hydra/Lightning LM1B and Test-PPL from sample/external Gen-PPL."
+        },
+        {
+          "anchor": "#audit",
+          "judgment": "Reviewed LM1B sample-protocol and compute sections plus evidence limitations: mixed top-p, requested T versus NFE, missing D3PM cells, SEDD discrepancy and smoke versus full reproduction. No historical statistics changed or revalidated by this review."
+        }
+      ],
+      "reason": "Outline and substantive explanation/figure positions already contain useful algorithm, framework and evidence diagrams. Read HTML explanations with embedded image payloads omitted from terminal display; no browser inspection, image-level remeasurement or new experiments claimed.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "agent-systems",
+      "source": "content/series/agent-systems/index.html",
+      "changed": false,
+      "sha256_before": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "sha256_after": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "examined": [
+        {
+          "anchor": "#purpose",
+          "judgment": "Reviewed the introduction and existing evidence/decision/execution/acceptance flow. Its caption says permission checks occur on every read/action, not only at the final stage; appropriate as a concept overview."
+        },
+        {
+          "anchor": "#case",
+          "judgment": "Reviewed the RNA-seq case table mapping evidence, budget and permission questions to distinct acceptance outputs. It is explicitly unexecuted design; another diagram would repeat the overview."
+        },
+        {
+          "anchor": "#mastery",
+          "judgment": "Reviewed course assembly position and mastery criteria. Detailed observation and trust-boundary figures belong in their main teaching chapters rather than the course index."
+        }
+      ],
+      "reason": "Retained a sufficient overview flow and case map. New detailed boundaries were added only at the relevant retrieval/trust teaching positions.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "agent-rag",
+      "source": "content/series/agent-systems/s01_rag_retrieval.html",
+      "changed": true,
+      "sha256_before": "73df192198e07012ee916fe97d6585c863b1d5d7517669414422350b67d5a9d5",
+      "sha256_after": "1dda55a6e6fca6df4de3d696aa822bed107052c083c20e81c8f3d3dc2d491cfa",
+      "examined": [
+        {
+          "anchor": "#overview",
+          "judgment": "Reviewed the full chapter outline and existing retrieval/re-rank/evidence/answer loop. Kept this useful evidence-sufficiency diagram rather than duplicating it."
+        },
+        {
+          "anchor": "#retrieval",
+          "judgment": "Read BM25, normalized dense similarity, RRF and Faiss explanations with numeric examples. These have explicit scales and exact formulas; no extra algorithm chain added."
+        },
+        {
+          "anchor": "#agentic",
+          "judgment": "Added a local observation/action boundary diagram immediately after the main explanation: policy emits query, external service returns observation, evidence state updates. Semantic check distinguishes action spans from environmental tokens, trusted ACL/budget from external content and runtime feedback from training."
+        },
+        {
+          "anchor": "#evaluation",
+          "judgment": "Reviewed recall/support/whole-task distinctions, split isolation and PROGRESS evidence table. New diagram introduces no metric or claim of executed retrieval/RL."
+        }
+      ],
+      "reason": "The existing overview taught evidence sufficiency but did not visualize the policy-action versus external-observation interface used by the nearby SFT/RL mask explanation. All original outside-figure content is preserved.",
+      "diagrams": [
+        {
+          "id": "agent-retrieval-observation-map",
+          "type": "semantic-html-chain-with-feedback-added",
+          "section": "#agentic",
+          "label": "模型生成查询动作，检索服务返回外部观察；两种 token 不混成策略输出",
+          "objects_and_arrows": "Visible question/evidence/unresolved state -> learnable policy's query action span -> authorized tool routing and fixed-index retrieval -> externally produced observation and evidence update. Continuation feeds updated state into a new decision; sufficient/blocked states exit. ACL and budget originate in trusted configuration, not tool text.",
+          "simplifications": "Runtime/data-boundary teaching diagram, not an implemented online-learning loop. Retriever/reranker training targets, service details and policy-gradient updates are separate. No numeric metrics added. Semantic check confirms observations remain conditions, action masks remain distinct and failures do not become successful evidence.",
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "agent-planning",
+      "source": "content/series/agent-systems/s02_planning_compute.html",
+      "changed": false,
+      "sha256_before": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "sha256_after": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "examined": [
+        {
+          "anchor": "#strategies",
+          "judgment": "Reviewed chapter outline, ReAct/plan/reflection alternatives and existing scientific-analysis dependency/backtracking chain. Alternatives are a comparison table, not a sequential algorithm."
+        },
+        {
+          "anchor": "#search",
+          "judgment": "Read BoN existence-versus-selection, beam/MCTS and UCT examples. Candidate success, selector error and value feedback are already explicitly separated; no generic search-chain quota applied."
+        },
+        {
+          "anchor": "#environment",
+          "judgment": "Reviewed the checkpoint/isolated A-B branch figure and full state-restoration example. It already identifies read-only fixture, separate writable outputs/process/random states, evidence and commit; external side effects cannot be reset by prompt rollback."
+        },
+        {
+          "anchor": "#budget",
+          "judgment": "Reviewed value/cost units, stopping conditions and same-budget evaluation. Existing diagrams and tables preserve state, feedback, failure and total-cost boundaries; no additional figure justified."
+        }
+      ],
+      "reason": "Three existing mechanisms already cover planning dependencies, search feedback and environmental branch isolation. Retained the complete state/BoN/UCT examples and historical comparison tables.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "agent-trust",
+      "source": "content/series/agent-systems/s03_trust_safety.html",
+      "changed": true,
+      "sha256_before": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "sha256_after": "6bb07f421ea906049b588096cea323c81e6da43f7b4b7ffaed8a8bbeeb662e09",
+      "examined": [
+        {
+          "anchor": "#overview",
+          "judgment": "Reviewed outline, threat model and original opening chain. It lacked a visible independent authorization source, so replaced that teaching figure and moved it to the main isolation explanation."
+        },
+        {
+          "anchor": "#isolation",
+          "judgment": "Revised architecture diagram after the layer-responsibility table. Semantic check separates external data, learnable model proposal, trusted policy/controller, allow-only worker path, denial observation and tool-result feedback. Refusal does not execute a worker."
+        },
+        {
+          "anchor": "#science",
+          "judgment": "Reviewed science negative controls, fixture/output isolation and hidden-verifier boundaries. Kept all examples and unexecuted-design warnings."
+        },
+        {
+          "anchor": "#evaluating",
+          "judgment": "Read utility/ASR denominators and CaMeL evidence/limitations. New diagram adds no defense success rate and explicitly is not an implemented security guarantee or attack test."
+        }
+      ],
+      "reason": "Revised one diagram to show the separate authorization channel and explicit allow/deny behavior at its actual teaching location. Preserved original text, pseudocode, formulas, historical attack counts and references.",
+      "diagrams": [
+        {
+          "id": "agent-trust-boundaries-map",
+          "type": "semantic-html-architecture-with-denial-branch-revised",
+          "section": "#isolation",
+          "label": "数据通道影响模型判断；可信授权通道控制真实副作用",
+          "objects_and_arrows": "Authorized external data -> visible context -> model action proposal -> controller decision -> worker only if allowed. Independent trusted task policy/user authorization -> controller capability/object/credential/resource constraints. Denial -> reason -> subsequent context without worker execution; worker result -> subsequent context as observation, not authorization.",
+          "simplifications": "Responsibilities need not equal separate processes. Teaching design only; policy coverage, label propagation, TOCTOU and OS isolation still require independent implementation/testing. No numeric results added. Semantic check distinguishes learned proposal from trusted execution authority and pre-action control from post-action evaluation.",
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "llm-research-map-2026",
+      "source": "content/series/llm-research-map-2026/index.html",
+      "changed": false,
+      "sha256_before": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "sha256_after": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "examined": [
+        {
+          "anchor": "#overview",
+          "judgment": "Reviewed outline and relocation introduction. Existing flow is explicitly a research-organization path with feedback, not a single model execution architecture; it is adequate for this source-reference role."
+        },
+        {
+          "anchor": "#priorities",
+          "judgment": "Reviewed proposed topics and their specific evidence gaps. These are alternative research directions in a table, not sequential runtime stages; no teaching graph needed."
+        },
+        {
+          "anchor": "#sources",
+          "judgment": "Examined archive/source-index position and its fixed-version/independent-evidence cautions. The 71 historical references and 15-original counts were preserved, not revalidated as current online facts."
+        }
+      ],
+      "reason": "This is now a reference/compatibility entry, not a second mixed-topic course. Retained its sufficient organizational flow and original source index; detailed diagrams stay in topic-owned teaching sources.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "research-agent-frontiers",
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "changed": true,
+      "sha256_before": "1ab7d3ef637c54825a7a40f0942b3de6f85e6ecb65e2b65618e772fca8c5c24c",
+      "sha256_after": "1cd78ea81253458075098331d6605d8718abda6ad7926463c6334d8f0d290d98",
+      "examined": [
+        {
+          "anchor": "#scope",
+          "judgment": "Reviewed full chapter outline and existing comparison diagram for memory/skill versus parameter updates. It already labels the middle entries as different adaptation branches, so retained it."
+        },
+        {
+          "anchor": "#gui",
+          "judgment": "Added the GUI observation/grounding/execution/state-feedback figure beside the main mechanism table. Semantic check separates screenshot/a11y information, model proposal, coordinate inverse mapping, trusted action layer, new environment observation and independent terminal acceptance."
+        },
+        {
+          "anchor": "#science",
+          "judgment": "Read execution/submission/scientific-support distinctions and the leakage counterexample. The existing three-layer table is more informative than an additional generic chain."
+        },
+        {
+          "anchor": "#adaptation",
+          "judgment": "Reviewed skills, memory/harness/LoRA and existing time-boundary diagram. Kept frozen-version/new-task/old-task separation rather than adding a second feedback chart."
+        },
+        {
+          "anchor": "#multiagent",
+          "judgment": "Read parallel-agent versus multi-teacher distinctions and critical-path example. New GUI diagram neither claims OSWorld implementation nor modifies historical task counts or timing results."
+        }
+      ],
+      "reason": "The GUI table listed states and recovery but lacked a local visual loop showing observation freshness, coordinate conversion and actual environment feedback. Added one scene-specific diagram; retained existing adaptation diagrams and evidence tables.",
+      "diagrams": [
+        {
+          "id": "gui-observation-action-map",
+          "type": "semantic-html-state-feedback-chain-added",
+          "section": "#gui",
+          "label": "GUI 的闭环更新环境状态，不是把坐标输出直接当作任务成功",
+          "objects_and_arrows": "External screenshot/a11y/time/focus observation -> model grounding/planning proposal with processor inverse coordinate mapping -> trusted execution checks and action -> new actual environment/artifact observation. Incomplete state feeds a new decision; error feeds recovery after side-effect inspection; denial produces reason without action; pending result requires wait/status check.",
+          "simplifications": "Generic scene mechanism, not an OSWorld implementation or experiment. Tool information availability, coordinate transform, environment state and grader feedback remain distinct. No numeric performance claims added; recovery consumes budget and partial score is not final success.",
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-survey",
+      "source": "content/series/dlm-survey/index.html",
+      "changed": true,
+      "sha256_before": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
+      "sha256_after": "12fe7488fcaaf81da0f8d5e300c2c4339afc089d34639605c5205c8b0610f7b1",
+      "examined": [
+        {
+          "anchor": "#foundations",
+          "judgment": "Reviewed outline/course ordering and opening mechanism. Original chain visually connected training text -> denoiser -> generation prior. Replaced with separately labeled training and generation chains, shared network responsibility and an explicit generation-only feedback path."
+        },
+        {
+          "anchor": "#mastery",
+          "judgment": "Reviewed mastery requirements and source-policy limitations. The replacement remains an overview; exact kernels, objectives and samplers are still taught in the chapters, not implied to be universal."
+        }
+      ],
+      "reason": "Corrected a diagram-level training/generation adjacency while preserving all introductory prose, course markers and source-policy content.",
+      "diagrams": [
+        {
+          "id": "dlm-training-generation-map",
+          "type": "semantic-html-two-path-comparison-revised",
+          "section": "#foundations",
+          "label": "训练与生成是两条路径，共享去噪器；不是把训练输入接成生成先验",
+          "objects_and_arrows": "Training: real text/encoding -> known sampled perturbation -> learnable denoiser -> supervised loss and parameter update. Generation: prior/current state -> trained denoiser prediction -> sampler state update -> endpoint/text interface and independent acceptance. Nonterminal sampler output returns to current state, not to training loss.",
+          "simplifications": "Interface overview only, no universal kernel/loss/sampler asserted and no numeric metrics introduced. Semantic check separates trainable network, known perturbation, sampling state change and text decoding; training normally samples one time rather than running the full generation chain.",
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "agent-harness-guide",
+      "source": "content/posts/agent-harness-guide/index.html",
+      "changed": true,
+      "sha256_before": "110bca77e52aa4d8b577cc2d1d41ca5750faa7e42c1458501e6372f2a2e032d8",
+      "sha256_after": "da64a72ff48fa1a6b4af12626e58592101aafaf222efb9ddeb49b8fa678aae79",
+      "examined": [
+        {
+          "anchor": "#codex-loop",
+          "judgment": "Reviewed full outline and existing model/tool SVG, state table, permission routing and continuation. The SVG and persistent-event explanations are sufficient and were preserved."
+        },
+        {
+          "anchor": "#sandbox",
+          "judgment": "Read timeout/idempotency/recovery chain and example. It already distinguishes job state, disk state, external side effects and cumulative budget; retained it."
+        },
+        {
+          "anchor": "#codex-compaction-paths",
+          "judgment": "Revised the A/B figure because CSS chain arrows visually made summary compaction precede the alternative no-summary token-budget path. New branch lists encode configuration selection and independent post-branch evidence recovery without sequential inter-branch arrows."
+        },
+        {
+          "anchor": "#codex-memory",
+          "judgment": "Reviewed existing memory-write/read SVG, V1/V2 gates, storage-versus-parameters distinction and complete template appendix positions. No extra memory diagram needed."
+        },
+        {
+          "anchor": "#mapping",
+          "judgment": "Read exact action-token/span versus observation explanation. Preserved training handoff and fixed source-version/default limitations; no backend execution claims."
+        }
+      ],
+      "reason": "Changed only the compaction figure to express true alternatives, preserving all original SVGs, code, templates, links and prose. Source-level semantics checked; product/source execution and browser interactions not run.",
+      "diagrams": [
+        {
+          "id": "codex-compaction-branches-map",
+          "type": "semantic-html-configuration-branching-revised",
+          "section": "#codex-compaction-paths",
+          "label": "按配置选择 A 或 B，再重建后续输入；不是先摘要、再执行无摘要换窗",
+          "objects_and_arrows": "Budget-triggered run_auto_compact -> configuration choice. A disabled token_budget -> local/remote summary compaction -> reconstructed active input. B enabled token_budget -> world-state/retained-item reassembly -> new window ID and usage accounting. Either path -> notes/history pointers -> current file/job inspection -> verification and continuation.",
+          "simplifications": "Only the fixed-source branch contract is described; remote internals are undisclosed and defaults/provider availability remain in adjacent prose. No automatic disk/process/side-effect restoration. Semantic check confirms A and B do not acquire CSS sequential arrows; no numeric defaults or backend measurements added.",
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "vlm-knowledge-interview",
+      "source": "content/posts/vlm-knowledge-interview/index.html",
+      "changed": true,
+      "sha256_before": "3df1a2d7a87603bd103db1942acc9a0a4f2397020ef6d96a1229b375649494e9",
+      "sha256_after": "e1e60d5464056de954069787baf2103fd83acadbd1f8d7a350494df02ab5b23c",
+      "examined": [
+        {
+          "anchor": "#sec1",
+          "judgment": "Reviewed all six top-level sections and existing visual-condition chain. Retained it as overview; CLIP global matching is explicitly separate from conditional generation."
+        },
+        {
+          "anchor": "#clip-siglip",
+          "judgment": "Read patch/CLIP/SigLIP derivations and complete numeric examples. Preserve scale-once, pair coupling, gradients and all code rather than replacing them with a graph."
+        },
+        {
+          "anchor": "#sec1-2",
+          "judgment": "Added independent fusion-path architecture branches next to the interface table. Semantic check identifies learnable adapters, self-attention sequence/KV, text-Q to visual-KV cross-attention and separate encoder/decoder states; alternatives are not sequential stages."
+        },
+        {
+          "anchor": "#sec1-4",
+          "judgment": "Read answer-label mask and visual gradient chain: no direct visual text labels does not imply no encoder gradient unless frozen/detached. Existing full formulas retained."
+        },
+        {
+          "anchor": "#sec1-5",
+          "judgment": "Reviewed existing processor/grid/coordinate diagram and patch/tiling/video examples; retained the useful spatial-cost map."
+        },
+        {
+          "anchor": "#code2",
+          "judgment": "Read interleaved-mask, bool-API and future-label isolation explanations, plus grounding/RAG and benchmark sections. New fusion diagram makes no processor-default or performance claims."
+        }
+      ],
+      "reason": "The existing common visual pipeline did not show the materially different fusion/state-storage paths of concatenation, independent cross-attention and encoder-decoder. Added one local architecture comparison without duplicating formulas or altering historical tables/code.",
+      "diagrams": [
+        {
+          "id": "vlm-fusion-paths-map",
+          "type": "semantic-html-architecture-branching-added",
+          "section": "#sec1-2",
+          "label": "视觉表示与文本状态在哪里交互？三条接口支路，不是三个连续阶段",
+          "objects_and_arrows": "Common image -> processor -> visual encoder, with question text forming separate text state. A visual state -> trainable projector/resampler -> concatenated visual/text embeddings -> decoder self-attention -> answer. B visual K/V plus text Q -> learnable cross-attention -> updated text hidden -> answer. C fused encoded image/text condition K/V plus decoder Q -> cross-attention -> autoregressive answer.",
+          "simplifications": "Paths can be combined in concrete models; A/B/C have no inter-branch sequence arrows. Residuals, heads and layer counts omitted; freezing remains recipe-specific. Input visual features are not output image tokens; unified image generation requires its own tokenizer/decoder contract. No numeric metrics added; semantic check keeps visual memory, text sequence length and output targets distinct.",
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-ddpm",
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "changed": true,
+      "sha256_before": "6ded3b8f24ad8bd83c61c32636b40ed02dbd5868d2e10c5c4e015e64b1451c7d",
+      "sha256_after": "5e5b0285788ae59a578511af837fce3515a14af9b43778fdf33407ba57fbb8e1",
+      "examined": [
+        {
+          "anchor": "#model",
+          "judgment": "Reviewed the five-step outline, closed-form forward variance and reverse parameterization. Removed the misleading opening training-input-to-reverse-sampling chain; formulas and true-posterior versus model distinction retained."
+        },
+        {
+          "anchor": "#posterior",
+          "judgment": "Read Gaussian precision/posterior derivation and noise-loss weighting, including alpha/beta coefficient and fixed-versus-learned variance boundary. No formulas or examples replaced."
+        },
+        {
+          "anchor": "#sampling",
+          "judgment": "Placed revised two-path figure after actual training/sampling steps and before the complete scalar example. Semantic check identifies sampled training epsilon, known forward map, trainable epsilon_theta, deterministic mean conversion and independently drawn reverse z_t."
+        },
+        {
+          "anchor": "#ddpm-full-example",
+          "judgment": "Numerically recomputed x2=1.113103, posterior mean=1.073711, model mean=1.113552, variance=1/14, x1=0.979922 and final sample=1.045586. Checked simple loss=0.04, weighted loss=1/90, c2=5/18 and distinct epsilon=0.5 versus z2=-0.5 inputs. These are teaching arithmetic, not trained-model results."
+        }
+      ],
+      "reason": "A combined old chain blurred a single-time training update with iterative generation. Revised and moved one figure to the main sampling explanation, explicitly separating learned prediction, fixed coordinate transformation, state update and independent noise.",
+      "diagrams": [
+        {
+          "id": "ddpm-training-sampling-map",
+          "type": "semantic-html-two-path-comparison-with-feedback-revised",
+          "section": "#sampling",
+          "label": "两条路径，共享可学习的噪声预测器；训练不接着运行反向采样",
+          "objects_and_arrows": "Training: real x0 plus sampled t/epsilon -> known q transformation to xt -> epsilon_theta prediction -> declared noise-MSE objective and theta gradient. Generation: Gaussian prior/current xt -> fixed trained epsilon_theta -> schedule-based deterministic mu_theta conversion -> xt-1=mu_theta+sigma_t*z_t with fresh independent reverse draw. New state returns at decreased t; final-step extra noise is zero by convention.",
+          "simplifications": "Fixed-variance original-DDPM ancestral convention; not a second learned mean network, exact true reverse marginal, reduced-step recipe or projection guarantee. Adjacent full example retains its inadequate two-step prior warning. Numeric checks reproduce example means/states/loss and vary reverse z independently of training epsilon; independence is a sampling assumption explicitly stated, not empirically inferred.",
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-flow-sde",
+      "source": "content/series/dlm-survey/s00b_flow_sde.html",
+      "changed": false,
+      "sha256_before": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
+      "sha256_after": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
+      "examined": [
+        {
+          "anchor": "#conditional-path",
+          "judgment": "Reviewed outline, time-direction convention and existing conditional-supervision-to-marginal-field diagram. It explicitly says ODE inference does not need real y, so retained it as a training-to-inference learning handoff."
+        },
+        {
+          "anchor": "#flow-full-example",
+          "judgment": "Read full Gaussian posterior-average example and existing endpoint/posterior/loss/integration check figure. It distinguishes single-pair target 4 from marginal speed 2, and Euler output from analytic trajectory."
+        },
+        {
+          "anchor": "#probability-flow",
+          "judgment": "Read continuity/Itô/SDE/probability-flow derivations, VP reverse direction and solver table. Same marginals versus different trajectories and finite-step errors are already explicit; table shows alternatives without turning ODE/SDE into a sequential chain."
+        }
+      ],
+      "reason": "Two sufficient local diagrams already accompany complete derivations and numerical integration evidence. Preserved formulas, fixed-trajectory-coordinate versus fresh SDE-noise distinction and solver alternatives.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-overview",
+      "source": "content/series/dlm-survey/s01_overview.html",
+      "changed": true,
+      "sha256_before": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "sha256_after": "1fa10fd2e928c5d05c1dd45e62e358bbf5075183cd7d703d0eda2aa2757020cd",
+      "examined": [
+        {
+          "anchor": "#s1",
+          "judgment": "Reviewed the whole outline and combinable classification axes. State space, kernel, factorization and prediction target are not mutually exclusive families; retained the table."
+        },
+        {
+          "anchor": "#generation",
+          "judgment": "Revised the old AR-to-masked adjacency into two explicit four-position trajectories. Semantic check: AR prefix grows one position per shown transition; masked state keeps four slots and reveals 2, then 1, then 1, totaling four. No arrow connects AR completion to masked initialization."
+        },
+        {
+          "anchor": "#lineage",
+          "judgment": "Reviewed method-route table and cost/ability caveats. Revised trajectory is illustrative only, not evidence of equal distribution, fixed official schedule or speed advantage."
+        }
+      ],
+      "reason": "The old figure visually chained alternative generation methods. Replaced one figure with separate state paths while preserving classification, lineage and all explanatory prose.",
+      "diagrams": [
+        {
+          "id": "ar-masked-state-map",
+          "type": "semantic-html-two-state-trajectories-revised",
+          "section": "#generation",
+          "label": "同一目标“我 喜欢 学习 数学”，两条独立的生成示意",
+          "objects_and_arrows": "AR committed prefix: 1 -> 2 -> 3 -> 4 tokens. Independently, masked four-slot state: M M M M -> 我 M 学习 M -> 我 喜欢 学习 M -> complete target. Each arrow advances only its own trajectory.",
+          "simplifications": "One carry-over illustrative masked path, with sampler-dependent reveal order/count. Four-slot conservation and reveal totals checked; no equal-time/equal-distribution claim or universal remasking prohibition. Separate headings prevent stacked mobile reading from suggesting one algorithm follows the other.",
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-discrete",
+      "source": "content/series/dlm-survey/s02_discrete.html",
+      "changed": false,
+      "sha256_before": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "sha256_after": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "examined": [
+        {
+          "anchor": "#kernel",
+          "judgment": "Reviewed full chapter outline, row-vector transition kernels and Bayes posterior. The formula explicitly expresses clean prediction mixed into reverse transitions; no generic chain can replace its normalization."
+        },
+        {
+          "anchor": "#weighted-mlm",
+          "judgment": "Read SUBS KL-to-CE derivation, 1/t schedule, target normalization and 8-position supervision example. Necessary formulas and endpoint cautions already give the exact teaching content."
+        },
+        {
+          "anchor": "#llada",
+          "judgment": "Reviewed existing candidate/commit/next-round figure. It clearly distinguishes uncommitted low-confidence candidates from modifying committed values and flags alternative corrector/remasking rules; retained it."
+        },
+        {
+          "anchor": "#duality",
+          "judgment": "Reviewed variant table and single-time Gaussian/uniform pushforward caveats. Kernels/methods are alternatives, already presented as comparisons rather than one chain."
+        }
+      ],
+      "reason": "Existing local sampling figure plus posterior/loss derivations are sufficient. No new diagram or historical recipe/metric changes justified.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-block",
+      "source": "content/series/dlm-survey/s03_block.html",
+      "changed": false,
+      "sha256_before": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "sha256_after": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "examined": [
+        {
+          "anchor": "#factorization",
+          "judgment": "Reviewed outline and exact block factorization versus block-level bound. Formulas already separate outer sequencing from inner diffusion marginalization."
+        },
+        {
+          "anchor": "#attention-mask",
+          "judgment": "Read four-position visibility matrix and clean/noisy training warning. Existing two-loop/commit diagram properly marks fixed prefix, changing current block and cache-refresh handoff; retained it."
+        },
+        {
+          "anchor": "#cache",
+          "judgment": "Reviewed per-layer dependency-based cache validity and mode conversion. The surrounding explanation already corrects token-unchanged versus hidden-unchanged confusion."
+        },
+        {
+          "anchor": "#cost-example",
+          "judgment": "Read 128-token block/denoising/extra-commit example and family comparison. Call counts versus per-call cost are explicit; no new quota-based diagram needed."
+        }
+      ],
+      "reason": "The existing local diagram already separates inner denoising, outer block progression, state dependencies and commit. Preserved sufficient attention matrix and full cost example.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-continuous",
+      "source": "content/series/dlm-survey/s04_continuous.html",
+      "changed": true,
+      "sha256_before": "f811e607779ce036d79e925c45a4ddd21873c75b965493c5ba57181b24b23a54",
+      "sha256_after": "795004ed90a714be21580b08767abbe8a5c0a0f6567dd3d389c8cb1d14c7d573",
+      "examined": [
+        {
+          "anchor": "#interface",
+          "judgment": "Reviewed complete outline and old clean-encoding-to-generation chain. Revised figure separates real encoded training endpoint from unknown generated endpoint, and moves reconstruction into an independent bypass path."
+        },
+        {
+          "anchor": "#flow",
+          "judgment": "Read linear CFM path and checked the existing toy point: epsilon=-1, z1=3, t=0.25 gives zt=0 and conditional target=4; a 0.25 Euler step using that target gives 1. Figure keeps conditional supervision versus learned posterior-average field distinct."
+        },
+        {
+          "anchor": "#rounding",
+          "judgment": "Read MSE mean versus categorical distribution example. Diagram labels final classification/rounding/sequence-decoder as a separate interface, not continuous density already equal to token probability."
+        },
+        {
+          "anchor": "#evaluation",
+          "judgment": "Reviewed reconstruction/generation/final-task checks and family alternatives. Codec, generator and decoder costs remain separate; no new model results or universal codec-training policy asserted."
+        }
+      ],
+      "reason": "One revised diagram corrects an ambiguous training/generation handoff and makes independent reconstruction acceptance visible. All outside-figure prose, equations and examples retained.",
+      "diagrams": [
+        {
+          "id": "continuous-text-interface-map",
+          "type": "semantic-html-two-path-interface-comparison-revised",
+          "section": "#interface",
+          "label": "真实表示提供训练端点；生成从噪声起步，不读取未知的真实文本",
+          "objects_and_arrows": "Training: real text -> encoder/embedding z1 -> known epsilon pairing/path point and conditional velocity -> learned field -> CFM loss/update. Generation: prior/current z -> learned field plus independent solver -> sampled endpoint -> text classifier/rounding/decoder. Nonterminal state loops into current z; real-text encoder-to-text-interface reconstruction bypasses noise/integration.",
+          "simplifications": "Uses this chapter's noise0/data1 linear path only. Codec freezing/joint training and continuous/discrete joint models remain method-specific. Numeric toy path checked; real inference uses the learned marginal field rather than unknown real endpoint. No promise of exact decoder reconstruction or equal generation/reconstruction distributions.",
+          "change_kind": "revised"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-paradigms",
+      "source": "content/series/dlm-survey/s05_paradigms.html",
+      "changed": true,
+      "sha256_before": "3c25b261f4f9bcd942af2dc45c8118e464acc853b654fcc648c89e0d73fe7834",
+      "sha256_after": "b88d7ec72ff8f07f66b5cada2460c6690bc3716aae492e72f252bfcd6ffb224c",
+      "examined": [
+        {
+          "anchor": "#vp-conversion",
+          "judgment": "Added a coordinate-branch map immediately after the rotation derivation/example. One learnable v prediction feeds three deterministic conversions; outputs do not update xt and branches are not model stages."
+        },
+        {
+          "anchor": "#loss-weight",
+          "judgment": "Numerically checked a=0.8, s=0.6, x0=2, epsilon=-1 -> xt=1, v=-2 -> x0=2, epsilon=-1, score=5/3. Also checked epsilon error 0.2 -> clean error -0.15 and MSE 0.04 -> 0.0225. Variable equivalence is not unweighted-loss equivalence."
+        },
+        {
+          "anchor": "#score",
+          "judgment": "Reviewed conditional versus marginal score equations. Map says converted model score is a prediction, not exact true marginal score; s_t>0 is required."
+        },
+        {
+          "anchor": "#discrete-score",
+          "judgment": "Read SEDD generalized divergence and DFM rate/master-equation example. FM time velocity and discrete ratios are explicitly outside the VP rotation map, preventing a false universal equivalence."
+        }
+      ],
+      "reason": "This core coordinate-conversion explanation had no diagram. Added one branched map with the existing scalar numbers and endpoint/score caveats, preserving every original formula and example.",
+      "diagrams": [
+        {
+          "id": "vp-coordinate-map",
+          "type": "semantic-html-coordinate-branching-added",
+          "section": "#vp-conversion",
+          "label": "一次可学习预测，三条确定性坐标换算；不是依次训练三个模型",
+          "objects_and_arrows": "Fixed xt,t and known a_t,s_t -> learned v_hat. From that common source independently: x0_hat=a_t*xt-s_t*v_hat; epsilon_hat=s_t*xt+a_t*v_hat; score_hat=-(s_t*xt+a_t*v_hat)/s_t. No fresh noise draw, state advancement, parameter update or inter-branch execution arrow.",
+          "simplifications": "VP a_t^2+s_t^2=1 only; score conversion requires s_t>0. Converted finite-model predictions are not asserted equal to true marginal quantities. FM time velocity/discrete ratios excluded; loss and solver changes remain separate. Rotation/score/MSE numbers recomputed and alternative figure has no CSS chain arrows.",
+          "change_kind": "added"
+        }
+      ]
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-scaling",
+      "source": "content/series/dlm-survey/s06_scaling.html",
+      "changed": false,
+      "sha256_before": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "sha256_after": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "examined": [
+        {
+          "anchor": "#scaling-budget",
+          "judgment": "Reviewed outline and existing independent-data/parameter-reuse/compute/acceptance diagram. It already separates U, total D=UE and actual compute; random views are not new independent facts."
+        },
+        {
+          "anchor": "#compute-optimal",
+          "judgment": "Read fixed-budget derivative and exponent relation. Existing formulas are necessary, and another four-node chain would not improve the distinction between N versus C and N versus D."
+        },
+        {
+          "anchor": "#crossover",
+          "judgment": "Reviewed iso-data/isoFLOP/iso-time and hypothesis-versus-evidence distinctions, plus drafter generalization and source-range limitations. Retained existing diagram without inventing scaling metrics."
+        }
+      ],
+      "reason": "One sufficient local comparison-design diagram already supports the full budget derivation. No material additional visualization gap.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-speculative",
+      "source": "content/series/dlm-survey/s07_speculative.html",
+      "changed": false,
+      "sha256_before": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "sha256_after": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "examined": [
+        {
+          "anchor": "#system-role",
+          "judgment": "Reviewed outline and role table: AR drafter, self-DLM acceleration and unified-mode cooperation are alternatives. Existing prefix/draft/target-verify/commit figure has a real continuation loop and clearly identified target contract."
+        },
+        {
+          "anchor": "#acceptance",
+          "judgment": "Read tail-sum/independence example, bonus accounting and parallel marginal-q versus sequential conditional-q caveat. No generic acceptance graph can replace these exact probability boundaries."
+        },
+        {
+          "anchor": "#cycle-cost",
+          "judgment": "Read complete cycle-time/committed-token denominator and 35ms/5-token example. Existing figure already says draft/verify/commit all count; no speed metrics added."
+        },
+        {
+          "anchor": "#methods",
+          "judgment": "Reviewed separate self-acceleration methods and quality checks. They remain comparisons, not a sequence implying all preserve the same distribution."
+        }
+      ],
+      "reason": "Existing mechanism figure and exact probability/cost examples are sufficient. Kept distribution-contract, commit/cache and end-to-end-cost explanations unchanged.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-elbo-rl",
+      "source": "content/series/dlm-survey/s08_elbo_rl.html",
+      "changed": false,
+      "sha256_before": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "sha256_after": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "examined": [
+        {
+          "anchor": "#probability",
+          "judgment": "Reviewed full outline and existing denoiser/path/final-text/reward diagram. It distinguishes actual path from marginalized final output and leaves the update method explicitly declared."
+        },
+        {
+          "anchor": "#elbo-gap",
+          "judgment": "Read path REINFORCE, auxiliary-posterior gap and MC-variance/ratio-bias table. Diagram does not replace marginalization or claim MC removes bound looseness."
+        },
+        {
+          "anchor": "#spg",
+          "judgment": "Read positive/negative-advantage likelihood-bound branching and numeric sign example. The piecewise formula is already the precise branch representation; adding a generic sequential chain would obscure the sign rule."
+        },
+        {
+          "anchor": "#gdsd",
+          "judgment": "Read old/ref/current shared-perturbation scoring, centering and stop-gradient teacher formulas. Update-route alternatives and diagnosis remain distinct; no historical result changes."
+        }
+      ],
+      "reason": "The existing probability/feedback diagram, piecewise SPG definition and complete GDSD formulas already carry the important object boundaries. No material new diagram needed.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-commercial",
+      "source": "content/series/dlm-survey/s09_commercial.html",
+      "changed": false,
+      "sha256_before": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "sha256_after": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "examined": [
+        {
+          "anchor": "#evidence",
+          "judgment": "Reviewed page outline and product-role/evidence-gap comparison. Products are alternatives, and unmatched vendor numbers are not a ranking."
+        },
+        {
+          "anchor": "#latency",
+          "judgment": "Read burst-output example and existing waiting/prefill/denoising/commit/acceptance timeline. The 200ms first-visible-token versus 500tok/s output rate distinction is already visible; retained the figure."
+        }
+      ],
+      "reason": "Existing local timeline explains the actual latency misunderstanding. Preserved product-history numbers and warnings; no current pricing, availability or online measurement claimed.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-comparison",
+      "source": "content/series/dlm-survey/s10_comparison.html",
+      "changed": false,
+      "sha256_before": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "sha256_after": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "examined": [
+        {
+          "anchor": "#comparison",
+          "judgment": "Reviewed full outline and route comparison table. Masked, uniform, block, continuous and drafter axes overlap; a mandatory serial family graph would be semantically wrong."
+        },
+        {
+          "anchor": "#protocol",
+          "judgment": "Read task/data/train/generation/system/claim comparison contract. This is a checklist of controlled conditions, not a missing runtime architecture; retained as a list."
+        },
+        {
+          "anchor": "#research",
+          "judgment": "Reviewed one-axis experiment proposals and interview answers. Earlier chapters supply the actual mechanisms; adding a review-page graph would duplicate them without teaching new objects."
+        }
+      ],
+      "reason": "No diagrams added to a comparison/revision page whose tables and protocol list are already the clearest representation. Avoided an arbitrary graph count or false sequential taxonomy.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-loop-transformer",
+      "source": "content/series/dlm-survey/s11_loop_transformer.html",
+      "changed": false,
+      "sha256_before": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "sha256_after": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "examined": [
+        {
+          "anchor": "#recurrence",
+          "judgment": "Reviewed full outline and existing input/shared-F_theta/updated-hidden/output diagram. The return path reuses parameters while state changes, and the text explicitly distinguishes hidden recurrence from noise diffusion."
+        },
+        {
+          "anchor": "#gradient",
+          "judgment": "Read shared-parameter gradient sum/Jacobian product and stable-versus-growing scalar recursion. Complete formulas already express repeated parameter use; no extra linear layer chain added."
+        },
+        {
+          "anchor": "#halting",
+          "judgment": "Reviewed fixed/adaptive halting alternatives, wrong stable points and theory limits. Existing loop diagram and comparisons separate stop decision, compute and parameter storage; retained them."
+        }
+      ],
+      "reason": "A sufficient local recurrence/state-feedback diagram already exists. Preserved cost, gradient, stability and theory examples without new performance claims.",
+      "diagrams": []
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "id": "dlm-vae",
+      "source": "content/series/dlm-survey/s12_vae.html",
+      "changed": false,
+      "sha256_before": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "sha256_after": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "examined": [
+        {
+          "anchor": "#elbo",
+          "judgment": "Reviewed entire outline and existing real-x/encoder/reparameterized-z/decoder/loss figure. Its separate prior-to-decoder generation note explicitly bypasses encoder and observed x; sufficient for the main distinction."
+        },
+        {
+          "anchor": "#reparameterization",
+          "judgment": "Read path gradients and exact Gaussian KL example. Full formulas are clearer than an added generic chain and remain necessary."
+        },
+        {
+          "anchor": "#vq",
+          "judgment": "Read nearest-code selection, straight-through, codebook versus commitment gradients and RQ/FSQ/LFQ alternatives. Quantizer families are comparisons, not serial transforms; no chain added."
+        },
+        {
+          "anchor": "#system-role",
+          "judgment": "Reviewed codec versus generator responsibilities and compression element-count example. Existing tables preserve modality-specific interfaces."
+        },
+        {
+          "anchor": "#cvae-robot",
+          "judgment": "Read observed condition, future action posterior and inference z=0 boundary. It explicitly does not claim averaging disappears or robot success was validated; no scene graph justified here."
+        }
+      ],
+      "reason": "Existing training/generation distinction and explicit formula/gradient examples are sufficient. Retained all quantizer alternatives, codec boundaries and action-policy caveats; no training or robot experiment executed.",
+      "diagrams": []
+    }
+  ]
+}

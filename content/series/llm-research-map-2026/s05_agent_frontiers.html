@@ -27,6 +27,17 @@
 <tr><td>验收与复现</td><td>重置环境、固定网站、终态检查与部分完成标准</td><td>环境 / grader版本、预算、终态产物、基础设施失败</td></tr>
 </tbody>
 </table>
+<figure id="gui-observation-action-map" class="mechanism-map">
+<figcaption>GUI 的闭环更新环境状态，不是把坐标输出直接当作任务成功</figcaption>
+<ol class="mechanism-chain">
+<li><b>外部观察</b><small>截图 / 可访问性树、时间、焦点与窗口；只含工具实际提供的信息</small></li>
+<li><b>模型 → 动作提案</b><small>grounding / 规划输出目标与坐标；按 processor 元数据逆映射</small></li>
+<li><b>可信执行层 → 操作</b><small>核对权限、当前焦点与目标状态；过期观察需重取</small></li>
+<li><b>新观察与进展证据</b><small>点击后的真实页面 / 文件；独立终态验收或错误恢复</small></li>
+</ol>
+<p class="mechanism-return">未完成 → 以新观察更新计划后再决策；错误 → 核实实际副作用再恢复。权限拒绝则不执行，返回原因。动作已发出但结果未到时，先等待 / 查询状态，不盲目重放。</p>
+<p class="mechanism-note">这是场景机制示意，不是特定 OSWorld 实现或新增实验。模型预测、坐标变换、环境状态与 grader 反馈分属不同对象；恢复会消耗额外预算，不能把中间 partial score 当最终成功。</p>
+</figure>
 <p>与<a href="../publication/cua-recovery/">CUA-Recovery公开项目</a>相连时，可讲清失败分类和恢复流程；内部环境、未公开规模和未授权结果不放进文章。固定任务与scaffold后比较恢复模块，不能把工具权限或步数增加的收益归因于算法。</p>
 </section>
 <section id="science">

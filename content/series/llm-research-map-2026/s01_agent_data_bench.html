@@ -45,6 +45,16 @@
 <p>任务格式、数值容差和负对照在<a href="../agent-data-benchmarks/s01_task_synthesis.html#contract">任务合同</a>展开。这里关注把原benchmark迁入Harbor后，哪些状态会丢失。<a href="index.html#ref-35">[35]</a></p>
 <p><strong>独立 verifier sandbox</strong>把验证过程移到单独环境，只接收显式声明的 artifacts。运行中的进程、未复制的数据库状态和临时目录不会自动转移。官方参数包括 <code>artifacts</code> 与 <code>verifier.environment_mode</code>；不能自行造字段或默认整台环境已经复制。奖励写入 <code>/logs/verifier/reward.txt</code> 或对应JSON输出。<a href="index.html#ref-36">[36]</a> <a href="index.html#ref-35">[35]</a></p>
 <p><strong>迁移算例：</strong>Agent把规范CSV写入声明产物路径，却把SQLite修改留在临时目录。独立verifier能读CSV，不能自动看到数据库变更；原环境“通过”、迁移后“失败”此时属于交接差异。应声明数据库快照或验证可重放导出，不能直接降低grader要求。此例是教学设计，未运行任务。</p>
+<figure class="mechanism-map" id="artifact-handoff-map" aria-labelledby="artifact-handoff-map-label">
+<figcaption id="artifact-handoff-map-label">Separate verifier 的交接边界：传声明产物，不传整台运行环境</figcaption>
+<ol class="mechanism-chain mechanism-options" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))">
+<li><b>Solver 环境：CSV + 临时 SQLite 修改</b><small>任务结束时有两种状态；下面按交接合同分流，不是先后执行。</small></li>
+<li><b>已声明 CSV → 收集 → verifier</b><small>干净 verifier 恢复声明文件，按合同读取其内容；被传递不等于结果正确。</small></li>
+<li><b>未声明 SQLite 状态 → 不自动转移</b><small>verifier 没有此变更；运行进程、会话与临时目录也不因 solver 成功而继承。</small></li>
+</ol>
+<p class="mechanism-return">需要数据库结果时：先明确一致的快照/导出产物，再在独立环境重放验收；不能用 solver 原环境的通过结果替代交付证明。</p>
+<p class="mechanism-note">仅示意上文 separate 模式；shared 是另一种合同，不能把两模式画成连续步骤。路径与配置仍依固定 Harbor 版本定义；图不新增字段或通用快照操作。</p>
+</figure>
 </section>
 <section id="parity">
 <h2>迁移一致性：统一格式之后仍要重放</h2>

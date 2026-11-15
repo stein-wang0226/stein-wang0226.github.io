@@ -122,6 +122,23 @@ accepted_token_count, rejected_token_count, retry_reason</code></pre>
 <tr><td>\(a_0\) / v7</td><td>0.20</td><td>0.22</td><td>0.24</td><td>\((12/11)\times1.10=1.20\)</td></tr>
 <tr><td>\(a_1\) / v8</td><td>0.50</td><td>0.45</td><td>0.60</td><td>\((4/3)\times0.90=1.20\)</td></tr>
 </tbody></table>
+<figure class="mechanism-map" id="async-handoff-map" aria-labelledby="async-handoff-map-label">
+<figcaption id="async-handoff-map-label">同一任务，两条版本线：采样历史延续，训练快照另行固定</figcaption>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));gap:16px">
+<div style="padding:14px;border:1px solid #b8cbc3;background:#fff">
+<b>Rollout 线：v7 → 发布 v8 → v8 续段</b>
+<p>v7 生成 a₀ → 工具执行与等待 → 保留真实观察 → 用 v8 对历史重新 prefill → 生成 a₁。</p>
+<p>随段保存：a₀ 的 μ=0.20；a₁ 的 μ=0.50。发布 v8 不改写已经采到的分母。</p>
+</div>
+<div style="padding:14px;border:1px solid #b8cbc3;background:#fff">
+<b>Trainer 线：old=v8，current=v9</b>
+<p>接收两段 token、真实 prefix 与行为概率 → 在各自 prefix 上分别重算 old/current。</p>
+<p>a₀：0.22 / 0.24；a₁：0.45 / 0.60。这里依次列 old / current，不是采样概率。</p>
+</div>
+</div>
+<p class="mechanism-return">两线在同一动作/历史上汇合：current/old × old/μ → 选定目标的裁剪、过滤与聚合。权重发布连接 trainer 与 rollout，不连接 reference 与行为分母。</p>
+<p class="mechanism-note">概率沿用上表教学值；两线表示不同职责，不表示精确墙钟排程。只校正固定历史上的动作概率，不校正完成顺序或缺失任务；新权重不能默认沿用旧 KV。</p>
+</figure>
 <p>链路是<strong>精确历史与分段 behavior log-prob → old / current 重算 → 两段 ratio → 按选定目标裁剪、过滤和聚合</strong>。两可控动作的概率乘积之比为 \(1.2^2=1.44\)，而长度归一的几何平均为1.20；两者是不同学习权重。仅使用 current/old 的乘积为 \(16/11\approx1.454545\)，漏掉了校正因子 \(1.10\times0.90=0.99\)。工具观察不加入策略 token 乘积。</p>
 <p>如果把第一段分母错误地改成训练端v8的0.22，得到 \((0.24/0.22)(0.60/0.50)\approx1.309091\)。它不是这条轨迹的真实行为比；一个“最终版本v8”的标签无法重建第一段采样分布。</p>
 <details><summary>裁剪顺序为什么还要写进配方？</summary>

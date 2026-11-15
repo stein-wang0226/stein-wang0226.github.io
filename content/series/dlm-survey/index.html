@@ -11,7 +11,10 @@ body{margin:0;background:#fff;color:#1a1a2e;font:16px/1.85 system-ui,-apple-syst
 </style></head><body>
 <section id="foundations">
 <p><strong>先记住一条链：</strong>选择扰动过程 → 预测干净信息 → 按采样规则更新状态 → 返回文本。DLM 的关键不是“把 token 同时输出”，而是让模型在不同完整度的上下文中学习重建，并定义从噪声到文本的生成过程。</p>
-<figure class="mechanism-map"><figcaption>训练和生成使用同一个去噪器，但状态来源不同</figcaption><ol class="mechanism-chain"><li><b>训练：干净文本</b><small>采样时刻与扰动，目标已知</small></li><li><b>去噪器</b><small>读部分文本、连续表示或噪声</small></li><li><b>生成：先验状态</b><small>按日程反复预测和更新</small></li><li><b>评测：最终文本</b><small>质量、延迟、显存、成功成本</small></li></ol><p class="mechanism-return">↶ 生成循环需要多次模型调用；训练可直接采一个时刻，通常不必运行整条链。</p></figure>
+<figure id="dlm-training-generation-map" class="mechanism-map"><figcaption>训练与生成是两条路径，共享去噪器；不是把训练输入接成生成先验</figcaption>
+<p><strong>训练路径</strong></p><ol class="mechanism-chain"><li><b>干净文本 / 编码表示</b><small>真实目标可得</small></li><li><b>采时间与扰动</b><small>已知规则构造当前训练状态</small></li><li><b>可学习去噪器</b><small>预测干净信息或所定义坐标</small></li><li><b>监督 loss → 参数更新</b><small>目标、时间权重与监督位置分开声明</small></li></ol>
+<p><strong>生成路径</strong></p><ol class="mechanism-chain"><li><b>先验 / 当前状态</b><small>全 mask 或连续噪声；真实目标不可得</small></li><li><b>已训练去噪器</b><small>本轮候选或场预测</small></li><li><b>采样器更新状态</b><small>按日程选择、修正或提交；不是反向传播</small></li><li><b>终点 → 文本接口</b><small>离散值或 decoder 输出，再独立验收</small></li></ol>
+<p class="mechanism-return">生成回路：未到终点时，新状态 → 当前状态；每次模型调用和状态重算都计成本。训练通常直接采一个时刻，不运行整条生成链。</p><p class="mechanism-note">这是接口概览，不规定所有模型采用同一核、loss 或 sampler；后续章节分别给出精确定义。</p></figure>
 <p>本页按<strong>概览与目标 → 离散与块 → 连续接口 → ELBO/RL → 算力与解码 → 综合判断</strong>连续展开。DDPM、连续时间和 VAE 的先修推导，以及循环模型与商业材料，可在后部页内展开；不要求先穿过所有先修才能开始学语言扩散。</p>
 <p>先修仅需条件概率、交叉熵、矩阵与反向传播。每节先给可复述结论，再展开必要公式、算例与追问。所有算例都是教学计算；本页没有本地模型训练或速度实测。</p>
 </section>

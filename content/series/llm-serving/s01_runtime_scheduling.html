@@ -43,6 +43,12 @@ w=B\left\lceil\frac TB\right\rceil-T,\qquad 0\le w\lt B.
 <p>block table为\([7,2,11]\)，kernel依据映射读取完整逻辑历史；<strong>分页不删除token，也不改变Attention公式。</strong></p>
 <p>prefix共享可让多个请求读取相同不可变block；写入共享尾页时需要copy-on-write或等价机制。物理分页与FlashAttention的IO-aware计算不同，两者可组合。原论文<a href="#ref-paged">[1]</a>的吞吐收益是其模型、硬件、负载和延迟条件，不是当前vLLM的统一倍数。</p>
 <p><strong>共享算例：</strong>两请求各35token，前32token完全相同。B=16时，共享2个满页，各有1个私有尾页，共4页64槽；独立分配需6页96槽。部分尾页共享要按具体copy-on-write实现核算，不能只相加逻辑长度。</p>
+<figure class="mechanism-map" id="shared-kv-page-layout"><figcaption>两个请求、两张 block table、一份共享物理前缀</figcaption><ol class="mechanism-chain mechanism-compare">
+<li><b>兼容前缀：位置 0–31</b><small>相同 token、权重和位置条件；两个满页的 K/V 不可被任一请求改写。</small></li>
+<li><b>请求 A 的逻辑页</b><small>table [7,2,11]<br>0–15 → 页 7；16–31 → 页 2<br>32–34 → 私有页 11</small></li>
+<li><b>请求 B 的逻辑页</b><small>table [7,2,13]<br>0–15 → 同一页 7；16–31 → 同一页 2<br>32–34 → 私有页 13</small></li>
+<li><b>物理 KV 池：只计唯一页</b><small>共享 {7,2} + A 的 {11} + B 的 {13} = 4 页、64 槽；两个私有尾页各有 13 个空槽。</small></li>
+</ol><p class="mechanism-note">箭头是逻辑页到物理页的地址映射，不是先执行 A 再执行 B；页 ID 为教学编号，不表示连续地址。状态内容仍按逻辑顺序读取。共享页有引用保护，写共享尾页需 copy-on-write 或等价机制；请求退出仅解除引用，可复用 prefix 是否留下由缓存策略决定。</p></figure>
 </section>
 <section id="prefix"><h2>Prefix复用与RadixAttention</h2>
 <section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>

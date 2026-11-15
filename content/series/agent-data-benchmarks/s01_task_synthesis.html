@@ -123,6 +123,18 @@ R_{\rm repair}=\max\left(0,\frac{r-f}{1-f}\right)\quad(f&lt;1).
 <section id="admission">
 <h2>同一批episode，进入CPT、SFT、RL的规则不同</h2>
 
+<style>.reading-content figure[id$="data-admission-map"] .mechanism-options>li+li::before{content:"\25c7";font-size:16px}</style>
+<figure class="mechanism-map" id="data-admission-map" aria-labelledby="data-admission-map-label">
+<figcaption id="data-admission-map-label">数据交接是按用途分流，不是把同一日志依次喂给四种训练</figcaption>
+<ol class="mechanism-chain mechanism-options" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr))">
+<li><b>任务包 + 受控 episodes + 来源切分</b><small>保留动作、真实观察、产物、结果和失败类型；先隔离 invalid task / infra fail，不当作正常策略负例。</small></li>
+<li><b>CPT / midtraining 路</b><small>来源与格式审计 → 文档/结构/trace 输入；按既定目标选 mask，观察不自动变成动作标签。</small></li>
+<li><b>SFT 路</b><small>可复验示范 → 筛动作 → assistant 目标；失败历史可作 context，恢复动作另经验证。</small></li>
+<li><b>在线 RL 路</b><small>可 reset 的任务与 verifier → 当前策略重新尝试 → reward / advantage / 动作更新；旧 episode 主要用于审计与设计。</small></li>
+<li><b>Critic / preference 路</b><small>可核对的成功/失败与可比候选 → outcome、pair 或 step 标签；不把生成理由当因果真值。</small></li>
+</ol>
+<p class="mechanism-note">四路可以组合，但有不同准入合同；旧日志不因附有 reward 就成为 on-policy RL 数据。来源组与留出边界随派生数据继承，固定 benchmark 不回流训练。</p>
+</figure>
 
 <table><thead><tr><th>用途</th><th>准入重点</th><th>loss / feedback对象</th><th>不应直接使用</th></tr></thead><tbody>
 <tr><td>CPT / midtraining</td><td>来源、去重、文本 / 工具轨迹格式及能力回放</td><td>角色与工具observation mask按目标设计</td><td>把所有工具输出当作模型动作监督</td></tr>

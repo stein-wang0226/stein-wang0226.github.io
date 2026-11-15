@@ -35,6 +35,12 @@ a_{l,i}&=\frac{\exp(s_{l,i})}{\sum_{j\lt l}\exp(s_{l,j})},\\
 \end{aligned}
 \]</div>
 <p>\(q_l\)是当前层可学习query；\(h_i\)是同一token的可用前层表示。先算归一化key的得分，再沿深度softmax，最后读取原表示；它没有替代token Attention。</p>
+<figure class="mechanism-map" id="attnres-depth-read"><figcaption>AttnRes：同一 token 的历史表示分成 key 与 value 两条路径</figcaption><ol class="mechanism-chain mechanism-compare">
+<li><b>可用前层表示 hᵢ</b><small>固定 token 位置，i 沿深度变化；不是不同 token 的序列 KV。</small></li>
+<li><b>匹配路径 → 权重 aₗ,ᵢ</b><small>hᵢ → RMSNorm 得 key；与可学习 qₗ 匹配 → 沿深度 softmax。归一化用于算得分。</small></li>
+<li><b>内容路径 → 原表示 hᵢ</b><small>保留未作该 key 归一化的 value；等待对应的深度权重，不把 Norm 后的 key 当成读出内容。</small></li>
+<li><b>两路汇合 → 模块输入</b><small>逐表示 aₗ,ᵢhᵢ 求和得到 h̃ₗ，再进入当前 Attention/FFN 子层；两表示例读出 (0.5,3)。</small></li>
+</ol><p class="mechanism-note">这是前式的概念数据依赖。Full 的候选是可用历史表示；Block 改为已完成 block 的 summary 与当前局部累积，不把所有层激活永久保存。具体 Norm/融合/分块顺序按报告实现；本图不添加第二条普通残差累加路径。</p></figure>
 <p><strong>两表示算例：</strong>若 \(h_1=(2,0),h_2=(0,4)\)，得分为0与\(\log3\)，权重就是1/4与3/4，模块输入为\((0.5,3)\)。选择按表示得分变化，固定残差累加则不会得到这一加权结果。</p>
 <ul><li><strong>Full：</strong>保留更多历史层表示，增加状态与访问成本。</li><li><strong>Block：</strong>读取已完成block的summary与当前局部累积；K3采用该方向。</li><li><strong>验收：</strong>能力之外还测保存激活、重算、融合kernel和pipeline通信。<a href="index.html#ref-60">[60]</a> <a href="index.html#ref-5">[5] §2.2</a></li></ul>
 <h3>mHC：约束多路残差的混合矩阵</h3>
@@ -47,6 +53,12 @@ X_{l+1}&=H_l^{\rm res}X_l\\
 H_{ij}&\ge0,\quad H\mathbf1=\mathbf1,\quad H^\top\mathbf1=\mathbf1.
 \end{aligned}
 \]</div>
+<figure class="mechanism-map" id="mhc-stream-layout"><figcaption>mHC：旧流混合与模块写回是并行的数据依赖</figcaption><ol class="mechanism-chain mechanism-compare">
+<li><b>n 路残差 Xₗ：[n,d]</b><small>同一 token 的多路表示；两支都读取 Xₗ，不把 n 路当成 n 个历史 token。</small></li>
+<li><b>旧流支：HʳᵉˢXₗ</b><small>[n,n] × [n,d] → [n,d]。Sinkhorn 近似约束 Hʳᵉˢ 非负、行列和为 1。</small></li>
+<li><b>模块支：汇入 → F → 分发</b><small>Hᵖʳᵉ：[1,n] → 汇成 [1,d]<br>F：[1,d] → [1,d]<br>Hᵖᵒˢᵗ：[n,1] → 写回 [n,d]</small></li>
+<li><b>逐流相加 → Xₗ₊₁：[n,d]</b><small>旧流混合 + 模块写回；只把同形结果相加，不将 res/pre/post 串成一个矩阵。</small></li>
+</ol><p class="mechanism-note">双随机约束只作用于旧流的 res 混合，不约束整个 F 或 pre/post 路径的 Jacobian。图按上式省略内部 Norm、映射预测与融合 kernel；“并行”指依赖分支，不承诺 GPU 同时执行。Single-Pass 复用映射的工程方式另按下文报告说明。</p></figure>
 <p>理想双随机H是置换矩阵的凸组合：\(H=\sum_r\lambda_rP_r\)，\(\lambda_r\ge0,\sum_r\lambda_r=1\)。由范数的三角不等式，\(\|H\|_2\le\sum_r\lambda_r\|P_r\|_2=1\)。乘积也保持双随机；这只限定<strong>旧残差的线性混合</strong>。</p>
 <div class="reading-math" role="math">\[
 H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
@@ -111,6 +123,12 @@ h^{(j+1)}&=\operatorname{Core}_\theta(h^{(j)},x),
 \end{aligned}
 \]</div>
 <p>\(\theta\)在迭代间共享，K决定执行深度；注入和Norm顺序取决于模型。<strong>状态例：</strong>人为取 \(h^{(0)}=0,h^{(j+1)}=0.5h^{(j)}+1\)，前三轮是1、1.5、1.75，接近固定点2。额外迭代改变潜在状态，参数量不随K复制；此收敛例不能证明真实模型质量单调提高。</p>
+<figure class="mechanism-map" id="recurrent-core-loop"><figcaption>递归深度：重复执行同一个 core，再做词表读出</figcaption><ol class="mechanism-chain">
+<li><b>输入 x → Pre</b><small>建立 h⁽⁰⁾；x 也可按模型定义注入 core。</small></li>
+<li><b>Coreθ 更新潜在状态</b><small>h⁽ʲ⁾ → h⁽ʲ⁺¹⁾；各轮共享 θ，不复制 K 套权重。</small></li>
+<li><b>迭代计数 / 停止</b><small>本式固定执行 K 次；尚未完成则回到 core，完成后才进入 Post。</small></li>
+<li><b>Post(h⁽ᴷ⁾) → logits</b><small>词表读出发生在潜在迭代之后；中间轮次不等于生成了 CoT token。</small></li>
+</ol><p class="mechanism-return">反馈边：未到 K 的新潜在状态 → 同一个 Coreθ。下一输出 token 的自回归循环是另一条轴，不能把两种循环的 cache 与成本混算。</p><p class="mechanism-note">只对应上方共享权重概念式；省略实际注入、Norm 和 cache 布局。自适应停止需另有训练与验收；教学收敛序列不是 Huginn 的性能测量。</p></figure>
 <table>
 <thead><tr><th>增加算力的方式</th><th>重复的对象</th><th>可观察的代价</th></tr></thead>
 <tbody>

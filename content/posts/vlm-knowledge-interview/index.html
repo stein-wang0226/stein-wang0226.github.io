@@ -59,6 +59,16 @@ L_{\rm SigLIP}&=\frac1N\sum_{i,j}\ell(y_{ij},S_{ij}).
 <tr><td>encoder-decoder / 统一生成</td><td>条件 encoder；或图像离散 token 进入生成目标</td><td>输入/输出目标与融合层分别设计</td><td>PaLI；Chameleon 的早期融合</td></tr>
 </tbody></table>
 <p><strong>“原生”不是精确定义。</strong>有些系统强调联合训练，有些强调统一词表/序列，有些强调端到端多模态能力。说明图像如何编码、在哪里融合、预测什么，才能比较；CoCa 还结合对比和 captioning 目标，不宜只归成普通 PaLI 式 E-D。</p>
+<figure id="vlm-fusion-paths-map" class="mechanism-map">
+<figcaption>视觉表示与文本状态在哪里交互？三条接口支路，不是三个连续阶段</figcaption>
+<p><strong>共同输入：</strong>图像 → processor → 视觉 encoder 表示；问题文本另形成文本状态。以下分别描述所选融合接口的计算，不把 CLIP 全局匹配当作回答生成。</p>
+<ul>
+<li><strong>A · 拼接：</strong>视觉表示 → 可学习 projector / resampler → 语言宽度的视觉 embedding；与文本 embedding 按布局拼接 → decoder self-attention → 回答。视觉位置进入 decoder 序列和 KV。</li>
+<li><strong>B · 独立跨注意力：</strong>视觉表示 → 视觉 K/V；文本 hidden → Q；二者在可学习 cross-attention 内交互 → 文本 hidden 更新 → 回答。视觉状态仍需存储，不是“视觉内存归零”。</li>
+<li><strong>C · encoder-decoder：</strong>编码端融合图文条件 → encoder 状态 K/V；decoder 当前文本 Q → cross-attention → 自回归回答。编码序列与 decoder 输出序列分别计长度。</li>
+</ul>
+<p class="mechanism-note">A/B/C 从共同输入各自展开，没有 A→B→C 的执行箭头；具体模型可以组合接口。图省略残差、多头和层数，模块是否冻结按配方说明。统一生成的图像 token 若成为输出目标，还需 tokenizer / 图像解码合同，不等同于把输入视觉特征换个名称。</p>
+</figure>
 <h3 id="sec1-3">1.5 Connector：维度映射与信息预算</h3>
 <p class="math-notation">\(Z\in\mathbb R^{N\times d_v}\) 为视觉表示，\(W_1,W_2\) 分别为 \(d_v\times m,m\times d_L\)，\(b_1,b_2\) 为偏置；\(P_{\rm MLP}\) 是参数数，区别于 patch 边长 \(P\)。单头 query 式的 \(K(Z),V(Z)\in\mathbb R^{N\times d}\)，\(M\) 为 query 数；语言梯度式的 \(\theta_v,Z_v,Z_{\rm lang}\) 为视觉参数、视觉输出和语言侧条件表示。</p>
 <p>MLP 对每 patch 独立映射，保持 N：dv→m→dL。可学习 query 通过 cross-attention 聚合变长视觉输入，输出 M 个语言条件 token。两者改变信息路径和预算，并非谁在所有任务都更优。</p>

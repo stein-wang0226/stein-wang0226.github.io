@@ -3,7 +3,12 @@
 <title>05 · 线性 Attention、状态空间与混合架构</title><meta name="description" content="从外积状态推导线性Attention、遗忘与delta更新，比较GDN、Mamba、SWA、全局KV及混合架构的历史信息和系统代价。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
 <!-- READING:FRAGMENT:START -->
-<figure class="mechanism-map"><figcaption>混合模型：压缩状态与显式历史的交接</figcaption><ol class="mechanism-chain"><li><b>新 token hidden</b><small>进入当前层序列计算</small></li><li><b>递推层更新状态</b><small>线性 Attention / SSM 按各自规则压缩历史</small></li><li><b>Attention 层读取 KV</b><small>部分层保留显式 token 历史</small></li><li><b>输出与各层新状态</b><small>维护不同类型的状态对象</small></li></ol><p class="mechanism-return">↶ 逐 token 继续；此为混合堆叠示意，具体层序、比例和状态形状见模型配置。</p></figure>
+<figure class="mechanism-map" id="hybrid-state-layout"><figcaption>混合模型的逐层状态：按本层类型读取，不是三步固定流水线</figcaption><ol class="mechanism-chain mechanism-options">
+<li><b>本层 hidden + 本层历史</b><small>由 layer plan 选择下方对应的序列模块；各层拥有自己的状态，不能共用一份“memory”。</small></li>
+<li><b>GDN / KDA 层</b><small>当前 q/k/v + 旧关联矩阵 → 更新矩阵 → 读出；持久矩阵形状不随历史长度增长。</small></li>
+<li><b>SSM 层</b><small>当前输入 + 旧递归状态 → 选择性转移 → 读出；局部卷积等辅助状态另存。</small></li>
+<li><b>Attention 层</b><small>当前 Q + 历史/当前 KV → 聚合输出；全局或局部窗口决定可见历史与保留策略。</small></li>
+</ol><p class="mechanism-return">每条路线输出表示供后续模块/下一层使用，并保存本层的新状态；下一个 token 再读取这些状态。混合堆叠的层序取决于配置，不表示三类模块在同一层同时执行。</p><p class="mechanism-note">只画序列混合与持久状态，省略 Norm、FFN、门控和输出投影；不同递推机制不共享同一更新公式。</p></figure>
 <section id="purpose"><h2>固定大小状态怎样保留不断增长的历史</h2>
 <p class="lead">完整 Attention 为历史保留可逐项访问的 KV；递归模型不断更新一个固定形状的状态，用它概括历史。后者可降低长序列 decode 的状态增长，但压缩与覆盖会影响精确召回。混合架构让不同层承担递推、局部访问与全局读取。</p>
 <p>先修：<a href="s02_attention_position_cache.html">Attention 与缓存</a>。本章公式采用 <code>S ∈ R^(dv×dk)</code>、列向量 q/k/v；与第01章的行向量约定转置等价，不能混用乘法方向。GDN 原论文 §2–3 明确讨论更新和硬件并行。<a href="index.html#ref-7">[7]</a></p></section>
@@ -83,7 +88,12 @@ h_t=\bar A_t h_{t-1}+\bar B_t x_t,\qquad y_t=C_t h_t+Dx_t.
 <tr><td>错误：B接着A的可变状态运行</td><td>8.5</td><td>\(0.5\times8.5-2=2.25\)</td></tr>
 <tr><td>B：重放完整前缀再继续</td><td>重算得到5</td><td>0.5，与快照恢复一致</td></tr>
 </tbody></table>
-<figure class="mechanism-map"><figcaption>分支共享输入历史，各自推进状态</figcaption><ol class="mechanism-chain"><li><b>前缀 [2,4]</b><small>完整计算得到状态5</small></li><li><b>冻结起点快照</b><small>关联权重、位置及其他状态</small></li><li><b>独立续写 A / B</b><small>A输出8.5；B输出0.5</small></li><li><b>继续或丢弃分支</b><small>不得覆盖另一分支的起点</small></li></ol></figure>
+<figure class="mechanism-map" id="state-fork-map"><figcaption>从同一不可变快照分叉：A 的更新不能流入 B</figcaption><ol class="mechanism-chain mechanism-compare">
+<li><b>前缀 [2,4] → 冻结 h = 5</b><small>两条箭头都从这个起点恢复；关联相同权重、位置与输入历史。</small></li>
+<li><b>分支 A 的私有状态</b><small>恢复 5，输入 6：0.5×5+6 = 8.5。后续只更新 A。</small></li>
+<li><b>分支 B 的私有状态</b><small>独立恢复 5，输入 −2：0.5×5−2 = 0.5。不是接着 A 的 8.5 计算。</small></li>
+<li><b>分别继续 / 选择 / 丢弃</b><small>保存 (A,8.5) 与 (B,0.5)，不能把两个状态相加或当成同一条历史。</small></li>
+</ol><p class="mechanism-note">底部只汇总分支管理，不合并数值。此处为标量 SSM 教学例，真实混合模型还要快照各层 KV、卷积和递归状态；误把 A 状态交给 B 会读出 2.25。</p></figure>
 <p><strong>换窗：</strong>若从零只重放最后一个输入4，状态为4；再接A的6，读出8，与完整历史的8.5不同。摘要是新的输入，也没有天然的状态等价保证；KV和递归状态都必须对应实际输入历史。</p>
 <p><strong>换参数：</strong>将状态转移系数改为0.25，完整重放[2,4]应得到4.5，再接6读出<strong>7.125</strong>；直接复用旧状态5会得到7.25。即便保存了原token，也需要重算或一个明确的跨版本状态算法。单个标量快照只含一个数，真实混合block还需各层KV、卷积状态、位置与门控相关状态。</p>
 <p>RL 权重更新使旧状态通常过期。每一生成段都应固定权重、router、mask、位置、adapter、精度与 kernel；跨版本恢复需有明确协议。恢复机制与 policy lag 连接<a href="../llm-posttraining/s05_frameworks_async.html#partial-rollout">Partial rollout 的分段交接</a>。</p></section>
