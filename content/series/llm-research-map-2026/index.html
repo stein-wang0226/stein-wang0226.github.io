@@ -3,18 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LLM 研究地图：数据、Agent RL、架构与推理</title>
-<meta name="description" content="截至2026年11月14日的七章研究专题，连接Agent数据、RL、扩散推理与场景，并比较DeepSeek、Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step、Gemma及残差、MoE、Muon机制。">
+<title>前沿研究来源与旧目录</title>
+<meta name="description" content="原研究地图的章节已并入各主题；此页保留旧书签定位、固定版本来源、报告下载与证据说明。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
 <main class="training-lifecycle">
 <section id="overview">
 <p class="eyebrow">Stein’s Notes · Research review · 2026-11-14</p>
-<h2>用研究问题阅读论文，用实验条件判断结论</h2>
+<h2>前沿内容已归入各自的学习主题</h2>
 <section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
 
-<p class="lead">本页衔接完整学习主线，集中阅读<strong>新方法改了什么、论文测到了什么、结论在哪些条件下成立</strong>。先掌握训练目标、模型状态和独立评测，再用下面七节建立自己的证据表。</p>
+<p class="lead">原来的“数据、Agent RL、架构与推理”研究地图按一次调研批次组织，混合了不同学习主题。现在，<strong>基础原理和前沿机制在所属主题内连续阅读</strong>：架构进入模型架构，Agent RL进入后训练，投机解码进入推理，任务合成进入数据，GUI与科学Agent进入Agent系统。</p>
+<p>从<a href="../blog/#knowledge-map">分类目录</a>开始学习。本页保留原来源编号、报告下载和旧目录定位，方便核对既有引用。</p>
 <ul><li><strong>看机制：</strong>定位被改变的状态、梯度、缓存或执行路径。</li><li><strong>看对照：</strong>固定模型、数据、预算、硬件与指标分母；组合改动不能归因给一个模块。</li><li><strong>看边界：</strong>规格推导、论文实验、独立复现与待执行方案分别记录。</li></ul>
 <figure>
 <div class="flow" aria-label="研究链路，按顺序阅读">
@@ -30,7 +31,7 @@
 <div class="card"><span class="metric">15 份原件</span><p>保存DeepSeek官方报告与14篇CC BY原论文，新增Nemotron、GDN、LatentMoE、GLM-5和Gemma 4；版本、许可与SHA可核对。</p></div>
 </div>
 <p class="note">调研截止 2026-11-14。论文数字均为作者报告，本次未复现训练或 benchmark；建议实验全部标为待执行。动态文档只代表访问时口径，不把版本不同的榜单拼成同一实验。</p>
-<p>本页依次阅读数据、Agent RL、模型家族、DeepSeek缓存案例、训练机制、扩散推理和场景研究。基础解释在<a href="../blog/#learning-paths">完整学习主线</a>；本页的版本细表和扩展方案按需展开。</p>
+<p>按研究问题比较方法时，先固定输入、计算对象、对照条件和输出；具体推导与论文对照随正文一起归入下列主题。</p>
 </section>
 <section id="coverage">
 <p><strong>先修：</strong>模型张量与状态、后训练目标、任务验证及服务指标。尚不熟悉时从<a href="../blog/#learning-paths">完整学习主线</a>补齐；本页不再维护第二套基础课程。</p>
@@ -38,7 +39,7 @@
 <section id="learning-paths">
 <p><strong>阅读产物：</strong>每节留下“机制改动、对照条件、结果、未知项”四栏笔记；论文名只是检索入口。</p>
 </section>
-<!-- READING:COURSE -->
+<!-- READING:RELOCATED -->
 <section id="priorities">
 <h2>后续最值得独立展开的选题</h2>
 <details><summary>展开研究选题与证据缺口</summary>
@@ -50,7 +51,7 @@
 <tr><td>P0 · 异步训练有效样本率</td><td>完成顺序偏置、版本 lag、目标 token、MoE routing / kernel 对齐分别观测</td><td>GPU 利用率增加就代表学习效率增加</td></tr>
 <tr><td>P1 · 架构服务真实 Agent</td><td>工具轮次、前缀命中、短轮返回、输入输出比、IO、队列和成功成本</td><td>KV 某口径缩小就等于总成本同比缩小</td></tr>
 <tr><td>P1 · GUI 与科学 Agent</td><td>状态与恢复、确定性复现、数据划分、有效提交与科学正确性；绑定公开案例</td><td>最终文件存在或自然语言解释流畅就代表任务完成</td></tr>
-<tr><td>P1 · 架构与训练机制</td><td>第06–07章已完成多家族、残差、LatentMoE、Muon和递归深度综述；下一步实现等token / 等算力消融与kernel实测</td><td>从单团队结果、参数量或维度比推断通用最优</td></tr>
+<tr><td>P1 · 架构与训练机制</td><td>架构主题包含多家族、残差、LatentMoE和递归深度；Muon位于训练主题。下一步是等token / 等算力消融与kernel实测</td><td>从单团队结果、参数量或维度比推断通用最优</td></tr>
 </tbody>
 </table>
 </details>
@@ -68,7 +69,7 @@
 <section id="sources">
 <h2>原始来源索引</h2>
 <details><summary>展开71项固定来源与原编号</summary>
-<p class="note">本系列七章共用编号，原1–43保留，新增44–71。论文固定版本；官方 / 合作方访问日期均为2026-11-14，模型配置固定revision。标题、署名、使用位置、许可与哈希见清单。同一团队论文、模型卡和发布页面可以核对规格，但不能算三个独立复现实验。</p>
+<p class="note">原七节共用的编号在此保留，正文已归入各主题。论文固定版本；官方 / 合作方访问日期均为2026-11-14，模型配置固定revision。标题、署名、使用位置、许可与哈希见清单。同一团队论文、模型卡和发布页面可以核对规格，但不能算三个独立复现实验。</p>
 <ol class="sources">
 <li id="ref-1"><a href="https://arxiv.org/html/2609.19969v1">DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression</a> · §2架构、§3.2缓存、§5数据与RL。<a href="../assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf">官方PDF快照</a>。</li>
 <li id="ref-2"><a href="https://arxiv.org/html/2606.19348v1">DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence</a> · V4.1的架构前序。</li>

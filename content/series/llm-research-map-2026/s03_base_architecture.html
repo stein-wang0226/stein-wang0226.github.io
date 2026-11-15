@@ -189,7 +189,7 @@ b_{\rm global}&=(1.5+1)\times356\\
 <li>在开放实现允许时消融缓存 / replay / 索引计划；不把不存在的可配置项假装成已经完成的实验。</li>
 <li>固定工具、题集与总生成预算，同时报告成功率、工具错误、成本和长上下文质量；改变缓存策略后重新验收输出。</li>
 </ul>
-<p>本节只拆解原报告，实验未执行。应用条件连接本页的<a href="s04_inference_diffusion.html">扩散drafter</a>与<a href="s02_agentic_rl.html#asynchrony">异步对齐</a>；任务生产的独有流程归任务主讲。</p>
+<p>本节只拆解原报告，实验未执行。应用条件分别连接推理主题的<a href="s04_inference_diffusion.html">扩散drafter</a>与后训练主题的<a href="s02_agentic_rl.html#asynchrony">异步对齐</a>；任务生产的独有流程归任务主讲。</p>
 </section>
 <section id="frontier-evidence" data-frontier-audit="20261114"><h2>缓存规格与能力对照分开</h2><p><a href="../llm-architecture/s02_attention_position_cache.html#frontier-comparison">Kimi Linear 同 token 能力实验</a>用于比较结构；本章 V4.1 字节规格是另一模型和存储口径，不能与该成绩表拼成统一排名。</p></section>
 <div class="course-review"><p><strong>面试短答：</strong>890 B/token只计global cache；它来自entry格式、encoder压缩比和跨层共享。SWA、权重、Engram及workspace另计。Bounded replay用额外计算恢复近似局部状态，必须同时验收质量与短轮延迟。</p></div>

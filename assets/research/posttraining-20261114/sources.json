@@ -453,7 +453,7 @@
       "source_position_and_scope": "Kimi K2: Open Agentic Intelligence · Moonshot；Agent 数据、环境、SFT / RL。",
       "used_in": [
         "/llm-posttraining/s01_supervision_preference.html#industry",
-        "/llm-research-map-2026/s07_architecture_training.html#muon"
+        "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html"
@@ -663,9 +663,9 @@
         "/llm-posttraining/s06_task_cases_experiments.html#code-case",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#mimo",
-        "/llm-research-map-2026/s07_architecture_training.html#muon",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
-        "/llm-research-map-2026/s07_architecture_training.html#sources"
+        "/llm-research-map-2026/s07_architecture_training.html#sources",
+        "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
       ],
       "used_in_before_organization": [
         "/llm-posttraining/s01_supervision_preference.html",

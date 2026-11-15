@@ -70,8 +70,9 @@
       "summary": "先学经典计算链路，再比较前沿模型改变了哪些模块。",
       "stages": [
         {"entry": "llm-architecture", "label": "Transformer → Attention / KV → FFN / MoE → 残差 / 混合状态"},
+        {"entry": "transformer-decoder-flow", "anchor": "training-forward", "label": "完整前向算例：逐步张量 → 数值计算 → 缓存解码 → PyTorch"},
         {"entry": "research-architecture-landscape", "anchor": "families", "label": "DeepSeek、Qwen、Kimi 等开源家族与固定版本"},
-        {"entry": "research-architecture-training", "label": "前沿机制：残差、LatentMoE、Muon 与递归计算"},
+        {"entry": "research-architecture-training", "label": "前沿机制：残差流、LatentMoE 与递归深度"},
         {"entry": "dlm-survey", "label": "生成范式分支：扩散语言模型"}
       ]
     },
@@ -436,7 +437,7 @@
     {
       "key": "gui-agents",
       "label": "GUI环境与任务状态验证",
-      "entry": "llm-research-map-2026",
+      "entry": "agent-systems",
       "anchor": "research-agent-frontiers--gui"
     },
     {

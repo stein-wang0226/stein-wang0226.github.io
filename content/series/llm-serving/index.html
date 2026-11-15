@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
 <section id="purpose"><p class="eyebrow">Serving engineering · 2026-11-14</p><h2>把结构收益转成可测量的服务结果</h2>
 <p class="lead">模型结构决定计算和状态；调度决定哪些请求一起运行；并行和低精度决定如何使用设备；端到端测量决定这些选择是否值得。token吞吐、请求延迟、任务正确性和成功成本必须分别记录。</p>
+<p>基础算例之后，继续在本页阅读<a href="#research-inference-diffusion">DFlash → DSpark → AdaFlash</a>，把接受协议、选择偏差和并发测量接回同一条推理主线。</p>
 <ul><li><strong>调度与状态：</strong>prefill/decode、分页、prefix复用、请求结束和工具暂停。</li><li><strong>加速与正确性：</strong>TP/EP/PD、量化对象、投机接受与残差校正。</li><li><strong>交付与成本：</strong>容量账本、TTFT/TPOT、Little定律、全部尝试的成功成本。</li></ul>
 <figure><div class="flow"><div class="stage"><b>模型与状态</b><small>权重、KV、递归状态<br>结构与长度边界</small></div><div class="stage"><b>服务调度</b><small>prefill / decode<br>批处理与cache生命周期</small></div><div class="stage"><b>设备与数值</b><small>TP / DP / EP / PD<br>量化、验证与传输</small></div><div class="stage"><b>任务与成本</b><small>TTFT / ITL / goodput<br>失败、CPU、成功成本</small></div></div><figcaption>不是性能比例图。所有规划值与论文实测、源码支持范围分开呈现。</figcaption></figure></section>
 <!-- READING:COURSE -->
@@ -13,5 +14,5 @@
 
 <ul><li><strong>能解释：</strong>分页改变存储映射，prefix复用改变重算，投机校正保持所选target分布。</li><li><strong>能复算：</strong>末页浪费、KV传输下界、量化误差、70B容量和成功成本。</li><li><strong>能诊断：</strong>区分显存准入、prefill干扰、decode带宽、CPU工具等待与选择失败。</li></ul>
 <p>本文固定实现：vLLM v0.32.0（5df63a7）与SGLang v0.5.23（297e54f）。截至2026-11-14核对，vLLM另有v0.33.0rc3标签，即使release元数据未标prerelease，名称仍是RC，本系列以无RC的v0.32.0作源码基线。新版本与新架构组合需重新检查。</p>
-<details><summary>研究与工程参考</summary><p><a href="../llm-research-map-2026/">前沿模型及作者测量</a>；<a href="../agent-data-benchmarks/">科学任务与训练规划</a>；<a href="../transformer-decoder-flow.html">可运行Decoder实现</a>。</p></details>
+<details><summary>研究与工程参考</summary><p><a href="../llm-architecture/#research-architecture-landscape">前沿模型结构</a>；<a href="../agent-data-benchmarks/">科学任务与训练规划</a>；<a href="../transformer-decoder-flow.html">完整Decoder前向与实现</a>。</p></details>
 </section></main></body></html>

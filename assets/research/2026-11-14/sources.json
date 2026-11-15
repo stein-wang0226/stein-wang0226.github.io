@@ -271,9 +271,9 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#kimi",
         "/llm-research-map-2026/s06_architecture_landscape.html#state",
         "/llm-research-map-2026/s07_architecture_training.html#latent-moe",
-        "/llm-research-map-2026/s07_architecture_training.html#muon",
         "/llm-research-map-2026/s07_architecture_training.html#residual",
-        "/llm-research-map-2026/s07_architecture_training.html#sources"
+        "/llm-research-map-2026/s07_architecture_training.html#sources",
+        "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
       ],
       "historical_used_in": [
         "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt",
@@ -1797,9 +1797,9 @@
       "official_report_note": "Downloaded outside repository to inspect; no redistribution license assumed. Official report cover date 2026-08-26 differs from arXiv v1 submission 2026-08-31.",
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen",
-        "/llm-research-map-2026/s07_architecture_training.html#muon",
         "/llm-research-map-2026/s07_architecture_training.html#residual",
-        "/llm-research-map-2026/s07_architecture_training.html#sources"
+        "/llm-research-map-2026/s07_architecture_training.html#sources",
+        "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
       ],
       "historical_used_in": [
         "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
@@ -2620,9 +2620,9 @@
         "/llm-posttraining/s06_task_cases_experiments.html#code-case",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#mimo",
-        "/llm-research-map-2026/s07_architecture_training.html#muon",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
-        "/llm-research-map-2026/s07_architecture_training.html#sources"
+        "/llm-research-map-2026/s07_architecture_training.html#sources",
+        "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
       ],
       "historical_used_in": [
         "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt",
@@ -2886,9 +2886,9 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#step",
-        "/llm-research-map-2026/s07_architecture_training.html#muon",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
-        "/llm-research-map-2026/s07_architecture_training.html#sources"
+        "/llm-research-map-2026/s07_architecture_training.html#sources",
+        "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
       ],
       "historical_used_in": [
         "/assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt",
@@ -3633,7 +3633,7 @@
       "local_asset": null,
       "used_in": [
         "/llm-posttraining/s01_supervision_preference.html#industry",
-        "/llm-research-map-2026/s07_architecture_training.html#muon"
+        "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
       ],
       "historical_used_in": [
         "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt",

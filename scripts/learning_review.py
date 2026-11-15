@@ -11,6 +11,7 @@ RECEIPTS = ROOT / "docs/content-changes.json"
 SYMBOL_REVIEW = ROOT / "docs/blog-symbol-review-20261115.json"
 STRUCTURE_REVIEW = ROOT / "docs/blog-structure-review-20261115.json"
 CURRICULUM_REVIEW = ROOT / "docs/blog-curriculum-review-20261115.json"
+FORWARD_REVIEW = ROOT / "docs/blog-forward-integration-20261115.json"
 
 
 def derive():
@@ -66,6 +67,15 @@ def derive():
                 raise ValueError(f"curriculum review source mismatch: {page['id']}")
             if page["changed"]:
                 reasons[page["id"]] += f" 分类与课程复查：{page['reason']}。"
+    if FORWARD_REVIEW.exists():
+        sources = {e["id"]: e["source"] for e in entries}
+        seen = set()
+        for page in json.loads(FORWARD_REVIEW.read_text())["pages"]:
+            identifier = page["id"]
+            if identifier in seen or sources.get(identifier) != page["source"]:
+                raise ValueError(f"forward review duplicate or source mismatch: {identifier}")
+            seen.add(identifier)
+            reasons[identifier] += f" 完整算例与主题整合：{page['reason']}。"
     return entries, reasons
 
 

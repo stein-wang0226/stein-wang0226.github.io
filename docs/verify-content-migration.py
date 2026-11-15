@@ -257,10 +257,31 @@ def validate_contract(catalog, site, redirects, baseline):
             errors.append(f"{parent['id']}: chapter order must be unique and contiguous")
     baseline_sources = {r["after"] for r in baseline["files"] if r["after"]}
     baseline_entries = [e for e in entries if e["source"] in baseline_sources]
+    # Count the original roles while verifying explicitly reviewed role changes.
+    # The immutable source/route/byte/anchor checks below remain in force.
+    original_kind = {}
+    transition_path = ROOT / "docs/blog-forward-integration-20261115.json"
+    if transition_path.exists():
+        review = read_json(transition_path)
+        reviewed_sources = {p["source"] for p in review["pages"]}
+        by_id = {e["id"]: e for e in entries}
+        for move in review.get("catalog_transitions", []):
+            entry = by_id.get(move["id"], {})
+            if (move["id"] in original_kind or move["source"] not in reviewed_sources or
+                    (move["from_kind"], move["to_kind"]) not in
+                    {("post", "chapter"), ("series", "post")} or
+                    any(entry.get(key) != move[key] for key in ("source", "url")) or
+                    entry.get("kind") != move["to_kind"] or
+                    entry.get("series") != move["to_series"]):
+                errors.append(f"{move['id']}: invalid reviewed catalog transition")
+            else:
+                original_kind[move["id"]] = move["from_kind"]
+    def original_role(entry):
+        return original_kind.get(entry["id"], entry["kind"])
     local = [e for e in baseline_entries if e["origin"] == "local" and
-             e["status"] == "published" and e["kind"] != "chapter"]
+             e["status"] == "published" and original_role(e) != "chapter"]
     if (len(local) != baseline["counts"]["local_collections"] or
-            sum(e["kind"] == "chapter" for e in baseline_entries) != baseline["counts"]["chapters"]):
+            sum(original_role(e) == "chapter" for e in baseline_entries) != baseline["counts"]["chapters"]):
         errors.append("original collection/chapter coverage differs from the immutable baseline")
     if len([e for e in entries if e["origin"] == "external"]) != 2:
         errors.append("baseline external coverage differs from 2")

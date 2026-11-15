@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agent 任务合成与评测：数据构建、任务设计与基准选择</title>
-<meta name="description" content="四章连接可执行任务合成、Benchmark、公开RNA-seq科学合同和工业SFT/RL方案；提供独立验证、schema、失败与成功成本口径。">
+<meta name="description" content="连接可执行任务合成、Benchmark、公开RNA-seq科学合同、训练对照和前沿数据路线；提供独立验证、失败与成功成本口径。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
@@ -12,6 +12,7 @@
 <p class="eyebrow">Stein’s Notes · Data &amp; evaluation · 2026-11-14</p>
 <h2>合成什么数据，才能测到真正的 Agent 能力</h2>
 <p class="lead">沿一条任务生命周期学习：生产可执行任务，明确科学操作，筛选训练轨迹，最后在独立任务上评测。本页既讲合同与统计原理，也保留来源和实验边界。</p>
+<p>在合同、评测和对照方法之后，<a href="#research-agent-data">前沿数据合成与迁移审计</a>继续比较NexForge、EvoSyn、ProgramGym等工作，解释它们分别扩展了什么生成空间。</p>
 <div class="callout"><strong>核心判断：</strong>可运行环境、独立验收、受控校准和固定留出集，是任务合成与评测共有的基础。更多任务、更高通过率或更长轨迹，都需要结合覆盖、预算和验证器质量解释。</div>
 <ul><li><strong>生产：</strong>来源、输入、环境、任务合同与独立verifier。</li><li><strong>理解：</strong>生物学重复、配对NB模型、contrast、BH与可复算产物。</li><li><strong>比较：</strong>研究组切分、单因素实验、配对差异、pass@k和失败分母。</li></ul>
 <p class="note">来源访问截止2026-11-14。前两章共用本页52项引用，编号独立于《LLM研究地图》；新增科学与集群两章分别记录来源。研究设计、论文数字和个人简历陈述分开；没有执行科学任务、任务合成、训练或benchmark。</p>

@@ -1,12 +1,115 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Transformer Decoder：张量、公式与完整 PyTorch 实现</title>
+<title>Transformer 完整前向算例：训练、缓存解码与 PyTorch</title>
 <meta name="description" content="以MHA、RoPE、RMSNorm和SwiGLU连接张量形状、整段训练与KV增量解码，提供可运行小模型和缓存等价性验证。">
 <link rel="stylesheet" href="assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
-<section id="architecture-bridge"><h2>先对照对象和形状，再读代码</h2>
-<p><strong>本页是实现参考：</strong>用 bias-free MHA、相邻维配对 RoPE、Pre-RMSNorm、SwiGLU 和独立 LM head 构造小模型，不直接加载 Llama/Qwen checkpoint。基础推导在<a href="llm-architecture/">架构主题</a>，此处保留读代码所需公式与可复算形状。</p>
-<p>设 B 为 batch，T 为本次输入长度，S 为此前缓存长度，d 为 hidden，H 为 head 数，D=d/H 为每头维度，F 为 FFN 中间维度，V 为词表。本例 d=32、H=4、D=8、F=64、V=97、层数2。</p>
+<!-- READING:FRAGMENT:START -->
+<section id="architecture-bridge"><h2>把一次完整 forward 从输入算到输出</h2>
+<p><strong>这是旧版完整前向示例的主讲位置。</strong>先沿训练链路走完每个张量，再手算一个小模型的中间值，最后对照 prefill、缓存解码和完整代码。旧版的训练、推理、参数与实现内容在这里接成一条线；<a href="assets/archive/blog-before-learning-rework-20261115/posts/transformer-decoder-flow/index.html.txt" download>原始页面源码</a>完整保留供查证。</p>
+<p>主体模型采用 bias-free MHA、相邻维配对 RoPE、Pre-RMSNorm、SwiGLU 和独立 LM head。它是便于推导的现代 decoder 示例；原始 Transformer 的 Post-LayerNorm、绝对位置编码和 encoder–decoder 结构需要分别辨认。</p>
+<p>设 B 为 batch，T 为本次输入长度，S 为此前缓存长度，d 为 hidden，H 为 head 数，D=d/H 为每头维度，F 为 FFN 中间维度，V 为词表。完整PyTorch代码采用 d=32、H=4、D=8、F=64、V=97、层数2；逐步形状例和手算例使用各自明确列出的更小尺寸。</p>
 <figure class="mechanism-map"><figcaption>一组参数，两种输入：整段训练与增量解码</figcaption><ol class="mechanism-chain"><li><b>IDs [B,T]</b><small>embedding → [B,T,d]</small></li><li><b>Pre-Norm → QKV/RoPE</b><small>[B,H,T,D]；位置从 S 开始</small></li><li><b>历史 KV + 当前 KV</b><small>Attention [B,H,T,S+T] → 残差</small></li><li><b>Pre-Norm → SwiGLU → head</b><small>[B,T,d] → [B,T,V]；训练计算 CE，推理采样</small></li></ol></figure>
+</section>
+<section><h2 id="training-forward">训练前向：整段输入怎样一步步变成 loss</h2>
+<p><strong>固定一组贯穿全节的尺寸：</strong>B=2、T=3、d=4、H=2、D=2、F=8、V=5、L=2。B是样本数，T是输入token数，d是表示宽度，H/D是头数/每头宽度，F是FFN中间宽度，V是词表大小，L是层数。下方可运行代码采用更大的 d=32；计算顺序完全相同。</p>
+<h3 id="forward-embedding">1. IDs → embedding → 第一个 Pre-Norm</h3>
+<p>取一个样本的输入ID为 [1,2,3]，另一个为 [2,4,1]。查表不做token之间的混合：每个整数选出一行可学习向量。每层有独立的Norm缩放参数，统计沿最后一维进行。</p>
+<div class="reading-math">\[
+\begin{aligned}
+I&amp;\in\{0,\ldots,V-1\}^{B\times T},\\
+E&amp;\in\mathbb R^{V\times d},\quad X_0=E[I],\\
+X&amp;=X_{\ell-1},\quad U=\operatorname{RMSNorm}_{\ell,1}(X).
+\end{aligned}
+\]</div>
+<p>I为ID张量，E为embedding表，X₀和每层输入X均为 [2,3,4]；ℓ从1到L索引层。U是归一化结果，形状仍为 [2,3,4]。<strong>后面的QKV投影接收U，残差保留原始X</strong>。RMSNorm和RoPE的逐项定义见本节下方公式。</p>
+<h3 id="forward-qkv">2. 三组投影 → 拆头 → 旋转Q/K</h3>
+<div class="reading-math">\[
+\begin{aligned}
+\widetilde Q&amp;=UW_Q,\quad\widetilde K=UW_K,\quad\widetilde V=UW_V,\\
+Q&amp;=\operatorname{splitHeads}(\widetilde Q),\\
+K&amp;=\operatorname{splitHeads}(\widetilde K),\quad
+V_h=\operatorname{splitHeads}(\widetilde V).
+\end{aligned}
+\]</div>
+<p>按行向量右乘约定，W_Q/W_K/W_V各为 [4,4]；带波浪线的投影为 [2,3,4]。先reshape成 [2,3,2,2]，再交换序列/头维成 [2,2,3,2]。V_h是value张量，区别于词表大小V；splitHeads只重排维度，不新增参数。</p>
+<p>对Q/K在位置p=0/1/2应用RoPE，得到Q_r/K_r，形状不变；V_h不旋转。<strong>RoPE是成对维度的线性旋转，不是给embedding加位置向量</strong>。同一内容向量的旋转内积引入相对位移；内容本身仍随上下文和层改变。</p>
+<h3 id="forward-attention">3. 打分 → 因果mask → softmax → 加权value</h3>
+<div class="reading-math">\[
+\begin{aligned}
+S&amp;=Q_rK_r^\top/\sqrt D,\\
+A&amp;=\operatorname{softmax}_{\rm key}(S+M),\\
+O_h&amp;=AV_h.
+\end{aligned}
+\]</div>
+<p>S是每个头内的query–key分数，转置只交换最后两维；[2,2,3,2]×[2,2,2,3]得到 [2,2,3,3]。M在合法key处为0、未来位置为−∞，广播到各样本与头。softmax沿key维归一化，每个query的一行和为1。</p>
+<table><caption>T=3时的因果可见性：行是query位置，列是key位置</caption><thead><tr><th></th><th>key 0</th><th>key 1</th><th>key 2</th></tr></thead><tbody><tr><th>query 0</th><td>可见</td><td>屏蔽</td><td>屏蔽</td></tr><tr><th>query 1</th><td>可见</td><td>可见</td><td>屏蔽</td></tr><tr><th>query 2</th><td>可见</td><td>可见</td><td>可见</td></tr></tbody></table>
+<p>A乘V_h：[2,2,3,3]×[2,2,3,2]得到O_h=[2,2,3,2]。<strong>A是“从哪些位置读取”的权重，O_h是读取后的表示</strong>，两者不是同一个张量。</p>
+<h3 id="forward-block">4. 拼头 → 输出投影 → 两条残差与SwiGLU</h3>
+<div class="reading-math">\[
+\begin{aligned}
+O&amp;=\operatorname{mergeHeads}(O_h)W_O,\\
+H_{\rm mid}&amp;=X+O,\quad Z=\operatorname{RMSNorm}_{\ell,2}(H_{\rm mid}),\\
+G&amp;=\operatorname{SiLU}(ZW_g),\quad U_f=ZW_u,\\
+\Delta_f&amp;=(G\odot U_f)W_d,\quad X_\ell=H_{\rm mid}+\Delta_f.
+\end{aligned}
+\]</div>
+<p>先将O_h变回 [2,3,2,2] 再拼成 [2,3,4]，右乘W_O=[4,4]。H_mid是第一条残差输出，Z是第二次Norm结果。W_g/W_u为 [4,8]，得到G/U_f=[2,3,8]；逐元素相乘后右乘W_d=[8,4]，得到Δ_f=[2,3,4]，才能与H_mid相加。</p>
+<p>SiLU(z)=z·sigmoid(z)，⊙是逐元素乘法。FFN独立处理每个位置的通道；本层跨位置通信发生在Attention。L层各自重复以上运算，hidden形状始终为 [2,3,4]。</p>
+<h3 id="forward-loss">5. 最终Norm → LM head → 标签右移 → 标量loss</h3>
+<div class="reading-math">\[
+\begin{aligned}
+Z_{\rm lm}&amp;=\operatorname{RMSNorm}_{\rm final}(X_L)W_{\rm lm},\\
+p_{b,t}&amp;=\operatorname{softmax}(Z_{{\rm lm},b,t}),\\
+\mathcal L&amp;=-\frac1{B(T-1)}
+\sum_{b=1}^{B}\sum_{t=0}^{T-2}\log p_{b,t}[I_{b,t+1}].
+\end{aligned}
+\]</div>
+<p>W_lm=[4,5]，logits为 [2,3,5]；p_b,t是位置t预测下一个token的5类分布。对输入 [1,2,3]，位置0预测ID2，位置1预测ID3；没有额外标签时，位置2的logits不计入这次loss。两个样本各2个目标，总共4项平均得到标量。</p>
+<p>PyTorch的Linear存储转置权重，因此head.weight为 [5,4]；这是存储约定差异。训练用真实前缀并行计算，不在每个位置采样再喂回。loss.backward()随后把梯度传回head、各block与embedding，optimizer.step()才更新参数。</p>
+<figure class="mechanism-map"><figcaption>完整forward的检查点：每一站都能拿到具体张量</figcaption><ol class="mechanism-chain"><li><b>IDs → X₀</b><small>[2,3] → [2,3,4]</small></li><li><b>Q/K/V → A</b><small>[2,2,3,2] → [2,2,3,3]</small></li><li><b>两条残差 → X₂</b><small>Attention与FFN都回到 [2,3,4]</small></li><li><b>head → CE</b><small>[2,3,5] → 4个有效目标 → 标量</small></li></ol></figure>
+</section>
+<section><h2 id="numerical-forward">完整数值算例：从两个token算到下一token的概率</h2>
+<p><strong>教学假设：</strong>B=1、T=2、d=D=F=2、H=L=1，词表为[A,B,EOS]。输入[A,B]，embedding为x₀=(1,0)、x₁=(0,1)；Q/K/V/O和gate/up/down矩阵均取2×2单位阵，所有Norm的γ=(1,1)。为使手算聚焦计算链，本例单独关闭RoPE并令ε=0；各Norm输入非零。下方完整代码仍使用RoPE和ε=10⁻⁶。</p>
+<p>LM head取行向量右乘矩阵 \(W_{\rm lm}=\begin{bmatrix}1&amp;0&amp;0\\0&amp;1&amp;0\end{bmatrix}\)。它把最终表示的两维作为A/B logits，EOS logit设为0。数值保留6位，计算过程不提前四舍五入。</p>
+<div class="reading-math">\[
+U=\begin{bmatrix}\sqrt2&amp;0\\0&amp;\sqrt2\end{bmatrix},
+\quad Q=K=V_h=U,\quad
+S=\begin{bmatrix}\sqrt2&amp;0\\0&amp;\sqrt2\end{bmatrix}.
+\]</div>
+<p>加mask后第一行只能读自己，A₀=(1,0)。第二行可以读两位置，A₁=softmax(0,√2)=(0.195570,0.804430)。下面跟踪第二个位置，完整算到预测输出。</p>
+<table><thead><tr><th>步骤</th><th>代入计算</th><th>输出向量</th></tr></thead><tbody>
+<tr><td>Attention读value</td><td>0.195570·(√2,0)+0.804430·(0,√2)</td><td>(0.276578, 1.137635)</td></tr>
+<tr><td>输出投影与第一条残差</td><td>W_O=I；加原始x₁=(0,1)</td><td>h=(0.276578, 2.137635)</td></tr>
+<tr><td>第二次RMSNorm</td><td>z=h/√mean(h²)</td><td>(0.181466, 1.402523)</td></tr>
+<tr><td>SwiGLU三个投影</td><td>均为I；SiLU(z)⊙z</td><td>(0.017955, 1.578739)</td></tr>
+<tr><td>第二条残差</td><td>x′=h+FFN(z)</td><td>(0.294533, 3.716374)</td></tr>
+<tr><td>最终Norm</td><td>x′/√mean(x′²)</td><td>(0.111730, 1.409793)</td></tr>
+<tr><td>LM head</td><td>乘W_lm得到三类logits</td><td>(0.111730, 1.409793, 0)</td></tr>
+<tr><td>softmax</td><td>exp(logit)/Σexp(logit)</td><td>(0.179970, 0.659085, 0.160945)</td></tr>
+</tbody></table>
+<p><strong>输出解释：</strong>贪心会选B；按概率采样则仍可能输出A或EOS。若额外给定第二位置的监督目标为EOS，这一项NLL为 −log(0.160944586)=<strong>1.826695</strong>。这是人为指定的下一token目标；仅拿两token输入自移位，只能计算第一位置预测B的loss，不能凭空获得EOS标签。</p>
+<p><strong>复核条件：</strong>每行Attention权重和为1；第一个位置不读B；两条残差形状一致；词表概率和为1。修改B的embedding不应改变第一位置输出，却会改变第二位置输出。数值由标准库公式复算，不代表任何训练后模型的能力。</p>
+</section>
+<section><h2 id="decode-forward">同一组参数的推理：prefill → 采样 → 缓存decode</h2>
+<p>恢复含RoPE的主例尺寸B=2、d=4、H=2、D=2、L=2。设prompt长度为3；缓存长度S只统计<strong>已经经过模型前向</strong>的token，刚采样出来的token还没有K/V。</p>
+<table><thead><tr><th>环节</th><th>输入与位置</th><th>逐层Attention形状</th><th>输出与缓存状态</th></tr></thead><tbody>
+<tr><td>Prefill</td><td>ID [2,3]；位置0/1/2</td><td>Q/K/V [2,2,3,2]；scores [2,2,3,3]，用因果mask</td><td>每层缓存K/V [2,2,3,2]；末位置logits [2,5]采样得到token3</td></tr>
+<tr><td>第一次decode</td><td>只输入token3：[2,1]；RoPE offset=3</td><td>新Q/K/V [2,2,1,2]；拼历史后K/V [2,2,4,2]；scores [2,2,1,4]</td><td>两条残差保持 [2,1,4]；head [2,1,5]采样token4；S=4</td></tr>
+<tr><td>第二次decode</td><td>只输入token4；offset=4</td><td>scores [2,2,1,5]，输出context [2,2,1,2]</td><td>head采样token5；S=5；继续到EOS或长度上限</td></tr>
+</tbody></table>
+<div class="reading-math">\[
+\begin{aligned}
+K_{\rm all}&amp;=\operatorname{cat}(K_{\rm past},K_{\rm new}),\\
+V_{\rm all}&amp;=\operatorname{cat}(V_{\rm past},V_{\rm new}),\\
+A_{\rm new}&amp;=\operatorname{softmax}\!
+\left(Q_{\rm new}K_{\rm all}^{\top}/\sqrt D+M\right),\\
+O_{\rm new}&amp;=A_{\rm new}V_{\rm all}.
+\end{aligned}
+\]</div>
+<p>cat沿序列维拼接；Q_new/K_new已用逻辑位置S旋转，V_new不旋转。随后拼头、W_O、第一条残差、Norm、SwiGLU、第二条残差与训练完全相同。各层分别保存自己的K/V；缓存不保存待生成token的“未来信息”。</p>
+<p><strong>为什么旧缓存可以复用：</strong>固定权重和位置规则、关闭训练随机性后，过去位置的因果表示不依赖未来token。整段执行[A,B]与先执行A、再带A的缓存执行B，应产生相同的B位置logits；下面代码同时验证单token和多token增量。</p>
+<p><strong>采样：</strong>给定温度τ&gt;0，p=softmax(logits/τ)，再按配置进行top-k/top-p过滤并归一化。贪心直接取argmax；τ=0不应实际执行除零。常见repetition penalty对正logit除以ρ、对负logit乘以ρ，不能统一除以ρ，否则负logit反而上升；具体顺序与实现匹配。</p>
+<p>单token、无padding且全部缓存合法时，可不另加因果mask；多token增量仍需限制每个query能见的key。全量重算的Attention为平方量级，单query读取历史为线性量级，但投影、FFN、权重读取和系统调度也占时间，不能据此给出固定整机加速倍数。</p>
 </section>
 <section id="tensor-formulas"><h2>核心公式和代码对象逐项对应</h2>
 <p class="math-notation">Norm 的 \(\gamma\) 是逐维可训练缩放，\(\epsilon\) 防止除零，mean 沿 hidden 维平均，\(\odot\) 是逐元素乘法；\(N\) 在此为 Norm 函数。SwiGLU 式按列向量写，\(W_g,W_u\) 为 \(F\times d\)，\(W_d\) 为 \(d\times F\)，与代码的右乘转置权重等价。后面参数式的 \(N\) 改指参数元素数。</p>
@@ -66,8 +169,9 @@ N=L(4d^2+3dF+2d)+2Vd+d.
 \]</div>
 <p>本例 MHA 每层4d²，SwiGLU 3dF，两组 RMSNorm 2d；独立 embedding/head 共2Vd，最终 Norm 为d。代入 d=32/F=64/V=97/L=2，得到<strong>26,848参数</strong>。若 head 与 embedding 共享，少 Vd；GQA、bias、MoE 需另改公式。</p>
 </section>
-<section id="code"><h2>完整 PyTorch：小模型、训练、缓存等价性与生成</h2>
+<section><h2 id="code">完整 PyTorch：小模型、训练、缓存等价性与生成</h2>
 <p>复制下面一个代码块即可运行，需要 PyTorch。CPU 默认维度较小；不需要下载权重或数据。实现保留明确 mask 与缓存，未包含 padding、dropout、生产 fused kernel 或分布式训练。</p>
+<details><summary>展开完整可运行代码（含训练一步与缓存一致性断言）</summary>
 <pre><code>import math
 import torch
 from torch import nn
@@ -204,7 +308,8 @@ with torch.inference_mode():
         generated = torch.cat((generated, next_id), dim=1)
         scores, past = model(next_id, past, use_cache=True)
     print("generated", generated.tolist())</code></pre>
-<div class="course-review"><p><strong>追问：为什么缓存等价性检查有意义？</strong>同时检验位置 offset、因果 mask、每层缓存与投影共享；只看输出 shape 无法发现偷偷读取未来或缓存未续接。</p><p><strong>追问：这段代码能直接服务 Llama 吗？</strong>不能。模型规格、KV头、RoPE配对、权重命名/布局、head共享与模板需匹配 checkpoint。</p></div>
+</details><div class="course-review"><p><strong>追问：为什么缓存等价性检查有意义？</strong>同时检验位置 offset、因果 mask、每层缓存与投影共享；只看输出 shape 无法发现偷偷读取未来或缓存未续接。</p><p><strong>追问：这段代码能直接服务 Llama 吗？</strong>不能。模型规格、KV头、RoPE配对、权重命名/布局、head共享与模板需匹配 checkpoint。</p></div>
 </section>
 <section id="sources"><h2>来源与进一步检查</h2><p><a href="https://arxiv.org/abs/1706.03762v7">Transformer</a> · <a href="https://arxiv.org/abs/2104.09864v5">RoPE</a> · <a href="https://arxiv.org/abs/1910.07467v1">RMSNorm</a> · <a href="https://arxiv.org/abs/2002.05202v1">GLU variants</a> · <a href="https://arxiv.org/abs/2305.13245v3">GQA</a>。算法关系和本页代码是教学整理，性能未做训练 benchmark；代码验证范围记录在逐页验收表。</p></section>
+<!-- READING:FRAGMENT:END -->
 </main></body></html>

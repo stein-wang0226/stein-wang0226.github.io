@@ -89,7 +89,7 @@ def render_artifact(ctx):
     from reading import decorate
     from views import render_blog, render_home
     from citations import render_citations
-    from course import parent_of, compatibility, decorate_course
+    from course import parent_of, compatibility, decorate_course, relocated_directory
     from mathematics import decorate_math
 
     for asset in ctx.site["assets"]:
@@ -132,6 +132,7 @@ def render_artifact(ctx):
                     '<body class="site-body">'
                     f'<main class="site-page reading-markdown"><article class="prose">{md(body)}'
                     '</article></main></body></html>')
+        text = relocated_directory(ctx, record, text)
         text = (decorate_course(ctx, record, text) if record.get("reading_mode") == "longform"
                 else decorate(ctx, record, text))
         text = decorate_math(ctx, record, text)

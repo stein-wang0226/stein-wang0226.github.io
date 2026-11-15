@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LLM 后训练：SFT、RL、OPD 与 Agent 训练系统</title>
-<meta name="description" content="六章从监督、偏好和策略梯度深入 OPD、自蒸馏、过程奖励、异步分布式系统，结合代码修复、Harbor 科学与 GUI 任务。">
+<meta name="description" content="从监督、偏好和策略梯度深入OPD、信用分配、异步系统与Agentic RL前沿对照；包含完整算例、论文配方和代码、科学、GUI任务。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
@@ -26,6 +26,7 @@
 </section>
 <section class="integration-overview" id="read"><h2>本页怎样学、怎样复习</h2>
 <p>先修只需条件概率、softmax与反向传播。本页从示范损失开始，完整推导策略梯度、GAE、PPO、GRPO与蒸馏，再接回任务、系统和诊断；无需打开另一本手册补齐原理。</p>
+<p><a href="#posttraining-algorithms--grpo-full-example">GRPO完整组算例</a>把reward、优势、ratio、clip和loss贯通；读完任务案例，再用<a href="#research-agentic-rl">Agentic RL前沿对照</a>检查新工作究竟改变哪一个环节。</p>
 <ul><li><strong>快速复习：</strong>看各节重点、比较表和追问短答，区分状态、信号、更新对象。</li><li><strong>深入理解：</strong>顺着默认展开的推导和算例复算；配方、配置长表按需展开。</li><li><strong>读完产物：</strong>能解释一条轨迹怎样进入SFT、RL或OPD，并写出数据、mask、版本、分母和独立验收协议。</li></ul></section>
 <!-- READING:COURSE -->
 <section id="findings">

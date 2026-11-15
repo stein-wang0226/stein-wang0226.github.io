@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>架构与训练机制：残差、专家、优化器与递归计算</title>
-<meta name="description" content="推导Attention Residuals、mHC与LatentMoE的对象和成本，解释Muon矩阵更新、参数分工、低精度边界与Huginn循环深度，并设计等算力消融。">
+<title>前沿架构机制：残差流、LatentMoE 与递归深度</title>
+<meta name="description" content="从残差和专家的基础出发，推导Attention Residuals、mHC与LatentMoE的对象和成本，解释低精度对象与Huginn递归深度；优化器配方归入训练主题。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css">
 </head>
 <body>
@@ -11,9 +11,9 @@
 <!-- READING:FRAGMENT:START -->
 <section id="overview">
 <p class="eyebrow">Architecture &amp; training · 2026-11-14</p>
-<h2>模型架构之外，还要理解信息传递和更新方式</h2>
-<p class="lead">从上一章的模型家族里抽出可复用机制：<strong>残差怎样传信息、专家在哪个空间计算、矩阵怎样更新、哪些对象可以低精度、推理深度怎样增加</strong>。它们与Attention、数据和后训练协作，各自有不同的消融与成本。</p>
-<p><strong>基础分工：</strong>Norm、FFN和AdamW/Muon基础已在主线展开。这里深入新的深度选择、残差约束及工业配方差别，保留各自的证据与失败结果。</p>
+<h2>从基础模块走向新的信息传递方式</h2>
+<p class="lead">在前面的Norm、FFN、MoE和递归状态基础上，继续回答：<strong>残差怎样选择深度表示、专家在哪个空间计算、共享参数怎样增加执行深度</strong>。先理解机制，再读后面的模型家族怎样组合它们。</p>
+<p><strong>主讲分工：</strong>本节展开深度选择、残差约束和LatentMoE；AdamW/Muon推导与工业优化器配方集中在<a href="../llm-training-lifecycle/s05_training_methods_systems.html#muon-industrial">训练主题</a>。</p>
 <p class="note">截至2026-11-14；公式为机制解释，数值为规格或明确推导，未执行本章训练/实验。型号与版本见本页家族节。</p>
 </section>
 <section id="residual">
@@ -83,25 +83,7 @@ H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
 </section>
 <section id="muon">
 <h2>Muon：近似正交化的是更新矩阵</h2>
-<p><strong>核心回顾：</strong>Muon对矩阵动量作近似polar变换，再按形状与配方缩放更新；权重本身没有被约束为正交矩阵。SVD、两轴算例、AdamW及成本对照统一见<a href="../llm-training-lifecycle/s05_training_methods_systems.html#muon-mechanism">训练主讲</a>。本节保留工业实现差别。<a href="index.html#ref-62">[62]</a></p>
-<h3>工业配方：不同模型怎样拆矩阵和分工</h3>
-<table>
-<thead><tr><th>来源</th><th>具体措施</th><th>不能扩大为</th></tr></thead>
-<tbody>
-<tr><td>Muon / Moonlight <a href="index.html#ref-62">[62]</a></td><td>可扩展LLM训练，矩形更新scale和分布式实现；部分参数继续AdamW</td><td>全部参数均用相同矩阵更新、任何规模都优于AdamW</td></tr>
-<tr><td>Kimi K2 <a href="index.html#ref-63">[63]</a></td><td>MuonClip结合QK幅度控制</td><td>Muon本身自动保证所有Attention logits稳定</td></tr>
-<tr><td>Kimi K3 <a href="index.html#ref-5">[5]</a></td><td>Per-head Muon，对Attention矩阵按head处理</td><td>与K2的clipping机制相同</td></tr>
-<tr><td>Qwen3.8 <a href="index.html#ref-45">[45]</a></td><td>融合矩阵按逻辑投影拆开，再处理更新</td><td>整个fused buffer作为一个矩阵正交化总是合适</td></tr>
-<tr><td>MiMo-V2.6 <a href="index.html#ref-56">[56]</a></td><td>预训练AdamW；mid-training hidden矩阵用Muown；embedding / head / router仍AdamW</td><td>pretrain全程Muon或Muown与所有Muon版本完全等价</td></tr>
-<tr><td>Step 3.5 <a href="index.html#ref-57">[57]</a></td><td>Polar Express迭代从BF16切FP16以消除其罕见outlier</td><td>所有矩阵和所有训练阶段都应使用FP16</td></tr>
-</tbody>
-</table>
-<p>按head或逻辑投影拆开有明确目的：不同功能、尺度与形状不应因物理存储融合而被当作同一个更新对象。embedding、output head、router、bias与Norm也具有不同形状和统计；要保存参数分组及优化器状态，才能解释切换配方的效果。</p>
-<h3>分布式训练：本地切片不一定等于全矩阵更新</h3>
-<section id="citation-sources-10" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>。</p></section>
-
-<ul><li><strong>逻辑矩阵：</strong>完整矩阵更新通常不等于逐TP/FSDP切片变换后拼接。</li><li><strong>状态与计算：</strong>记录gather/shard边界、动量所有权、近似计算位置与通信量。</li><li><strong>恢复：</strong>checkpoint的optimizer状态和逻辑分组必须一致。<a href="index.html#ref-62">[62]</a></li></ul>
-<p>有意义的对照应报告等token和等算力两种预算、validation loss、任务质量、optimizer step时间、额外通信及失稳恢复成本。只比较固定step数，会混入吞吐差异；只比较loss下降，也会漏掉执行预算。</p>
+<p>Muon改变参数更新规则，矩阵本身没有被约束为正交权重。完整的SVD解释、数值算例、Kimi/Qwen/MiMo/Step参数分工和分布式切片边界已归入<a href="../llm-training-lifecycle/s05_training_methods_systems.html#muon-industrial">训练主题的Muon工业配方</a>，与AdamW及成本对照连续阅读。<a href="index.html#ref-62">[62]</a></p>
 </section>
 <section id="precision">
 <h2>FP4、FP8、BF16：先问是哪一类数值对象</h2>
@@ -117,7 +99,7 @@ H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
 <ul><li><strong>格式：</strong>4-bit value之外还有scale、block布局和高精度例外；NVFP4与MXFP4层级不同。</li><li><strong>对象：</strong>权重、激活、梯度、KV和optimizer迭代分别登记。</li><li><strong>验收：</strong>同时看loss、长程任务、重尾样本、router/gate、峰值内存与恢复；DeepSeek字节推导在本页<a href="s03_base_architecture.html#cache">缓存节</a>。</li></ul>
 </section>
 <section id="depth">
-<h2>Recurrent depth：推理预算也可以放进潜在计算</h2>
+<h2 id="recurrent-depth">Recurrent depth：推理预算也可以放进潜在计算</h2>
 <p class="math-notation">\(x\) 是输入 token/表示，\(h^{(j)}\) 是第 \(j\) 次迭代后的潜在状态；上标是迭代编号，非乘方。\(K\) 是 core 执行次数，Pre/Core/Post 分别负责入口表示、共享参数的状态更新和最终词表 logits。</p>
 <p>Huginn的公开研究采用共享权重的recurrent depth：先得到token表示，再让同一个核心模块在潜在状态上迭代，最后输出token分布。推理时改变迭代次数，把更多算力用于token内部计算。<a href="index.html#ref-64">[64]</a></p>
 <div class="reading-math" role="math" aria-label="共享权重递归深度的概念公式">\[

@@ -237,6 +237,12 @@ def load_content(root):
             errors.append(f"{label}.reading_mode: expected longform or omitted")
         if entry.get("reading_mode") and entry.get("kind") != "series":
             errors.append(f"{label}.reading_mode: only series can assemble a course")
+        if entry.get("relocated_from"):
+            former = by_id.get(entry["relocated_from"])
+            if (entry.get("kind") != "chapter" or not former or
+                    former["origin"] != "local" or former["kind"] not in {"post", "series"} or
+                    former["id"] in {entry["id"], entry.get("series")}):
+                errors.append(f"{label}.relocated_from: expected a distinct former local topic")
         if entry.get("origin") == "external":
             if entry.get("url") in external_urls:
                 errors.append(f"{label}.url: duplicate external URL")

@@ -1,0 +1,548 @@
+{
+  "base_commit": "572a30e49e51a8623ebe2d7a4ade3d3bb12e5b3b",
+  "scope": "完整forward恢复、完整组与解码轨迹算例、研究专题实际归位",
+  "validation": {
+    "integration_tests": {
+      "passed": true,
+      "cases": 17,
+      "additional_final_catalog_negative_test": true
+    },
+    "build": {
+      "passed": true,
+      "html_pages": 107,
+      "public_files": 303
+    },
+    "retention": {
+      "passed": true,
+      "immutable_baselines_changed": false,
+      "reviewed_role_transitions": [
+        {
+          "id": "transformer-decoder-flow",
+          "source": "content/posts/transformer-decoder-flow/index.html",
+          "url": "/transformer-decoder-flow.html",
+          "from_kind": "post",
+          "to_kind": "chapter",
+          "to_series": "llm-architecture"
+        },
+        {
+          "id": "llm-research-map-2026",
+          "source": "content/series/llm-research-map-2026/index.html",
+          "url": "/llm-research-map-2026/",
+          "from_kind": "series",
+          "to_kind": "post",
+          "to_series": null
+        }
+      ]
+    },
+    "reader_pages": 75,
+    "source_checks": 222,
+    "legacy_chapter_checks": 147,
+    "no_script_sources": 74,
+    "plot_dialog_checks": 63,
+    "late_changes": "三屏全量检查后仅清理五个旧章序链接措辞、训练入口措辞与登记章号；最终七个受影响主题再做21次三屏检查",
+    "final_checks": [
+      {
+        "root": "llm-architecture",
+        "width": 390,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-training-lifecycle",
+        "width": 390,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-posttraining",
+        "width": 390,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-serving",
+        "width": 390,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "agent-systems",
+        "width": 390,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "agent-data-benchmarks",
+        "width": 390,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-research-map-2026",
+        "width": 390,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-architecture",
+        "width": 768,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-training-lifecycle",
+        "width": 768,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-posttraining",
+        "width": 768,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-serving",
+        "width": 768,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "agent-systems",
+        "width": 768,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "agent-data-benchmarks",
+        "width": 768,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-research-map-2026",
+        "width": 768,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-architecture",
+        "width": 1440,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-training-lifecycle",
+        "width": 1440,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-posttraining",
+        "width": 1440,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-serving",
+        "width": 1440,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "agent-systems",
+        "width": 1440,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "agent-data-benchmarks",
+        "width": 1440,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      },
+      {
+        "root": "llm-research-map-2026",
+        "width": 1440,
+        "overflow": false,
+        "mathErrors": 0,
+        "h1": 1,
+        "badAnchors": 0
+      }
+    ],
+    "parent_bookmarks": [
+      {
+        "key": "research-agent-data",
+        "present": true,
+        "query": "?bookmark=1",
+        "url": "http://127.0.0.1:8774/agent-data-benchmarks/index.html?bookmark=1#research-agent-data"
+      },
+      {
+        "key": "research-agentic-rl--asynchrony",
+        "present": true,
+        "query": "?bookmark=1",
+        "url": "http://127.0.0.1:8774/llm-posttraining/index.html?bookmark=1#research-agentic-rl--asynchrony"
+      },
+      {
+        "key": "research-base-architecture--cache",
+        "present": true,
+        "query": "?bookmark=1",
+        "url": "http://127.0.0.1:8774/llm-architecture/index.html?bookmark=1#research-base-architecture--cache"
+      },
+      {
+        "key": "research-inference-diffusion",
+        "present": true,
+        "query": "?bookmark=1",
+        "url": "http://127.0.0.1:8774/llm-serving/index.html?bookmark=1#research-inference-diffusion"
+      },
+      {
+        "key": "research-agent-frontiers--gui",
+        "present": true,
+        "query": "?bookmark=1",
+        "url": "http://127.0.0.1:8774/agent-systems/index.html?bookmark=1#research-agent-frontiers--gui"
+      },
+      {
+        "key": "research-architecture-landscape--families",
+        "present": true,
+        "query": "?bookmark=1",
+        "url": "http://127.0.0.1:8774/llm-architecture/index.html?bookmark=1#research-architecture-landscape--families"
+      },
+      {
+        "key": "research-architecture-training--muon",
+        "present": true,
+        "query": "?bookmark=1",
+        "url": "http://127.0.0.1:8774/llm-architecture/index.html?bookmark=1#research-architecture-training--muon"
+      }
+    ],
+    "knowledge_directory": [
+      {
+        "label": "Transformer → Attention / KV → FFN / MoE → 残差 / 混合状态",
+        "href": "../llm-architecture/index.html",
+        "url": "http://127.0.0.1:8774/llm-architecture/index.html",
+        "target": true
+      },
+      {
+        "label": "完整前向算例：逐步张量 → 数值计算 → 缓存解码 → PyTorch",
+        "href": "../llm-architecture/index.html#transformer-decoder-flow--training-forward",
+        "url": "http://127.0.0.1:8774/llm-architecture/index.html#transformer-decoder-flow--training-forward",
+        "target": true
+      },
+      {
+        "label": "DeepSeek、Qwen、Kimi 等开源家族与固定版本",
+        "href": "../llm-architecture/index.html#research-architecture-landscape--families",
+        "url": "http://127.0.0.1:8774/llm-architecture/index.html#research-architecture-landscape--families",
+        "target": true
+      },
+      {
+        "label": "前沿机制：残差流、LatentMoE 与递归深度",
+        "href": "../llm-architecture/index.html#research-architecture-training",
+        "url": "http://127.0.0.1:8774/llm-architecture/index.html#research-architecture-training",
+        "target": true
+      },
+      {
+        "label": "生成范式分支：扩散语言模型",
+        "href": "../dlm-survey/index.html",
+        "url": "http://127.0.0.1:8774/dlm-survey/index.html",
+        "target": true
+      },
+      {
+        "label": "Pretrain → Midtrain / CPT → Post-train：数据与目标交接",
+        "href": "../llm-training-lifecycle/index.html",
+        "url": "http://127.0.0.1:8774/llm-training-lifecycle/index.html",
+        "target": true
+      },
+      {
+        "label": "Scaling Law 推导与 scaling ladder 实验阶梯",
+        "href": "../llm-training-lifecycle/index.html#llm-training-pretraining--scaling-law",
+        "url": "http://127.0.0.1:8774/llm-training-lifecycle/index.html#llm-training-pretraining--scaling-law",
+        "target": true
+      },
+      {
+        "label": "优化器：SGD → AdamW → Muon；参数、显存与成本",
+        "href": "../llm-training-lifecycle/index.html#training-methods-systems--adamw-derivation",
+        "url": "http://127.0.0.1:8774/llm-training-lifecycle/index.html#training-methods-systems--adamw-derivation",
+        "target": true
+      },
+      {
+        "label": "训练框架与系统：Megatron、FSDP / ZeRO、并行与恢复",
+        "href": "../llm-training-lifecycle/index.html#training-methods-systems--training-stack",
+        "url": "http://127.0.0.1:8774/llm-training-lifecycle/index.html#training-methods-systems--training-stack",
+        "target": true
+      },
+      {
+        "label": "RLVR 算法、论文参数配方与诊断",
+        "href": "../llm-posttraining/index.html#posttraining-algorithms--paper-recipes",
+        "url": "http://127.0.0.1:8774/llm-posttraining/index.html#posttraining-algorithms--paper-recipes",
+        "target": true
+      },
+      {
+        "label": "后训练框架：TRL、verl、slime、AReaL 等",
+        "href": "../llm-posttraining/index.html#posttraining-frameworks--framework-map",
+        "url": "http://127.0.0.1:8774/llm-posttraining/index.html#posttraining-frameworks--framework-map",
+        "target": true
+      },
+      {
+        "label": "Prefill / decode、KV cache 与连续批处理",
+        "href": "../llm-serving/index.html#serving-runtime--phases",
+        "url": "http://127.0.0.1:8774/llm-serving/index.html#serving-runtime--phases",
+        "target": true
+      },
+      {
+        "label": "框架与调度：vLLM、SGLang、分页与前缀复用",
+        "href": "../llm-serving/index.html#serving-runtime--implementation",
+        "url": "http://127.0.0.1:8774/llm-serving/index.html#serving-runtime--implementation",
+        "target": true
+      },
+      {
+        "label": "量化：权重、激活与 KV 的不同精度",
+        "href": "../llm-serving/index.html#serving-parallel--precision",
+        "url": "http://127.0.0.1:8774/llm-serving/index.html#serving-parallel--precision",
+        "target": true
+      },
+      {
+        "label": "投机解码：接受概率、拒绝残差与加速条件",
+        "href": "../llm-serving/index.html#serving-parallel--speculation",
+        "url": "http://127.0.0.1:8774/llm-serving/index.html#serving-parallel--speculation",
+        "target": true
+      },
+      {
+        "label": "并行部署、显存容量、延迟、吞吐与成功成本",
+        "href": "../llm-serving/index.html#serving-capacity",
+        "url": "http://127.0.0.1:8774/llm-serving/index.html#serving-capacity",
+        "target": true
+      },
+      {
+        "label": "预训练：清洗、去重、混合采样、packing 与污染隔离",
+        "href": "../llm-training-lifecycle/index.html#llm-training-pretraining--data",
+        "url": "http://127.0.0.1:8774/llm-training-lifecycle/index.html#llm-training-pretraining--data",
+        "target": true
+      },
+      {
+        "label": "Midtraining：领域、仓库、长上下文与回放",
+        "href": "../llm-training-lifecycle/index.html#llm-training-midtraining--data",
+        "url": "http://127.0.0.1:8774/llm-training-lifecycle/index.html#llm-training-midtraining--data",
+        "target": true
+      },
+      {
+        "label": "后训练：示范、偏好、拒绝采样与轨迹监督",
+        "href": "../llm-posttraining/index.html#posttraining-supervision",
+        "url": "http://127.0.0.1:8774/llm-posttraining/index.html#posttraining-supervision",
+        "target": true
+      },
+      {
+        "label": "Agentic task：环境 → 任务 → verifier → 轨迹 → 训练",
+        "href": "../agent-data-benchmarks/index.html#agent-task-synthesis",
+        "url": "http://127.0.0.1:8774/agent-data-benchmarks/index.html#agent-task-synthesis",
+        "target": true
+      },
+      {
+        "label": "独立评测：留出集、污染、成功率与失败分类",
+        "href": "../agent-data-benchmarks/index.html#agent-benchmark-map",
+        "url": "http://127.0.0.1:8774/agent-data-benchmarks/index.html#agent-benchmark-map",
+        "target": true
+      }
+    ],
+    "manual_parent_routes": [
+      {
+        "id": "research-agent-data",
+        "href": "../agent-data-benchmarks/index.html#research-agent-data"
+      },
+      {
+        "id": "research-agentic-rl",
+        "href": "../llm-posttraining/index.html#research-agentic-rl"
+      },
+      {
+        "id": "research-base-architecture",
+        "href": "../llm-architecture/index.html#research-base-architecture"
+      },
+      {
+        "id": "research-inference-diffusion",
+        "href": "../llm-serving/index.html#research-inference-diffusion"
+      },
+      {
+        "id": "research-agent-frontiers",
+        "href": "../agent-systems/index.html#research-agent-frontiers"
+      },
+      {
+        "id": "research-architecture-landscape",
+        "href": "../llm-architecture/index.html#research-architecture-landscape"
+      },
+      {
+        "id": "research-architecture-training",
+        "href": "../llm-architecture/index.html#research-architecture-training"
+      }
+    ],
+    "original_forward": {
+      "status": 200,
+      "bytes": 72136,
+      "identical": true
+    },
+    "numeric": {
+      "toy_forward_prob": [
+        0.17996998678960283,
+        0.6590854272685871,
+        0.16094458594181005
+      ],
+      "toy_eos_nll": 1.826695159940342,
+      "grpo_objective": 0.11547005383792502,
+      "grpo_logit_gradient_finite_difference_error": 1.8317264371958686e-11,
+      "pytorch_parameters": 26848,
+      "pytorch_loss": 4.74044942855835,
+      "single_and_multi_token_cache_assertions": true
+    }
+  },
+  "pages": [
+    {
+      "id": "research-agent-data",
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "sha256": "c8d63962b3cc10cde956f2744fa098d878332f5dbc9a3c11f8516bcd7264bb8e",
+      "reading_url": "/agent-data-benchmarks/#research-agent-data",
+      "reason": "归入数据主题，修正原下一章为后训练主讲的语义入口"
+    },
+    {
+      "id": "research-base-architecture",
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "sha256": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "reading_url": "/llm-architecture/#research-base-architecture",
+      "reason": "归入架构主题，明确drafter与异步对齐分别属于推理和后训练"
+    },
+    {
+      "id": "research-inference-diffusion",
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "sha256": "c9ad2561a006624ee2f866ccc4ab18b6792ecbb40786e77024453f05ddb8738c",
+      "reading_url": "/llm-serving/#research-inference-diffusion",
+      "reason": "归入推理主题，修正跨主题场景链接的原下一章措辞"
+    },
+    {
+      "id": "research-agent-frontiers",
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "sha256": "1ab7d3ef637c54825a7a40f0942b3de6f85e6ecb65e2b65618e772fca8c5c24c",
+      "reading_url": "/agent-systems/#research-agent-frontiers",
+      "reason": "归入Agent系统，数据合成按主题指向而不再引用旧章号"
+    },
+    {
+      "id": "research-architecture-landscape",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "sha256": "80c196d691d61b9688b03c8a4fc34be64682b485a43f7856d0317523687aaa6e",
+      "reading_url": "/llm-architecture/#research-architecture-landscape",
+      "reason": "家族比较接在架构机制后，修正前后节顺序及集中来源编号描述"
+    },
+    {
+      "id": "transformer-decoder-flow",
+      "source": "content/posts/transformer-decoder-flow/index.html",
+      "sha256": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
+      "reading_url": "/llm-architecture/#transformer-decoder-flow",
+      "reason": "从参考文章升为架构第2节；恢复embedding到loss、prefill到decode逐步形状推导，补齐两token的Norm/Attention/SwiGLU/head完整数值链；保留完整代码与原稿下载，修正warmup、mask、最终Norm、标签和采样边界"
+    },
+    {
+      "id": "llm-architecture",
+      "source": "content/series/llm-architecture/index.html",
+      "sha256": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "reading_url": "/llm-architecture/",
+      "reason": "按基础、完整forward、模块、前沿机制、家族、缓存案例装配10节；显式入口直达完整算例，核心计算默认展开，代码按需展开"
+    },
+    {
+      "id": "llm-research-map-2026",
+      "source": "content/series/llm-research-map-2026/index.html",
+      "sha256": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "reading_url": "/llm-research-map-2026/",
+      "reason": "原跨主题长文改为参考来源与旧目录；七节正文归入所属主题，仅保留固定引用、原件、研究边界及自动生成的旧锚点定位"
+    },
+    {
+      "id": "research-architecture-training",
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "sha256": "ec0fcdcea44bb98cebe6ce501013c276c2456067d0c8b337f4432b30853c3865",
+      "reading_url": "/llm-architecture/#research-architecture-training",
+      "reason": "归入架构并置于家族比较前；主线收敛为残差流、LatentMoE与递归深度，Muon工业分组与分布式说明迁至训练主讲，旧段保留语义链接"
+    },
+    {
+      "id": "training-methods-systems",
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "sha256": "2c0cde0f68f69f993de2243ba993f75abc7cdc281877acc5a13696b06ae462e2",
+      "reading_url": "/llm-training-lifecycle/#training-methods-systems",
+      "reason": "Muon工业配方六项对照与逻辑矩阵、分布式切片、状态恢复接到polar推导后；保留原固定引用和适用边界"
+    },
+    {
+      "id": "llm-posttraining",
+      "source": "content/series/llm-posttraining/index.html",
+      "sha256": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "reading_url": "/llm-posttraining/",
+      "reason": "接入Agentic RL前沿章，导读指向完整GRPO算例及实际算法增量"
+    },
+    {
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "sha256": "247f7f19c8190d217ffadbfe97f648078b5fa8b72d1e89b5cc2f175d01a98cb5",
+      "reading_url": "/llm-posttraining/#posttraining-algorithms",
+      "reason": "补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件"
+    },
+    {
+      "id": "llm-serving",
+      "source": "content/series/llm-serving/index.html",
+      "sha256": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "reading_url": "/llm-serving/",
+      "reason": "把前沿diffusion投机章接在运行机制、精度与容量后，来源入口改为架构主讲与固定引用"
+    },
+    {
+      "id": "serving-parallel",
+      "source": "content/series/llm-serving/s02_parallel_quantization.html",
+      "sha256": "b57952ba142e83701bce6265f9abc40f544d835c74451d63f9ca34b41cfea671",
+      "reading_url": "/llm-serving/#serving-parallel",
+      "reason": "由三词表接受/残差概率推进到一轮B/B/C提议、首token接受、次token拒绝补A、丢弃后缀与KV恢复，区分输出提交和缓存计算"
+    },
+    {
+      "id": "agent-data-benchmarks",
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "sha256": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "reading_url": "/agent-data-benchmarks/",
+      "reason": "任务生命周期末尾接入前沿合成、迁移与榜单审计，目录从四节变为五节，来源编号保持原命名空间"
+    },
+    {
+      "id": "agent-systems",
+      "source": "content/series/agent-systems/index.html",
+      "sha256": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "reading_url": "/agent-systems/",
+      "reason": "在检索、规划、权限后接入GUI、科学Agent、Skills与持续学习场景，避免另一个跨主题研究入口"
+    }
+  ]
+}

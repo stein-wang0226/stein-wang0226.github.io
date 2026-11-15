@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LLM 架构：Transformer 基础与前沿模型设计</title>
-<meta name="description" content="六章系统讲解 Transformer、Attention与KV、SwiGLU与MoE、残差稳定性、混合状态架构和前沿模型设计，以数据流示例辅助理解，连接训练、部署、Agent与研究地图。">
+<meta name="description" content="从Transformer完整前向算例、Attention/KV、MoE与残差，连续读到混合状态、前沿机制、DeepSeek/Qwen/Kimi等家族和缓存推导。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
 <section id="purpose"><p class="eyebrow">Architecture · 2026-11-14</p>
@@ -10,7 +10,7 @@
 <section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
 
 <p class="lead">LLM 架构可以拆成六个问题：token 怎样成为表示，位置之间怎样交换信息，每个位置怎样做非线性变换，信息怎样穿过深度，历史怎样保存，以及这些选择怎样影响训练和服务。本系列从可追踪的张量出发，逐步连接最新公开机制。</p>
-<ul><li><strong>原理：</strong>张量流与目标→Attention缩放/RoPE→FFN/MoE→残差梯度→递归状态。</li><li><strong>复习：</strong>每节有算例、易错点与追问；先能说出对象、形状和条件，再比较质量与成本。</li><li><strong>先修：</strong>矩阵乘法、概率与反向传播；本页默认展开必要推导，核心学习在页内完成。</li></ul>
+<ul><li><strong>先完整算一遍：</strong><a href="#transformer-decoder-flow">Transformer 前向推导</a>按 embedding → Norm → Attention → FFN → logits / loss 展开，再对照 prefill 与缓存解码。</li><li><strong>再拆开理解：</strong>Attention缩放/RoPE→FFN/MoE→残差梯度→递归状态。</li><li><strong>最后比较前沿：</strong>残差流与LatentMoE→DeepSeek/Qwen/Kimi等家族→DeepSeek缓存账本，都在本页继续阅读。</li><li><strong>先修：</strong>矩阵乘法、概率与反向传播；每个算例先列输入和假设，再展示中间量、输出及检查。</li></ul>
 <figure><div class="flow">
 <div class="stage"><b>输入与目标</b><small>token → embedding → logits<br>因果关系、标签位移</small></div>
 <div class="stage"><b>序列与通道</b><small>Attention / 递归状态<br>FFN / 专家路由</small></div>
@@ -24,7 +24,7 @@
 <li><strong>写出推导：</strong>Attention尺度、RoPE相对位置、残差Jacobian与外积/delta更新。</li>
 <li><strong>比较机制：</strong>分开参数、激活、KV/state、派发通信与服务等待。</li>
 <li><strong>判断证据：</strong>区分规格推导、作者实验、受控消融与独立复现。</li></ul>
-<details><summary>实现与研究参考</summary><p><a href="../transformer-decoder-flow.html">PyTorch Decoder逐项实现</a>；<a href="../llm-research-map-2026/">固定型号和前沿实验</a>。下一主题在页末进入训练阶段与工程。</p></details></section>
+<details><summary>实现与来源参考</summary><p><a href="#transformer-decoder-flow--code">本页完整PyTorch实现</a>；<a href="../llm-research-map-2026/#sources">固定版本来源索引</a>。下一主题在页末进入训练阶段与工程。</p></details></section>
 <section id="sources"><h2>基础来源与实现版本</h2>
 <ol class="sources">
 <li id="ref-1"><a href="https://arxiv.org/abs/1706.03762v7">Attention Is All You Need</a>，§3：原始 encoder-decoder、scaled dot-product、multi-head 与 FFN。decoder-only 改造不归给原论文的全部实验。</li>

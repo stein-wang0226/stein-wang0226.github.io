@@ -1,0 +1,26 @@
+{
+  "base_commit": "572a30e49e51a8623ebe2d7a4ade3d3bb12e5b3b",
+  "scope": "恢复完整Transformer前向算例、扩展完整计算轨迹，并把原研究地图七节按真实主题归位；原件与两份保留基线不改",
+  "catalog_transitions": [
+    {"id": "transformer-decoder-flow", "source": "content/posts/transformer-decoder-flow/index.html", "url": "/transformer-decoder-flow.html", "from_kind": "post", "to_kind": "chapter", "to_series": "llm-architecture"},
+    {"id": "llm-research-map-2026", "source": "content/series/llm-research-map-2026/index.html", "url": "/llm-research-map-2026/", "from_kind": "series", "to_kind": "post", "to_series": null}
+  ],
+  "pages": [
+    {"id": "research-agent-data", "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html", "reason": "归入数据主题，修正原下一章为后训练主讲的语义入口"},
+    {"id": "research-base-architecture", "source": "content/series/llm-research-map-2026/s03_base_architecture.html", "reason": "归入架构主题，明确drafter与异步对齐分别属于推理和后训练"},
+    {"id": "research-inference-diffusion", "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html", "reason": "归入推理主题，修正跨主题场景链接的原下一章措辞"},
+    {"id": "research-agent-frontiers", "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html", "reason": "归入Agent系统，数据合成按主题指向而不再引用旧章号"},
+    {"id": "research-architecture-landscape", "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html", "reason": "家族比较接在架构机制后，修正前后节顺序及集中来源编号描述"},
+    {"id": "transformer-decoder-flow", "source": "content/posts/transformer-decoder-flow/index.html", "reason": "从参考文章升为架构第2节；恢复embedding到loss、prefill到decode逐步形状推导，补齐两token的Norm/Attention/SwiGLU/head完整数值链；保留完整代码与原稿下载，修正warmup、mask、最终Norm、标签和采样边界"},
+    {"id": "llm-architecture", "source": "content/series/llm-architecture/index.html", "reason": "按基础、完整forward、模块、前沿机制、家族、缓存案例装配10节；显式入口直达完整算例，核心计算默认展开，代码按需展开"},
+    {"id": "llm-research-map-2026", "source": "content/series/llm-research-map-2026/index.html", "reason": "原跨主题长文改为参考来源与旧目录；七节正文归入所属主题，仅保留固定引用、原件、研究边界及自动生成的旧锚点定位"},
+    {"id": "research-architecture-training", "source": "content/series/llm-research-map-2026/s07_architecture_training.html", "reason": "归入架构并置于家族比较前；主线收敛为残差流、LatentMoE与递归深度，Muon工业分组与分布式说明迁至训练主讲，旧段保留语义链接"},
+    {"id": "training-methods-systems", "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html", "reason": "Muon工业配方六项对照与逻辑矩阵、分布式切片、状态恢复接到polar推导后；保留原固定引用和适用边界"},
+    {"id": "llm-posttraining", "source": "content/series/llm-posttraining/index.html", "reason": "接入Agentic RL前沿章，导读指向完整GRPO算例及实际算法增量"},
+    {"id": "posttraining-algorithms", "source": "content/series/llm-posttraining/s02_rl_algorithms.html", "reason": "补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件"},
+    {"id": "llm-serving", "source": "content/series/llm-serving/index.html", "reason": "把前沿diffusion投机章接在运行机制、精度与容量后，来源入口改为架构主讲与固定引用"},
+    {"id": "serving-parallel", "source": "content/series/llm-serving/s02_parallel_quantization.html", "reason": "由三词表接受/残差概率推进到一轮B/B/C提议、首token接受、次token拒绝补A、丢弃后缀与KV恢复，区分输出提交和缓存计算"},
+    {"id": "agent-data-benchmarks", "source": "content/series/agent-data-benchmarks/index.html", "reason": "任务生命周期末尾接入前沿合成、迁移与榜单审计，目录从四节变为五节，来源编号保持原命名空间"},
+    {"id": "agent-systems", "source": "content/series/agent-systems/index.html", "reason": "在检索、规划、权限后接入GUI、科学Agent、Skills与持续学习场景，避免另一个跨主题研究入口"}
+  ]
+}

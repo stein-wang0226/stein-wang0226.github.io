@@ -16,7 +16,7 @@
 <section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
 
 <p class="lead">Pretraining、CPT、SFT、RL 描述训练链路；全参数、LoRA、优化器和并行策略决定同一阶段怎样更新。一个工业后训练方案要同时回答：哪些参数可训练、哪些状态常驻、哪些数据被采样、哪些环境实际执行，以及谁负责验证。</p>
-<p>先修：<a href="../llm-architecture/s03_ffn_moe_routing.html">FFN / MoE</a>、<a href="../llm-architecture/s04_residual_norm_stability.html">残差与稳定性</a>及<a href="s04_rl_evaluation.html">RL 循环</a>。本章建立方法和资源账本，最新 Muon / FP4 型号证据见<a href="../llm-research-map-2026/s07_architecture_training.html">研究地图07</a>。</p>
+<p>先修：<a href="../llm-architecture/s03_ffn_moe_routing.html">FFN / MoE</a>、<a href="../llm-architecture/s04_residual_norm_stability.html">残差与稳定性</a>及<a href="s04_rl_evaluation.html">RL 循环</a>。本章建立方法和资源账本；<a href="#muon-industrial">Muon工业配方</a>在下文继续，<a href="../llm-research-map-2026/s07_architecture_training.html#precision">低精度对象与型号边界</a>见架构主题。</p>
 <figure><div class="flow" aria-label="更新到集群的设计流程">
 <div class="stage"><b>更新对象</b><small>全参数 / adapter / 专家<br>可训练参数与目标矩阵</small></div>
 <div class="stage"><b>数值与状态</b><small>权重、梯度、master、动量<br>精度与重计算分别决定</small></div>
@@ -194,7 +194,19 @@ M=\begin{bmatrix}3&amp;0\\0&amp;1\end{bmatrix}
 \operatorname{polar}(M)=I_2.
 \]</div>
 <p><strong>算例：</strong>未缩放时，M 的两轴更新比为3:1，polar 为1:1；若 W=2I、η=0.1，用该方向后 W'=1.9I，显然 W' 并不正交。Muon 正交化的是<strong>更新方向</strong>。零奇异值、有限迭代与数值精度会影响实际近似，不能把每轮输出当成精确 polar。</p>
-<p>以下区分<strong>已有工业实现</strong>与<strong>研究候选</strong>。参数状态中的二阶矩不是二阶导数；Shampoo/SOAP也通过梯度统计构造预条件器，不直接保存完整模型 Hessian。Muon 的核心机制和工业变体继续见<a href="../llm-research-map-2026/s07_architecture_training.html#muon">研究地图07</a>。</p>
+<h4 id="muon-industrial">Muon工业配方：逻辑矩阵、参数分工与分布式更新</h4>
+<p>承接上面的polar算例：更新对象必须按逻辑功能确定，不能因为QKV在内存里融合存储，就把所有投影视作同一个矩阵。下面的固定报告沿用原来源编号，具体措施不扩大为跨模型保证。</p>
+<table><thead><tr><th>来源</th><th>具体措施</th><th>边界</th></tr></thead><tbody>
+<tr><td>Muon / Moonlight <a href="../llm-research-map-2026/#ref-62">[62]</a></td><td>矩形更新scale、分布式实现；部分参数继续AdamW</td><td>并非全部参数均用相同矩阵更新，也非任何规模都优于AdamW</td></tr>
+<tr><td>Kimi K2 <a href="../llm-research-map-2026/#ref-63">[63]</a></td><td>MuonClip结合QK幅度控制</td><td>Muon本身不自动保证Attention logits稳定</td></tr>
+<tr><td>Kimi K3 <a href="../llm-research-map-2026/#ref-5">[5]</a></td><td>Per-head Muon，对Attention矩阵按head处理</td><td>与K2的clipping机制不同</td></tr>
+<tr><td>Qwen3.8 <a href="../llm-research-map-2026/#ref-45">[45]</a></td><td>融合矩阵按逻辑投影拆开，再处理更新</td><td>整个fused buffer的polar通常不等于拆开处理</td></tr>
+<tr><td>MiMo-V2.6 <a href="../llm-research-map-2026/#ref-56">[56]</a></td><td>预训练AdamW；mid-training hidden矩阵用Muown；embedding/head/router仍AdamW</td><td>不能概括为全阶段Muon或把Muown等同全部Muon版本</td></tr>
+<tr><td>Step 3.5 <a href="../llm-research-map-2026/#ref-57">[57]</a></td><td>特定Polar Express迭代从BF16切FP16以处理罕见outlier</td><td>不是所有矩阵与训练阶段都应使用FP16</td></tr>
+</tbody></table>
+<p><strong>分布式边界：</strong>完整逻辑矩阵的变换通常不等于逐TP/FSDP切片变换后拼接。记录gather/shard边界、动量所有权、近似计算位置、额外通信；恢复时checkpoint必须保留一致的参数分组和optimizer状态。embedding、head、router、bias与Norm的形状和统计各不同。</p>
+<p>对照要同时报告等token与等算力预算、validation loss、任务质量、optimizer step时间、通信和失稳恢复成本。固定step数会混入吞吐差异，单看loss也会漏掉执行成本。<a href="../llm-research-map-2026/#ref-62">Moonlight固定来源</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html">FSDP官方文档</a>。</p>
+<p>以下区分<strong>已有工业实现</strong>与<strong>研究候选</strong>。参数状态中的二阶矩不是二阶导数；Shampoo/SOAP也通过梯度统计构造预条件器，不直接保存完整模型 Hessian。</p>
 <div class="reading-table" style="overflow-x:auto"><table>
 <thead><tr><th>方法 / 来源</th><th>怎样更新或节省</th><th>适用方向与代价</th></tr></thead><tbody>
 <tr><td>AdamW<br><a href="#ref-adamw">原论文 [3]</a></td><td>逐坐标m、v，自适应缩放；解耦衰减</td><td>成熟基线，常用于预训练与后训练；全尺寸状态和内存带宽是主要成本。</td></tr>
@@ -385,7 +397,7 @@ expert_DP = world_size // (ETP * EP * PP)
 <h2>两套工业规模后训练规划</h2>
 <section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
 
-<p>目标是讨论大模型系统约束，不为单个airway研究制造足量训练数据。Dense参考公开Qwen2.5-72B；MoE参考Qwen3-235B-A22B。它们是可固定规格的基线，最新型号案例见研究地图。H100 80GB、8卡/节点和池比例由本文选择，配置尚未运行、端到端兼容尚未验证。<a href="#ref-models">[7]</a></p>
+<p>目标是讨论大模型系统约束，不为单个airway研究制造足量训练数据。Dense参考公开Qwen2.5-72B；MoE参考Qwen3-235B-A22B。它们是可固定规格的基线，前沿型号案例见架构主题。H100 80GB、8卡/节点和池比例由本文选择，配置尚未运行、端到端兼容尚未验证。<a href="#ref-models">[7]</a></p>
 <div class="reading-table"><table><thead><tr><th>规划</th><th>硬件与训练 actor</th><th>rollout 池</th><th>关键约束</th></tr></thead><tbody>
 <tr><td>Dense 约70B</td><td>128卡 / 16节点；64训练卡<br>TP4×PP2×CP2×DP4=64</td><td>64卡；规划16个TP4副本</td><td>TP4×CP2尽量放8卡节点内；PP跨节点。reference共置须另计权重与临时区</td></tr>
 <tr><td>大型MoE</td><td>1024卡 / 128节点；512训练卡<br>TP2×PP4×CP2×DP32=512</td><td>512卡；TP8为初始比较路线，EP服务为另一个消融</td><td>ETP2×PP4×EP8×专家DP8=512；128专家可分8组。94层不能四等分，规划24/23/23/24层</td></tr>
@@ -428,7 +440,7 @@ M_{\mathrm{reference}}&amp;\approx\frac{2N}{4\times2}\\
 <li id="ref-areal">[6] Fu et al. <a href="https://arxiv.org/abs/2505.24298v5">AReaL</a>，v5（2026-03-02）；完全异步与过期样本处理，报告任务为数学 / 代码。</li>
 <li id="ref-models">[7] Qwen官方config：<a href="https://huggingface.co/Qwen/Qwen2.5-72B-Instruct/blob/495f39366efef23836d0cfae4fbe635880d2be31/config.json">Qwen2.5-72B-Instruct，495f393</a>；<a href="https://huggingface.co/Qwen/Qwen3-235B-A22B/blob/8efa61729e24bd65b1d152b5ab5409052aa80e65/config.json">Qwen3-235B-A22B，8efa617</a>。仅作为公开基线；本文未下载权重。</li>
 </ol>
-<p class="note">硬件 / 预算 / 池比例为本文方案；公式为规格推导；原论文报告与方案判断分别表述。对Muon最新案例复用研究地图证据，不重复统计为独立复现。</p>
+<p class="note">硬件 / 预算 / 池比例为本文方案；公式为规格推导；原论文报告与方案判断分别表述。Muon工业案例沿用固定来源，不重复统计为独立复现。</p>
 </section>
 <!-- READING:FRAGMENT:END -->
 </main></body></html>

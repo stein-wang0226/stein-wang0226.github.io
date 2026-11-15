@@ -79,8 +79,17 @@ P(\text{输出 }x)&amp;=\min(p(x),q(x))\\
 <tr><td>B</td><td>0.6</td><td>0.3</td><td>0</td><td>0.3</td></tr>
 <tr><td>C</td><td>1/3</td><td>0.1</td><td>0</td><td>0.1</td></tr></tbody></table>
 <p>总拒绝概率0.4，正残差全部在A，所以拒绝时一定补A。若拒绝后直接从p再抽，B/C会被重复补入，最终分布就不是p。</p>
+<h3 id="speculative-trace">把概率算例走成一轮：候选 → 验证 → 提交 → 缓存恢复</h3>
+<p>沿用上表的p/q，假设本轮遇到的各前缀恰好都有这些分布。已有有效前缀P，draft提议[B,B,C]；两次验收随机数取u₁=0.4、u₂=0.8，均来自[0,1]均匀分布。这是一条确定的演示轨迹，频率结论仍来自上面的概率证明。</p>
+<table><thead><tr><th>检查位置</th><th>条件与操作</th><th>提交结果 / 状态</th></tr></thead><tbody>
+<tr><td>候选1：B</td><td>接受概率0.3/0.5=0.6，0.4≤0.6，接受</td><td>有效前缀变为P,B</td></tr>
+<tr><td>候选2：B</td><td>在前缀P,B下仍为0.6，0.8&gt;0.6，拒绝；残差仅支持A</td><td>提交修正token A，输出本轮[B,A]</td></tr>
+<tr><td>候选3：C</td><td>第2位置已拒绝，其后的条件前缀改变</td><td>丢弃，不再按原验证概率接受C</td></tr>
+<tr><td>KV恢复</td><td>保留P和第一个B的有效缓存；丢弃拒绝位置及后缀的投机状态</td><td>下一次前向送入修正A时，为A建立缓存；逻辑输出为P,B,A</td></tr>
+</tbody></table>
+<p><strong>关键检查：</strong>“已经输出A”与“已经计算A的K/V”有时相差一次forward。draft与target都必须恢复到各自正确的有效状态；具体实现可提前计算A，但不能沿用被拒绝B的K/V。这个区别与Transformer前向算例中“刚采样token尚未入缓存”一致。</p>
 <p>Leviathan等<a href="#ref-spec">[5]</a>给出保留target采样分布的协议。只保留与target argmax一致的最长前缀，是贪心等价的另一类协议；不能以贪心一致证明temperature采样分布精确。近似接受、只看confidence或忽略draft分布的实现需要单独证明/测量。</p>
-<p>2026 DFlash → DSpark → AdaFlash路线的diffusion候选、OPD训练与服务证据由<a href="../llm-research-map-2026/s04_inference_diffusion.html">研究地图推理/扩散章</a>维护。这里提供判断框架：模型版本、target采样规则、验证协议、接受率分母、拒绝后的cache恢复、并发与端到端成功成本。</p>
+<p>2026 DFlash → DSpark → AdaFlash的diffusion候选、OPD训练与服务证据在<a href="../llm-research-map-2026/s04_inference_diffusion.html">本主题后面的前沿投机解码节</a>继续展开。比较时固定模型版本、target采样规则、验证协议、接受率分母、拒绝后的cache恢复、并发与端到端成功成本。</p>
 <h3>接受长度为什么不是加速比</h3>
 <p class="math-notation">\(\mathbb E\) 对完整周期取平均；提交 token 是最终保留的输出。\(t_{\rm AR}\) 为普通 AR 每 token 时间，\(t_{\rm draft},t_{\rm verify},t_{\rm restore}\) 为一轮提议、验证和恢复时间，统一使用秒或毫秒；加速比无单位。</p>
 <div class="reading-math">\[

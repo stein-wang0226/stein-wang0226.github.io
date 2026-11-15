@@ -21,7 +21,7 @@
 </ol></figure>
 <p class="lead">DeepSeek V4.1是一个具体案例，不能覆盖整个基模方向。本章把Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step及Gemma接到同一组问题：<strong>历史保存成什么、哪些层访问全局、专家在哪个维度计算、多模态如何进入主干，以及这些选择怎样影响真实任务成本</strong>。</p>
 <ul><li><strong>状态不同：</strong>递归矩阵、压缩KV、稀疏读取和滑动窗口不能互换。</li><li><strong>计划具体：</strong>混合架构要核对实际层表，不能只背一个比例。</li><li><strong>归因有限：</strong>数据、配方和执行系统共同影响能力，参数量与Attention名称不足以预测排名。</li></ul>
-<p class="note">截止2026-11-14。规格按报告与固定config登记，未作同条件本地复现；下文继续拆解DeepSeek缓存与训练机制。来源共用本页索引。</p>
+<p class="note">截止2026-11-14。规格按报告与固定config登记，未作同条件本地复现；前面的架构机制用于理解家族差异，后面继续拆解DeepSeek缓存。编号对应<a href="index.html#sources">固定来源索引</a>。</p>
 <table>
 <thead><tr><th>比较对象</th><th>应回答的问题</th><th>需要单独计量</th></tr></thead>
 <tbody>
@@ -184,7 +184,7 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 <tr><td>Gemini 4 Argon / Carbon</td><td>官方model cards<a href="index.html#ref-69">[69–70]</a></td><td>Argon明确披露稀疏MoE Transformer，Carbon基于Argon；更细层表、专家数和缓存细节仍未披露</td></tr>
 </tbody>
 </table>
-<p>开源Agent harness中的notes、history、memory或“重新开始一个窗口”，不构成闭源模型使用Loop Transformer的证据。跨会话记忆属于执行系统；共享权重递归深度属于模型计算，见<a href="s07_architecture_training.html#depth">下一章</a>与<a href="../agent-harness-guide.html#codex-context">Harness上下文管理</a>。</p>
+<p>开源Agent harness中的notes、history、memory或“重新开始一个窗口”，不构成闭源模型使用Loop Transformer的证据。跨会话记忆属于执行系统；共享权重递归深度属于模型计算，分别见<a href="s07_architecture_training.html#depth">本页前面的递归深度机制</a>与<a href="../agent-harness-guide.html#codex-context">Harness上下文管理</a>。</p>
 </section>
 <section id="reading">
 <h2>阅读和实验怎样形成可复用的结论</h2>

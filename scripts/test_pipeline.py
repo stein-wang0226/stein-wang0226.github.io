@@ -81,8 +81,8 @@ class PipelineTests(unittest.TestCase):
         build(self.output, self.root)
         parent = (self.output / "llm-posttraining/index.html").read_text()
         self.assertEqual(1, parent.count('class="course-toc"'))
-        self.assertEqual(6, parent.count('class="course-chapter"'))
-        self.assertEqual(6, parent.count('class="course-focus"'))
+        self.assertEqual(7, parent.count('class="course-chapter"'))
+        self.assertEqual(7, parent.count('class="course-focus"'))
         self.assertIn('href="#posttraining-algorithms--interview-cards"', parent)
         self.assertIn('href="#posttraining-algorithms--baseline-proof"', parent)
         self.assertIn('id="posttraining-algorithms--baseline-proof"', parent)
@@ -94,12 +94,22 @@ class PipelineTests(unittest.TestCase):
         catalog = json.loads((self.output / "blog/catalog.json").read_text())
         self.assertFalse(any(e["id"] == "posttraining-algorithms" for e in catalog["entries"]))
         course = next(e for e in catalog["entries"] if e["id"] == "llm-posttraining")
-        self.assertEqual(6, len(course["sections"]))
+        self.assertEqual(7, len(course["sections"]))
         self.assertTrue(any("grpo" in s["search"] for s in course["sections"]))
         self.assertEqual(6, parent.count('class="teaching-diagram"'))
         self.assertNotIn("K = 3~10", parent)
         architecture = (self.output / "llm-architecture/index.html").read_text()
-        self.assertEqual(6, architecture.count('class="course-chapter"'))
+        self.assertEqual(10, architecture.count('class="course-chapter"'))
+        self.assertIn('id="transformer-decoder-flow--numerical-forward"', architecture)
+        self.assertIn('id="research-architecture-landscape--families"', architecture)
+        old_map = (self.output / "llm-research-map-2026/index.html").read_text()
+        self.assertNotIn('class="course-chapter"', old_map)
+        self.assertIn('"research-architecture-landscape--families": "../llm-architecture/index.html#research-architecture-landscape--families"', old_map)
+        self.assertIn('target.search=location.search', old_map)
+        self.assertIn('id="research-architecture-landscape--families"', old_map)
+        decoder = (self.output / "transformer-decoder-flow.html").read_text()
+        self.assertIn('"code": "transformer-decoder-flow--code"', decoder)
+        self.assertIn('location.replace(target.href)', decoder)
         self.assertIn('id="architecture-attention--attention-scaling"', architecture)
         self.assertNotIn('class="equation"', architecture)
         training = (self.output / "llm-training-lifecycle/index.html").read_text()
@@ -114,10 +124,9 @@ class PipelineTests(unittest.TestCase):
         self.assertIn('id="codex-prompt-f"', harness)
         self.assertNotIn('data-reading-history', harness)
         for slug, count, anchor in (
-                ("agent-systems", 3, "agent-rag--retrieval"),
-                ("agent-data-benchmarks", 4, "scientific-task-family--statistics"),
-                ("llm-serving", 3, "serving-parallel--speculation"),
-                ("llm-research-map-2026", 7, "research-base-architecture--cache")):
+                ("agent-systems", 4, "agent-rag--retrieval"),
+                ("agent-data-benchmarks", 5, "scientific-task-family--statistics"),
+                ("llm-serving", 4, "serving-parallel--speculation")):
             text = (self.output / slug / "index.html").read_text()
             self.assertEqual(count, text.count('class="course-chapter"'))
             self.assertEqual(1, text.count('class="course-toc"'))
@@ -266,6 +275,15 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "learning_paths.*missing #fixture"):
             load_content(self.root)
         path.write_bytes(original)
+        catalog_path = self.root / "content/catalog.json"
+        catalog_original = catalog_path.read_bytes()
+        def invalid_history(entries):
+            entry = next(e for e in entries if e.get("relocated_from"))
+            entry["relocated_from"] = entry["id"]
+        self.catalog(invalid_history)
+        with self.assertRaisesRegex(ValueError, "relocated_from"):
+            load_content(self.root)
+        catalog_path.write_bytes(catalog_original)
         def cycle(entries):
             a, b = entries[:2]
             a["prerequisites"] = [{"entry": b["id"], "reason": "Fixture"}]

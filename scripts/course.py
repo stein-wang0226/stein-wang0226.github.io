@@ -13,6 +13,7 @@ END = "<!-- READING:FRAGMENT:END -->"
 
 # Short, editorially selected links keep derivation and review in one directory.
 FOCUS = {
+    "transformer-decoder-flow": [("training-forward", "逐步训练前向"), ("numerical-forward", "完整数值算例"), ("decode-forward", "Prefill → decode"), ("code", "完整 PyTorch")],
     "architecture-transformer": [("reading-section-3", "因果 mask"), ("reading-section-5", "标签移位与梯度"), ("reading-section-7", "实现检查")],
     "architecture-attention": [("course-heading-1", "点积缩放推导"), ("reading-section-4", "RoPE 相对位移"), ("reading-section-7", "缓存与自测")],
     "architecture-moe": [("reading-section-2", "FFN 参数账本"), ("reading-section-4", "负载与容量"), ("reading-section-8", "常见失败")],
@@ -44,7 +45,7 @@ FOCUS = {
     "research-agentic-rl": [("reading-section-6", "信用分配路线"), ("reading-section-7", "有效学习机会"), ("reading-section-8", "异步偏差")],
     "research-architecture-landscape": [("reading-section-4", "GDN 到 KDA"), ("reading-section-5", "实际层计划"), ("reading-section-16", "比较协议")],
     "research-base-architecture": [("reading-section-3", "CED 张量来源"), ("reading-section-9", "890 B/token 推导"), ("reading-section-10", "Replay 边界")],
-    "research-architecture-training": [("reading-section-3", "AttnRes 深度注意力"), ("reading-section-4", "mHC 凸组合"), ("reading-section-10", "矩阵切片边界")],
+    "research-architecture-training": [("reading-section-3", "AttnRes 深度注意力"), ("reading-section-4", "mHC 凸组合"), ("recurrent-depth", "递归深度")],
     "research-inference-diffusion": [("reading-section-2", "三类 drafter"), ("reading-section-4", "选择偏差反例"), ("course-heading-1", "并发退化")],
     "research-agent-frontiers": [("reading-section-3", "科学能力三层"), ("reading-section-5", "时间切分"), ("reading-section-6", "并行资源账本")],
     "dlm-overview": [("generation", "四 token 算例"), ("lineage", "路线与机制")],
@@ -209,10 +210,46 @@ class Fragment(HTMLParser):
 
 
 def public_target(entry, anchor, by_id):
+    # Bookmarks into a former assembled topic keep their chapter namespace.
+    for child in by_id.values():
+        if child.get("relocated_from") == entry["id"] and (
+                anchor == child["id"] or anchor.startswith(child["id"] + "--")):
+            suffix = anchor[len(child["id"]):].removeprefix("--")
+            return public_target(child, suffix, by_id)
     parent = parent_of(entry, by_id)
     if parent:
         return parent["url"], entry["id"] + ("--" + anchor if anchor else "")
     return entry["url"], anchor
+
+
+def relocated_directory(ctx, entry, text):
+    """Render old chapter bookmarks from catalog history, without duplicate prose."""
+    marker = "<!-- READING:RELOCATED -->"
+    if marker not in text:
+        return text
+    children = [e for e in ctx.entries if e.get("relocated_from") == entry["id"]]
+    mapping, rows, aliases = {}, [], []
+    for child in children:
+        doc = Fragment(fragment(ctx.root, child), child, ctx.root)
+        parent = parent_of(child, ctx.by_id)
+        route, anchor = public_target(child, "", ctx.by_id)
+        href = ctx.rel(entry["url"], route) + "#" + anchor
+        mapping[child["id"]] = href
+        rows.append(f'<li id="{child["id"]}"><a href="{href}">'
+                    f'{html.escape(parent["title"])} → {short_title(child)}</a></li>')
+        for old in sorted(doc.all_ids):
+            key = child["id"] + "--" + old
+            mapping[key] = href + "--" + old
+            aliases.append(f'<span class="reading-anchor" id="{html.escape(key, quote=True)}"></span>')
+    directory = ('<section id="relocated-topics"><h2>原章节现在在哪里</h2>'
+                 '<p>各节正文已在对应主题连续展开。旧书签会直接定位；也可使用以下链接。</p>'
+                 '<ul>' + "".join(rows) + '</ul>' + "".join(aliases) + '</section>')
+    script = ('<script>(()=>{const routes=' + json.dumps(mapping, ensure_ascii=False) +
+              ';const move=()=>{let key="";try{key=decodeURIComponent(location.hash.slice(1))}catch{}'
+              'if(!routes[key])return;const target=new URL(routes[key],location.href);'
+              'target.search=location.search;location.replace(target.href)};'
+              'addEventListener("hashchange",move);move()})();</script>')
+    return text.replace(marker, directory).replace("</body>", script + "</body>")
 
 
 def rewrite_link(value, entry, output_url, by_id, site_url=""):

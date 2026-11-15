@@ -142,10 +142,10 @@
     },
     {
       "source": "content/posts/transformer-decoder-flow/index.html",
-      "sha256": "f192e13d7fbd5e44c360fc65f56b593660d28493af91223b23020f8b6391a6da",
+      "sha256": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
       "visual_revision_reason": "2026-11-15: add explicit training tensor flow and causal/shifted-label explanation; preserve layer formulas and PyTorch code.",
       "title_revision_reason": "2026-11-14 title audit: describe the actual forward-computation and tensor-dimension walkthrough in document title and h1; retain scientific text and interactive content.",
-      "reason": "逐页审阅：公式/形状、cache/mask、参数账本与完整小模型全部审阅。原理与算例：NLL/attention；整段/逐token/多token缓存等价。精简与证据：修Llama3头型、SwiGLU计数、双shift、初始化/cache/device/mask；PyTorch2.8 CPU实现运行通过，非性能实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "reason": "逐页审阅：公式/形状、cache/mask、参数账本与完整小模型全部审阅。原理与算例：NLL/attention；整段/逐token/多token缓存等价。精简与证据：修Llama3头型、SwiGLU计数、双shift、初始化/cache/device/mask；PyTorch2.8 CPU实现运行通过，非性能实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：从参考文章升为架构第2节；恢复embedding到loss、prefill到decode逐步形状推导，补齐两token的Norm/Attention/SwiGLU/head完整数值链；保留完整代码与原稿下载，修正warmup、mask、最终Norm、标签和采样边界。",
       "prior_reason": "Add prerequisites, data-flow reading route and symbolic shape-tracking exercise. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
@@ -277,8 +277,9 @@
     },
     {
       "source": "content/series/agent-systems/index.html",
-      "sha256": "33f5cb2e59bc7444c044f702f602697943f54e1209c9fa31152df02c26ffcf32",
-      "reason": "逐页审阅：三职责引入、科学关联、掌握清单。原理与算例：证据/决策/执行约束关系。精简与证据：去旧目录与重复路线；父页只装配不复制正文。"
+      "sha256": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "reason": "逐页审阅：三职责引入、科学关联、掌握清单。原理与算例：证据/决策/执行约束关系。精简与证据：去旧目录与重复路线；父页只装配不复制正文。 完整算例与主题整合：在检索、规划、权限后接入GUI、科学Agent、Skills与持续学习场景，避免另一个跨主题研究入口。",
+      "prior_reason": "逐页审阅：三职责引入、科学关联、掌握清单。原理与算例：证据/决策/执行约束关系。精简与证据：去旧目录与重复路线；父页只装配不复制正文。"
     },
     {
       "source": "content/series/agent-systems/s01_rag_retrieval.html",
@@ -299,8 +300,9 @@
     },
     {
       "source": "content/series/llm-serving/index.html",
-      "sha256": "e1dc30773c1645030ab683978b923dafc3f5f466ea7c84e927933e2f47288a76",
-      "reason": "逐页审阅：调度/加速/成本三问题、装配、掌握清单、固定实现。原理与算例：请求计算与状态交接。精简与证据：去旧三章目录与重复研究路线；实现版本说明保留。"
+      "sha256": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "reason": "逐页审阅：调度/加速/成本三问题、装配、掌握清单、固定实现。原理与算例：请求计算与状态交接。精简与证据：去旧三章目录与重复研究路线；实现版本说明保留。 完整算例与主题整合：把前沿diffusion投机章接在运行机制、精度与容量后，来源入口改为架构主讲与固定引用。",
+      "prior_reason": "逐页审阅：调度/加速/成本三问题、装配、掌握清单、固定实现。原理与算例：请求计算与状态交接。精简与证据：去旧三章目录与重复研究路线；实现版本说明保留。"
     },
     {
       "source": "content/series/llm-serving/s01_runtime_scheduling.html",
@@ -310,8 +312,8 @@
     },
     {
       "source": "content/series/llm-serving/s02_parallel_quantization.html",
-      "sha256": "312e15f202d9863ca8d6b0afd691bd12823794bb873894704f31832120aac213",
-      "reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "b57952ba142e83701bce6265f9abc40f544d835c74451d63f9ca34b41cfea671",
+      "reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：由三词表接受/残差概率推进到一轮B/B/C提议、首token接受、次token拒绝补A、丢弃后缀与KV恢复，区分输出提交和缓存计算。",
       "prior_reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。"
     },
     {
@@ -322,8 +324,8 @@
     },
     {
       "source": "content/series/llm-posttraining/index.html",
-      "sha256": "f20b13f320d174857d87f357ff38fb2f65e2ca5c009a17ef365eb71f791d9661",
-      "reason": "逐页审阅：七主题中的反馈与更新入口、六章装配、掌握清单。原理与算例：原理→变体→配方→诊断。精简与证据：父页只装配唯一片段，删除第二目录与分散阅读路线。 分类与课程复查：修正过时来源数量说明，登记11月OPD补充；保留原理→变体→配方→诊断顺序。",
+      "sha256": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "reason": "逐页审阅：七主题中的反馈与更新入口、六章装配、掌握清单。原理与算例：原理→变体→配方→诊断。精简与证据：父页只装配唯一片段，删除第二目录与分散阅读路线。 分类与课程复查：修正过时来源数量说明，登记11月OPD补充；保留原理→变体→配方→诊断顺序。 完整算例与主题整合：接入Agentic RL前沿章，导读指向完整GRPO算例及实际算法增量。",
       "prior_reason": "逐页审阅：七主题中的反馈与更新入口、六章装配、掌握清单。原理与算例：原理→变体→配方→诊断。精简与证据：父页只装配唯一片段，删除第二目录与分散阅读路线。"
     },
     {
@@ -334,8 +336,8 @@
     },
     {
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
-      "sha256": "181c2dbf800e54631ef3541377b4e1f1cf2d916b6cb03eb75526fa77d1fdc44c",
-      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "247f7f19c8190d217ffadbfe97f648078b5fa8b72d1e89b5cc2f175d01a98cb5",
+      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件。",
       "prior_reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。"
     },
     {
@@ -363,8 +365,8 @@
     },
     {
       "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
-      "sha256": "25d5368fb403dc14c6e2bca14d90409d5f6b97e773b0323ca6ba0bd8ae931554",
-      "reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：新增训练系统四层职责图，区分模型结构、优化器、并行状态布局与后训练编排；复用原有实现和固定版本框架地图。 分类与课程复查：完整保留AdamW/Muon推导；补四层训练架构、TorchTitan/MaxText固定源码、框架验收、roofline和nGPT整套配方证据。",
+      "sha256": "2c0cde0f68f69f993de2243ba993f75abc7cdc281877acc5a13696b06ae462e2",
+      "reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：新增训练系统四层职责图，区分模型结构、优化器、并行状态布局与后训练编排；复用原有实现和固定版本框架地图。 分类与课程复查：完整保留AdamW/Muon推导；补四层训练架构、TorchTitan/MaxText固定源码、框架验收、roofline和nGPT整套配方证据。 完整算例与主题整合：Muon工业配方六项对照与逻辑矩阵、分布式切片、状态恢复接到polar推导后；保留原固定引用和适用边界。",
       "prior_reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。"
     },
     {
@@ -381,8 +383,9 @@
     },
     {
       "source": "content/series/llm-architecture/index.html",
-      "sha256": "0ac970cfe9b74735a078a5b65eea8b992e1500b3c4355f8857268e37db8bfb2f",
-      "reason": "逐页审阅：架构入口、六章装配、状态/计算关系与掌握清单。原理与算例：表示→选择→更新→恢复。精简与证据：删除旧重复目录；源稿分章维护，正文连续阅读。"
+      "sha256": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "reason": "逐页审阅：架构入口、六章装配、状态/计算关系与掌握清单。原理与算例：表示→选择→更新→恢复。精简与证据：删除旧重复目录；源稿分章维护，正文连续阅读。 完整算例与主题整合：按基础、完整forward、模块、前沿机制、家族、缓存案例装配10节；显式入口直达完整算例，核心计算默认展开，代码按需展开。",
+      "prior_reason": "逐页审阅：架构入口、六章装配、状态/计算关系与掌握清单。原理与算例：表示→选择→更新→恢复。精简与证据：删除旧重复目录；源稿分章维护，正文连续阅读。"
     },
     {
       "source": "content/series/llm-architecture/s01_transformer_foundations.html",
@@ -421,8 +424,9 @@
     },
     {
       "source": "content/series/agent-data-benchmarks/index.html",
-      "sha256": "dd16193ad2320e1181342f87c66d9742d7d36f6456387dfd64f01bcc2fd88d1f",
-      "reason": "逐页审阅：生命周期引入、对象职责、正文装配、掌握清单、原始来源。原理与算例：来源/环境/任务/verifier/多轨迹/留出关系。精简与证据：去旧四章目录与第二路线；52引用编号不改、清单按需。"
+      "sha256": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "reason": "逐页审阅：生命周期引入、对象职责、正文装配、掌握清单、原始来源。原理与算例：来源/环境/任务/verifier/多轨迹/留出关系。精简与证据：去旧四章目录与第二路线；52引用编号不改、清单按需。 完整算例与主题整合：任务生命周期末尾接入前沿合成、迁移与榜单审计，目录从四节变为五节，来源编号保持原命名空间。",
+      "prior_reason": "逐页审阅：生命周期引入、对象职责、正文装配、掌握清单、原始来源。原理与算例：来源/环境/任务/verifier/多轨迹/留出关系。精简与证据：去旧四章目录与第二路线；52引用编号不改、清单按需。"
     },
     {
       "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
@@ -438,13 +442,15 @@
     },
     {
       "source": "content/series/llm-research-map-2026/index.html",
-      "sha256": "38557716c4450595f17609292aa552662c18e2ff073a77f86f3cff22da2671bb",
-      "reason": "逐页审阅：研究问题、证据层次、先修、七节装配、选题、归档与来源全部审阅。原理与算例：机制→对照→边界；掌握检查。精简与证据：移除旧覆盖表、三路线和七章重复目录；71原编号、15原件、SHA/许可说明保留；长来源/选题按需。"
+      "sha256": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "reason": "逐页审阅：研究问题、证据层次、先修、七节装配、选题、归档与来源全部审阅。原理与算例：机制→对照→边界；掌握检查。精简与证据：移除旧覆盖表、三路线和七章重复目录；71原编号、15原件、SHA/许可说明保留；长来源/选题按需。 完整算例与主题整合：原跨主题长文改为参考来源与旧目录；七节正文归入所属主题，仅保留固定引用、原件、研究边界及自动生成的旧锚点定位。",
+      "prior_reason": "逐页审阅：研究问题、证据层次、先修、七节装配、选题、归档与来源全部审阅。原理与算例：机制→对照→边界；掌握检查。精简与证据：移除旧覆盖表、三路线和七章重复目录；71原编号、15原件、SHA/许可说明保留；长来源/选题按需。"
     },
     {
       "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
-      "sha256": "7d65251191af8348208d2c6130b5f71b989b99a066b98740149c88b9aa0bdedd",
-      "reason": "逐页审阅：资产、四路线、Harbor交接、迁移、榜单审计、实验、定量入口全部审阅。原理与算例：SQLite临时状态未交接反例；父span/请求0.05与0.10计费例。精简与证据：通用对象/合同表归任务主讲；四路线只讲生成空间区别，长实验按需；82/6627困难切片、19/20修复分歧及未重放状态保留。"
+      "sha256": "c8d63962b3cc10cde956f2744fa098d878332f5dbc9a3c11f8516bcd7264bb8e",
+      "reason": "逐页审阅：资产、四路线、Harbor交接、迁移、榜单审计、实验、定量入口全部审阅。原理与算例：SQLite临时状态未交接反例；父span/请求0.05与0.10计费例。精简与证据：通用对象/合同表归任务主讲；四路线只讲生成空间区别，长实验按需；82/6627困难切片、19/20修复分歧及未重放状态保留。 完整算例与主题整合：归入数据主题，修正原下一章为后训练主讲的语义入口。",
+      "prior_reason": "逐页审阅：资产、四路线、Harbor交接、迁移、榜单审计、实验、定量入口全部审阅。原理与算例：SQLite临时状态未交接反例；父span/请求0.05与0.10计费例。精简与证据：通用对象/合同表归任务主讲；四路线只讲生成空间区别，长实验按需；82/6627困难切片、19/20修复分歧及未重放状态保留。"
     },
     {
       "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
@@ -453,30 +459,32 @@
     },
     {
       "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
-      "sha256": "3b8a34880ce21b4334fc4471fef7428f0dcd35f04b3a30af90bd66b9823e7039",
-      "reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：归入架构主题，明确drafter与异步对齐分别属于推理和后训练。",
       "prior_reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。"
     },
     {
       "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
-      "sha256": "3966264d9abe13bc59b8e52380a202268ed97d22d8969015fc0064d4952707fa",
-      "reason": "逐页审阅：四成本目标、三drafter、采样合同、准入、OPD角色、两论文表与实验全部审阅。原理与算例：周期90ms/5token=18ms与AR15ms反例；丢弃B后q=p仍全部A的调度反例。精简与证据：标准投机校正与成功成本长式归服务；并发1→128退化保留；温度/块长/τ/加速分开，独立trainer成本及未知硬件不省略。"
+      "sha256": "c9ad2561a006624ee2f866ccc4ab18b6792ecbb40786e77024453f05ddb8738c",
+      "reason": "逐页审阅：四成本目标、三drafter、采样合同、准入、OPD角色、两论文表与实验全部审阅。原理与算例：周期90ms/5token=18ms与AR15ms反例；丢弃B后q=p仍全部A的调度反例。精简与证据：标准投机校正与成功成本长式归服务；并发1→128退化保留；温度/块长/τ/加速分开，独立trainer成本及未知硬件不省略。 完整算例与主题整合：归入推理主题，修正跨主题场景链接的原下一章措辞。",
+      "prior_reason": "逐页审阅：四成本目标、三drafter、采样合同、准入、OPD角色、两论文表与实验全部审阅。原理与算例：周期90ms/5token=18ms与AR15ms反例；丢弃B后q=p仍全部A的调度反例。精简与证据：标准投机校正与成功成本长式归服务；并发1→128退化保留；温度/块长/τ/加速分开，独立trainer成本及未知硬件不省略。"
     },
     {
       "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
-      "sha256": "6c249ac2f8294a0532b2f9f9b64018c06cd0ae7826fdf38b58754a52a90b30f7",
-      "reason": "逐页审阅：GUI、科学三层、Skills版本、适配、并行/多教师、实验全部审阅。原理与算例：时间t→冻结→新任务→旧回归图；测试标签泄漏反例；20s串行/13s并行但资源20s例。精简与证据：删除第二幅同义总流程；运行memory定义归Harness，研究干预要点分点；所有版本、预算、公开履历与待执行边界保留。"
+      "sha256": "1ab7d3ef637c54825a7a40f0942b3de6f85e6ecb65e2b65618e772fca8c5c24c",
+      "reason": "逐页审阅：GUI、科学三层、Skills版本、适配、并行/多教师、实验全部审阅。原理与算例：时间t→冻结→新任务→旧回归图；测试标签泄漏反例；20s串行/13s并行但资源20s例。精简与证据：删除第二幅同义总流程；运行memory定义归Harness，研究干预要点分点；所有版本、预算、公开履历与待执行边界保留。 完整算例与主题整合：归入Agent系统，数据合成按主题指向而不再引用旧章号。",
+      "prior_reason": "逐页审阅：GUI、科学三层、Skills版本、适配、并行/多教师、实验全部审阅。原理与算例：时间t→冻结→新任务→旧回归图；测试标签泄漏反例；20s串行/13s并行但资源20s例。精简与证据：删除第二幅同义总流程；运行memory定义归Harness，研究干预要点分点；所有版本、预算、公开履历与待执行边界保留。"
     },
     {
       "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
-      "sha256": "eca788377fb7d67543315172291f4e9df56fe07b10fec167cf57063216224eb4",
-      "reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：补充经典骨架到高效模块、混合状态与前沿家族的学习链路图，以及全站四类目录入口；保留固定版本规格和全部来源，本轮未重新核验所有型号。 分类与课程复查：增补经典→前沿学习图和四类目录关系；Kimi连接新服务字节/TTFT证据，九家族固定版本规格保持。",
+      "sha256": "80c196d691d61b9688b03c8a4fc34be64682b485a43f7856d0317523687aaa6e",
+      "reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：补充经典骨架到高效模块、混合状态与前沿家族的学习链路图，以及全站四类目录入口；保留固定版本规格和全部来源，本轮未重新核验所有型号。 分类与课程复查：增补经典→前沿学习图和四类目录关系；Kimi连接新服务字节/TTFT证据，九家族固定版本规格保持。 完整算例与主题整合：家族比较接在架构机制后，修正前后节顺序及集中来源编号描述。",
       "prior_reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。"
     },
     {
       "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
-      "sha256": "73511e09cb6ac9f2377859a5aa235c0297898e0a9ec1afb70681d2aafc160256",
-      "reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "ec0fcdcea44bb98cebe6ce501013c276c2456067d0c8b337f4432b30853c3865",
+      "reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：归入架构并置于家族比较前；主线收敛为残差流、LatentMoE与递归深度，Muon工业分组与分布式说明迁至训练主讲，旧段保留语义链接。",
       "prior_reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。"
     },
     {

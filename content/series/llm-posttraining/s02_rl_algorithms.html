@@ -151,6 +151,17 @@ A_i^{\rm GRPO}=\frac{R_i-\bar R}{\sigma_R+\epsilon}.
 </tbody>
 </table>
 <p>全同奖励组的 <strong>task policy-gradient</strong> 为零；KL、entropy、OPD 或其他辅助目标仍可能产生梯度。不同实现 std 用总体还是样本估计、ε 多大，也影响具体数值。</p>
+<h3 id="grpo-full-example">完整一组算例：reward → advantage → ratio → clip → loss</h3>
+<p><strong>输入与假设：</strong>同一prompt的四个单token候选A/B/C/D，旧策略各为0.25；本组恰好各采到一次。verifier给[1,0,0,0]，总体std=√3/4，优势固定为[√3,−1/√3,−1/√3,−1/√3]。当前策略经过此前更新后为[0.325,0.175,0.275,0.225]；clip区间[0.8,1.2]，KL β=0，无entropy项。这是教学配方，非论文推荐超参数。</p>
+<table><thead><tr><th>候选</th><th>ratio=current/old</th><th>未裁剪ρA</th><th>裁剪后ρ̄A</th><th>min得到j</th></tr></thead><tbody>
+<tr><td>A，正优势</td><td>1.3</td><td>2.251666</td><td>2.078461</td><td>2.078461，上越界平台</td></tr>
+<tr><td>B，负优势</td><td>0.7</td><td>−0.404145</td><td>−0.461880</td><td>−0.461880，下越界平台</td></tr>
+<tr><td>C，负优势</td><td>1.1</td><td>−0.635085</td><td>−0.635085</td><td>−0.635085，有直接梯度</td></tr>
+<tr><td>D，负优势</td><td>0.9</td><td>−0.519615</td><td>−0.519615</td><td>−0.519615，有直接梯度</td></tr>
+</tbody></table>
+<p><strong>输出：</strong>J=Σj/4=0.115470，训练最小化的policy loss为−0.115470。正负优势必须分别取min，不能把所有超界ratio都简单截成“无更新”。此例每条只有一个有效token，因此序列平均与token平均相同；多token轨迹要继续应用mask和长度分母。</p>
+<p><strong>接到参数更新：</strong>设当前四类logits为z，p=softmax(z)。对固定优势，令cᵢ=∂J/∂log pᵢ，则本例c=(0,0,−0.158771,−0.129904)，经softmax得到 \(\partial J/\partial z_i=c_i-p_i\sum_jc_j\)。所以A/B的自身代理项进入平台，概率仍可能被共享归一化和其他项改变。梯度随后交给优化器，下一轮用新策略重新采样。</p>
+<figure class="mechanism-map"><figcaption>一组数据怎样成为实际优化信号</figcaption><ol class="mechanism-chain"><li><b>采样与终评</b><small>保存old log-prob；reward=[1,0,0,0]</small></li><li><b>固定组优势</b><small>mean=1/4，std=√3/4</small></li><li><b>重算与裁剪</b><small>ratio=[1.3,0.7,1.1,0.9]；J=0.115470</small></li><li><b>反传与新采样</b><small>loss=−J；更新logits，再运行verifier</small></li></ol></figure>
 <h3 id="heterogeneous">异质数据：标准化不能保证每个任务都有学习机会</h3>
 <div class="reading-math" role="math" aria-label="二值奖励有效组概率">\[
 P(\text{组内有成败差异})=1-p^G-(1-p)^G.
