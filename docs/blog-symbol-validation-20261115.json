@@ -1,5 +1,17 @@
 {
   "scope": "new symbol explanations and complete reader acceptance after 7559d0f",
+  "publication": {
+    "content_commit": "b232504b8df6031701f2921d4dd1ae8e05ff53d2",
+    "input_digest_matches_local": true,
+    "live_pages_with_matching_definitions": 26,
+    "live_formula_pages": 4,
+    "live_errors": 0,
+    "legacy_fragment": "posttraining-algorithms--ppo-ratio",
+    "search": "GRPO → llm-posttraining",
+    "original_rl_sha256": "fd5cedc033aff57186e7ba8037cc6ce937c7cdaf13e9ae7e2e928c96900e2984",
+    "actions": [43676207430, 43676207495],
+    "status": "passed"
+  },
   "build": {
     "commit": "7559d0fed0a402101a2d65b249774221c7d98409",
     "dirty": true,

@@ -39,9 +39,21 @@
 | 数学与说明 | 每屏 123 段说明可见；无 TeX 错误、裸露 TeX、缺失 display 输出或整页溢出；阻断外部 CDN |
 | 原生 MathML | Holon 的 50 个表达式完整保留，其中 8 个为 display；手机长式在独立容器横向滚动，键盘右箭头已验证可访问 |
 | 阅读交互 | 48 旧章 × 三屏 = 144 深链通过；74 页无 JS 阅读通过；63 次图表打开/退出通过；学习、面试、项目三种路线通过 |
-| 实际截图 | 12 张精确定位截图留在 `/tmp/my-blogs-browser-tests/`；人工查看六张手机及两张桌面截图，RL/AdamW 另定位到公式及说明 |
+| 实际截图 | 12 张精确定位截图留在 `/tmp/my-blogs-browser-tests/`；人工查看全部六张手机及六张桌面截图，RL/AdamW 另定位到公式及说明 |
 
 本地验收 input digest：
 `edaab874234d424626aae1a530e7e9bab41081a688cf549ccdd8e349ab32842c`。
-验收时 HEAD 为 `7559d0f`、工作区有本轮改动；提交后将通过 Actions 与线上
-`build-info.json` 核对同一输入摘要，再记录实际发布状态。
+验收时 HEAD 为 `7559d0f`、工作区有本轮改动。
+
+## 发布核对
+
+内容提交 `b232504b8df6031701f2921d4dd1ae8e05ff53d2` 已推送并上线；
+[校验工作流](https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43676207430)
+与[发布工作流](https://github.com/stein-wang0226/stein-wang0226.github.io/actions/runs/43676207495)
+均成功。线上 `build-info.json` 的 commit、clean 状态与上述 input digest
+已核对。26 个阅读页的说明数量与本地验收一致，RL/DLM/Holon/Frontier 四页
+数学输出、旧 PPO 深链、GRPO 搜索入口、74 原稿下载入口与 RL 原稿 SHA 均通过。
+文档补记发布结果的后续提交不改变已验收的渲染输入摘要。
+
+学习入口：[七个连续主题](https://stein-wang0226.github.io/blog/#learning-paths)；
+公式示例：[RL 轨迹与梯度](https://stein-wang0226.github.io/llm-posttraining/#posttraining-algorithms--policy-gradient)。
