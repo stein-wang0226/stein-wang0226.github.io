@@ -48,7 +48,9 @@
       }
       for (const [k, field] of Object.entries(fields)) {
         if (preserveEdits && pendingFields.has(k)) continue;
-        const value = params.get(k) || (k === 'sort' ? 'updated-desc' : '');
+        const rawValue = params.get(k);
+        const value = (k === 'topic' ? data.compatibility.topic_aliases?.[rawValue] : null)
+          || rawValue || (k === 'sort' ? 'updated-desc' : '');
         field.value = value;
         if (k !== 'q' && field.value !== value) {
           field.value = k === 'sort' ? 'updated-desc' : '';
@@ -81,7 +83,8 @@
       clear.hidden = !filtered;
       const rows = data.entries.filter(e => (query ? true : e.origin === 'local' && e.status === 'published')
         && (includeChapters || e.kind !== 'chapter')
-        && (!state.topic || e.topic === state.topic)
+        && (!state.topic || e.topic === state.topic || e.secondary_topics?.includes(state.topic)
+          || e.sections?.some(s => s.topic === state.topic || s.secondary_topics?.includes(state.topic)))
         && (!state.type || e.type === state.type)
         && (!query || e.search.includes(query)));
       rows.sort((a, b) => state.sort !== 'title' && (a.updated || b.updated) && a.updated !== b.updated
@@ -96,16 +99,19 @@
         const type = data.types.find(t => t.id === e.type).label;
         const parent = e.series && data.entries.find(row => row.id === e.series);
         const children = data.entries.filter(c => c.series === e.id && c.status === 'published').sort((a,b) => a.order-b.order);
+        const matchingSections = (e.sections || []).filter(s =>
+          (!state.topic || s.topic === state.topic || s.secondary_topics?.includes(state.topic))
+          && (!query || s.search.includes(query)));
         return `<article class="note-card${e.kind === 'series' ? ' series-card' : ''}" data-entry="${esc(e.id)}"><div class="tag"><span>${esc(topic)}</span><span class="note-type">${esc(type)}${e.kind === 'chapter' ? ' · 系列章节' : ''}</span></div>
           <h2><a href="${esc(e.url)}">${esc(e.title)}</a></h2><p>${esc(e.summary)}</p>
           ${parent ? `<p>所属系列：<a href="${esc(parent.url)}">${esc(parent.title)}</a></p>` : ''}
-          ${query && e.sections?.some(s=>s.search.includes(query)) ? `<ul class="catalog-section-matches">${e.sections.filter(s=>s.search.includes(query)).map(s=>`<li><a href="${esc(s.url)}">${esc(s.title)}</a></li>`).join('')}</ul>` : ''}
+          ${(query || state.topic) && matchingSections.length ? `<ul class="catalog-section-matches">${matchingSections.map(s=>`<li><a href="${esc(s.url)}">${esc(s.title)}</a></li>`).join('')}</ul>` : ''}
           <div class="card-bottom"><span class="note-date">${esc(e.updated || '更新时间待确认')}</span>
           <a class="card-open" href="${esc(e.url)}" aria-label="阅读${esc(e.title)}">${e.kind === 'series' ? '浏览系列' : '阅读笔记'}${icon}</a></div>
           ${children.length ? `<details><summary>查看系列章节</summary><ol>${children.map(c=>`<li><a href="${esc(c.url)}">${esc(c.title)}</a></li>`).join('')}</ol></details>` : ''}
-          ${e.sections?.length && !query ? `<details><summary>查看本页小节</summary><ol>${e.sections.map(s=>`<li><a href="${esc(s.url)}">${esc(s.title)}</a></li>`).join('')}</ol></details>` : ''}</article>`;
+          ${e.sections?.length && !query && !state.topic ? `<details><summary>查看本页小节</summary><ol>${e.sections.map(s=>`<li><a href="${esc(s.url)}">${esc(s.title)}</a></li>`).join('')}</ol></details>` : ''}</article>`;
       }
-      if (query) {
+      if (query || state.topic) {
         container.innerHTML = '<div class="note-grid">' + rows.map(renderCard).join('') + '</div>';
       } else {
         const groups = data.topics.map(t => ({

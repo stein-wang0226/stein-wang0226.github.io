@@ -282,7 +282,7 @@
 <div class="update-entry">
     <span class="entry-date">2026-09-14</span>
     <div class="card-title">MiniMax-M3（MiniMax，2026-06/07 正式发布，MiniMax Community License）<span class="pill fact">FACT</span></div>
-    <p><strong>更正：M3 已正式发布，从本页「传闻」栏移出。</strong>HF <code>MiniMaxAI/MiniMax-M3</code>（arch <code>minimax_m3_vl</code>）2026-06-02 建库、2026-07-23 更新，权重公开。<strong>原生多模态、1M 上下文、总参 ~428B / 激活 ~23B</strong>；从训练第一步起做文本/图像/视频<strong>混合模态训练</strong>以实现更深语义融合。核心是 <strong>MSA（MiniMax Sparse Attention）</strong>：相较 GQA 大幅降低注意力算力/显存，在 1M 上下文下较 M2 实现 <strong>9× prefill、15× decode 加速、每 token 算力降至 1/20</strong>；主打长程 agentic 的编码与 cowork，<code>thinking</code> 支持 enabled/adaptive/disabled 三档。技术报告《MiniMax Sparse Attention》（arXiv:<a href="https://arxiv.org/abs/2606.13392" title="MiniMax Sparse Attention · Lai, Xunhao, Xu, Weiqi, Yang, Yufeng 等 · 2026/06/11 · 2606.13392">2606.13392</a>，Xunhao Lai、Weiqi Xu 等）。同期组织内还有视频生成 <strong>MiniMax-H3</strong>（text/image→video+audio，下载量逾 480 万）与 <strong>Music3</strong>。</p>
+    <p><strong>M3的发布状态与MSA实验分别看。</strong>公开模型采用原生多模态、1M上下文与稀疏注意力路线；当前M3.1-Flash的428B总参数、23B激活及实际层配置，见<a href="/llm-research-map-2026/#research-architecture-landscape--minimax">模型家族主讲</a>。MSA按GQA group选择历史block；<a href="https://arxiv.org/html/2606.13392v2">MSA v2论文</a>的109B模型训练对照和H800上1M长度kernel测量，是不同于428B发布模型的实验。原条目未明确分母的9×/15×及1/20概括不再作为统一性能结论；查看主讲中的硬件、长度、kernel与端到端范围。</p>
     <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/MiniMaxAI/MiniMax-M3">HF MiniMaxAI/MiniMax-M3</a> · <a href="https://arxiv.org/abs/2606.13392">MiniMax Sparse Attention arXiv:2606.13392</a> · <a href="https://huggingface.co/MiniMaxAI/MiniMax-H3">MiniMax-H3</a>。加速倍数与 agentic 表现为厂商自报 <span class="pill self">SELF-REPORT</span>。</p>
 </div>
 

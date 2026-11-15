@@ -2402,6 +2402,7 @@
       "used_for": "GQA-group block selection, indexer training, H800 attention-kernel experiment on 109B model.",
       "local_asset": null,
       "used_in": [
+        "/llm-frontier-2026.html#models",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#minimax"
       ],

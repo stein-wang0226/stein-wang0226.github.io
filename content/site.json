@@ -64,6 +64,58 @@
       ]
     },
     {
+      "id": "directory-architecture",
+      "directory": true,
+      "label": "模型架构",
+      "summary": "先学经典计算链路，再比较前沿模型改变了哪些模块。",
+      "stages": [
+        {"entry": "llm-architecture", "label": "Transformer → Attention / KV → FFN / MoE → 残差 / 混合状态"},
+        {"entry": "research-architecture-landscape", "anchor": "families", "label": "DeepSeek、Qwen、Kimi 等开源家族与固定版本"},
+        {"entry": "research-architecture-training", "label": "前沿机制：残差、LatentMoE、Muon 与递归计算"},
+        {"entry": "dlm-survey", "label": "生成范式分支：扩散语言模型"}
+      ]
+    },
+    {
+      "id": "directory-training",
+      "directory": true,
+      "label": "训练",
+      "summary": "阶段、目标、预算、参数更新与集群执行分层理解。",
+      "stages": [
+        {"entry": "llm-training-lifecycle", "label": "Pretrain → Midtrain / CPT → Post-train：数据与目标交接"},
+        {"entry": "llm-training-pretraining", "anchor": "scaling-law", "label": "Scaling Law 推导与 scaling ladder 实验阶梯"},
+        {"entry": "training-methods-systems", "anchor": "adamw-derivation", "label": "优化器：SGD → AdamW → Muon；参数、显存与成本"},
+        {"entry": "training-methods-systems", "anchor": "training-stack", "label": "训练框架与系统：Megatron、FSDP / ZeRO、并行与恢复"},
+        {"entry": "posttraining-algorithms", "anchor": "paper-recipes", "label": "RLVR 算法、论文参数配方与诊断"},
+        {"entry": "posttraining-frameworks", "anchor": "framework-map", "label": "后训练框架：TRL、verl、slime、AReaL 等"}
+      ]
+    },
+    {
+      "id": "directory-inference",
+      "directory": true,
+      "label": "推理",
+      "summary": "从一次请求的执行过程，读到调度、压缩与部署成本。",
+      "stages": [
+        {"entry": "serving-runtime", "anchor": "phases", "label": "Prefill / decode、KV cache 与连续批处理"},
+        {"entry": "serving-runtime", "anchor": "implementation", "label": "框架与调度：vLLM、SGLang、分页与前缀复用"},
+        {"entry": "serving-parallel", "anchor": "precision", "label": "量化：权重、激活与 KV 的不同精度"},
+        {"entry": "serving-parallel", "anchor": "speculation", "label": "投机解码：接受概率、拒绝残差与加速条件"},
+        {"entry": "serving-capacity", "label": "并行部署、显存容量、延迟、吞吐与成功成本"}
+      ]
+    },
+    {
+      "id": "directory-data",
+      "directory": true,
+      "label": "数据",
+      "summary": "阶段决定需要什么数据；来源、切分与独立验证贯穿全程。",
+      "stages": [
+        {"entry": "llm-training-pretraining", "anchor": "data", "label": "预训练：清洗、去重、混合采样、packing 与污染隔离"},
+        {"entry": "llm-training-midtraining", "anchor": "data", "label": "Midtraining：领域、仓库、长上下文与回放"},
+        {"entry": "posttraining-supervision", "label": "后训练：示范、偏好、拒绝采样与轨迹监督"},
+        {"entry": "agent-task-synthesis", "label": "Agentic task：环境 → 任务 → verifier → 轨迹 → 训练"},
+        {"entry": "agent-benchmark-map", "label": "独立评测：留出集、污染、成功率与失败分类"}
+      ]
+    },
+    {
       "id": "model-training",
       "label": "模型与训练",
       "summary": "把基础机制、数据阶段、参数更新和新架构证据接起来。",
@@ -440,27 +492,31 @@
   "topics": [
     {
       "id": "llm-foundations",
-      "label": "LLM 基础与架构"
+      "label": "模型架构"
     },
     {
-      "id": "multimodal",
-      "label": "多模态"
+      "id": "training",
+      "label": "训练"
     },
     {
-      "id": "rl-post-training",
-      "label": "强化学习与后训练"
+      "id": "inference",
+      "label": "推理"
+    },
+    {
+      "id": "data",
+      "label": "数据与评测"
     },
     {
       "id": "agent",
-      "label": "Agent"
+      "label": "Agent 系统"
     },
     {
-      "id": "training-inference",
-      "label": "训练与推理工程"
+      "id": "multimodal",
+      "label": "多模态专题"
     },
     {
       "id": "diffusion",
-      "label": "扩散模型"
+      "label": "扩散模型专题"
     }
   ],
   "types": [

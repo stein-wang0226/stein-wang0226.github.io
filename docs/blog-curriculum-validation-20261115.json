@@ -1,0 +1,6433 @@
+{
+  "base_commit": "7392b5c51784230aef0d8809bebabef02219cb15",
+  "scope": "74源结构及主讲边界复查；修改正文逐段核对；新验收单独记录",
+  "source_count": 74,
+  "changed_count": 9,
+  "build": {
+    "html_pages": 107,
+    "public_files": 303,
+    "fingerprint": {
+      "commit": "7392b5c51784230aef0d8809bebabef02219cb15",
+      "dirty": true,
+      "input_digest": "74c206a1cde4830b0c446d642ecc78d5c4d3725d0200e0c99f1acdbf2231a578",
+      "schema_version": 1
+    }
+  },
+  "browser": {
+    "sourceCount": 74,
+    "physicalCount": 26,
+    "pages": [
+      {
+        "id": "my-work-holon",
+        "path": "/my-work/holon/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 7903,
+        "mathOutputs": 36,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-protagent",
+        "path": "/my-work/protagent/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 6969,
+        "mathOutputs": 25,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-harbor",
+        "path": "/my-work/harbor-task-sync/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 6644,
+        "mathOutputs": 18,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-dllm",
+        "path": "/my-work/trainable-dllm/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 8575,
+        "mathOutputs": 33,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-holon-full",
+        "path": "/my-work/holon/full-report.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 603866,
+        "mathOutputs": 17,
+        "nativeMath": 8,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-protagent-full",
+        "path": "/my-work/protagent/full-report.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 14738,
+        "mathOutputs": 7,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-harbor-full",
+        "path": "/my-work/harbor-task-sync/full-report.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 10982,
+        "mathOutputs": 4,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-dllm-full",
+        "path": "/my-work/trainable-dllm/full-report.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 14286,
+        "mathOutputs": 10,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-systems",
+        "path": "/agent-systems/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 17496,
+        "mathOutputs": 78,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 9,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-serving",
+        "path": "/llm-serving/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 17287,
+        "mathOutputs": 70,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 9,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-posttraining",
+        "path": "/llm-posttraining/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 76492,
+        "mathOutputs": 252,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 20,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 31165,
+        "mathOutputs": 164,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 17,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-data-benchmarks",
+        "path": "/agent-data-benchmarks/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 39412,
+        "mathOutputs": 61,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 12,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-research-map-2026",
+        "path": "/llm-research-map-2026/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 48837,
+        "mathOutputs": 75,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 21,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "path": "/llm-training-lifecycle/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 57178,
+        "mathOutputs": 189,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 19,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-frontier-2026",
+        "path": "/llm-frontier-2026.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 28442,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agentic-rl-guide",
+        "path": "/agentic-rl-guide.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 3277,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 39282,
+        "mathOutputs": 325,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "transformer-decoder-flow",
+        "path": "/transformer-decoder-flow.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 8901,
+        "mathOutputs": 24,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "rl-interview-guide",
+        "path": "/rl-interview-guide.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 4655,
+        "mathOutputs": 28,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-harness-guide",
+        "path": "/agent-harness-guide.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 11797,
+        "mathOutputs": 7,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "distributed-training-guide",
+        "path": "/distributed-training-guide.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 7880,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-interview-bank",
+        "path": "/llm-interview-bank.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 26982,
+        "mathOutputs": 16,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "vlm-knowledge-interview",
+        "path": "/vlm-knowledge-interview.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 16116,
+        "mathOutputs": 44,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "rl-interview-guide-legacy",
+        "path": "/legacy/rl-interview-guide.html",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 44311,
+        "mathOutputs": 713,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "harbor-framework-guide",
+        "path": "/harbor-framework-guide/",
+        "width": 390,
+        "cdnBlocked": true,
+        "textLength": 43264,
+        "mathOutputs": 31,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-holon",
+        "path": "/my-work/holon/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 7903,
+        "mathOutputs": 36,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-protagent",
+        "path": "/my-work/protagent/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 6969,
+        "mathOutputs": 25,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-harbor",
+        "path": "/my-work/harbor-task-sync/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 6644,
+        "mathOutputs": 18,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-dllm",
+        "path": "/my-work/trainable-dllm/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 8575,
+        "mathOutputs": 33,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-holon-full",
+        "path": "/my-work/holon/full-report.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 603866,
+        "mathOutputs": 17,
+        "nativeMath": 8,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-protagent-full",
+        "path": "/my-work/protagent/full-report.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 14738,
+        "mathOutputs": 7,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-harbor-full",
+        "path": "/my-work/harbor-task-sync/full-report.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 10982,
+        "mathOutputs": 4,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-dllm-full",
+        "path": "/my-work/trainable-dllm/full-report.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 14286,
+        "mathOutputs": 10,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-systems",
+        "path": "/agent-systems/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 17496,
+        "mathOutputs": 78,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 9,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-serving",
+        "path": "/llm-serving/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 17287,
+        "mathOutputs": 70,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 9,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-posttraining",
+        "path": "/llm-posttraining/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 76492,
+        "mathOutputs": 252,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 20,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 31165,
+        "mathOutputs": 164,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 17,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-data-benchmarks",
+        "path": "/agent-data-benchmarks/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 39412,
+        "mathOutputs": 61,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 12,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-research-map-2026",
+        "path": "/llm-research-map-2026/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 48837,
+        "mathOutputs": 75,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 21,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "path": "/llm-training-lifecycle/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 57178,
+        "mathOutputs": 189,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 19,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-frontier-2026",
+        "path": "/llm-frontier-2026.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 28442,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agentic-rl-guide",
+        "path": "/agentic-rl-guide.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 3277,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 39282,
+        "mathOutputs": 325,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "transformer-decoder-flow",
+        "path": "/transformer-decoder-flow.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 8901,
+        "mathOutputs": 24,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "rl-interview-guide",
+        "path": "/rl-interview-guide.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 4655,
+        "mathOutputs": 28,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-harness-guide",
+        "path": "/agent-harness-guide.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 11797,
+        "mathOutputs": 7,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "distributed-training-guide",
+        "path": "/distributed-training-guide.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 7880,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-interview-bank",
+        "path": "/llm-interview-bank.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 26982,
+        "mathOutputs": 16,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "vlm-knowledge-interview",
+        "path": "/vlm-knowledge-interview.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 16116,
+        "mathOutputs": 44,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "rl-interview-guide-legacy",
+        "path": "/legacy/rl-interview-guide.html",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 44311,
+        "mathOutputs": 713,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "harbor-framework-guide",
+        "path": "/harbor-framework-guide/",
+        "width": 768,
+        "cdnBlocked": true,
+        "textLength": 43264,
+        "mathOutputs": 31,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-holon",
+        "path": "/my-work/holon/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 7903,
+        "mathOutputs": 36,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-protagent",
+        "path": "/my-work/protagent/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 6969,
+        "mathOutputs": 25,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-harbor",
+        "path": "/my-work/harbor-task-sync/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 6644,
+        "mathOutputs": 18,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-dllm",
+        "path": "/my-work/trainable-dllm/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 8575,
+        "mathOutputs": 33,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-holon-full",
+        "path": "/my-work/holon/full-report.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 603866,
+        "mathOutputs": 17,
+        "nativeMath": 8,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-protagent-full",
+        "path": "/my-work/protagent/full-report.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 14738,
+        "mathOutputs": 7,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-harbor-full",
+        "path": "/my-work/harbor-task-sync/full-report.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 10982,
+        "mathOutputs": 4,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "my-work-dllm-full",
+        "path": "/my-work/trainable-dllm/full-report.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 14286,
+        "mathOutputs": 10,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-systems",
+        "path": "/agent-systems/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 17496,
+        "mathOutputs": 78,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 9,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-serving",
+        "path": "/llm-serving/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 17287,
+        "mathOutputs": 70,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 9,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-posttraining",
+        "path": "/llm-posttraining/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 76492,
+        "mathOutputs": 252,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 20,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-architecture",
+        "path": "/llm-architecture/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 31165,
+        "mathOutputs": 164,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 17,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-data-benchmarks",
+        "path": "/agent-data-benchmarks/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 39412,
+        "mathOutputs": 61,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 12,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-research-map-2026",
+        "path": "/llm-research-map-2026/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 48837,
+        "mathOutputs": 75,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 21,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "path": "/llm-training-lifecycle/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 57178,
+        "mathOutputs": 189,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 19,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-frontier-2026",
+        "path": "/llm-frontier-2026.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 28442,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agentic-rl-guide",
+        "path": "/agentic-rl-guide.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 3277,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "dlm-survey",
+        "path": "/dlm-survey/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 39282,
+        "mathOutputs": 325,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 1,
+        "focusLinks": 37,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "transformer-decoder-flow",
+        "path": "/transformer-decoder-flow.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 8901,
+        "mathOutputs": 24,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "rl-interview-guide",
+        "path": "/rl-interview-guide.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 4655,
+        "mathOutputs": 28,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "agent-harness-guide",
+        "path": "/agent-harness-guide.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 11797,
+        "mathOutputs": 7,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "distributed-training-guide",
+        "path": "/distributed-training-guide.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 7880,
+        "mathOutputs": 0,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "llm-interview-bank",
+        "path": "/llm-interview-bank.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 26982,
+        "mathOutputs": 16,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "vlm-knowledge-interview",
+        "path": "/vlm-knowledge-interview.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 16116,
+        "mathOutputs": 44,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "rl-interview-guide-legacy",
+        "path": "/legacy/rl-interview-guide.html",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 44429,
+        "mathOutputs": 713,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      },
+      {
+        "id": "harbor-framework-guide",
+        "path": "/harbor-framework-guide/",
+        "width": 1440,
+        "cdnBlocked": true,
+        "textLength": 43264,
+        "mathOutputs": 31,
+        "nativeMath": 0,
+        "rawTeX": [],
+        "mathErrors": [],
+        "missingMath": 0,
+        "pseudoMath": [],
+        "wideMath": [],
+        "wideNative": [],
+        "globalOverflow": false,
+        "wideDiagrams": [],
+        "failedImages": [],
+        "distortedImages": [],
+        "badAnchors": [],
+        "directories": 0,
+        "focusLinks": 0,
+        "visibleH1": 1,
+        "errors": [],
+        "failed": []
+      }
+    ],
+    "sources": [
+      {
+        "id": "my-work-holon",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "my-work-protagent",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "my-work-harbor",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "my-work-dllm",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "my-work-harbor-full",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "agent-rag",
+        "parent": "agent-systems",
+        "width": 390,
+        "present": true,
+        "math": 49,
+        "headings": 12
+      },
+      {
+        "id": "agent-planning",
+        "parent": "agent-systems",
+        "width": 390,
+        "present": true,
+        "math": 29,
+        "headings": 11
+      },
+      {
+        "id": "agent-trust",
+        "parent": "agent-systems",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 8
+      },
+      {
+        "id": "agent-systems",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "serving-runtime",
+        "parent": "llm-serving",
+        "width": 390,
+        "present": true,
+        "math": 14,
+        "headings": 11
+      },
+      {
+        "id": "serving-parallel",
+        "parent": "llm-serving",
+        "width": 390,
+        "present": true,
+        "math": 31,
+        "headings": 10
+      },
+      {
+        "id": "serving-capacity",
+        "parent": "llm-serving",
+        "width": 390,
+        "present": true,
+        "math": 25,
+        "headings": 9
+      },
+      {
+        "id": "llm-serving",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "posttraining-supervision",
+        "parent": "llm-posttraining",
+        "width": 390,
+        "present": true,
+        "math": 53,
+        "headings": 11
+      },
+      {
+        "id": "posttraining-algorithms",
+        "parent": "llm-posttraining",
+        "width": 390,
+        "present": true,
+        "math": 110,
+        "headings": 20
+      },
+      {
+        "id": "posttraining-opd",
+        "parent": "llm-posttraining",
+        "width": 390,
+        "present": true,
+        "math": 55,
+        "headings": 18
+      },
+      {
+        "id": "posttraining-rewards",
+        "parent": "llm-posttraining",
+        "width": 390,
+        "present": true,
+        "math": 20,
+        "headings": 13
+      },
+      {
+        "id": "posttraining-frameworks",
+        "parent": "llm-posttraining",
+        "width": 390,
+        "present": true,
+        "math": 13,
+        "headings": 12
+      },
+      {
+        "id": "posttraining-cases",
+        "parent": "llm-posttraining",
+        "width": 390,
+        "present": true,
+        "math": 1,
+        "headings": 10
+      },
+      {
+        "id": "llm-posttraining",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "architecture-transformer",
+        "parent": "llm-architecture",
+        "width": 390,
+        "present": true,
+        "math": 29,
+        "headings": 9
+      },
+      {
+        "id": "architecture-attention",
+        "parent": "llm-architecture",
+        "width": 390,
+        "present": true,
+        "math": 35,
+        "headings": 10
+      },
+      {
+        "id": "architecture-moe",
+        "parent": "llm-architecture",
+        "width": 390,
+        "present": true,
+        "math": 33,
+        "headings": 10
+      },
+      {
+        "id": "architecture-residual",
+        "parent": "llm-architecture",
+        "width": 390,
+        "present": true,
+        "math": 21,
+        "headings": 8
+      },
+      {
+        "id": "architecture-hybrid",
+        "parent": "llm-architecture",
+        "width": 390,
+        "present": true,
+        "math": 46,
+        "headings": 9
+      },
+      {
+        "id": "architecture-comparison",
+        "parent": "llm-architecture",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 8
+      },
+      {
+        "id": "llm-architecture",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "scientific-task-family",
+        "parent": "agent-data-benchmarks",
+        "width": 390,
+        "present": true,
+        "math": 32,
+        "headings": 14
+      },
+      {
+        "id": "cluster-training-evaluation",
+        "parent": "agent-data-benchmarks",
+        "width": 390,
+        "present": true,
+        "math": 8,
+        "headings": 11
+      },
+      {
+        "id": "agent-task-synthesis",
+        "parent": "agent-data-benchmarks",
+        "width": 390,
+        "present": true,
+        "math": 12,
+        "headings": 13
+      },
+      {
+        "id": "agent-benchmark-map",
+        "parent": "agent-data-benchmarks",
+        "width": 390,
+        "present": true,
+        "math": 9,
+        "headings": 23
+      },
+      {
+        "id": "agent-data-benchmarks",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "research-agent-data",
+        "parent": "llm-research-map-2026",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "research-agentic-rl",
+        "parent": "llm-research-map-2026",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 10
+      },
+      {
+        "id": "research-base-architecture",
+        "parent": "llm-research-map-2026",
+        "width": 390,
+        "present": true,
+        "math": 15,
+        "headings": 15
+      },
+      {
+        "id": "research-inference-diffusion",
+        "parent": "llm-research-map-2026",
+        "width": 390,
+        "present": true,
+        "math": 4,
+        "headings": 7
+      },
+      {
+        "id": "research-agent-frontiers",
+        "parent": "llm-research-map-2026",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "research-architecture-landscape",
+        "parent": "llm-research-map-2026",
+        "width": 390,
+        "present": true,
+        "math": 16,
+        "headings": 17
+      },
+      {
+        "id": "research-architecture-training",
+        "parent": "llm-research-map-2026",
+        "width": 390,
+        "present": true,
+        "math": 40,
+        "headings": 16
+      },
+      {
+        "id": "llm-research-map-2026",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "training-methods-systems",
+        "parent": "llm-training-lifecycle",
+        "width": 390,
+        "present": true,
+        "math": 83,
+        "headings": 27
+      },
+      {
+        "id": "llm-training-pretraining",
+        "parent": "llm-training-lifecycle",
+        "width": 390,
+        "present": true,
+        "math": 81,
+        "headings": 18
+      },
+      {
+        "id": "llm-training-midtraining",
+        "parent": "llm-training-lifecycle",
+        "width": 390,
+        "present": true,
+        "math": 11,
+        "headings": 9
+      },
+      {
+        "id": "llm-training-sft-rft",
+        "parent": "llm-training-lifecycle",
+        "width": 390,
+        "present": true,
+        "math": 14,
+        "headings": 6
+      },
+      {
+        "id": "llm-training-rl-evaluation",
+        "parent": "llm-training-lifecycle",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "llm-frontier-2026",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "agentic-rl-guide",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "dlm-ddpm",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 54,
+        "headings": 6
+      },
+      {
+        "id": "dlm-flow-sde",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 47,
+        "headings": 7
+      },
+      {
+        "id": "dlm-overview",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 3
+      },
+      {
+        "id": "dlm-discrete",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 46,
+        "headings": 6
+      },
+      {
+        "id": "dlm-block",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 7,
+        "headings": 4
+      },
+      {
+        "id": "dlm-continuous",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 17,
+        "headings": 4
+      },
+      {
+        "id": "dlm-paradigms",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 32,
+        "headings": 6
+      },
+      {
+        "id": "dlm-scaling",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 13,
+        "headings": 4
+      },
+      {
+        "id": "dlm-speculative",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 15,
+        "headings": 4
+      },
+      {
+        "id": "dlm-elbo-rl",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 37,
+        "headings": 6
+      },
+      {
+        "id": "dlm-commercial",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 2
+      },
+      {
+        "id": "dlm-comparison",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 0,
+        "headings": 4
+      },
+      {
+        "id": "dlm-loop-transformer",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 15,
+        "headings": 4
+      },
+      {
+        "id": "dlm-vae",
+        "parent": "dlm-survey",
+        "width": 390,
+        "present": true,
+        "math": 42,
+        "headings": 8
+      },
+      {
+        "id": "dlm-survey",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "transformer-decoder-flow",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "rl-interview-guide",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "agent-harness-guide",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "distributed-training-guide",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "llm-interview-bank",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "vlm-knowledge-interview",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "rl-interview-guide-legacy",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "harbor-framework-guide",
+        "width": 390,
+        "present": true
+      },
+      {
+        "id": "my-work-holon",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "my-work-protagent",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "my-work-harbor",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "my-work-dllm",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "my-work-harbor-full",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "agent-rag",
+        "parent": "agent-systems",
+        "width": 768,
+        "present": true,
+        "math": 49,
+        "headings": 12
+      },
+      {
+        "id": "agent-planning",
+        "parent": "agent-systems",
+        "width": 768,
+        "present": true,
+        "math": 29,
+        "headings": 11
+      },
+      {
+        "id": "agent-trust",
+        "parent": "agent-systems",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 8
+      },
+      {
+        "id": "agent-systems",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "serving-runtime",
+        "parent": "llm-serving",
+        "width": 768,
+        "present": true,
+        "math": 14,
+        "headings": 11
+      },
+      {
+        "id": "serving-parallel",
+        "parent": "llm-serving",
+        "width": 768,
+        "present": true,
+        "math": 31,
+        "headings": 10
+      },
+      {
+        "id": "serving-capacity",
+        "parent": "llm-serving",
+        "width": 768,
+        "present": true,
+        "math": 25,
+        "headings": 9
+      },
+      {
+        "id": "llm-serving",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "posttraining-supervision",
+        "parent": "llm-posttraining",
+        "width": 768,
+        "present": true,
+        "math": 53,
+        "headings": 11
+      },
+      {
+        "id": "posttraining-algorithms",
+        "parent": "llm-posttraining",
+        "width": 768,
+        "present": true,
+        "math": 110,
+        "headings": 20
+      },
+      {
+        "id": "posttraining-opd",
+        "parent": "llm-posttraining",
+        "width": 768,
+        "present": true,
+        "math": 55,
+        "headings": 18
+      },
+      {
+        "id": "posttraining-rewards",
+        "parent": "llm-posttraining",
+        "width": 768,
+        "present": true,
+        "math": 20,
+        "headings": 13
+      },
+      {
+        "id": "posttraining-frameworks",
+        "parent": "llm-posttraining",
+        "width": 768,
+        "present": true,
+        "math": 13,
+        "headings": 12
+      },
+      {
+        "id": "posttraining-cases",
+        "parent": "llm-posttraining",
+        "width": 768,
+        "present": true,
+        "math": 1,
+        "headings": 10
+      },
+      {
+        "id": "llm-posttraining",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "architecture-transformer",
+        "parent": "llm-architecture",
+        "width": 768,
+        "present": true,
+        "math": 29,
+        "headings": 9
+      },
+      {
+        "id": "architecture-attention",
+        "parent": "llm-architecture",
+        "width": 768,
+        "present": true,
+        "math": 35,
+        "headings": 10
+      },
+      {
+        "id": "architecture-moe",
+        "parent": "llm-architecture",
+        "width": 768,
+        "present": true,
+        "math": 33,
+        "headings": 10
+      },
+      {
+        "id": "architecture-residual",
+        "parent": "llm-architecture",
+        "width": 768,
+        "present": true,
+        "math": 21,
+        "headings": 8
+      },
+      {
+        "id": "architecture-hybrid",
+        "parent": "llm-architecture",
+        "width": 768,
+        "present": true,
+        "math": 46,
+        "headings": 9
+      },
+      {
+        "id": "architecture-comparison",
+        "parent": "llm-architecture",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 8
+      },
+      {
+        "id": "llm-architecture",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "scientific-task-family",
+        "parent": "agent-data-benchmarks",
+        "width": 768,
+        "present": true,
+        "math": 32,
+        "headings": 14
+      },
+      {
+        "id": "cluster-training-evaluation",
+        "parent": "agent-data-benchmarks",
+        "width": 768,
+        "present": true,
+        "math": 8,
+        "headings": 11
+      },
+      {
+        "id": "agent-task-synthesis",
+        "parent": "agent-data-benchmarks",
+        "width": 768,
+        "present": true,
+        "math": 12,
+        "headings": 13
+      },
+      {
+        "id": "agent-benchmark-map",
+        "parent": "agent-data-benchmarks",
+        "width": 768,
+        "present": true,
+        "math": 9,
+        "headings": 23
+      },
+      {
+        "id": "agent-data-benchmarks",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "research-agent-data",
+        "parent": "llm-research-map-2026",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "research-agentic-rl",
+        "parent": "llm-research-map-2026",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 10
+      },
+      {
+        "id": "research-base-architecture",
+        "parent": "llm-research-map-2026",
+        "width": 768,
+        "present": true,
+        "math": 15,
+        "headings": 15
+      },
+      {
+        "id": "research-inference-diffusion",
+        "parent": "llm-research-map-2026",
+        "width": 768,
+        "present": true,
+        "math": 4,
+        "headings": 7
+      },
+      {
+        "id": "research-agent-frontiers",
+        "parent": "llm-research-map-2026",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "research-architecture-landscape",
+        "parent": "llm-research-map-2026",
+        "width": 768,
+        "present": true,
+        "math": 16,
+        "headings": 17
+      },
+      {
+        "id": "research-architecture-training",
+        "parent": "llm-research-map-2026",
+        "width": 768,
+        "present": true,
+        "math": 40,
+        "headings": 16
+      },
+      {
+        "id": "llm-research-map-2026",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "training-methods-systems",
+        "parent": "llm-training-lifecycle",
+        "width": 768,
+        "present": true,
+        "math": 83,
+        "headings": 27
+      },
+      {
+        "id": "llm-training-pretraining",
+        "parent": "llm-training-lifecycle",
+        "width": 768,
+        "present": true,
+        "math": 81,
+        "headings": 18
+      },
+      {
+        "id": "llm-training-midtraining",
+        "parent": "llm-training-lifecycle",
+        "width": 768,
+        "present": true,
+        "math": 11,
+        "headings": 9
+      },
+      {
+        "id": "llm-training-sft-rft",
+        "parent": "llm-training-lifecycle",
+        "width": 768,
+        "present": true,
+        "math": 14,
+        "headings": 6
+      },
+      {
+        "id": "llm-training-rl-evaluation",
+        "parent": "llm-training-lifecycle",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "llm-frontier-2026",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "agentic-rl-guide",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "dlm-ddpm",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 54,
+        "headings": 6
+      },
+      {
+        "id": "dlm-flow-sde",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 47,
+        "headings": 7
+      },
+      {
+        "id": "dlm-overview",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 3
+      },
+      {
+        "id": "dlm-discrete",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 46,
+        "headings": 6
+      },
+      {
+        "id": "dlm-block",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 7,
+        "headings": 4
+      },
+      {
+        "id": "dlm-continuous",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 17,
+        "headings": 4
+      },
+      {
+        "id": "dlm-paradigms",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 32,
+        "headings": 6
+      },
+      {
+        "id": "dlm-scaling",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 13,
+        "headings": 4
+      },
+      {
+        "id": "dlm-speculative",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 15,
+        "headings": 4
+      },
+      {
+        "id": "dlm-elbo-rl",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 37,
+        "headings": 6
+      },
+      {
+        "id": "dlm-commercial",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 2
+      },
+      {
+        "id": "dlm-comparison",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 0,
+        "headings": 4
+      },
+      {
+        "id": "dlm-loop-transformer",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 15,
+        "headings": 4
+      },
+      {
+        "id": "dlm-vae",
+        "parent": "dlm-survey",
+        "width": 768,
+        "present": true,
+        "math": 42,
+        "headings": 8
+      },
+      {
+        "id": "dlm-survey",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "transformer-decoder-flow",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "rl-interview-guide",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "agent-harness-guide",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "distributed-training-guide",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "llm-interview-bank",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "vlm-knowledge-interview",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "rl-interview-guide-legacy",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "harbor-framework-guide",
+        "width": 768,
+        "present": true
+      },
+      {
+        "id": "my-work-holon",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "my-work-protagent",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "my-work-harbor",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "my-work-dllm",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "my-work-harbor-full",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "agent-rag",
+        "parent": "agent-systems",
+        "width": 1440,
+        "present": true,
+        "math": 49,
+        "headings": 12
+      },
+      {
+        "id": "agent-planning",
+        "parent": "agent-systems",
+        "width": 1440,
+        "present": true,
+        "math": 29,
+        "headings": 11
+      },
+      {
+        "id": "agent-trust",
+        "parent": "agent-systems",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 8
+      },
+      {
+        "id": "agent-systems",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "serving-runtime",
+        "parent": "llm-serving",
+        "width": 1440,
+        "present": true,
+        "math": 14,
+        "headings": 11
+      },
+      {
+        "id": "serving-parallel",
+        "parent": "llm-serving",
+        "width": 1440,
+        "present": true,
+        "math": 31,
+        "headings": 10
+      },
+      {
+        "id": "serving-capacity",
+        "parent": "llm-serving",
+        "width": 1440,
+        "present": true,
+        "math": 25,
+        "headings": 9
+      },
+      {
+        "id": "llm-serving",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "posttraining-supervision",
+        "parent": "llm-posttraining",
+        "width": 1440,
+        "present": true,
+        "math": 53,
+        "headings": 11
+      },
+      {
+        "id": "posttraining-algorithms",
+        "parent": "llm-posttraining",
+        "width": 1440,
+        "present": true,
+        "math": 110,
+        "headings": 20
+      },
+      {
+        "id": "posttraining-opd",
+        "parent": "llm-posttraining",
+        "width": 1440,
+        "present": true,
+        "math": 55,
+        "headings": 18
+      },
+      {
+        "id": "posttraining-rewards",
+        "parent": "llm-posttraining",
+        "width": 1440,
+        "present": true,
+        "math": 20,
+        "headings": 13
+      },
+      {
+        "id": "posttraining-frameworks",
+        "parent": "llm-posttraining",
+        "width": 1440,
+        "present": true,
+        "math": 13,
+        "headings": 12
+      },
+      {
+        "id": "posttraining-cases",
+        "parent": "llm-posttraining",
+        "width": 1440,
+        "present": true,
+        "math": 1,
+        "headings": 10
+      },
+      {
+        "id": "llm-posttraining",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "architecture-transformer",
+        "parent": "llm-architecture",
+        "width": 1440,
+        "present": true,
+        "math": 29,
+        "headings": 9
+      },
+      {
+        "id": "architecture-attention",
+        "parent": "llm-architecture",
+        "width": 1440,
+        "present": true,
+        "math": 35,
+        "headings": 10
+      },
+      {
+        "id": "architecture-moe",
+        "parent": "llm-architecture",
+        "width": 1440,
+        "present": true,
+        "math": 33,
+        "headings": 10
+      },
+      {
+        "id": "architecture-residual",
+        "parent": "llm-architecture",
+        "width": 1440,
+        "present": true,
+        "math": 21,
+        "headings": 8
+      },
+      {
+        "id": "architecture-hybrid",
+        "parent": "llm-architecture",
+        "width": 1440,
+        "present": true,
+        "math": 46,
+        "headings": 9
+      },
+      {
+        "id": "architecture-comparison",
+        "parent": "llm-architecture",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 8
+      },
+      {
+        "id": "llm-architecture",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "scientific-task-family",
+        "parent": "agent-data-benchmarks",
+        "width": 1440,
+        "present": true,
+        "math": 32,
+        "headings": 14
+      },
+      {
+        "id": "cluster-training-evaluation",
+        "parent": "agent-data-benchmarks",
+        "width": 1440,
+        "present": true,
+        "math": 8,
+        "headings": 11
+      },
+      {
+        "id": "agent-task-synthesis",
+        "parent": "agent-data-benchmarks",
+        "width": 1440,
+        "present": true,
+        "math": 12,
+        "headings": 13
+      },
+      {
+        "id": "agent-benchmark-map",
+        "parent": "agent-data-benchmarks",
+        "width": 1440,
+        "present": true,
+        "math": 9,
+        "headings": 23
+      },
+      {
+        "id": "agent-data-benchmarks",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "research-agent-data",
+        "parent": "llm-research-map-2026",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "research-agentic-rl",
+        "parent": "llm-research-map-2026",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 10
+      },
+      {
+        "id": "research-base-architecture",
+        "parent": "llm-research-map-2026",
+        "width": 1440,
+        "present": true,
+        "math": 15,
+        "headings": 15
+      },
+      {
+        "id": "research-inference-diffusion",
+        "parent": "llm-research-map-2026",
+        "width": 1440,
+        "present": true,
+        "math": 4,
+        "headings": 7
+      },
+      {
+        "id": "research-agent-frontiers",
+        "parent": "llm-research-map-2026",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "research-architecture-landscape",
+        "parent": "llm-research-map-2026",
+        "width": 1440,
+        "present": true,
+        "math": 16,
+        "headings": 17
+      },
+      {
+        "id": "research-architecture-training",
+        "parent": "llm-research-map-2026",
+        "width": 1440,
+        "present": true,
+        "math": 40,
+        "headings": 16
+      },
+      {
+        "id": "llm-research-map-2026",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "training-methods-systems",
+        "parent": "llm-training-lifecycle",
+        "width": 1440,
+        "present": true,
+        "math": 83,
+        "headings": 27
+      },
+      {
+        "id": "llm-training-pretraining",
+        "parent": "llm-training-lifecycle",
+        "width": 1440,
+        "present": true,
+        "math": 81,
+        "headings": 18
+      },
+      {
+        "id": "llm-training-midtraining",
+        "parent": "llm-training-lifecycle",
+        "width": 1440,
+        "present": true,
+        "math": 11,
+        "headings": 9
+      },
+      {
+        "id": "llm-training-sft-rft",
+        "parent": "llm-training-lifecycle",
+        "width": 1440,
+        "present": true,
+        "math": 14,
+        "headings": 6
+      },
+      {
+        "id": "llm-training-rl-evaluation",
+        "parent": "llm-training-lifecycle",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 7
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "llm-frontier-2026",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "agentic-rl-guide",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "dlm-ddpm",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 54,
+        "headings": 6
+      },
+      {
+        "id": "dlm-flow-sde",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 47,
+        "headings": 7
+      },
+      {
+        "id": "dlm-overview",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 3
+      },
+      {
+        "id": "dlm-discrete",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 46,
+        "headings": 6
+      },
+      {
+        "id": "dlm-block",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 7,
+        "headings": 4
+      },
+      {
+        "id": "dlm-continuous",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 17,
+        "headings": 4
+      },
+      {
+        "id": "dlm-paradigms",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 32,
+        "headings": 6
+      },
+      {
+        "id": "dlm-scaling",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 13,
+        "headings": 4
+      },
+      {
+        "id": "dlm-speculative",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 15,
+        "headings": 4
+      },
+      {
+        "id": "dlm-elbo-rl",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 37,
+        "headings": 6
+      },
+      {
+        "id": "dlm-commercial",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 2
+      },
+      {
+        "id": "dlm-comparison",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 0,
+        "headings": 4
+      },
+      {
+        "id": "dlm-loop-transformer",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 15,
+        "headings": 4
+      },
+      {
+        "id": "dlm-vae",
+        "parent": "dlm-survey",
+        "width": 1440,
+        "present": true,
+        "math": 42,
+        "headings": 8
+      },
+      {
+        "id": "dlm-survey",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "transformer-decoder-flow",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "rl-interview-guide",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "agent-harness-guide",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "distributed-training-guide",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "llm-interview-bank",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "vlm-knowledge-interview",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "rl-interview-guide-legacy",
+        "width": 1440,
+        "present": true
+      },
+      {
+        "id": "harbor-framework-guide",
+        "width": 1440,
+        "present": true
+      }
+    ],
+    "deepLinks": [
+      {
+        "id": "agent-rag",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/agent-systems/#agent-rag--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "agent-planning",
+        "width": 390,
+        "old": "sources",
+        "target": "/agent-systems/#agent-planning--sources",
+        "pass": true
+      },
+      {
+        "id": "agent-trust",
+        "width": 390,
+        "old": "self-check",
+        "target": "/agent-systems/#agent-trust--self-check",
+        "pass": true
+      },
+      {
+        "id": "serving-runtime",
+        "width": 390,
+        "old": "sources",
+        "target": "/llm-serving/#serving-runtime--sources",
+        "pass": true
+      },
+      {
+        "id": "serving-parallel",
+        "width": 390,
+        "old": "ref-formats",
+        "target": "/llm-serving/#serving-parallel--ref-formats",
+        "pass": true
+      },
+      {
+        "id": "serving-capacity",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/llm-serving/#serving-capacity--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "posttraining-supervision",
+        "width": 390,
+        "old": "dpo-derivation",
+        "target": "/llm-posttraining/#posttraining-supervision--dpo-derivation",
+        "pass": true
+      },
+      {
+        "id": "posttraining-algorithms",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/llm-posttraining/#posttraining-algorithms--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "posttraining-opd",
+        "width": 390,
+        "old": "recipe",
+        "target": "/llm-posttraining/#posttraining-opd--recipe",
+        "pass": true
+      },
+      {
+        "id": "posttraining-rewards",
+        "width": 390,
+        "old": "cases",
+        "target": "/llm-posttraining/#posttraining-rewards--cases",
+        "pass": true
+      },
+      {
+        "id": "posttraining-frameworks",
+        "width": 390,
+        "old": "slime-opd",
+        "target": "/llm-posttraining/#posttraining-frameworks--slime-opd",
+        "pass": true
+      },
+      {
+        "id": "posttraining-cases",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/llm-posttraining/#posttraining-cases--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "training-methods-systems",
+        "width": 390,
+        "old": "optimizers",
+        "target": "/llm-training-lifecycle/#training-methods-systems--optimizers",
+        "pass": true
+      },
+      {
+        "id": "scientific-task-family",
+        "width": 390,
+        "old": "self-check",
+        "target": "/agent-data-benchmarks/#scientific-task-family--self-check",
+        "pass": true
+      },
+      {
+        "id": "cluster-training-evaluation",
+        "width": 390,
+        "old": "measurement",
+        "target": "/agent-data-benchmarks/#cluster-training-evaluation--measurement",
+        "pass": true
+      },
+      {
+        "id": "architecture-transformer",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/llm-architecture/#architecture-transformer--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "architecture-attention",
+        "width": 390,
+        "old": "position",
+        "target": "/llm-architecture/#architecture-attention--position",
+        "pass": true
+      },
+      {
+        "id": "architecture-moe",
+        "width": 390,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-moe--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-residual",
+        "width": 390,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-residual--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-hybrid",
+        "width": 390,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-hybrid--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-comparison",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/llm-architecture/#architecture-comparison--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "agent-task-synthesis",
+        "width": 390,
+        "old": "synthesis-bridge",
+        "target": "/agent-data-benchmarks/#agent-task-synthesis--synthesis-bridge",
+        "pass": true
+      },
+      {
+        "id": "agent-benchmark-map",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/agent-data-benchmarks/#agent-benchmark-map--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-agent-data",
+        "width": 390,
+        "old": "synthesis",
+        "target": "/llm-research-map-2026/#research-agent-data--synthesis",
+        "pass": true
+      },
+      {
+        "id": "research-agentic-rl",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/llm-research-map-2026/#research-agentic-rl--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-base-architecture",
+        "width": 390,
+        "old": "csa2",
+        "target": "/llm-research-map-2026/#research-base-architecture--csa2",
+        "pass": true
+      },
+      {
+        "id": "research-inference-diffusion",
+        "width": 390,
+        "old": "citation-sources-5",
+        "target": "/llm-research-map-2026/#research-inference-diffusion--citation-sources-5",
+        "pass": true
+      },
+      {
+        "id": "research-agent-frontiers",
+        "width": 390,
+        "old": "citation-sources-6",
+        "target": "/llm-research-map-2026/#research-agent-frontiers--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-architecture-landscape",
+        "width": 390,
+        "old": "mimo",
+        "target": "/llm-research-map-2026/#research-architecture-landscape--mimo",
+        "pass": true
+      },
+      {
+        "id": "research-architecture-training",
+        "width": 390,
+        "old": "residual",
+        "target": "/llm-research-map-2026/#research-architecture-training--residual",
+        "pass": true
+      },
+      {
+        "id": "llm-training-pretraining",
+        "width": 390,
+        "old": "budget",
+        "target": "/llm-training-lifecycle/#llm-training-pretraining--budget",
+        "pass": true
+      },
+      {
+        "id": "llm-training-midtraining",
+        "width": 390,
+        "old": "recipe",
+        "target": "/llm-training-lifecycle/#llm-training-midtraining--recipe",
+        "pass": true
+      },
+      {
+        "id": "llm-training-sft-rft",
+        "width": 390,
+        "old": "reinforcement",
+        "target": "/llm-training-lifecycle/#llm-training-sft-rft--reinforcement",
+        "pass": true
+      },
+      {
+        "id": "llm-training-rl-evaluation",
+        "width": 390,
+        "old": "heterogeneity-bridge",
+        "target": "/llm-training-lifecycle/#llm-training-rl-evaluation--heterogeneity-bridge",
+        "pass": true
+      },
+      {
+        "id": "dlm-ddpm",
+        "width": 390,
+        "old": "decomposition",
+        "target": "/dlm-survey/#dlm-ddpm--decomposition",
+        "pass": true
+      },
+      {
+        "id": "dlm-flow-sde",
+        "width": 390,
+        "old": "probability-flow",
+        "target": "/dlm-survey/#dlm-flow-sde--probability-flow",
+        "pass": true
+      },
+      {
+        "id": "dlm-overview",
+        "width": 390,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-overview--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-discrete",
+        "width": 390,
+        "old": "bayes",
+        "target": "/dlm-survey/#dlm-discrete--bayes",
+        "pass": true
+      },
+      {
+        "id": "dlm-block",
+        "width": 390,
+        "old": "attention-mask",
+        "target": "/dlm-survey/#dlm-block--attention-mask",
+        "pass": true
+      },
+      {
+        "id": "dlm-continuous",
+        "width": 390,
+        "old": "rounding",
+        "target": "/dlm-survey/#dlm-continuous--rounding",
+        "pass": true
+      },
+      {
+        "id": "dlm-paradigms",
+        "width": 390,
+        "old": "parameterization",
+        "target": "/dlm-survey/#dlm-paradigms--parameterization",
+        "pass": true
+      },
+      {
+        "id": "dlm-scaling",
+        "width": 390,
+        "old": "drafter-generalization",
+        "target": "/dlm-survey/#dlm-scaling--drafter-generalization",
+        "pass": true
+      },
+      {
+        "id": "dlm-speculative",
+        "width": 390,
+        "old": "cycle-cost",
+        "target": "/dlm-survey/#dlm-speculative--cycle-cost",
+        "pass": true
+      },
+      {
+        "id": "dlm-elbo-rl",
+        "width": 390,
+        "old": "mechanism-review",
+        "target": "/dlm-survey/#dlm-elbo-rl--mechanism-review",
+        "pass": true
+      },
+      {
+        "id": "dlm-commercial",
+        "width": 390,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-commercial--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-comparison",
+        "width": 390,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-comparison--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-loop-transformer",
+        "width": 390,
+        "old": "s11-7",
+        "target": "/dlm-survey/#dlm-loop-transformer--s11-7",
+        "pass": true
+      },
+      {
+        "id": "dlm-vae",
+        "width": 390,
+        "old": "s12-2",
+        "target": "/dlm-survey/#dlm-vae--s12-2",
+        "pass": true
+      },
+      {
+        "id": "agent-rag",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/agent-systems/#agent-rag--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "agent-planning",
+        "width": 768,
+        "old": "sources",
+        "target": "/agent-systems/#agent-planning--sources",
+        "pass": true
+      },
+      {
+        "id": "agent-trust",
+        "width": 768,
+        "old": "self-check",
+        "target": "/agent-systems/#agent-trust--self-check",
+        "pass": true
+      },
+      {
+        "id": "serving-runtime",
+        "width": 768,
+        "old": "sources",
+        "target": "/llm-serving/#serving-runtime--sources",
+        "pass": true
+      },
+      {
+        "id": "serving-parallel",
+        "width": 768,
+        "old": "ref-formats",
+        "target": "/llm-serving/#serving-parallel--ref-formats",
+        "pass": true
+      },
+      {
+        "id": "serving-capacity",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/llm-serving/#serving-capacity--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "posttraining-supervision",
+        "width": 768,
+        "old": "dpo-derivation",
+        "target": "/llm-posttraining/#posttraining-supervision--dpo-derivation",
+        "pass": true
+      },
+      {
+        "id": "posttraining-algorithms",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/llm-posttraining/#posttraining-algorithms--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "posttraining-opd",
+        "width": 768,
+        "old": "recipe",
+        "target": "/llm-posttraining/#posttraining-opd--recipe",
+        "pass": true
+      },
+      {
+        "id": "posttraining-rewards",
+        "width": 768,
+        "old": "cases",
+        "target": "/llm-posttraining/#posttraining-rewards--cases",
+        "pass": true
+      },
+      {
+        "id": "posttraining-frameworks",
+        "width": 768,
+        "old": "slime-opd",
+        "target": "/llm-posttraining/#posttraining-frameworks--slime-opd",
+        "pass": true
+      },
+      {
+        "id": "posttraining-cases",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/llm-posttraining/#posttraining-cases--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "training-methods-systems",
+        "width": 768,
+        "old": "optimizers",
+        "target": "/llm-training-lifecycle/#training-methods-systems--optimizers",
+        "pass": true
+      },
+      {
+        "id": "scientific-task-family",
+        "width": 768,
+        "old": "self-check",
+        "target": "/agent-data-benchmarks/#scientific-task-family--self-check",
+        "pass": true
+      },
+      {
+        "id": "cluster-training-evaluation",
+        "width": 768,
+        "old": "measurement",
+        "target": "/agent-data-benchmarks/#cluster-training-evaluation--measurement",
+        "pass": true
+      },
+      {
+        "id": "architecture-transformer",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/llm-architecture/#architecture-transformer--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "architecture-attention",
+        "width": 768,
+        "old": "position",
+        "target": "/llm-architecture/#architecture-attention--position",
+        "pass": true
+      },
+      {
+        "id": "architecture-moe",
+        "width": 768,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-moe--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-residual",
+        "width": 768,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-residual--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-hybrid",
+        "width": 768,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-hybrid--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-comparison",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/llm-architecture/#architecture-comparison--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "agent-task-synthesis",
+        "width": 768,
+        "old": "synthesis-bridge",
+        "target": "/agent-data-benchmarks/#agent-task-synthesis--synthesis-bridge",
+        "pass": true
+      },
+      {
+        "id": "agent-benchmark-map",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/agent-data-benchmarks/#agent-benchmark-map--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-agent-data",
+        "width": 768,
+        "old": "synthesis",
+        "target": "/llm-research-map-2026/#research-agent-data--synthesis",
+        "pass": true
+      },
+      {
+        "id": "research-agentic-rl",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/llm-research-map-2026/#research-agentic-rl--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-base-architecture",
+        "width": 768,
+        "old": "csa2",
+        "target": "/llm-research-map-2026/#research-base-architecture--csa2",
+        "pass": true
+      },
+      {
+        "id": "research-inference-diffusion",
+        "width": 768,
+        "old": "citation-sources-5",
+        "target": "/llm-research-map-2026/#research-inference-diffusion--citation-sources-5",
+        "pass": true
+      },
+      {
+        "id": "research-agent-frontiers",
+        "width": 768,
+        "old": "citation-sources-6",
+        "target": "/llm-research-map-2026/#research-agent-frontiers--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-architecture-landscape",
+        "width": 768,
+        "old": "mimo",
+        "target": "/llm-research-map-2026/#research-architecture-landscape--mimo",
+        "pass": true
+      },
+      {
+        "id": "research-architecture-training",
+        "width": 768,
+        "old": "residual",
+        "target": "/llm-research-map-2026/#research-architecture-training--residual",
+        "pass": true
+      },
+      {
+        "id": "llm-training-pretraining",
+        "width": 768,
+        "old": "budget",
+        "target": "/llm-training-lifecycle/#llm-training-pretraining--budget",
+        "pass": true
+      },
+      {
+        "id": "llm-training-midtraining",
+        "width": 768,
+        "old": "recipe",
+        "target": "/llm-training-lifecycle/#llm-training-midtraining--recipe",
+        "pass": true
+      },
+      {
+        "id": "llm-training-sft-rft",
+        "width": 768,
+        "old": "reinforcement",
+        "target": "/llm-training-lifecycle/#llm-training-sft-rft--reinforcement",
+        "pass": true
+      },
+      {
+        "id": "llm-training-rl-evaluation",
+        "width": 768,
+        "old": "heterogeneity-bridge",
+        "target": "/llm-training-lifecycle/#llm-training-rl-evaluation--heterogeneity-bridge",
+        "pass": true
+      },
+      {
+        "id": "dlm-ddpm",
+        "width": 768,
+        "old": "decomposition",
+        "target": "/dlm-survey/#dlm-ddpm--decomposition",
+        "pass": true
+      },
+      {
+        "id": "dlm-flow-sde",
+        "width": 768,
+        "old": "probability-flow",
+        "target": "/dlm-survey/#dlm-flow-sde--probability-flow",
+        "pass": true
+      },
+      {
+        "id": "dlm-overview",
+        "width": 768,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-overview--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-discrete",
+        "width": 768,
+        "old": "bayes",
+        "target": "/dlm-survey/#dlm-discrete--bayes",
+        "pass": true
+      },
+      {
+        "id": "dlm-block",
+        "width": 768,
+        "old": "attention-mask",
+        "target": "/dlm-survey/#dlm-block--attention-mask",
+        "pass": true
+      },
+      {
+        "id": "dlm-continuous",
+        "width": 768,
+        "old": "rounding",
+        "target": "/dlm-survey/#dlm-continuous--rounding",
+        "pass": true
+      },
+      {
+        "id": "dlm-paradigms",
+        "width": 768,
+        "old": "parameterization",
+        "target": "/dlm-survey/#dlm-paradigms--parameterization",
+        "pass": true
+      },
+      {
+        "id": "dlm-scaling",
+        "width": 768,
+        "old": "drafter-generalization",
+        "target": "/dlm-survey/#dlm-scaling--drafter-generalization",
+        "pass": true
+      },
+      {
+        "id": "dlm-speculative",
+        "width": 768,
+        "old": "cycle-cost",
+        "target": "/dlm-survey/#dlm-speculative--cycle-cost",
+        "pass": true
+      },
+      {
+        "id": "dlm-elbo-rl",
+        "width": 768,
+        "old": "mechanism-review",
+        "target": "/dlm-survey/#dlm-elbo-rl--mechanism-review",
+        "pass": true
+      },
+      {
+        "id": "dlm-commercial",
+        "width": 768,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-commercial--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-comparison",
+        "width": 768,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-comparison--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-loop-transformer",
+        "width": 768,
+        "old": "s11-7",
+        "target": "/dlm-survey/#dlm-loop-transformer--s11-7",
+        "pass": true
+      },
+      {
+        "id": "dlm-vae",
+        "width": 768,
+        "old": "s12-2",
+        "target": "/dlm-survey/#dlm-vae--s12-2",
+        "pass": true
+      },
+      {
+        "id": "agent-rag",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/agent-systems/#agent-rag--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "agent-planning",
+        "width": 1440,
+        "old": "sources",
+        "target": "/agent-systems/#agent-planning--sources",
+        "pass": true
+      },
+      {
+        "id": "agent-trust",
+        "width": 1440,
+        "old": "self-check",
+        "target": "/agent-systems/#agent-trust--self-check",
+        "pass": true
+      },
+      {
+        "id": "serving-runtime",
+        "width": 1440,
+        "old": "sources",
+        "target": "/llm-serving/#serving-runtime--sources",
+        "pass": true
+      },
+      {
+        "id": "serving-parallel",
+        "width": 1440,
+        "old": "ref-formats",
+        "target": "/llm-serving/#serving-parallel--ref-formats",
+        "pass": true
+      },
+      {
+        "id": "serving-capacity",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/llm-serving/#serving-capacity--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "posttraining-supervision",
+        "width": 1440,
+        "old": "dpo-derivation",
+        "target": "/llm-posttraining/#posttraining-supervision--dpo-derivation",
+        "pass": true
+      },
+      {
+        "id": "posttraining-algorithms",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/llm-posttraining/#posttraining-algorithms--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "posttraining-opd",
+        "width": 1440,
+        "old": "recipe",
+        "target": "/llm-posttraining/#posttraining-opd--recipe",
+        "pass": true
+      },
+      {
+        "id": "posttraining-rewards",
+        "width": 1440,
+        "old": "cases",
+        "target": "/llm-posttraining/#posttraining-rewards--cases",
+        "pass": true
+      },
+      {
+        "id": "posttraining-frameworks",
+        "width": 1440,
+        "old": "slime-opd",
+        "target": "/llm-posttraining/#posttraining-frameworks--slime-opd",
+        "pass": true
+      },
+      {
+        "id": "posttraining-cases",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/llm-posttraining/#posttraining-cases--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "training-methods-systems",
+        "width": 1440,
+        "old": "optimizers",
+        "target": "/llm-training-lifecycle/#training-methods-systems--optimizers",
+        "pass": true
+      },
+      {
+        "id": "scientific-task-family",
+        "width": 1440,
+        "old": "self-check",
+        "target": "/agent-data-benchmarks/#scientific-task-family--self-check",
+        "pass": true
+      },
+      {
+        "id": "cluster-training-evaluation",
+        "width": 1440,
+        "old": "measurement",
+        "target": "/agent-data-benchmarks/#cluster-training-evaluation--measurement",
+        "pass": true
+      },
+      {
+        "id": "architecture-transformer",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/llm-architecture/#architecture-transformer--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "architecture-attention",
+        "width": 1440,
+        "old": "position",
+        "target": "/llm-architecture/#architecture-attention--position",
+        "pass": true
+      },
+      {
+        "id": "architecture-moe",
+        "width": 1440,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-moe--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-residual",
+        "width": 1440,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-residual--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-hybrid",
+        "width": 1440,
+        "old": "sources",
+        "target": "/llm-architecture/#architecture-hybrid--sources",
+        "pass": true
+      },
+      {
+        "id": "architecture-comparison",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/llm-architecture/#architecture-comparison--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "agent-task-synthesis",
+        "width": 1440,
+        "old": "synthesis-bridge",
+        "target": "/agent-data-benchmarks/#agent-task-synthesis--synthesis-bridge",
+        "pass": true
+      },
+      {
+        "id": "agent-benchmark-map",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/agent-data-benchmarks/#agent-benchmark-map--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-agent-data",
+        "width": 1440,
+        "old": "synthesis",
+        "target": "/llm-research-map-2026/#research-agent-data--synthesis",
+        "pass": true
+      },
+      {
+        "id": "research-agentic-rl",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/llm-research-map-2026/#research-agentic-rl--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-base-architecture",
+        "width": 1440,
+        "old": "csa2",
+        "target": "/llm-research-map-2026/#research-base-architecture--csa2",
+        "pass": true
+      },
+      {
+        "id": "research-inference-diffusion",
+        "width": 1440,
+        "old": "citation-sources-5",
+        "target": "/llm-research-map-2026/#research-inference-diffusion--citation-sources-5",
+        "pass": true
+      },
+      {
+        "id": "research-agent-frontiers",
+        "width": 1440,
+        "old": "citation-sources-6",
+        "target": "/llm-research-map-2026/#research-agent-frontiers--citation-sources-6",
+        "pass": true
+      },
+      {
+        "id": "research-architecture-landscape",
+        "width": 1440,
+        "old": "mimo",
+        "target": "/llm-research-map-2026/#research-architecture-landscape--mimo",
+        "pass": true
+      },
+      {
+        "id": "research-architecture-training",
+        "width": 1440,
+        "old": "residual",
+        "target": "/llm-research-map-2026/#research-architecture-training--residual",
+        "pass": true
+      },
+      {
+        "id": "llm-training-pretraining",
+        "width": 1440,
+        "old": "budget",
+        "target": "/llm-training-lifecycle/#llm-training-pretraining--budget",
+        "pass": true
+      },
+      {
+        "id": "llm-training-midtraining",
+        "width": 1440,
+        "old": "recipe",
+        "target": "/llm-training-lifecycle/#llm-training-midtraining--recipe",
+        "pass": true
+      },
+      {
+        "id": "llm-training-sft-rft",
+        "width": 1440,
+        "old": "reinforcement",
+        "target": "/llm-training-lifecycle/#llm-training-sft-rft--reinforcement",
+        "pass": true
+      },
+      {
+        "id": "llm-training-rl-evaluation",
+        "width": 1440,
+        "old": "heterogeneity-bridge",
+        "target": "/llm-training-lifecycle/#llm-training-rl-evaluation--heterogeneity-bridge",
+        "pass": true
+      },
+      {
+        "id": "dlm-ddpm",
+        "width": 1440,
+        "old": "decomposition",
+        "target": "/dlm-survey/#dlm-ddpm--decomposition",
+        "pass": true
+      },
+      {
+        "id": "dlm-flow-sde",
+        "width": 1440,
+        "old": "probability-flow",
+        "target": "/dlm-survey/#dlm-flow-sde--probability-flow",
+        "pass": true
+      },
+      {
+        "id": "dlm-overview",
+        "width": 1440,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-overview--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-discrete",
+        "width": 1440,
+        "old": "bayes",
+        "target": "/dlm-survey/#dlm-discrete--bayes",
+        "pass": true
+      },
+      {
+        "id": "dlm-block",
+        "width": 1440,
+        "old": "attention-mask",
+        "target": "/dlm-survey/#dlm-block--attention-mask",
+        "pass": true
+      },
+      {
+        "id": "dlm-continuous",
+        "width": 1440,
+        "old": "rounding",
+        "target": "/dlm-survey/#dlm-continuous--rounding",
+        "pass": true
+      },
+      {
+        "id": "dlm-paradigms",
+        "width": 1440,
+        "old": "parameterization",
+        "target": "/dlm-survey/#dlm-paradigms--parameterization",
+        "pass": true
+      },
+      {
+        "id": "dlm-scaling",
+        "width": 1440,
+        "old": "drafter-generalization",
+        "target": "/dlm-survey/#dlm-scaling--drafter-generalization",
+        "pass": true
+      },
+      {
+        "id": "dlm-speculative",
+        "width": 1440,
+        "old": "cycle-cost",
+        "target": "/dlm-survey/#dlm-speculative--cycle-cost",
+        "pass": true
+      },
+      {
+        "id": "dlm-elbo-rl",
+        "width": 1440,
+        "old": "mechanism-review",
+        "target": "/dlm-survey/#dlm-elbo-rl--mechanism-review",
+        "pass": true
+      },
+      {
+        "id": "dlm-commercial",
+        "width": 1440,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-commercial--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-comparison",
+        "width": 1440,
+        "old": "math-loading",
+        "target": "/dlm-survey/#dlm-comparison--math-loading",
+        "pass": true
+      },
+      {
+        "id": "dlm-loop-transformer",
+        "width": 1440,
+        "old": "s11-7",
+        "target": "/dlm-survey/#dlm-loop-transformer--s11-7",
+        "pass": true
+      },
+      {
+        "id": "dlm-vae",
+        "width": 1440,
+        "old": "s12-2",
+        "target": "/dlm-survey/#dlm-vae--s12-2",
+        "pass": true
+      }
+    ],
+    "noJS": [
+      {
+        "id": "my-work-holon",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "my-work-protagent",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "my-work-harbor",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "my-work-dllm",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "my-work-harbor-full",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agent-systems",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agent-rag",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agent-planning",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agent-trust",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-serving",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "serving-runtime",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "serving-parallel",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "serving-capacity",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-posttraining",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "posttraining-supervision",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "posttraining-algorithms",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "posttraining-opd",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "posttraining-rewards",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "posttraining-frameworks",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "posttraining-cases",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "training-methods-systems",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "scientific-task-family",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "cluster-training-evaluation",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-architecture",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "architecture-transformer",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "architecture-attention",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "architecture-moe",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "architecture-residual",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "architecture-hybrid",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "architecture-comparison",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agent-data-benchmarks",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agent-task-synthesis",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agent-benchmark-map",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-research-map-2026",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "research-agent-data",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "research-agentic-rl",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "research-base-architecture",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "research-inference-diffusion",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "research-agent-frontiers",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "research-architecture-landscape",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "research-architecture-training",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-training-lifecycle",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-training-pretraining",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-training-midtraining",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-training-sft-rft",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-training-rl-evaluation",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-frontier-2026",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agentic-rl-guide",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-survey",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "transformer-decoder-flow",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "rl-interview-guide",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "agent-harness-guide",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "distributed-training-guide",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "llm-interview-bank",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "vlm-knowledge-interview",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "rl-interview-guide-legacy",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-ddpm",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-flow-sde",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-overview",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-discrete",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-block",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-continuous",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-paradigms",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-scaling",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-speculative",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-elbo-rl",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-commercial",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-comparison",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-loop-transformer",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "dlm-vae",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      },
+      {
+        "id": "harbor-framework-guide",
+        "readable": true,
+        "overflow": false,
+        "manualLink": true
+      }
+    ],
+    "journeys": [
+      {
+        "role": "初学者",
+        "mainlineLinks": [
+          "../llm-architecture/index.html",
+          "../llm-training-lifecycle/index.html",
+          "../llm-posttraining/index.html",
+          "../agent-harness-guide.html#codex-loop",
+          "../agent-systems/index.html",
+          "../agent-data-benchmarks/index.html",
+          "../llm-serving/index.html"
+        ],
+        "sevenTopics": true
+      },
+      {
+        "role": "初学者",
+        "url": "/llm-posttraining/",
+        "anchor": "posttraining-algorithms--baseline-proof",
+        "present": true,
+        "context": true
+      },
+      {
+        "role": "面试复习",
+        "url": "/llm-posttraining/",
+        "anchor": "posttraining-algorithms--interview-cards",
+        "present": true,
+        "context": true
+      },
+      {
+        "role": "项目研究",
+        "url": "/my-work/holon/full-report.html",
+        "anchor": "holon-ladder-effect",
+        "present": true,
+        "context": true
+      }
+    ],
+    "plots": [
+      {
+        "id": "my-work-holon",
+        "width": 390,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent",
+        "width": 390,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-harbor",
+        "width": 390,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm",
+        "width": 390,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 2,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 3,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 4,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 5,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 6,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 7,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 8,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 390,
+        "index": 9,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 390,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 390,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 390,
+        "index": 2,
+        "pass": true
+      },
+      {
+        "id": "my-work-harbor-full",
+        "width": 390,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 390,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 390,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 390,
+        "index": 2,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon",
+        "width": 768,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent",
+        "width": 768,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-harbor",
+        "width": 768,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm",
+        "width": 768,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 2,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 3,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 4,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 5,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 6,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 7,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 8,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 768,
+        "index": 9,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 768,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 768,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 768,
+        "index": 2,
+        "pass": true
+      },
+      {
+        "id": "my-work-harbor-full",
+        "width": 768,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 768,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 768,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 768,
+        "index": 2,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon",
+        "width": 1440,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent",
+        "width": 1440,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-harbor",
+        "width": 1440,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm",
+        "width": 1440,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 2,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 3,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 4,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 5,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 6,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 7,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 8,
+        "pass": true
+      },
+      {
+        "id": "my-work-holon-full",
+        "width": 1440,
+        "index": 9,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 1440,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 1440,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-protagent-full",
+        "width": 1440,
+        "index": 2,
+        "pass": true
+      },
+      {
+        "id": "my-work-harbor-full",
+        "width": 1440,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 1440,
+        "index": 0,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 1440,
+        "index": 1,
+        "pass": true
+      },
+      {
+        "id": "my-work-dllm-full",
+        "width": 1440,
+        "index": 2,
+        "pass": true
+      }
+    ]
+  },
+  "directory": {
+    "pages": [
+      {
+        "label": "directory",
+        "width": 346,
+        "pageOverflow": 0,
+        "math": 0,
+        "mathErrors": 0,
+        "cards": 4,
+        "diagrams": 0
+      },
+      {
+        "label": "scaling",
+        "width": 314,
+        "pageOverflow": 0,
+        "math": 41,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 2
+      },
+      {
+        "label": "systems",
+        "width": 314,
+        "pageOverflow": 0,
+        "math": 19,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 1
+      },
+      {
+        "label": "architecture",
+        "width": 314,
+        "pageOverflow": 0,
+        "math": 16,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 1
+      },
+      {
+        "label": "directory",
+        "width": 712,
+        "pageOverflow": 0,
+        "math": 0,
+        "mathErrors": 0,
+        "cards": 4,
+        "diagrams": 0
+      },
+      {
+        "label": "scaling",
+        "width": 688,
+        "pageOverflow": 0,
+        "math": 41,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 2
+      },
+      {
+        "label": "systems",
+        "width": 688,
+        "pageOverflow": 0,
+        "math": 19,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 1
+      },
+      {
+        "label": "architecture",
+        "width": 688,
+        "pageOverflow": 0,
+        "math": 16,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 1
+      },
+      {
+        "label": "directory",
+        "width": 1040,
+        "pageOverflow": 0,
+        "math": 0,
+        "mathErrors": 0,
+        "cards": 4,
+        "diagrams": 0
+      },
+      {
+        "label": "scaling",
+        "width": 774,
+        "pageOverflow": 0,
+        "math": 41,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 2
+      },
+      {
+        "label": "systems",
+        "width": 774,
+        "pageOverflow": 0,
+        "math": 19,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 1
+      },
+      {
+        "label": "architecture",
+        "width": 774,
+        "pageOverflow": 0,
+        "math": 16,
+        "mathErrors": 0,
+        "cards": 0,
+        "diagrams": 1
+      }
+    ],
+    "links": [
+      {
+        "text": "Transformer → Attention / KV → FFN / MoE → 残差 / 混合状态",
+        "url": "http://127.0.0.1:8773/llm-architecture/index.html",
+        "visible": true
+      },
+      {
+        "text": "DeepSeek、Qwen、Kimi 等开源家族与固定版本",
+        "url": "http://127.0.0.1:8773/llm-research-map-2026/index.html#research-architecture-landscape--families",
+        "visible": true
+      },
+      {
+        "text": "前沿机制：残差、LatentMoE、Muon 与递归计算",
+        "url": "http://127.0.0.1:8773/llm-research-map-2026/index.html#research-architecture-training",
+        "visible": true
+      },
+      {
+        "text": "生成范式分支：扩散语言模型",
+        "url": "http://127.0.0.1:8773/dlm-survey/index.html",
+        "visible": true
+      },
+      {
+        "text": "Pretrain → Midtrain / CPT → Post-train：数据与目标交接",
+        "url": "http://127.0.0.1:8773/llm-training-lifecycle/index.html",
+        "visible": true
+      },
+      {
+        "text": "Scaling Law 推导与 scaling ladder 实验阶梯",
+        "url": "http://127.0.0.1:8773/llm-training-lifecycle/index.html#llm-training-pretraining--scaling-law",
+        "visible": true
+      },
+      {
+        "text": "优化器：SGD → AdamW → Muon；参数、显存与成本",
+        "url": "http://127.0.0.1:8773/llm-training-lifecycle/index.html#training-methods-systems--adamw-derivation",
+        "visible": true
+      },
+      {
+        "text": "训练框架与系统：Megatron、FSDP / ZeRO、并行与恢复",
+        "url": "http://127.0.0.1:8773/llm-training-lifecycle/index.html#training-methods-systems--training-stack",
+        "visible": true
+      },
+      {
+        "text": "RLVR 算法、论文参数配方与诊断",
+        "url": "http://127.0.0.1:8773/llm-posttraining/index.html#posttraining-algorithms--paper-recipes",
+        "visible": true
+      },
+      {
+        "text": "后训练框架：TRL、verl、slime、AReaL 等",
+        "url": "http://127.0.0.1:8773/llm-posttraining/index.html#posttraining-frameworks--framework-map",
+        "visible": true
+      },
+      {
+        "text": "Prefill / decode、KV cache 与连续批处理",
+        "url": "http://127.0.0.1:8773/llm-serving/index.html#serving-runtime--phases",
+        "visible": true
+      },
+      {
+        "text": "框架与调度：vLLM、SGLang、分页与前缀复用",
+        "url": "http://127.0.0.1:8773/llm-serving/index.html#serving-runtime--implementation",
+        "visible": true
+      },
+      {
+        "text": "量化：权重、激活与 KV 的不同精度",
+        "url": "http://127.0.0.1:8773/llm-serving/index.html#serving-parallel--precision",
+        "visible": true
+      },
+      {
+        "text": "投机解码：接受概率、拒绝残差与加速条件",
+        "url": "http://127.0.0.1:8773/llm-serving/index.html#serving-parallel--speculation",
+        "visible": true
+      },
+      {
+        "text": "并行部署、显存容量、延迟、吞吐与成功成本",
+        "url": "http://127.0.0.1:8773/llm-serving/index.html#serving-capacity",
+        "visible": true
+      },
+      {
+        "text": "预训练：清洗、去重、混合采样、packing 与污染隔离",
+        "url": "http://127.0.0.1:8773/llm-training-lifecycle/index.html#llm-training-pretraining--data",
+        "visible": true
+      },
+      {
+        "text": "Midtraining：领域、仓库、长上下文与回放",
+        "url": "http://127.0.0.1:8773/llm-training-lifecycle/index.html#llm-training-midtraining--data",
+        "visible": true
+      },
+      {
+        "text": "后训练：示范、偏好、拒绝采样与轨迹监督",
+        "url": "http://127.0.0.1:8773/llm-posttraining/index.html#posttraining-supervision",
+        "visible": true
+      },
+      {
+        "text": "Agentic task：环境 → 任务 → verifier → 轨迹 → 训练",
+        "url": "http://127.0.0.1:8773/agent-data-benchmarks/index.html#agent-task-synthesis",
+        "visible": true
+      },
+      {
+        "text": "独立评测：留出集、污染、成功率与失败分类",
+        "url": "http://127.0.0.1:8773/agent-data-benchmarks/index.html#agent-benchmark-map",
+        "visible": true
+      }
+    ],
+    "noScript": [
+      {
+        "navigationLinks": 20,
+        "scalingTextVisible": true
+      }
+    ]
+  },
+  "taxonomy": [
+    {
+      "query": "",
+      "topic": null,
+      "expected": null,
+      "ok": true
+    },
+    {
+      "query": "?topic=llm-foundations",
+      "topic": "llm-foundations",
+      "expected": "research-architecture-landscape",
+      "ok": true
+    },
+    {
+      "query": "?topic=training",
+      "topic": "training",
+      "expected": "posttraining-frameworks",
+      "ok": true
+    },
+    {
+      "query": "?topic=inference",
+      "topic": "inference",
+      "expected": "research-inference-diffusion",
+      "ok": true
+    },
+    {
+      "query": "?topic=data",
+      "topic": "data",
+      "expected": "llm-training-pretraining",
+      "ok": true
+    },
+    {
+      "query": "?topic=rl-post-training",
+      "topic": "training",
+      "expected": "posttraining-frameworks",
+      "ok": true
+    },
+    {
+      "query": "?topic=training-inference",
+      "topic": "training",
+      "expected": "training-methods-systems",
+      "ok": true
+    },
+    {
+      "query": "?category=强化学习&topic=inference",
+      "topic": "inference",
+      "expected": "serving-runtime",
+      "ok": true
+    },
+    {
+      "chip": "training",
+      "count": 11,
+      "ok": true
+    },
+    {
+      "chip": "inference",
+      "count": 4,
+      "ok": true
+    },
+    {
+      "chip": "data",
+      "count": 9,
+      "ok": true
+    }
+  ],
+  "new_sections": {
+    "sections": [
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "training-map",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-training-map-390.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "llm-training-pretraining--mup-transfer",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-llm-training-pretraining--mup-transfer-390.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "llm-training-pretraining--wsd-schedule",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-wsd-fixed-390.png",
+        "pass": true,
+        "formula_rechecked_after_fix": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "training-methods-systems--training-frameworks",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-training-methods-systems--training-frameworks-390.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "training-methods-systems--roofline",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-training-methods-systems--roofline-390.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-posttraining/",
+        "anchor": "posttraining-opd--historical-teachers",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-posttraining-opd--historical-teachers-390.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-posttraining/",
+        "anchor": "posttraining-opd--ecos-feedback",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-posttraining-opd--ecos-feedback-390.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-serving/",
+        "anchor": "serving-runtime--kimi-sparse-traffic",
+        "width": 390,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-serving-runtime--kimi-sparse-traffic-390.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "training-map",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-training-map-1440.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "llm-training-pretraining--mup-transfer",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-llm-training-pretraining--mup-transfer-1440.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "llm-training-pretraining--wsd-schedule",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-llm-training-pretraining--wsd-schedule-1440.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "training-methods-systems--training-frameworks",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-training-methods-systems--training-frameworks-1440.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-training-lifecycle/",
+        "anchor": "training-methods-systems--roofline",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-training-methods-systems--roofline-1440.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-posttraining/",
+        "anchor": "posttraining-opd--historical-teachers",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-posttraining-opd--historical-teachers-1440.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-posttraining/",
+        "anchor": "posttraining-opd--ecos-feedback",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-posttraining-opd--ecos-feedback-1440.png",
+        "pass": true
+      },
+      {
+        "path": "/llm-serving/",
+        "anchor": "serving-runtime--kimi-sparse-traffic",
+        "width": 1440,
+        "screenshot": "/tmp/my-blogs-browser-tests/curriculum-serving-runtime--kimi-sparse-traffic-1440.png",
+        "pass": true
+      }
+    ],
+    "crossTopics": [
+      {
+        "topic": "training",
+        "path": "/llm-interview-bank.html",
+        "anchor": "",
+        "pass": true
+      },
+      {
+        "topic": "inference",
+        "path": "/llm-frontier-2026.html",
+        "anchor": "",
+        "pass": true
+      },
+      {
+        "topic": "data",
+        "path": "/agent-data-benchmarks/",
+        "anchor": "cluster-training-evaluation",
+        "pass": true
+      },
+      {
+        "topic": "llm-foundations",
+        "path": "/llm-research-map-2026/",
+        "anchor": "research-architecture-training",
+        "pass": true
+      }
+    ]
+  },
+  "formulas": {
+    "analytic_checks": "scaling optimum; mixture fraction; MuP hidden LR; Kimi bytes",
+    "mobile_corrections": "split scaling derivative; WSD normalized multiplier"
+  },
+  "integration": {
+    "suite_cases": 17,
+    "first_run_passed": 16,
+    "first_run_failure": "Harbor project URL changed during taxonomy edit",
+    "correction": "Restored both original /my-work/harbor-task-sync/ routes",
+    "failed_case_rerun": "test_rebuild_is_deterministic_read_only_and_manifest_only",
+    "failed_case_rerun_passed": true,
+    "failed_case_rerun_seconds": 67.483
+  },
+  "frontier": {
+    "automation_cases_passed": 18,
+    "validation_command_passed": true
+  },
+  "retention": {
+    "original_anchors": 299,
+    "markers": 59,
+    "registered_routes": 199,
+    "baseline_rewritten": false
+  },
+  "source_receipts": [
+    {
+      "id": "my-work-holon",
+      "source": "content/posts/my-work-holon/index.md",
+      "changed": false,
+      "before_sha256": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "sha256": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "reason": "MoT→数据目标→条件利用→评测；项目结果与通用训练原理有清晰分工，保留配对干预算例"
+    },
+    {
+      "id": "my-work-protagent",
+      "source": "content/posts/my-work-protagent/index.md",
+      "changed": false,
+      "before_sha256": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "sha256": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "reason": "工具轨迹→监督→逐步信用→独立评价；保留真实工具、奖励分母和四臂实验边界"
+    },
+    {
+      "id": "my-work-harbor",
+      "source": "content/posts/my-work-harbor/index.md",
+      "changed": false,
+      "before_sha256": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "sha256": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "reason": "合同→多路径oracle→盲测→失败归因；分类迁至数据，科学要求与历史生产量分开"
+    },
+    {
+      "id": "my-work-dllm",
+      "source": "content/posts/my-work-dllm/index.md",
+      "changed": false,
+      "before_sha256": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "sha256": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "reason": "调度、attention与loss分别讲解；两块算例和训练可见性符合项目主线"
+    },
+    {
+      "id": "my-work-holon-full",
+      "source": "content/posts/my-work-holon/full-report.html",
+      "changed": false,
+      "before_sha256": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "sha256": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "reason": "长研究报告保留证据与历史材料；学习摘要承担快速入口，不复制实验结论到通用教材"
+    },
+    {
+      "id": "my-work-protagent-full",
+      "source": "content/posts/my-work-protagent/full-report.html",
+      "changed": false,
+      "before_sha256": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "sha256": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "reason": "保留配置、原始seed与逐步回报细节；与摘要按深度分工，不改实验分母"
+    },
+    {
+      "id": "my-work-harbor-full",
+      "source": "content/posts/my-work-harbor/full-report.html",
+      "changed": false,
+      "before_sha256": "9cd38f47051c7e86dceb560b5f551ef94c2caf70e4ea3225449b4c6d7e5c5b98",
+      "sha256": "9cd38f47051c7e86dceb560b5f551ef94c2caf70e4ea3225449b4c6d7e5c5b98",
+      "reason": "保留原稿方法汇报、合同和历史记录；成本仍标估算与未刷新价格"
+    },
+    {
+      "id": "my-work-dllm-full",
+      "source": "content/posts/my-work-dllm/full-report.html",
+      "changed": false,
+      "before_sha256": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "sha256": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "reason": "保留ICL、ARR、路径与LM1B机制；已明确概念层与具体backbone的attention差别"
+    },
+    {
+      "id": "agent-systems",
+      "source": "content/series/agent-systems/index.html",
+      "changed": false,
+      "before_sha256": "33f5cb2e59bc7444c044f702f602697943f54e1209c9fa31152df02c26ffcf32",
+      "sha256": "33f5cb2e59bc7444c044f702f602697943f54e1209c9fa31152df02c26ffcf32",
+      "reason": "检索、规划、权限三章连续阅读；与Harness运行循环边界清楚"
+    },
+    {
+      "id": "agent-rag",
+      "source": "content/series/agent-systems/s01_rag_retrieval.html",
+      "changed": false,
+      "before_sha256": "73df192198e07012ee916fe97d6585c863b1d5d7517669414422350b67d5a9d5",
+      "sha256": "73df192198e07012ee916fe97d6585c863b1d5d7517669414422350b67d5a9d5",
+      "reason": "BM25→dense→RRF→Agentic检索；有推导、数例与分层评测，不补重复模型列表"
+    },
+    {
+      "id": "agent-planning",
+      "source": "content/series/agent-systems/s02_planning_compute.html",
+      "changed": false,
+      "before_sha256": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "sha256": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "reason": "候选存在性、选择器、UCT与状态分支依次展开；保留Search-R1++分项退化"
+    },
+    {
+      "id": "agent-trust",
+      "source": "content/series/agent-systems/s03_trust_safety.html",
+      "changed": false,
+      "before_sha256": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "sha256": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "reason": "控制面、数据面、权限和隔离有机制图；保留CaMeL攻击集分母及效用未知项"
+    },
+    {
+      "id": "llm-serving",
+      "source": "content/series/llm-serving/index.html",
+      "changed": false,
+      "before_sha256": "e1dc30773c1645030ab683978b923dafc3f5f466ea7c84e927933e2f47288a76",
+      "sha256": "e1dc30773c1645030ab683978b923dafc3f5f466ea7c84e927933e2f47288a76",
+      "reason": "调度→精度/并行→容量/成本主线明确；一级分类由训练推理合并项拆为推理"
+    },
+    {
+      "id": "serving-runtime",
+      "source": "content/series/llm-serving/s01_runtime_scheduling.html",
+      "changed": true,
+      "before_sha256": "c9f91c4b808c64f479f8adad02b85c81c8350890771c7e4fa6b8717c842c40d0",
+      "sha256": "7c6062293a9b7bfad3a5485326eff6a7a103100fa71242c2e80e3674b0469d65",
+      "reason": "增补Kimi K3.1索引→候选→潜在KV读取图、每层流量公式及GB300单请求TTFT；区别读取与容量"
+    },
+    {
+      "id": "serving-parallel",
+      "source": "content/series/llm-serving/s02_parallel_quantization.html",
+      "changed": false,
+      "before_sha256": "312e15f202d9863ca8d6b0afd691bd12823794bb873894704f31832120aac213",
+      "sha256": "312e15f202d9863ca8d6b0afd691bd12823794bb873894704f31832120aac213",
+      "reason": "PD传输下界、量化舍入/饱和、投机精确性与速度算例完整；不用架构活跃参数代替部署容量"
+    },
+    {
+      "id": "serving-capacity",
+      "source": "content/series/llm-serving/s03_capacity_cost.html",
+      "changed": false,
+      "before_sha256": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "sha256": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "reason": "70B容量、延迟分母、Little定律及成功成本连贯；规划表保持无实测状态"
+    },
+    {
+      "id": "llm-posttraining",
+      "source": "content/series/llm-posttraining/index.html",
+      "changed": true,
+      "before_sha256": "64683caf93467927a381f9a276ef04c40cb91219326ee44e592edc2c9d6bbb7e",
+      "sha256": "f20b13f320d174857d87f357ff38fb2f65e2ca5c009a17ef365eb71f791d9661",
+      "reason": "修正过时来源数量说明，登记11月OPD补充；保留原理→变体→配方→诊断顺序"
+    },
+    {
+      "id": "posttraining-supervision",
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "changed": false,
+      "before_sha256": "558da3e00220acfc740b5fce01073ad9882c90c02192394b3443e885c930d776",
+      "sha256": "558da3e00220acfc740b5fce01073ad9882c90c02192394b3443e885c930d776",
+      "reason": "SFT mask、轨迹恢复、拒绝采样、DPO推导集中；训练阶段页只负责交接"
+    },
+    {
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "changed": false,
+      "before_sha256": "181c2dbf800e54631ef3541377b4e1f1cf2d916b6cb03eb75526fa77d1fdc44c",
+      "sha256": "181c2dbf800e54631ef3541377b4e1f1cf2d916b6cb03eb75526fa77d1fdc44c",
+      "reason": "PG/GAE/PPO/GRPO推导、六论文数值配方与追问完整；保留mini-batch和epochs区别"
+    },
+    {
+      "id": "posttraining-opd",
+      "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
+      "changed": true,
+      "before_sha256": "a72b4a50c0f67509985e29a18516b522c5cce34584bfbb71c7bcc4ed41f1bdb8",
+      "sha256": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "reason": "在多教师/自蒸馏原节加入Agentic-OPD与ECOS；核对top-k、验证切分、命令监督、遗忘与额外成本"
+    },
+    {
+      "id": "posttraining-rewards",
+      "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
+      "changed": false,
+      "before_sha256": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "sha256": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "reason": "环境→反馈类型→过程监督→多步信用；PURE反例与2026信用分配已有独立机制和证据"
+    },
+    {
+      "id": "posttraining-frameworks",
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "changed": false,
+      "before_sha256": "88036edb05fa4c214d098d808e97d5e1bd5b9a1693b970d702754c75a6a2f86f",
+      "sha256": "88036edb05fa4c214d098d808e97d5e1bd5b9a1693b970d702754c75a6a2f86f",
+      "reason": "同步/异步及三类偏移、固定源码和12类框架保持；TorchForge迁入TorchTitan状态已有说明"
+    },
+    {
+      "id": "posttraining-cases",
+      "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
+      "changed": false,
+      "before_sha256": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "sha256": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "reason": "代码、科学、GUI三条完整轨迹连接目标和验证；待执行对照不写成已测结果"
+    },
+    {
+      "id": "training-methods-systems",
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "changed": true,
+      "before_sha256": "c9e06b46e369f94ffb3339845d0dc9646170c9904cdf684378f4873a3b733b04",
+      "sha256": "25d5368fb403dc14c6e2bca14d90409d5f6b97e773b0323ca6ba0bd8ae931554",
+      "reason": "完整保留AdamW/Muon推导；补四层训练架构、TorchTitan/MaxText固定源码、框架验收、roofline和nGPT整套配方证据"
+    },
+    {
+      "id": "scientific-task-family",
+      "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
+      "changed": false,
+      "before_sha256": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "sha256": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "reason": "来源→统计单位→NB/contrast/BH→verifier→切分；算例与数据角色已清晰"
+    },
+    {
+      "id": "cluster-training-evaluation",
+      "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
+      "changed": false,
+      "before_sha256": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "sha256": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "reason": "算法、预算、集群和配对统计分开；增加数据次主题归属，规划仍不声称运行"
+    },
+    {
+      "id": "llm-architecture",
+      "source": "content/series/llm-architecture/index.html",
+      "changed": false,
+      "before_sha256": "0ac970cfe9b74735a078a5b65eea8b992e1500b3c4355f8857268e37db8bfb2f",
+      "sha256": "0ac970cfe9b74735a078a5b65eea8b992e1500b3c4355f8857268e37db8bfb2f",
+      "reason": "张量→Attention→FFN/MoE→残差→混合状态→比较；保留单一连续目录"
+    },
+    {
+      "id": "architecture-transformer",
+      "source": "content/series/llm-architecture/s01_transformer_foundations.html",
+      "changed": false,
+      "before_sha256": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "sha256": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "reason": "token至logits、causal mask、shift与四种状态对应；基础张量链路已有图"
+    },
+    {
+      "id": "architecture-attention",
+      "source": "content/series/llm-architecture/s02_attention_position_cache.html",
+      "changed": false,
+      "before_sha256": "6c5ccb71967e2fd40bde89f810c251cabaa5997dc354e5d4ddb76d34880e7004",
+      "sha256": "6c5ccb71967e2fd40bde89f810c251cabaa5997dc354e5d4ddb76d34880e7004",
+      "reason": "缩放、GQA、KV字节、RoPE、Flash/Paged职责分开；Kimi Linear同预算数据保留反例"
+    },
+    {
+      "id": "architecture-moe",
+      "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
+      "changed": false,
+      "before_sha256": "00c9ae53d38b7e2e076cbd64d901abe552009c266a2c86d44efe395ca26da341",
+      "sha256": "00c9ae53d38b7e2e076cbd64d901abe552009c266a2c86d44efe395ca26da341",
+      "reason": "FFN账本、router、容量、通信与LatentMoE串联；不能由激活参数比例推速度"
+    },
+    {
+      "id": "architecture-residual",
+      "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
+      "changed": false,
+      "before_sha256": "dcb06d68ca279f1e1054ac97b98fe385de58e0a88ac2b50bcff01f4b46740042",
+      "sha256": "dcb06d68ca279f1e1054ac97b98fe385de58e0a88ac2b50bcff01f4b46740042",
+      "reason": "Pre/Post Norm梯度、RMSNorm算例与mHC受控结果清楚；不复制优化器推导"
+    },
+    {
+      "id": "architecture-hybrid",
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "changed": false,
+      "before_sha256": "0e241c17b2857ae58b025cc25747b8b4c903e333c65325533a72c3765076740d",
+      "sha256": "0e241c17b2857ae58b025cc25747b8b4c903e333c65325533a72c3765076740d",
+      "reason": "外积→遗忘→delta→Mamba/SSD→混合层与恢复；矩阵转置约定已解释"
+    },
+    {
+      "id": "architecture-comparison",
+      "source": "content/series/llm-architecture/s06_model_comparison.html",
+      "changed": false,
+      "before_sha256": "e185cf4f9267ef82f9d7dad9d36a37ea6e00e48b01c95345e07b79f789ea79cc",
+      "sha256": "e185cf4f9267ef82f9d7dad9d36a37ea6e00e48b01c95345e07b79f789ea79cc",
+      "reason": "六条比较轴与共同实验协议汇总；将型号细节留在研究家族表"
+    },
+    {
+      "id": "agent-data-benchmarks",
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "changed": false,
+      "before_sha256": "dd16193ad2320e1181342f87c66d9742d7d36f6456387dfd64f01bcc2fd88d1f",
+      "sha256": "dd16193ad2320e1181342f87c66d9742d7d36f6456387dfd64f01bcc2fd88d1f",
+      "reason": "数据生产、任务、轨迹、独立benchmark的关系有图；归入数据主题"
+    },
+    {
+      "id": "agent-task-synthesis",
+      "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
+      "changed": false,
+      "before_sha256": "17655227a45a0140d03dbf6690dd17d9df30329e2876b3bc0519af4fb08ae4e7",
+      "sha256": "17655227a45a0140d03dbf6690dd17d9df30329e2876b3bc0519af4fb08ae4e7",
+      "reason": "12条合成路线→合同→数值容差→轨迹准入；跨阶段数据用途已展开"
+    },
+    {
+      "id": "agent-benchmark-map",
+      "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
+      "changed": false,
+      "before_sha256": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "sha256": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "reason": "pass@k组合推导、版本、领域与成本分母齐全；不把滚动榜单抄入各章"
+    },
+    {
+      "id": "llm-research-map-2026",
+      "source": "content/series/llm-research-map-2026/index.html",
+      "changed": false,
+      "before_sha256": "38557716c4450595f17609292aa552662c18e2ff073a77f86f3cff22da2671bb",
+      "sha256": "38557716c4450595f17609292aa552662c18e2ff073a77f86f3cff22da2671bb",
+      "reason": "七章按研究问题维护新机制；通过子章节主题筛选可从架构/训练/推理/数据找到相关部分"
+    },
+    {
+      "id": "research-agent-data",
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "changed": false,
+      "before_sha256": "7d65251191af8348208d2c6130b5f71b989b99a066b98740149c88b9aa0bdedd",
+      "sha256": "7d65251191af8348208d2c6130b5f71b989b99a066b98740149c88b9aa0bdedd",
+      "reason": "合成空间、环境迁移和验证重放是增量主题；与任务合成主讲分工明确"
+    },
+    {
+      "id": "research-agentic-rl",
+      "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
+      "changed": false,
+      "before_sha256": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "sha256": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "reason": "更新对象、信用、异质数据、异步偏移四维组织；完整算法推导仍归后训练"
+    },
+    {
+      "id": "research-base-architecture",
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "changed": false,
+      "before_sha256": "3b8a34880ce21b4334fc4471fef7428f0dcd35f04b3a30af90bd66b9823e7039",
+      "sha256": "3b8a34880ce21b4334fc4471fef7428f0dcd35f04b3a30af90bd66b9823e7039",
+      "reason": "V4.1版本→CED→CSA2→字节→replay；保留890B/token口径和查表参数分拆"
+    },
+    {
+      "id": "research-inference-diffusion",
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "changed": false,
+      "before_sha256": "3966264d9abe13bc59b8e52380a202268ed97d22d8969015fc0064d4952707fa",
+      "sha256": "3966264d9abe13bc59b8e52380a202268ed97d22d8969015fc0064d4952707fa",
+      "reason": "DFlash/DSpark/AdaFlash分别改变候选、训练和调度；保留选择偏差反例及并发对照"
+    },
+    {
+      "id": "research-agent-frontiers",
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "changed": false,
+      "before_sha256": "6c249ac2f8294a0532b2f9f9b64018c06cd0ae7826fdf38b58754a52a90b30f7",
+      "sha256": "6c249ac2f8294a0532b2f9f9b64018c06cd0ae7826fdf38b58754a52a90b30f7",
+      "reason": "GUI/科学/skills/memory与持续适配分层；保留时间切分和并行资源算例"
+    },
+    {
+      "id": "research-architecture-landscape",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "changed": true,
+      "before_sha256": "1a6b1884f7fe8258aa0b847e4f59bb0ada7819a61381fb2fd0f8149d38a7243e",
+      "sha256": "eca788377fb7d67543315172291f4e9df56fe07b10fec167cf57063216224eb4",
+      "reason": "增补经典→前沿学习图和四类目录关系；Kimi连接新服务字节/TTFT证据，九家族固定版本规格保持"
+    },
+    {
+      "id": "research-architecture-training",
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "changed": false,
+      "before_sha256": "73511e09cb6ac9f2377859a5aa235c0297898e0a9ec1afb70681d2aafc160256",
+      "sha256": "73511e09cb6ac9f2377859a5aa235c0297898e0a9ec1afb70681d2aafc160256",
+      "reason": "残差、LatentMoE、Muon、精度、递归计算分对象讲解；增加模型架构次主题，不复制更新公式"
+    },
+    {
+      "id": "llm-training-lifecycle",
+      "source": "content/series/llm-training-lifecycle/index.html",
+      "changed": true,
+      "before_sha256": "6d70d9c7a7c84b16782a2f658e12f9b2f24425b3845455c0bc8827f2f554e028",
+      "sha256": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "reason": "增加阶段×目标/数据×预算×执行交叉表；连接Scaling、优化器与框架主讲，引用CS336及Smol课程组织"
+    },
+    {
+      "id": "llm-training-pretraining",
+      "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
+      "changed": true,
+      "before_sha256": "8d5599dee30009dc374912339774209f3a05e20d856698f8e9cf7186062f95c5",
+      "sha256": "ebfe3b6b648270bc5fe48b80a8bbb82aaf02fa09e308990794cde10b5dc279f2",
+      "reason": "补固定算力最优解、IsoFLOP/scaling ladder、μP/WSD机制与图；新增混合token、重复倍数与目标占比算例"
+    },
+    {
+      "id": "llm-training-midtraining",
+      "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
+      "changed": false,
+      "before_sha256": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "sha256": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "reason": "阶段定义、固定SFT受控证据、CSV视角、回放与目标权重完整；数据次主题与训练入口共用正文"
+    },
+    {
+      "id": "llm-training-sft-rft",
+      "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
+      "changed": false,
+      "before_sha256": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "sha256": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "reason": "保留角色mask、筛选与交接；DPO和OPD推导指向唯一主讲，避免重复"
+    },
+    {
+      "id": "llm-training-rl-evaluation",
+      "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
+      "changed": false,
+      "before_sha256": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "sha256": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "reason": "CSV误删0反例、策略版本、训练/交付指标及预算对照清晰"
+    },
+    {
+      "id": "llm-frontier-2026",
+      "source": "content/posts/llm-frontier-2026/index.html",
+      "changed": true,
+      "before_sha256": "3dedb4400a0e6c5185fbaaaec3880550ea7d462eb058b8fd842c1005a3a5a837",
+      "sha256": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
+      "reason": "精简旧MiniMax混合性能概括并转主讲证据；跨主题可检索，动态追踪与基础教材分工保持"
+    },
+    {
+      "id": "agentic-rl-guide",
+      "source": "content/posts/agentic-rl-guide/index.html",
+      "changed": false,
+      "before_sha256": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "sha256": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "reason": "按五个研究问题比较方法，保留局部信用例；基础推导不回填到速览"
+    },
+    {
+      "id": "dlm-survey",
+      "source": "content/series/dlm-survey/index.html",
+      "changed": false,
+      "before_sha256": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
+      "sha256": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
+      "reason": "概览→目标→离散/块→连续→ELBO/RL→Scaling/解码；先修与商业分支按需展开"
+    },
+    {
+      "id": "transformer-decoder-flow",
+      "source": "content/posts/transformer-decoder-flow/index.html",
+      "changed": false,
+      "before_sha256": "f192e13d7fbd5e44c360fc65f56b593660d28493af91223b23020f8b6391a6da",
+      "sha256": "f192e13d7fbd5e44c360fc65f56b593660d28493af91223b23020f8b6391a6da",
+      "reason": "公式、代码对象与缓存等价性对应；作为实现参考，不复制为第二架构长章"
+    },
+    {
+      "id": "rl-interview-guide",
+      "source": "content/posts/rl-interview-guide/index.html",
+      "changed": false,
+      "before_sha256": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "sha256": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "reason": "短答、参数、诊断与追问卡；详细推导及修订六图在主讲，历史原稿入口保持"
+    },
+    {
+      "id": "agent-harness-guide",
+      "source": "content/posts/agent-harness-guide/index.html",
+      "changed": false,
+      "before_sha256": "110bca77e52aa4d8b577cc2d1d41ca5750faa7e42c1458501e6372f2a2e032d8",
+      "sha256": "110bca77e52aa4d8b577cc2d1d41ca5750faa7e42c1458501e6372f2a2e032d8",
+      "reason": "执行→状态→上下文→记忆→恢复链路完整；Codex原稿和六模板保持"
+    },
+    {
+      "id": "distributed-training-guide",
+      "source": "content/posts/distributed-training-guide/index.html",
+      "changed": false,
+      "before_sha256": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "sha256": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "reason": "DeepSpeed/FSDP/Megatron接口与诊断定位；状态推导归训练主讲"
+    },
+    {
+      "id": "llm-interview-bank",
+      "source": "content/posts/llm-interview-bank/index.html",
+      "changed": true,
+      "before_sha256": "e83ed5ac55f045a6480c4ab2b4aff085f23c61de6cec496c480c95fc2c6e3aae",
+      "sha256": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "reason": "补Scaling ladder/μP/WSD短答与边界并链接推导；增相关次主题，避免只在架构分类找到综合题库"
+    },
+    {
+      "id": "vlm-knowledge-interview",
+      "source": "content/posts/vlm-knowledge-interview/index.html",
+      "changed": false,
+      "before_sha256": "3df1a2d7a87603bd103db1942acc9a0a4f2397020ef6d96a1229b375649494e9",
+      "sha256": "3df1a2d7a87603bd103db1942acc9a0a4f2397020ef6d96a1229b375649494e9",
+      "reason": "CLIP/SigLIP→connector→mask→视觉预算→评测；未闭合历史型号断言仍不作结论"
+    },
+    {
+      "id": "rl-interview-guide-legacy",
+      "source": "content/archive/rl-interview-guide/index.html",
+      "changed": false,
+      "before_sha256": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "sha256": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "reason": "历史原稿明确归档，只验入口和渲染；旧算法口径不冒充当前教材结论"
+    },
+    {
+      "id": "dlm-ddpm",
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "changed": false,
+      "before_sha256": "b84f9ac911a60908a61d92bb6e79b24e3064d4220890bfe2dbd64b70a014c11d",
+      "sha256": "b84f9ac911a60908a61d92bb6e79b24e3064d4220890bfe2dbd64b70a014c11d",
+      "reason": "ELBO裂项、高斯后验与噪声重加权推导完整；先修不挡住主线"
+    },
+    {
+      "id": "dlm-flow-sde",
+      "source": "content/series/dlm-survey/s00b_flow_sde.html",
+      "changed": false,
+      "before_sha256": "240c1de5b47904431eab449ded0623db28fe4abe0a2868a22b03b5a11ce9afc9",
+      "sha256": "240c1de5b47904431eab449ded0623db28fe4abe0a2868a22b03b5a11ce9afc9",
+      "reason": "条件到边际场、概率守恒、SDE/ODE按假设推进；保留端点与OT边界"
+    },
+    {
+      "id": "dlm-overview",
+      "source": "content/series/dlm-survey/s01_overview.html",
+      "changed": false,
+      "before_sha256": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "sha256": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "reason": "四token例先解释生成状态，再介绍路线；适合作为DLM入口"
+    },
+    {
+      "id": "dlm-discrete",
+      "source": "content/series/dlm-survey/s02_discrete.html",
+      "changed": false,
+      "before_sha256": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "sha256": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "reason": "Bayes→吸收核→KL到CE→LLaDA；1/t权重算例明确"
+    },
+    {
+      "id": "dlm-block",
+      "source": "content/series/dlm-survey/s03_block.html",
+      "changed": false,
+      "before_sha256": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "sha256": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "reason": "块间/块内循环、训练可见性和缓存充分条件分开；没有把mask名字当实现证明"
+    },
+    {
+      "id": "dlm-continuous",
+      "source": "content/series/dlm-survey/s04_continuous.html",
+      "changed": false,
+      "before_sha256": "f811e607779ce036d79e925c45a4ddd21873c75b965493c5ba57181b24b23a54",
+      "sha256": "f811e607779ce036d79e925c45a4ddd21873c75b965493c5ba57181b24b23a54",
+      "reason": "连续接口、路径方向、MSE/CE反例与三层误差；不恢复无来源统一倍数"
+    },
+    {
+      "id": "dlm-paradigms",
+      "source": "content/series/dlm-survey/s05_paradigms.html",
+      "changed": false,
+      "before_sha256": "3c25b261f4f9bcd942af2dc45c8118e464acc853b654fcc648c89e0d73fe7834",
+      "sha256": "3c25b261f4f9bcd942af2dc45c8118e464acc853b654fcc648c89e0d73fe7834",
+      "reason": "预测坐标换算、时间权重、score与离散质量流；符号与对象齐全"
+    },
+    {
+      "id": "dlm-scaling",
+      "source": "content/series/dlm-survey/s06_scaling.html",
+      "changed": false,
+      "before_sha256": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "sha256": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "reason": "数据受限U/D/E与crossover为本节重点；保留短幂律推导，完整实验阶梯由训练主讲承担"
+    },
+    {
+      "id": "dlm-speculative",
+      "source": "content/series/dlm-survey/s07_speculative.html",
+      "changed": false,
+      "before_sha256": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "sha256": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "reason": "AR drafter与DLM自身提速分开；尾和期望、周期时间和联合分布边界完整"
+    },
+    {
+      "id": "dlm-elbo-rl",
+      "source": "content/series/dlm-survey/s08_elbo_rl.html",
+      "changed": false,
+      "before_sha256": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "sha256": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "reason": "边际/路径/下界分开，SPG符号与GDSD倾斜例清楚；不把ELBO差写成精确ratio"
+    },
+    {
+      "id": "dlm-commercial",
+      "source": "content/series/dlm-survey/s09_commercial.html",
+      "changed": false,
+      "before_sha256": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "sha256": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "reason": "只解释产品证据与burst时延算例；定价与开放状态不冒充当日实测"
+    },
+    {
+      "id": "dlm-comparison",
+      "source": "content/series/dlm-survey/s10_comparison.html",
+      "changed": false,
+      "before_sha256": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "sha256": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "reason": "机制表、统一合同与六道复述题收束主线；避免堆历史无共同分母表"
+    },
+    {
+      "id": "dlm-loop-transformer",
+      "source": "content/series/dlm-survey/s11_loop_transformer.html",
+      "changed": false,
+      "before_sha256": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "sha256": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "reason": "hidden循环与噪声去除区分，参数复用不等于免费计算；理论条件明确"
+    },
+    {
+      "id": "dlm-vae",
+      "source": "content/series/dlm-survey/s12_vae.html",
+      "changed": false,
+      "before_sha256": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "sha256": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "reason": "重参数化、高斯KL、VQ梯度及codec职责齐全；未闭合名称保持研究线索"
+    },
+    {
+      "id": "harbor-framework-guide",
+      "source": "content/posts/harbor-framework-guide/index.html",
+      "changed": false,
+      "before_sha256": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "sha256": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "reason": "版本、执行、隔离、重评分、适配与任务研究分层；不刷新全部动态榜单或声称运行任务"
+    }
+  ]
+}

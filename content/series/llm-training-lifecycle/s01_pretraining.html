@@ -56,6 +56,15 @@
 # 训练输入来自 text；record_id、split 与 provenance 用于审计。
 # 同一内容产生的 QA / paraphrase 应继承 source_group 与 split。</code></pre>
 <p class="note">这是示意 schema，不是公开团队的数据文件格式。正式训练应另外记录数据分片 checksum、生成器配置与访问权限。</p>
+<h3 id="mixture-budget">数据混合：配比、重复次数与有效监督分别记账</h3>
+<p>先按来源冻结留出集，再比较候选配比。混合并非“高质量桶越多越好”：小桶被反复读取可能过拟合，代码比例提高也可能挤压多语言覆盖。建议先在固定小模型、token预算和学习率调度上比较，再把候选带入规模阶梯；这是实验设计建议。</p>
+<p class="math-notation">设桶 \(j\) 有 \(U_j\) 个可用唯一token，总预算为 \(D\) 个输入token，按token口径分配比例 \(p_j\)，且 \(\sum_jp_j=1\)。\(D_j\) 是该桶的计划读取量，\(r_j\) 是平均重复倍数；\(f_j\) 是读入token中参与直接loss的比例，\(\tilde p_j\) 是全局目标token平均下的目标数量占比。</p>
+<div class="reading-math" role="math">\[
+D_j=p_jD,\qquad r_j=\frac{p_jD}{U_j},\qquad
+\tilde p_j=\frac{p_jf_j}{\sum_kp_kf_k}.
+\]</div>
+<p><strong>算例：</strong>代码桶 \(U=10\mathrm B\)、总预算 \(D=100\mathrm B\)、代码占比20%，对应读取20B、平均重复2次。若其直接目标比例为0.5，其他80%输入全部算loss，则代码只占 \(0.2\times0.5/(0.2\times0.5+0.8)=11.1\%\) 的目标数。B表示十亿token；这里没有假定每个目标梯度大小相同。</p>
+<p>按样本采样时还要乘平均长度；按桶分别求平均再加权时，上面的 \(\tilde p_j\) 也不再是目标系数。预训练常有 \(f_j\approx1\)，角色mask在Midtraining/SFT更关键。终评同时保留每桶loss、重复量、下游分项与训练总成本，避免平均loss掩盖小桶退化。</p>
 </section>
 <section id="objective">
 <h2>Causal LM：每个 token 的条件预测</h2>
@@ -117,6 +126,84 @@ C_{\rm train}\approx6NT.
 </tbody>
 </table>
 <p>DeepSeek-V4 公开 32T+ 训练量及长上下文阶段，官方模型卡也给出同一大规模链路；Nemotron 3 Ultra 报告 20T 预训练。它们展示工业投入规模，无法由总 token 独立解释最终质量。<a href="index.html#ref-10">[10]</a> <a href="index.html#ref-26">[26]</a> <a href="index.html#ref-11">[11]</a></p>
+</section>
+<section id="scaling-law">
+<h2 id="scaling-derivation">Scaling Law：固定算力，怎样分配模型与数据</h2>
+<p><strong>先分清三个问题：</strong>Scaling Law 拟合规模与损失的经验关系；compute-optimal allocation 在预算内选参数量和训练量；scaling ladder 则用逐级实验检验能否外推。预训练 loss 的规律不能直接当作 Agent 成功率规律。</p>
+<p>基础来源：<a href="https://arxiv.org/abs/2001.08361v1">Kaplan 等，2020</a>；<a href="https://arxiv.org/html/2203.15556v1">Chinchilla，2022，§2–3</a>。前者强调幂律与提前停止，后者联合改变模型和训练时长，得到更均衡的规模分配。下列优化推导采用 Chinchilla 的可分离损失模型；它是经验拟合假设下的数学结论。</p>
+<p class="math-notation">\(N\) 为稠密模型参数数，\(D\) 为处理的训练 token 数（即上一节的 \(T\)，不保证独立）；\(L\) 为同一验证分布、同一 tokenizer 下的平均交叉熵，单位 nats/token。\(E\) 为拟合的损失下限，\(A,B&gt;0\) 为尺度系数，\(\alpha,\beta&gt;0\) 为拟合指数；系数取决于 \(N,D\) 的计数单位。\(C\) 为训练 FLOPs，\(\kappa\) 为每参数每 token 的计算系数，稠密主矩阵粗估取6。</p>
+<div class="reading-math" role="math">\[
+L(N,D)=E+A N^{-\alpha}+B D^{-\beta},\qquad C\approx\kappa ND.
+\]</div>
+<h3>代入预算，再令边际收益平衡</h3>
+<p>固定 \(C\) 后，增大 \(N\) 就必须减小 \(D=C/(\kappa N)\)。因此只需最小化一个变量；对 \(\log N\) 求导可以直接比较两项收益。</p>
+<div class="reading-math" role="math">\[
+\begin{aligned}
+L(N\mid C)&amp;=E+A N^{-\alpha}+B(\kappa N/C)^\beta,\\
+\frac{\partial L}{\partial\log N}
+&amp;=-\alpha A N^{-\alpha}\\
+&amp;\quad+\beta B(\kappa N/C)^\beta=0,\\
+N_*&amp;=\left(\frac{\alpha A}{\beta B}\right)^{1/(\alpha+\beta)}
+       (C/\kappa)^{\beta/(\alpha+\beta)},\\
+D_*&amp;=\frac{C}{\kappa N_*}\ \propto\ C^{\alpha/(\alpha+\beta)}.
+\end{aligned}
+\]</div>
+<p>\(*\) 表示这个拟合模型内的最优点；\(\propto\) 表示忽略固定比例系数。对 \(\log N\) 的二阶导为 \(\alpha^2 A N^{-\alpha}+\beta^2 B(\kappa N/C)^\beta&gt;0\)，故驻点为最小值。<strong>最优条件是加权边际收益相等，不要求两个损失项本身相等。</strong></p>
+<p>当 \(\alpha\approx\beta\) 时，参数和 token 都近似按 \(\sqrt C\) 增长。这解释了“预算扩大，两者一起扩”的方向，但没有推出普适的 \(D=20N\)：比例还依赖系数、数据分布和训练配置。</p>
+<table><thead><tr><th>原论文口径</th><th>可以记住的结论</th><th>适用边界</th></tr></thead><tbody>
+<tr><td>Kaplan；Chinchilla §2 对前序结果的比较</td><td>算力增加10倍，前序配方约把模型扩大5.5倍、数据扩大1.8倍</td><td>实验规模、训练时长与学习率衰减的处理不同，不能只比较年份</td></tr>
+<tr><td>Chinchilla §3 的三种估计方法</td><td>模型与训练 token 近似等比例扩展；用曲线包络、IsoFLOP 和参数拟合交叉判断</td><td>各方法指数不完全一致；不是任何规模都精确平方根</td></tr>
+<tr><td>Chinchilla Table 1</td><td>70B 参数、1.4T token，即该模型约20 token/参数</td><td>这是一个训练配置及其研究背景，不是所有模型的统一配方</td></tr>
+</tbody></table>
+<h3 id="scaling-ladder">Scaling ladder：从小实验走到大规模训练</h3>
+<p><strong>实验阶梯是验证流程，不是把同一个模型一路续训变大。</strong>不同规模通常需要独立训练；固定模型改变训练时长，与同时改变深宽/专家数，是不同实验轴。下面为工程组织建议，未执行本地训练。</p>
+<figure class="mechanism-map"><figcaption>每一级都带着预测与验收条件进入下一级</figcaption><ol class="mechanism-chain">
+<li><b>正确性与稳定性</b><small>小模型：mask、loss、梯度、恢复与数值范围</small></li>
+<li><b>配方搜索</b><small>学习率、batch、优化器、数据混合分别做对照</small></li>
+<li><b>规模与时长网格</b><small>多个 N × 多个 D；匹配各自衰减终点，拟合等算力前沿</small></li>
+<li><b>留出规模验证</b><small>预测更大一级；核对误差、能力、吞吐与集群稳定性</small></li>
+</ol><p class="mechanism-return">↶ 留出规模明显偏离预测时，先检查数据、调度和结构是否变了，再修正拟合；不能只保留吻合的点。</p></figure>
+<table><thead><tr><th>实验层</th><th>固定什么 / 改变什么</th><th>产物与放大条件</th></tr></thead><tbody>
+<tr><td>算法与超参数阶梯</td><td>固定模型、数据、目标和预算；改变 optimizer / LR / batch 等单轴，必要时检查交互</td><td>稳定区间、loss 曲线、梯度与更新尺度；保留调参总成本</td></tr>
+<tr><td>规模阶梯</td><td>明确宽度、深度与头数的构造规则；各规模改变 D，分别完成相应 schedule</td><td>每点保存 N、D、FLOPs、最终验证 loss；更大一级留作外推检验</td></tr>
+<tr><td>系统阶梯</td><td>同一逻辑目标，扩大卡数或改变 TP/PP/CP/EP、精度与分片</td><td>有效 tokens/s、通信、峰值显存、恢复一致性；吞吐提升不等于 loss 改善</td></tr>
+<tr><td>下游确认</td><td>固定评测与后训练协议，比同等 loss 的候选及其成本</td><td>领域/长文本/代码等分项；预训练平均 loss 不能代替任务验收</td></tr>
+</tbody></table>
+<p><strong>IsoFLOP 怎么做：</strong>给定一个 \(C\)，对多个 \(N\) 分配 \(D=C/(\kappa N)\)，比较训练终点损失，得到该预算下的最佳规模；在多个预算重复。长 cosine 训练的早期 checkpoint 尚未完成衰减，不能直接充当短预算训练的最优终点。Chinchilla §2 特别讨论了这一偏差。</p>
+<p><strong>超参数如何迁移：</strong>学习率、初始化与参数化要一起定义；不能把小模型的最优 LR 原样套给任意大模型。跨规模先验证更新与激活尺度；更换 AdamW/Muon、dense/MoE 或数据混合后，应重新检查拟合。详细更新规则见<a href="s05_training_methods_systems.html#adamw-hyperparameters">优化器参数</a>，batch 的统计分母见<a href="s05_training_methods_systems.html#batch-accounting">全局 batch 账本</a>。</p>
+<h3 id="mup-transfer">μP / μTransfer：迁移的是参数化后的配方</h3>
+<p><a href="https://arxiv.org/abs/2203.03466v2">Tensor Programs V</a>研究在最大更新参数化（μP）下，把小模型调出的超参数迁移到更宽模型。初始化时独立随机项的和常按 \(\sqrt n\) 增长，训练后相关更新的贡献却可能按 \(n\) 增长；只让初始化方差稳定，并不保证更新后的激活稳定。</p>
+<p>因此要同时定义<strong>哪些轴随宽度变化、初始化尺度、输出层缩放和逐参数组学习率</strong>。例如官方 <a href="https://github.com/microsoft/mup#how-mup-works-under-the-hood">mup实现</a>对具有两个宽度轴的隐藏矩阵，在Adam下使用下式；它不是所有参数共享的缩放规则。</p>
+<div class="reading-math" role="math">\[
+m=\frac{\mathrm{fan\_in}}{\mathrm{base\_fan\_in}},
+\qquad \eta_{\rm hidden}=\frac{\eta_{\rm base}}m.
+\]</div>
+<p class="math-notation">\(m\) 是相对基准模型的输入宽度倍数，\(\eta_{\rm base}\) 是搜索的基础学习率，\(\eta_{\rm hidden}\) 是这一类隐藏矩阵实际使用的学习率；embedding、readout及固定维度参数须按完整参数化另行处理。宽度扩大4倍、基础LR为0.004时，该隐藏矩阵使用0.001；这只是规则算例，不是推荐训练值。</p>
+<ol><li><strong>定义base / delta shapes：</strong>标明随规模变化的轴；官方基础用法保持深度不变。</li><li><strong>做coordinate check：</strong>在几个宽度、几个更新步上检查每层激活坐标的平均绝对值，排查随宽度爆炸或消失。</li><li><strong>小宽度搜索，留出大宽度确认：</strong>保持分组LR相对比例，检查最终loss；激活检查通过不等于迁移收益已经验证。</li></ol>
+<p><strong>边界：</strong>μP不是Muon，前者是参数化方法，后者是更新规则。换深度、专家结构、优化器、tokenizer或数据分布，不能直接沿用这一个式子。完整Tensor Programs证明在原论文；本节提供关键机制、实现接口与可检查条件。</p>
+<h3 id="wsd-schedule">WSD：让训练时长的实验复用稳定阶段</h3>
+<p><a href="https://arxiv.org/abs/2404.06395">MiniCPM</a>与<a href="https://openbmb.vercel.app/minicpm">官方模型沙盒报告 §2.4</a>采用Warmup–Stable–Decay：先升温，维持稳定学习率，再从指定checkpoint分支退火。较长预算的主干继续稳定训练，较短预算的分支完成自己的衰减，避免把未退火中途点与已退火终点混比。</p>
+<p class="math-notation">\(t\) 为optimizer更新步，\(W\) 为warmup结束步，\(S\) 为稳定阶段结束步，\(H\) 为衰减持续步数；\(0&lt;W&lt;S\)，\(\eta_{\max}\) 为峰值LR，\(f:[0,1]\to[0,1]\) 为选定的非增衰减函数且 \(f(0)=1\)。记无单位的学习率倍率为 \(u(t)\)，实际学习率为 \(\eta(t)=\eta_{\max}u(t)\)：</p>
+<div class="reading-math" role="math">\[
+u(t)=
+\begin{cases}
+t/W,&amp;0\le t&lt;W,\\
+1,&amp;W\le t&lt;S,\\
+f((t-S)/H),&amp;S\le t\le S+H
+\end{cases}
+\]</div>
+<figure class="mechanism-map"><figcaption>同一稳定训练主干，分出不同预算的退火终点</figcaption><ol class="mechanism-chain">
+<li><b>Warmup → Stable</b><small>固定数据、参数化与优化器；保存完整训练状态</small></li>
+<li><b>在 S₁ 保存分支点</b><small>副本退火 H₁步 → 短预算终点</small></li>
+<li><b>主干继续到 S₂</b><small>从未退火状态继续；另分支退火 H₂步</small></li>
+<li><b>比较完成退火的终点</b><small>分别记录主干与分支成本，再拟合规模 / 时长关系</small></li>
+</ol></figure>
+<p>MiniCPM沙盒在0.036B模型的相关实验中比较约2.5%和10%的退火长度，前者不足、后者达到或超过其cosine对照；<strong>10%是该实验观察，不是通用最优值</strong>。分支退火也消耗训练量，共享主干只能减少重复实验，不能把所有分支当作零成本checkpoint。若退火时同时引入高质量数据，须分别消融schedule和数据变化。</p>
+<details><summary>三个面试追问：token翻倍、20倍规则、部署成本</summary>
+<ul><li><strong>固定 N，D 翻倍，loss 减半吗？</strong>不。只有拟合的数据项变成 \(2^{-\beta}BD^{-\beta}\)，模型项和下限不变。</li>
+<li><strong>为什么工业小模型可能训练远超20N？</strong>需要考虑长期推理负载、内存与延迟约束；训练算力最优不等于生命周期成本最优。</li>
+<li><strong>MoE、长上下文、RL 能直接套这个式子吗？</strong>不能。总参数、激活参数、attention、路由和 rollout 成本需分开建账，再验证适用的经验关系。</li></ul>
+</details>
 </section>
 <section id="curriculum">
 <h2>长上下文与 late pretraining：课程和数据一起变</h2>

@@ -25,6 +25,19 @@
 <div class="callout"><strong>最关键的术语修正：</strong>CPT 描述“从已有权重继续训练”，Midtraining 描述训练链路中的准备阶段，SFT 描述监督训练方法。Midtraining 内可以对 trace 使用 assistant-only loss；看到相同 loss，不能推断它们是同一阶段。RFT 则必须写全名：拒绝采样微调与强化微调是两种方法。</div>
 </section>
 <ul><li><strong>原理：</strong>目标与 mask→数据混合权重→轨迹准入→反馈/验收→LoRA、AdamW、Muon与分片。</li><li><strong>复习：</strong>先能区分输入 token、目标 token、更新次数与实际成本；再用各节算例和诊断表检查理解。</li><li><strong>先修：</strong>因果 LM、矩阵乘法与反向传播；必要推导在本页展开。</li></ul>
+<section id="training-map">
+<h2>训练知识地图：阶段是一条轴，技术是另一条轴</h2>
+<p><strong>顺着阶段读，理解数据和目标怎样变；横向读技术，理解同一目标怎样高效实现。</strong>优化器、并行、精度和恢复贯穿多个阶段。先确定下面第一列，再选择对应的目标、预算和执行方法，能避免把“用了LoRA”误当成一个新的训练阶段。</p>
+<div class="reading-table"><table><thead><tr><th>阶段</th><th>数据 → 目标</th><th>预算与超参数</th><th>执行与验收重点</th></tr></thead><tbody>
+<tr><td><a href="s01_pretraining.html#purpose">Pretrain</a></td><td>通用语料 / 代码 → LM、FIM</td><td>参数与token分配；LR、batch、数据混合、schedule</td><td>大规模并行、吞吐、恢复；同分布loss与分项能力</td></tr>
+<tr><td><a href="s02_midtraining.html">Midtrain / CPT</a></td><td>领域、长上下文、仓库与轨迹 → 混合目标</td><td>新增token、回放、mask、长度课程</td><td>状态兼容；固定下游SFT检验增量与遗忘</td></tr>
+<tr><td><a href="../llm-posttraining/s01_supervision_preference.html">SFT / 偏好</a></td><td>示范、验证轨迹、偏好对 → CE / DPO等</td><td>有效目标token、epochs、全参或adapter</td><td>模板、角色与loss mask；独立执行、过拟合与回归</td></tr>
+<tr><td><a href="../llm-posttraining/s02_rl_algorithms.html">RLVR / Agentic RL</a></td><td>策略rollout + 环境反馈 → 策略目标</td><td>group、采样温度、长度、clip、更新次数</td><td>生成 / 训练 / verifier协作；成功率、策略滞后与成本</td></tr>
+<tr><td><a href="../llm-posttraining/s03_opd_self_distillation.html">OPD / 自蒸馏</a></td><td>学生状态 + 教师概率 / 反馈 → 蒸馏目标</td><td>教师覆盖、信号接口、系数与混合比例</td><td>同状态概率对齐；无教师终评、保留能力与教师成本</td></tr>
+</tbody></table></div>
+<p><strong>横向技术的主讲位置：</strong><a href="s01_pretraining.html#scaling-law">Scaling Law → 实验阶梯 → μP / WSD</a>；<a href="s05_training_methods_systems.html#adamw-derivation">SGD → AdamW → Muon及成本对照</a>；<a href="s05_training_methods_systems.html#training-stack">训练框架、并行、状态分片与性能瓶颈</a>。具体RL与OPD推导在后训练主题集中展开，本页保留阶段交接和适用判断。</p>
+<p class="note">学习组织参考 <a href="https://cs336.stanford.edu/">Stanford CS336（2026）</a> 的基础→系统→Scaling→数据→对齐顺序，以及 <a href="https://huggingfacetb-smol-training-playbook.hf.space/">Smol Training Playbook</a> 的小实验、配方选择和训练诊断流程；下文的论断与数字仍引用对应原论文。</p>
+</section>
 <!-- READING:COURSE -->
 <section id="artifacts">
 <h2>沿途究竟交付什么</h2>

@@ -155,6 +155,11 @@ def load_content(root):
             if (not isinstance(values, list) or not all(isinstance(v, str) for v in values)
                     or len(values) != len(set(values))):
                 errors.append(f"{label}.{field}: expected unique strings")
+        secondary = entry.get("secondary_topics", [])
+        if (not isinstance(secondary, list) or not all(isinstance(v, str) for v in secondary)
+                or len(secondary) != len(set(secondary))
+                or any(v not in topics or v == entry.get("topic") for v in secondary)):
+            errors.append(f"{label}.secondary_topics: expected distinct valid secondary topics")
         if "featured" in entry and not isinstance(entry["featured"], bool):
             errors.append(f"{label}.featured: expected boolean")
         entry.setdefault("reading_role", "historical" if entry.get("status") == "archived"

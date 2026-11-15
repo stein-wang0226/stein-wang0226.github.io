@@ -266,6 +266,7 @@ F_{k}&amp;\approx k(4a^2b+2a^3).
 <tr><td><a href="https://arxiv.org/abs/2412.05270v4">APOLLO v4</a></td><td>8×A100-80GB设置支持4×更大batch，报告3×吞吐；7B低显存案例还结合权重量化</td><td>这是扩batch后的系统收益；不能说相同batch下更新kernel快3×，或仅换optimizer就让任意7B训练少于12GB。</td></tr>
 <tr><td><a href="https://arxiv.org/abs/2403.03507v2">GaLore v2</a></td><td>LLaMA 1B/7B、C4最多19.7B tokens与RoBERTa/GLUE：状态内存最多−65.5%；8-bit组合状态最多−82.5%、总内存−63.3%</td><td>“最多”对应特定配置，投影与量化效果要分开；低秩状态不证明同等质量总FLOPs必然降低。</td></tr>
 <tr><td><a href="https://arxiv.org/html/2611.16905v1#S1.F1">FOAM v1，Figure 1</a></td><td>GPT-2 760M、29.55K steps：固定步数墙钟相对AdamW，Muon1.15×、FOAM1.17×、SOAP2.31×；FOAM达到AdamW终点loss为10.53h，AdamW为10.55h</td><td>研究候选；它直接展示“更低终点loss”与“每步更快”不同。SOAP在此设置更慢，与原论文大batch收益不矛盾；目标和实现改变结果。</td></tr>
+<tr><td><a href="https://arxiv.org/html/2608.01284v2#S4">Training nGPT v2，§4 / Table 1</a></td><td>30B总参数、3.23B激活的Mamba–Transformer–MoE，1T token：验证loss由1.2113降至1.1754；曲线达到相当loss约需一半token，报告约6%运行开销</td><td>改变归一化参数化、GatedAdam、schedule等整套配方；不是只换optimizer的2×收益，6%也不是测得的FLOPs增幅。1B–7B门控消融的收益明显小于整套差距。</td></tr>
 </tbody></table></div>
 <p>对照结论是<strong>先确定瓶颈再选候选</strong>：成熟更新/恢复基线从AdamW开始；目标是等质量训练量可考虑Muon或SOAP；状态/通信吃紧可考虑Adam-mini、8-bit或Adafactor；极限单卡全参训练研究GaLore/APOLLO，同时评估basis刷新与精度。以上为本文工程判断，不是统一benchmark排名。</p>
 
@@ -296,6 +297,50 @@ F_{k}&amp;\approx k(4a^2b+2a^3).
 <tr><td>恢复后行为不同</td><td>遗漏 optimizer、RNG、sampler、rollout版本</td><td>checkpoint同时保存数据游标、随机态、scheduler、adapter与环境镜像</td></tr>
 </tbody></table></div>
 <p>恢复范围分两层：模型训练状态能够续训；长程工具环境是否能够恢复要另外定义。只恢复权重并重新采样，不等于恢复一条中断中的科学分析轨迹。对应<a href="../agent-harness-guide.html">Harness状态管理</a>。</p>
+</section>
+<section id="training-stack">
+<h2 id="training-frameworks">训练架构与框架：先分清四层职责</h2>
+<p>“训练架构”在这里指计算与状态怎样组织。Transformer/MoE 是<strong>模型结构</strong>，AdamW/Muon 是<strong>更新规则</strong>，TP/FSDP 是<strong>执行与状态布局</strong>，verl 等负责<strong>后训练流程编排</strong>；它们可以组合，不能当作同一层的替代方案。</p>
+<figure class="mechanism-map"><figcaption>一条训练链路中的配置归属</figcaption><ol class="mechanism-chain">
+<li><b>数据与目标</b><small>sampler → packing / mask → LM、SFT 或 RL loss</small></li>
+<li><b>模型与更新</b><small>结构 → forward/backward → 裁剪 → optimizer / scheduler</small></li>
+<li><b>分布式执行</b><small>TP / PP / CP / EP；DP、状态分片与通信重叠</small></li>
+<li><b>编排与恢复</b><small>checkpoint、评测；RL 另有 rollout、reward 和权重同步</small></li>
+</ol><p class="mechanism-return">↶ 恢复同时对齐参数、优化器、数据游标与版本；RL 还要追踪生成轨迹时的策略。</p></figure>
+<table><thead><tr><th>框架 / 组件层</th><th>适合回答的问题</th><th>接入时核对</th></tr></thead><tbody>
+<tr><td><a href="https://docs.nvidia.com/megatron-core/developer-guide/latest/index.html">Megatron Core</a> / Megatron-LM</td><td>大模型模块与模型并行如何执行？训练入口怎样调用核心组件？</td><td>模型支持、进程组、optimizer 分片、checkpoint 转换；Core 与完整训练应用分开看</td></tr>
+<tr><td><a href="https://docs.pytorch.org/docs/stable/fsdp.html">PyTorch FSDP</a> / <a href="https://www.deepspeed.ai/docs/config-json/">DeepSpeed ZeRO</a></td><td>参数、梯度、优化器状态怎样分片，何时聚合？</td><td>具体 API / 版本、分片阶段、CPU offload、通信与峰值；不由“分片”二字推断等价</td></tr>
+<tr><td><a href="https://github.com/pytorch/torchtitan/blob/631d544b1f6794ecfeca734a7bba861e03ddd5e3/README.md">TorchTitan</a></td><td>怎样在PyTorch原生训练应用中组合FSDP2、TP/PP/CP/EP、数据与checkpoint？</td><td>固定源码631d544；当前文档覆盖pretrain、SFT和TitanRL。模型列表、debug配置与已验证训练配方分开看，不能只按2025论文标题理解为仅预训练</td></tr>
+<tr><td><a href="https://github.com/AI-Hypercomputer/maxtext/blob/538dcdd3e60865f80cf5c567f266a2abc1c7b6e4/README.md">MaxText</a>及JAX生态</td><td>怎样用JAX/XLA在TPU或GPU上组织预训练与后训练？</td><td>固定源码538dcdd；模型用Flax、更新用Optax、状态用Orbax、数据用Grain，后训练结合Tunix；核对版本及具体模型/算法组合，不把“支持JAX”当成完整训练应用</td></tr>
+<tr><td>TRL、verl、slime、AReaL、NeMo RL 等</td><td>采样、奖励、log-prob、更新、权重同步怎样连起来？</td><td>训练后端和推理后端分别登记；同一名字不能保证同一算法或异步协议</td></tr>
+<tr><td>vLLM / SGLang 等生成后端</td><td>rollout 怎样调度、缓存、采样与返回结果？</td><td>概率、tokenizer、精度、路由与权重版本是否对齐训练侧</td></tr>
+</tbody></table>
+<p>下面继续推导并行和状态容量；<a href="../distributed-training-guide.html">分布式实现参考</a>用于查代码，<a href="../llm-posttraining/s05_frameworks_async.html#framework-map">后训练框架地图</a>提供各项目及固定版本配置。官方动态文档访问于2026-11-15；本表说明职责，没有宣称上述所有组合均已运行验证。</p>
+<h3 id="framework-selection">把“选框架”变成可验收的小实验</h3>
+<p>已有PyTorch模型需要分片，可先核对FSDP2或DeepSpeed集成；需要成熟的大模型并行组件，可查看Megatron Core及训练应用；希望研究PyTorch原生多维并行，可查看TorchTitan；JAX/TPU或相应GPU栈可查看MaxText。在线RL还需要生成、环境和权重同步层。<strong>这些是职责与生态入口，不是互斥排名。</strong></p>
+<table><thead><tr><th>从小到大的验证顺序</th><th>比较对象</th><th>通过条件</th></tr></thead><tbody>
+<tr><td>单卡小模型</td><td>同一数据、mask、loss与更新</td><td>前向/梯度、参数分组及一步更新符合预期</td></tr>
+<tr><td>少量卡分片</td><td>同一逻辑batch与checkpoint</td><td>目标和梯度归一化一致；误差符合精度容许范围</td></tr>
+<tr><td>实际长度与规模</td><td>kernel、通信、重计算、数据加载</td><td>峰值显存、有效吞吐与恢复行为达标</td></tr>
+<tr><td>在线训练闭环</td><td>生成策略、概率、奖励和环境状态</td><td>无效/过期轨迹可追踪；独立终评和总成本完整</td></tr>
+</tbody></table>
+<h3 id="roofline">性能瓶颈：FLOPs、HBM流量与通信不能混算</h3>
+<p>按<a href="https://jax-ml.github.io/scaling-book/roofline/">The Scaling Book · Rooflines</a>，先为一次算子或一个可重叠区间估算三种时间，再用profile判断实际瓶颈。理论峰值给出乐观下界，无法直接预测整步墙钟。</p>
+<p class="math-notation">\(F\) 为运算量（FLOPs），\(P\) 为对应dtype和计算单元的吞吐上限（FLOPs/s）；\(Q\) 为HBM实际读写字节，\(B_{\rm HBM}\) 为其带宽（bytes/s）；\(V_{\rm net}\) 为网络传输量，\(B_{\rm net}\) 为对应通信带宽。\(I\) 是算术强度，单位FLOPs/byte。</p>
+<div class="reading-math" role="math">\[
+t_{\rm lower}=\max\left(\frac FP,\frac Q{B_{\rm HBM}},
+                              \frac{V_{\rm net}}{B_{\rm net}}\right),
+\qquad I=\frac FQ,\qquad P_{\rm attainable}\le\min(P,B_{\rm HBM}I).
+\]</div>
+<p>完整重叠时接近最大项；依赖、启动开销、低占用率与额外I/O会使真实时间更长。不能把同时发生的三段测量简单相加，也不能把这一下界当承诺性能。</p>
+<p>以BF16线性层 \(X_{M\times K}W_{K\times N}\) 为例，假设每份输入/权重只从HBM读一次、输出写一次，主乘法约 \(2MKN\) FLOPs，流量约 \(2(MK+KN+MN)\) bytes；当 \(M\ll K,N\) 时，\(I\approx M\)。这里 \(M\) 是<strong>一次局部矩阵乘法处理的token数</strong>，\(K,N\) 是输入/输出通道数，不是全局训练batch或参数总量。</p>
+<p><strong>教学例：</strong>若某硬件与dtype下 \(P/B_{\rm HBM}=200\) FLOPs/byte，则 \(M=16\) 的理想权重读取受限，\(M=512\) 可能越过该界。真实tile重复读取、KV与网络还需另算。增加梯度累积次数不会自动扩大每次局部GEMM的 \(M\)，所以“global batch变大”不保证kernel更快。</p>
+<table><thead><tr><th>观测到的瓶颈</th><th>优先检查的方向</th><th>一起报告的代价</th></tr></thead><tbody>
+<tr><td>参数 / 状态容量不足</td><td>FSDP / ZeRO、TP / PP、低精度状态或offload</td><td>聚合峰值、通信、精度与恢复兼容</td></tr>
+<tr><td>激活容量不足</td><td>重计算、CP、microbatch、序列组织</td><td>额外计算、通信与有效目标token</td></tr>
+<tr><td>HBM带宽不足</td><td>融合、量化、局部batch与缓存复用</td><td>重读流量、误差、延迟与workspace</td></tr>
+<tr><td>跨卡通信 / pipeline空泡</td><td>拓扑、并行粒度、microbatch数与重叠</td><td>负载均衡、调度开销、完整step时间</td></tr>
+</tbody></table>
 </section>
 <section id="parallel">
 <h2>并行维度先分清逻辑对象</h2>

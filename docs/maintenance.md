@@ -116,7 +116,14 @@ GitHub Profile 的可维护介绍稿和字段建议位于 `docs/github-profile/`
 
 ## 目录、主讲位置与引用
 
-博客 `/blog/#learning-paths` 是完整主线入口，`#research-focus` 展示四条研究路径。
+博客 `/blog/#knowledge-map` 按模型架构、训练、推理、数据直达主讲；
+`#learning-paths` 保留连续学习主线，`#research-focus` 提供按需研究与复习。
+四类直达目录复用 `site.json` 的 `learning_paths`，以 `directory: true` 标记，
+节点的可选 `label` 用于简明显示，`entry / anchor` 仍由统一校验器验证。
+主题分类以架构、训练、推理、数据为主；Agent系统、多模态与扩散作为扩展专题。
+训练阶段与训练方法是不同维度，均归训练；数据跨阶段的关系用章节登记中的
+`secondary_topics` 表达。筛选同时匹配长章及其小节，避免跨主题研究内容消失。
+旧 `rl-post-training / training-inference` 查询映射到 `training`，推理使用独立分类。
 首页推荐和最近更新分开；非核心参考、追踪、课程子站和历史材料在目录后部。
 修改路线只编辑 `site.json`，修改章序同时核对 `catalog.json` 的标题、先修和分组。
 `reading.py` 统一生成系列目录与前后章；不在正文复制现行全站目录。

@@ -11,13 +11,17 @@
       "topic_key": "topic",
       "type_key": "type",
       "legacy_key": "category",
+      "topic_aliases": {
+        "rl-post-training": "training",
+        "training-inference": "training"
+      },
       "legacy_values": {
         "前沿追踪": {"type": "frontier-tracker"},
-        "强化学习": {"topic": "rl-post-training"},
+        "强化学习": {"topic": "training"},
         "扩散模型": {"topic": "diffusion"},
         "模型架构": {"topic": "llm-foundations"},
         "Agent": {"topic": "agent"},
-        "训练工程": {"topic": "training-inference"},
+        "训练工程": {"topic": "training"},
         "面试复习": {"type": "interview-bank"},
         "多模态": {"topic": "multimodal"},
         "外部笔记": {"origin": "external"}

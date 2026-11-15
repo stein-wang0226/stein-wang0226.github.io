@@ -74,6 +74,27 @@ evict_unlocked_nodes_under_pressure()
 <section id="mixed"><h2>长短请求、工具暂停与混合状态</h2>
 <p>工具Agent在生成与CPU工具执行之间停顿。如果持续保留全部KV，会占用大量容量；如果回收，下一步需要prefix命中或重算。要测工具等待时间、cache保留时长、重算token和复用收益，不能只报运行中batch size。</p>
 <p>Hybrid模型可能同时维护全局KV、SWA、卷积状态和递归矩阵。全局KV可按token页管理；递归状态通常是累计状态，不能默认在任意前缀处裁剪或复制。当前vLLM KV manager包含Mamba共享prefix checkpoint相关分支，说明恢复对象需专门支持，不证明所有混合架构兼容。基础机制见<a href="../llm-architecture/s05_hybrid_architectures.html">状态递推</a>。</p>
+<h3 id="kimi-sparse-traffic">Kimi K3.1案例：读得更少，不一定存得更少</h3>
+<p><a href="https://vllm-project.github.io/2026/11/04/kimi-k31-pro.html">vLLM官方工程报告（2026-11-04）</a>介绍93层Kimi K3.1的69个KDA层与24个带DSA索引的MLA层。这里关注后者：decode先扫描历史索引，再读取选中的2048个潜在KV。稀疏选择改变访问集合，分页则决定这些状态存在哪里。</p>
+<figure class="mechanism-map"><figcaption>一次稀疏MLA读取：索引仍扫描全历史，主注意力读取候选</figcaption><ol class="mechanism-chain">
+<li><b>当前query</b><small>使用本层查询和历史索引</small></li>
+<li><b>扫描 L个索引</b><small>按FP8格式约132L bytes</small></li>
+<li><b>选 top-2048</b><small>收集对应的MLA潜在KV</small></li>
+<li><b>执行注意力</b><small>约576×min(L,2048) bytes的潜在KV读取</small></li>
+</ol></figure>
+<p class="math-notation">\(L\) 是该请求历史token数；以下为报告FP8格式下<strong>每个MLA层、单decode query</strong>的状态读取估算，排除query、元数据、重读和通信。132与576的单位均为bytes/token。</p>
+<div class="reading-math" role="math">\[
+Q_{\rm sparse}\approx132L+576\min(L,2048),\qquad
+Q_{\rm dense}\approx576L.
+\]</div>
+<p>长历史下，两者之比趋近 \(132/576\approx22.9\%\)。但存储同时包含索引和潜在KV：24层每历史token约 \(24(132+576)=16{,}992\) bytes，高于无索引的 \(24\times576=13{,}824\) bytes；KDA累计状态另计。<strong>这是流量与容量的不同账本，不能把读取下降说成缓存同比缩小。</strong></p>
+<table><caption>同报告：8×GB300、TP8、真实权重单请求的prefill；改变head分片为token分片</caption><thead><tr><th>输入长度</th><th>原TTFT（秒）</th><th>token分片后（秒）</th></tr></thead><tbody>
+<tr><td>27K</td><td>0.82</td><td>0.71</td></tr>
+<tr><td>108K</td><td>3.72</td><td>2.89</td></tr>
+<tr><td>340K</td><td>15.89</td><td>9.42</td></tr>
+</tbody></table>
+<p>这项prefill优化通过all-to-all重排工作布局，解决少量KV头和因果负载分配；不是上述稀疏读取公式直接算出的加速。数字仅对应作者实现、硬件和单请求负载，不能外推为多请求goodput或所有混合模型的倍率。</p>
+<h3>回到运行时：按等待与状态类型定位问题</h3>
 <table><thead><tr><th>症状</th><th>先查</th><th>调整后验证</th></tr></thead><tbody>
 <tr><td>新请求TTFT高，已有decode稳定</td><td>准入排队、prefill配额与长输入</td><td>chunk或配额调整后TTFT和decode尾延迟一起看</td></tr>
 <tr><td>工具暂停导致KV长期占满</td><td>等待时长、保留策略、prefix命中和重算</td><td>回收后的容量增量与恢复重算成本</td></tr>

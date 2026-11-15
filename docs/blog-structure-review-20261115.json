@@ -1,0 +1,24 @@
+{
+  "scope": "知识目录、Scaling Law 与训练系统分层；本轮独立补充，不复用此前浏览器验收结论",
+  "base_commit": "7392b5c51784230aef0d8809bebabef02219cb15",
+  "pages": [
+    {
+      "id": "llm-training-pretraining",
+      "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
+      "before_sha256": "8d5599dee30009dc374912339774209f3a05e20d856698f8e9cf7186062f95c5",
+      "reason": "补充Chinchilla损失模型、固定算力最优分配推导、符号与适用边界；增加scaling ladder流程、IsoFLOP与调度偏差解释及面试追问。依据Kaplan与Chinchilla原论文；实验流程为建议，未作训练复现"
+    },
+    {
+      "id": "training-methods-systems",
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "before_sha256": "c9e06b46e369f94ffb3339845d0dc9646170c9904cdf684378f4873a3b733b04",
+      "reason": "新增训练系统四层职责图，区分模型结构、优化器、并行状态布局与后训练编排；复用原有实现和固定版本框架地图"
+    },
+    {
+      "id": "research-architecture-landscape",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "before_sha256": "1a6b1884f7fe8258aa0b847e4f59bb0ada7819a61381fb2fd0f8149d38a7243e",
+      "reason": "补充经典骨架到高效模块、混合状态与前沿家族的学习链路图，以及全站四类目录入口；保留固定版本规格和全部来源，本轮未重新核验所有型号"
+    }
+  ]
+}

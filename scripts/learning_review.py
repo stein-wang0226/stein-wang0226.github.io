@@ -9,6 +9,8 @@ REVIEW = ROOT / "docs/blog-learning-page-review-20261115.md"
 LEDGER = ROOT / "docs/organization-changes-20261115.json"
 RECEIPTS = ROOT / "docs/content-changes.json"
 SYMBOL_REVIEW = ROOT / "docs/blog-symbol-review-20261115.json"
+STRUCTURE_REVIEW = ROOT / "docs/blog-structure-review-20261115.json"
+CURRICULUM_REVIEW = ROOT / "docs/blog-curriculum-review-20261115.json"
 
 
 def derive():
@@ -45,6 +47,25 @@ def derive():
                 raise ValueError(f"symbol review source mismatch: {page['id']}")
             if page["changed"]:
                 reasons[page["id"]] += f" 符号补充审阅：{page['reason']}。"
+    if STRUCTURE_REVIEW.exists():
+        sources = {e["id"]: e["source"] for e in entries}
+        seen = set()
+        for page in json.loads(STRUCTURE_REVIEW.read_text())["pages"]:
+            identifier = page["id"]
+            if identifier in seen or sources.get(identifier) != page["source"]:
+                raise ValueError(f"structure review duplicate or source mismatch: {identifier}")
+            seen.add(identifier)
+            reasons[identifier] += f" 结构补充审阅：{page['reason']}。"
+    if CURRICULUM_REVIEW.exists():
+        sources = {e["id"]: e["source"] for e in entries}
+        pages = json.loads(CURRICULUM_REVIEW.read_text())["pages"]
+        if len(pages) != len(entries) or {p["id"] for p in pages} != set(sources):
+            raise ValueError("curriculum review must cover each local source exactly once")
+        for page in pages:
+            if sources[page["id"]] != page["source"]:
+                raise ValueError(f"curriculum review source mismatch: {page['id']}")
+            if page["changed"]:
+                reasons[page["id"]] += f" 分类与课程复查：{page['reason']}。"
     return entries, reasons
 
 
@@ -79,7 +100,7 @@ def main():
                 errors.append(f"{identifier}: stale receipt SHA/reason")
     shared = "assets/site/catalog.js"
     shared_sha = hashlib.sha256((ROOT / shared).read_bytes()).hexdigest()
-    shared_reason = "Approved learning rework: catalog search and reading destinations follow unique assembled topics; preserve immutable migration baseline."
+    shared_reason = "Approved learning rework and taxonomy integration: preserve assembled reading destinations, filter by chapter and secondary topics, and map legacy training categories; preserve immutable migration baseline."
     if args.command == "refresh":
         receipt = by_source[shared]
         receipt.setdefault("prior_reason", receipt.get("reason", ""))

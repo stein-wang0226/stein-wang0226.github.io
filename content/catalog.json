@@ -30,7 +30,7 @@
       "summary": "讲解真实工具闭环、assistant-only SFT 和策略梯度；用重复调用轨迹展开 step return、normalization、reward 与评测，复盘四臂实验、主模型及复现缺口。",
       "source": "content/posts/my-work-protagent/index.md",
       "url": "/my-work/protagent/",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "system-guide",
       "tags": ["Personal Project", "My Work", "ProtAgent", "Tool Use", "Step-Level RL", "REINFORCE"],
       "origin": "local",
@@ -51,7 +51,7 @@
       "summary": "从公开研究到 Harbor 任务包，解释 fixture、oracle、verifier 和盲测；展开完整路径接受域、输入到判分的例子、pass@k、生命周期及 refinement 的证据边界。",
       "source": "content/posts/my-work-harbor/index.md",
       "url": "/my-work/harbor-task-sync/",
-      "topic": "agent",
+      "topic": "data",
       "type": "system-guide",
       "tags": ["Personal Project", "My Work", "Harbor", "Task Synthesis", "Verifier", "Refinement"],
       "origin": "local",
@@ -115,7 +115,7 @@
       "summary": "展开策略梯度、步骤回报、reward 附着与评分分母；四臂三种子、论文配方、工具控制和独立 PFUA 协议集中呈现。",
       "source": "content/posts/my-work-protagent/full-report.html",
       "url": "/my-work/protagent/full-report.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "system-guide",
       "tags": ["My Work", "ProtAgent", "完整报告"],
       "origin": "local",
@@ -137,7 +137,7 @@
       "summary": "展开来源冻结、公开合同、完整路径校准与盲测；保留任务案例和历史统计，区分生产交付、难度迭代与成本口径。",
       "source": "content/posts/my-work-harbor/full-report.html",
       "url": "/my-work/harbor-task-sync/full-report.html",
-      "topic": "agent",
+      "topic": "data",
       "type": "system-guide",
       "tags": ["My Work", "Harbor", "完整报告"],
       "origin": "local",
@@ -325,7 +325,7 @@
       "summary": "一页讲清调度与缓存、并行与量化、投机分布校正、容量和成功成本；含分页、量化、70B账本及延迟算例。",
       "source": "content/series/llm-serving/index.html",
       "url": "/llm-serving/",
-      "topic": "training-inference",
+      "topic": "inference",
       "type": "series-tutorial",
       "tags": [
         "Serving",
@@ -360,7 +360,7 @@
       "summary": "continuous batching、分页与prefix、chunked prefill和抢占，核对vLLM v0.32.0/SGLang v0.5.23源码，分析工具暂停与混合状态。",
       "source": "content/series/llm-serving/s01_runtime_scheduling.html",
       "url": "/llm-serving/s01_runtime_scheduling.html",
-      "topic": "training-inference",
+      "topic": "inference",
       "type": "system-guide",
       "tags": [
         "Prefill",
@@ -394,7 +394,7 @@
       "summary": "TP/DP/EP与PD分离、KV传输、weight/activation/KV量化和FP4，解释贪心与采样验证边界，设计Dense/MoE/Hybrid服务对照。",
       "source": "content/series/llm-serving/s02_parallel_quantization.html",
       "url": "/llm-serving/s02_parallel_quantization.html",
-      "topic": "training-inference",
+      "topic": "inference",
       "type": "system-guide",
       "tags": [
         "TP",
@@ -431,7 +431,7 @@
       "summary": "权重/KV/状态/临时区显存、70B TP4容量推导、TTFT/ITL/goodput、长程rollout与全部尝试成本；下载CSV/JSON/协议，实测字段为空。",
       "source": "content/series/llm-serving/s03_capacity_cost.html",
       "url": "/llm-serving/s03_capacity_cost.html",
-      "topic": "training-inference",
+      "topic": "inference",
       "type": "practical-guide",
       "tags": [
         "Capacity",
@@ -468,7 +468,7 @@
       "summary": "一页学习SFT与偏好、策略梯度到PPO/GRPO、OPD、Agent信用分配、异步系统和任务案例；保留论文配方、诊断与面试追问。",
       "source": "content/series/llm-posttraining/index.html",
       "url": "/llm-posttraining/",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "series-tutorial",
       "tags": [
         "Post-training",
@@ -506,7 +506,8 @@
       "summary": "角色mask、恢复轨迹、拒绝采样与偏好优化；附SimPO偏好/数学权衡及ReTerm任务成绩，注明评测版本。",
       "source": "content/series/llm-posttraining/s01_supervision_preference.html",
       "url": "/llm-posttraining/s01_supervision_preference.html",
-      "topic": "rl-post-training",
+      "topic": "training",
+      "secondary_topics": ["data"],
       "type": "principles",
       "tags": [
         "SFT",
@@ -539,7 +540,7 @@
       "summary": "推导PPO/GAE、RLOO/GRPO及变体；汇总DeepSeekMath/R1、DAPO、Dr.GRPO、GSPO、CISPO数值recipe、参数联动、诊断与面试追问。",
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
       "url": "/llm-posttraining/s02_rl_algorithms.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "principles",
       "tags": [
         "PPO",
@@ -574,7 +575,7 @@
       "summary": "Reverse-KL与采样PG、MOPD2及自蒸馏；教师接口、OPD参数和遗忘，附MOPD五维成绩与教师成本缺口。",
       "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
       "url": "/llm-posttraining/s03_opd_self_distillation.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "principles",
       "tags": [
         "OPD",
@@ -610,7 +611,7 @@
       "summary": "Harbor verifier、过程奖励与长程信用；覆盖GiGPO/RLDS等，附RLDS原表Lift、秒/步与实验条件差异。",
       "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
       "url": "/llm-posttraining/s04_environment_reward_credit.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "system-guide",
       "tags": [
         "Environment",
@@ -651,7 +652,7 @@
       "summary": "十二类框架、RLVR/OPD配置与异步偏差；partial KV和slime源码，附AReaL同规模质量/墙钟时间对照。",
       "source": "content/series/llm-posttraining/s05_frameworks_async.html",
       "url": "/llm-posttraining/s05_frameworks_async.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "system-guide",
       "tags": [
         "Async",
@@ -692,7 +693,7 @@
       "summary": "三类任务输入→动作→反馈→目标→独立终评；提供轨迹契约、单轴消融、失败诊断和成功成本，明确尚未训练。",
       "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
       "url": "/llm-posttraining/s06_task_cases_experiments.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "practical-guide",
       "tags": [
         "Case Study",
@@ -726,7 +727,7 @@
       "summary": "LoRA/QLoRA、SGD到AdamW推导与数值例子，比较Muon、SOAP与省状态优化器的质量、耗时、显存和FLOPs；连接Megatron进程组及128/1024 H100规划，区分论文结果与实测。",
       "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
       "url": "/llm-training-lifecycle/s05_training_methods_systems.html",
-      "topic": "training-inference",
+      "topic": "training",
       "type": "system-guide",
       "tags": [
         "PEFT",
@@ -770,7 +771,7 @@
       "summary": "围绕GSE52778/airway设计RNA-seq任务族，核对count层、配对与来源冲突，公开完整schema、研究切分、独立verifier和轨迹；尚未构建真实benchmark。",
       "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
       "url": "/agent-data-benchmarks/s03_scientific_task_family.html",
-      "topic": "agent",
+      "topic": "data",
       "type": "practical-guide",
       "tags": [
         "Science",
@@ -814,7 +815,8 @@
       "summary": "按监督、结果、信用、采样、教师与预算分开做成对对照；展开研究组切分、配对差异和不确定性，集群规划按需查阅；无实测结果。",
       "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
       "url": "/agent-data-benchmarks/s04_cluster_training_evaluation.html",
-      "topic": "rl-post-training",
+      "topic": "training",
+      "secondary_topics": ["data"],
       "type": "system-guide",
       "tags": [
         "Agentic RL",
@@ -1101,7 +1103,7 @@
       "summary": "沿任务生产、配对科学合同、训练对照与独立评测连续学习；展开容差、NB/offset/contrast、BH、研究组切分和pass@k估计。",
       "source": "content/series/agent-data-benchmarks/index.html",
       "url": "/agent-data-benchmarks/",
-      "topic": "agent",
+      "topic": "data",
       "type": "series-tutorial",
       "tags": [
         "Agent",
@@ -1139,7 +1141,7 @@
       "summary": "十二条数据路线、Harbor合同、科学容差与训练准入；附EvoSyn反馈/设计消融，区分候选预算和有效任务成本。",
       "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
       "url": "/agent-data-benchmarks/s01_task_synthesis.html",
-      "topic": "agent",
+      "topic": "data",
       "type": "practical-guide",
       "tags": [
         "Data Synthesis",
@@ -1180,7 +1182,7 @@
       "summary": "固定TB 4.1等版本，深入DeepSWE/SWE-bench与经典基准；附SkillsBench v1技能/费用对照，解释分母、污染和预算。",
       "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
       "url": "/agent-data-benchmarks/s02_benchmark_map.html",
-      "topic": "agent",
+      "topic": "data",
       "type": "quick-reference",
       "tags": [
         "Benchmark",
@@ -1279,7 +1281,7 @@
       "summary": "区分轨迹、任务、环境与 benchmark，比较 SWE-smith、NexForge、EvoSyn、ProgramGym；独立 verifier、adapter parity、版本与成本审计。",
       "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
       "url": "/llm-research-map-2026/s01_agent_data_bench.html",
-      "topic": "agent",
+      "topic": "data",
       "type": "practical-guide",
       "tags": [
         "Agent Data",
@@ -1315,7 +1317,7 @@
       "summary": "四维 loss 比较 GRPO / GSPO / CISPO；GiGPO、RLDS、KnowGPO、两种 SAPO 和 SAMPO；异质数据、policy lag 与 rollout–trainer 对齐。",
       "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
       "url": "/llm-research-map-2026/s02_agentic_rl.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "system-guide",
       "tags": [
         "Agentic RL",
@@ -1387,7 +1389,7 @@
       "summary": "扩散drafter、半自回归与OPD；验证精确性和调度，附AdaFlash并发加速、DSpark接受长度及资源成本边界。",
       "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
       "url": "/llm-research-map-2026/s04_inference_diffusion.html",
-      "topic": "diffusion",
+      "topic": "inference",
       "type": "system-guide",
       "tags": [
         "DFlash",
@@ -1513,7 +1515,8 @@
       "summary": "推导残差深度选择、双随机流混合、latent专家和Muon矩阵更新；拆解参数分组、分布式梯度、FP4对象与Huginn循环深度，并连接Agentic RL和等算力消融。",
       "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
       "url": "/llm-research-map-2026/s07_architecture_training.html",
-      "topic": "training-inference",
+      "topic": "training",
+      "secondary_topics": ["llm-foundations"],
       "type": "principles",
       "tags": [
         "AttnRes",
@@ -1554,10 +1557,10 @@
       "reading_mode": "longform",
       "kind": "series",
       "title": "LLM 训练全链路：从预训练到 Agent RL",
-      "summary": "一页串联数据、训练目标、阶段交接与独立验收，展开LoRA、AdamW、Muon、状态分片及恢复；以算例、诊断表和面试追问连接原理与工程。",
+      "summary": "一页串联训练阶段、Scaling Law与实验阶梯、LoRA、AdamW/Muon、训练框架、状态分片及恢复；以推导、链路图和面试追问连接原理与工程。",
       "source": "content/series/llm-training-lifecycle/index.html",
       "url": "/llm-training-lifecycle/",
-      "topic": "training-inference",
+      "topic": "training",
       "type": "series-tutorial",
       "tags": [
         "Pretraining",
@@ -1591,22 +1594,25 @@
       "id": "llm-training-pretraining",
       "kind": "chapter",
       "title": "01 · 预训练：数据、训练目标与基础模型",
-      "summary": "数据治理、因果 LM、FIM、训练预算与上下文课程，以及交接给 CPT 和后训练的产物。",
+      "summary": "数据治理、因果 LM、FIM、6NT算力账本、Scaling Law最优分配推导与scaling ladder实验阶梯，以及上下文课程和阶段交接。",
       "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
       "url": "/llm-training-lifecycle/s01_pretraining.html",
-      "topic": "training-inference",
+      "topic": "training",
+      "secondary_topics": ["data"],
       "type": "principles",
       "tags": [
         "Pretraining",
         "Causal LM",
         "FIM",
         "Compute",
+        "Scaling Law",
+        "Scaling Ladder",
         "Checkpoint"
       ],
       "origin": "local",
       "status": "published",
       "review_status": "reviewed",
-      "updated": "2026-11-14",
+      "updated": "2026-11-15",
       "updated_source": null,
       "series": "llm-training-lifecycle",
       "order": 1,
@@ -1624,7 +1630,8 @@
       "summary": "复核 Nemotron 的混合 CPT、trace mask 与固定 SFT 对照，比较 Qwen、GLM、Olmo、MidTool、PRISM、SPT 和函数级 FIM。",
       "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
       "url": "/llm-training-lifecycle/s02_midtraining.html",
-      "topic": "training-inference",
+      "topic": "training",
+      "secondary_topics": ["data"],
       "type": "system-guide",
       "tags": [
         "CPT",
@@ -1658,7 +1665,7 @@
       "summary": "验证示范与角色 mask、拒绝采样和强化微调的区别、DPO，以及专家到统一模型的 OPD。",
       "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
       "url": "/llm-training-lifecycle/s03_sft_rft.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "principles",
       "tags": [
         "SFT",
@@ -1692,7 +1699,7 @@
       "summary": "PPO、GRPO、DAPO、Dr. GRPO 与 GSPO；rollout、verifier、policy lag、预算对照和可追溯交付。",
       "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
       "url": "/llm-training-lifecycle/s04_rl_evaluation.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "practical-guide",
       "tags": [
         "RL",
@@ -1731,6 +1738,7 @@
       "source": "content/posts/llm-frontier-2026/index.html",
       "url": "/llm-frontier-2026.html",
       "topic": "llm-foundations",
+      "secondary_topics": ["training", "inference", "data", "agent", "multimodal", "diffusion"],
       "type": "frontier-tracker",
       "tags": [
         "LLM",
@@ -1767,7 +1775,7 @@
       "summary": "以RLVR为起点，系统梳理Agentic RL、长程信用、OPD、自蒸馏、训练框架、工程实践与面试问答。",
       "source": "content/posts/agentic-rl-guide/index.html",
       "url": "/agentic-rl-guide.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "system-guide",
       "tags": [
         "PPO",
@@ -1864,7 +1872,7 @@
       "summary": "RL算法、符号、论文配方与面试追问的复习入口；完整推导与六幅修订教学图在后训练主讲，历史原稿保留查证。",
       "source": "content/posts/rl-interview-guide/index.html",
       "url": "/rl-interview-guide.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "quick-reference",
       "tags": [
         "Policy Gradient",
@@ -1946,7 +1954,7 @@
     "summary": "DeepSpeed、FSDP1/2与Megatron的API、配置、LoRA示例及恢复排查；按状态与通信瓶颈选型，明确版本和未实测边界。",
       "source": "content/posts/distributed-training-guide/index.html",
       "url": "/distributed-training-guide.html",
-      "topic": "training-inference",
+      "topic": "training",
       "type": "practical-guide",
       "tags": [
         "DeepSpeed",
@@ -1982,6 +1990,7 @@
       "source": "content/posts/llm-interview-bank/index.html",
       "url": "/llm-interview-bank.html",
       "topic": "llm-foundations",
+      "secondary_topics": ["training", "inference", "data", "agent", "multimodal"],
       "type": "interview-bank",
       "tags": [
         "LLM",
@@ -2101,7 +2110,7 @@
       "summary": "原学术站RL手册的完整原件，保留6张SVG图、公式推导与问答；可与现行详细手册对照。",
       "source": "content/archive/rl-interview-guide/index.html",
       "url": "/legacy/rl-interview-guide.html",
-      "topic": "rl-post-training",
+      "topic": "training",
       "type": "quick-reference",
       "tags": [
         "RL",
@@ -2534,7 +2543,7 @@
       "summary": "截至2026-11-14，梳理Terminal-Bench 4.1、Science、Challenges与HarborIndex的评测目标、版本和最新进展；补充Harbor近期更新、代表案例及可核查引用。",
       "source": "content/posts/harbor-framework-guide/index.html",
       "url": "/harbor-framework-guide/",
-      "topic": "agent",
+      "topic": "data",
       "type": "system-guide",
       "tags": [
         "Harbor",

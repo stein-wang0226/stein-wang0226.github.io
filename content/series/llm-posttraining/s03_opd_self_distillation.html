@@ -129,6 +129,24 @@ loss = -adv_distill * student_logp
 </table>
 <p>教师路由可以按任务域选择专家。若概率混合 \(q=\sum_jw_jq_j\)，使用的是 \(\log(\sum_jw_jq_j)\)；若加权多个reverse-KL，使用的是 \(\sum_jw_j\log q_j\)，对应归一化几何混合而非算术混合。两者目标不同，须写清权重与路由条件。</p>
 <p>“大教师更好”也依赖教师对学生访问状态的适应性。教师自己的 task score 很高，仍可能在学生损坏的 shell 状态上给低质量反馈；此时更强信号可能更稳定地推错。终评要看统一学生的目标能力、原有能力和同成本表现。</p>
+<h3 id="historical-teachers">Agentic-OPD：从历史checkpoint找互补教师</h3>
+<p><a href="https://arxiv.org/html/2611.12799v1#S3">Agentic-OPD（2026-11-09），§3–4</a>保存一次RL训练的多个checkpoint，把验证集最好的checkpoint作为学生起点，再整合其他时刻仍保留的能力。Highest Coverage Next（HCN）选择能覆盖学生当前失败题的教师；教师平均分最高，不保证最适合补当前缺口。</p>
+<div class="reading-math" role="math">\[
+i_t^*=\arg\max_i\sum_{x\in Q_i\setminus P_t}w_t(x).
+\]</div>
+<p class="math-notation">\(t\) 是教师调度轮，\(Q_i\) 是候选教师 \(i\) 在路由验证集上解出的题，\(P_t\) 是当前学生解出的题，\(Q_i\setminus P_t\) 是教师会而学生不会的集合；\(w_t(x)\ge0\) 是题目优先级，\(i_t^*\) 是本轮激活的教师。学生周期性重评，权重按已解决及尚未覆盖情况更新。</p>
+<figure class="mechanism-map"><figcaption>先选择互补能力，再过滤可信监督</figcaption><ol class="mechanism-chain">
+<li><b>历史教师池 → HCN</b><small>在路由验证集比较学生缺口；选择下一位教师</small></li>
+<li><b>训练题分别采样 G次</b><small>仅保留教师经验成功率高于学生的题</small></li>
+<li><b>保留学生失败轨迹</b><small>教师rollout用于估计优势；蒸馏仍用学生历史</small></li>
+<li><b>学生生成位置做KL</b><small>学生top-k支持集上双方重归一化；排除工具观察</small></li>
+</ol></figure>
+<p>Locality-Aware Distillation（LAD）的回合级过滤保留think/action/answer中的学生生成位置；它没有证明每个保留token都具有因果贡献。双方在学生top-k集合重归一化后求reverse-KL，目标不同于完整词表KL。筛选丢弃大量轨迹时，需要额外采样填充更新batch。</p>
+<table><thead><tr><th>原报告设置</th><th>GRPO → Agentic-OPD</th><th>怎样读结果</th></tr></thead><tbody>
+<tr><td>DeepSearch，七项测试集平均EM，Qwen2.5-3B / 7B</td><td>35.6→38.4；38.8→46.2（%）</td><td>均为8×A800 80GB节点上的作者实验；未证明与GRPO等总训练成本</td></tr>
+<tr><td>Qwen3-4B，2,000题路由验证集的恢复分析</td><td>新增解出60题，同时失去45题；净增15题</td><td>这组checkpoint在同一验证集挑选，仅用于分析；不能替代独立测试分数</td></tr>
+</tbody></table>
+<p><strong>代价与边界：</strong>复用已训练的教师省去另训教师，但存储、路由评测、教师前向和整合更新仍有成本。验证集参与选教师后属于调参环节，最终测试必须独立；历史互补也不保证没有遗忘。</p>
 </section>
 <section id="mopd2">
 <h2>MOPD2：增加前缀覆盖，不把所有探索留给自主长 rollout</h2>
@@ -166,6 +184,17 @@ loss = -adv_distill * student_logp
 <p>此式仅示意组合结构；真实mask、聚合、schedule与UKL估计按原文核对。</p>
 <p>教学失败反馈 <code>expected ValueError for empty input, got ZeroDivisionError</code> 使同模型在教师分支更清楚错误边界；学生分支只看到普通任务历史。成功 sibling 若使用相同题的正确解法，也属于训练额外信息。必须由独立 verifier 确认解法，且留出题答案不能流入训练。</p>
 <p>文本反馈若含模糊偏好、错 traceback、已泄漏的隐藏测试或错误解法，自蒸馏可能放大误导。teacher no-grad 只防直接梯度环路；若每步立刻使用更新学生当教师，还要评估目标漂移、参考约束和 EMA。</p>
+<h3 id="ecos-feedback">ECOS：用环境结果校准技能教师的监督</h3>
+<p><a href="https://arxiv.org/html/2611.12232v1#S3">ECOS（2026-11-09）</a>让共享参数的Actor与Analyzer分别行动和总结反思/技能。更新前模型快照获得技能上下文后充当教师；学生仍看普通历史。环境反馈调节教师对命令的监督强度，并训练技能生成分支；调节不翻转教师偏好符号，也不构成因果信用分配证明。</p>
+<p><strong>关键区别是监督范围：</strong>直接教师损失只施加在可执行命令，环境RL仍训练完整回复。教师推理依赖额外技能，强迫学生逐字模仿可能引入学生条件中没有的信息。推理时Actor不检索技能，也不在线生成反思。</p>
+<details><summary>看具体消融、泛化和成本，避免只记提升数字</summary>
+<table><thead><tr><th>原文设置</th><th>结果</th><th>限制</th></tr></thead><tbody>
+<tr><td>Table 3，Qwen2.5-3B，WebShop</td><td>命令监督的完整方法Success 75.00；扩为完整回复监督后52.34</td><td>同表消融；不与主表三评测seed均值75.5混写</td></tr>
+<tr><td>Table 2，134个ALFWorld unseen任务，六类宏平均</td><td>3B：GRPO 74.8→85.8；7B：78.9→86.6</td><td>三个评测seed，训练只固定一个seed；部分任务类别下降，不是所有类别改善</td></tr>
+<tr><td>§4.1，3B匹配batch profiling</td><td>在线方法比GRPO约多30%耗时</td><td>还需计入外部标注及初始化SFT；不是全流程成本上限</td></tr>
+</tbody></table>
+<p>该研究是“初始化SFT + 在线Actor/Analyzer学习”的完整方案；移除SFT或联合移除调节与反思损失的消融，不足以给所有组件分配独立收益。部署简化不等于训练监督免费。</p>
+</details>
 </section>
 <section id="guided-intervention">
 <h2>Guided-OPD 与 TISD：主动改变学生访问的轨迹</h2>
