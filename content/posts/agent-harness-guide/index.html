@@ -211,6 +211,7 @@ reward_weights:
 <p>保留原配置作为教学示例，8轮和权重不是通用建议。配置可降低新增同类任务的代码改动，但新工具能力仍需实现、注册与验证；任务定义和评分版本应跟随配置保存。</p></details>
 </section>
 <section id="lab"><h2>按需实验：检索记忆与训练角色分开比较</h2>
+<p class="math-notation">检索式的 \(q\) 是当前问题，\(m\) 是候选记忆，score 为排序分数；sem/lex/imp 三项分别从这对问题与记忆的语义、词项和重要性计算。该处 \(m\) 不表示训练 mask。</p>
 <details><summary>个体模拟实验：评分算例与 2×2 对照</summary>
 <p>构建角色记忆后，用 Base/SFT × 有/无外部 Memory 四组区分参数训练和检索增益；固定角色、问题、token 与 grader。记录背景使用、价值/人格一致性、虚构与通用指令回归。</p>
 <div class="reading-math">\[

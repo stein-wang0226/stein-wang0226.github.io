@@ -1,0 +1,1610 @@
+{
+  "review_date": "2026-11-15",
+  "base_commit": "7559d0fed0a402101a2d65b249774221c7d98409",
+  "scope": "74 local authoritative sources; symbol meanings, local assumptions, rendered formulas and reader interactions",
+  "status": "browser-validation-passed; publication-pending",
+  "count_notes": "TeX inventory counts include inline symbols and historical formulas. Frontier's five matches were currency errors, not mathematical formulas.",
+  "pages": [
+    {
+      "id": "my-work-holon",
+      "source": "content/posts/my-work-holon/index.md",
+      "url": "/my-work/holon/",
+      "reading_destination": "/my-work/holon/",
+      "before_sha256": "bab7f9aa7ee2a73c7dced8758f922c9aee26a4c7597c81311e318e2741860a7b",
+      "reviewed_sha256": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(p\\) 为蛋白序列，\\(t\\) 为文本，\\(p_\\theta(\\cdot)\\) 为参数 \\(\\theta\\) 定义的概率分布；字母 \\(p\\) 作序列变量与作概率函数时靠位置区分。这里 \\(t\\) 不是训练时间。",
+        "\\(H\\) 是 token hidden 表示；\\(I_{\\rm und/gen}\\) 为两类模态路由的行索引，\\(W\\) 为对应投影参数。单头 \\(Q,K\\) 为 \\(T\\times d_h\\)、\\(V\\) 为 \\(T\\times d_v\\)，\\(P\\) 为 \\(T\\times T\\) 注意力权重，\\(O\\) 为 \\(T\\times d_v\\) 输出；\\({}^\\top\\) 是转置，softmax 沿 key 位置归一。不同头型在计算前对齐共享关系。",
+        "监督式中 \\(S\\) 为有效目标位置集合，\\(|S|\\) 为位置数，\\(y_i,c_i\\) 为第 \\(i\\) 位目标/条件历史，\\(\\mathcal L_S\\) 为平均 NLL。预算式的 \\(C,M,D\\) 分别为总 FLOPs、每 token FLOPs 和训练 token 数，\\(M\\) 与 Attention mask 的 \\(M\\) 含义不同。",
+        "\\(c\\) 索引 checkpoint 配方，\\(m_{c,L0/L3}\\) 是该配方在两种条件阶梯上的 margin NLL；\\(\\Delta_c\\) 是阶梯差，DiD 是 PSC 与 PS8 两个差的差，单位仍为 NLL。这里 \\(m\\) 表示指标值，与训练的监督 mask 不同。"
+      ],
+      "previous_tex_inventory_count": 6,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "my-work-protagent",
+      "source": "content/posts/my-work-protagent/index.md",
+      "url": "/my-work/protagent/",
+      "reading_destination": "/my-work/protagent/",
+      "before_sha256": "ce0505364f03d02f9409453286ee62c4f4265c4f073dec7e107ca1539759ced2",
+      "reviewed_sha256": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(x,q\\) 为蛋白输入和问题，\\(a_t,o_t\\) 为第 \\(t\\) 步动作/环境观察，\\(h_t\\) 为动作前历史，\\(\\pi_\\theta\\) 为可训练策略。SFT 式中 \\(u\\) 索引输出 token，\\(y_u\\) 为示范，\\(c\\) 为任务条件，\\(S_{\\rm assistant}\\) 为监督位置集合；\\(\\mathbb E\\) 表示按所注明策略采样后平均。",
+        "\\(r_t\\) 为即时奖励，\\(G_t\\) 为未来回报，\\(H\\) 为动作步数，\\(\\gamma\\) 为折扣；\\(\\tau\\) 为完整轨迹，\\(p_\\theta(\\tau)\\) 为路径概率。actor 式的 \\(m_{t,u}\\) 为策略 token mask，\\(A_{t,u}\\) 为固定优势，\\(Z\\) 为所选聚合分母，\\(\\beta\\) 为 KL 系数，ref 为冻结参考策略；\\(\\nabla_\\theta\\) 对策略参数求梯度。"
+      ],
+      "previous_tex_inventory_count": 4,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "my-work-harbor",
+      "source": "content/posts/my-work-harbor/index.md",
+      "url": "/my-work/harbor-task-sync/",
+      "reading_destination": "/my-work/harbor-task-sync/",
+      "before_sha256": "9dba0522197e07b81199a8296e3f9b0a1f2cfe39a9040de06cff89bd6767053d",
+      "reviewed_sha256": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(y\\) 为完整结果向量，\\(a\\) 索引合法分析路径，\\(j\\) 索引结果字段；\\(y_j^{(a)}\\) 为该路径的参考字段，\\(d_j\\) 为其误差度量，\\(\\epsilon_j\\) 为同尺度容差。\\(\\prod\\) 在 \\(\\mathcal A_{\\rm box}\\) 中是区间的笛卡尔积，\\(\\bigcup\\) 是接受域并集，\\(\\forall j\\) 要求所有字段同时满足同一路径。",
+        "\\(n\\) 为同题尝试总数，\\(c\\) 为成功条数，\\(k\\) 为候选预算；\\(\\binom nk\\) 为不放回选择 \\(k\\) 条的组合数，帽号表示估计值。\\(\\Delta\\) 是相同终评协议下 parent 与 child 通过率之差；正值表示 child 通过率较低，缺陷导致的下降仍须另行排除。"
+      ],
+      "previous_tex_inventory_count": 2,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "my-work-dllm",
+      "source": "content/posts/my-work-dllm/index.md",
+      "url": "/my-work/trainable-dllm/",
+      "reading_destination": "/my-work/trainable-dllm/",
+      "before_sha256": "09ad7a2436005a28b3f186a54c0d447690184f1838b4abcff05624716486e825",
+      "reviewed_sha256": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(x\\) 是长度 \\(L\\) 的真实 token 序列，\\(\\theta\\) 为模型参数；\\(i\\) 索引位置，\\(x_{\\lt i}\\) 为前缀。扩散式的 \\(\\tau\\in(0,1]\\) 为 mask 比例/扰动时间，\\(x_\\tau\\) 为扰动态，\\(m\\) 为 mask token，\\(\\ell_i\\) 为该位置 NLL，\\(\\mathbf1\\{\\cdot\\}\\) 为指示函数；\\(\\mathbb E\\) 对数据、时间和随机 mask 取平均。块编号用括号上标 \\(x^{(k)}\\)，不是乘方。",
+        "\\(b\\) 是一个候选块，\\(|b|\\) 为块位置数，\\(U\\) 为未决块集合；\\(p_{i,v}\\) 是第 \\(i\\) 位对词表项 \\(v\\) 的预测概率。\\(H_b\\) 为平均熵，\\(b^*=\\arg\\min_{b\\in U}H_b\\) 返回熵最低的块，log 为自然对数；低熵只代表分布集中。",
+        "线性回归式中 \\(X_P\\in\\mathbb R^{P\\times d}\\)、\\(y_P\\in\\mathbb R^P\\) 为提示输入/输出，\\(X_R\\in\\mathbb R^{R\\times d}\\) 为待预测输入；\\(\\mu\\in\\mathbb R^d\\) 为权重后验均值，\\(\\sigma^2\\) 为观测噪声方差，\\(I\\) 为单位矩阵。\\({}^{-1}\\) 为矩阵逆，\\({}^\\top\\) 为转置，\\(\\widehat y_R\\) 为预测输出。"
+      ],
+      "previous_tex_inventory_count": 4,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "my-work-holon-full",
+      "source": "content/posts/my-work-holon/full-report.html",
+      "url": "/my-work/holon/full-report.html",
+      "reading_destination": "/my-work/holon/full-report.html",
+      "before_sha256": "270478cdf12de622d5b8f92fdc7114fbfa41456c45d07b0024396747803e0b16",
+      "reviewed_sha256": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；逐项复核50个原生MathML，修正GQA交互计算的矛盾表述",
+      "explanations": [
+        "单层符号：i/j 是 query/key 位置，hᵢ 是 d 维 token 行表示，mᵢ 是模态路由；WQ/WK/WV 是该模态的投影。单头 Qᵢ/Kⱼ 宽 dₕ，Vⱼ 为 value 向量；转置形成标量点积，softmax 沿允许的 key 位置归一。它不同于训练监督 mask。",
+        "本节 L 为层数，d 为 hidden 宽度，qwidth/kvwidth 为全部 query/KV 头的总投影宽度，dff 为单路 FFN 中间宽度，S_eff 为有效注意力长度；Nactive 为单 token 激活路径的线性层参数数，M 为训练 FLOPs/token。预算式不把两条 MoT 存储分支重复当成单 token 计算。",
+        "n_T/n_P 是文本/蛋白的有效目标 token 数，带横线的 ℓ 是各自平均 NLL；L_token 按全部 token 平均，L_modality 为两个模态均值的和。下标 T 在这里表示 text，不是时间；后一目标若再除以 2，才是等权平均，两者梯度尺度不同。",
+        "配比式的 wᵢ 为记录采样概率，rᵢ/sᵢ 为目标 token 份额，aᵢ 为有效率，μᵢ 为有效记录平均长度，eᵢ=aᵢμᵢ 为每次 fetch 的有效产出；Dᵢ/Fᵢ/Rᵢ 分别为 token 量、fetch 次数、记录行数，B 为总 token 预算。簇采样式的 c/j 改为簇编号，n_c 为簇成员数，C 为簇数，β 为重采样幂指数；TV 为两分布概率差绝对值之和的一半。",
+        "这里 ℓ 是记录长度，q(ℓ) 是记录级长度分布；ℓq(ℓ) 反映 token 级暴露的未归一权重。拒绝采样的 k 为长度桶，a(k) 为接受概率，M 为使所有接受概率不超过 1 的包络常数；它不是 scaling 节的每 token FLOPs。",
+        "本节 C 统一为总 FLOPs，M 为 FLOPs/token，D 为训练 token 数；opt 标出经验拟合的最优点，B_opt 为 token batch，η_opt 为学习率。幂律系数依赖这套单位和实验范围，不能改成 TFLOPs 后原样代入；η_actual/η_hp 为实际/拟合学习率，M/M_opt 为模型计算规模比，γ 为经验修正指数。这里 C、B、γ 与前面的簇数、token 预算、RL 折扣不同。",
+        "m/v 为一阶矩与梯度平方的二阶原点矩，ε 为稳定常数；U/V 在 polar 表达式中是动量矩阵的左右奇异向量。迭代 X 是规范化更新矩阵，A=XXᵀ 为 Gram 矩阵，B 为其多项式，箭头表示用新值覆盖 X；Frobenius 范数为所有矩阵元素平方和的平方根。",
+        "xₜ 为第 t 个目标 token，x<t 为它之前的前缀，c 为文本条件，T 为目标长度；log-prob 沿目标位置相加，NLL 为其负均值，PPL 为 exp(NLL)。Negative Ladder 的 match/null/mismatch 分别为匹配文本、无文本、错配文本条件；IG、Interference、Margin 都是同目标 NLL 的差，DiD 是两配方阶梯差的差。",
+        "SFT 式的 x 为输入条件，yₜ 为第 t 个目标，mₜ∈{0,1} 为监督 mask；求和形式尚未指定最终归一化分母。它与前面 attention 的模态路由 mᵢ 不同；标签为 0 只屏蔽该位置的直接损失。",
+        "DPO 中 x 为共同 prompt，y⁺/y⁻ 为偏好/不偏好候选，πθ/πref 为当前/冻结参考策略；Δ 为相对 reference 的序列 log-prob 差，σ 为 sigmoid，β 为偏好 logit 缩放及原 KL 正则系数。它与簇采样的幂指数 β 分段定义。"
+      ],
+      "previous_tex_inventory_count": 17,
+      "native_math_count": 50,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "my-work-protagent-full",
+      "source": "content/posts/my-work-protagent/full-report.html",
+      "url": "/my-work/protagent/full-report.html",
+      "reading_destination": "/my-work/protagent/full-report.html",
+      "before_sha256": "80667aac07b10abfe75331c8e45ae12ad44b621a6de80008962e853cb80a9fa6",
+      "reviewed_sha256": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "x/q 为蛋白输入/问题，t 为动作步，aₜ/oₜ 为动作/真实观察，hₜ 为动作前历史；πθ 为参数 θ 定义的策略，∼ 表示按分布采样，点号表示所有候选动作。",
+        "u 索引输出 token，yᵤ 是示范目标，c 为任务条件，y<u 为示范前缀，mᵤ∈{0,1} 为监督 mask；L_SFT 是有效位置 NLL 之和，若实现平均则另指定分母。",
+        "τ 是完整轨迹，pθ(τ) 为其概率，R(τ) 为终评回报，J 为其期望；∇ 对 θ 求梯度，E 按策略轨迹平均。Gₜ,ₖ/rₜ,ₖ 为候选 k 在步 t 的未来回报/即时奖励，H 为总动作步数，γ 为折扣。actor 式的 u 为动作内 token，m 为策略 mask，A 为固定优势，Z 为聚合分母，β 为 reference KL 系数。",
+        "本段 A/B/Q/V/J 是奖励计算的中间分数，区别于上一段策略优势 A、目标 J 和状态价值 V；y/y* 为回答/参考答案，z 为完整 answer 标签指示，m 为完成工具数，|y| 为回答字符数。C_tool、R、E、P、F、J 的具体职责见下方定义与事件表；ℓ(y) 是长度门控。最终评测的 zᵢ 另表示答案匹配是否超过阈值。",
+        "评价式的 i 为任务编号，extract 为答案抽取，R_tok 为 token 级匹配分数，zᵢ 为是否超过阈值的 0/1 指示；p̂ 是 1000 项独立协议记录的平均成功比例，不是训练 reward 的平均值。"
+      ],
+      "previous_tex_inventory_count": 7,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "my-work-harbor-full",
+      "source": "content/posts/my-work-harbor/full-report.html",
+      "url": "/my-work/harbor-task-sync/full-report.html",
+      "reading_destination": "/my-work/harbor-task-sync/full-report.html",
+      "before_sha256": "94ea2681b67a431b6405ef3783e60d36da2a6385da873c9eaf61bf8f50c44350",
+      "reviewed_sha256": "9cd38f47051c7e86dceb560b5f551ef94c2caf70e4ea3225449b4c6d7e5c5b98",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义",
+      "explanations": [
+        "y 为完整结果，k=1,…,K 为合法分析路径编号，𝒜ₖ 为该路径的一致接受域；⋃ 为并集，V(y) 为落入接受域取 1、否则取 0 的 verifier。这里 V 是判分函数，不是 RL 状态价值。",
+        "cᵢ 为第 i 次尝试的同单位成本，N_done 为同一 cohort 的完成任务数；C_measured 计入该池全部尝试。几何估算另假设每次独立、固定成功率 p、固定单次成本 c，此时 E[C]=c/p；p 必须非零，不能用不同 cohort 的成功率混算。"
+      ],
+      "previous_tex_inventory_count": 8,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "my-work-dllm-full",
+      "source": "content/posts/my-work-dllm/full-report.html",
+      "url": "/my-work/trainable-dllm/full-report.html",
+      "reading_destination": "/my-work/trainable-dllm/full-report.html",
+      "before_sha256": "598cbfef4a46ed11daafcb53a909de22d2ebd1f9ab10f02855617a4a014e9772",
+      "reviewed_sha256": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "x 是长度 L 的 token 序列，θ 是模型参数，i 为位置，x<i 为前缀。τ∈(0,1] 是 mask 比例/扰动时间，xτ 为扰动态，m 为 mask token；qτ 为已知扰动分布，pθ 为去噪预测，1{·} 为指示，ℓᵢ 为位置 NLL，E 对数据/时间/扰动平均。",
+        "x^(k) 是第 k 块，x^(<k) 是已完成前块；括号上标为块索引。L_BD 对各块去噪损失求和，分号后变量表示干净前块提供的条件，块内仍有随机 mask 和边际似然的区别。",
+        "Iⱼ 为 offset j 对应的位置集合，S 为块长，j_q/j_k 为 query/key 的块内 offset，s_q/s_k 为 clean/noisy 段身份；B₁/B₂/B₃ 为布尔条件，∧/∨ 为“且/或”，M(q,k) 为可见性判定。这里 q/k 是位置角色，不是概率分布。",
+        "b 为候选块，U 为未提交块集合，i 为块内位置，v 为词表项；pᵢ,ᵥ 是预测概率，H_b 是平均熵，|b| 是位置数，argmin 返回最低熵块的编号。低熵是模型置信度，不能直接当正确率。",
+        "X_P∈R^(P×d)/y_P∈R^P 为提示输入/输出，X_R∈R^(R×d) 为待预测输入；w/μ_P∈R^d 为真实权重/后验均值，σ² 为噪声方差。I 为 d×d 单位矩阵，A 为正则化 Gram 矩阵，逆号表示矩阵逆，rank 为矩阵秩；风险式的 d 为输入维度，isotropic/sphere 分别标出权重先验的归一约定。",
+        "成本图的 t 为任务条件，τ 在此改指达标阈值，s 为训练 seed，k_s(τ) 为达到阈值的更新次数，C_step 为每次更新 FLOPs；median_s 为跨 seed 中位数。A(t) 是 AR/Diff 成本比的 log10，H(t) 是两者较低成本的 log10，均不是 accuracy 或熵。"
+      ],
+      "previous_tex_inventory_count": 10,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agent-systems",
+      "source": "content/series/agent-systems/index.html",
+      "url": "/agent-systems/",
+      "reading_destination": "/agent-systems/",
+      "before_sha256": "33f5cb2e59bc7444c044f702f602697943f54e1209c9fa31152df02c26ffcf32",
+      "reviewed_sha256": "33f5cb2e59bc7444c044f702f602697943f54e1209c9fa31152df02c26ffcf32",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agent-rag",
+      "source": "content/series/agent-systems/s01_rag_retrieval.html",
+      "url": "/agent-systems/s01_rag_retrieval.html",
+      "reading_destination": "/agent-systems/",
+      "before_sha256": "9c362d8a11c187f403a2462e77a4e572a0944c010db1157830144dcbb2106446",
+      "reviewed_sha256": "73df192198e07012ee916fe97d6585c863b1d5d7517669414422350b67d5a9d5",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "下面 \\(q\\) 是查询词项集合，\\(d\\) 是文档，\\(t\\) 是词项；\\(|d|\\) 为文档词项数，avgdl 为语料平均文档长度，\\(\\ell_d\\) 为无量纲长度调整项。IDF 衡量词项的稀有程度，不是事实可信度。",
+        "\\(u,v\\in\\mathbb R^d\\) 是同维查询/文档 embedding；这里 \\(d\\) 改指向量宽度。\\({}^\\top\\) 为转置，\\(u^\\top v\\) 是内积，\\(\\|\\cdot\\|_2\\) 是欧氏长度；cosine 要求两个向量都非零，单位向量指长度为 1。",
+        "\\(L_j\\) 是第 \\(j\\) 路检索的有序候选列表，\\(r_j(d)\\) 是文档在该列表中的名次；求和只遍历召回该文档的列表。参数 \\(c\\) 是排名平滑常数，与科学检验的成功计数 \\(c\\) 无关。",
+        "竖线表示集合元素数，\\(\\cap\\) 表示交集；Recall 要求相关集合 \\(R\\) 非空。MRR 对 \\(M\\) 条查询平均，\\(r_i\\) 是第 \\(i\\) 条查询首个相关结果的名次，未命中时倒数定义为 0。这里 \\(L_k\\) 是前 \\(k\\) 条结果集合，区别于 RRF 中第 \\(j\\) 路的列表 \\(L_j\\)。"
+      ],
+      "previous_tex_inventory_count": 25,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agent-planning",
+      "source": "content/series/agent-systems/s02_planning_compute.html",
+      "url": "/agent-systems/s02_planning_compute.html",
+      "reading_destination": "/agent-systems/",
+      "before_sha256": "78666e756cc2c7d6478fe1dbc69209c5c451af7f8c37af0055f95889b8c404f5",
+      "reviewed_sha256": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(s\\) 是搜索状态，\\(a\\) 是可选动作，\\(a^*\\) 是本次选中动作；\\(\\arg\\max\\) 返回使分数最大的动作。此处 \\(N(s),N(s,a)\\) 为访问次数，区别于上一节的候选条数 \\(N\\)；探索常数 \\(c\\) 的尺度应与回报 \\(Q\\) 一致。",
+        "\\(\\Delta p_a\\) 表示当前状态下，采取 \\(a\\) 相比不采取 \\(a\\) 的成功概率增量；\\(V\\) 是一次成功的价值，\\(\\Delta C(a)\\) 是新增成本，\\(\\Delta U(a)\\) 是净收益。价值和成本必须使用同一单位；这里 \\(V\\) 不是 RL 的状态价值函数。"
+      ],
+      "previous_tex_inventory_count": 15,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agent-trust",
+      "source": "content/series/agent-systems/s03_trust_safety.html",
+      "url": "/agent-systems/s03_trust_safety.html",
+      "reading_destination": "/agent-systems/",
+      "before_sha256": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "reviewed_sha256": "93c9504a3917fd7a3a6258f358f3cec35cabcf696f6d19974783f3096b37e8d9",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-serving",
+      "source": "content/series/llm-serving/index.html",
+      "url": "/llm-serving/",
+      "reading_destination": "/llm-serving/",
+      "before_sha256": "e1dc30773c1645030ab683978b923dafc3f5f466ea7c84e927933e2f47288a76",
+      "reviewed_sha256": "e1dc30773c1645030ab683978b923dafc3f5f466ea7c84e927933e2f47288a76",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "serving-runtime",
+      "source": "content/series/llm-serving/s01_runtime_scheduling.html",
+      "url": "/llm-serving/s01_runtime_scheduling.html",
+      "reading_destination": "/llm-serving/",
+      "before_sha256": "98289e08593121bc461d8872c025d4b6d6e9e84a49749c8bbf6a55fde90b20cc",
+      "reviewed_sha256": "c9f91c4b808c64f479f8adad02b85c81c8350890771c7e4fa6b8717c842c40d0",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(T\\) 是一个请求需保存的 token 数，\\(B\\) 是每页可容纳的 token 槽数，\\(n_{\\rm block}\\) 是页数，\\(w\\) 是末页空槽数；\\(\\lceil\\cdot\\rceil\\) 表示向上取整。这里 \\(B\\) 是 page size，区别于架构章节中的 batch size。"
+      ],
+      "previous_tex_inventory_count": 3,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "serving-parallel",
+      "source": "content/series/llm-serving/s02_parallel_quantization.html",
+      "url": "/llm-serving/s02_parallel_quantization.html",
+      "reading_destination": "/llm-serving/",
+      "before_sha256": "5ce5470b29abb57348705a36f1e514dd73073fc72f051e909b7d3dd0175f9d2c",
+      "reviewed_sha256": "312e15f202d9863ca8d6b0afd691bd12823794bb873894704f31832120aac213",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(M_{\\rm state}\\) 是本次实际发送的状态字节数，\\(B_{\\rm effective}\\) 是有效传输带宽（bytes/s），相除得到秒；它不是 batch 大小，\\(\\ge\\) 表示仅给出传输时间下界。",
+        "这里 \\(x\\) 是待编码实数，\\(q\\) 是量化整数，\\(\\hat x\\) 是恢复值；round 按最近整数舍入，clip 将结果限制到整数范围 \\([q_{\\min},q_{\\max}]\\)。下一节的 \\(q(x)\\) 改指 drafter 概率分布，与量化整数不同。",
+        "\\(\\mathbb E\\) 对完整周期取平均；提交 token 是最终保留的输出。\\(t_{\\rm AR}\\) 为普通 AR 每 token 时间，\\(t_{\\rm draft},t_{\\rm verify},t_{\\rm restore}\\) 为一轮提议、验证和恢复时间，统一使用秒或毫秒；加速比无单位。"
+      ],
+      "previous_tex_inventory_count": 20,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "serving-capacity",
+      "source": "content/series/llm-serving/s03_capacity_cost.html",
+      "url": "/llm-serving/s03_capacity_cost.html",
+      "reading_destination": "/llm-serving/",
+      "before_sha256": "a425a95662eeb565df0afb83f44d9995bd2d6546a32378592bdd5ffe7b0113a5",
+      "reviewed_sha256": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(M\\) 各项均为同一设备/rank 上的字节容量，下标说明对象。KV 式中 \\(l\\) 为层号，\\(d_l\\) 为该层每头宽度，\\(b_{K,l},b_{V,l}\\) 分别为 K/V 每元素字节；它假定两者宽度相同，不同宽度时分别相乘再相加。"
+      ],
+      "previous_tex_inventory_count": 21,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-posttraining",
+      "source": "content/series/llm-posttraining/index.html",
+      "url": "/llm-posttraining/",
+      "reading_destination": "/llm-posttraining/",
+      "before_sha256": "64683caf93467927a381f9a276ef04c40cb91219326ee44e592edc2c9d6bbb7e",
+      "reviewed_sha256": "64683caf93467927a381f9a276ef04c40cb91219326ee44e592edc2c9d6bbb7e",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "posttraining-supervision",
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "url": "/llm-posttraining/s01_supervision_preference.html",
+      "reading_destination": "/llm-posttraining/",
+      "before_sha256": "980cfa1021cb604131bad75c4b0a3c575e02f6420f33f98fcbe3e4b87b89d89f",
+      "reviewed_sha256": "558da3e00220acfc740b5fce01073ad9882c90c02192394b3443e885c930d776",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(n\\) 索引轨迹，\\(i\\) 索引预测位置，\\(a_{ni}\\) 是示范目标 token，\\(h_{ni}\\) 是它之前的可见历史，\\(\\theta\\) 是模型参数；\\(\\ell_{ni}\\) 是单位置负对数概率。下式的 \\(z_{ni,v}\\) 是词表项 \\(v\\) 的 logit，\\(p_{ni,v}\\) 是 softmax 概率；\\(\\mathbf1[\\cdot]\\) 为条件成立取 1、否则取 0 的指示函数。",
+        "这里 \\(x\\) 是固定任务，\\(p_x\\) 是模型在该任务上单次成功的概率，\\(K\\) 是独立尝试次数；\\(P(\\cdot\\mid x)\\) 和 \\(\\mathbb E[\\cdot\\mid x]\\) 都是在给定这道题的条件下计算，分别衡量“能否得到示范”和“得到多少示范”。",
+        "符号：星号表示最优解；\\(\\eta\\) 是约束“概率和为 1”的拉格朗日乘子，\\(Z(x)=\\sum_y q_y\\exp(r_y/\\beta)\\)。\\(\\sigma\\) 是 sigmoid；下面 \\(u_+,u_-\\) 是两候选相对 reference 的 log-ratio，\\(z\\) 是偏好分类 logit，区别于 SFT 的词表 logits。",
+        "SimPO 的 \\(|y|\\) 是回答的目标 token 数，\\(\\beta\\) 缩放平均 log-prob，\\(\\gamma\\) 是要求 chosen 超过 rejected 的偏好间隔；这里的 \\(\\gamma\\) 不表示 RL 奖励折扣。\\(\\Delta r_\\theta\\) 是同题两候选的分数差。"
+      ],
+      "previous_tex_inventory_count": 28,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "url": "/llm-posttraining/s02_rl_algorithms.html",
+      "reading_destination": "/llm-posttraining/",
+      "before_sha256": "8689a9045b998642f84e78754ec3a5d9c4b768ec5e71c8e0e60188cfbeff0a3f",
+      "reviewed_sha256": "181c2dbf800e54631ef3541377b4e1f1cf2d916b6cb03eb75526fa77d1fdc44c",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(\\theta\\) 是策略的可训练参数；\\(\\tau\\) 是一条完整轨迹，\\(p_\\theta(\\tau)\\) 是它的概率；\\(p(h_0)\\) 是初态分布。\\(t=0,\\ldots,T-1\\) 索引决策，\\(\\gamma\\in[0,1]\\) 是折扣因子，\\(R\\) 是累计回报，\\(J\\) 是其期望。这里的求和遍历离散轨迹；连续状态下改用积分。\\(\\nabla_\\theta\\) 表示对参数求梯度，\\(\\mathbb E_{\\tau\\sim p_\\theta}\\) 表示按该策略采样轨迹后取平均。",
+        "概念：\\(G_t\\) 是从第 \\(t\\) 步开始的回报，\\(g_t\\) 是该动作的 log-prob 梯度；\\(Q^\\pi\\) 是指定动作后的期望回报，\\(V^\\pi\\) 是按策略平均动作后的状态价值，\\(A^\\pi\\) 是两者之差。\\(\\phi\\) 是 critic 参数，区别于 actor 的 \\(\\theta\\)；单步例中的 \\(\\sigma(z)=1/(1+e^{-z})\\) 是 sigmoid。",
+        "符号：\\(\\delta_t\\) 是一步 TD 预测误差，\\(\\hat A_t\\) 是估计优势；\\(V(h_t)\\) 估计当前状态的未来回报。\\(\\lambda\\in[0,1]\\) 控制多步误差的混合，\\(\\gamma\\) 仍控制奖励折扣；\\(1-d_t\\) 在真实终止时切断下一状态价值和递推。",
+        "符号：\\(\\rho_t\\) 是同一动作在当前策略与采样旧策略下的概率比，\\(\\bar\\rho_t\\) 是裁剪后的比率。\\(\\epsilon_{\\rm low/high}\\) 是相对 1 的下/上裁剪幅度；clip 将数值限制在区间，min 取两项较小值。\\(\\mathbb E_{\\rm old}\\) 按旧策略数据平均；优势在 actor 更新中作为固定权重，\\(J\\) 被最大化，框架的 loss 通常取其负号。",
+        "符号：\\(i,j=1,\\ldots,G\\) 索引同一题的候选，\\(R_i\\) 是候选终评，\\(\\bar R\\) 是组均值，\\(\\sigma_R\\) 是总体标准差。分母里的 \\(\\epsilon\\) 是防止除零的小常数，区别于 PPO 的裁剪幅度；奖励有单位时，它应与标准差同单位。\\(A_i\\) 是候选优势，不是某个 token 的即时奖励；下式的 \\(p\\) 是单次成功概率。",
+        "索引与分母：\\(i\\) 索引候选，\\(t=1,\\ldots,T_i\\) 仅遍历有效策略 token；\\(T_i\\) 是该候选的有效长度，\\(T_{\\rm fixed}\\) 是预先固定的长度标尺。padding 和工具观察不因物理存在就计入分母。GSPO 的 \\(s_i\\) 对这些 token 的 log-ratio 取平均再指数化；CISPO 的 \\(\\ell_{it}\\) 在下节专指 log-prob，与本节泛指 loss 的 \\(\\ell_{it}\\) 含义不同。",
+        "\\(\\sigma\\) 是 sigmoid，\\(u\\in(0,1)\\) 是门控值；此处 \\(\\tau>0\\) 是门控斜率参数，区别于前面的轨迹 \\(\\tau\\) 和生成 temperature。\\(f(\\rho)\\) 是代理目标中的 ratio 变换，\\(A\\) 是固定优势。\\(\\rho=1\\) 时 \\(df/d\\rho=1\\)；\\(\\tau\\) 越大，导数在远离 1 时衰减越快。正负优势可以选择不同的 \\(\\tau\\)。"
+      ],
+      "previous_tex_inventory_count": 59,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "posttraining-opd",
+      "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
+      "url": "/llm-posttraining/s03_opd_self_distillation.html",
+      "reading_destination": "/llm-posttraining/",
+      "before_sha256": "f8ece6ac057b111bf47055cb9a1d8c7fabf6928f40240cf1613401ef521d8721",
+      "reviewed_sha256": "a72b4a50c0f67509985e29a18516b522c5cce34584bfbb71c7bcc4ed41f1bdb8",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(\\theta\\) 是当前学生参数，\\(\\bar\\theta\\) 是生成本批轨迹的学生快照，\\(h\\) 是动作前的 prefix，\\(d_{\\bar\\theta}\\) 是其访问 prefix 的分布；本批优化把它固定。\\(\\pi_T\\) 是冻结教师策略，下标 \\(T\\) 在此表示 teacher；\\(\\cdot\\) 表示整个候选词表，\\(D\\) 是选定的分布差异，\\(\\mathbb E\\) 对访问到的 prefix 取平均。",
+        "维度：词表大小为 \\(V\\)，\\(v,k=1,\\ldots,V\\) 都索引词表候选；\\(p,q,z\\) 各有 \\(V\\) 个分量。\\(z_k\\) 是学生 logit，\\(\\mathbf1[v=k]\\) 是指示函数，\\(u_v\\) 是学生/教师 log-ratio；KL 是对整个词表求和后的标量。此处 \\(V\\) 是词表大小，区别于 RL 的状态价值函数。",
+        "这里 \\(a\\) 是按学生分布采样的 token，\\(g(a)\\) 是对学生参数求得的 log-prob 梯度；\\(b(h)\\) 只依赖当前 prefix，不依赖所采动作。\\(\\operatorname{sg}\\) 保留前向数值但阻断梯度，\\(A_{\\rm distill}\\) 因而只充当学习权重。"
+      ],
+      "previous_tex_inventory_count": 27,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "posttraining-rewards",
+      "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
+      "url": "/llm-posttraining/s04_environment_reward_credit.html",
+      "reading_destination": "/llm-posttraining/",
+      "before_sha256": "e8eb7bdcc00ced28c7828f67c5d246b7ef5bc559de54bf10f930633c8a9a212d",
+      "reviewed_sha256": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "下面 \\(i,j\\) 索引所考虑的步骤，\\(r_i\\) 为步骤分数，\\(R_{\\rm sum}\\) 为简单累计；\\(T>0\\) 是软最小值的温度，\\(w_i\\) 为归一化权重，\\(r_i^*\\) 为加权反馈。这里 \\(T\\) 不是轨迹长度；温度应与分数同尺度，趋近 0 时权重聚焦最低分步骤。",
+        "\\(i\\) 索引候选，pass 是通过且具有正优势的集合，\\(A_i\\) 为原优势，\\(f_i\\) 为 grader 给出的质量因子；\\(\\lambda\\) 将加权后的总正优势归一回原总量，\\(A_i'\\) 为调整后优势。此处 \\(\\lambda\\) 是归一系数，区别于 GAE 的多步混合参数。"
+      ],
+      "previous_tex_inventory_count": 7,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "posttraining-frameworks",
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "url": "/llm-posttraining/s05_frameworks_async.html",
+      "reading_destination": "/llm-posttraining/",
+      "before_sha256": "1265adae0d53670b119a01c42d4f7c14dfa312fddb02f7604e1149f481229359",
+      "reviewed_sha256": "88036edb05fa4c214d098d808e97d5e1bd5b9a1693b970d702754c75a6a2f86f",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "以下 \\(h\\) 是动作前历史，\\(a\\) 是已采动作，\\(\\mu\\) 是真实生成分布，\\(\\pi_{\\rm old}\\) 是旧权重在训练端重算的分布，\\(\\pi_\\theta\\) 是当前 actor 分布；三者都在同一 token/历史上求概率。后面的并发式中 \\(i\\) 是任务域，\\(C_i\\) 是并发配额，\\(\\propto\\) 表示仅给出比例关系。"
+      ],
+      "previous_tex_inventory_count": 5,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "posttraining-cases",
+      "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
+      "url": "/llm-posttraining/s06_task_cases_experiments.html",
+      "reading_destination": "/llm-posttraining/",
+      "before_sha256": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "reviewed_sha256": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "changed": false,
+      "reason": "案例中的取值示例和方法接口已有文字含义；完整算法符号沿唯一主讲解释",
+      "explanations": [],
+      "previous_tex_inventory_count": 1,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "training-methods-systems",
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "url": "/llm-training-lifecycle/s05_training_methods_systems.html",
+      "reading_destination": "/llm-training-lifecycle/",
+      "before_sha256": "4dda84fd38065700da2ff7b6c15ddc51a7b894dbeae6f242453222e8f4e9824c",
+      "reviewed_sha256": "c9e06b46e369f94ffb3339845d0dc9646170c9904cdf684378f4873a3b733b04",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "LoRA 符号：\\(x,y\\) 分别是输入/输出列向量，\\(d_{\\rm in/out}\\) 是其宽度；\\(W_0\\) 是冻结底座，\\(A,B\\) 是可训练低秩矩阵，\\(r\\) 是增量秩，\\(\\alpha/r\\) 是缩放。\\(N_{\\rm adapter/base}\\) 为参数元素数；\\({}^\\top\\) 表示转置，\\(g\\) 是与 \\(y\\) 同形的输出梯度。",
+        "概览符号：\\(W,W'\\) 为更新前后参数，\\(G\\) 为梯度矩阵，\\(M'\\) 为更新后的动量，\\(U\\) 为近似 polar 方向；\\(\\eta\\) 是学习率，\\(\\lambda\\) 是权重衰减，\\(\\widehat m,\\widehat v\\) 为偏差修正的一阶/二阶原点矩。\\(\\epsilon\\) 防止除零，\\(c\\) 是梯度范数上限；\\(\\|G\\|_2\\) 在裁剪式中指展平全部被裁剪梯度后的欧氏范数。",
+        "这里 \\(\\mathbb E\\) 对 minibatch 的随机采样取平均，\\(a,b\\) 分别是单坐标梯度的一阶与二阶原点矩；\\(k,j\\) 是历史更新索引。\\(\\mu\\) 是 sum-buffer 动量系数，\\(\\beta_1,\\beta_2\\) 是 EMA 保留系数；帽号表示零初始化的偏差修正，平方、平方根和除法都逐坐标进行。",
+        "此处若 \\(M\\) 为 \\(p\\times q\\)、秩为 \\(r\\)，薄 SVD 的 \\(U,V\\) 分别为 \\(p\\times r,q\\times r\\)，\\(\\Sigma\\) 为奇异值对角阵；\\(UV^\\top\\) 与 \\(M\\) 同形。这里 \\(U\\) 是左奇异向量矩阵，区别于概览中的整块更新方向 \\(U\\)。成本表的 \\(n=pq\\)、\\(b\\) 个块、刷新周期 \\(f\\) 都在各自公式中重新定义。"
+      ],
+      "previous_tex_inventory_count": 26,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "scientific-task-family",
+      "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
+      "url": "/agent-data-benchmarks/s03_scientific_task_family.html",
+      "reading_destination": "/agent-data-benchmarks/",
+      "before_sha256": "6f2a4cf022530d603eedb26e30230ec59fac14d4c3a719244c391b96f17660d5",
+      "reviewed_sha256": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(K_{gj}\\) 是基因 \\(g\\) 在样本 \\(j\\) 的整数 count，\\(\\mu_{gj}\\) 是其期望；\\(\\sim\\) 表示服从某分布，NB 为此处均值/离散度参数化的负二项分布。下面 \\(x_j\\) 是设计矩阵第 \\(j\\) 行写成的列向量，\\(\\beta_g\\) 是该基因的系数向量，维度相同；\\(x_j^\\top\\beta_g\\) 为线性预测值，log 为自然对数。",
+        "这里 \\(m\\) 是参与校正的检验数，括号下标 \\((i)\\) 是排序名次；\\(q\\in[0,1]\\) 是 FDR 阈值，\\(p^{\\rm adj}\\) 是调整后 p 值。内层 min 遍历从当前名次 \\(i\\) 到 \\(m\\) 的全部 \\(j\\)，外层将值封顶为 1。设计式的 \\(I(B),I(C),I(D),I({\\rm Dex})\\) 都是指示变量；FC 是同供体、归一化后的处理/对照表达比。"
+      ],
+      "previous_tex_inventory_count": 15,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "cluster-training-evaluation",
+      "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
+      "url": "/agent-data-benchmarks/s04_cluster_training_evaluation.html",
+      "reading_destination": "/agent-data-benchmarks/",
+      "before_sha256": "9a43124fdf1d4934f813b4eee06d75597a306f2d7e85bf1f25bbd1c7dafe04cf",
+      "reviewed_sha256": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(i=1,\\ldots,n\\) 索引配对任务，\\(Y_{A,i},Y_{B,i}\\in\\{0,1\\}\\) 为两方案独立终评结果；\\(D_i\\) 是同题差值，\\(\\bar D\\) 是其均值，\\(n_{\\rm only}\\) 为仅一个方案成功的任务数。\\(\\widehat{\\operatorname{SE}}\\) 是估计标准误，度量均值的不确定性；横线表示平均，帽号表示估计值。"
+      ],
+      "previous_tex_inventory_count": 2,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-architecture",
+      "source": "content/series/llm-architecture/index.html",
+      "url": "/llm-architecture/",
+      "reading_destination": "/llm-architecture/",
+      "before_sha256": "0ac970cfe9b74735a078a5b65eea8b992e1500b3c4355f8857268e37db8bfb2f",
+      "reviewed_sha256": "0ac970cfe9b74735a078a5b65eea8b992e1500b3c4355f8857268e37db8bfb2f",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "architecture-transformer",
+      "source": "content/series/llm-architecture/s01_transformer_foundations.html",
+      "url": "/llm-architecture/s01_transformer_foundations.html",
+      "reading_destination": "/llm-architecture/",
+      "before_sha256": "bcd0704d1db27d065630a795d6201c78ced4c920075d184d197ea8e75515ea4e",
+      "reviewed_sha256": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "读式约定：\\(\\theta\\) 表示模型参数，\\({}^\\top\\) 为转置；softmax 对标明的候选轴归一，\\(\\mathbf1[\\cdot]\\) 为指示函数。下文 \\(L\\) 在形状表中表示 block 数，在 NLL 推导中表示标量损失，均按所在段落理解；词表大小 \\(V\\) 与 value 矩阵 \\(V_{\\rm val}\\) 分开记。"
+      ],
+      "previous_tex_inventory_count": 23,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "architecture-attention",
+      "source": "content/series/llm-architecture/s02_attention_position_cache.html",
+      "url": "/llm-architecture/s02_attention_position_cache.html",
+      "reading_destination": "/llm-architecture/",
+      "before_sha256": "89f815f672f7dbaa4c38de171285226285987cb696dc46c3fe9a190f171f5e3c",
+      "reviewed_sha256": "6c5ccb71967e2fd40bde89f810c251cabaa5997dc354e5d4ddb76d34880e7004",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(q,k\\in\\mathbb R^{d_h}\\) 是单头 query/key，\\(\\ell\\) 索引其分量，\\({}^\\top\\) 表示转置，\\(\\operatorname{Var}\\) 是方差。Jacobian 中的 \\(s_j\\) 是第 \\(j\\) 个候选的 score，\\(p_i\\) 是其 softmax 权重，\\(\\mathbf1[i=j]\\) 是指示函数。后面的 RoPE 段落用 \\(p\\) 表示位置，含义在该段重新定义。",
+        "以下 \\(q_i,k_j\\) 只取一个二维分量对，\\(i,j\\) 是 token 的逻辑位置；\\(\\omega\\) 的单位是弧度/位置，\\(\\alpha,\\beta\\) 是旋转角度，\\(R\\) 是 \\(2\\times2\\) 旋转矩阵。撇号表示旋转后的向量，\\(j-i\\) 是相对位移；这里的 \\(\\alpha,\\beta\\) 与优化器参数无关。"
+      ],
+      "previous_tex_inventory_count": 18,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "architecture-moe",
+      "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
+      "url": "/llm-architecture/s03_ffn_moe_routing.html",
+      "reading_destination": "/llm-architecture/",
+      "before_sha256": "1eeb32f002ceaf210577183db3d09f34c92b99a4371717f328326c59381d6200",
+      "reviewed_sha256": "00c9ae53d38b7e2e076cbd64d901abe552009c266a2c86d44efe395ca26da341",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "读式约定：单 token 的 \\(x\\) 是 \\(d\\) 维行向量，右乘投影矩阵；\\(f\\) 是 FFN 中间宽度，\\(b_1,b_2\\) 为偏置，\\(\\phi\\) 为非线性激活，\\(\\sigma\\) 为 sigmoid，\\(\\odot\\) 为逐元素乘法。路由式中 \\(e\\) 索引专家，\\(I\\) 是选中专家的集合，\\(g_e\\) 是权重，\\(E_e\\) 是专家函数；\\(E\\) 表示专家总数，\\(k\\) 是每 token 选中数，shared 项为共享专家输出。"
+      ],
+      "previous_tex_inventory_count": 20,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "architecture-residual",
+      "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
+      "url": "/llm-architecture/s04_residual_norm_stability.html",
+      "reading_destination": "/llm-architecture/",
+      "before_sha256": "3c6272a0d476fc7f61717d5084559f59377dd368d7faa9471348c304247102f3",
+      "reviewed_sha256": "dcb06d68ca279f1e1054ac97b98fe385de58e0a88ac2b50bcff01f4b46740042",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "读式约定：\\(F\\) 是 Attention/FFN 等残差分支，\\(N\\) 是归一化函数；\\(J_F,J_N\\) 是输出对输入的 Jacobian，\\(I\\) 是单位矩阵，\\(\\nabla_x L\\) 是损失对表示的梯度。层号用 \\(\\ell\\)，\\(x_0,x_L\\) 为首末层表示；\\({}^\\top\\) 为转置。Norm 式的 \\(g,b\\) 是逐维可训练缩放和偏置，\\(\\varepsilon\\) 为防止除零的常数，\\(\\odot\\) 为逐元素乘法。"
+      ],
+      "previous_tex_inventory_count": 10,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "architecture-hybrid",
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "url": "/llm-architecture/s05_hybrid_architectures.html",
+      "reading_destination": "/llm-architecture/",
+      "before_sha256": "1cc958c588293503cbd89f1fe73aae04be580700ea402d7c5966552e8efa6df9",
+      "reviewed_sha256": "0e241c17b2857ae58b025cc25747b8b4c903e333c65325533a72c3765076740d",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "容量式对一条序列计：\\(\\ell\\) 索引对应类型的层，\\(H_{{\\rm state},\\ell}\\) / \\(H_{{\\rm kv},\\ell}\\) 是状态头 / KV 头数，\\(b_\\ell\\) 是每个元素的字节数，\\(T\\) 是保留的历史长度。\\(d_{v,\\ell},d_{k,\\ell}\\) 是状态两轴宽度，\\(d_{V,\\ell},d_{K,\\ell}\\) 是显式 KV 的宽度；两类层分别求和。",
+        "符号：\\(\\alpha_t\\) 是旧状态保留系数，\\(\\beta_t\\) 是沿当前 key 方向的修正幅度；\\(I\\) 是 \\(d_k\\times d_k\\) 单位矩阵。\\(v_t-S_{t-1}k_t\\) 是新值与旧预测的误差，\\(\\|k_t\\|_2\\) 是欧氏长度；下式 \\(\\prod\\) 表示连续多步保留系数相乘。",
+        "在一般单步 SSM 中，设输入 \\(x_t\\in\\mathbb R^{d_x}\\)、状态 \\(h_t\\in\\mathbb R^{n}\\)、输出 \\(y_t\\in\\mathbb R^{d_y}\\)；\\(\\bar A_t\\) 为 \\(n\\times n\\) 状态转移，\\(\\bar B_t\\) 为 \\(n\\times d_x\\) 输入映射，\\(C_t\\) 为 \\(d_y\\times n\\) 读出，\\(D\\) 为 \\(d_y\\times d_x\\) 直连。横线表示离散化后的参数；工业实现可按通道组织结构化状态。"
+      ],
+      "previous_tex_inventory_count": 21,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "architecture-comparison",
+      "source": "content/series/llm-architecture/s06_model_comparison.html",
+      "url": "/llm-architecture/s06_model_comparison.html",
+      "reading_destination": "/llm-architecture/",
+      "before_sha256": "e185cf4f9267ef82f9d7dad9d36a37ea6e00e48b01c95345e07b79f789ea79cc",
+      "reviewed_sha256": "e185cf4f9267ef82f9d7dad9d36a37ea6e00e48b01c95345e07b79f789ea79cc",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agent-data-benchmarks",
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "url": "/agent-data-benchmarks/",
+      "reading_destination": "/agent-data-benchmarks/",
+      "before_sha256": "dd16193ad2320e1181342f87c66d9742d7d36f6456387dfd64f01bcc2fd88d1f",
+      "reviewed_sha256": "dd16193ad2320e1181342f87c66d9742d7d36f6456387dfd64f01bcc2fd88d1f",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agent-task-synthesis",
+      "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
+      "url": "/agent-data-benchmarks/s01_task_synthesis.html",
+      "reading_destination": "/agent-data-benchmarks/",
+      "before_sha256": "93f5d4b0975961e5618eb694e02ffc274927dc5830f357e72d160c5d6da3d9be",
+      "reviewed_sha256": "17655227a45a0140d03dbf6690dd17d9df30329e2876b3bc0519af4fb08ae4e7",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(\\hat y\\) 为待验收数值，\\(y_{\\rm ref}\\) 为同方法/输入/单位的参考值；\\(|\\cdot|\\) 为绝对值。绝对容差 \\(a\\) 与 \\(y\\) 同单位，相对容差 \\(r\\) 无单位。后面 repair reward 中的 \\(r\\) 改指修复后的测试通过率，需按该处定义理解。"
+      ],
+      "previous_tex_inventory_count": 5,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agent-benchmark-map",
+      "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
+      "url": "/agent-data-benchmarks/s02_benchmark_map.html",
+      "reading_destination": "/agent-data-benchmarks/",
+      "before_sha256": "afb07b2809cc5b7a3cb94d02171154122463d6f4e2b7c376ffa907db84421b8d",
+      "reviewed_sha256": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义",
+      "explanations": [],
+      "previous_tex_inventory_count": 11,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-research-map-2026",
+      "source": "content/series/llm-research-map-2026/index.html",
+      "url": "/llm-research-map-2026/",
+      "reading_destination": "/llm-research-map-2026/",
+      "before_sha256": "38557716c4450595f17609292aa552662c18e2ff073a77f86f3cff22da2671bb",
+      "reviewed_sha256": "38557716c4450595f17609292aa552662c18e2ff073a77f86f3cff22da2671bb",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "research-agent-data",
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "url": "/llm-research-map-2026/s01_agent_data_bench.html",
+      "reading_destination": "/llm-research-map-2026/",
+      "before_sha256": "7d65251191af8348208d2c6130b5f71b989b99a066b98740149c88b9aa0bdedd",
+      "reviewed_sha256": "7d65251191af8348208d2c6130b5f71b989b99a066b98740149c88b9aa0bdedd",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "research-agentic-rl",
+      "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
+      "url": "/llm-research-map-2026/s02_agentic_rl.html",
+      "reading_destination": "/llm-research-map-2026/",
+      "before_sha256": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "reviewed_sha256": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "research-base-architecture",
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "url": "/llm-research-map-2026/s03_base_architecture.html",
+      "reading_destination": "/llm-research-map-2026/",
+      "before_sha256": "1d80fa06b5a7a1fecb73ff19101e8a844a4ad64a8791f9e3a7067abae6b6215e",
+      "reviewed_sha256": "3b8a34880ce21b4334fc4471fef7428f0dcd35f04b3a30af90bd66b9823e7039",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(H_{20}\\) 是 encoder 第 20 层的 token 表示；省略 batch 轴时形状为 \\(N\\times5120\\)，\\(N\\) 为历史位置数。\\(l\\) 索引使用投影的 decoder 层/共享组，\\(W_l^{KV},W_l^Z\\) 是从 hidden 宽度映射到各自输出通道的矩阵；\\(C_l,Z_l\\) 保留 token 轴，具体 head/压缩布局按报告配置展开。",
+        "\\(N_{\\rm pool}\\) 是候选池位置数；\\(T_{\\rm first}\\) 在此是首次扫描的计算复杂度，\\(O(N)\\) 表示随历史位置数线性增长，不是毫秒实测时间。缓存段的 \\(b_{\\rm entry}\\) 为每 entry 字节，\\(e_{\\rm enc/dec}\\) 为每 token 的 entry 数，\\(b_{\\rm global}\\) 才是最终 bytes/token。"
+      ],
+      "previous_tex_inventory_count": 3,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "research-inference-diffusion",
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "url": "/llm-research-map-2026/s04_inference_diffusion.html",
+      "reading_destination": "/llm-research-map-2026/",
+      "before_sha256": "3966264d9abe13bc59b8e52380a202268ed97d22d8969015fc0064d4952707fa",
+      "reviewed_sha256": "3966264d9abe13bc59b8e52380a202268ed97d22d8969015fc0064d4952707fa",
+      "changed": false,
+      "reason": "周期时间、提交长度、长期均值和AR比较已有就近说明；其余为有单位的算例",
+      "explanations": [],
+      "previous_tex_inventory_count": 4,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "research-agent-frontiers",
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "url": "/llm-research-map-2026/s05_agent_frontiers.html",
+      "reading_destination": "/llm-research-map-2026/",
+      "before_sha256": "6c249ac2f8294a0532b2f9f9b64018c06cd0ae7826fdf38b58754a52a90b30f7",
+      "reviewed_sha256": "6c249ac2f8294a0532b2f9f9b64018c06cd0ae7826fdf38b58754a52a90b30f7",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "research-architecture-landscape",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "url": "/llm-research-map-2026/s06_architecture_landscape.html",
+      "reading_destination": "/llm-research-map-2026/",
+      "before_sha256": "c746f293d349b6959b25eea64256c061bdb3ff015b2ee8d313533229b205e5f0",
+      "reviewed_sha256": "1a6b1884f7fe8258aa0b847e4f59bb0ada7819a61381fb2fd0f8149d38a7243e",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "以下 \\(q_t,k_t\\in\\mathbb R^{d_k}\\)、\\(v_t,o_t\\in\\mathbb R^{d_v}\\) 均为列向量；\\(t\\) 为 token 位置，\\(\\beta_t\\) 为修正幅度。\\(A_t,I\\) 是 \\(d_k\\times d_k\\) 矩阵，\\(\\alpha_t\\) 为标量保留系数，\\(\\boldsymbol\\alpha_t\\) 为 key 通道保留向量，Diag 将它放到对角线。此处状态为 \\(d_k\\times d_v\\)，是架构主讲中 \\(d_v\\times d_k\\) 状态的转置，读取方向也随之转置。"
+      ],
+      "previous_tex_inventory_count": 6,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "research-architecture-training",
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "url": "/llm-research-map-2026/s07_architecture_training.html",
+      "reading_destination": "/llm-research-map-2026/",
+      "before_sha256": "9c00695fea8104529da25f68aa1b031063f5cc356e288db0a88bbab9dfb057dc",
+      "reviewed_sha256": "73511e09cb6ac9f2377859a5aa235c0297898e0a9ec1afb70681d2aafc160256",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "对固定 token，\\(l\\) 是当前层，\\(i,j\\lt l\\) 遍历可用前层；\\(q_l,h_i\\in\\mathbb R^d\\)。\\(s_{l,i}\\) 为匹配得分，\\(a_{l,i}\\) 为沿深度归一化的非负权重，\\(\\widetilde h_l\\) 为加权后的模块输入；波浪号表示构造的新表示。",
+        "单 token 下，\\(H_l^{\\rm res}\\) 为 \\(n\\times n\\)，\\(H_l^{\\rm pre}\\) 为 \\(1\\times n\\)，\\(H_l^{\\rm post}\\) 为 \\(n\\times1\\)，\\(F_l\\) 将 \\(1\\times d\\) 表示映射回同形。\\(\\mathbf1\\) 为 \\(n\\) 维全 1 向量；双随机指元素非负且行列和都为 1。证明中的 \\(P_r\\) 为置换矩阵、\\(\\lambda_r\\) 为凸组合权重，\\(\\|H\\|_2\\) 为谱范数（最大奇异值）。",
+        "\\(x\\) 是输入 token/表示，\\(h^{(j)}\\) 是第 \\(j\\) 次迭代后的潜在状态；上标是迭代编号，非乘方。\\(K\\) 是 core 执行次数，Pre/Core/Post 分别负责入口表示、共享参数的状态更新和最终词表 logits。"
+      ],
+      "previous_tex_inventory_count": 17,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-training-lifecycle",
+      "source": "content/series/llm-training-lifecycle/index.html",
+      "url": "/llm-training-lifecycle/",
+      "reading_destination": "/llm-training-lifecycle/",
+      "before_sha256": "6d70d9c7a7c84b16782a2f658e12f9b2f24425b3845455c0bc8827f2f554e028",
+      "reviewed_sha256": "6d70d9c7a7c84b16782a2f658e12f9b2f24425b3845455c0bc8827f2f554e028",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-training-pretraining",
+      "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
+      "url": "/llm-training-lifecycle/s01_pretraining.html",
+      "reading_destination": "/llm-training-lifecycle/",
+      "before_sha256": "bde3ac18182dba3d5ad9ae1edaa3e0d67e5cd289b28547c10207c62b15092487",
+      "reviewed_sha256": "8d5599dee30009dc374912339774209f3a05e20d856698f8e9cf7186062f95c5",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(x_{1:n}\\) 是长度 \\(n\\) 的 token 序列，\\(x_{\\lt i}\\) 是第 \\(i\\) 位之前的前缀，\\(\\theta\\) 是模型参数；\\(\\prod\\) 将各位置条件概率相乘，log 为自然对数，\\(L_{\\rm LM}\\) 为有效目标位置的平均负 log-prob。预算节的 \\(N\\) 是参与矩阵计算的参数元素数，\\(T\\) 是实际处理 token 数，\\(C\\) 单位为 FLOPs，区别于数据序列长度 \\(n\\)。"
+      ],
+      "previous_tex_inventory_count": 11,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-training-midtraining",
+      "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
+      "url": "/llm-training-lifecycle/s02_midtraining.html",
+      "reading_destination": "/llm-training-lifecycle/",
+      "before_sha256": "ce256f007bc5412f51551d520c0e1d5cc28e39b8da1844c7aff6d9f33744adf3",
+      "reviewed_sha256": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(j,k\\) 都索引数据桶；\\(N_{\\rm target/input}\\) 为目标/输入 token 数，\\(q_k\\) 为实际目标 token 的占比。\\(\\alpha_k\\) 则是显式设定的桶级损失权重，通常非负且和为 1；分母要求至少有一个有效目标，全部为空时不能照常求平均。"
+      ],
+      "previous_tex_inventory_count": 7,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-training-sft-rft",
+      "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
+      "url": "/llm-training-lifecycle/s03_sft_rft.html",
+      "reading_destination": "/llm-training-lifecycle/",
+      "before_sha256": "0bc9b5742ec1c7252f29bc4045cbe9704d14bd013eb5223af9bc099a295672af",
+      "reviewed_sha256": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(\\theta\\) 为模型参数，\\(t\\) 为预测位置，\\(x_{\\lt t}\\) 为其前缀；\\(h_t\\) 在此是由模型算出的隐藏表示。\\(\\partial_\\theta\\ell_t|_{h_t}\\) 固定该表示只对输出分支求导，第二项通过表示生成链路反传；\\(\\partial_\\theta h_t\\) 是表示对参数的 Jacobian，转置后把表示梯度映射回参数空间。"
+      ],
+      "previous_tex_inventory_count": 8,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-training-rl-evaluation",
+      "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
+      "url": "/llm-training-lifecycle/s04_rl_evaluation.html",
+      "reading_destination": "/llm-training-lifecycle/",
+      "before_sha256": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "reviewed_sha256": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-frontier-2026",
+      "source": "content/posts/llm-frontier-2026/index.html",
+      "url": "/llm-frontier-2026.html",
+      "reading_destination": "/llm-frontier-2026.html",
+      "before_sha256": "e28b3171d105fdcfb3169a070d9ccb533a5514be17639eb1c8fd6a8680f7a5a1",
+      "reviewed_sha256": "3dedb4400a0e6c5185fbaaaec3880550ea7d462eb058b8fd842c1005a3a5a837",
+      "changed": true,
+      "reason": "将三段美元价格改为明确货币单位，修复五个跨段误识别的数学输出；价格原数值及来源保留",
+      "explanations": [],
+      "previous_tex_inventory_count": 5,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agentic-rl-guide",
+      "source": "content/posts/agentic-rl-guide/index.html",
+      "url": "/agentic-rl-guide.html",
+      "reading_destination": "/agentic-rl-guide.html",
+      "before_sha256": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "reviewed_sha256": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-survey",
+      "source": "content/series/dlm-survey/index.html",
+      "url": "/dlm-survey/",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
+      "reviewed_sha256": "bb8866603590f19d1cc4fef155bd83a3646430f3580c214b5d2457802c0403e2",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "transformer-decoder-flow",
+      "source": "content/posts/transformer-decoder-flow/index.html",
+      "url": "/transformer-decoder-flow.html",
+      "reading_destination": "/transformer-decoder-flow.html",
+      "before_sha256": "8aae16cec2012b6eb607e6d72856cd1f46068306281493bdba56e701a4f43a3b",
+      "reviewed_sha256": "f192e13d7fbd5e44c360fc65f56b593660d28493af91223b23020f8b6391a6da",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "Norm 的 \\(\\gamma\\) 是逐维可训练缩放，\\(\\epsilon\\) 防止除零，mean 沿 hidden 维平均，\\(\\odot\\) 是逐元素乘法；\\(N\\) 在此为 Norm 函数。SwiGLU 式按列向量写，\\(W_g,W_u\\) 为 \\(F\\times d\\)，\\(W_d\\) 为 \\(d\\times F\\)，与代码的右乘转置权重等价。后面参数式的 \\(N\\) 改指参数元素数。",
+        "\\(p\\) 为 token 逻辑位置，\\(j=0,\\ldots,D/2-1\\) 为维度对编号；\\(\\omega_j\\) 为弧度/位置的频率，\\(c_j,s_j\\) 为余弦/正弦，撇号表示旋转后的分量。缓存节的 \\(i\\) 从 0 索引本次 query、\\(j\\) 索引历史与当前 key；\\(\\mathbf1\\) 是可见性指示，层数用 \\(L\\)，标量训练 loss 也在其段落用 \\(L\\)。"
+      ],
+      "previous_tex_inventory_count": 6,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "rl-interview-guide",
+      "source": "content/posts/rl-interview-guide/index.html",
+      "url": "/rl-interview-guide.html",
+      "reading_destination": "/rl-interview-guide.html",
+      "before_sha256": "bdc92cc441e8d71f8694511c17e12d2b08080e63a9a01f21401582408b7ab6c4",
+      "reviewed_sha256": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(t=0,\\ldots,T-1\\) 为决策步，\\(T\\) 为轨迹决策数，\\(\\theta\\) 为 actor 参数；\\(G_t\\) 是回报，\\(G\\) 是同题候选数。\\(\\rho_t\\) 为同动作的新/旧概率比；clip 的 \\(\\epsilon\\) 与 GRPO 分母的除零稳定常数分别定义。\\(\\mathbb E\\) 表示按注明数据分布取平均，sg 表示保持数值并停止梯度。",
+        "DQN 中 \\(s,a,r,s'\\) 为一条 replay 转移的状态、动作、奖励、下一状态；\\(a'\\) 遍历下一状态可选动作，\\(\\phi,\\bar\\phi\\) 为当前/target Q 网络参数，\\(d=1\\) 表示真实 terminal。\\(\\mathbb E\\) 按 replay 样本平均，\\(y_{\\rm DQN}\\) 为停止梯度的 Bellman 目标；\\(v'\\) 只是最大下一状态 Q 的简写。"
+      ],
+      "previous_tex_inventory_count": 13,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "agent-harness-guide",
+      "source": "content/posts/agent-harness-guide/index.html",
+      "url": "/agent-harness-guide.html",
+      "reading_destination": "/agent-harness-guide.html",
+      "before_sha256": "0828314cff253832cbefaf5d9e35f7cb02ed360fb277ee2fcf96db67920bbe4c",
+      "reviewed_sha256": "110bca77e52aa4d8b577cc2d1d41ca5750faa7e42c1458501e6372f2a2e032d8",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "检索式的 \\(q\\) 是当前问题，\\(m\\) 是候选记忆，score 为排序分数；sem/lex/imp 三项分别从这对问题与记忆的语义、词项和重要性计算。该处 \\(m\\) 不表示训练 mask。"
+      ],
+      "previous_tex_inventory_count": 4,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "distributed-training-guide",
+      "source": "content/posts/distributed-training-guide/index.html",
+      "url": "/distributed-training-guide.html",
+      "reading_destination": "/distributed-training-guide.html",
+      "before_sha256": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "reviewed_sha256": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "llm-interview-bank",
+      "source": "content/posts/llm-interview-bank/index.html",
+      "url": "/llm-interview-bank.html",
+      "reading_destination": "/llm-interview-bank.html",
+      "before_sha256": "6e86bd1ebc7b4ba710a79de24aafe6d56614f73e43a3988be496a9b5023df578",
+      "reviewed_sha256": "e83ed5ac55f045a6480c4ab2b4aff085f23c61de6cec496c480c95fc2c6e3aae",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "这里 \\(p,q\\) 是同一候选集合上的两分布，\\(a\\sim p\\) 为所采动作，\\(u\\) 为反向概率比，\\(K\\) 为 KL 标量；\\(\\mathbb E_p\\) 按 \\(p\\) 加权平均，\\(\\Vert\\) 分隔两个被比较的分布。共同支持和可积性是这些期望等式的条件。",
+        "\\(x\\) 为共同 prompt，\\(y_w,y_l\\) 为偏好/不偏好候选，\\(\\pi_\\theta,\\pi_{\\rm ref}\\) 为当前/冻结参考策略；\\(\\ell_w,\\ell_l\\) 为序列 log-ratio，\\(\\Delta\\) 为两者差，\\(\\sigma\\) 为 sigmoid，\\(\\beta>0\\) 缩放偏好 logit。这里 w/l 是 winner/loser 标签，不是 token 位置。"
+      ],
+      "previous_tex_inventory_count": 2,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "vlm-knowledge-interview",
+      "source": "content/posts/vlm-knowledge-interview/index.html",
+      "url": "/vlm-knowledge-interview.html",
+      "reading_destination": "/vlm-knowledge-interview.html",
+      "before_sha256": "15a3e13e8a83ea0c56d50a0ad63ad14ce205fede675d0516c59687e85ae66da3",
+      "reviewed_sha256": "3df1a2d7a87603bd103db1942acc9a0a4f2397020ef6d96a1229b375649494e9",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(i,j,k=1,\\ldots,N\\) 索引 batch 中配对图文；\\(S,p,q\\) 均为 \\(N\\times N\\) 矩阵。\\(p_{ij}\\) 按行归一，\\(q_{ij}\\) 按列归一；\\(\\mathbf1[i=j]\\) 为匹配对指示。\\(\\sigma(z)=1/(1+e^{-z})\\) 为 sigmoid，SigLIP 的 \\(b\\) 是可训练 bias。",
+        "\\(Z\\in\\mathbb R^{N\\times d_v}\\) 为视觉表示，\\(W_1,W_2\\) 分别为 \\(d_v\\times m,m\\times d_L\\)，\\(b_1,b_2\\) 为偏置；\\(P_{\\rm MLP}\\) 是参数数，区别于 patch 边长 \\(P\\)。单头 query 式的 \\(K(Z),V(Z)\\in\\mathbb R^{N\\times d}\\)，\\(M\\) 为 query 数；语言梯度式的 \\(\\theta_v,Z_v,Z_{\\rm lang}\\) 为视觉参数、视觉输出和语言侧条件表示。",
+        "\\(n_{\\rm crop/thumb}\\) 为裁剪图/缩略图数量，\\(R\\) 为每张 tile 边长（像素），\\(r\\) 为每空间轴的 merge 倍数；\\(F\\) 为视频帧数，\\(N_f\\) 为第 \\(f\\) 帧贡献的视觉 token 数。坐标式的 \\(s_x,s_y\\) 是 resize 比例，\\(o_x,o_y\\) 是原图 crop 偏移；坐标先统一到像素单位再逆映射。",
+        "VCD 中 \\(v,v'\\) 为原图/扰动图，\\(z(v)\\) 为词表 logits，\\(\\alpha\\) 为对比分支权重；\\(w,u\\) 为词表项，\\(M\\) 为原图条件下最大 token 概率，\\(\\eta\\) 为相对概率阈值，\\(\\mathcal A\\) 为允许采样集合。ColPali 式的 \\(q_i,d_j\\) 则是同维查询/page patch embedding，\\(N_q,N_d\\) 为各自数量，内积再按每个查询 token 的最大匹配求和。"
+      ],
+      "previous_tex_inventory_count": 10,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "rl-interview-guide-legacy",
+      "source": "content/archive/rl-interview-guide/index.html",
+      "url": "/legacy/rl-interview-guide.html",
+      "reading_destination": "/legacy/rl-interview-guide.html",
+      "before_sha256": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "reviewed_sha256": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "changed": false,
+      "reason": "逐式核对历史原稿保留情况；冻结原字节，现代符号定义与纠错在现行主讲和手册",
+      "explanations": [],
+      "previous_tex_inventory_count": 623,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-ddpm",
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "url": "/dlm-survey/s00a_ddpm.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "e553a6a42cb20b1de142f4c02fd5d7e48a3b71fc5ce7f7cb35693f875bae7b7e",
+      "reviewed_sha256": "b84f9ac911a60908a61d92bb6e79b24e3064d4220890bfe2dbd64b70a014c11d",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(x_t\\in\\mathbb R^d\\) 是第 \\(t\\) 步状态，\\(x_0\\) 是真实数据，\\(T\\) 是扩散步数；\\(q\\) 为已知前向分布，\\(p_\\theta\\) 为参数 \\(\\theta\\) 定义的反向模型。\\(\\mathcal N(\\mu,\\Sigma)\\) 的两参数是均值与协方差，\\(I\\) 为 \\(d\\times d\\) 单位矩阵；\\(\\epsilon_t,\\epsilon,z\\) 均为标准高斯噪声。\\(\\beta_t\\) 是单步加噪方差，\\(\\bar\\alpha_t\\) 是累计信号保留量，区别于单步 \\(\\alpha_t\\)。",
+        "\\(\\mathbb E_q\\) 按前向隐状态路径平均，\\(\\prod\\) 将条件密度相乘；log 为自然对数。KL 的顺序 \\(\\operatorname{KL}(q\\|p)=\\mathbb E_q[\\log(q/p)]\\) 表示以 \\(q\\) 加权比较两个分布；双竖线是分布分隔符。\\(\\mathcal L_{\\rm VLB}\\) 是负的变分下界，最小化它是在最大化该下界。",
+        "配方式的 \\(A\\) 是标量精度，\\(b\\in\\mathbb R^d\\) 是线性系数，\\(E(y)\\) 是指数中的二次表达式；\\(\\|\\cdot\\|^2\\) 为欧氏长度平方。\\(\\tilde\\mu_t,\\tilde\\beta_t\\) 是给定 \\(x_0,x_t\\) 的解析后验均值/方差，\\(\\mu_\\theta,\\sigma_t^2\\) 是模型反向均值/方差；波浪号与下标 \\(\\theta\\) 区分真后验和预测。损失节的 \\(c_t\\) 是时间权重，\\(C_t\\) 是与 \\(\\theta\\) 无关的项。"
+      ],
+      "previous_tex_inventory_count": 24,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-flow-sde",
+      "source": "content/series/dlm-survey/s00b_flow_sde.html",
+      "url": "/dlm-survey/s00b_flow_sde.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "909060ff1fb8eb8eb6ea4b7fa7d09053fcd28affc2e680d76a95a74ce306a590",
+      "reviewed_sha256": "240c1de5b47904431eab449ded0623db28fe4abe0a2868a22b03b5a11ce9afc9",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(y,x_t,\\epsilon\\in\\mathbb R^d\\) 分别为数据端点、路径状态和标准高斯噪声；\\(a_t,b_t\\) 是确定的标量路径系数，点号表示对连续时间求导。\\(u_t(x\\mid y)\\) 是给定数据端点的速度，\\(u_t(x)\\) 是边际速度，\\(u_\\theta\\) 是网络估计；速度与状态同维。\\(\\mathbb E[\\cdot\\mid x_t=x]\\) 按与当前状态相容的端点后验平均，不是对所有端点等权平均。",
+        "\\(p_t\\) 为时刻 \\(t\\) 的密度，\\(\\phi:\\mathbb R^d\\to\\mathbb R\\) 为光滑测试函数；\\(\\nabla\\phi\\) 是空间梯度，\\(\\nabla\\cdot\\) 是散度，\\(\\Delta\\) 是拉普拉斯算子（各坐标二阶导数之和），\\(\\partial_t\\) 是时间偏导。SDE 中 \\(f_t\\) 为漂移向量，\\(g_t\\) 为标量扩散系数，\\(W_t\\) 为 \\(d\\) 维布朗运动；概率流速度 \\(u_t\\) 与 SDE 漂移不同。",
+        "求解器表中 \\(h>0\\) 是正向积分步长，\\(z\\sim\\mathcal N(0,I)\\)；逆向过程应使用其时间方向对应的网格与漂移。\\(dW_t\\) 的尺度为 \\(\\sqrt{dt}\\)，\\(\\bar W_s\\) 表示逆向时间的布朗运动。这里 \\(\\Delta p_t\\) 是空间拉普拉斯，\\(\\Delta s\\) 则是时间步长，两种 \\(\\Delta\\) 按对象区分。"
+      ],
+      "previous_tex_inventory_count": 21,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-overview",
+      "source": "content/series/dlm-survey/s01_overview.html",
+      "url": "/dlm-survey/s01_overview.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "reviewed_sha256": "78396faed05005794124f20fd0edc5ff0eea2385fba42a7327ad06de04276bae",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-discrete",
+      "source": "content/series/dlm-survey/s02_discrete.html",
+      "url": "/dlm-survey/s02_discrete.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "6c516ecba1bf7968e6c25e667dd1ca2953f683563d1a18548727770b948a80e7",
+      "reviewed_sha256": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(K\\) 为该核的状态数，\\(x_0,x_t,i,j,v\\) 是词表/状态编号，\\(\\operatorname{Cat}\\) 表示按给定概率行向量采样分类状态；\\(\\mathbf1(i=j)\\) 为指示函数，\\(\\beta_t\\) 为扰动概率，\\(M\\) 为 mask 状态。一般核按其状态集合计 \\(K\\)；吸收核若单独加入 mask，需计入这一个额外状态。下面 \\(x_t^i\\) 的上标 \\(i\\) 改指序列位置。",
+        "该段 \\(\\alpha_t\\) 为从初始数据到时刻 \\(t\\) 仍保留原值的概率，区别于 DDPM 的单步 \\(\\alpha_t\\)；\\(\\alpha'_t\\) 为时间导数。\\(S_\\theta\\) 是所有 mask 位置 CE 的和，\\(w(t)\\) 为时间权重，\\(\\mathbb E\\) 对采样时间、真实序列和扰动状态共同平均。",
+        "该段 \\(r\\) 是 argmax 后选中正确类的概率，\\(a_t\\) 是对应 uniform 混合的保留系数；\\(\\mathbf1/K\\) 为均匀概率向量。\\(T_\\#q\\) 表示先按 \\(q\\) 采样再施加同一确定映射 \\(T\\) 所得到的分布，称为推前分布；此处 \\(T\\) 是映射，不是采样步数。"
+      ],
+      "previous_tex_inventory_count": 23,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-block",
+      "source": "content/series/dlm-survey/s03_block.html",
+      "url": "/dlm-survey/s03_block.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "af4bfb35a4ca861365fa985c898680fa58bdefab0f73677908c7fc078a1b179b",
+      "reviewed_sha256": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(x^{(j)}\\) 表示第 \\(j\\) 个 token 块，\\(x^{(\\lt j)}\\) 为已提交的前面各块；括号上标是块编号，非乘方。\\(\\mathcal L_{\\rm NELBO}^{(j)}\\) 是给定前缀的块级负 ELBO，对该块负对数概率给出上界。可见矩阵 \\(M\\) 的行/列分别是 query/key 位置，1 为允许访问、0 为屏蔽，转换为加性 mask 时对应 0/负无穷。"
+      ],
+      "previous_tex_inventory_count": 2,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-continuous",
+      "source": "content/series/dlm-survey/s04_continuous.html",
+      "url": "/dlm-survey/s04_continuous.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "2c3e196d4c3426afc1d9de55e964a4bb3fb8b9fc9c9f5f810b2ca4cf4c4286d7",
+      "reviewed_sha256": "f811e607779ce036d79e925c45a4ddd21873c75b965493c5ba57181b24b23a54",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "本节符号：\\(z_1\\in\\mathbb R^d\\) 是文本的连续表示，\\(\\epsilon\\) 为同维高斯噪声，\\(z_t\\) 为插值状态；此处 \\(t=0\\) 是噪声、\\(t=1\\) 是数据。\\(u_\\theta\\) 为网络速度，\\(\\dot z_t\\) 为路径速度，\\(\\|\\cdot\\|^2\\) 为欧氏平方误差，CFM 为条件 Flow Matching。后面的 \\(c\\) 是给定上下文，\\(v\\) 是词表项；条件均值 \\(\\mathbb E[z\\mid c]\\) 与 token 概率 \\(P(x=v\\mid c)\\) 是不同预测对象。"
+      ],
+      "previous_tex_inventory_count": 5,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-paradigms",
+      "source": "content/series/dlm-survey/s05_paradigms.html",
+      "url": "/dlm-survey/s05_paradigms.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "58310c27866c2c4cb574221a85ed55ae6b1443ff3dcd513d0ae7d6deb44032c2",
+      "reviewed_sha256": "3c25b261f4f9bcd942af2dc45c8118e464acc853b654fcc648c89e0d73fe7834",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(x_0,x_t,\\epsilon,v_t\\) 是同维连续向量，\\(\\epsilon\\) 为标准高斯噪声；\\(a_t,s_t\\) 分别缩放信号和噪声，VP 是方差保持路径。这里 \\(v_t\\) 是所定义的预测坐标，点号 \\(\\dot x_t\\) 才是时间导数；帽号表示模型预测。\\(\\nabla_x\\log p_t(x)\\) 是空间 log 密度梯度，不是对模型参数 \\(\\theta\\) 求导。",
+        "下面 \\(x,y\\) 是完整离散状态，\\(r^*\\) 为真实相邻状态密度比，\\(r>0\\) 为模型预测；星号表示真实目标，\\(D\\) 为逐项散度。DFM 式的 \\(R_t(x,y)\\) 是从 \\(x\\) 跳到 \\(y\\) 的速率（每单位时间），\\(p_t(x)\\) 是状态概率，\\(\\dot p_t(x)\\) 是其时间变化率；它不是奖励 \\(R\\)。"
+      ],
+      "previous_tex_inventory_count": 15,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-scaling",
+      "source": "content/series/dlm-survey/s06_scaling.html",
+      "url": "/dlm-survey/s06_scaling.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "26bebb0c43949117fc14ef672ebb6ed75dc7af593b2ec1adb8e770938acb508c",
+      "reviewed_sha256": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "拟合式中 \\(L\\) 为验证损失，\\(A,B\\) 为正幅度，\\(\\alpha,\\beta>0\\) 为幂律指数，\\(L_\\infty\\) 为不可约项；它们不是扩散噪声日程。\\(\\kappa\\) 是每参数、每 token 的近似计算系数，\\(C\\) 为固定 FLOPs 预算；opt 表示该拟合假设下的最优点，\\(\\propto\\) 只表示幂次关系，不给出绝对配方。"
+      ],
+      "previous_tex_inventory_count": 6,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-speculative",
+      "source": "content/series/dlm-survey/s07_speculative.html",
+      "url": "/dlm-survey/s07_speculative.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "8912d107591acaece896e979a2fe215f32ac2e4711d3df4913aa0fd7dcf87648",
+      "reviewed_sha256": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "\\(b\\) 是草稿块长，\\(K\\in\\{0,\\ldots,b\\}\\) 是首个拒绝前接受的草稿数，\\(k\\) 为计数阈值；\\(P(K\\ge k)\\) 是连续接受至少 \\(k\\) 个的概率。几何例中的 \\(a\\) 是固定、独立条件下的单位置接受率，区别于 signal 系数；实际提交数还可能包括 target 补出的 token。",
+        "\\(N_{\\rm committed}\\) 是最终保留的 token 数，\\(t_{\\rm draft/verify/commit}\\) 分别为一轮草稿、验证和提交恢复的时间；\\(\\mathbb E\\) 按周期平均。\\(t_{\\rm per\\ token},t_{\\rm AR}\\) 都是时间/token，两者相除才得到无单位的 speedup。"
+      ],
+      "previous_tex_inventory_count": 5,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-elbo-rl",
+      "source": "content/series/dlm-survey/s08_elbo_rl.html",
+      "url": "/dlm-survey/s08_elbo_rl.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "472d6a9d6401da3ef93b77c8a8ee8dc99b4eb0435ea8717b88a12e62518ff0d9",
+      "reviewed_sha256": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(\\tau=(x_T,\\ldots,x_0)\\) 是去噪路径，\\(t\\) 为去噪步，\\(x_0\\) 是最终输出；\\(p_\\theta(\\tau)\\) 是路径概率，\\(\\sum_{\\tau:\\tau\\to x_0}\\) 汇总到达同一输出的路径。\\(R(x_0)\\) 是终局奖励，\\(J\\) 是其期望，\\(\\nabla_\\theta\\) 对模型参数求梯度。连续状态的路径边际化用积分。",
+        "\\(L_\\theta,U_\\theta\\) 分别为文本 log-likelihood 的下/上界，区别于通常被最小化的损失 \\(\\mathcal L\\)；\\(\\Delta_\\theta\\) 为界与真实 log-likelihood 的差。\\(i=1,\\ldots,G\\) 索引候选，\\(A_i\\) 为固定奖励优势，\\(J_{\\rm bound}\\) 是要最大化的代理目标。",
+        "倾斜式的 \\(\\lambda>0\\) 为 KL 正则系数，\\(c\\) 为概率归一约束的乘子，\\(Z\\) 为归一常数；星号表示最优分布。中心化式中 \\(\\mathcal V\\) 为词表，\\(v\\) 为词表项，\\(n\\) 为目标位置，\\(x_0^n\\) 为该位置 token；\\(\\bar l_{p,n}\\) 为词表 log-prob 均值，\\(\\ell_p\\) 为位置分数之和。\\(\\psi\\) 缩放优势引导，\\(\\beta\\) 控制 reference 正则，sg 保留数值但停止教师梯度。"
+      ],
+      "previous_tex_inventory_count": 12,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-commercial",
+      "source": "content/series/dlm-survey/s09_commercial.html",
+      "url": "/dlm-survey/s09_commercial.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "reviewed_sha256": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-comparison",
+      "source": "content/series/dlm-survey/s10_comparison.html",
+      "url": "/dlm-survey/s10_comparison.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "reviewed_sha256": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "changed": false,
+      "reason": "无新增公式缺口；审读机制图、代码字段及带单位数字，保留现有简洁说明",
+      "explanations": [],
+      "previous_tex_inventory_count": 0,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-loop-transformer",
+      "source": "content/series/dlm-survey/s11_loop_transformer.html",
+      "url": "/dlm-survey/s11_loop_transformer.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "5cc6fea60a3f5d78a8f8d0444d3fd3eeb161061bce4f758d96e1fe79276d83b7",
+      "reviewed_sha256": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "成本式的 \\(k\\) 为共享层数，\\(r\\) 为循环次数，\\(P_{\\rm layer/interface}\\) 为每层/接口参数数，\\(F_{\\rm layer/interface}\\) 为计算量，\\(D_{\\rm effective}\\) 为实际层调用深度。梯度节的 \\(r\\) 改作循环索引，\\(R\\) 为总循环次数，\\(J_r\\) 是状态更新对 \\(h_r\\) 的 Jacobian；共享参数 \\(\\theta\\) 接收所有调用位置的梯度贡献。"
+      ],
+      "previous_tex_inventory_count": 5,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "dlm-vae",
+      "source": "content/series/dlm-survey/s12_vae.html",
+      "url": "/dlm-survey/s12_vae.html",
+      "reading_destination": "/dlm-survey/",
+      "before_sha256": "ac353c7b95b87a0b14fb55ec3fae34aa9b93006c137c340739e420345495e9c0",
+      "reviewed_sha256": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义",
+      "explanations": [
+        "符号：\\(x\\) 是观测，\\(z\\in\\mathbb R^d\\) 是 latent，\\(p(z)\\) 为先验，\\(p_\\theta(x\\mid z)\\) 为 decoder，\\(q_\\phi(z\\mid x)\\) 为 encoder 的辅助后验；\\(\\theta,\\phi\\) 是两组参数。\\(\\mathcal R\\) 为期望重建 log-likelihood，\\(\\mathcal K\\) 为后验到先验的 KL；\\(\\mathbb E_q\\) 给定 \\(x\\) 按辅助后验采 \\(z\\) 后平均，ELBO 为要最大化的下界。",
+        "\\(\\mu_\\phi,\\sigma_\\phi\\) 为 \\(d\\) 维均值和标准差向量，\\(\\sigma_j^2\\) 才是方差；\\(\\epsilon\\sim\\mathcal N(0,I)\\) 为标准高斯，\\(I\\) 为单位矩阵，\\(\\odot\\) 为逐元素乘法，diag 把向量放到对角线。高斯 KL 式的 \\(j\\) 索引 latent 坐标。",
+        "\\(z_e\\) 为 encoder 输出，\\(\\{e_j\\}_{j=1}^K\\) 为同维码字，\\(k=\\arg\\min_j\\) 返回最近码字编号，\\(z_q=e_k\\) 为量化表示；\\(\\|\\cdot\\|^2\\) 为欧氏平方距离。sg 为停止梯度，\\(\\beta\\) 是 commitment 权重，\\(z_{\\rm ST}\\) 是 straight-through 的前向/反向替代表示。量化表中 \\(R\\) 为残差级数、\\(L_j\\) 为第 \\(j\\) 维级别数、\\(d\\) 为二值宽度，组合数不是实际使用数。"
+      ],
+      "previous_tex_inventory_count": 13,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "id": "harbor-framework-guide",
+      "source": "content/posts/harbor-framework-guide/index.html",
+      "url": "/harbor-framework-guide/",
+      "reading_destination": "/harbor-framework-guide/",
+      "before_sha256": "d2ad86ce0c5d3d20dd4e559f591713cb0062c587312369f16928196affb29949",
+      "reviewed_sha256": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "changed": true,
+      "reason": "就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义",
+      "explanations": [
+        "下面 \\(N_c\\) 为细胞的 observed 总 count，\\(E(X)\\) 为候选矩阵 \\(X\\) 相对 native 真值的归一绝对误差。oracle 式的 \\(j(c)\\) 为细胞所在 batch，\\(b_g^{(j)}\\) 为该 batch 的污染基因份额，\\(B_{gc}\\) 为估算污染 count，\\(A_{gc}\\) 为参考校正；round_even 为最近整数、半整数取偶数。\\(q_{\\rm gap}\\) 为相对“不校正→参考校正”误差改善的完成比例，要求相应分母非零。",
+        "\\(i=1,\\ldots,n\\) 索引 trial，\\(v_i,s_i\\in\\{0,1\\}\\) 分别为有效性/成功指示，\\(r_i\\) 为数值奖励；\\(\\bar r_{\\rm valid}\\) 是有效 trial 平均 reward，\\(p_{\\rm valid}\\) 是有效 trial 成功率，\\(a_{\\rm valid}\\) 是全部 trial 中有效比例。"
+      ],
+      "previous_tex_inventory_count": 6,
+      "native_math_count": 0,
+      "validation": "passed",
+      "viewports": [
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "input_digest": "edaab874234d424626aae1a530e7e9bab41081a688cf549ccdd8e349ab32842c",
+  "build_commit": "7559d0fed0a402101a2d65b249774221c7d98409",
+  "build_dirty": true,
+  "browser_summary": {
+    "physical_pages": 26,
+    "viewport_checks": 78,
+    "source_checks": 222,
+    "legacy_deep_links": 144,
+    "no_javascript_pages": 74,
+    "plot_dialog_checks": 63,
+    "definitions_per_viewport": 123,
+    "native_display_math_per_viewport": 8,
+    "math_outputs_per_viewport": 2136,
+    "cdn_blocked": true,
+    "browser": "local Google Chrome via Playwright",
+    "native_math_total_in_holon": 50
+  },
+  "integration_tests": {
+    "passed": 17,
+    "duration_seconds": 331.708,
+    "command": "/Users/bytedance/.cache/stein-notes/venv/bin/python scripts/test_pipeline.py"
+  }
+}

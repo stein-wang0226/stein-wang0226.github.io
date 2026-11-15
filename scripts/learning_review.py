@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REVIEW = ROOT / "docs/blog-learning-page-review-20261115.md"
 LEDGER = ROOT / "docs/organization-changes-20261115.json"
 RECEIPTS = ROOT / "docs/content-changes.json"
+SYMBOL_REVIEW = ROOT / "docs/blog-symbol-review-20261115.json"
 
 
 def derive():
@@ -32,6 +33,18 @@ def derive():
         reasons[entry["id"]] = f"逐页审阅：{judgment}。原理与算例：{mechanism}。精简与证据：{retention}。"
     if set(reasons) != {e["id"] for e in entries}:
         raise ValueError(f"missing review rows: {sorted({e['id'] for e in entries} - set(reasons))}")
+    # Later reviews supplement the frozen learning-rework evidence; they do not
+    # relabel its browser results as validation of newly edited content.
+    if SYMBOL_REVIEW.exists():
+        pages = json.loads(SYMBOL_REVIEW.read_text())["pages"]
+        if len(pages) != len(entries) or {p["id"] for p in pages} != set(reasons):
+            raise ValueError("symbol review must cover each local source exactly once")
+        sources = {e["id"]: e["source"] for e in entries}
+        for page in pages:
+            if page["source"] != sources[page["id"]]:
+                raise ValueError(f"symbol review source mismatch: {page['id']}")
+            if page["changed"]:
+                reasons[page["id"]] += f" 符号补充审阅：{page['reason']}。"
     return entries, reasons
 
 

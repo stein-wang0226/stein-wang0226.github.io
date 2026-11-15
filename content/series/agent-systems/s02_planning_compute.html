@@ -39,6 +39,7 @@ P(\text{至少一条成功})=1-(1-p)^N.
 <tr><td>顺序修订</td><td>基于反馈改一条方案</td><td>反馈是否独立可靠；修订是否引入新错误和更多失败操作</td></tr>
 </tbody></table>
 <h3>UCT：利用当前价值，也给少访问分支机会</h3>
+<p class="math-notation">\(s\) 是搜索状态，\(a\) 是可选动作，\(a^*\) 是本次选中动作；\(\arg\max\) 返回使分数最大的动作。此处 \(N(s),N(s,a)\) 为访问次数，区别于上一节的候选条数 \(N\)；探索常数 \(c\) 的尺度应与回报 \(Q\) 一致。</p>
 <div class="reading-math">\[
 a^*=\arg\max_a\left[
 Q(s,a)+c\sqrt{\frac{\log N(s)}{N(s,a)}}\right].
@@ -72,7 +73,7 @@ Q(s,a)+c\sqrt{\frac{\log N(s)}{N(s,a)}}\right].
 <div class="reading-math">\[
 \Delta U(a)=V\,\Delta p_a-\Delta C(a).
 \]</div>
-<p>\(\Delta p_a\)表示当前状态下，采取a相比不采取a的成功概率增量。</p>
+<p class="math-notation">\(\Delta p_a\) 表示当前状态下，采取 \(a\) 相比不采取 \(a\) 的成功概率增量；\(V\) 是一次成功的价值，\(\Delta C(a)\) 是新增成本，\(\Delta U(a)\) 是净收益。价值和成本必须使用同一单位；这里 \(V\) 不是 RL 的状态价值函数。</p>
 <p>教学取成功价值100单位：再查一次预计增量0.05、成本2，净收益3；另一条分支增量0.01、成本3，净收益−2。<strong>概率未知就用可解释停止规则，再在留出任务上校准，不编造精确价值。</strong></p>
 <table><thead><tr><th>条件</th><th>行动</th><th>验证信号</th></tr></thead><tbody>
 <tr><td>仍缺必要证据，预算和权限允许</td><td>针对缺口续查或补计算</td><td>新增原文、解除阻塞、可验产物</td></tr>

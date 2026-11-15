@@ -189,8 +189,8 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h2>SkillsBench：固定 harness 内比较技能与成本</h2>
 <p><a href="https://arxiv.org/html/2602.12670v1">SkillsBench v1，Table 3 与 Appendix Table 13</a>的配对设置比较同模型、同 harness 下无技能与 curated skills；以下不是后来 SkillsBench 1.1 的榜单。成功率为 %，费用为论文估计的美元/次 trial。</p>
 <table><thead><tr><th>Harness / 模型</th><th>无技能成功率</th><th>Curated 成功率</th><th>自生成技能成功率</th><th>无技能→Curated 估计费用</th></tr></thead><tbody>
-<tr><td>Codex / GPT-5.2</td><td>30.6</td><td>44.7</td><td>25.0</td><td>$1.85→$2.07</td></tr>
-<tr><td>Gemini CLI / Gemini 3 Flash</td><td>31.3</td><td>48.7</td><td>未报告</td><td>$0.54→$0.57</td></tr>
+<tr><td>Codex / GPT-5.2</td><td>30.6</td><td>44.7</td><td>25.0</td><td>1.85→2.07 美元</td></tr>
+<tr><td>Gemini CLI / Gemini 3 Flash</td><td>31.3</td><td>48.7</td><td>未报告</td><td>0.54→0.57 美元</td></tr>
 </tbody></table>
 <p>Curated skills 提高这两个设置的成功率，单 trial 费用也增加；Codex 的自生成技能则低于无技能。费用统计只覆盖 token 记录完整的 trial 子集，与全体成功率的分母不同，不能直接用费用÷全体成功率当作精确成功成本，也不是截至今日的服务商价格。跨模型差异同时包含 harness、技能和模型因素；版本、重试与成本分母仍按本章指标协议记录。</p>
 </section>

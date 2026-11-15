@@ -4,6 +4,7 @@
 <h2 id="parameterization">先固定路径，再比较预测对象</h2>
 <p><strong>预测对象是描述生成过程的坐标。</strong>改变输出坐标后，若不相应调整损失权重、时间采样和求解器，就可能改变训练问题。本节 VP 路径使用干净数据 \(x_0\)，\(x_t=a_tx_0+s_t\epsilon\)，其中 \(a_t^2+s_t^2=1\)。</p>
 <h3 id="vp-conversion">VP v 的换算是二维旋转</h3>
+<p class="math-notation">\(x_0,x_t,\epsilon,v_t\) 是同维连续向量，\(\epsilon\) 为标准高斯噪声；\(a_t,s_t\) 分别缩放信号和噪声，VP 是方差保持路径。这里 \(v_t\) 是所定义的预测坐标，点号 \(\dot x_t\) 才是时间导数；帽号表示模型预测。\(\nabla_x\log p_t(x)\) 是空间 log 密度梯度，不是对模型参数 \(\theta\) 求导。</p>
 <div class="reading-math">\[\begin{aligned}
 v_t&=a_t\epsilon-s_tx_0,\\
 \begin{pmatrix}x_t\\v_t\end{pmatrix}
@@ -30,6 +31,7 @@ x_0&=a_tx_t-s_tv_t,\qquad
 \end{aligned}\]</div>
 <p>条件 score 已知，可以作为监督；网络拟合的是条件期望。有限训练的输出近似真实边际 score，不能直接写成精确等号。噪声预测到 score 的换算也会引入 \(1/s_t^2\) 的平方损失尺度。</p>
 <h3 id="discrete-score">SEDD：离散比率不是归一化分布</h3>
+<p class="math-notation">下面 \(x,y\) 是完整离散状态，\(r^*\) 为真实相邻状态密度比，\(r&gt;0\) 为模型预测；星号表示真实目标，\(D\) 为逐项散度。DFM 式的 \(R_t(x,y)\) 是从 \(x\) 跳到 \(y\) 的速率（每单位时间），\(p_t(x)\) 是状态概率，\(\dot p_t(x)\) 是其时间变化率；它不是奖励 \(R\)。</p>
 <p>令 y 为把 x 的一个位置换成 v 的相邻状态，离散 score 是 \(r^*(x,y,t)=p_t(y)/p_t(x)\)。反向速率由前向速率和这份比率构造。比率不要求加起来等于 1，因此不能直接把它当 categorical KL。</p>
 <div class="reading-math">\[\begin{aligned}
 D(r^*,r)&=r-r^*+r^*\log(r^*/r),\\

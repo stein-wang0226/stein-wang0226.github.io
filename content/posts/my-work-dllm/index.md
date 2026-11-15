@@ -28,6 +28,7 @@ title: Trainable DLLM：生成顺序与块局部性
 <!-- WORK:KNOWLEDGE:END -->
 
 ## 目标函数与条件可见性
+<p class="math-notation"><strong>符号：</strong>\(x\) 是长度 \(L\) 的真实 token 序列，\(\theta\) 为模型参数；\(i\) 索引位置，\(x_{\lt i}\) 为前缀。扩散式的 \(\tau\in(0,1]\) 为 mask 比例/扰动时间，\(x_\tau\) 为扰动态，\(m\) 为 mask token，\(\ell_i\) 为该位置 NLL，\(\mathbf1\{\cdot\}\) 为指示函数；\(\mathbb E\) 对数据、时间和随机 mask 取平均。块编号用括号上标 \(x^{(k)}\)，不是乘方。</p>
 
 <div class="reading-math">\[
 p_\theta(x_{1:L})=\prod_i p_\theta(x_i\mid x_{\lt i})
@@ -117,6 +118,7 @@ multi_target_prefix:
 ```
 
 ### 熵选块为什么不等于选出正确块
+<p class="math-notation">\(b\) 是一个候选块，\(|b|\) 为块位置数，\(U\) 为未决块集合；\(p_{i,v}\) 是第 \(i\) 位对词表项 \(v\) 的预测概率。\(H_b\) 为平均熵，\(b^*=\arg\min_{b\in U}H_b\) 返回熵最低的块，log 为自然对数；低熵只代表分布集中。</p>
 
 给未提交块 b 的位置分布 p，先计算每个位置的熵，再取块内均值并选最小：
 
@@ -132,6 +134,7 @@ U 是未提交块集合。**低熵表示确信，未必正确**；错误块提�
 因此一个充分的消融应固定 backbone、attention、supervised token 数及实际 forward 预算，再比较固定块顺序与熵选择。prefix/fixed/multi 的监督密度不同，只有同时记录 loss 分母、target block 数和重复视图才能解释其差异。[3](#ref-3)[4](#ref-4)
 
 ## 三类受控实验怎样解释局部性
+<p class="math-notation">线性回归式中 \(X_P\in\mathbb R^{P\times d}\)、\(y_P\in\mathbb R^P\) 为提示输入/输出，\(X_R\in\mathbb R^{R\times d}\) 为待预测输入；\(\mu\in\mathbb R^d\) 为权重后验均值，\(\sigma^2\) 为观测噪声方差，\(I\) 为单位矩阵。\({}^{-1}\) 为矩阵逆，\({}^\top\) 为转置，\(\widehat y_R\) 为预测输出。</p>
 
 | 任务 | 输入 → 输出 | 检验机制 | 指标 |
 | --- | --- | --- | --- |

@@ -7,6 +7,7 @@
 <p>κ 是当前训练实现的近似常数；dense 的 6NT 估计只适用于相应假设，不能用于所有 MoE、长 attention 与 codec。示意 U=1B、E=100，则处理 100B tokens，并不等于见过 100B 不同 tokens。</p>
 <figure class="mechanism-map"><figcaption>Scaling 对照：先分清约束，再拟合趋势</figcaption><ol class="mechanism-chain"><li><b>固定独立数据</b><small>去重、tokenizer、任务切分</small></li><li><b>改变参数与复用</b><small>N、E、kernel、目标分开扫</small></li><li><b>实测训练计算</b><small>FLOPs、设备小时、有效目标</small></li><li><b>固定生成预算验收</b><small>质量与延迟共同报告</small></li></ol></figure>
 <h3 id="compute-optimal">幂律的最优配比怎样求？</h3>
+<p class="math-notation">拟合式中 \(L\) 为验证损失，\(A,B\) 为正幅度，\(\alpha,\beta&gt;0\) 为幂律指数，\(L_\infty\) 为不可约项；它们不是扩散噪声日程。\(\kappa\) 是每参数、每 token 的近似计算系数，\(C\) 为固定 FLOPs 预算；opt 表示该拟合假设下的最优点，\(\propto\) 只表示幂次关系，不给出绝对配方。</p>
 <p>用常见经验形式 \(L=A N^{-\alpha}+B D^{-\beta}+L_\infty\)。在 C≈κND 下，把 \(D=C/(\kappa N)\) 代入，对 N 求导令零：</p>
 <div class="reading-math">\[\begin{aligned}
 L(N)&=AN^{-\alpha}

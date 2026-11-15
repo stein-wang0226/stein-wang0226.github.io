@@ -2,6 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>离散扩散：转移核与加权 MLM</title></head><body>
 <!-- READING:FRAGMENT:START -->
 <h2 id="kernel">从转移矩阵到可训练的去噪器</h2>
+<p class="math-notation"><strong>符号：</strong>\(K\) 为该核的状态数，\(x_0,x_t,i,j,v\) 是词表/状态编号，\(\operatorname{Cat}\) 表示按给定概率行向量采样分类状态；\(\mathbf1(i=j)\) 为指示函数，\(\beta_t\) 为扰动概率，\(M\) 为 mask 状态。一般核按其状态集合计 \(K\)；吸收核若单独加入 mask，需计入这一个额外状态。下面 \(x_t^i\) 的上标 \(i\) 改指序列位置。</p>
 <p><strong>离散扩散在词表上移动概率质量。</strong>本节使用行向量：\(Q_t[i,j]\) 表示第 t 步从 i 到 j 的概率，每行和为 1；干净 token 的 one-hot 为 \(e_x\)，累积核为 \(\bar Q_t=Q_1\cdots Q_t\)。</p>
 <div class="reading-math">\[q(x_t\mid x_0)=\operatorname{Cat}(e_{x_0}\bar Q_t).\]</div>
 <table><thead><tr><th>核</th><th>转移规则</th><th>要记住</th></tr></thead><tbody>
@@ -27,6 +28,7 @@ q(x_s=M\mid x_t=M,x_0)&=\frac{1-\alpha_s}{1-\alpha_t}.
 \end{aligned}\]</div>
 <p>取 \(\alpha_s=0.8,\alpha_t=0.5\)：揭示原值为 0.6，保持 M 为 0.4，和为 1。若当前不是 M，吸收核说明它从未被 mask，上一时刻确定保持该值。</p>
 <h3 id="weighted-mlm">MDLM：反向转移 KL 为什么化成 CE？</h3>
+<p class="math-notation">该段 \(\alpha_t\) 为从初始数据到时刻 \(t\) 仍保留原值的概率，区别于 DDPM 的单步 \(\alpha_t\)；\(\alpha'_t\) 为时间导数。\(S_\theta\) 是所有 mask 位置 CE 的和，\(w(t)\) 为时间权重，\(\mathbb E\) 对采样时间、真实序列和扰动状态共同平均。</p>
 <p>在 SUBS 参数化下，未 mask 的值直接保留，网络不输出 M。当前为 M 时，真实后验在原值 x 上的质量是 \(a=(\alpha_s-\alpha_t)/(1-\alpha_t)\)；模型把这份质量按 \(p_\theta(v\mid x_t)\) 分配。M 的概率在真实后验与模型间相同，因此：</p>
 <div class="reading-math">\[\begin{aligned}\operatorname{KL}(q\|p_\theta)
 &=a\log\frac{a}{a\,p_\theta(x\mid x_t)}\\
@@ -64,6 +66,7 @@ w(t)&=\frac{-\alpha'_t}{1-\alpha_t}.
 <tr><td>SEDD</td><td>预测离散分布比率</td><td>见本页预测目标节，不重复一套 score 推导</td></tr>
 </tbody></table>
 <details id="duality"><summary>Uniform 与高斯对偶：能推出什么？</summary>
+<p class="math-notation">该段 \(r\) 是 argmax 后选中正确类的概率，\(a_t\) 是对应 uniform 混合的保留系数；\(\mathbf1/K\) 为均匀概率向量。\(T_\#q\) 表示先按 \(q\) 采样再施加同一确定映射 \(T\) 所得到的分布，称为推前分布；此处 \(T\) 是映射，不是采样步数。</p>
 <p>one-hot 加各维对称高斯噪声后取 argmax，由错误类别的对称性，正确类概率记为 r，其余每类为 (1−r)/(K−1)。因此该<strong>单时刻边际</strong>可写为 uniform 混合：</p>
 <div class="reading-math">\[\begin{aligned}
 q(z_t\mid x)&=\operatorname{Cat}\left(a_te_x+(1-a_t)\frac{\mathbf1}{K}\right),\\

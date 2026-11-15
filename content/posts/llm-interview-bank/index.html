@@ -39,14 +39,14 @@ K&=D_{\rm KL}(p\Vert q),\\
 \mathbb E_p[-\log u]&=K,\\
 \mathbb E_p[u-\log u-1]&=K,\\
 \mathbb E_p[u]&=1 .
-\end{aligned}\]</div><p class="followup"><strong>追问：</strong>old/current 的更新 KL 与 reference KL 分开；不能直接对非负 K3 采样值普通反传就声称得到完整 KL 梯度。</p></details>
+\end{aligned}\]</div><p class="math-notation">这里 \(p,q\) 是同一候选集合上的两分布，\(a\sim p\) 为所采动作，\(u\) 为反向概率比，\(K\) 为 KL 标量；\(\mathbb E_p\) 按 \(p\) 加权平均，\(\Vert\) 分隔两个被比较的分布。共同支持和可积性是这些期望等式的条件。</p><p class="followup"><strong>追问：</strong>old/current 的更新 KL 与 reference KL 分开；不能直接对非负 K3 采样值普通反传就声称得到完整 KL 梯度。</p></details>
 <details class="interview-card"><summary>DPO 怎样从 KL 正则目标推导？β 是反比吗？</summary><p><strong>三步：</strong>最优策略 π*∝πref·exp(r/β)；反解 r=βlog(π*/πref)+βlog Z；同 prompt 的偏好差消去 log Z，得 sigmoid 分类 loss。β 在原目标控制 KL 正则强度；训练中又缩放 preference logit，不是“KL 的反比”或单一学习率旋钮。</p><div class="reading-math" role="math">\[
 \begin{aligned}
 \ell_w&=\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\rm ref}(y_w\mid x)},\\
 \ell_l&=\log\frac{\pi_\theta(y_l\mid x)}{\pi_{\rm ref}(y_l\mid x)},\\
 \Delta&=\ell_w-\ell_l,\\
 L_{\rm DPO}&=-\log\sigma(\beta\Delta).
-\end{aligned}\]</div><p class="followup"><strong>追问：</strong>reference 支持、序列 log-prob 求和、label noise、长度与 chosen/rejected 同降。<a href="/llm-posttraining/#posttraining-supervision--dpo-derivation">完整优化推导</a>。</p></details>
+\end{aligned}\]</div><p class="math-notation">\(x\) 为共同 prompt，\(y_w,y_l\) 为偏好/不偏好候选，\(\pi_\theta,\pi_{\rm ref}\) 为当前/冻结参考策略；\(\ell_w,\ell_l\) 为序列 log-ratio，\(\Delta\) 为两者差，\(\sigma\) 为 sigmoid，\(\beta&gt;0\) 缩放偏好 logit。这里 w/l 是 winner/loser 标签，不是 token 位置。</p><p class="followup"><strong>追问：</strong>reference 支持、序列 log-prob 求和、label noise、长度与 chosen/rejected 同降。<a href="/llm-posttraining/#posttraining-supervision--dpo-derivation">完整优化推导</a>。</p></details>
 <details class="interview-card"><summary>离线 DPO 是 off-policy RL 吗？在线 DPO 改了什么？</summary><p><strong>固定偏好数据训练：</strong>标准 DPO 不在每步访问环境；它的监督梯度针对离线目标，并非随时间产生“RL 梯度估计偏差”。问题是数据覆盖与 policy 分布失配。online/iterative DPO 刷新当前策略候选与标签，增加反馈成本，也需防选择偏移和遗忘。</p><p class="followup"><strong>追问：</strong>“只 SFT chosen”与偏好差目标不同，但不是必须用 RL 才能对齐。</p></details>
 <details class="interview-card"><summary>IPO、KTO、SimPO、ORPO、cDPO 各改哪里？</summary><p><strong>沿目标与数据记：</strong>IPO 用平方目标约束偏好 log-ratio，非 squared hinge；KTO 用单条 good/bad 的效用目标；SimPO 用平均 log-prob 和 margin，省 reference；ORPO 将 SFT 与 odds-ratio 偏好项结合；cDPO/label smoothing 建模标签翻转噪声。不同命名实现仍需固定版本。</p><p class="followup"><strong>追问：</strong>无 reference 的新目标不自动继承 DPO 推导；偏好胜率、held-out 能力和长度变化共同验收。</p></details>
 <details class="interview-card"><summary>Reward hacking、alignment tax 与模式坍缩如何诊断？</summary><p><strong>代理高分与真实目标分开。</strong>检查高分样本的长度/格式捷径，独立任务成功、OOD、旧能力、输出多样性与安全误拒绝。KL 只能限制偏移；长度惩罚、ensemble、更新 RM 各会改变目标，不能代替独立验收。</p><p class="followup"><strong>追问：</strong>β、LR、epochs、数据与 reward 版本单轴消融；没有所有训练都健康的 KL/clip/entropy 固定区间。</p></details>

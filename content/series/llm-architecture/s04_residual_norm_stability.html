@@ -3,6 +3,7 @@
 <title>04 · 残差、归一化与稳定性</title><meta name="description" content="解释Pre/Post-Norm、RMSNorm、梯度直通、初始化与QK尺度，区分AttnRes和mHC的对象、约束与稳定性证据。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
 <!-- READING:FRAGMENT:START -->
+<p class="math-notation"><strong>读式约定：</strong>\(F\) 是 Attention/FFN 等残差分支，\(N\) 是归一化函数；\(J_F,J_N\) 是输出对输入的 Jacobian，\(I\) 是单位矩阵，\(\nabla_x L\) 是损失对表示的梯度。层号用 \(\ell\)，\(x_0,x_L\) 为首末层表示；\({}^\top\) 为转置。Norm 式的 \(g,b\) 是逐维可训练缩放和偏置，\(\varepsilon\) 为防止除零的常数，\(\odot\) 为逐元素乘法。</p>
 <figure class="mechanism-map"><figcaption>Pre-Norm 残差块：保留主干，学习增量</figcaption><ol class="mechanism-chain"><li><b>输入状态 x</b><small>一支保留作 residual</small></li><li><b>Norm(x) → 子层 F</b><small>归一化后做 Attention 或 FFN</small></li><li><b>增量 F(Norm(x))</b><small>初始化与尺度影响数值范围</small></li><li><b>x + 增量 → 下一层</b><small>主干与分支共同传播梯度</small></li></ol><p class="mechanism-return">旁路：x 直接进入加法节点。Post-Norm 在相加之后归一化；两种位置不能互换描述。</p></figure>
 <section id="purpose"><h2>稳定性来自一条完整数值路径</h2>
 <section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>

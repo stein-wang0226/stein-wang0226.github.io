@@ -23,7 +23,7 @@
         "entry": "my-work-holon",
         "anchor": null
       },
-      "reason": "逐页审阅：表示→MoT→数据/监督→token校准→预算→Ladder→工作复盘全部审阅。原理与算例：routed Q/attention、CE分母反例、产出校准与两流例、C/M、DiD。精简与证据：修正 margin 为 mismatch−match，保 checkpoint/CI/单seed/OOD边界；五追问，机制图可放大。"
+      "reason": "逐页审阅：表示→MoT→数据/监督→token校准→预算→Ladder→工作复盘全部审阅。原理与算例：routed Q/attention、CE分母反例、产出校准与两流例、C/M、DiD。精简与证据：修正 margin 为 mismatch−match，保 checkpoint/CI/单seed/OOD边界；五追问，机制图可放大。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "my-work-protagent",
@@ -45,7 +45,7 @@
         "entry": "my-work-protagent",
         "anchor": null
       },
-      "reason": "逐页审阅：工具→SFT→return→reward→四臂→主模型→训练全部审阅。原理与算例：assistant mask、轨迹score-function、token surrogate、重复调用信用。精简与证据：区分原始无偏梯度与处理后advantage；保四臂61.4与指定61.0、PFUA独立、recall>0.5；五追问。"
+      "reason": "逐页审阅：工具→SFT→return→reward→四臂→主模型→训练全部审阅。原理与算例：assistant mask、轨迹score-function、token surrogate、重复调用信用。精简与证据：区分原始无偏梯度与处理后advantage；保四臂61.4与指定61.0、PFUA独立、recall>0.5；五追问。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "my-work-harbor",
@@ -67,7 +67,7 @@
         "entry": "my-work-harbor",
         "anchor": null
       },
-      "reason": "逐页审阅：来源→合同→oracle→门禁→refinement→历史规模全部审阅。原理与算例：A=(1,10)/B=(2,20)混拼反例、完整路径集合、pass@k补事件。精简与证据：剪重复链路，用短要点说明接受门；v4反事实与accepted=0保留，历史库存不除作匹配率；五追问。"
+      "reason": "逐页审阅：来源→合同→oracle→门禁→refinement→历史规模全部审阅。原理与算例：A=(1,10)/B=(2,20)混拼反例、完整路径集合、pass@k补事件。精简与证据：剪重复链路，用短要点说明接受门；v4反事实与accepted=0保留，历史库存不除作匹配率；五追问。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "my-work-dllm",
@@ -89,7 +89,7 @@
         "entry": "my-work-dllm",
         "anchor": null
       },
-      "reason": "逐页审阅：目标→mask→Jigsaw→任务→LM1B→复现全部审阅。原理与算例：AR/MDM/block目标、熵与ICL终点。精简与证据：保 side/offset具体规则和监督密度、top-p混合与缺日志；五追问。"
+      "reason": "逐页审阅：目标→mask→Jigsaw→任务→LM1B→复现全部审阅。原理与算例：AR/MDM/block目标、熵与ICL终点。精简与证据：保 side/offset具体规则和监督密度、top-p混合与缺日志；五追问。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "my-work-holon-full",
@@ -3101,7 +3101,7 @@
         "entry": "my-work-holon-full",
         "anchor": null
       },
-      "reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。"
+      "reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；逐项复核50个原生MathML，修正GQA交互计算的矛盾表述。"
     },
     {
       "id": "my-work-protagent-full",
@@ -3393,7 +3393,7 @@
         "entry": "my-work-protagent-full",
         "anchor": null
       },
-      "reason": "逐页审阅：13节全部审阅。原理与算例：对数导数→去过去奖→step return→策略token，reward guard与全样本分母。精简与证据：四臂/配方同义表合并；原3SVG保持比，可放大；逐seed/阈值/γλ/PFUA表及来源保留；不再克隆导读三节。"
+      "reason": "逐页审阅：13节全部审阅。原理与算例：对数导数→去过去奖→step return→策略token，reward guard与全样本分母。精简与证据：四臂/配方同义表合并；原3SVG保持比，可放大；逐seed/阈值/γλ/PFUA表及来源保留；不再克隆导读三节。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "my-work-harbor-full",
@@ -3620,7 +3620,7 @@
         "entry": "my-work-harbor-full",
         "anchor": null
       },
-      "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。"
+      "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。"
     },
     {
       "id": "my-work-dllm-full",
@@ -3867,7 +3867,7 @@
         "entry": "my-work-dllm-full",
         "anchor": null
       },
-      "reason": "逐页审阅：全章节审阅。原理与算例：AR/吸收/块目标；ICL二次型配方、rank风险例；三OR mask；熵与affinity。精简与证据：修概念mask套用LM1B的错误；CLI按需，原3图保持比可放大；ARR表/SEDD差异/smoke范围保留。"
+      "reason": "逐页审阅：全章节审阅。原理与算例：AR/吸收/块目标；ICL二次型配方、rank风险例；三OR mask；熵与affinity。精简与证据：修概念mask套用LM1B的错误；CLI按需，原3图保持比可放大；ARR表/SEDD差异/smoke范围保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "agent-systems",
@@ -4188,7 +4188,7 @@
         "entry": "agent-systems",
         "anchor": "agent-rag"
       },
-      "reason": "逐页审阅：对象、索引、检索、Agentic、分层评测、论文结果、追问、来源全部审阅。原理与算例：BM25饱和/长度项；单位向量与cosine；两路RRF；Recall/MRR。精简与证据：删除第二幅同义总流程；索引经验分点；保留Faiss固定提交与未运行状态、PROGRESS退化/成本边界。"
+      "reason": "逐页审阅：对象、索引、检索、Agentic、分层评测、论文结果、追问、来源全部审阅。原理与算例：BM25饱和/长度项；单位向量与cosine；两路RRF；Recall/MRR。精简与证据：删除第二幅同义总流程；索引经验分点；保留Faiss固定提交与未运行状态、PROGRESS退化/成本边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "agent-planning",
@@ -4431,7 +4431,7 @@
         "entry": "agent-systems",
         "anchor": "agent-planning"
       },
-      "reason": "逐页审阅：策略、搜索、验证、环境、预算、对照、论文结果、来源全部审阅。原理与算例：独立失败概率→BoN；selector条件成功；UCT两分支；净收益教学例。精简与证据：去重复总流程和pass@k组合长讲；分支状态与副作用图、停止表替代原则段；保留Search-R1++下降项。"
+      "reason": "逐页审阅：策略、搜索、验证、环境、预算、对照、论文结果、来源全部审阅。原理与算例：独立失败概率→BoN；selector条件成功；UCT两分支；净收益教学例。精简与证据：去重复总流程和pass@k组合长讲；分支状态与副作用图、停止表替代原则段；保留Search-R1++下降项。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "agent-trust",
@@ -4900,7 +4900,7 @@
         "entry": "llm-serving",
         "anchor": "serving-runtime"
       },
-      "reason": "逐页审阅：阶段、分页、prefix、实现、混合状态、对照、来源全部审阅。原理与算例：连续批处理三轮；35token/16槽分页；逻辑→物理映射；两请求共享32prefix例。精简与证据：去第二同义总图；prefix条件分点、瓶颈诊断表；固定vLLM/SGLang源码与未运行范围保留。"
+      "reason": "逐页审阅：阶段、分页、prefix、实现、混合状态、对照、来源全部审阅。原理与算例：连续批处理三轮；35token/16槽分页；逻辑→物理映射；两请求共享32prefix例。精简与证据：去第二同义总图；prefix条件分点、瓶颈诊断表；固定vLLM/SGLang源码与未运行范围保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "serving-parallel",
@@ -5078,7 +5078,7 @@
         "entry": "llm-serving",
         "anchor": "serving-parallel"
       },
-      "reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。"
+      "reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "serving-capacity",
@@ -5281,7 +5281,7 @@
         "entry": "llm-serving",
         "anchor": "serving-capacity"
       },
-      "reason": "逐页审阅：账本、70B例、指标、rollout、成本、协议、来源全部审阅。原理与算例：唯一物理槽/本地head账本；70B/TP4/32K逐维；TTFT/ITL/TPOT时间例；Little稳定条件；全部尝试资源/成功。精简与证据：去第二总图；资源不能跨单位直接相加、费用避免重复；CSV/JSON规划不冒充实测。"
+      "reason": "逐页审阅：账本、70B例、指标、rollout、成本、协议、来源全部审阅。原理与算例：唯一物理槽/本地head账本；70B/TP4/32K逐维；TTFT/ITL/TPOT时间例；Little稳定条件；全部尝试资源/成功。精简与证据：去第二总图；资源不能跨单位直接相加、费用避免重复；CSV/JSON规划不冒充实测。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "llm-posttraining",
@@ -6362,7 +6362,7 @@
         "entry": "llm-posttraining",
         "anchor": "posttraining-supervision"
       },
-      "reason": "逐页审阅：SFT、模板/packing、恢复、拒绝采样、偏好、反馈与准入全部审阅。原理与算例：mask 梯度；KL 正则最优策略→DPO 分类目标。精简与证据：方法结论分点，保留KTO/恢复训练来源与退化，偏好细讲唯一主讲。"
+      "reason": "逐页审阅：SFT、模板/packing、恢复、拒绝采样、偏好、反馈与准入全部审阅。原理与算例：mask 梯度；KL 正则最优策略→DPO 分类目标。精简与证据：方法结论分点，保留KTO/恢复训练来源与退化，偏好细讲唯一主讲。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "posttraining-algorithms",
@@ -6665,7 +6665,7 @@
         "entry": "llm-posttraining",
         "anchor": "posttraining-algorithms"
       },
-      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。"
+      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "posttraining-opd",
@@ -6993,7 +6993,7 @@
         "entry": "llm-posttraining",
         "anchor": "posttraining-opd"
       },
-      "reason": "逐页审阅：学生轨迹、局部KL、采样梯度、教师接口、多教师、自蒸馏、引导、遗忘全部审阅。原理与算例：reverse-KL 局部导数；数值估计与梯度估计区别。精简与证据：教师接口/成本和监控分点，保工业路线与退化，OPD原理集中本章。"
+      "reason": "逐页审阅：学生轨迹、局部KL、采样梯度、教师接口、多教师、自蒸馏、引导、遗忘全部审阅。原理与算例：reverse-KL 局部导数；数值估计与梯度估计区别。精简与证据：教师接口/成本和监控分点，保工业路线与退化，OPD原理集中本章。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "posttraining-rewards",
@@ -7251,7 +7251,7 @@
         "entry": "llm-posttraining",
         "anchor": "posttraining-rewards"
       },
-      "reason": "逐页审阅：状态机、反馈、过程监督、PURE/Cliff、多步信用、MiMo/RLDS与案例全部审阅。原理与算例：重复正确步骤漏洞；局部优势与credit粒度。精简与证据：保GraphGPO/ReBel/EFCA/MileGPO等区别与因果边界；经验、奖励漏洞与追问分点。"
+      "reason": "逐页审阅：状态机、反馈、过程监督、PURE/Cliff、多步信用、MiMo/RLDS与案例全部审阅。原理与算例：重复正确步骤漏洞；局部优势与credit粒度。精简与证据：保GraphGPO/ReBel/EFCA/MileGPO等区别与因果边界；经验、奖励漏洞与追问分点。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "posttraining-frameworks",
@@ -7584,7 +7584,7 @@
         "entry": "llm-posttraining",
         "anchor": "posttraining-frameworks"
       },
-      "reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。"
+      "reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "posttraining-cases",
@@ -8355,7 +8355,7 @@
         "entry": "llm-training-lifecycle",
         "anchor": "training-methods-systems"
       },
-      "reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。"
+      "reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "scientific-task-family",
@@ -8703,7 +8703,7 @@
         "entry": "agent-data-benchmarks",
         "anchor": "scientific-task-family"
       },
-      "reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。"
+      "reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "cluster-training-evaluation",
@@ -8946,7 +8946,7 @@
         "entry": "agent-data-benchmarks",
         "anchor": "cluster-training-evaluation"
       },
-      "reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。"
+      "reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "llm-architecture",
@@ -9292,7 +9292,7 @@
         "entry": "llm-architecture",
         "anchor": "architecture-transformer"
       },
-      "reason": "逐页审阅：条件预测、张量路径、mask、block、teacher forcing、状态成本与不变量全部审阅。原理与算例：NLL/softmax导数；4token causal mask；标签shift。精简与证据：机制展开、结论短卡；修AR训练串行等混淆，原来源和旧定位保留。"
+      "reason": "逐页审阅：条件预测、张量路径、mask、block、teacher forcing、状态成本与不变量全部审阅。原理与算例：NLL/softmax导数；4token causal mask；标签shift。精简与证据：机制展开、结论短卡；修AR训练串行等混淆，原来源和旧定位保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "architecture-attention",
@@ -9485,7 +9485,7 @@
         "entry": "llm-architecture",
         "anchor": "architecture-attention"
       },
-      "reason": "逐页审阅：历史访问、MHA/MQA/GQA、cache、RoPE、稀疏、Flash/Paged与对照全部审阅。原理与算例：点积方差缩放；二维旋转与相对位移；缓存字节算例。精简与证据：型号/框架次表按需；长式分行，原图与共同预算条件保留。"
+      "reason": "逐页审阅：历史访问、MHA/MQA/GQA、cache、RoPE、稀疏、Flash/Paged与对照全部审阅。原理与算例：点积方差缩放；二维旋转与相对位移；缓存字节算例。精简与证据：型号/框架次表按需；长式分行，原图与共同预算条件保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "architecture-moe",
@@ -9678,7 +9678,7 @@
         "entry": "llm-architecture",
         "anchor": "architecture-moe"
       },
-      "reason": "逐页审阅：FFN、router、容量、参数/通信、latent专家、EP与消融全部审阅。原理与算例：两/三矩阵计数；top-k门控；容量和负载。精简与证据：规格名录折叠，不能用总参数替代激活参数或真实吞吐。"
+      "reason": "逐页审阅：FFN、router、容量、参数/通信、latent专家、EP与消融全部审阅。原理与算例：两/三矩阵计数；top-k门控；容量和负载。精简与证据：规格名录折叠，不能用总参数替代激活参数或真实吞吐。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "architecture-residual",
@@ -9846,7 +9846,7 @@
         "entry": "llm-architecture",
         "anchor": "architecture-residual"
       },
-      "reason": "逐页审阅：梯度、Norm、初始化/QK/长上下文、AttnRes/mHC与故障全部审阅。原理与算例：Pre/Post-Norm链式法则；LN/RMS算例。精简与证据：修免warmup绝对化；新残差增量归研究地图，基础与诊断集中本章。"
+      "reason": "逐页审阅：梯度、Norm、初始化/QK/长上下文、AttnRes/mHC与故障全部审阅。原理与算例：Pre/Post-Norm链式法则；LN/RMS算例。精简与证据：修免warmup绝对化；新残差增量归研究地图，基础与诊断集中本章。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "architecture-hybrid",
@@ -10029,7 +10029,7 @@
         "entry": "llm-architecture",
         "anchor": "architecture-hybrid"
       },
-      "reason": "逐页审阅：外积、衰减/delta、Mamba/SSD、混合层、分支恢复与对照全部审阅。原理与算例：状态外积；遗忘与定向覆盖反例；SSM标量状态。精简与证据：经验精炼，有限状态压缩边界保留，cache与恢复不自动等价。"
+      "reason": "逐页审阅：外积、衰减/delta、Mamba/SSD、混合层、分支恢复与对照全部审阅。原理与算例：状态外积；遗忘与定向覆盖反例；SSM标量状态。精简与证据：经验精炼，有限状态压缩边界保留，cache与恢复不自动等价。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "architecture-comparison",
@@ -10768,7 +10768,7 @@
         "entry": "agent-data-benchmarks",
         "anchor": "agent-task-synthesis"
       },
-      "reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。"
+      "reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "agent-benchmark-map",
@@ -11066,7 +11066,7 @@
         "entry": "agent-data-benchmarks",
         "anchor": "agent-benchmark-map"
       },
-      "reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。"
+      "reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。"
     },
     {
       "id": "llm-research-map-2026",
@@ -12458,7 +12458,7 @@
         "entry": "llm-research-map-2026",
         "anchor": "research-base-architecture"
       },
-      "reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。"
+      "reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "research-inference-diffusion",
@@ -13212,7 +13212,7 @@
         "entry": "llm-research-map-2026",
         "anchor": "research-architecture-landscape"
       },
-      "reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。"
+      "reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "research-architecture-training",
@@ -13525,7 +13525,7 @@
         "entry": "llm-research-map-2026",
         "anchor": "research-architecture-training"
       },
-      "reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。"
+      "reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "llm-training-lifecycle",
@@ -14201,7 +14201,7 @@
         "entry": "llm-training-lifecycle",
         "anchor": "llm-training-pretraining"
       },
-      "reason": "逐页审阅：数据、CLM/FIM、预算、长上下文、恢复、阶段准入全部审阅。原理与算例：packing边界；6NT前向/反向来由。精简与证据：保真实token/重复/预算区别，工程结论分点、共同预算证据保留。"
+      "reason": "逐页审阅：数据、CLM/FIM、预算、长上下文、恢复、阶段准入全部审阅。原理与算例：packing边界；6NT前向/反向来由。精简与证据：保真实token/重复/预算区别，工程结论分点、共同预算证据保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "llm-training-midtraining",
@@ -14509,7 +14509,7 @@
         "entry": "llm-training-lifecycle",
         "anchor": "llm-training-midtraining"
       },
-      "reason": "逐页审阅：阶段、工业配方、受控结果、数据/伪代码、配比回放与科学交接全部审阅。原理与算例：CSV四视角；输入比例与目标比例反例。精简与证据：长论文路线表按需；保能力下降与混杂条件，CPT不由名称决定目标。"
+      "reason": "逐页审阅：阶段、工业配方、受控结果、数据/伪代码、配比回放与科学交接全部审阅。原理与算例：CSV四视角；输入比例与目标比例反例。精简与证据：长论文路线表按需；保能力下降与混杂条件，CPT不由名称决定目标。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "llm-training-sft-rft",
@@ -14847,7 +14847,7 @@
         "entry": "llm-training-lifecycle",
         "anchor": "llm-training-sft-rft"
       },
-      "reason": "逐页审阅：协议策略、角色mask、轨迹准入、拒绝采样、偏好/教师与RL交接全部审阅。原理与算例：mask的直接梯度与条件反传；筛选偏移。精简与证据：DPO/OPD/PPO重复推导归后训练；结论按准入条件与失败信号精简。"
+      "reason": "逐页审阅：协议策略、角色mask、轨迹准入、拒绝采样、偏好/教师与RL交接全部审阅。原理与算例：mask的直接梯度与条件反传；筛选偏移。精简与证据：DPO/OPD/PPO重复推导归后训练；结论按准入条件与失败信号精简。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "llm-training-rl-evaluation",
@@ -16423,7 +16423,7 @@
         "entry": "llm-frontier-2026",
         "anchor": null
       },
-      "reason": "逐页审阅：14节含模型、架构、优化器、Agent、RL、OPD、训练、评测、蛋白、证据与日志全部审阅。原理与算例：改动位置→比较条件；五个判断追问；polar有限近似、Clip-Higher与行为校正、教师接口边界。精简与证据：型号/许可证快照与原维护日志按需；收敛Muon/RL/OPD主讲，旧TB排名改历史；移除无共同条件榜单、领域CoT普遍结论，修正百万碱基单位。AUTO标记、原日期、last-updated与原稿逐字归档保持。"
+      "reason": "逐页审阅：14节含模型、架构、优化器、Agent、RL、OPD、训练、评测、蛋白、证据与日志全部审阅。原理与算例：改动位置→比较条件；五个判断追问；polar有限近似、Clip-Higher与行为校正、教师接口边界。精简与证据：型号/许可证快照与原维护日志按需；收敛Muon/RL/OPD主讲，旧TB排名改历史；移除无共同条件榜单、领域CoT普遍结论，修正百万碱基单位。AUTO标记、原日期、last-updated与原稿逐字归档保持。 符号补充审阅：将三段美元价格改为明确货币单位，修复五个跨段误识别的数学输出；价格原数值及来源保留。"
     },
     {
       "id": "agentic-rl-guide",
@@ -20237,7 +20237,7 @@
         "entry": "transformer-decoder-flow",
         "anchor": null
       },
-      "reason": "逐页审阅：公式/形状、cache/mask、参数账本与完整小模型全部审阅。原理与算例：NLL/attention；整段/逐token/多token缓存等价。精简与证据：修Llama3头型、SwiGLU计数、双shift、初始化/cache/device/mask；PyTorch2.8 CPU实现运行通过，非性能实验。"
+      "reason": "逐页审阅：公式/形状、cache/mask、参数账本与完整小模型全部审阅。原理与算例：NLL/attention；整段/逐token/多token缓存等价。精简与证据：修Llama3头型、SwiGLU计数、双shift、初始化/cache/device/mask；PyTorch2.8 CPU实现运行通过，非性能实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "rl-interview-guide",
@@ -21780,7 +21780,7 @@
         "entry": "rl-interview-guide",
         "anchor": null
       },
-      "reason": "逐页审阅：符号、算法卡、数值卡、参数影响、诊断、短答与历史入口全部审阅。原理与算例：关键目标与作用；完整推导定位后训练。精简与证据：修G/KL方向/显存/epochs矛盾；合并重复长讲，现代RLVR/Agentic/OPD覆盖保留。"
+      "reason": "逐页审阅：符号、算法卡、数值卡、参数影响、诊断、短答与历史入口全部审阅。原理与算例：关键目标与作用；完整推导定位后训练。精简与证据：修G/KL方向/显存/epochs矛盾；合并重复长讲，现代RLVR/Agentic/OPD覆盖保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "agent-harness-guide",
@@ -22803,7 +22803,7 @@
         "entry": "agent-harness-guide",
         "anchor": null
       },
-      "reason": "逐页审阅：runtime、工具、权限、并发恢复、context/换窗、memory与交接全部审阅。原理与算例：两固定源码图；压缩/reset/history与V1/V2流程。精简与证据：修pruning归属/非通用预算；六原模板与用户原稿下载保留；训练配方与无来源性能移出。"
+      "reason": "逐页审阅：runtime、工具、权限、并发恢复、context/换窗、memory与交接全部审阅。原理与算例：两固定源码图；压缩/reset/history与V1/V2流程。精简与证据：修pruning归属/非通用预算；六原模板与用户原稿下载保留；训练配方与无来源性能移出。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "distributed-training-guide",
@@ -25724,7 +25724,7 @@
         "entry": "llm-interview-bank",
         "anchor": null
       },
-      "reason": "逐页审阅：470问的11领域全部审阅：LLM、偏好、RL、Agentic、VLM、Agent、RAG、服务、代码、评测、开放题；155旧答核对口径。原理与算例：90卡全部附短答与追问；KL/DPO关键式，SFT/GQA/Norm/RoPE/LoRA/DPO/PPO/GAE/group/采样完整教学代码，online-softmax与经典算法不变量。精简与证据：合并同义问、删除无来源频率/公司排名；全470原问及旧答逐字归档，旧公开锚点保留；完整PG/GAE/GRPO推导与六论文数值配方归唯一主讲。"
+      "reason": "逐页审阅：470问的11领域全部审阅：LLM、偏好、RL、Agentic、VLM、Agent、RAG、服务、代码、评测、开放题；155旧答核对口径。原理与算例：90卡全部附短答与追问；KL/DPO关键式，SFT/GQA/Norm/RoPE/LoRA/DPO/PPO/GAE/group/采样完整教学代码，online-softmax与经典算法不变量。精简与证据：合并同义问、删除无来源频率/公司排名；全470原问及旧答逐字归档，旧公开锚点保留；完整PG/GAE/GRPO推导与六论文数值配方归唯一主讲。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "vlm-knowledge-interview",
@@ -26127,7 +26127,7 @@
         "entry": "vlm-knowledge-interview",
         "anchor": null
       },
-      "reason": "逐页审阅：六部分全部审阅：核心表示与目标、前沿路线、11问、3组代码、来源、掌握清单。原理与算例：patch/MLP/query形状与参数；CLIP/SigLIP梯度和两对算例；视觉条件反传；tiling/merge/视频预算；crop坐标；VCD、ColPali MaxSim；完整patch/projector/resampler/mask/tiling。精简与证据：删除跨论文榜单/无出处倍数，代表路线按需；修正336/14=576、SigLIP负例通信/O(N)、MLP最优/统一四阶段、M-RoPE三等分、VCD无图对比、不同图像不可互看及max12却15tiles；精确原稿和全部原链接继续保留。"
+      "reason": "逐页审阅：六部分全部审阅：核心表示与目标、前沿路线、11问、3组代码、来源、掌握清单。原理与算例：patch/MLP/query形状与参数；CLIP/SigLIP梯度和两对算例；视觉条件反传；tiling/merge/视频预算；crop坐标；VCD、ColPali MaxSim；完整patch/projector/resampler/mask/tiling。精简与证据：删除跨论文榜单/无出处倍数，代表路线按需；修正336/14=576、SigLIP负例通信/O(N)、MLP最优/统一四阶段、M-RoPE三等分、VCD无图对比、不同图像不可互看及max12却15tiles；精确原稿和全部原链接继续保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "rl-interview-guide-legacy",
@@ -27573,7 +27573,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-ddpm"
       },
-      "reason": "逐页审阅：模型→Jensen→裂项→后验→noise loss→采样全部审阅。原理与算例：前向方差递推；t≥2裂项；精度α/β、A14/variance1/14/mean0.89443；固定方差MSE。精简与证据：修正漏α、连续q(x0|x0)=1、有限逆边缘精确Gaussian、simple=ELBO、末步投影数据流形；必要五步推导保留。"
+      "reason": "逐页审阅：模型→Jensen→裂项→后验→noise loss→采样全部审阅。原理与算例：前向方差递推；t≥2裂项；精度α/β、A14/variance1/14/mean0.89443；固定方差MSE。精简与证据：修正漏α、连续q(x0|x0)=1、有限逆边缘精确Gaussian、simple=ELBO、末步投影数据流形；必要五步推导保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-flow-sde",
@@ -28456,7 +28456,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-flow-sde"
       },
-      "reason": "逐页审阅：时间、ODE/SDE、路径、条件/边际、score、PF、OT、DDPM连接、训练、求解器与原附录A–F全部审阅。原理与算例：条件速度；方差分解证明；test-function连续性；Ito/FP；score抵消；VP极限与逆SDE。精简与证据：删除独立配对自动OT、一/少步必然、所有loss/网络等价；明确生成/前向时间、理想边际vs路径、空间无关g条件。"
+      "reason": "逐页审阅：时间、ODE/SDE、路径、条件/边际、score、PF、OT、DDPM连接、训练、求解器与原附录A–F全部审阅。原理与算例：条件速度；方差分解证明；test-function连续性；Ito/FP；score抵消；VP极限与逆SDE。精简与证据：删除独立配对自动OT、一/少步必然、所有loss/网络等价；明确生成/前向时间、理想边际vs路径、空间无关g条件。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-overview",
@@ -29652,7 +29652,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-discrete"
       },
-      "reason": "逐页审阅：D3PM、贝叶斯、VLB、MDLM、LLaDA、Dream/Seed/适配、SEDD、对偶全部审阅。原理与算例：行向量Bayes；吸收揭示0.6/0.4；SUBS后验KL→CE→连续权重；t0.25/0.75；对称argmax边际。精简与证据：线性weight修正1/t；可见token梯度、remasking/carry-over与GQA/cache分开；LLaDA原论文配方保留；无条件历史数字与错误CART/CTMC公式移出当前正文。"
+      "reason": "逐页审阅：D3PM、贝叶斯、VLB、MDLM、LLaDA、Dream/Seed/适配、SEDD、对偶全部审阅。原理与算例：行向量Bayes；吸收揭示0.6/0.4；SUBS后验KL→CE→连续权重；t0.25/0.75；对称argmax边际。精简与证据：线性weight修正1/t；可见token梯度、remasking/carry-over与GQA/cache分开；LLaDA原论文配方保留；无条件历史数字与错误CART/CTMC公式移出当前正文。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-block",
@@ -30210,7 +30210,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-block"
       },
-      "reason": "逐页审阅：因子化、插值、训练、cache、SSD-LM、适配、SFT/BlockGen、drafter、混合模式、Fast-dLLM全部审阅。原理与算例：4token两块mask；clean/noisy泄漏；128token/16块/4轮与32块/8轮。精简与证据：删除伪单调定理、虚构simplex Gaussian、重复DFlash数值；精确因子化不等于块边际精确；保留现代路线与cache充分条件。"
+      "reason": "逐页审阅：因子化、插值、训练、cache、SSD-LM、适配、SFT/BlockGen、drafter、混合模式、Fast-dLLM全部审阅。原理与算例：4token两块mask；clean/noisy泄漏；128token/16块/4轮与32块/8轮。精简与证据：删除伪单调定理、虚构simplex Gaussian、重复DFlash数值；精确因子化不等于块边际精确；保留现代路线与cache充分条件。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-continuous",
@@ -30873,7 +30873,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-continuous"
       },
-      "reason": "逐页审阅：三接口、Diffusion-LM、COLA、CADD、ELF、CCDD、LangFlow、TextLDM、Plaid全部审阅。原理与算例：−1→3路径t0.25；两token embedding均值与CE反例；重建/生成/任务三检查。精简与证据：删除一般MSE=CE、任意RAE稳定、全域20x；时间符号统一，型号仅保留研究接口/需核对字段。"
+      "reason": "逐页审阅：三接口、Diffusion-LM、COLA、CADD、ELF、CCDD、LangFlow、TextLDM、Plaid全部审阅。原理与算例：−1→3路径t0.25；两token embedding均值与CE反例；重建/生成/任务三检查。精简与证据：删除一般MSE=CE、任意RAE稳定、全域20x；时间符号统一，型号仅保留研究接口/需核对字段。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-paradigms",
@@ -31206,7 +31206,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-paradigms"
       },
-      "reason": "逐页审阅：连续三目标、score、SEDD、DFM、对照、追问全部审阅。原理与算例：VP旋转/逆变换数值例；MSE时间权重；score条件期望；ratio散度导数；两状态master例。精简与证据：修正epsilon低噪声归零、VP-v=FM、SEDD缺r项/比率softmax；DFM纠错后ID保留；旧错误冻结全文移到原稿。"
+      "reason": "逐页审阅：连续三目标、score、SEDD、DFM、对照、追问全部审阅。原理与算例：VP旋转/逆变换数值例；MSE时间权重；score条件期望；ratio散度导数；两状态master例。精简与证据：修正epsilon低噪声归零、VP-v=FM、SEDD缺r项/比率softmax；DFM纠错后ID保留；旧错误冻结全文移到原稿。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-scaling",
@@ -31679,7 +31679,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-scaling"
       },
-      "reason": "逐页审阅：scaling、过拟合、熵调度、四数据研究、噪声核、Beyond、对照全部审阅。原理与算例：U/D/E/C独立变量；compute约束导数→最优幂；1B×100复用。精简与证据：修正N∝sqrt(D)、宽浅推断与过拟合有益；去513/32通用上限与无来源贡献百分比；原研究入口保留。"
+      "reason": "逐页审阅：scaling、过拟合、熵调度、四数据研究、噪声核、Beyond、对照全部审阅。原理与算例：U/D/E/C独立变量；compute约束导数→最优幂；1B×100复用。精简与证据：修正N∝sqrt(D)、宽浅推断与过拟合有益；去513/32通用上限与无来源贡献百分比；原研究入口保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-speculative",
@@ -32012,7 +32012,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-speculative"
       },
-      "reason": "逐页审阅：基础、DFlash/MTP、接受率、发散、训练、时间线、轨迹/自身加速全部审阅。原理与算例：尾和期望；a0.8/b4→2.3616；8+25+2ms/5→7ms/token。精简与证据：标准精确校正归服务；原KL/概率乘积/速度上界错误移除；DFlash/DSpark/AdaFlash长结果唯一维护在研究地图。"
+      "reason": "逐页审阅：基础、DFlash/MTP、接受率、发散、训练、时间线、轨迹/自身加速全部审阅。原理与算例：尾和期望；a0.8/b4→2.3616；8+25+2ms/5→7ms/token。精简与证据：标准精确校正归服务；原KL/概率乘积/速度上界错误移除；DFlash/DSpark/AdaFlash长结果唯一维护在研究地图。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-elbo-rl",
@@ -32745,7 +32745,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-elbo-rl"
       },
-      "reason": "逐页审阅：原14节的界、SPG/GDSD、d1、偏好/轨迹/方差、uniform迁移全部审阅。原理与算例：denoiser/path/marginal；Jensen gap；三误差；SPG正负例；指数倾斜0.7311；冻结centered-score目标。精简与证据：保留SPG v1四任务数据；删除与现代修订冲突的重复SPG公式、无条件梯度方差倍率、Gaussian投影精确文本概率、uniform迁移保证；未核实命名/题号明确仅线索。"
+      "reason": "逐页审阅：原14节的界、SPG/GDSD、d1、偏好/轨迹/方差、uniform迁移全部审阅。原理与算例：denoiser/path/marginal；Jensen gap；三误差；SPG正负例；指数倾斜0.7311；冻结centered-score目标。精简与证据：保留SPG v1四任务数据；删除与现代修订冲突的重复SPG公式、无条件梯度方差倍率、Gaussian投影精确文本概率、uniform迁移保证；未核实命名/题号明确仅线索。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-commercial",
@@ -33799,7 +33799,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-loop-transformer"
       },
-      "reason": "逐页审阅：原10节直觉/理论/复杂度/扩散类比/Ouro/CCDD/latent/现代架构/索引/启示全部审阅。原理与算例：kP/krF；共享theta梯度和Jacobian乘积；0.5h+1稳定/2h+1发散；8元素结合组合。精简与证据：移除无条件复杂度严格分离、答案变化证明忠实、所有循环上限4–8；路线/失败与研究问题保留，未核实大表回精确原稿。"
+      "reason": "逐页审阅：原10节直觉/理论/复杂度/扩散类比/Ouro/CCDD/latent/现代架构/索引/启示全部审阅。原理与算例：kP/krF；共享theta梯度和Jacobian乘积；0.5h+1稳定/2h+1发散；8元素结合组合。精简与证据：移除无条件复杂度严格分离、答案变化证明忠实、所有循环上限4–8；路线/失败与研究问题保留，未核实大表回精确原稿。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "dlm-vae",
@@ -34282,7 +34282,7 @@
         "entry": "dlm-survey",
         "anchor": "dlm-vae"
       },
-      "reason": "逐页审阅：ELBO、三失败、发展/18变体、VQ/RQ/FSQ/LFQ、层级、现代系统、ACT、联合训练全部审阅。原理与算例：KL0.81815；重参数梯度；VQ0.8→1两职责；RQ1.3→1.25；25/2^d组合；512图像→latent1/48。精简与证据：修正VQ无法绕过、无码本无退化、RQ同token数、LlamaGen/RQ/Sora/Parti归属和ACT prior均值保证；连续/层级家族表与来源保留。"
+      "reason": "逐页审阅：ELBO、三失败、发展/18变体、VQ/RQ/FSQ/LFQ、层级、现代系统、ACT、联合训练全部审阅。原理与算例：KL0.81815；重参数梯度；VQ0.8→1两职责；RQ1.3→1.25；25/2^d组合；512图像→latent1/48。精简与证据：修正VQ无法绕过、无码本无退化、RQ同token数、LlamaGen/RQ/Sora/Parti归属和ACT prior均值保证；连续/层级家族表与来源保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
       "id": "harbor-framework-guide",
@@ -35159,7 +35159,7 @@
         "entry": "harbor-framework-guide",
         "anchor": null
       },
-      "reason": "逐页审阅：13节与scalingX17集全部审阅；版本、计数、源码、canary与未运行状态核对。原理与算例：observed/native/ambient/corrected counts→移除比例/归一误差→oracle gap；误收/误拒净值与分母；reward_valid均值；五个机制追问。精简与证据：删除重复目录与两次同义总结，长版本表按需；科学数学从代码框移到默认正文；Index筛选改机制图；三原执行图默认可见，600px限宽不变形且可放大；真实案例与计数/去重边界保留。"
+      "reason": "逐页审阅：13节与scalingX17集全部审阅；版本、计数、源码、canary与未运行状态核对。原理与算例：observed/native/ambient/corrected counts→移除比例/归一误差→oracle gap；误收/误拒净值与分母；reward_valid均值；五个机制追问。精简与证据：删除重复目录与两次同义总结，长版本表按需；科学数学从代码框移到默认正文；Index筛选改机制图；三原执行图默认可见，600px限宽不变形且可放大；真实案例与计数/去重边界保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。"
     }
   ]
 }

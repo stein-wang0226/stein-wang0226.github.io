@@ -10,6 +10,7 @@
 <p><strong>本节为规格推导和测量协议。</strong>没有GPU运行、真实价格或训练结果；容量上界需再经峰值和SLO验证。</p>
 </section>
 <section id="ledger"><h2>按对象建立显存账本</h2>
+<p class="math-notation">\(M\) 各项均为同一设备/rank 上的字节容量，下标说明对象。KV 式中 \(l\) 为层号，\(d_l\) 为该层每头宽度，\(b_{K,l},b_{V,l}\) 分别为 K/V 每元素字节；它假定两者宽度相同，不同宽度时分别相乘再相加。</p>
 <div class="reading-math">\[
 \begin{aligned}
 M_{\rm peak}&amp;=M_{\rm weights}+M_{\rm adapters}\\

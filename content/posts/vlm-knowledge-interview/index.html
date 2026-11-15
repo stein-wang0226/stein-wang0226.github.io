@@ -19,6 +19,7 @@ W_p&\in\mathbb R^{CP^2\times d_v}.
 <ul><li><strong>CLS / pooling：</strong>汇总全局表征适合分类/图文匹配；patch 级输出保留空间条件，具体取层和归一化由 checkpoint 决定。</li><li><strong>CNN / Swin：</strong>局部性与层级结构提供不同归纳偏置；全局 ViT 更灵活，但不是所有任务都更优。</li><li><strong>预训练目标：</strong>CLIP/SigLIP 对齐图文；MAE 重建 masked 图像；DINO 类自蒸馏学表示；SAM/SAM2 学可提示分割及视频记忆。它们不能用同一“视觉能力分数”代替。</li></ul>
 <p>来源：<a href="https://arxiv.org/abs/2010.11929">ViT</a>、<a href="https://arxiv.org/abs/2103.00020">CLIP</a>。</p>
 <h3 id="clip-siglip">1.2 CLIP：为什么匹配对的相似度会上升？</h3>
+<p class="math-notation">\(i,j,k=1,\ldots,N\) 索引 batch 中配对图文；\(S,p,q\) 均为 \(N\times N\) 矩阵。\(p_{ij}\) 按行归一，\(q_{ij}\) 按列归一；\(\mathbf1[i=j]\) 为匹配对指示。\(\sigma(z)=1/(1+e^{-z})\) 为 sigmoid，SigLIP 的 \(b\) 是可训练 bias。</p>
 <p>batch 有 N 个配对 (Ii,Ti)。双塔输出向量分别 L2 归一为 vi/uj，learnable scale a=exp(t) 相当于逆温度。相似度 Sij=a·viᵀuj，<strong>这里已经缩放一次，loss 中不要再除温度。</strong></p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
@@ -59,6 +60,7 @@ L_{\rm SigLIP}&=\frac1N\sum_{i,j}\ell(y_{ij},S_{ij}).
 </tbody></table>
 <p><strong>“原生”不是精确定义。</strong>有些系统强调联合训练，有些强调统一词表/序列，有些强调端到端多模态能力。说明图像如何编码、在哪里融合、预测什么，才能比较；CoCa 还结合对比和 captioning 目标，不宜只归成普通 PaLI 式 E-D。</p>
 <h3 id="sec1-3">1.5 Connector：维度映射与信息预算</h3>
+<p class="math-notation">\(Z\in\mathbb R^{N\times d_v}\) 为视觉表示，\(W_1,W_2\) 分别为 \(d_v\times m,m\times d_L\)，\(b_1,b_2\) 为偏置；\(P_{\rm MLP}\) 是参数数，区别于 patch 边长 \(P\)。单头 query 式的 \(K(Z),V(Z)\in\mathbb R^{N\times d}\)，\(M\) 为 query 数；语言梯度式的 \(\theta_v,Z_v,Z_{\rm lang}\) 为视觉参数、视觉输出和语言侧条件表示。</p>
 <p>MLP 对每 patch 独立映射，保持 N：dv→m→dL。可学习 query 通过 cross-attention 聚合变长视觉输入，输出 M 个语言条件 token。两者改变信息路径和预算，并非谁在所有任务都更优。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
@@ -91,6 +93,7 @@ L&=\frac{\sum_t m_t\ell_t}{\sum_t m_t},\\
 </tbody></table>
 <p><strong>这不是所有 VLM 必须依次完成的四阶段。</strong>LLaVA-1.5 具体配方常见 558K 对齐、665K 指令样本，不能移作任意模型的数据量默认值。一般 SFT/DPO/RL 推导见<a href="/llm-posttraining/">后训练主讲</a>，本页关注视觉条件、标注与验收。</p>
 <h3 id="sec1-5">1.7 分辨率、merge 与视频：逐项数 token</h3>
+<p class="math-notation">\(n_{\rm crop/thumb}\) 为裁剪图/缩略图数量，\(R\) 为每张 tile 边长（像素），\(r\) 为每空间轴的 merge 倍数；\(F\) 为视频帧数，\(N_f\) 为第 \(f\) 帧贡献的视觉 token 数。坐标式的 \(s_x,s_y\) 是 resize 比例，\(o_x,o_y\) 是原图 crop 偏移；坐标先统一到像素单位再逆映射。</p>
 <p>tiling 将大图映到若干固定大小 crop，可能另加 thumbnail；native dynamic resolution 让 encoder 读可变 patch grid，并使用适配位置与 merge。<strong>二者都涉及 resize/padding/预算约束</strong>，动态不等于原图信息无损或无限分辨率。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
@@ -115,6 +118,7 @@ y_{\rm orig}&=y_{\rm crop}/s_y+o_y.
 <div class="vlm-example"><strong>坐标例：</strong>原图 crop 从 x=100 开始，crop resize 放大 2 倍，模型在处理图报 x=40，则原图 x=40/2+100=120。漏 crop offset 会在真实页面点击错误对象。padding 还需先减 padding。</div>
 <p><strong>视觉幻觉：</strong>物体、属性、关系分别评；POPE 的 yes/no 对象存在探测不能覆盖全部。数据去错、grounding 监督、分辨率与偏好训练可改失败率，但 CoT、自检、引用都不保证忠实。</p>
 <details><summary>展开 VCD 的正确对比对象与限制</summary>
+<p class="math-notation">VCD 中 \(v,v'\) 为原图/扰动图，\(z(v)\) 为词表 logits，\(\alpha\) 为对比分支权重；\(w,u\) 为词表项，\(M\) 为原图条件下最大 token 概率，\(\eta\) 为相对概率阈值，\(\mathcal A\) 为允许采样集合。ColPali 式的 \(q_i,d_j\) 则是同维查询/page patch embedding，\(N_q,N_d\) 为各自数量，内积再按每个查询 token 的最大匹配求和。</p>
 <p>原 VCD 将原图 v 与噪声扰动图 v′ 的 logits 对比，抑制对视觉退化仍过强的先验；同时限制在原图概率足够大的候选中采样。不是单纯减“无图 logits”。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}

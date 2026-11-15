@@ -2,6 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DLM 后训练：界、路径与去噪器蒸馏</title></head><body>
 <!-- READING:FRAGMENT:START -->
 <h2 id="probability">三个概率，不能混用</h2>
+<p class="math-notation"><strong>符号：</strong>\(\tau=(x_T,\ldots,x_0)\) 是去噪路径，\(t\) 为去噪步，\(x_0\) 是最终输出；\(p_\theta(\tau)\) 是路径概率，\(\sum_{\tau:\tau\to x_0}\) 汇总到达同一输出的路径。\(R(x_0)\) 是终局奖励，\(J\) 是其期望，\(\nabla_\theta\) 对模型参数求梯度。连续状态的路径边际化用积分。</p>
 <p><strong>DLM 可以做策略学习；先明确策略动作和所计算的概率。</strong>网络预测一个干净 token 的分布、完整去噪路径的概率、最终文本的边际概率，复杂度与含义不同。</p>
 <figure class="mechanism-map"><figcaption>反馈来自最终文本，更新可以作用在不同对象</figcaption><ol class="mechanism-chain"><li><b>去噪器分布</b><small>当前状态 → token/transition</small></li><li><b>实际采样路径 τ</b><small>记录噪声、选择、更新和提交</small></li><li><b>最终文本 x</b><small>很多 τ 可以到达同一 x</small></li><li><b>reward 与更新</b><small>路径梯度、界目标或蒸馏，分别声明</small></li></ol></figure>
 <div class="reading-math">\[\begin{aligned}
@@ -33,6 +34,7 @@ J(\theta)&=\mathbb E_{\tau\sim p_\theta}R(x_0),\\
 </tbody></table>
 <p>因此“ELBO 有 bias”不够具体；<strong>MC 可以无偏估计某个下界，但这个下界仍不等于文本 log-likelihood。</strong></p>
 <h3 id="spg">SPG：优势固定，按符号选择 likelihood 界</h3>
+<p class="math-notation">\(L_\theta,U_\theta\) 分别为文本 log-likelihood 的下/上界，区别于通常被最小化的损失 \(\mathcal L\)；\(\Delta_\theta\) 为界与真实 log-likelihood 的差。\(i=1,\ldots,G\) 索引候选，\(A_i\) 为固定奖励优势，\(J_{\rm bound}\) 是要最大化的代理目标。</p>
 <p>令 \(L_\theta(x)\leq\log p_\theta(x)\leq U_\theta(x)\)，奖励优势 A 在更新中固定。A 为正时，用下界；A 为负时，不等式乘负数翻转，\(A\,U_\theta\leq A\log p_\theta\)。教学构造为：</p>
 <div class="reading-math">\[J_{\rm bound}=\frac1G\sum_i
 \begin{cases}A_iL_\theta(x_i),&A_i\geq0,\\
@@ -48,6 +50,7 @@ A_iU_\theta(x_i),&A_i\lt0.
 </tbody></table><p>均为原论文对应配置的报告结果，基线是该表 UniGRPO，不与其他论文的 Dream/AR 分数横向拼接；本文未训练复现。方法按<a href="https://arxiv.org/abs/2510.09541">SPG v1 §3 / 算法1</a>阅读。</p>
 </details>
 <h3 id="gdsd">GDSD：从策略倾斜到冻结去噪器教师</h3>
+<p class="math-notation">倾斜式的 \(\lambda&gt;0\) 为 KL 正则系数，\(c\) 为概率归一约束的乘子，\(Z\) 为归一常数；星号表示最优分布。中心化式中 \(\mathcal V\) 为词表，\(v\) 为词表项，\(n\) 为目标位置，\(x_0^n\) 为该位置 token；\(\bar l_{p,n}\) 为词表 log-prob 均值，\(\ell_p\) 为位置分数之和。\(\psi\) 缩放优势引导，\(\beta\) 控制 reference 正则，sg 保留数值但停止教师梯度。</p>
 <p>先看单 KL 的教学特例：固定 old，以 \(\mathbb E_\pi A-\lambda\operatorname{KL}(\pi\|\pi_{\rm old})\) 为目标，对归一化约束求导得 \(A-\lambda(\log\pi-\log\pi_{\rm old}+1)+c=0\)，因此：</p>
 <div class="reading-math">\[\pi^*(x)=\frac{\pi_{\rm old}(x)e^{A(x)/\lambda}}{Z},\qquad\lambda\gt0.\]</div>
 <p>取 old=(0.5,0.5)、A=(1,0)、λ=1，倾斜目标为 (0.7311,0.2689)。实际 GDSD 另含 reference 正则与共同 forward 假设，不能直接用这份二分类例代替原算法。</p>

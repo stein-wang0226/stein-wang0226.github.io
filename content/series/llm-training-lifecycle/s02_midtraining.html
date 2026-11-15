@@ -181,6 +181,7 @@ q_k=\frac{w_k\rho_k}{\sum_jw_j\rho_j},\qquad
 L_{\rm global}=\sum_kq_kL_k,\qquad
 L_{\rm bucket}=\sum_k\alpha_kL_k.
 \]</div>
+<p class="math-notation">\(j,k\) 都索引数据桶；\(N_{\rm target/input}\) 为目标/输入 token 数，\(q_k\) 为实际目标 token 的占比。\(\alpha_k\) 则是显式设定的桶级损失权重，通常非负且和为 1；分母要求至少有一个有效目标，全部为空时不能照常求平均。</p>
 <p><strong>1000-token例：</strong>文档900token全监督，trace100token只监督5个assistant目标。输入占比为90%/10%，目标数为900/5，因此trace在全局token平均下的权重 \(5/905\approx0.55\%\)。若显式按桶设 \(\alpha_{\rm trace}=10\%\)，就是另一个目标；“输入10%trace”不能背成“梯度权重10%”。</p>
 <p>如果所有目标直接汇总做全局 token 平均，目标密度高的数据桶贡献较多。若先按每桶均值再加权，效果又不同。比较观察 mask 时，应固定相同轨迹与输入长度，同时报告有效目标、归一化方式和 assistant 梯度权重，避免误把目标重加权解释为单一语义因素。</p>
 <p>回放用于缓解遗忘，但比例取决于模型、目标、预算与接受的回归。PRISM 的分项下降说明不能只看综合平均。建议先冻结通用、领域、长上下文与指令基线，定期评估；再比较配比、训练时长和数据质量，保留可回退 checkpoint。<a href="index.html#ref-6">[6]</a></p>

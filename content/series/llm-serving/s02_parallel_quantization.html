@@ -25,6 +25,7 @@
 <div class="reading-math">\[
 t_{\rm transfer}\ge\frac{M_{\rm state}}{B_{\rm effective}}.
 \]</div>
+<p class="math-notation">\(M_{\rm state}\) 是本次实际发送的状态字节数，\(B_{\rm effective}\) 是有效传输带宽（bytes/s），相除得到秒；它不是 batch 大小，\(\ge\) 表示仅给出传输时间下界。</p>
 <p>取状态10GiB、有效链路25GB/s，纯传输下界为\(10\times2^{30}/(25\times10^9)\approx0.4295\)秒。GB与GiB不同；真实还含序列化、scale、分片重排、协议、同步、排队和目标分配。多请求并发传输会共享带宽。</p>
 <p>KV发送方和接收方必须一致理解层布局、dtype/scales、位置、模型版本和block映射。PD两侧TP大小不同，还需重排；跨节点以可用带宽和并发测量，不用NIC标称速度代替端到端吞吐。混合模型可能还需递归/卷积状态，V4.1压缩共享cache也有独特结构。</p>
 <p>本文工业规划先比较共置TP服务，再将PD或EP列为独立消融，避免一次改变所有变量。工具CPU、retrieval与verifier不属于PD两阶段，依然计入Agent墙钟和成本。</p>
@@ -36,6 +37,7 @@ t_{\rm transfer}\ge\frac{M_{\rm state}}{B_{\rm effective}}.
 q=\operatorname{clip}\left(\operatorname{round}(x/s)+z,q_{\min},q_{\max}\right),
 \qquad \hat x=s(q-z).
 \]</div>
+<p class="math-notation">这里 \(x\) 是待编码实数，\(q\) 是量化整数，\(\hat x\) 是恢复值；round 按最近整数舍入，clip 将结果限制到整数范围 \([q_{\min},q_{\max}]\)。下一节的 \(q(x)\) 改指 drafter 概率分布，与量化整数不同。</p>
 <p>\(s&gt;0\)为scale，\(z\)为整数zero-point；对称形式取\(z=0\)。未饱和时、按最近整数舍入，误差至多\(s/2\)；越过表示范围后，这个误差界不再成立。</p>
 <table><caption>教学量化算例，不是GPTQ/AWQ实际配置</caption><thead><tr><th>设置</th><th>输入</th><th>整数q</th><th>恢复值与误差</th></tr></thead><tbody>
 <tr><td>对称，s=0.25，q∈[−7,7]</td><td>0.62</td><td>2</td><td>0.50，绝对误差0.12</td></tr>
@@ -80,6 +82,7 @@ P(\text{输出 }x)&amp;=\min(p(x),q(x))\\
 <p>Leviathan等<a href="#ref-spec">[5]</a>给出保留target采样分布的协议。只保留与target argmax一致的最长前缀，是贪心等价的另一类协议；不能以贪心一致证明temperature采样分布精确。近似接受、只看confidence或忽略draft分布的实现需要单独证明/测量。</p>
 <p>2026 DFlash → DSpark → AdaFlash路线的diffusion候选、OPD训练与服务证据由<a href="../llm-research-map-2026/s04_inference_diffusion.html">研究地图推理/扩散章</a>维护。这里提供判断框架：模型版本、target采样规则、验证协议、接受率分母、拒绝后的cache恢复、并发与端到端成功成本。</p>
 <h3>接受长度为什么不是加速比</h3>
+<p class="math-notation">\(\mathbb E\) 对完整周期取平均；提交 token 是最终保留的输出。\(t_{\rm AR}\) 为普通 AR 每 token 时间，\(t_{\rm draft},t_{\rm verify},t_{\rm restore}\) 为一轮提议、验证和恢复时间，统一使用秒或毫秒；加速比无单位。</p>
 <div class="reading-math">\[
 \text{理想加速比}\approx
 \frac{\mathbb E[\text{每轮提交token}]\;t_{\rm AR}}

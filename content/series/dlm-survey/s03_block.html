@@ -2,6 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>块扩散：因子化、可见性与缓存</title></head><body>
 <!-- READING:FRAGMENT:START -->
 <h2 id="factorization">块间顺序，块内迭代</h2>
+<p class="math-notation">\(x^{(j)}\) 表示第 \(j\) 个 token 块，\(x^{(\lt j)}\) 为已提交的前面各块；括号上标是块编号，非乘方。\(\mathcal L_{\rm NELBO}^{(j)}\) 是给定前缀的块级负 ELBO，对该块负对数概率给出上界。可见矩阵 \(M\) 的行/列分别是 query/key 位置，1 为允许访问、0 为屏蔽，转换为加性 mask 时对应 0/负无穷。</p>
 <p><strong>块扩散把“已完成历史”与“正在修改的状态”分开。</strong>将长度 L 划成 B 个块、每块 b 个 token；每块以已经提交的前缀为条件，内部用扩散生成。</p>
 <div class="reading-math">\[\begin{aligned}
 p_\theta(x)&=\prod_{j=1}^{B}p_\theta(x^{(j)}\mid x^{(\lt j)}),\\

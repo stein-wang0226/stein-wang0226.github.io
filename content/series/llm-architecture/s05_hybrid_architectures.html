@@ -22,8 +22,10 @@ M_{\rm state}=\sum_{\ell}H_{{\rm state},\ell}d_{v,\ell}d_{k,\ell}b_\ell,\qquad
 M_{\rm KV}=\sum_{\ell}T H_{{\rm kv},\ell}(d_{K,\ell}+d_{V,\ell})b_\ell.
 \]</div>
 <p>本例一个state只有2个值；若每值4B，则8B，与已处理token数无关。混合模型的卷积状态、Attention KV及其他缓存另计。</p>
+<p class="math-notation">容量式对一条序列计：\(\ell\) 索引对应类型的层，\(H_{{\rm state},\ell}\) / \(H_{{\rm kv},\ell}\) 是状态头 / KV 头数，\(b_\ell\) 是每个元素的字节数，\(T\) 是保留的历史长度。\(d_{v,\ell},d_{k,\ell}\) 是状态两轴宽度，\(d_{V,\ell},d_{K,\ell}\) 是显式 KV 的宽度；两类层分别求和。</p>
 <p>“状态不随 T 增长”指特定递归状态的持久大小；训练仍有按序列的激活/重计算，prefill 仍要处理每个 token。它不能推出无限上下文、训练 O(1) 显存或无损记忆。</p></section>
 <section id="gated-delta"><h2>遗忘控制与定向更新解决不同问题</h2>
+<p class="math-notation"><strong>符号：</strong>\(\alpha_t\) 是旧状态保留系数，\(\beta_t\) 是沿当前 key 方向的修正幅度；\(I\) 是 \(d_k\times d_k\) 单位矩阵。\(v_t-S_{t-1}k_t\) 是新值与旧预测的误差，\(\|k_t\|_2\) 是欧氏长度；下式 \(\prod\) 表示连续多步保留系数相乘。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 \text{遗忘外积：}\quad S_t&=\alpha_tS_{t-1}+v_tk_t^\top,\\
@@ -51,6 +53,7 @@ S_t=\sum_{i=1}^t\left(\prod_{j=i+1}^t\alpha_j\right)v_i k_i^\top
 </div><figcaption>Gated delta 更新的概念图。归一化、局部卷积、输出门控和投影省略，不冒充完整工业 block。</figcaption></figure>
 <p>KDA 等进一步细化 decay 的方向/粒度，需要检查 gate 是标量、向量还是其它结构；不能把所有“K”或“delta”变体写成同一递推。具体 Kimi/Qwen 配置与披露边界放在<a href="../llm-research-map-2026/s06_architecture_landscape.html#state">型号证据页</a>。</p></section>
 <section id="ssm"><h2>Mamba 与 SSD 把状态更新组织成高效计算</h2>
+<p class="math-notation">在一般单步 SSM 中，设输入 \(x_t\in\mathbb R^{d_x}\)、状态 \(h_t\in\mathbb R^{n}\)、输出 \(y_t\in\mathbb R^{d_y}\)；\(\bar A_t\) 为 \(n\times n\) 状态转移，\(\bar B_t\) 为 \(n\times d_x\) 输入映射，\(C_t\) 为 \(d_y\times n\) 读出，\(D\) 为 \(d_y\times d_x\) 直连。横线表示离散化后的参数；工业实现可按通道组织结构化状态。</p>
 <div class="reading-math" role="math">\[
 h_t=\bar A_t h_{t-1}+\bar B_t x_t,\qquad y_t=C_t h_t+Dx_t.
 \]</div>

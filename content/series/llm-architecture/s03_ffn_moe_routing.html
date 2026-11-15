@@ -3,6 +3,7 @@
 <title>03 · FFN、MoE 与专家通信</title><meta name="description" content="从SwiGLU矩阵和参数量推导MoE路由、容量、负载均衡、专家并行、通信和LatentMoE，解释稀疏模型的系统边界。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head><body><main class="training-lifecycle">
 <!-- READING:FRAGMENT:START -->
+<p class="math-notation"><strong>读式约定：</strong>单 token 的 \(x\) 是 \(d\) 维行向量，右乘投影矩阵；\(f\) 是 FFN 中间宽度，\(b_1,b_2\) 为偏置，\(\phi\) 为非线性激活，\(\sigma\) 为 sigmoid，\(\odot\) 为逐元素乘法。路由式中 \(e\) 索引专家，\(I\) 是选中专家的集合，\(g_e\) 是权重，\(E_e\) 是专家函数；\(E\) 表示专家总数，\(k\) 是每 token 选中数，shared 项为共享专家输出。</p>
 <figure class="mechanism-map"><figcaption>MoE：路由选择、专家计算与回收</figcaption><ol class="mechanism-chain"><li><b>hidden → router</b><small>专家分数、top-k 与路由权重</small></li><li><b>Dispatch 到专家</b><small>按容量与设备布局发送 token</small></li><li><b>被选专家执行 FFN</b><small>稀疏激活；共享专家另计</small></li><li><b>加权 Combine</b><small>恢复 token 次序与主干维度</small></li></ol><p class="mechanism-return">训练支路：监控平衡、溢出和通信；激活参数不等于总参数。</p></figure>
 <section id="purpose"><h2>通道容量怎样变成稀疏计算</h2>
 <section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>

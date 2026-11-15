@@ -516,6 +516,7 @@
 <p><strong>为什么前置门禁重要？</strong> 零 token 门禁在沙箱前拦截结构错误、配方泄漏和依赖缺失，避免无效盲测。</p>
 
 <h3 id="joint-path">开放方法为何仍能确定性判分</h3>
+<p class="math-notation">y 为完整结果，k=1,…,K 为合法分析路径编号，𝒜ₖ 为该路径的一致接受域；⋃ 为并集，V(y) 为落入接受域取 1、否则取 0 的 verifier。这里 V 是判分函数，不是 RL 状态价值。</p>
 <p>把合法解法登记成<strong>完整输出路径</strong>，并对每条路径的排名、方向、统计量与元数据做联合检查。令第 k 条路径的接受集合为 \(\mathcal A_k\)，最终接受集合是这些集合的并：</p>
 <div class="reading-math">\[
 \begin{aligned}
@@ -709,6 +710,7 @@ p_{\rm task}=
 </table>
 
 <h2 id="cost">7. 单位成功成本：真实账本与假设估算</h2>
+<p class="math-notation">cᵢ 为第 i 次尝试的同单位成本，N_done 为同一 cohort 的完成任务数；C_measured 计入该池全部尝试。几何估算另假设每次独立、固定成功率 p、固定单次成本 c，此时 E[C]=c/p；p 必须非零，不能用不同 cohort 的成功率混算。</p>
 <p>真实单位成功成本以<strong>全部尝试资源除以最终成功数</strong>，包含重试、失败、校准和 adjudication。若每次尝试成本固定为 c、成功概率为 p，且每次独立同分布，则尝试次数的期望为 1/p：</p>
 <div class="reading-math">\[
 \begin{aligned}
@@ -736,9 +738,9 @@ C_{\rm measured}&=\frac{\sum_i c_i}{N_{\rm done}},\\
 <table>
   <thead><tr><th>口径</th><th>input 费用</th><th>output 费用</th><th>合计估算</th></tr></thead>
   <tbody>
-    <tr><td>单次主生产尝试</td><td>约 <strong>$8.5–17</strong></td><td>约 <strong>$0.8–1.1</strong></td><td>约 <strong>$9–18</strong></td></tr>
-    <tr><td>早期单位 done</td><td>约 <strong>$85–170</strong></td><td>约 <strong>$8–11</strong></td><td>约 <strong>$93–181</strong></td></tr>
-    <tr><td>当前单位 done</td><td>约 <strong>$12–25</strong></td><td>约 <strong>$1.1–1.6</strong></td><td>约 <strong>$13–27</strong></td></tr>
+    <tr><td>单次主生产尝试</td><td>约 <strong>8.5–17 美元</strong></td><td>约 <strong>0.8–1.1 美元</strong></td><td>约 <strong>9–18 美元</strong></td></tr>
+    <tr><td>早期单位 done</td><td>约 <strong>85–170 美元</strong></td><td>约 <strong>8–11 美元</strong></td><td>约 <strong>93–181 美元</strong></td></tr>
+    <tr><td>当前单位 done</td><td>约 <strong>12–25 美元</strong></td><td>约 <strong>1.1–1.6 美元</strong></td><td>约 <strong>13–27 美元</strong></td></tr>
   </tbody>
 </table>
 

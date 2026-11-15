@@ -39,6 +39,7 @@
 <section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://www.nowpublishers.com/article/Details/INR-019" title="BM25 · 官方文档 / 原始出版页">BM25</a>；<a href="https://doi.org/10.1145/1571941.1572114" title="RRF · 官方文档 / 原始出版页">RRF</a>。</p></section>
 
 <h3>BM25：词频饱和与长度归一</h3>
+<p class="math-notation">下面 \(q\) 是查询词项集合，\(d\) 是文档，\(t\) 是词项；\(|d|\) 为文档词项数，avgdl 为语料平均文档长度，\(\ell_d\) 为无量纲长度调整项。IDF 衡量词项的稀有程度，不是事实可信度。</p>
 <p>同一关键词多出现几次有帮助，但重复一百次不该得到一百倍分数。BM25用饱和词频项处理这一点，再按文档长度调整。以下是常用的无查询词频扩展形式；不同实现的IDF约定需单独核对。</p>
 <div class="reading-math">\[
 \begin{aligned}
@@ -52,6 +53,7 @@
 <p>\(N\)为文档数，\(n_t\)为包含词项的文档数，\(f_{t,d}\)为词频；\(k_1&gt;0\)控制饱和，\(b\in[0,1]\)控制长度归一。固定长度时，词频趋于无穷，词频项趋于\(k_1+1\)；\(b=0\)则取消长度影响。</p>
 <p><strong>教学算例：</strong>取\(k_1=1.2,b=0.75,\operatorname{avgdl}=100,f=2\)。100词文档的\(\ell=1\)，词频项为\(4.4/3.2=1.375\)；200词文档的\(\ell=1.75\)，为\(4.4/4.1\approx1.073\)。同样出现两次，长文相对少得分。它适合精确对象匹配，仍不判断句子是否真实。</p>
 <h3>Dense：向量关系需要明确度量</h3>
+<p class="math-notation">\(u,v\in\mathbb R^d\) 是同维查询/文档 embedding；这里 \(d\) 改指向量宽度。\({}^\top\) 为转置，\(u^\top v\) 是内积，\(\|\cdot\|_2\) 是欧氏长度；cosine 要求两个向量都非零，单位向量指长度为 1。</p>
 <div class="reading-math">\[
 \begin{aligned}
 \cos(u,v)&amp;=\frac{u^\top v}{\|u\|_2\|v\|_2},\\
@@ -60,6 +62,7 @@
 \]</div>
 <p>取\(u=(1,0),v=(0.8,0.6)\)，两者单位长度，cosine为0.8、平方L2距离为0.4。将\(v\)放大10倍，cosine不变，内积变为8。<strong>只有归一化条件成立时，cosine、内积和L2才有这里的排序对应；分数不是事实正确概率。</strong></p>
 <h3>RRF：先融合排名，再用重排器判断</h3>
+<p class="math-notation">\(L_j\) 是第 \(j\) 路检索的有序候选列表，\(r_j(d)\) 是文档在该列表中的名次；求和只遍历召回该文档的列表。参数 \(c\) 是排名平滑常数，与科学检验的成功计数 \(c\) 无关。</p>
 <div class="reading-math">\[
 \operatorname{RRF}(d)=\sum_{j:\,d\in L_j}\frac{1}{c+r_j(d)}.
 \]</div>
@@ -107,6 +110,7 @@ return answer_with_citations(evidence) or explicit_unresolved_report()</code></p
 \operatorname{Recall@}k=\frac{|R\cap L_k|}{|R|},\qquad
 \operatorname{MRR}=\frac1M\sum_{i=1}^M\frac1{r_i}.
 \]</div>
+<p class="math-notation">竖线表示集合元素数，\(\cap\) 表示交集；Recall 要求相关集合 \(R\) 非空。MRR 对 \(M\) 条查询平均，\(r_i\) 是第 \(i\) 条查询首个相关结果的名次，未命中时倒数定义为 0。这里 \(L_k\) 是前 \(k\) 条结果集合，区别于 RRF 中第 \(j\) 路的列表 \(L_j\)。</p>
 <p>\(R\)为标注相关证据，\(L_k\)为前k条；MRR中未命中查询贡献0。两条必要证据只召回一条，Recall为1/2，但多跳问题可能仍完全无法回答。</p>
 <ul><li><strong>引用支持：</strong>有原文支持的已核对引用／已核对引用。两条中一条支持，支持率50%。</li>
 <li><strong>引用完整：</strong>重要事实是否都有证据。只引用一句正确背景也不能覆盖全部结论。</li>

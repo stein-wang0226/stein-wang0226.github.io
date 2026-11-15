@@ -2,6 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DDPM：五步推导与后验算例</title></head><body>
 <!-- READING:FRAGMENT:START -->
 <h2 id="model">第一步：定义前向与反向过程</h2>
+<p class="math-notation"><strong>符号：</strong>\(x_t\in\mathbb R^d\) 是第 \(t\) 步状态，\(x_0\) 是真实数据，\(T\) 是扩散步数；\(q\) 为已知前向分布，\(p_\theta\) 为参数 \(\theta\) 定义的反向模型。\(\mathcal N(\mu,\Sigma)\) 的两参数是均值与协方差，\(I\) 为 \(d\times d\) 单位矩阵；\(\epsilon_t,\epsilon,z\) 均为标准高斯噪声。\(\beta_t\) 是单步加噪方差，\(\bar\alpha_t\) 是累计信号保留量，区别于单步 \(\alpha_t\)。</p>
 <p><strong>DDPM 固定加噪规则，学习反向条件。</strong>本节 t=0 是数据，t=T 是噪声；\(\beta_t\in(0,1)\)，\(\alpha_t=1-\beta_t\)，\(\bar\alpha_t=\prod_{s=1}^t\alpha_s\)。每一步：</p>
 <div class="reading-math">\[\begin{aligned}
 q(x_t\mid x_{t-1})
@@ -14,6 +15,7 @@ x_t&=\sqrt{\alpha_t}x_{t-1}+\sqrt{\beta_t}\epsilon_t.
 <p>反向模型从先验 \(p(x_T)=\mathcal N(0,I)\) 起步，定义 \(p_\theta(x_{t-1}\mid x_t)=\mathcal N(\mu_\theta,\sigma_t^2I)\)。这是模型参数化；未给定 x₀ 的真实有限步反向边际通常是混合分布，不保证精确高斯。</p>
 <figure class="mechanism-map"><figcaption>训练有 x₀；生成只有当前 noisy 状态</figcaption><ol class="mechanism-chain"><li><b>x₀、t、ε</b><small>直接构造训练输入 xₜ</small></li><li><b>预测 εθ</b><small>从 noisy 输入恢复噪声信息</small></li><li><b>均值 μθ</b><small>用已知日程换算反向均值</small></li><li><b>反向采样</b><small>t 递减，添加所定方差</small></li></ol></figure>
 <h3 id="elbo">第二步：把边际似然改写成下界</h3>
+<p class="math-notation">\(\mathbb E_q\) 按前向隐状态路径平均，\(\prod\) 将条件密度相乘；log 为自然对数。KL 的顺序 \(\operatorname{KL}(q\|p)=\mathbb E_q[\log(q/p)]\) 表示以 \(q\) 加权比较两个分布；双竖线是分布分隔符。\(\mathcal L_{\rm VLB}\) 是负的变分下界，最小化它是在最大化该下界。</p>
 <p>反向联合 \(p_\theta(x_{0:T})=p(x_T)\prod_t p_\theta(x_{t-1}\mid x_t)\)。引入已知前向辅助分布 q，对隐变量积分，再用 log 的凹性：</p>
 <div class="reading-math">\[\begin{aligned}
 \log p_\theta(x_0)
@@ -42,6 +44,7 @@ p_t^-&=p_\theta(x_{t-1}\mid x_t),\\
 \end{aligned}\]</div>
 <ul><li><strong>先验：</strong>固定 forward/先验时，与 θ 无关。</li><li><strong>去噪：</strong>训练模型转移匹配给定真实数据的后验。</li><li><strong>重建：</strong>最后一步的 likelihood；若 x₀ 是离散像素，还要使用相应离散化 decoder 定义。</li></ul>
 <h3 id="posterior">第四步：两个高斯相乘，配方求后验</h3>
+<p class="math-notation">配方式的 \(A\) 是标量精度，\(b\in\mathbb R^d\) 是线性系数，\(E(y)\) 是指数中的二次表达式；\(\|\cdot\|^2\) 为欧氏长度平方。\(\tilde\mu_t,\tilde\beta_t\) 是给定 \(x_0,x_t\) 的解析后验均值/方差，\(\mu_\theta,\sigma_t^2\) 是模型反向均值/方差；波浪号与下标 \(\theta\) 区分真后验和预测。损失节的 \(c_t\) 是时间权重，\(C_t\) 是与 \(\theta\) 无关的项。</p>
 <p>令 y=xₜ₋₁。由贝叶斯，后验正比于 \(q(x_t\mid y)q(y\mid x_0)\)。指数中关于 y 的二次项给出精度与线性系数：</p>
 <div class="reading-math">\[\begin{aligned}
 A&=\frac{\alpha_t}{\beta_t}

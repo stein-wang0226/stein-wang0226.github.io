@@ -157,7 +157,7 @@ body{margin:0;background:var(--bg);color:var(--ink)}
 <tr><td>False positives：原来误收</td><td>45</td><td>通过 → 失败，采用新 verifier 结果</td></tr>
 <tr><td>Verifier 测量差异</td><td>28</td><td>保留 TB 4.0 原分</td></tr>
 </tbody></table></div>
-<p>4.0 submissions 的 Agent inference 成本累计约 $116k；保存 artifact 后，此次 regrade 未新增 Agent inference 成本。对于 errored trials 和缺 artifact 的 trials，公告说明也保留旧分。因此当前 4.1 榜单包含回退处理，不能写成全部 11,550 项都成功以新 verifier 独立重算。<sup><a href="#cite-5">[5]</a></sup></p>
+<p>4.0 submissions 的 Agent inference 成本累计约 11.6 万美元；保存 artifact 后，此次 regrade 未新增 Agent inference 成本。对于 errored trials 和缺 artifact 的 trials，公告说明也保留旧分。因此当前 4.1 榜单包含回退处理，不能写成全部 11,550 项都成功以新 verifier 独立重算。<sup><a href="#cite-5">[5]</a></sup></p>
 <article class="case">
 <span class="case-tag">实际 verifier 修订 · freecad-platform-drawing</span>
 <h3>符合图纸的三维实体也应通过</h3>
@@ -206,6 +206,7 @@ body{margin:0;background:var(--bg);color:var(--ink)}
 <tr><td>负对照</td><td>优于不校正、多个固定缩放比例与 marker-zeroing control</td><td>排除简单缩放或抹掉 marker 就通过的漏洞</td></tr>
 </tbody></table></div>
 <h4 id="ambient-error">科学验收怎样把“改善”写成算式</h4>
+<p class="math-notation">下面 \(N_c\) 为细胞的 observed 总 count，\(E(X)\) 为候选矩阵 \(X\) 相对 native 真值的归一绝对误差。oracle 式的 \(j(c)\) 为细胞所在 batch，\(b_g^{(j)}\) 为该 batch 的污染基因份额，\(B_{gc}\) 为估算污染 count，\(A_{gc}\) 为参考校正；round_even 为最近整数、半整数取偶数。\(q_{\rm gap}\) 为相对“不校正→参考校正”误差改善的完成比例，要求相应分母非零。</p>
 <p>\(g,c\)分别为基因和细胞，\(O,T,U,C\)分别为 observed、hidden native、hidden ambient 和提交的 corrected counts。矩阵须先按基因/细胞标识对齐；文件中的索引从 1 开始。</p>
 <div class="reading-math">\[
 \begin{aligned}
@@ -268,7 +269,7 @@ q_{\rm gap}&amp;=\frac{E(O)-E(C)}{E(O)-E(A)}
 <p>Adapter 将上游数据集解析成 task directories；当前独立仓库从 Harbor monorepo 拆出，README 将 adapter 描述为独立项目，分别保存依赖、metadata、template 和 parity result；实际目录计数见后文清单。共同合同把“每 benchmark 接每 Agent”的重复工程从概念上的 O(mn) 降为 O(m+n)，但某些权限、工具和交互语义依然需要专门处理。<sup><a href="#cite-12">[12]</a></sup><sup><a href="#cite-13">[13]</a></sup></p>
 <p>论文对 original 与 Harbor-adapted 进行匹配 model、Agent 和配置的 multi-trial parity experiments，以 mean ± sample SEM 报告差异，并有多级代码审阅。将非 agentic 问答 benchmark 变成可使用工具的 Agent task，会改变测量对象；不能把 adapted 分数直接当成原始 closed-book 分数。<sup><a href="#cite-13">[13]</a></sup></p>
 <h3>研究规模与结果的适用范围</h3>
-<p>arXiv v1 的大规模研究包含 54 benchmarks、6,627 tasks、8 models，每个 model 用 Terminus-2 加一个 native harness，形成 16 model–harness configurations，每设置 3 repeats，约 0.3M trajectories、226B tokens、超过 $300k compute。<strong>54 是被实际评估的 benchmark 数，80+ 是 adapter 覆盖，不能混用。</strong><sup><a href="#cite-13">[13]</a></sup></p>
+<p>arXiv v1 的大规模研究包含 54 benchmarks、6,627 tasks、8 models，每个 model 用 Terminus-2 加一个 native harness，形成 16 model–harness configurations，每设置 3 repeats，约 0.3M trajectories、226B tokens、超过 30 万美元 compute。<strong>54 是被实际评估的 benchmark 数，80+ 是 adapter 覆盖，不能混用。</strong><sup><a href="#cite-13">[13]</a></sup></p>
 <div class="table-wrap"><table><thead><tr><th>论文观察</th><th>证据与范围</th><th>可用的解读</th></tr></thead><tbody>
 <tr><td>很多榜单共享排序信号</td><td>16×54 score matrix；greedy 选 12 后其余与已选某项 |Spearman|≥0.7</td><td>应覆盖独立能力轴；不是永久只需要 12 个 benchmark</td></tr>
 <tr><td>Model 的影响大于所测 harness</td><td>控制 benchmark 后 model effect range 0.451、harness 0.087，约 5.2×</td><td>模型能力重要；该设计仍受工具、模型族和 scaffold 选择限制</td></tr>
@@ -588,6 +589,7 @@ storage_mb = 1024
             for exception in self.recorded_exceptions()
         )</code></pre></div></details>
 <h3 id="valid-denominator">有效奖励与成功率：先固定分母</h3>
+<p class="math-notation">\(i=1,\ldots,n\) 索引 trial，\(v_i,s_i\in\{0,1\}\) 分别为有效性/成功指示，\(r_i\) 为数值奖励；\(\bar r_{\rm valid}\) 是有效 trial 平均 reward，\(p_{\rm valid}\) 是有效 trial 成功率，\(a_{\rm valid}\) 是全部 trial 中有效比例。</p>
 <p>记 \(v_i\) 为 trial 是否有有效奖励，\(r_i\) 为奖励，\(s_i\) 为是否达到任务成功标准。对同一池的 trial，可分别报告：</p>
 <div class="reading-math">\[
 \begin{aligned}

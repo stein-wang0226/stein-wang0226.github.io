@@ -20,6 +20,7 @@ Holon 的目标是在同一模型接口中连接蛋白质序列、自然语言�
 阅读本项目需要理解三个概念。**Tokenizer** 把氨基酸或文本变成离散编号；它决定序列长度和词表，不能用氨基酸个数直接代替 token 数。**条件建模** 学习“给定描述时哪些蛋白序列更可能”；它不同于把文本和序列各自训练得更流畅。**监督区间** 决定哪些位置产生 loss；一个 token 即使只作上下文，也可能通过注意力影响被监督位置。
 
 P2T 从蛋白预测文本，T2P 从文本预测蛋白，protein-only 学习无文本序列先验：
+<p class="math-notation"><strong>符号：</strong>\(p\) 为蛋白序列，\(t\) 为文本，\(p_\theta(\cdot)\) 为参数 \(\theta\) 定义的概率分布；字母 \(p\) 作序列变量与作概率函数时靠位置区分。这里 \(t\) 不是训练时间。</p>
 
 <div class="reading-math">\[
 \begin{aligned}
@@ -60,6 +61,7 @@ packed sequence + modality indexes
 这使跨模态交互和参数隔离可以同时存在，但也引入模态边界、tied head、checkpoint shape 和冻结策略的一致性要求。dense 路线用于检查专门路由的收益与额外成本，MoE 路线则另外研究稀疏容量及优化稳定性。[1](#ref-1)[3](#ref-3)
 
 ### 从张量看 MoT 为什么能跨模态交互
+<p class="math-notation">\(H\) 是 token hidden 表示；\(I_{\rm und/gen}\) 为两类模态路由的行索引，\(W\) 为对应投影参数。单头 \(Q,K\) 为 \(T\times d_h\)、\(V\) 为 \(T\times d_v\)，\(P\) 为 \(T\times T\) 注意力权重，\(O\) 为 \(T\times d_v\) 输出；\({}^\top\) 是转置，softmax 沿 key 位置归一。不同头型在计算前对齐共享关系。</p>
 
 设 packed 表示有 T 行、每行 d 维；两类索引分别选出理解侧与生成侧。各路径计算投影，再 scatter 回原序列；K/V 同理。按单个注意力头写成：
 
@@ -92,6 +94,7 @@ O&=PV
 一个 T2P 样本可以将文本条件放在上下文中，以蛋白 token 为主要预测目标；对应 P2T 视图从序列预测描述。双向样本的“配对正确”必须由 accession、序列和清洗规则确认。训练与 C30/Temporal 评测还需要在聚类、来源比例和视图构造上避免泄漏；精确序列不重复并不充分保证同源分布隔离。[1](#ref-1)
 
 ### 一个样本怎样从输入走到 loss
+<p class="math-notation">监督式中 \(S\) 为有效目标位置集合，\(|S|\) 为位置数，\(y_i,c_i\) 为第 \(i\) 位目标/条件历史，\(\mathcal L_S\) 为平均 NLL。预算式的 \(C,M,D\) 分别为总 FLOPs、每 token FLOPs 和训练 token 数，\(M\) 与 Attention mask 的 \(M\) 含义不同。</p>
 
 下面是布局讲解，模态标记为描述性占位符，不是仓库 tokenizer 的字面 special token：
 
@@ -163,6 +166,7 @@ Negative Ladder v2 的注册终点是两 checkpoint 从 L0 到 L3 的变化之�
 
 <!-- WORK:EXAMPLE:START -->
 ### 用真实结果解释交互效应 {#work-example}
+<p class="math-notation">\(c\) 索引 checkpoint 配方，\(m_{c,L0/L3}\) 是该配方在两种条件阶梯上的 margin NLL；\(\Delta_c\) 是阶梯差，DiD 是 PSC 与 PS8 两个差的差，单位仍为 NLL。这里 \(m\) 表示指标值，与训练的监督 mask 不同。</p>
 
 Negative Ladder 的 margin 是 **mismatch NLL − matched NLL**；null 条件用于进一步分解信息增益与干扰，不是 margin 的另一端。正 margin 表示该协议下更偏好正确配对，不是生物功能正确率。[6](#ref-6)
 

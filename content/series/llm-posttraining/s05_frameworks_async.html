@@ -107,6 +107,7 @@ accepted_token_count, rejected_token_count, retry_reason</code></pre>
 <li><b>behavior μ采样</b><small>实际token、模板、温度与版本</small></li><li><b>old πold计算基线</b><small>训练侧旧快照；不一定等于μ</small></li><li><b>current πθ更新</b><small>重算同一token；核对两段ratio</small></li><li><b>reference πref约束</b><small>独立KL锚点，不替代采样分母</small></li>
 </ol><p class="mechanism-return">↶ trainer 发布权重给 rollout；监控版本差、ratio、有效样本和墙钟成功成本。</p></figure>
 <h2>三类偏移：策略版本、数值实现、完成顺序</h2>
+<p class="math-notation">以下 \(h\) 是动作前历史，\(a\) 是已采动作，\(\mu\) 是真实生成分布，\(\pi_{\rm old}\) 是旧权重在训练端重算的分布，\(\pi_\theta\) 是当前 actor 分布；三者都在同一 token/历史上求概率。后面的并发式中 \(i\) 是任务域，\(C_i\) 是并发配额，\(\propto\) 表示仅给出比例关系。</p>
 <section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>。</p></section>
 
 <div class="reading-math" role="math" aria-label="三策略校正">\[

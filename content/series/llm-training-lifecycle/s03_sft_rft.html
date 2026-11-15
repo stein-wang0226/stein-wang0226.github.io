@@ -37,6 +37,7 @@ L_{\mathrm{SFT}}=-\frac{\sum_{t=1}^{T}m_t\log p_\theta(x_t\mid x_{&lt;t})}{\sum_
 =\left.\partial_\theta\ell_t\right|_{h_t}
 +(\partial_\theta h_t)^\top\nabla_{h_t}\ell_t.
 \]</div>
+<p class="math-notation">\(\theta\) 为模型参数，\(t\) 为预测位置，\(x_{\lt t}\) 为其前缀；\(h_t\) 在此是由模型算出的隐藏表示。\(\partial_\theta\ell_t|_{h_t}\) 固定该表示只对输出分支求导，第二项通过表示生成链路反传；\(\partial_\theta h_t\) 是表示对参数的 Jacobian，转置后把表示梯度映射回参数空间。</p>
 <p><strong>算例：</strong>两个观察 token 的 mask 都为0，后面两个动作 token 的概率分别为0.5、0.25，则平均 loss 为 \(-(\log0.5+\log0.25)/2\approx1.040\)。模型需要根据观察决定过滤条件；移除观察、更改 Attention 或对中间状态 detach 会改变这条计算链，单独设置目标 mask 不会。</p>
 <table><thead><tr><th>片段</th><th>保留为条件</th><th>本例监督</th><th>准入检查</th></tr></thead><tbody>
 <tr><td>system/user/schema</td><td>是</td><td>否</td><td>模板与推理一致</td></tr>

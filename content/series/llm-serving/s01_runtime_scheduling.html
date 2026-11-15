@@ -34,8 +34,9 @@
 <p>连续为最大长度预留KV会浪费空间；逐请求扩容也容易产生碎片。PagedAttention把逻辑历史分block，由block table指向非连续物理页，kernel按映射访问。它降低外部碎片和重复分配，不把完整attention改成稀疏attention。最后一页仍可能有内部浪费，元数据、预留与临时区也存在。</p>
 <div class="reading-math">\[
 n_{\rm block}=\left\lceil\frac TB\right\rceil,\qquad
-w=B\left\lceil\frac TB\right\rceil-T,\qquad 0\le w&lt;B.
+w=B\left\lceil\frac TB\right\rceil-T,\qquad 0\le w\lt B.
 \]</div>
+<p class="math-notation">\(T\) 是一个请求需保存的 token 数，\(B\) 是每页可容纳的 token 槽数，\(n_{\rm block}\) 是页数，\(w\) 是末页空槽数；\(\lceil\cdot\rceil\) 表示向上取整。这里 \(B\) 是 page size，区别于架构章节中的 batch size。</p>
 <p>教学取\(T=35,B=16\)：3页共48槽，末页13槽空闲。这里只是整数槽计数，不含metadata、预留和workspace。</p>
 <table><caption>非连续物理页保持逻辑token顺序</caption><thead><tr><th>逻辑页</th><th>token位置</th><th>物理页ID（教学）</th></tr></thead><tbody>
 <tr><td>0</td><td>0–15</td><td>7</td></tr><tr><td>1</td><td>16–31</td><td>2</td></tr><tr><td>2</td><td>32–34；余13槽</td><td>11</td></tr></tbody></table>

@@ -86,6 +86,7 @@
 </tbody></table></div>
 <p><strong>资源向量分项报告：</strong>GPU-hours、CPU-hours、tokens、存储与网络不同单位，不能直接相加。GPU-hours由各设备秒数相加再除3600；active和reserved分别保留。同样8卡预留2小时就是16 GPU-hours，即使只有一半时间执行kernel，不能把剩余资源称为免费。</p>
 <h3>配对比较：平均分相同也可能换了一批成功任务</h3>
+<p class="math-notation">\(i=1,\ldots,n\) 索引配对任务，\(Y_{A,i},Y_{B,i}\in\{0,1\}\) 为两方案独立终评结果；\(D_i\) 是同题差值，\(\bar D\) 是其均值，\(n_{\rm only}\) 为仅一个方案成功的任务数。\(\widehat{\operatorname{SE}}\) 是估计标准误，度量均值的不确定性；横线表示平均，帽号表示估计值。</p>
 <p>同100项教学任务、同预算与verifier：A成功60，B成功64。若其中A独有8、B独有12，二者都成功52、都失败28；B的净增量4个百分点由这20个分歧任务产生。</p>
 <div class="reading-math">\[
 D_i=Y_{B,i}-Y_{A,i}\in\{-1,0,1\},\qquad

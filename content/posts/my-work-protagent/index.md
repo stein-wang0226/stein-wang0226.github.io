@@ -31,6 +31,7 @@ ProtAgent 研究紧凑蛋白领域智能体能否学习调用真实生物信息�
 <!-- WORK:KNOWLEDGE:END -->
 
 ## 工具、轨迹和监督怎样组织
+<p class="math-notation"><strong>符号：</strong>\(x,q\) 为蛋白输入和问题，\(a_t,o_t\) 为第 \(t\) 步动作/环境观察，\(h_t\) 为动作前历史，\(\pi_\theta\) 为可训练策略。SFT 式中 \(u\) 索引输出 token，\(y_u\) 为示范，\(c\) 为任务条件，\(S_{\rm assistant}\) 为监督位置集合；\(\mathbb E\) 表示按所注明策略采样后平均。</p>
 
 输入含 `sample_id`、instruction、sequence、任务类型与 metadata。历史由初始输入、已执行动作和真实观察组成；skill policy 约束可见工具、必要证据及答案形状。[1](#ref-1)[2](#ref-2)
 
@@ -62,6 +63,7 @@ a_t&\sim\pi_\theta(\cdot\mid h_t)
 这要求 tokenizer、chat template、loss mask 和 next-token label shift 对齐。论文配方为 Qwen3-8B-Instruct、1 epoch、LR `1e−6`、cosine、weight decay `0.01`、长度 8192、bf16；Megatron 使用 TP2/PP2/CP2。局部 batch 和梯度累积为 1×1，不能据此猜测全局 batch。[1](#ref-1)[3](#ref-3)
 
 ## 逐步回报怎样进入策略梯度
+<p class="math-notation">\(r_t\) 为即时奖励，\(G_t\) 为未来回报，\(H\) 为动作步数，\(\gamma\) 为折扣；\(\tau\) 为完整轨迹，\(p_\theta(\tau)\) 为路径概率。actor 式的 \(m_{t,u}\) 为策略 token mask，\(A_{t,u}\) 为固定优势，\(Z\) 为所选聚合分母，\(\beta\) 为 KL 系数，ref 为冻结参考策略；\(\nabla_\theta\) 对策略参数求梯度。</p>
 
 每个 prompt 采样 K=4 条 on-policy 轨迹。相关工具首次成功、重复调用、格式错误、截断和终止答案分别产生局部奖励。主方法是无 critic 的 REINFORCE，按同一轨迹从后向前累加：[1](#ref-1)[3](#ref-3)
 

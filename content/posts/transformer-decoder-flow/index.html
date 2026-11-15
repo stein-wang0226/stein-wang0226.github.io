@@ -9,6 +9,7 @@
 <figure class="mechanism-map"><figcaption>一组参数，两种输入：整段训练与增量解码</figcaption><ol class="mechanism-chain"><li><b>IDs [B,T]</b><small>embedding → [B,T,d]</small></li><li><b>Pre-Norm → QKV/RoPE</b><small>[B,H,T,D]；位置从 S 开始</small></li><li><b>历史 KV + 当前 KV</b><small>Attention [B,H,T,S+T] → 残差</small></li><li><b>Pre-Norm → SwiGLU → head</b><small>[B,T,d] → [B,T,V]；训练计算 CE，推理采样</small></li></ol></figure>
 </section>
 <section id="tensor-formulas"><h2>核心公式和代码对象逐项对应</h2>
+<p class="math-notation">Norm 的 \(\gamma\) 是逐维可训练缩放，\(\epsilon\) 防止除零，mean 沿 hidden 维平均，\(\odot\) 是逐元素乘法；\(N\) 在此为 Norm 函数。SwiGLU 式按列向量写，\(W_g,W_u\) 为 \(F\times d\)，\(W_d\) 为 \(d\times F\)，与代码的右乘转置权重等价。后面参数式的 \(N\) 改指参数元素数。</p>
 <table><thead><tr><th>对象</th><th>计算</th><th>形状/条件</th></tr></thead><tbody>
 <tr><td>Q/K/V</td><td>归一化输入分别乘投影矩阵</td><td>[B,T,d] → [B,H,T,D]</td></tr>
 <tr><td>RoPE</td><td>每两个维度按位置频率旋转</td><td>Q/K 旋转，V 不旋转；当前位置 S…S+T−1</td></tr>
@@ -26,6 +27,7 @@ x'&amp;=h+\operatorname{SwiGLU}(N(h)),\\
 \]</div>
 <p>RMSNorm 不减均值；数值稳定依赖精度与 ε。Pre-Norm 提供残差梯度路径，<strong>不意味着无需 warmup</strong>。SwiGLU 无 bias 参数量为3dF，普通两矩阵 FFN 为2dF；同参数预算可把 SwiGLU 的 F 调小。</p>
 <h3 id="rope-implementation">相邻配对 RoPE：缓存位置不能从零重启</h3>
+<p class="math-notation">\(p\) 为 token 逻辑位置，\(j=0,\ldots,D/2-1\) 为维度对编号；\(\omega_j\) 为弧度/位置的频率，\(c_j,s_j\) 为余弦/正弦，撇号表示旋转后的分量。缓存节的 \(i\) 从 0 索引本次 query、\(j\) 索引历史与当前 key；\(\mathbf1\) 是可见性指示，层数用 \(L\)，标量训练 loss 也在其段落用 \(L\)。</p>
 <div class="reading-math">\[
 \begin{aligned}
 \omega_j&amp;=10000^{-2j/D},\\

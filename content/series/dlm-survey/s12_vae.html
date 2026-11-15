@@ -2,6 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>VAE：ELBO、重参数化与量化接口</title></head><body>
 <!-- READING:FRAGMENT:START -->
 <h2 id="elbo">VAE 把“编码一个点”变成“推断一个分布”</h2>
+<p class="math-notation"><strong>符号：</strong>\(x\) 是观测，\(z\in\mathbb R^d\) 是 latent，\(p(z)\) 为先验，\(p_\theta(x\mid z)\) 为 decoder，\(q_\phi(z\mid x)\) 为 encoder 的辅助后验；\(\theta,\phi\) 是两组参数。\(\mathcal R\) 为期望重建 log-likelihood，\(\mathcal K\) 为后验到先验的 KL；\(\mathbb E_q\) 给定 \(x\) 按辅助后验采 \(z\) 后平均，ELBO 为要最大化的下界。</p>
 <p><strong>生成器是 \(p(z)p_\theta(x\mid z)\)，编码器 \(q_\phi(z\mid x)\) 是辅助推断。</strong>训练时看真实 x 并采 posterior latent；生成时从 prior 采 z，交给 decoder。两条支路的输入分布要匹配。</p>
 <figure class="mechanism-map"><figcaption>训练与生成共享 decoder</figcaption><ol class="mechanism-chain"><li><b>真实 x → encoder</b><small>μ(x)、log σ²(x)</small></li><li><b>重参数采 z</b><small>μ + σ⊙ε</small></li><li><b>decoder</b><small>条件分布 pθ(x|z)</small></li><li><b>训练目标</b><small>重建 likelihood + prior 正则</small></li></ol><p class="mechanism-return">生成支路：prior z → decoder；无需真实 x 与 encoder。</p></figure>
 <p>将联合概率除以辅助后验，应用 Jensen：</p>
@@ -20,6 +21,7 @@
 \end{aligned}\]</div>
 <p>最大化重建项、减小 KL；两者有取舍。改 KL 权重 β、添加感知/对抗损失后，是新的优化目标，不能仍无条件称原 likelihood 下界。</p>
 <h3 id="reparameterization">为什么重参数化能传梯度？</h3>
+<p class="math-notation">\(\mu_\phi,\sigma_\phi\) 为 \(d\) 维均值和标准差向量，\(\sigma_j^2\) 才是方差；\(\epsilon\sim\mathcal N(0,I)\) 为标准高斯，\(I\) 为单位矩阵，\(\odot\) 为逐元素乘法，diag 把向量放到对角线。高斯 KL 式的 \(j\) 索引 latent 坐标。</p>
 <div class="reading-math">\[z=\mu_\phi(x)+\sigma_\phi(x)\odot\epsilon,\qquad
 \epsilon\sim\mathcal N(0,I).\]</div>
 <p>随机 ε 的分布不依赖 φ，采样后的 z 是 φ 的可微函数。路径梯度 \(\partial z/\partial\mu=I\)、\(\partial z/\partial\sigma=\operatorname{diag}(\epsilon)\)。decoder 重建梯度因此可传到 encoder；离散采样与最近邻不能原样使用该路径。</p>
@@ -36,6 +38,7 @@
 <tr><td>码本少数码被使用</td><td>离散 code 使用退化</td><td>使用直方图、重建、EMA/reset与正则；与连续 posterior collapse 区分</td></tr>
 </tbody></table>
 <h3 id="vq">VQ-VAE：最近邻与两条梯度职责</h3>
+<p class="math-notation">\(z_e\) 为 encoder 输出，\(\{e_j\}_{j=1}^K\) 为同维码字，\(k=\arg\min_j\) 返回最近码字编号，\(z_q=e_k\) 为量化表示；\(\|\cdot\|^2\) 为欧氏平方距离。sg 为停止梯度，\(\beta\) 是 commitment 权重，\(z_{\rm ST}\) 是 straight-through 的前向/反向替代表示。量化表中 \(R\) 为残差级数、\(L_j\) 为第 \(j\) 维级别数、\(d\) 为二值宽度，组合数不是实际使用数。</p>
 <div class="reading-math">\[\begin{aligned}
 k&=\arg\min_j\|z_e-e_j\|^2,\qquad z_q=e_k,\\
 \mathcal L&=\mathcal L_{\rm recon}

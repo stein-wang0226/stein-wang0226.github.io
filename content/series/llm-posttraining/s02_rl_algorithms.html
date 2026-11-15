@@ -27,6 +27,7 @@ R(\tau)&=\sum_{t=0}^{T-1}\gamma^t r_t,\\
 J(\theta)&=\sum_\tau p_\theta(\tau)R(\tau).
 \end{aligned}
 \]</div>
+<p class="math-notation"><strong>符号：</strong>\(\theta\) 是策略的可训练参数；\(\tau\) 是一条完整轨迹，\(p_\theta(\tau)\) 是它的概率；\(p(h_0)\) 是初态分布。\(t=0,\ldots,T-1\) 索引决策，\(\gamma\in[0,1]\) 是折扣因子，\(R\) 是累计回报，\(J\) 是其期望。这里的求和遍历离散轨迹；连续状态下改用积分。\(\nabla_\theta\) 表示对参数求梯度，\(\mathbb E_{\tau\sim p_\theta}\) 表示按该策略采样轨迹后取平均。</p>
 <p>用 \(\nabla p=p\nabla\log p\) 把概率的导数改写成期望。再对轨迹概率取log：乘积变求和；初态和环境项的导数为零，只留下策略动作。这就是REINFORCE的score-function估计，不需要对shell、浏览器或verifier反传。</p>
 <div class="reading-math" role="math" aria-label="REINFORCE逐步推导">\[
 \begin{aligned}
@@ -61,6 +62,7 @@ V^\pi(h)=\mathbb E_{a\sim\pi}[Q^\pi(h,a)],\quad
 A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 \]</div>
 <p>critic用数据拟合未来回报，例如最小化 \((V_\phi(h_t)-G_t)^2\)，再给actor提供baseline。一个好的baseline通常降方差；<strong>任意baseline都不保证降方差</strong>，价值函数也不一定是score加权意义下的最优baseline。</p>
+<p class="math-notation"><strong>概念：</strong>\(G_t\) 是从第 \(t\) 步开始的回报，\(g_t\) 是该动作的 log-prob 梯度；\(Q^\pi\) 是指定动作后的期望回报，\(V^\pi\) 是按策略平均动作后的状态价值，\(A^\pi\) 是两者之差。\(\phi\) 是 critic 参数，区别于 actor 的 \(\theta\)；单步例中的 \(\sigma(z)=1/(1+e^{-z})\) 是 sigmoid。</p>
 <table><thead><tr><th>可复算的单步例子</th><th>成功，概率0.25</th><th>失败，概率0.75</th></tr></thead><tbody>
 <tr><td>\(p=\sigma(\theta)\)，成功奖励2、失败奖励0</td><td>\(\nabla\log p=0.75\)</td><td>\(\nabla\log(1-p)=-0.25\)</td></tr>
 <tr><td>原始估计 \(R\nabla\log\pi\)</td><td>1.5</td><td>0</td></tr>
@@ -83,6 +85,7 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 \delta_t=r_t+\gamma(1-d_t)V(h_{t+1})-V(h_t),\qquad
 \hat A_t=\delta_t+\gamma\lambda(1-d_t)\hat A_{t+1}.
 \]</div>
+<p class="math-notation"><strong>符号：</strong>\(\delta_t\) 是一步 TD 预测误差，\(\hat A_t\) 是估计优势；\(V(h_t)\) 估计当前状态的未来回报。\(\lambda\in[0,1]\) 控制多步误差的混合，\(\gamma\) 仍控制奖励折扣；\(1-d_t\) 在真实终止时切断下一状态价值和递推。</p>
 <p>没有跨terminal项时展开得到 \(\delta_t+\gamma\lambda\delta_{t+1}+(\gamma\lambda)^2\delta_{t+2}+\cdots\)。无限时域或末端处理正确时，它对应把多步TD优势按 \((1-\lambda)\lambda^{n-1}\) 混合；\(\lambda=1\) 的极限接近MC减baseline，\(\lambda=0\) 只用一步TD。</p>
 <p><strong>两步算例：</strong>\(\gamma=1,\lambda=0.5\)，奖励为[0,1]，value为[0.4,0.6,0]，末步terminal。则 \(\delta=[0.2,0.4]\)，\(\hat A_1=0.4,\hat A_0=0.2+0.5\times0.4=0.4\)。将 \(\lambda\) 调为0或1，首步优势分别为0.2或0.6。预算截断是否bootstrap要按任务定义，不能把所有timeout都当真实terminal。</p>
 <h3 id="ppo-ratio">旧策略采样，当前策略怎样复用数据</h3>
@@ -97,6 +100,7 @@ J_{\rm clip}&=\mathbb E_{\rm old}
 \left[\min(\rho_t\hat A_t,\bar\rho_t\hat A_t)\right].
 \end{aligned}
 \]</div>
+<p class="math-notation"><strong>符号：</strong>\(\rho_t\) 是同一动作在当前策略与采样旧策略下的概率比，\(\bar\rho_t\) 是裁剪后的比率。\(\epsilon_{\rm low/high}\) 是相对 1 的下/上裁剪幅度；clip 将数值限制在区间，min 取两项较小值。\(\mathbb E_{\rm old}\) 按旧策略数据平均；优势在 actor 更新中作为固定权重，\(J\) 被最大化，框架的 loss 通常取其负号。</p>
 <h3 id="ppo-piecewise">为什么clip要看优势正负</h3>
 <div class="reading-math" role="math" aria-label="PPO正负优势分段">\[
 j(\rho,A)=
@@ -135,6 +139,7 @@ A\max(\rho,1-\epsilon_{\rm low}),&A&lt;0.
 A_i^{\rm RLOO}=R_i-\frac1{G-1}\sum_{j\ne i}R_j,\quad
 A_i^{\rm GRPO}=\frac{R_i-\bar R}{\sigma_R+\epsilon}.
 \]</div>
+<p class="math-notation"><strong>符号：</strong>\(i,j=1,\ldots,G\) 索引同一题的候选，\(R_i\) 是候选终评，\(\bar R\) 是组均值，\(\sigma_R\) 是总体标准差。分母里的 \(\epsilon\) 是防止除零的小常数，区别于 PPO 的裁剪幅度；奖励有单位时，它应与标准差同单位。\(A_i\) 是候选优势，不是某个 token 的即时奖励；下式的 \(p\) 是单次成功概率。</p>
 <p>RLOO的baseline不含自己的动作，条件独立采样时可沿用零期望证明。对包含自己的组均值，有 \(R_i-\bar R=\frac{G-1}{G}A_i^{\rm RLOO}\)；再除随机组std会进一步改变尺度和隐式任务权重。<strong>GRPO归一化不是原始reward梯度的通用无偏估计</strong>。</p>
 <p>RLOO 用其他候选的均值避免自己的 reward 进入 baseline；GRPO 用组内中心化和标准差。它们节省显式 critic，却需要同一任务多次采样；单条长 episode 很贵时，省下的 critic 不能直接等价为总成本降低。<a href="index.html#ref-3">[3]</a> <a href="index.html#ref-4">[4]</a></p>
 <table>
@@ -191,6 +196,7 @@ L_{\rm fixed}=\frac{\sum_i\sum_t\ell_{it}}{G T_{\rm fixed}}.
 \]</div>
 <p><strong>两条轨迹算例：</strong>长度2/8，每token损失分别1/3，\(T_{\rm fixed}=10\)。序列平均为2，token平均为2.6，固定分母为1.3；短轨迹每token权重分别是0.25、0.1、0.05，长轨迹是0.0625、0.1、0.05。序列平均让每条轨迹总权重相等，token平均让每token权重相等；固定分母同时改变绝对梯度尺度。</p>
 <p>上述是聚合示意，<code>ℓ</code> 还包含 advantage、ratio、mask 和正则。只改分母的对照能解释权重变化；与改 baseline、过滤、任务配额一起上线则只能评价组合方案。</p>
+<p class="math-notation"><strong>索引与分母：</strong>\(i\) 索引候选，\(t=1,\ldots,T_i\) 仅遍历有效策略 token；\(T_i\) 是该候选的有效长度，\(T_{\rm fixed}\) 是预先固定的长度标尺。padding 和工具观察不因物理存在就计入分母。GSPO 的 \(s_i\) 对这些 token 的 log-ratio 取平均再指数化；CISPO 的 \(\ell_{it}\) 在下节专指 log-prob，与本节泛指 loss 的 \(\ell_{it}\) 含义不同。</p>
 </section>
 <section id="ratio-methods">
 <h2>GSPO、CISPO、Soft SAPO：控制更新的对象不同</h2>
@@ -219,7 +225,7 @@ f(\rho)=\frac4\tau\sigma(\tau(\rho-1)),\quad
 J=\operatorname{mean}[f(\rho)A],\quad
 \frac{df}{d\rho}=4u(1-u),\quad u=\sigma(\tau(\rho-1)).
 \]</div>
-<p>\(\rho=1\) 时 \(df/d\rho=1\)；远离1时导数减小。温度 \(\tau\) 按优势正负选择，作用于梯度衰减速度。</p>
+<p class="math-notation">\(\sigma\) 是 sigmoid，\(u\in(0,1)\) 是门控值；此处 \(\tau&gt;0\) 是门控斜率参数，区别于前面的轨迹 \(\tau\) 和生成 temperature。\(f(\rho)\) 是代理目标中的 ratio 变换，\(A\) 是固定优势。\(\rho=1\) 时 \(df/d\rho=1\)；\(\tau\) 越大，导数在远离 1 时衰减越快。正负优势可以选择不同的 \(\tau\)。</p>
 <p>Soft Adaptive Policy Optimization 在远离 1 的 ratio 上平滑减弱梯度，而不是硬截断；正负优势可使用不同温度。原报告偏向对负优势采用更强抑制，但这是实验设置，不能宣称“soft”消除了所有偏差。缺失 A 或把 <code>f</code> 直接说成 log-prob loss 都会改变目标。<a href="index.html#ref-9">[9]</a></p>
 </section>
 <section id="single-rollout">

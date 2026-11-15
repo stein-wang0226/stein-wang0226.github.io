@@ -39,6 +39,7 @@ N_{\mathrm{base}}&amp;=d_{\mathrm{in}}d_{\mathrm{out}}.
 \end{aligned}
 \]</div>
 <p>低秩限制施加在增量 ΔW，底座可以是满秩。LoRA 省去冻结参数的梯度和优化器状态；上游 adapter 要获得梯度，仍可能需要穿过后续冻结层反传和保存 / 重算激活。因此“只训练少量参数”不能直接换算为相同比例的训练计算下降。<a href="#ref-lora">[1]</a></p>
+<p class="math-notation"><strong>LoRA 符号：</strong>\(x,y\) 分别是输入/输出列向量，\(d_{\rm in/out}\) 是其宽度；\(W_0\) 是冻结底座，\(A,B\) 是可训练低秩矩阵，\(r\) 是增量秩，\(\alpha/r\) 是缩放。\(N_{\rm adapter/base}\) 为参数元素数；\({}^\top\) 表示转置，\(g\) 是与 \(y\) 同形的输出梯度。</p>
 <p>例如一个8192×8192矩阵，本文选 r=64，可训练量为1,048,576，约为原矩阵的1.56%；这是单矩阵规格推导，不代表全模型比例。若扩展到 Q/K/V/O、SwiGLU 三矩阵、router 或专家，必须分别统计真实形状与是否共享。GQA 的 K/V 矩阵通常更小。</p>
 <figure class="mechanism-map"><figcaption>LoRA：一条冻结路径和一条可训练增量相加</figcaption><ol class="mechanism-chain"><li><b>输入 x：d_in</b><small>同时进入底座 W₀ 与低秩 A</small></li><li><b>底座：W₀x</b><small>参数冻结，仍参与计算与向输入传梯度</small></li><li><b>增量：A x → B(Ax)</b><small>d_in → r → d_out；乘 α/r</small></li><li><b>求和 → 后续 loss</b><small>更新 A/B；上游 adapter 仍需反传</small></li></ol></figure>
 <p>令输出梯度为 \(g=\partial L/\partial y\)，\(s=\alpha/r\)，先按链式法则得到：</p>
@@ -78,6 +79,7 @@ U\approx\operatorname{polar}(M'),\quad W'=W-\eta\operatorname{scale}(U),\\
 \end{aligned}
 \]</div>
 <p>AdamW 把 weight decay 从自适应梯度分母中解耦，不能简单等同于给 Adam loss 加 L2。Muon 近似正交化的是二维更新矩阵，不要求更新后 W 正交；embedding、输出头和一维参数的分工，以及矩形缩放、动量 / Nesterov、Newton–Schulz实现都影响结果。<a href="#ref-adamw">[3]</a> <a href="../llm-research-map-2026/s07_architecture_training.html#muon">前沿配方与原论文</a>。</p>
+<p class="math-notation"><strong>概览符号：</strong>\(W,W'\) 为更新前后参数，\(G\) 为梯度矩阵，\(M'\) 为更新后的动量，\(U\) 为近似 polar 方向；\(\eta\) 是学习率，\(\lambda\) 是权重衰减，\(\widehat m,\widehat v\) 为偏差修正的一阶/二阶原点矩。\(\epsilon\) 防止除零，\(c\) 是梯度范数上限；\(\|G\|_2\) 在裁剪式中指展平全部被裁剪梯度后的欧氏范数。</p>
 <p>矩阵被 TP/FSDP 切片后，独立对每块做 polar 一般不等于整矩阵更新再切片。研究方案应冻结 optimizer 的逻辑矩阵、通信、参数分组和精度，再比较 AdamW / Muon；否则“优化器收益”混入了重计算、并行和更新预算差异。</p>
 <div class="callout"><strong>优化器阅读路线：</strong><a href="#adamw-derivation">SGD → Momentum → Adam → AdamW</a> → <a href="#adamw-example">两步数值例子</a> → <a href="#optimizer-landscape">方法与适用条件</a> → <a href="#optimizer-cost">显存与 FLOPs 账本</a> → <a href="#optimizer-evidence">原论文效率对照</a> → <a href="#optimizer-recipe">训练框架中的落地检查</a>。原理、规格推导与作者实验分别注明；没有统一条件下的实测排名。</div>
 
@@ -130,6 +132,7 @@ m_t&amp;=(1-\beta_1)\sum_{k=1}^{t}\beta_1^{t-k}g_k,\\
 \end{aligned}
 \]</div>
 <p>后两行假定各步 \(\mathbb E[g_k]=a\)、\(\mathbb E[g_k^2]=b\) 不变。除以 \(1-\beta^t\) 修正零初始化导致的权重总和不足。</p>
+<p class="math-notation">这里 \(\mathbb E\) 对 minibatch 的随机采样取平均，\(a,b\) 分别是单坐标梯度的一阶与二阶原点矩；\(k,j\) 是历史更新索引。\(\mu\) 是 sum-buffer 动量系数，\(\beta_1,\beta_2\) 是 EMA 保留系数；帽号表示零初始化的偏差修正，平方、平方根和除法都逐坐标进行。</p>
 <p>偏差修正针对零初始化，不代表能消除非平稳数据、策略变化或梯度估计的所有偏差；比值 m̂/sqrt(v̂) 本身也不是某个“真实更新”的无偏估计。学习率 warmup 和偏差修正作用不同，不能互相替代。<a href="https://arxiv.org/abs/1412.6980v9">Adam §2–3</a>。</p>
 <h4>4. AdamW：为什么 Adam 加 L2 不等于解耦衰减</h4>
 <div class="reading-math">\[
@@ -184,6 +187,7 @@ for t, g in enumerate((2.0, -1.0), start=1):
 <h3 id="optimizer-landscape">业界与研究路线：优化方向、减少状态、改善矩阵几何</h3>
 <h4 id="muon-mechanism">Muon：把矩阵动量的奇异值尺度和方向分开</h4>
 <p>对二维动量矩阵作薄 SVD，\(M=U\Sigma V^\top\)。非退化子空间上的 polar 方向 \(UV^\top\) 保留左右方向，去掉奇异值幅度；矩形矩阵只能在相应行或列子空间满足正交关系。Muon 用矩阵乘法近似这个方向，再按形状与配方缩放更新。</p>
+<p class="math-notation">此处若 \(M\) 为 \(p\times q\)、秩为 \(r\)，薄 SVD 的 \(U,V\) 分别为 \(p\times r,q\times r\)，\(\Sigma\) 为奇异值对角阵；\(UV^\top\) 与 \(M\) 同形。这里 \(U\) 是左奇异向量矩阵，区别于概览中的整块更新方向 \(U\)。成本表的 \(n=pq\)、\(b\) 个块、刷新周期 \(f\) 都在各自公式中重新定义。</p>
 <div class="reading-math">\[
 M=\begin{bmatrix}3&amp;0\\0&amp;1\end{bmatrix}
 \quad\Longrightarrow\quad

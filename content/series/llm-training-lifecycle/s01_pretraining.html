@@ -59,6 +59,7 @@
 </section>
 <section id="objective">
 <h2>Causal LM：每个 token 的条件预测</h2>
+<p class="math-notation">\(x_{1:n}\) 是长度 \(n\) 的 token 序列，\(x_{\lt i}\) 是第 \(i\) 位之前的前缀，\(\theta\) 是模型参数；\(\prod\) 将各位置条件概率相乘，log 为自然对数，\(L_{\rm LM}\) 为有效目标位置的平均负 log-prob。预算节的 \(N\) 是参与矩阵计算的参数元素数，\(T\) 是实际处理 token 数，\(C\) 单位为 FLOPs，区别于数据序列长度 \(n\)。</p>
 <p>decoder用前文预测下一token，训练可同时计算已知历史下的多个位置。条件概率因子分解、softmax梯度与shift已在架构页展开；这里关注数据进入目标时的边界与分母。</p>
 <div class="reading-math" role="math">\[
 p_\theta(x_{1:n})=\prod_{i=1}^np_\theta(x_i\mid x_{&lt;i}),\qquad

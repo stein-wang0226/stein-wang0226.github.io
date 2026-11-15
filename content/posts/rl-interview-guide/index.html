@@ -4,6 +4,7 @@
 <body><main class="training-lifecycle">
 <p class="lead"><strong>先复述，再推导，再诊断。</strong>本页用于面试前复习；完整原理、逐步算例和六幅修订教学图集中在<a href="/llm-posttraining/">后训练与策略学习</a>。读过主讲后，用下面的卡片检验自己能否解释条件与反例。</p>
 <section id="symbols"><h2>符号：先说清每个量属于谁</h2>
+<p class="math-notation">\(t=0,\ldots,T-1\) 为决策步，\(T\) 为轨迹决策数，\(\theta\) 为 actor 参数；\(G_t\) 是回报，\(G\) 是同题候选数。\(\rho_t\) 为同动作的新/旧概率比；clip 的 \(\epsilon\) 与 GRPO 分母的除零稳定常数分别定义。\(\mathbb E\) 表示按注明数据分布取平均，sg 表示保持数值并停止梯度。</p>
 <table><thead><tr><th>量</th><th>一句解释</th><th>最常见混淆</th></tr></thead><tbody>
 <tr><td>\(h_t,a_t,r_t,G_t\)</td><td>决策前历史、可控动作、即时奖励、未来回报</td><td>工具观察是下一历史的一部分，通常不计动作 loss</td></tr>
 <tr><td>\(V^\pi,Q^\pi,A^\pi\)</td><td>状态价值、动作价值、相对策略平均的优势</td><td>critic 预测未来回报；PRM评价过程；verifier验收产物</td></tr>
@@ -87,6 +88,7 @@ y_{\rm DQN}&=r+\gamma(1-d)v',\\
 L_Q&=\mathbb E[(Q_\phi(s,a)-\operatorname{sg}(y_{\rm DQN}))^2].
 \end{aligned}
 \]</div>
+<p class="math-notation">DQN 中 \(s,a,r,s'\) 为一条 replay 转移的状态、动作、奖励、下一状态；\(a'\) 遍历下一状态可选动作，\(\phi,\bar\phi\) 为当前/target Q 网络参数，\(d=1\) 表示真实 terminal。\(\mathbb E\) 按 replay 样本平均，\(y_{\rm DQN}\) 为停止梯度的 Bellman 目标；\(v'\) 只是最大下一状态 Q 的简写。</p>
 </details>
 </section>
 <section id="harness"><h2>把算法口述接回系统</h2><p><strong>一次完整回答：</strong>先定义任务和可控动作，再说反馈及优势如何取得，写目标与mask，解释采样和更新版本，最后给留出验收与成本。运行状态见<a href="/agent-harness-guide.html">Harness</a>，训练框架见<a href="/llm-posttraining/#posttraining-frameworks">后训练框架</a>。</p></section>

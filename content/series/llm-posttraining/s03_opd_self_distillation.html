@@ -25,7 +25,7 @@
 L_{\rm OPD}(\theta)=\mathbb E_{h\sim d_{\bar\theta}}
 D\!\left(\pi_\theta(\cdot\mid h),\pi_T(\cdot\mid h)\right).
 \]</div>
-<p>\(\bar\theta\) 是生成本批轨迹的学生快照，\(d_{\bar\theta}\) 是其访问prefix的分布；本批优化把它固定。</p>
+<p class="math-notation">\(\theta\) 是当前学生参数，\(\bar\theta\) 是生成本批轨迹的学生快照，\(h\) 是动作前的 prefix，\(d_{\bar\theta}\) 是其访问 prefix 的分布；本批优化把它固定。\(\pi_T\) 是冻结教师策略，下标 \(T\) 在此表示 teacher；\(\cdot\) 表示整个候选词表，\(D\) 是选定的分布差异，\(\mathbb E\) 对访问到的 prefix 取平均。</p>
 <p>一批样本采完后可用固定快照更新；学生随后再采新批。这是一种 on-policy 数据循环，不表示每个 optimizer step 都即时重采所有状态。异步缓存会进一步引入行为策略与当前策略差异。</p>
 </section>
 <section id="full-vocabulary">
@@ -41,6 +41,7 @@ D_{\rm reverse}=\sum_v p_v(\log p_v-\log q_v),\qquad
 D_{\rm forward}=\sum_v q_v(\log q_v-\log p_v).
 \]</div>
 <p>softmax给出 \(\partial p_v/\partial z_k=p_v(\mathbf1[v=k]-p_k)\)。令 \(u_v=\log p_v-\log q_v\)，对reverse-KL先求概率导数，再乘softmax Jacobian：</p>
+<p class="math-notation"><strong>维度：</strong>词表大小为 \(V\)，\(v,k=1,\ldots,V\) 都索引词表候选；\(p,q,z\) 各有 \(V\) 个分量。\(z_k\) 是学生 logit，\(\mathbf1[v=k]\) 是指示函数，\(u_v\) 是学生/教师 log-ratio；KL 是对整个词表求和后的标量。此处 \(V\) 是词表大小，区别于 RL 的状态价值函数。</p>
 <div class="reading-math" role="math" aria-label="reverse KL的softmax梯度推导">\[
 \begin{aligned}
 &\frac{\partial D_{\rm reverse}}{\partial z_k}
@@ -88,6 +89,7 @@ loss.backward()</code></pre>
 \end{aligned}
 \]</div>
 <p>求KL梯度时同时对采样分布 \(p\) 与 \(u\) 求导；score期望为零，因此常数1及任意状态baseline可删。取 \(b=D_{\rm reverse}\) 对应上节logits公式。冻结采样token后直接反传 \(u\)，只得到 \(\nabla\log p\)，遗漏了<strong>采样概率对参数的依赖</strong>。</p>
+<p class="math-notation">这里 \(a\) 是按学生分布采样的 token，\(g(a)\) 是对学生参数求得的 log-prob 梯度；\(b(h)\) 只依赖当前 prefix，不依赖所采动作。\(\operatorname{sg}\) 保留前向数值但阻断梯度，\(A_{\rm distill}\) 因而只充当学习权重。</p>
 <p><strong>复算上一例：</strong>以概率0.8/0.2采样两候选，score对 \(z_1\) 分别为0.2/−0.8。加权期望 \(0.8\times0.470004\times0.2+0.2\times(-0.916291)\times(-0.8)=0.221807\)，与完整词表梯度一致；不加权的score期望为0，说明同一个KL值估计器不自动提供正确梯度。</p>
 <p>当 b 只依赖状态，baseline 不改变这个局部期望。采样 log-ratio 可以估计 KL 数值；更新则需要 score-function / policy-gradient 的处理。直接对冻结样本上的平均 <code>log p−log q</code> 反传，通常只剩 ∇log p，缺失应有的权重。</p>
 <pre><code># 单prefix、on-policy采样的局部教学示意

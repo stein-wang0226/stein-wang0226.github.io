@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>连续语言扩散：表示与文本接口</title></head><body>
 <!-- READING:FRAGMENT:START -->
+<p class="math-notation"><strong>本节符号：</strong>\(z_1\in\mathbb R^d\) 是文本的连续表示，\(\epsilon\) 为同维高斯噪声，\(z_t\) 为插值状态；此处 \(t=0\) 是噪声、\(t=1\) 是数据。\(u_\theta\) 为网络速度，\(\dot z_t\) 为路径速度，\(\|\cdot\|^2\) 为欧氏平方误差，CFM 为条件 Flow Matching。后面的 \(c\) 是给定上下文，\(v\) 是词表项；条件均值 \(\mathbb E[z\mid c]\) 与 token 概率 \(P(x=v\mid c)\) 是不同预测对象。</p>
 <h2 id="interface">连续去噪之外，还要解决文本接口</h2>
 <p><strong>连续语言扩散有两个学习问题：</strong>在连续状态上学习生成，再将状态转成离散文本。去噪 MSE 更低不自动意味着 token 更准确。</p>
 <figure class="mechanism-map"><figcaption>三种连续接口，共同保留独立的重建验收</figcaption><ol class="mechanism-chain"><li><b>文本 x</b><small>embedding 或 encoder 编码</small></li><li><b>表示 z₁</b><small>可保长，也可压缩序列</small></li><li><b>连续生成 zₜ</b><small>噪声 → learned field → 终点</small></li><li><b>文本 decoder</b><small>词表分类或条件序列生成</small></li></ol><p class="mechanism-return">参考路径：真实 x → encoder → decoder，先验证不加扩散时能否恢复文本。</p></figure>

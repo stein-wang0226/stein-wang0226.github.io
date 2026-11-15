@@ -10,6 +10,7 @@
 <figure class="mechanism-map"><figcaption>草稿可以并行；验证后的提交仍按协议进行</figcaption><ol class="mechanism-chain"><li><b>已确认前缀</b><small>target 状态与条件</small></li><li><b>并行候选块</b><small>DLM 多位置预测</small></li><li><b>target 验证</b><small>计算条件分布，接受/校正</small></li><li><b>提交与刷新</b><small>保留已确认位置，丢弃未接受分支</small></li></ol><p class="mechanism-return">↶ 每轮的 draft、verify、commit 都计时，不只数 target 调用。</p></figure>
 <p>随机投机的标准接受概率为 \(\min(1,p(v)/q(v))\)，拒绝后需要正残差分布 \([p-q]_+\)；完整还原 target 的证明与三词表算例在<a href="/llm-serving/s02_parallel_quantization.html#speculation">服务章</a>。贪心前缀匹配与随机精确采样要分别说明。并行 DLM 若只给每位置边际 q，未必已经提供标准 sequential proposal 所需的条件分布。</p>
 <h3 id="acceptance">接受长度：用生存概率求期望</h3>
+<p class="math-notation">\(b\) 是草稿块长，\(K\in\{0,\ldots,b\}\) 是首个拒绝前接受的草稿数，\(k\) 为计数阈值；\(P(K\ge k)\) 是连续接受至少 \(k\) 个的概率。几何例中的 \(a\) 是固定、独立条件下的单位置接受率，区别于 signal 系数；实际提交数还可能包括 target 补出的 token。</p>
 <p>令 K 是草稿前缀中被接受的长度、最大 b。整数随机变量的尾和公式给出：</p>
 <div class="reading-math">\[\mathbb E K=\sum_{k=1}^{b}P(K\geq k).\]</div>
 <p>一般情况下，第 k 个接受事件依赖前缀，不能将每位置平均接受率直接相乘。若作独立、同接受率 a 的教学近似，则：</p>
@@ -17,6 +18,7 @@
 =\frac{a(1-a^b)}{1-a}\quad(a\ne1).\]</div>
 <p>取 a=0.8、b=4，期望接受 2.3616；若协议每轮另提交一个 target 校正/bonus token，则平均提交 3.3616。bonus 计数、EOS 与长度上限必须与报告口径一致。</p>
 <h3 id="cycle-cost">为什么接受 6 个 token 不等于快 6 倍？</h3>
+<p class="math-notation">\(N_{\rm committed}\) 是最终保留的 token 数，\(t_{\rm draft/verify/commit}\) 分别为一轮草稿、验证和提交恢复的时间；\(\mathbb E\) 按周期平均。\(t_{\rm per\ token},t_{\rm AR}\) 都是时间/token，两者相除才得到无单位的 speedup。</p>
 <div class="reading-math">\[\begin{aligned}
 t_{\rm per\ token}
 &=\frac{\mathbb E[t_{\rm draft}+t_{\rm verify}+t_{\rm commit}]}

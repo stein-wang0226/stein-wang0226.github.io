@@ -45,6 +45,7 @@
 <section id="statistics">
 <h2 id="reading-section-4">分析要求：先固定比较对象与统计单位</h2>
 <h3>从count到均值：离散度与offset</h3>
+<p class="math-notation">\(K_{gj}\) 是基因 \(g\) 在样本 \(j\) 的整数 count，\(\mu_{gj}\) 是其期望；\(\sim\) 表示服从某分布，NB 为此处均值/离散度参数化的负二项分布。下面 \(x_j\) 是设计矩阵第 \(j\) 行写成的列向量，\(\beta_g\) 是该基因的系数向量，维度相同；\(x_j^\top\beta_g\) 为线性预测值，log 为自然对数。</p>
 <div class="reading-math">\[
 K_{gj}\sim\operatorname{NB}(\mu_{gj},\alpha_g),\qquad
 \operatorname{Var}(K_{gj})=\mu_{gj}+\alpha_g\mu_{gj}^2.
@@ -86,6 +87,7 @@ K_{gj}\sim\operatorname{NB}(\mu_{gj},\alpha_g),\qquad
 <p>DESeq2路径可采用size-factor与dispersion估计、Wald对比；edgeR路径可采用TMM、同一设计矩阵和QL F-test。QL不由2009年的两组exact-test文章单独证明，另见2016 workflow及edgeR v4官方方法说明。<a href="#ref-ql">[5]</a> <a href="#ref-v4">[6]</a>。本轮固定候选版本DESeq2 1.52.0、edgeR 4.10.7，但未验证依赖或运行数值结果。</p>
 <p>对未检验、全零、过滤、不可估计基因分别定义状态；缺失p值不置0，也不伪造fold change。LFC收缩值与未收缩估计是不同对象。本合同主字段选择未收缩log2FC；若另交付shrunken LFC，应另列字段 / 版本。输入gene宇宙、预过滤和BH集合必须公开冻结。</p>
 <h3>BH：控制一组声明的错误发现率</h3>
+<p class="math-notation">这里 \(m\) 是参与校正的检验数，括号下标 \((i)\) 是排序名次；\(q\in[0,1]\) 是 FDR 阈值，\(p^{\rm adj}\) 是调整后 p 值。内层 min 遍历从当前名次 \(i\) 到 \(m\) 的全部 \(j\)，外层将值封顶为 1。设计式的 \(I(B),I(C),I(D),I({\rm Dex})\) 都是指示变量；FC 是同供体、归一化后的处理/对照表达比。</p>
 <p>固定m个参与校正的检验，把p值从小到大排为\(p_{(1)},\ldots,p_{(m)}\)。在阈值q下，找最大的\(k\)满足\(p_{(k)}\le kq/m\)，将前k项声明显著；没有满足项则不声明。adjusted p通过从后往前取累计最小值获得：</p>
 <div class="reading-math">\[
 p^{\rm adj}_{(i)}=\min\left(1,\min_{j\ge i}\frac{m\,p_{(j)}}{j}\right).

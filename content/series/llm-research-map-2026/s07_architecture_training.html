@@ -25,6 +25,7 @@
 <p class="figure-links"><a href="../assets/research/architecture-20261114/residual-designs.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
 </figure>
 <h3>Attention Residuals：Attention轴在深度上</h3>
+<p class="math-notation">对固定 token，\(l\) 是当前层，\(i,j\lt l\) 遍历可用前层；\(q_l,h_i\in\mathbb R^d\)。\(s_{l,i}\) 为匹配得分，\(a_{l,i}\) 为沿深度归一化的非负权重，\(\widetilde h_l\) 为加权后的模块输入；波浪号表示构造的新表示。</p>
 <p>AttnRes为当前层设置可学习query，从前面层的表示得到归一化key，再用softmax权重读取这些表示。对同一token位置，概念式如下；它选择的是<strong>前层表示</strong>，没有替代序列中的token Attention。<a href="index.html#ref-60">[60]</a></p>
 <div class="reading-math" role="math" aria-label="Attention Residuals沿深度的选择公式">\[
 \begin{aligned}
@@ -37,6 +38,7 @@ a_{l,i}&=\frac{\exp(s_{l,i})}{\sum_{j\lt l}\exp(s_{l,j})},\\
 <p><strong>两表示算例：</strong>若 \(h_1=(2,0),h_2=(0,4)\)，得分为0与\(\log3\)，权重就是1/4与3/4，模块输入为\((0.5,3)\)。选择按表示得分变化，固定残差累加则不会得到这一加权结果。</p>
 <ul><li><strong>Full：</strong>保留更多历史层表示，增加状态与访问成本。</li><li><strong>Block：</strong>读取已完成block的summary与当前局部累积；K3采用该方向。</li><li><strong>验收：</strong>能力之外还测保存激活、重算、融合kernel和pipeline通信。<a href="index.html#ref-60">[60]</a> <a href="index.html#ref-5">[5] §2.2</a></li></ul>
 <h3>mHC：约束多路残差的混合矩阵</h3>
+<p class="math-notation">单 token 下，\(H_l^{\rm res}\) 为 \(n\times n\)，\(H_l^{\rm pre}\) 为 \(1\times n\)，\(H_l^{\rm post}\) 为 \(n\times1\)，\(F_l\) 将 \(1\times d\) 表示映射回同形。\(\mathbf1\) 为 \(n\) 维全 1 向量；双随机指元素非负且行列和都为 1。证明中的 \(P_r\) 为置换矩阵、\(\lambda_r\) 为凸组合权重，\(\|H\|_2\) 为谱范数（最大奇异值）。</p>
 <p>\(X_l\in\mathbb R^{n\times d}\)表示n路残差。pre映射汇入模块，post映射分发输出，res映射混合旧流；mHC通过Sinkhorn近似约束res矩阵。<a href="index.html#ref-61">[61] §3</a></p>
 <div class="reading-math" role="math" aria-label="mHC结构与双随机约束">\[
 \begin{aligned}
@@ -116,6 +118,7 @@ H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
 </section>
 <section id="depth">
 <h2>Recurrent depth：推理预算也可以放进潜在计算</h2>
+<p class="math-notation">\(x\) 是输入 token/表示，\(h^{(j)}\) 是第 \(j\) 次迭代后的潜在状态；上标是迭代编号，非乘方。\(K\) 是 core 执行次数，Pre/Core/Post 分别负责入口表示、共享参数的状态更新和最终词表 logits。</p>
 <p>Huginn的公开研究采用共享权重的recurrent depth：先得到token表示，再让同一个核心模块在潜在状态上迭代，最后输出token分布。推理时改变迭代次数，把更多算力用于token内部计算。<a href="index.html#ref-64">[64]</a></p>
 <div class="reading-math" role="math" aria-label="共享权重递归深度的概念公式">\[
 \begin{aligned}

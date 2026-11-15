@@ -45,6 +45,7 @@ L_{\rm episode}&=\frac1N\sum_n\frac{\sum_i m_{ni}\ell_{ni}}{N_n}.
 \end{aligned}
 \]</div>
 <p>两个分母并不等价。token-mean 使较长的目标轨迹拥有更多总权重；episode-mean 给每条 episode 相同权重，单 token 的权重随长度下降。长恢复链路与短成功路径混合时，要报告实际采用哪一种，不能只写“assistant-only SFT”。</p>
+<p class="math-notation"><strong>符号：</strong>\(n\) 索引轨迹，\(i\) 索引预测位置，\(a_{ni}\) 是示范目标 token，\(h_{ni}\) 是它之前的可见历史，\(\theta\) 是模型参数；\(\ell_{ni}\) 是单位置负对数概率。下式的 \(z_{ni,v}\) 是词表项 \(v\) 的 logit，\(p_{ni,v}\) 是 softmax 概率；\(\mathbf1[\cdot]\) 为条件成立取 1、否则取 0 的指示函数。</p>
 <p><strong>mask算例：</strong>输入为“题面 → 工具动作 → 观察 → 修复动作”。两个assistant目标token的正确概率为0.5、0.25，则token平均损失为 \(-(\log0.5+\log0.25)/2\approx1.0397\)。题面和观察不进入分母，却仍被后续动作Attention读取。</p>
 <div class="reading-math" role="math" aria-label="mask对logits的直接梯度">\[
 p_v=\operatorname{softmax}(z)_v,\qquad
@@ -101,6 +102,7 @@ audit_truncation_by_role_and_task_family()</code></pre>
 P(\text{至少一个成功}\mid x)=1-(1-p_x)^K,\qquad
 \mathbb E[\text{保留全部成功的条数}\mid x]=Kp_x.
 \]</div>
+<p class="math-notation">这里 \(x\) 是固定任务，\(p_x\) 是模型在该任务上单次成功的概率，\(K\) 是独立尝试次数；\(P(\cdot\mid x)\) 和 \(\mathbb E[\cdot\mid x]\) 都是在给定这道题的条件下计算，分别衡量“能否得到示范”和“得到多少示范”。</p>
 <p>独立尝试假设下，\(K=4\)，容易题 \(p_x=0.8\) 约99.84%有成功候选，难题 \(p_x=0.1\) 只有34.39%。筛选后的训练分布因此更偏容易题；增加候选预算不等于覆盖已经均衡。</p>
 <p>同样的 K 会让容易题贡献更多训练条数，难题可能完全消失。只保留每题一条减少条数偏移，却不能救回零成功题；补教师、调整难度、增加预算或放弃任务需要分别记录。弱 verifier 还会筛进投机解法。</p>
 <p>报告候选总 token、执行与判分时间、通过率、去重率和最终监督 token。同样大小的 SFT 数据可能消耗完全不同的搜索算力；与 RL 比较时，仅对齐保留下来的数据量会隐藏差异。</p>
@@ -121,6 +123,7 @@ r_y&=\beta\log\frac{p_y^*}{q_y}+\beta\log Z(x).
 \end{aligned}
 \]</div>
 <p>第二行来自拉格朗日乘子的一阶条件；\(Z(x)\) 将候选概率归一化。Bradley–Terry模型用 \(\sigma(r(x,y^+)-r(x,y^-))\) 表示偏好概率。两候选的prompt相同，\(\beta\log Z(x)\) 相减消掉，再以可训练 \(\pi_\theta\) 参数化隐式reward：</p>
+<p class="math-notation"><strong>符号：</strong>星号表示最优解；\(\eta\) 是约束“概率和为 1”的拉格朗日乘子，\(Z(x)=\sum_y q_y\exp(r_y/\beta)\)。\(\sigma\) 是 sigmoid；下面 \(u_+,u_-\) 是两候选相对 reference 的 log-ratio，\(z\) 是偏好分类 logit，区别于 SFT 的词表 logits。</p>
 <div class="reading-math" role="math" aria-label="DPO损失">\[
 \begin{aligned}
 u_\pm&=\log\frac{\pi_\theta(y^\pm\mid x)}{\pi_{\rm ref}(y^\pm\mid x)},\\
@@ -148,6 +151,7 @@ r_\theta(x,y)&=\frac{\beta}{|y|}\log\pi_\theta(y\mid x),\\
 L_{\rm SimPO}&=-\log\sigma(\Delta r_\theta-\gamma).
 \end{aligned}
 \]</div>
+<p class="math-notation">SimPO 的 \(|y|\) 是回答的目标 token 数，\(\beta\) 缩放平均 log-prob，\(\gamma\) 是要求 chosen 超过 rejected 的偏好间隔；这里的 \(\gamma\) 不表示 RL 奖励折扣。\(\Delta r_\theta\) 是同题两候选的分数差。</p>
 <p>新策略遇到静态偏好对没有出现的环境状态时，仍可能无法恢复。在线收集偏好可更新数据覆盖，但属于额外过程；不能由此认为离线 DPO 已完成 PPO / GRPO 的探索功能。偏好、执行正确性和成本最好分别报告。</p>
 <div class="course-review"><p><strong>追问：DPO的归一化常数为什么消失？</strong>同一prompt的两候选共享 \(Z(x)\)，reward相减时抵消；不同prompt不能这样相减。</p><p><strong>追问：mask=0是否没有梯度？</strong>该预测位置直接CE为零，但作为后续条件的表示仍可能收到梯度。</p></div>
 </section>

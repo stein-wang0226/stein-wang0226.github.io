@@ -4,6 +4,7 @@
 <h2 id="time">连续时间的核心：先定义概率路径</h2>
 <p><strong>FM 学所选路径的速度；score 模型学噪声分布的 log 密度梯度。</strong>二者可以在特定路径和动力学下连接，不代表任意损失、网络和采样器都一样。本节 FM 使用噪声 t=0、数据 t=1；DDPM/前向 SDE 使用数据到噪声，转换时显式反转时间。</p>
 <h3 id="conditional-path">条件路径 → 条件速度</h3>
+<p class="math-notation">\(y,x_t,\epsilon\in\mathbb R^d\) 分别为数据端点、路径状态和标准高斯噪声；\(a_t,b_t\) 是确定的标量路径系数，点号表示对连续时间求导。\(u_t(x\mid y)\) 是给定数据端点的速度，\(u_t(x)\) 是边际速度，\(u_\theta\) 是网络估计；速度与状态同维。\(\mathbb E[\cdot\mid x_t=x]\) 按与当前状态相容的端点后验平均，不是对所有端点等权平均。</p>
 <p>取数据 y、噪声 ε，定义 \(x_t=a_ty+b_t\epsilon\)。路径条件分布为 \(\mathcal N(a_ty,b_t^2I)\)，沿同一噪声端点对时间求导：</p>
 <div class="reading-math">\[\begin{aligned}
 \dot x_t&=\dot a_ty+\dot b_t\epsilon,\\
@@ -32,6 +33,7 @@ u_t(x)&=\mathbb E[u_t(x\mid y)\mid x_t=x].
 +\mathbb E\|U-\bar U\|^2.\]</div>
 <p>这是 conditional FM 能实际训练的原因；要求可积性与微分/期望交换等条件。<strong>不是每条条件直线都等于网络推理轨迹。</strong>许多条件路径会经过同一点，网络学习的是平均速度。</p>
 <h3 id="continuity">ODE 的概率守恒</h3>
+<p class="math-notation">\(p_t\) 为时刻 \(t\) 的密度，\(\phi:\mathbb R^d\to\mathbb R\) 为光滑测试函数；\(\nabla\phi\) 是空间梯度，\(\nabla\cdot\) 是散度，\(\Delta\) 是拉普拉斯算子（各坐标二阶导数之和），\(\partial_t\) 是时间偏导。SDE 中 \(f_t\) 为漂移向量，\(g_t\) 为标量扩散系数，\(W_t\) 为 \(d\) 维布朗运动；概率流速度 \(u_t\) 与 SDE 漂移不同。</p>
 <p>ODE 为 \(\dot X_t=u_t(X_t)\)。取光滑测试函数 φ，链式法则给出 \(d\mathbb E\phi/dt=\int p_tu_t\cdot\nabla\phi\,dx\)。分部积分、边界项为零：</p>
 <div class="reading-math">\[\begin{aligned}
 \int p_tu_t\cdot\nabla\phi\,dx
@@ -69,6 +71,7 @@ dX_s&=\left[-\tfrac12\beta(s)X_s
 \end{aligned}\]</div>
 <p>第二行是逆向 SDE，ds 沿递减时间；对应概率流 ODE 的 score 系数是 β/2。高斯条件 score 为 \(-\epsilon/\sqrt{1-\bar\alpha_s}\)，网络噪声预测可按该尺度转换。这个对应不把未加权 score loss、DDPM ELBO 与 Lsimple 变成同一目标。</p>
 <h3 id="solver">求解器、端点与少步生成</h3>
+<p class="math-notation">求解器表中 \(h&gt;0\) 是正向积分步长，\(z\sim\mathcal N(0,I)\)；逆向过程应使用其时间方向对应的网格与漂移。\(dW_t\) 的尺度为 \(\sqrt{dt}\)，\(\bar W_s\) 表示逆向时间的布朗运动。这里 \(\Delta p_t\) 是空间拉普拉斯，\(\Delta s\) 则是时间步长，两种 \(\Delta\) 按对象区分。</p>
 <table><thead><tr><th>方法</th><th>一步更新</th><th>注意</th></tr></thead><tbody>
 <tr><td>Euler ODE</td><td>\(x_{t+h}=x_t+h u_\theta(x_t,t)\)</td><td>大步可能有离散误差；高阶方法每步可用多次 NFE</td></tr>
 <tr><td>Euler–Maruyama</td><td>\(x_{t+h}=x_t+h f_\theta+g_t\sqrt h\,z\)</td><td>随机项、网格和误差标准不同</td></tr>

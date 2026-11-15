@@ -90,6 +90,7 @@ html{scroll-behavior:smooth;scroll-padding-top:1rem}
 <section id="objectives">
 <h2>目标函数与因子分解</h2>
 <h3>AR 与吸收式掩码扩散</h3>
+<p class="math-notation">x 是长度 L 的 token 序列，θ 是模型参数，i 为位置，x&lt;i 为前缀。τ∈(0,1] 是 mask 比例/扰动时间，xτ 为扰动态，m 为 mask token；qτ 为已知扰动分布，pθ 为去噪预测，1{·} 为指示，ℓᵢ 为位置 NLL，E 对数据/时间/扰动平均。</p>
 <div class="reading-math">\[
 p_\theta(x_{1:L})=\prod_{i=1}^L p_\theta(x_i\mid x_{\lt i})
 \]</div>
@@ -108,6 +109,7 @@ L_{\rm MDM}
 <p><strong>为什么出现 1/τ？</strong> 在线性吸收 schedule 的去噪目标中，时间权重补偿不同遮蔽程度的监督；它不是额外对 token 概率取倒数。τ=0 是端点，不能直接数值代入；实现要固定采样范围、参数化和 reduction。若改 schedule，权重也应重新推导。</p>
 <p>例如四个位置只掩两个，本步只累加这两个位置的 CE；未掩位置仍可提供上下文。模型一次输出多位置分布，并不使它们在这次 forward 中形成逐 token 自回归依赖。推理的提交、重掩码与步数由 sampler 决定。</p>
 <h3>Block-Diff</h3>
+<p class="math-notation">x^(k) 是第 k 块，x^(&lt;k) 是已完成前块；括号上标为块索引。L_BD 对各块去噪损失求和，分号后变量表示干净前块提供的条件，块内仍有随机 mask 和边际似然的区别。</p>
 <div class="reading-math">\[
 \begin{aligned}
 p_\theta(x)&=\prod_k p_\theta(x^{(k)}\mid x^{(\lt k)})\\
@@ -124,6 +126,7 @@ L_{\rm BD}&=\sum_k\mathbb E
 <figcaption>Scatter 以 offset 为时间轴。较早 offset 的提交结果为后续层提供跨块上下文，同一 offset 在不同块上并行恢复。</figcaption>
 </figure>
 <h3>Scatter 的注意力与采样</h3>
+<p class="math-notation">Iⱼ 为 offset j 对应的位置集合，S 为块长，j_q/j_k 为 query/key 的块内 offset，s_q/s_k 为 clean/noisy 段身份；B₁/B₂/B₃ 为布尔条件，∧/∨ 为“且/或”，M(q,k) 为可见性判定。这里 q/k 是位置角色，不是概率分布。</p>
 <div class="reading-math">\[
 I_j=\{j,S+j,2S+j,\ldots\},\quad 0\le j\lt S
 \]</div>
@@ -143,6 +146,7 @@ M(q,k)&=B_1\lor B_2\lor B_3
 <figcaption>Jigsaw 控制组把块访问顺序交给 entropy probe，块内保留 AR。选择和提交使用不同的信息可见范围，二者的组合决定实际依赖。</figcaption>
 </figure>
 <h3>Jigsaw 的训练与主要变体</h3>
+<p class="math-notation">b 为候选块，U 为未提交块集合，i 为块内位置，v 为词表项；pᵢ,ᵥ 是预测概率，H_b 是平均熵，|b| 是位置数，argmin 返回最低熵块的编号。低熵是模型置信度，不能直接当正确率。</p>
 <div class="reading-math">\[
 \begin{aligned}
 H_b&=-\frac1{|b|}\sum_{i\in b}\sum_vp_{i,v}\log p_{i,v}\\
@@ -162,6 +166,7 @@ b^*&=\arg\min_{b\in U}H_b
 <section id="theory">
 <span data-reading-plot-zoom></span>
 <h2>ICL 理论与可识别性</h2>
+<p class="math-notation">X_P∈R^(P×d)/y_P∈R^P 为提示输入/输出，X_R∈R^(R×d) 为待预测输入；w/μ_P∈R^d 为真实权重/后验均值，σ² 为噪声方差。I 为 d×d 单位矩阵，A 为正则化 Gram 矩阵，逆号表示矩阵逆，rank 为矩阵秩；风险式的 d 为输入维度，isotropic/sphere 分别标出权重先验的归一约定。</p>
 <p>每个序列采样一个潜在向量 <code>w</code>，由同一向量产生 P 个演示标签和 R 个查询标签。令 <code>Xₚ</code> 为演示矩阵，<code>Xᵣ</code> 为查询矩阵，观测噪声为独立高斯。给定演示后，后验均值解是岭回归，响应的平方误差最优解是把这个后验均值作用到全部查询。</p>
 <div class="reading-math">\[
 \begin{aligned}
@@ -254,6 +259,7 @@ Hard      5        10       100    800,000</code></pre>
 </section>
 <section id="compute">
 <h2>FLOPs、阈值与推理成本</h2>
+<p class="math-notation">成本图的 t 为任务条件，τ 在此改指达标阈值，s 为训练 seed，k_s(τ) 为达到阈值的更新次数，C_step 为每次更新 FLOPs；median_s 为跨 seed 中位数。A(t) 是 AR/Diff 成本比的 log10，H(t) 是两者较低成本的 log10，均不是 accuracy 或熵。</p>
 <p>论文的 task affinity 用达到特定验证质量所需的训练算力比较方法。以 <code>kₛ(τ)</code> 记录种子 s 首次跨过目标阈值的训练步数，用每步 FLOPs 估得该种子的成本，再按种子取中位数。阈值为 d=20 ICL 的 MSE 0.5，Sudoku 整盘正确率 95%，Pathfinding 路径完全匹配 95%。附录另有 ICL 收敛分析使用 MSE 0.1。</p>
 <div class="reading-math">\[
 \begin{aligned}

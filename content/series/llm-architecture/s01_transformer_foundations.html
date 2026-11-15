@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
 <!-- READING:FRAGMENT:START -->
+<p class="math-notation"><strong>读式约定：</strong>\(\theta\) 表示模型参数，\({}^\top\) 为转置；softmax 对标明的候选轴归一，\(\mathbf1[\cdot]\) 为指示函数。下文 \(L\) 在形状表中表示 block 数，在 NLL 推导中表示标量损失，均按所在段落理解；词表大小 \(V\) 与 value 矩阵 \(V_{\rm val}\) 分开记。</p>
 <figure class="mechanism-map"><figcaption>Decoder 张量流：从 token 到预测分布</figcaption><ol class="mechanism-chain"><li><b>IDs → embedding</b><small>[B,T] → [B,T,d]；位置机制</small></li><li><b>Attention 读取历史</b><small>Q/K/V、因果 mask 与输出投影</small></li><li><b>FFN 与残差更新</b><small>多层维持主干维度 d</small></li><li><b>LM head → logits</b><small>[B,T,V]；训练对齐右移标签</small></li></ol><p class="mechanism-return">↶ 推理采样新 token 后继续；训练可并行计算位置，因果 mask 阻止读取未来。</p></figure>
 <section id="purpose"><h2>把一次语言预测走成可检查的数据流</h2>
 <section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>

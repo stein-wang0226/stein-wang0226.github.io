@@ -5,6 +5,7 @@
 <p><strong>Looped Transformer 复用参数增加实际计算深度。</strong>h₀ 由输入形成，\(h_{r+1}=F_\theta(h_r,x,r)\)，最后经 LM head 输出。文本 CoT、hidden 回灌、循环层与 diffusion 都可能迭代，但状态、监督和输出概率不同。</p>
 <figure class="mechanism-map"><figcaption>输入持续提供条件，共享层更新循环状态</figcaption><ol class="mechanism-chain"><li><b>输入 x → h₀</b><small>初始表示或随机状态</small></li><li><b>共享块 Fθ</b><small>读当前 hidden 与输入/step</small></li><li><b>新状态 hᵣ₊₁</b><small>决定继续还是停止</small></li><li><b>输出分布</b><small>LM head 或独立 decoder</small></li></ol><p class="mechanism-return">↶ 继续时重新执行共享块；调用次数增加，参数量不随 r 线性增加。</p></figure>
 <h3 id="cost">参数账本与计算账本</h3>
+<p class="math-notation">成本式的 \(k\) 为共享层数，\(r\) 为循环次数，\(P_{\rm layer/interface}\) 为每层/接口参数数，\(F_{\rm layer/interface}\) 为计算量，\(D_{\rm effective}\) 为实际层调用深度。梯度节的 \(r\) 改作循环索引，\(R\) 为总循环次数，\(J_r\) 是状态更新对 \(h_r\) 的 Jacobian；共享参数 \(\theta\) 接收所有调用位置的梯度贡献。</p>
 <div class="reading-math">\[\begin{aligned}
 P_{\rm loop}&\approx kP_{\rm layer}+P_{\rm interface},\\
 F_{\rm loop}&\approx krF_{\rm layer}+F_{\rm interface},\\

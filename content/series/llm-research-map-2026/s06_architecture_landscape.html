@@ -55,6 +55,7 @@
 </figure>
 <ul><li><strong>MLA：</strong>缩小每token的缓存表示，条目仍随历史增长。</li><li><strong>GDN/KDA：</strong>将关联压入有限矩阵；global混合层仍保存KV。</li><li><strong>DSA/QSA/MSA：</strong>保留可检索历史，减少本次读取候选；索引与gather另计。</li><li><strong>SWA：</strong>直接读取窗口，远距离传播由多层结构与global层补充。</li></ul>
 <h3>GDN → KDA：从整体遗忘到按通道控制</h3>
+<p class="math-notation">以下 \(q_t,k_t\in\mathbb R^{d_k}\)、\(v_t,o_t\in\mathbb R^{d_v}\) 均为列向量；\(t\) 为 token 位置，\(\beta_t\) 为修正幅度。\(A_t,I\) 是 \(d_k\times d_k\) 矩阵，\(\alpha_t\) 为标量保留系数，\(\boldsymbol\alpha_t\) 为 key 通道保留向量，Diag 将它放到对角线。此处状态为 \(d_k\times d_v\)，是架构主讲中 \(d_v\times d_k\) 状态的转置，读取方向也随之转置。</p>
 <p>基础delta更新已在架构主讲展开。这里采用Kimi Linear的转置方向：\(S\in\mathbb R^{d_k\times d_v}\)，输出 \(o_t=S_t^\top q_t\)。GDN用标量遗忘；KDA将其扩成key通道的对角门控。<a href="index.html#ref-49">[49]</a> <a href="index.html#ref-48">[48] §2–3</a></p>
 <div class="reading-math" role="math" aria-label="GDN和KDA的递归状态公式">\[
 \begin{aligned}
