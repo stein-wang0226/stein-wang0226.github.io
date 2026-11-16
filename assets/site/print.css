@@ -1,0 +1,24 @@
+@media print {
+  /* Printed pages keep the reading content, not site menus and navigation rails. */
+  nav.site-nav, nav.reading-series, footer.site-footer, .reading-chapter-bar, .site-skip { display: none !important; }
+  html, body, body.site-body, .site-page { background: #fff !important; color: #111; }
+  a { color: #0f5f57; }
+
+  /* Longform pages print as a single continuous column. */
+  .reading-content .course-layout { display: block; }
+  .reading-content .course-toc { position: static; max-height: none; overflow: visible; }
+  .reading-intro, .reading-series, .reading-related {
+    margin: 0 0 14pt; padding: 0 0 10pt; border: 0; background: transparent;
+  }
+
+  /* Keep figures, tables and code fragments intact across page breaks. */
+  h2, h3, h4 { break-after: avoid; }
+  figure, table, tr, pre, .mechanism-map, .integration-overview, .course-review { break-inside: avoid; }
+  thead { display: table-header-group; }
+  img, svg, object, .research-chart { max-width: 100% !important; }
+  .work-original-report pre, .training-lifecycle pre { white-space: pre-wrap; }
+
+  /* Dark code and table designs stay legible only if their backgrounds print. */
+  .artifact-block, .work-original-report pre, .work-original-report th,
+  .training-lifecycle pre { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

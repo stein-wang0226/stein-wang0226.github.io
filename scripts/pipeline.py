@@ -10,6 +10,8 @@ import tempfile
 from catalog import load_content
 from render import BuildContext, DEFAULT_OUTPUT, FAVICON_LINK, ROOT, external_output, input_digest, load_md, mark_cjk_runs, md, publication_date, route_path
 
+PRINT_LINK = '<link rel="stylesheet" href="/assets/site/print.css" media="print">'
+
 
 def git_metadata(root):
     def git(*args):
@@ -187,6 +189,8 @@ def render_artifact(ctx):
         additions = []
         if 'rel="icon"' not in text:
             additions.append(FAVICON_LINK)
+        if 'assets/site/print.css' not in text:
+            additions.append(PRINT_LINK)
         if 'rel="canonical"' not in text:
             additions.append(f'<link rel="canonical" href="{ctx.canonical(path)}">')
         entry = by_route.get(path)
