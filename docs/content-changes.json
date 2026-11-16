@@ -122,9 +122,9 @@
     },
     {
       "source": "content/posts/llm-frontier-2026/index.html",
-      "sha256": "9b525706485ce440607c9f10e38f17bcfa25200edfa4114189b82c7d7ee0f303",
+      "sha256": "6c42e82fff11f0b11b49522d93ee632af93c9589e56ab0d511af2e12b5b23b25",
       "visual_revision_reason": "2026-11-15: add source-to-mechanism-to-evidence reading diagram; preserve entries, dates and AUTO markers.",
-      "reason": "逐页审阅：14节含模型、架构、优化器、Agent、RL、OPD、训练、评测、蛋白、证据与日志全部审阅。原理与算例：改动位置→比较条件；五个判断追问；polar有限近似、Clip-Higher与行为校正、教师接口边界。精简与证据：型号/许可证快照与原维护日志按需；收敛Muon/RL/OPD主讲，旧TB排名改历史；移除无共同条件榜单、领域CoT普遍结论，修正百万碱基单位。AUTO标记、原日期、last-updated与原稿逐字归档保持。 符号补充审阅：将三段美元价格改为明确货币单位，修复五个跨段误识别的数学输出；价格原数值及来源保留。 分类与课程复查：精简旧MiniMax混合性能概括并转主讲证据；跨主题可检索，动态追踪与基础教材分工保持。 讲解连贯性续轮审阅：修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。",
+      "reason": "逐页审阅：14节含模型、架构、优化器、Agent、RL、OPD、训练、评测、蛋白、证据与日志全部审阅。原理与算例：改动位置→比较条件；五个判断追问；polar有限近似、Clip-Higher与行为校正、教师接口边界。精简与证据：型号/许可证快照与原维护日志按需；收敛Muon/RL/OPD主讲，旧TB排名改历史；移除无共同条件榜单、领域CoT普遍结论，修正百万碱基单位。AUTO标记、原日期、last-updated与原稿逐字归档保持。 符号补充审阅：将三段美元价格改为明确货币单位，修复五个跨段误识别的数学输出；价格原数值及来源保留。 分类与课程复查：精简旧MiniMax混合性能概括并转主讲证据；跨主题可检索，动态追踪与基础教材分工保持。 讲解连贯性续轮审阅：修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。 对比度复核：只将浅色底上的青绿、绿、琥珀与红色文字及两处渐变底色整体加深一档，使小号标签、表头、日期与页脚达到4.5:1；正文、来源、数字、日期与自动标记不变。",
       "prior_reason": "Approved learning rework: review all frontier sections, retain date/AUTO semantics and byte-exact original, fold dated specifications/logs, consolidate duplicate optimizer/RL/OPD teaching, distinguish behavior correction and clipping, rewrite obsolete benchmark rankings as historical evidence, correct biological unit and unsupported universal claims, add five interview checks. Full current product/benchmark claims were not independently reverified."
     },
     {

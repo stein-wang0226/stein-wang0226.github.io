@@ -7,11 +7,11 @@
     "local_sources": 74,
     "changed_sources": 45,
     "retained_sources": 29,
-    "change_units": 76,
+    "change_units": 77,
     "added_diagrams": 1,
     "revised_diagrams": 2,
     "scope": "保留作者逐源examined、reason、changes、assumptions与evidence_boundary；完整报告只按作者列明的主讲段检查，不等于所有历史科研事实复核。",
-    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。 T12变量前置定义轮：41源在公式首次使用前补充或改写符号说明，其中32源由保留转为改稿；Kimi/Gemma两张自制图按报告原文修正router与local:global口径。公式、标题、锚点与引用未改。三个sources.json仅由citations.py refresh-usages重算used_in，故从冻结集移入精确集成集。该轮以全站扫描定位候选、逐页对照源文本修复，make check通过；未重跑浏览器像素、模型训练或科研复现。 T12窄屏后续：s06两表与受控任务四列表在390px下改为表内横向滚动并补提示，页面scrollWidth未增；48个URL×三宽度+无脚本复验0失败。 T15键盘可访问性：MathJax默认让每个公式成为Tab停点，架构组装页达516个；新增math-tabstop.js将内联公式设为tabindex=-1并保留显示公式；显示公式仍保留浏览器默认焦点环。由于course.py/pipeline.py/render.py为此前轮次已改、mathematics.py为本轮加载脚本，四个脚本及新脚本从冻结集移入精确集成集；正文SHA链、历史review与两份baseline未动。 T16键盘滚动：390px下全站2205个可横向滚动的内容区（1802表格、376代码块等）原先仅少数可聚焦，键盘无法查看溢出内容；新增scroll-region.js只给实际溢出的表格、代码、公式与图示加tabindex=0及分组标签，并在字体加载、窗口变化时重新判定。实测390px溢出区全部可聚焦、方向键可滚动，1440px无多余停点；reading.py与course.py仅各加一行加载标签。 reading.py同样从冻结集移入精确集成集。"
+    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。 T12变量前置定义轮：41源在公式首次使用前补充或改写符号说明，其中32源由保留转为改稿；Kimi/Gemma两张自制图按报告原文修正router与local:global口径。公式、标题、锚点与引用未改。三个sources.json仅由citations.py refresh-usages重算used_in，故从冻结集移入精确集成集。该轮以全站扫描定位候选、逐页对照源文本修复，make check通过；未重跑浏览器像素、模型训练或科研复现。 T12窄屏后续：s06两表与受控任务四列表在390px下改为表内横向滚动并补提示，页面scrollWidth未增；48个URL×三宽度+无脚本复验0失败。 T15键盘可访问性：MathJax默认让每个公式成为Tab停点，架构组装页达516个；新增math-tabstop.js将内联公式设为tabindex=-1并保留显示公式；显示公式仍保留浏览器默认焦点环。由于course.py/pipeline.py/render.py为此前轮次已改、mathematics.py为本轮加载脚本，四个脚本及新脚本从冻结集移入精确集成集；正文SHA链、历史review与两份baseline未动。 T16键盘滚动：390px下全站2205个可横向滚动的内容区（1802表格、376代码块等）原先仅少数可聚焦，键盘无法查看溢出内容；新增scroll-region.js只给实际溢出的表格、代码、公式与图示加tabindex=0及分组标签，并在字体加载、窗口变化时重新判定。实测390px溢出区全部可聚焦、方向键可滚动，1440px无多余停点；reading.py与course.py仅各加一行加载标签。 reading.py同样从冻结集移入精确集成集。 T18全站对比度复核：107路由×390/1440共320144个文本节点，修复简报页变量配色后该页0失败；余5签名8组合均在凭据锁定的历史副本与完整报告，按原貌保留。当前通过限于本构建、真实Chrome与可计算纯色对比度，不含渐变/背景图区域。"
   },
   "sha_chain": {
     "historical_review": "docs/blog-diagram-review-20261115.json",
@@ -327,14 +327,15 @@
     "assets/research/2026-11-14/sources.json": "bb58b86f1bb804059ec8cdb8c348b1a00ced2af7b1f5b17dff2402897474a888",
     "assets/research/agent-data-benchmarks/sources.json": "73696913acd37a2086159002073de85ac4140507a77fd33e98358e3821b61f6a",
     "assets/research/posttraining-20261114/sources.json": "a56d5b90aab056348e00b3873cf3657f0079d46629455c4a36a3208eec430d79",
-    "docs/organization-changes-20261115.json": "0337847f5c68b99251bbc77c23e223bace1c384a6d19b1407889c44e869b2360",
+    "docs/organization-changes-20261115.json": "e09db441295072030edff300a4e8a13fe62f178fcf1d43e073d2876428752e24",
     "scripts/course.py": "077401d1c8e8244ff33f748e6dd033c62b912e429362b275a7b05d4382b7c328",
     "scripts/mathematics.py": "8102723e919f851b947e213bafcb45cc8abe0901e0ea748af2e21599cb86448e",
     "scripts/pipeline.py": "4b3ac3fdd12e6c84603c8670436bfcff79e9fbb91aa936a768c079540d02e5a9",
     "scripts/render.py": "5e9633d3ed60fe4bc30310571b37115249341883561e827babe442bca1b0f143",
     "assets/site/math-tabstop.js": "a6e27e6d6bbfd427d779e7ad006969c4d1f2e34161f16ccf94fcad2a32512943",
     "scripts/reading.py": "d8d904ae0894663535d23a47fa1b4602e54ffab8a2d88a0eea03df29bae92ba0",
-    "assets/site/scroll-region.js": "89ff3125f7e1e124a549a0a7c85436cbb3c0e25c453ee523fba05ebce8656a0b"
+    "assets/site/scroll-region.js": "89ff3125f7e1e124a549a0a7c85436cbb3c0e25c453ee523fba05ebce8656a0b",
+    "docs/content-changes.json": "804342511685447522bf0788b34ae90c8baebbc1422859c383ab0038771361cf"
   },
   "catalog_updates": [
     {
@@ -3164,7 +3165,7 @@
       "source": "content/posts/llm-frontier-2026/index.html",
       "changed": true,
       "sha256_before": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
-      "sha256_after": "9b525706485ce440607c9f10e38f17bcfa25200edfa4114189b82c7d7ee0f303",
+      "sha256_after": "6c42e82fff11f0b11b49522d93ee632af93c9589e56ab0d511af2e12b5b23b25",
       "examined": [
         {
           "anchor": "#frontier-evidence-bridge",
@@ -3183,7 +3184,7 @@
           "judgment": "GLM/Qwen/Kimi/CED概括混同线性Attention，局部改为递归状态、稀疏读取、跨层复用不同对象；Huginn潜在深度与CoT、GPT传闻边界保留。"
         }
       ],
-      "reason": "修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。",
+      "reason": "修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。 对比度复核：只将浅色底上的青绿、绿、琥珀与红色文字及两处渐变底色整体加深一档，使小号标签、表头、日期与页脚达到4.5:1；正文、来源、数字、日期与自动标记不变。",
       "changes": [
         {
           "anchor": "#models",
@@ -3235,6 +3236,17 @@
             "t10d-single-inline-style-byte-preservation",
             "t10d-old-artifact-font-pixel-diagnosis",
             "t10d-exact-receipt-offline"
+          ]
+        },
+        {
+          "anchor": "#overview",
+          "kind": "contrast-readability",
+          "summary": "仅改本页样式变量的文字色与渐变：accent #0d9488→#0f766e、accent2 #0f766e→#115e59、accent3 #059669→#065f46、accent4 #d97706→#92400e、danger #ef4444→#b91c1c、text-dim #78716c→#57534e；两处渐变同步加深，未改共享样式、结构、文案或来源。",
+          "assumptions": "按WCAG 2.1 AA普通文字4.5:1、大字号3:1核算；半透明底色按白色背景合成后计算；渐变与背景图区域不计入可计算的纯色对比度。",
+          "checks": [
+            "round8-contrast-full-107",
+            "round8-frontier-palette",
+            "round8-preservation"
           ]
         }
       ],
