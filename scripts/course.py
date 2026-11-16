@@ -409,7 +409,7 @@ def compatibility(ctx, entry):
                   '<meta name="robots" content="noindex">', text)
     text = text.replace("</body>", '<script>const target=new URL(' +
                         json.dumps(destination) + ',location.href);const anchors=' +
-                        json.dumps(mapping, ensure_ascii=False) + ';target.search=location.search;'
+                        json.dumps(dict(sorted(mapping.items())), ensure_ascii=False) + ';target.search=location.search;'
                         'let old="";try{old=decodeURIComponent(location.hash.slice(1))}catch{}'
                         'target.hash=anchors[old]||' + json.dumps(entry["id"]) + ';'
                         'location.replace(target.href);</script></body>')
