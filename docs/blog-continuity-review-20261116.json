@@ -7,7 +7,7 @@
     "local_sources": 74,
     "changed_sources": 45,
     "retained_sources": 29,
-    "change_units": 74,
+    "change_units": 75,
     "added_diagrams": 1,
     "revised_diagrams": 2,
     "scope": "保留作者逐源examined、reason、changes、assumptions与evidence_boundary；完整报告只按作者列明的主讲段检查，不等于所有历史科研事实复核。",
@@ -332,8 +332,8 @@
     "assets/research/2026-11-14/sources.json": "bb58b86f1bb804059ec8cdb8c348b1a00ced2af7b1f5b17dff2402897474a888",
     "assets/research/agent-data-benchmarks/sources.json": "73696913acd37a2086159002073de85ac4140507a77fd33e98358e3821b61f6a",
     "assets/research/posttraining-20261114/sources.json": "a56d5b90aab056348e00b3873cf3657f0079d46629455c4a36a3208eec430d79",
-    "docs/organization-changes-20261115.json": "aa24f32a9e8939ee7d4901aa0834d1698e793569e0982b6a196e7bb521033723",
-    "docs/content-changes.json": "8b6146d8baf965082e846b43be420f1a2ab78e326537f8cb452e3bfba6caef92"
+    "docs/organization-changes-20261115.json": "14c405c858271255e8725420a7de0e833db0f2f88cec5d95d200dac1d61b3a08",
+    "docs/content-changes.json": "c2b780018e377def038d22afb99fac5e1468ff93982e305479921c83552d4f76"
   },
   "catalog_updates": [
     {
@@ -2718,7 +2718,7 @@
       "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
       "changed": true,
       "sha256_before": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
-      "sha256_after": "97c4abae95cf0a1bed50b705230dd6fdb810c0ebf353e9d9848f51b9dd7a9e63",
+      "sha256_after": "b37f817bcdc29ecfe318f78a81f1d44485276f3b09b6d93c65a3bc96d3678bd7",
       "examined": [
         {
           "anchor": "#state",
@@ -2745,7 +2745,7 @@
           "judgment": "Gemma12B encoder-free例外及闭源披露范围在相邻段落明确，memory/换窗不能反推Loop Transformer。"
         }
       ],
-      "reason": "改稿：仅在公式首次使用前补充符号定义（q_t,k_t\\in\\mathbb R^{d_k}、v_t,o_t\\in\\mathbb R^{d_v}、t、\\beta_t、A_t,I、d_k\\times d_k），公式、标题、锚点与引用未改。",
+      "reason": "改稿：仅在公式首次使用前补充符号定义（q_t,k_t\\in\\mathbb R^{d_k}、v_t,o_t\\in\\mathbb R^{d_v}、t、\\beta_t、A_t,I、d_k\\times d_k），公式、标题、锚点与引用未改。 窄屏表格：两张宽表改为表内横向滚动，并在表前各加一行滚动提示。",
       "changes": [
         {
           "anchor": "#families",
@@ -2755,6 +2755,16 @@
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#module-matrix",
+          "kind": "窄屏表格可读性",
+          "summary": "给家族速查表与跨模块矩阵加wide标记，并在本页style块设40rem最小宽度；390px下改为表内横向滚动，避免逐字换行；两表前各加一句窄屏滚动提示。表格数据、列顺序与来源未改。",
+          "assumptions": "只改布局、滚动容器与一行操作提示，不改单元格数据、列顺序或引用。",
+          "checks": [
+            "390/1440实测表宽640/772px，页面scrollWidth未增加",
+            "make check：107 HTML页与链接/锚点检查通过"
           ]
         }
       ],

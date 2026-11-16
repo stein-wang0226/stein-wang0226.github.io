@@ -21,6 +21,7 @@
 .training-lifecycle .model-report-diagram .model-control{border-style:dashed;background:#edf3fb}
 .training-lifecycle .model-report-diagram .model-source{margin:12px 0 0;font-size:13px;line-height:1.7}
 .training-lifecycle .family-nav{display:flex;flex-wrap:wrap;gap:8px 16px;padding:12px 0;font-size:14px}
+.training-lifecycle table.wide{min-width:40rem}
 @media(max-width:600px){.training-lifecycle .model-report-diagram{padding:12px}.training-lifecycle .model-report-diagram .model-branches,.training-lifecycle .model-report-diagram .model-branches.three{grid-template-columns:1fr}.training-lifecycle .model-report-diagram .model-node small,.training-lifecycle .model-report-diagram .model-edge,.training-lifecycle .model-report-diagram .model-source{font-size:13px}}
 </style>
 <section id="overview">
@@ -52,7 +53,8 @@
 <h2>模型家族速查：版本、主干和证据分别登记</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>；<a href="https://arxiv.org/abs/2404.19737" title="Better &amp; Faster Large Language Models via Multi-token Prediction · 2024/04/30 · 2404.19737">Multi-Token Prediction</a>。</p></section>
 
-<table>
+<p class="note">提示：窄屏下可在表内横向滚动查看完整列。</p>
+<table class="wide">
 <thead><tr><th>家族 / 当前分析版本</th><th>公开参数口径</th><th>结构主线</th><th>本章证据</th></tr></thead>
 <tbody>
 <tr><td><a href="#deepseek-series">DeepSeek V4.1-Flash</a></td><td>552B主干 + 196B Engram；prefill / decode为8B / 16B active</td><td>CED、CSA2跨层稀疏检索、FP4 KV、bounded replay、mHC</td><td>固定v1完整报告<a href="index.html#ref-1">[1]</a>；1017能力更新另计</td></tr>
@@ -354,8 +356,8 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 <p class="model-source">依据<a href="index.html#ref-59">[59] §2、§2.1–2.6、Table 3</a>自制。省略per-layer embedding的共享细节、视觉encoder内部层数与移动量化分组；“global KV降37.5%”是报告在p-RoPE与K=V口径下的估计，不外推到全部型号或全部负载。</p>
 </figure>
 <h3 id="module-matrix">跨模块对照：把九个家族放回同一组问题</h3>
-<p>下表不重列参数，而是按模块追问“谁改变了什么对象”。同一格里的家族可以给出不同答案；写在一起的机制仍须回到各自报告核对层表。</p>
-<table>
+<p>下表不重列参数，而是按模块追问“谁改变了什么对象”。同一格里的家族可以给出不同答案；写在一起的机制仍须回到各自报告核对层表。提示：窄屏下可在表内横向滚动查看完整三列。</p>
+<table class="wide">
 <thead><tr><th>模块</th><th>各家族的答案</th><th>读表边界</th></tr></thead>
 <tbody>
 <tr><td>历史状态</td><td>DeepSeek用3组global缓存 + 逐层SWA；Qwen为36 GDN + 12 global；Kimi为KDA + Gated DSA；Nemotron为Mamba-2 + 12层GQA；GLM为KDA + DSA/MLA；MiniMax保留KV并用MSA选block；MiMo / Step为SWA + GA；Gemma为local / global交替</td><td>递归state、逐token KV、压缩latent与稀疏候选不是同一种“压缩”；不能按名字互换</td></tr>
