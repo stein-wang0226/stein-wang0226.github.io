@@ -271,7 +271,7 @@
     },
     {
       "source": "content/posts/my-work-holon/full-report.html",
-      "sha256": "2e2a217d7258ad9f70d40d22ef9510e1591698dbac754550176c0d85703fcbf1",
+      "sha256": "a5c82e1a50010af79d81a5f1ea5af7eb3bf9b795710288e02fc5cbf72e10b426",
       "reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；逐项复核50个原生MathML，修正GQA交互计算的矛盾表述。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（i、r_i、r_j、e_i），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。"
     },

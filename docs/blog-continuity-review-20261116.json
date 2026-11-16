@@ -336,7 +336,7 @@
     "assets/site/print.css": "6fe5516c335298f6d81025fed779e35a1374a6d877577314ca81a4bd9c73a5dd",
     "scripts/views.py": "b39b9fda69d8b3368aa19e70c50b9aecb7fd0f028853e5e9d883b695eac17ae7",
     "assets/site/scroll-region.js": "b8137455f1c1286f06a6716ceae557c2f2e621b686211d084279bc3d6d0be6d8",
-    "docs/content-changes.json": "bc6f46f0bd70fcba6e790cf8e3cb714b032e54358c9980f7606bad9405a5ce24"
+    "docs/content-changes.json": "e799aa5264f243aa88f431a5e9a7a429eed576f0d00d75394934362d81807a43"
   },
   "catalog_updates": [
     {
@@ -1068,7 +1068,7 @@
       "source": "content/posts/my-work-holon/full-report.html",
       "changed": true,
       "sha256_before": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
-      "sha256_after": "2e2a217d7258ad9f70d40d22ef9510e1591698dbac754550176c0d85703fcbf1",
+      "sha256_after": "a5c82e1a50010af79d81a5f1ea5af7eb3bf9b795710288e02fc5cbf72e10b426",
       "examined": [
         {
           "anchor": "#chapter-2",
