@@ -9,6 +9,8 @@ from urllib.parse import urlsplit
 
 import markdown
 import yaml
+from markdown.extensions import Extension
+from markdown.treeprocessors import Treeprocessor
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = Path("/tmp/my-blogs-site-build")
@@ -131,10 +133,27 @@ def load_md(path):
     return metadata, match[2].strip()
 
 
+class TableScopeTreeprocessor(Treeprocessor):
+    """Markdown tables are simple: every thead cell is a column header."""
+
+    def run(self, root):
+        for thead in root.iter("thead"):
+            for th in thead.iter("th"):
+                if not th.get("scope"):
+                    th.set("scope", "col")
+        return root
+
+
+class TableScopeExtension(Extension):
+    def extendMarkdown(self, md):
+        md.treeprocessors.register(TableScopeTreeprocessor(md), "table_scope", 4)
+
+
 def md(text):
     if "{%" in text or "{{" in text:
         raise ValueError("Unconverted Jekyll markup")
-    return markdown.markdown(text, extensions=["extra", "sane_lists", "toc"])
+    return markdown.markdown(text, extensions=["extra", "sane_lists", "toc",
+                                               TableScopeExtension()])
 
 
 def publication_date(meta):
