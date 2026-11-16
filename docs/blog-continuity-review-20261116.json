@@ -336,7 +336,7 @@
     "assets/site/print.css": "6fe5516c335298f6d81025fed779e35a1374a6d877577314ca81a4bd9c73a5dd",
     "scripts/views.py": "b39b9fda69d8b3368aa19e70c50b9aecb7fd0f028853e5e9d883b695eac17ae7",
     "assets/site/scroll-region.js": "b8137455f1c1286f06a6716ceae557c2f2e621b686211d084279bc3d6d0be6d8",
-    "docs/content-changes.json": "eb7f5c311e5eba01af3a2e093d202fdd868fe396ede047f505935224180be43b"
+    "docs/content-changes.json": "bc6f46f0bd70fcba6e790cf8e3cb714b032e54358c9980f7606bad9405a5ce24"
   },
   "catalog_updates": [
     {
@@ -3700,7 +3700,7 @@
       "source": "content/posts/llm-frontier-2026/index.html",
       "changed": true,
       "sha256_before": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
-      "sha256_after": "0126ab5eb4344f5cb4399feb0f49432c73a722583db820b992375b817a11a83e",
+      "sha256_after": "f615ac0ae98e0351e77f3da4ba0cb6acec3df327d5ea6a2bb2a3e951e851f39d",
       "examined": [
         {
           "anchor": "#frontier-evidence-bridge",
