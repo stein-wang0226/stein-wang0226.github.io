@@ -384,6 +384,7 @@ def decorate_course(ctx, entry, text):
                    for name in ("site.css", "reading.css"))
     tags += f'<script defer src="{ctx.asset(path, "/assets/site/reading.js")}"></script>'
     tags += f'<script defer src="{ctx.asset(path, "/assets/site/scroll-region.js")}"></script>'
+    tags += '<style>.research-chart:focus-visible{outline:3px solid #0f766e;outline-offset:4px}</style>'
     tags += f'<link rel="canonical" href="{ctx.canonical(path)}">'
     return text.replace("</head>", tags + "</head>", 1)
 
