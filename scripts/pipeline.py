@@ -17,6 +17,15 @@ FONT_PRELOAD = ('<link rel="preload" href="/assets/site/sora-latin.woff2" as="fo
                 'type="font/woff2" crossorigin>'
                 '<link rel="preload" href="/assets/site/literata-latin.woff2" as="font" '
                 'type="font/woff2" crossorigin>')
+# Georgia is the first serif in the shared stack. Matching its metrics to Literata
+# keeps the pre-webfont line breaks and stops the reference filter row re-wrapping.
+FONT_METRICS = ('<style>@font-face{font-family:"Literata Fallback";src:local("Georgia");'
+                'font-weight:200 500;size-adjust:106.3%}'
+                '@font-face{font-family:"Literata Fallback";src:local("Georgia Bold");'
+                'font-weight:600 900;size-adjust:97.6%}'
+                '.site-nav,.site-footer,.site-page{font-family:Literata,"Literata Fallback",'
+                'Georgia,"PingFang SC","Microsoft YaHei",serif}'
+                '.site-page .reference-controls input{width:14rem}</style>')
 
 
 def git_metadata(root):
@@ -199,6 +208,8 @@ def render_artifact(ctx):
             additions.append(PRINT_LINK)
         if 'rel="preload" as="font"' not in text:
             additions.append(FONT_PRELOAD)
+        if 'Literata Fallback' not in text:
+            additions.append(FONT_METRICS)
         if 'rel="canonical"' not in text:
             additions.append(f'<link rel="canonical" href="{ctx.canonical(path)}">')
         entry = by_route.get(path)

@@ -329,7 +329,7 @@
     "docs/organization-changes-20261115.json": "e1171869d93079c39570389c227442bf5defbf88434fd43741271ff1ff60fcfe",
     "scripts/course.py": "43ada4e2cbc29dbaebedd4a53c8bc526bf16f50a020e741e43f0158d10540147",
     "scripts/mathematics.py": "8102723e919f851b947e213bafcb45cc8abe0901e0ea748af2e21599cb86448e",
-    "scripts/pipeline.py": "a64c385c98bfde840548446ed1b0a95ada8ca7e4feea1d20d2bb8a7745f25ed7",
+    "scripts/pipeline.py": "ae7837d87a72e3072cb7617beb6d9e73e660179a53d72e0bb6f9ec6cfd0e157a",
     "scripts/render.py": "bcec00729cd18a33228f2e1233b74397b5628fbdb567ae69d3797042993fb780",
     "assets/site/math-tabstop.js": "5da62286a2259b80dc3a8fa24209ac80072ed4f87cf34c12e016e2efa17a2990",
     "scripts/reading.py": "99465e7538326453b3a885fb1debcdcf862e2e687fd9221a28c9435a2bc7ec2a",
