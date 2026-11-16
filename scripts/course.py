@@ -383,6 +383,7 @@ def decorate_course(ctx, entry, text):
     tags = "".join(f'<link rel="stylesheet" href="{ctx.asset(path, "/assets/site/" + name)}">'
                    for name in ("site.css", "reading.css"))
     tags += f'<script defer src="{ctx.asset(path, "/assets/site/reading.js")}"></script>'
+    tags += f'<script defer src="{ctx.asset(path, "/assets/site/scroll-region.js")}"></script>'
     tags += f'<link rel="canonical" href="{ctx.canonical(path)}">'
     return text.replace("</head>", tags + "</head>", 1)
 

@@ -338,5 +338,6 @@ def decorate(ctx, entry, text):
     text = text[:body_match.start(2)] + body + text[body_match.end(2):]
     text = text.replace("</head>", f'<link rel="stylesheet" href="{ctx.asset(path, "/assets/site/site.css")}">\n'
                         f'<link rel="stylesheet" href="{ctx.asset(path, "/assets/site/reading.css")}">\n'
-                        f'<script defer src="{ctx.asset(path, "/assets/site/reading.js")}"></script>\n</head>', 1)
+                        f'<script defer src="{ctx.asset(path, "/assets/site/reading.js")}"></script>\n'
+                        f'<script defer src="{ctx.asset(path, "/assets/site/scroll-region.js")}"></script>\n</head>', 1)
     return text

@@ -1177,3 +1177,9 @@ MathJax 默认给每个公式容器 `tabindex="0"`，以便键盘打开公式菜
 真实Chrome复核：架构组装页行内公式Tab停点472→0，显示公式44个保留；训练生命周期页24个显示公式保留；s07显示公式获得可键盘聚焦的默认焦点环；`mjx-merror`、控制台错误与页面脚本错误均为0。7个代表页面前30次Tab均无不可见焦点。三宽度48个URL加无脚本验收0失败；107个HTML页完整扫描无控制台错误、失败资源、溢出或空公式（3个旧章节别名页在客户端跳转时中止字体请求，属导航取消）。`make check` 通过107 HTML页/304公开文件。
 
 此前 `scripts/course.py`、`scripts/pipeline.py`、`scripts/render.py` 已在Round 4–5修改但未登记，`learning_review.py check` 因此长期在冻结集失配；本轮按既有“冻结集移入精确集成集”规则，把上述三个脚本与本轮 `scripts/mathematics.py`、新脚本移入 `integrated_files` 并记录精确SHA，冻结集240项、正文74源SHA链、历史review与两份baseline均未改，`learning_review.py check` 重新通过。边界：未重跑模型训练或科研复现，未把默认焦点环改成站点样式环。
+
+## T16 手机端横向滚动区的键盘可达性
+
+390px 下全站有 2205 个可横向滚动的内容区（1802 个表格包装、376 个代码块，另有公式与图示容器），此前只有两个手工标注的图示可聚焦，键盘与开关设备用户无法查看溢出部分。新增 `assets/site/scroll-region.js`：只在 `scrollWidth > clientWidth` 时给 `.reading-table`、`pre`、`.equation`、`figure` 加 `tabindex="0"`、`role="group"` 与中英文“可横向滚动”标签，窗口缩放、页面加载和字体就绪时重新判定并撤销多余标记；`reading.py` 与 `course.py` 各增加一行加载标签。
+
+真实 Chrome 复核：390px 下 2205 个溢出区全部可聚焦，`agent-harness-guide` 的 22 个溢出区均带分组标签、方向键可将表格从 0 滚到 18px；1440px 下同一页面 26 个候选中 0 个溢出、0 个多余Tab停点；控制台错误0。全站 107 页扫描、48 个URL×390/768/1440+无脚本验收均0失败，静态断链/断锚点/缺图0。`make check` 通过 107 HTML页/305公开文件；`reading.py` 因本轮修改从冻结集移入精确集成集（冻结239项），正文SHA链与两份baseline未动，`learning_review.py check` 通过。边界：无脚本时滚动区不可聚焦，仍可用触摸或触控板滚动；未改共享样式。
