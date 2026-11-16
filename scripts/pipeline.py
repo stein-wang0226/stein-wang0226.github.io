@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 
 from catalog import load_content
-from render import BuildContext, DEFAULT_OUTPUT, ROOT, external_output, input_digest, load_md, md, publication_date, route_path
+from render import BuildContext, DEFAULT_OUTPUT, FAVICON_LINK, ROOT, external_output, input_digest, load_md, md, publication_date, route_path
 
 
 def git_metadata(root):
@@ -173,6 +173,14 @@ def render_artifact(ctx):
               "\n</urlset>\n")
     ctx.write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {ctx.site['url']}/sitemap.xml\n")
     ctx.write(".nojekyll", "")
+    # One icon for every generated document, including templates that own their head.
+    for path in ctx.generated:
+        if not path.endswith(".html"):
+            continue
+        target = ctx.output / path
+        text = target.read_text(encoding="utf-8")
+        if 'rel="icon"' not in text:
+            target.write_text(text.replace("</head>", FAVICON_LINK + "</head>", 1), encoding="utf-8")
     files = {path: hashlib.sha256((ctx.output / path).read_bytes()).hexdigest()
              for path in sorted(ctx.generated)}
     ctx.write("build-info.json", json.dumps(

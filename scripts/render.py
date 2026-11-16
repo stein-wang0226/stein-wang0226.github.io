@@ -12,6 +12,11 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = Path("/tmp/my-blogs-site-build")
+FAVICON_LINK = ('<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=\'http://www.w3.org/2000/svg\''
+                '%20viewBox=\'0%200%2064%2064\'%3E%3Crect%20width=\'64\'%20height=\'64\'%20rx=\'12\''
+                '%20fill=\'%230f766e\'/%3E%3Ctext%20x=\'32\'%20y=\'43\'%20font-family=\'Georgia,serif\''
+                '%20font-size=\'28\'%20font-weight=\'700\'%20text-anchor=\'middle\'%20fill=\'%23f7f5f0\'%3E'
+                'YW%3C/text%3E%3C/svg%3E">')
 START, END = "<!-- SITE:NAV:START -->", "<!-- SITE:NAV:END -->"
 PUBLIC_EXTENSIONS = {
     ".html", ".css", ".js", ".pdf", ".svg", ".ico", ".woff", ".woff2",
