@@ -193,9 +193,20 @@ def render_artifact(ctx):
         if 'name="description"' not in text and entry and entry.get("summary"):
             additions.append('<meta name="description" content="'
                              + html.escape(entry["summary"], quote=True) + '">')
-        if additions:
-            target.write_text(text.replace("</head>", "".join(additions) + "</head>", 1),
-                              encoding="utf-8")
+        # Archived pages cannot be edited at the source; the catalog title distinguishes
+        # the historical copy from the current manual in the browser tab.
+        title_changed = False
+        if entry and entry.get("status") == "archived":
+            start = text.find("<title>")
+            end = text.find("</title>", start + 7) if start != -1 else -1
+            if start != -1 and end != -1:
+                title = html.escape(entry["title"])
+                title_changed = text[start + 7:end] != title
+                text = text[:start + 7] + title + text[end:]
+        if additions or title_changed:
+            if additions:
+                text = text.replace("</head>", "".join(additions) + "</head>", 1)
+            target.write_text(text, encoding="utf-8")
     files = {path: hashlib.sha256((ctx.output / path).read_bytes()).hexdigest()
              for path in sorted(ctx.generated)}
     ctx.write("build-info.json", json.dumps(
