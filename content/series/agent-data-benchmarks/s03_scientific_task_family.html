@@ -17,7 +17,7 @@
 <section id="provenance">
 <h2>GSE52778 与 airway：同一研究，输入层并不相同</h2>
 <p>GEO记录是四名供体的原代human airway smooth muscle细胞，四种处理，共16样本：untreated、Dex、albuterol、二者同时处理；处理为1μM、18小时。GEO指向PRJNA229998 / SRP033351，补充文件是FPKM矩阵与作者Dex差异结果。<a href="#ref-geo">[1]</a></p>
-<div class="reading-table"><table><thead><tr><th>来源层</th><th>已经核对的事实</th><th>任务使用策略</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">来源层</th><th scope="col">已经核对的事实</th><th scope="col">任务使用策略</th></tr></thead><tbody>
 <tr><td>SRA reads</td><td>原始序列有SRA入口；未下载</td><td>只有研究问题涉及上游QC / 计数时，另设计raw任务；不把文件体积当难度</td></tr>
 <tr><td>GEO FPKM</td><td><code>All_Sample_FPKM_Matrix</code>是归一化表达值</td><td>不能转名为raw counts后直接送入整数count模型</td></tr>
 <tr><td>GEO <code>gene_exp.diff</code></td><td>作者差异分析，携带目标答案线索</td><td>维护者审计背景；不放Agent公共fixture</td></tr>
@@ -34,7 +34,7 @@
 </section>
 <section id="family">
 <h2>三类任务共享研究组，但检验不同能力</h2>
-<div class="reading-table"><table><thead><tr><th>任务设计</th><th>输入 → 科学操作 → 输出</th><th>可辨别的真实错误</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">任务设计</th><th scope="col">输入 → 科学操作 → 输出</th><th scope="col">可辨别的真实错误</th></tr></thead><tbody>
 <tr><td>设计与QC</td><td>counts+样本映射 → 单位 / 重复 / 库大小 / 可估计性 → <code>sample_qc.tsv</code></td><td>把technical run当独立供体；错对列；把FPKM当counts</td></tr>
 <tr><td>差异表达</td><td>固定count层 → 归一化、配对NB模型、Dex对照、多重检验 → <code>gene_stats.tsv</code></td><td>忽略供体效应；对比符号反了；只用未校正p值</td></tr>
 <tr><td>稳健性与诊断</td><td>完整研究 / 未来独立研究 → 方法内复算、方法间敏感性、结构错误定位 → 结构化summary</td><td>把合法方法差异当模型错误；以单研究变体宣称迁移能力</td></tr>
@@ -59,7 +59,7 @@ K_{gj}\sim\operatorname{NB}(\mu_{gj},\alpha_g),\qquad
 <p>\(s_j&gt;0\)是方法估计的相对有效库大小，\(\log s_j\)作为已给定的offset、系数固定为1；它不是待自由拟合的处理效应。若样本2的有效库大小为样本1的两倍，即便表达相同，其期望count也两倍。归一化因子不一定等于原始总counts比例。</p>
 <h3>配对design：在同一供体内估计共同处理效应</h3>
 <p>设计<code>~ donor + condition</code>，以供体A、untreated为基线。每个gene有截距、B/C/D供体项和共同Dex项，以下8行×5列：</p>
-<table><thead><tr><th>样本</th><th>截距</th><th>供体B</th><th>供体C</th><th>供体D</th><th>Dex</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">样本</th><th scope="col">截距</th><th scope="col">供体B</th><th scope="col">供体C</th><th scope="col">供体D</th><th scope="col">Dex</th></tr></thead><tbody>
 <tr><td>A untreated</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
 <tr><td>A Dex</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
 <tr><td>B untreated</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
@@ -95,7 +95,7 @@ K_{gj}\sim\operatorname{NB}(\mu_{gj},\alpha_g),\qquad
 <div class="reading-math">\[
 p^{\rm adj}_{(i)}=\min\left(1,\min_{j\ge i}\frac{m\,p_{(j)}}{j}\right).
 \]</div>
-<table><caption>教学四检验例：m=4，q=0.05，非airway实测</caption><thead><tr><th>排序i</th><th>p值</th><th>i·q/m</th><th>BH padj</th><th>显著</th></tr></thead><tbody>
+<table><caption>教学四检验例：m=4，q=0.05，非airway实测</caption><thead><tr><th scope="col">排序i</th><th scope="col">p值</th><th scope="col">i·q/m</th><th scope="col">BH padj</th><th scope="col">显著</th></tr></thead><tbody>
 <tr><td>1</td><td>0.003</td><td>0.0125</td><td>0.012</td><td>是</td></tr>
 <tr><td>2</td><td>0.020</td><td>0.0250</td><td>0.040</td><td>是</td></tr>
 <tr><td>3</td><td>0.040</td><td>0.0375</td><td>0.0533</td><td>否</td></tr>
@@ -107,7 +107,7 @@ p^{\rm adj}_{(i)}=\min\left(1,\min_{j\ge i}\frac{m\,p_{(j)}}{j}\right).
 
 
 <p>候选公共输入为gene×sample非负整数<code>counts.tsv</code>、配对元数据<code>samples.tsv</code>及包含版本 / hash / 计数和注释语义的manifest。输出TSV必须UTF-8、首行字段名、每个gene / sample唯一；<code>NA</code>表示缺失，0表示实测零。JSON用<code>null</code>表示缺失，拒绝NaN / Infinity。可下载schema描述TSV解析后的row对象与summary，跨行 / 科学约束见序列化合同。</p>
-<div class="reading-table"><table><thead><tr><th>产物</th><th>完整字段</th><th>语义和规则</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">产物</th><th scope="col">完整字段</th><th scope="col">语义和规则</th></tr></thead><tbody>
 <tr><td><code>sample_qc.tsv</code></td><td>sample_id, donor_id, condition, library_assigned_counts, detected_genes, normalization_factor</td><td>每输入sample一行；库大小是assigned gene counts总和；检测量=count&gt;0基因数；factor为方法声明的相对有效库大小，几何均值归一至1</td></tr>
 <tr><td><code>gene_stats.tsv</code></td><td>gene_id, log2_fc, lfc_se, pvalue, padj, status, direction, significant</td><td>每输入gene一行；status= tested / filtered / all_zero / not_estimable；方向按LFC符号；显著按finite padj≤q，缺失不显著</td></tr>
 <tr><td><code>summary.json</code></td><td>contract_version, fixture_sha256, method, method_version, design, contrast, fdr_threshold, adjustment, counts, artifact_sha256</td><td>contrast明确Dex / untreated；counts是汇总一致性；hash对应真实输入和两个TSV。方法字段是复算路由，不评分解释文采</td></tr>
@@ -138,7 +138,7 @@ return independent_unit_scores_and_failure_codes(units)
 <section id="splits">
 <h2>切分与污染：研究组是独立单位</h2>
 <p>首先按BioProject / GEO研究、供体与source lineage归组，重复FASTQ或同一counts的变体不能跨train / held-out。基因、不同提示词或同供体的另一处理并不自动独立。随机切分现有8列会破坏配对设计，也不能证明跨研究泛化。</p>
-<div class="reading-table"><table><thead><tr><th>未来评估层</th><th>留出方式</th><th>能回答什么</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">未来评估层</th><th scope="col">留出方式</th><th scope="col">能回答什么</th></tr></thead><tbody>
 <tr><td>同分布新研究</td><td>独立研究group held-out；去重reads / fixture / 答案</td><td>相似操作与统计合同的迁移</td></tr>
 <tr><td>科学压力测试</td><td>新物种 / assay / paired structure / 注释版本</td><td>数据语义与适用性边界；不能混为同一主榜</td></tr>
 <tr><td>来源熟悉度</td><td>已知公开教学研究另列；联网 / 离线分轨</td><td>记忆答案或搜索lookup的污染风险</td></tr>

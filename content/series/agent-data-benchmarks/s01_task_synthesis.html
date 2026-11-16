@@ -19,7 +19,7 @@
 <figcaption>综合SWE-Gym、R2E-Gym、ScienceIDE与Harbor的机制整理，属于编辑归纳；不是本次已执行的流水线。</figcaption>
 <p class="figure-links"><a href="../assets/research/agent-data-benchmarks/task-synthesis-flow.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
 </figure>
-<table><thead><tr><th>生产单位</th><th>最小内容</th><th>常见错位</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">生产单位</th><th scope="col">最小内容</th><th scope="col">常见错位</th></tr></thead><tbody>
 <tr><td>Source</td><td>Issue、commit、论文、需求或专家protocol；来源与许可</td><td>Source记录数当作可执行任务数</td></tr>
 <tr><td>Environment</td><td>固定依赖、数据、构建与初始状态</td><td>镜像构建成功就称任务正确</td></tr>
 <tr><td>Task</td><td>问题、环境、独立verifier、资源与时间限制</td><td>一个环境的任务变体当作独立能力family</td></tr>
@@ -31,14 +31,14 @@
 <h2>十二条路线：改变的是来源、验收还是分布</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>。</p></section>
 
-<table><thead><tr><th>当前缺口</th><th>优先路线</th><th>先验收什么</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">当前缺口</th><th scope="col">优先路线</th><th scope="col">先验收什么</th></tr></thead><tbody>
 <tr><td>真实问题多，环境不稳定</td><td>SWE-Gym / daVinci式环境工程</td><td>clean rebuild、reset与产物可重放</td></tr>
 <tr><td>repair覆盖不足</td><td>commit逆向 / mutation</td><td>坏状态失败、修复状态通过、分布偏移</td></tr>
 <tr><td>目标技能不在旧issue中</td><td>需求 / 专家protocol</td><td>observable、容差、替代正确路径</td></tr>
 <tr><td>训练停滞或验收昂贵</td><td>反馈扩空间 / critic预筛</td><td>固定留出收益、执行校准、全部生产成本</td></tr></tbody></table>
 <details><summary>十二条路线的固定版本、规模与证据边界</summary>
 <p>以下数字为原来源报告；对象、scaffold、采样与训练配方不同，不跨论文拼接排名。</p>
-<table><thead><tr><th>路线 / 来源</th><th>怎样构造</th><th>报告规模与对象</th><th>验收与学习启示</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">路线 / 来源</th><th scope="col">怎样构造</th><th scope="col">报告规模与对象</th><th scope="col">验收与学习启示</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-1">SWE-Gym [1]</a></td><td>真实issue → 可执行仓库环境 → tests → agent / outcome verifier</td><td>2,438 tasks，11个Python repos；Raw 64,689项缺完整环境</td><td>先把真实问题变成可运行任务；不能把Raw数量视为同等成熟任务</td></tr>
 <tr><td><a href="index.html#ref-2">R2E-Gym v1 [2]</a></td><td>SweGen从commit及F2P tests反译任务；execution与execution-free verifier</td><td>Full 8,135；去SWE repos subset 4,578</td><td>Test / fix patch与初始状态一致；后续8.7k快照不覆盖v1计数</td></tr>
 <tr><td><a href="index.html#ref-3">SWE-smith [3]</a></td><td>可运行repo → 引入缺陷 → 用测试产生repair任务</td><td>大规模mutation-derived tasks；以固定原论文为机制依据</td><td>语法通过不足，需bad状态失败 / repaired状态通过的行为对照</td></tr>
@@ -71,7 +71,7 @@ audit/                    # 此处为建议的审计伴随产物，非Harbor必�
   calibration.json        # oracle / bad / alternative结果
   artifact-manifest.json  # 允许交接的文件与hash</code></pre>
 <p class="note">这是目录示意，没有随本文发布一套已校准task。审计字段属于建议扩展；实际配置名称按所用Harbor版本的schema核对。</p>
-<table><thead><tr><th>边界</th><th>最低检查</th><th>典型错误</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">边界</th><th scope="col">最低检查</th><th scope="col">典型错误</th></tr></thead><tbody>
 <tr><td>构建与reset</td><td>离线可重建、冻结输入、清洁初始状态、重复reset一致</td><td>残留产物、未来git、依赖更新改变难度</td></tr>
 <tr><td>solver可见面</td><td>可见目录 / 工具 / 网络白名单，排除答案和隐藏tests</td><td>solution、test patch或缓存含参考答案</td></tr>
 <tr><td>产物交接</td><td>明确文件、diff或状态；干净verifier重建后检查</td><td>只在solver环境中test通过，交付物不能复现</td></tr>
@@ -98,7 +98,7 @@ audit/                    # 此处为建议的审计伴随产物，非Harbor必�
 \]</div>
 <p>\(a\)为绝对容差、\(r\)为相对容差。教学取\(a=0.01,r=0.02\)：参考100允许误差2.01，候选101.5通过；参考0允许误差0.01，候选0.02不通过。<strong>近零值依靠绝对项，不能只看相对误差。</strong>这些数值不是科学任务的已校准容差。</p>
 <ul><li><strong>数值：</strong>同方法、单位和输入下逐字段比较；随机算法要固定seed并定义分布检验。</li><li><strong>不变量：</strong>检查单位、守恒、单调性和边界；接受不同实现也不放过物理约束。</li><li><strong>负例：</strong>指标接近仍可能来自泄漏或硬编码；用新输入、坏解与clean rebuild验证。</li></ul>
-<table><thead><tr><th>任务</th><th>有效性检查</th><th>科学检查</th><th>坏控制</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">任务</th><th scope="col">有效性检查</th><th scope="col">科学检查</th><th scope="col">坏控制</th></tr></thead><tbody>
 <tr><td>数值程序repair</td><td>导入、运行、输出schema</td><td>边界值、误差、稳定性或守恒</td><td>常数输出、错单位、仅修一个test</td></tr>
 <tr><td>论文程序复现</td><td>代码可跑、产物可读</td><td>数据划分、核心metric、消融方向</td><td>读取held-out答案、错误baseline、只重述结论</td></tr>
 <tr><td>科学数据分析</td><td>数据来源与预处理可追溯</td><td>统计假设、图表与研究产物一致</td><td>标签泄漏、错误聚合、无依据显著性</td></tr>
@@ -137,7 +137,7 @@ R_{\rm repair}=\max\left(0,\frac{r-f}{1-f}\right)\quad(f&lt;1).
 <p class="mechanism-note">四路可以组合，但有不同准入合同；旧日志不因附有 reward 就成为 on-policy RL 数据。来源组与留出边界随派生数据继承，固定 benchmark 不回流训练。</p>
 </figure>
 
-<table><thead><tr><th>用途</th><th>准入重点</th><th>loss / feedback对象</th><th>不应直接使用</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">用途</th><th scope="col">准入重点</th><th scope="col">loss / feedback对象</th><th scope="col">不应直接使用</th></tr></thead><tbody>
 <tr><td>CPT / midtraining</td><td>来源、去重、文本 / 工具轨迹格式及能力回放</td><td>角色与工具observation mask按目标设计</td><td>把所有工具输出当作模型动作监督</td></tr>
 <tr><td>SFT</td><td>有效示范、动作合法、结果可复验、角色mask</td><td>目标assistant动作与回答tokens</td><td>失败episode整段直接当正确动作；隐藏答案进入prompt</td></tr>
 <tr><td>RL</td><td>反复reset、稳定reward、预算与难度可控</td><td>On-policy actions、reward、advantage</td><td>坏环境产生惩罚；只追训练verifier导致reward hacking</td></tr>
@@ -156,7 +156,7 @@ split = train | validation | fixed_test</code></pre>
 <h2>与我的Harbor / GUI工作怎样对应</h2>
 <details><summary>履历事实、公开机制与证据边界</summary>
 <p>下面是公开履历材料与文献机制的对应。<strong>项目规模来自作者提供的简历，论文提供方法参照，不能当作内部项目成绩的外部证明。</strong> 原任务包、内部数据和私有执行记录不在本文公开。</p>
-<table><thead><tr><th>履历事实</th><th>对应研究问题</th><th>可公开学习总结</th><th>证据边界</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">履历事实</th><th scope="col">对应研究问题</th><th scope="col">可公开学习总结</th><th scope="col">证据边界</th></tr></thead><tbody>
 <tr><td><a href="../cv/#autoresearch">AutoResearch</a>：expert Skill / Protocol → audit / synthesis / calibration / rollout / refinement / SFT；2,000+ Harbor task packages</td><td>专家知识如何落到可靠任务</td><td>合同、独立oracle、坏控制、修订原因与版本链</td><td>作者简历陈述；packages不是2,000个独立family</td></tr>
 <tr><td>Qwen3.8-27B SFT验证；简历称TB相关表现改善，未提供数值</td><td>训练收益如何归因</td><td>固定策略 / 预算对照、逐域结果、任务质量消融</td><td>不补造提升百分比；TB Sci仅一轮review通过，不写accepted或正式入库</td></tr>
 <tr><td><a href="../cv/#gui-agent">GUI工作</a>：Setup → Rollout → Verify → Reset；9,641 trace events审计</td><td>状态、失败归因与reward稳定性</td><td>初始VM状态、artifact和GUI约束、真实失败转RL task</td><td>Events是trace审计量，不是任务数；截图或文件存在不足以证明完成</td></tr>
@@ -166,7 +166,7 @@ split = train | validation | fixed_test</code></pre>
 <section id="frontier-comparison" data-frontier-audit="20261114">
 <h2>EvoSyn：反馈与任务设计的同论文消融</h2>
 <p><a href="https://arxiv.org/html/2610.12593v1">EvoSyn v1，Table 2</a>固定 Opus 4.5 合成器、候选生成预算和 Qwen3-8B 的最终 SFT 设置，比较完整流水线与去除组件的版本。Airline、CAR 分数按原表 0–1 记录。</p>
-<table><thead><tr><th>合成流水线</th><th>Airline</th><th>CAR</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">合成流水线</th><th scope="col">Airline</th><th scope="col">CAR</th></tr></thead><tbody>
 <tr><td>完整 EvoSyn</td><td>0.713</td><td>0.726</td></tr>
 <tr><td>无 Feedback</td><td>0.660</td><td>0.613</td></tr>
 <tr><td>无 Designer</td><td>0.613</td><td>0.540</td></tr>

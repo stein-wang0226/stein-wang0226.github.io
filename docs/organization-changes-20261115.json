@@ -8721,7 +8721,7 @@
         "entry": "agent-data-benchmarks",
         "anchor": "scientific-task-family"
       },
-      "reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（\\alpha_g\\ge0、\\operatorname{Var}、s_j>0、\\exp、\\log s_j、\\beta_{g0}），公式、标题、锚点与引用未改。",
+      "reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（\\alpha_g\\ge0、\\operatorname{Var}、s_j>0、\\exp、\\log s_j、\\beta_{g0}），公式、标题、锚点与引用未改。表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "prior_reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
@@ -8965,7 +8965,7 @@
         "entry": "agent-data-benchmarks",
         "anchor": "cluster-training-evaluation"
       },
-      "reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（G、n_{B\\ {\\rm only}}、n_{A\\ {\\rm only}}、n、n>0、n>1），公式、标题、锚点与引用未改。",
+      "reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（G、n_{B\\ {\\rm only}}、n_{A\\ {\\rm only}}、n、n>0、n>1），公式、标题、锚点与引用未改。表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "prior_reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。"
     },
     {
@@ -10485,7 +10485,8 @@
         "entry": "agent-data-benchmarks",
         "anchor": null
       },
-      "reason": "逐页审阅：生命周期引入、对象职责、正文装配、掌握清单、原始来源。原理与算例：来源/环境/任务/verifier/多轨迹/留出关系。精简与证据：去旧四章目录与第二路线；52引用编号不改、清单按需。 完整算例与主题整合：任务生命周期末尾接入前沿合成、迁移与榜单审计，目录从四节变为五节，来源编号保持原命名空间。"
+      "reason": "逐页审阅：生命周期引入、对象职责、正文装配、掌握清单、原始来源。原理与算例：来源/环境/任务/verifier/多轨迹/留出关系。精简与证据：去旧四章目录与第二路线；52引用编号不改、清单按需。 完整算例与主题整合：任务生命周期末尾接入前沿合成、迁移与榜单审计，目录从四节变为五节，来源编号保持原命名空间。 讲解连贯性续轮审阅：表格表头作用域：入口承担对象关系与学习目标，详细算例已有对应章；仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
+      "prior_reason": "逐页审阅：生命周期引入、对象职责、正文装配、掌握清单、原始来源。原理与算例：来源/环境/任务/verifier/多轨迹/留出关系。精简与证据：去旧四章目录与第二路线；52引用编号不改、清单按需。 完整算例与主题整合：任务生命周期末尾接入前沿合成、迁移与榜单审计，目录从四节变为五节，来源编号保持原命名空间。"
     },
     {
       "id": "agent-task-synthesis",
@@ -10793,7 +10794,7 @@
         "entry": "agent-data-benchmarks",
         "anchor": "agent-task-synthesis"
       },
-      "reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：Add a purpose-specific branching handoff before the existing admission table. Preserve status fields and distinguish infrastructure/invalid-task rejection from normal policy failures. T5 visual blocker fix: at 1440px JS/noJS, auto-fit wraps Critic below CPT (3+1) and a downward marker implies CPT -> Critic. Scope hollow-diamond comparison markers to data-admission-map at all widths; preserve auto-fit, the four independent admission contracts, prose, title, IDs, formulas and sources. Independent browser/pixel recheck remains pending.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（r、f、[0,1]、R_{\\rm repair}、f<1、1-f），公式、标题、锚点与引用未改。",
+      "reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：Add a purpose-specific branching handoff before the existing admission table. Preserve status fields and distinguish infrastructure/invalid-task rejection from normal policy failures. T5 visual blocker fix: at 1440px JS/noJS, auto-fit wraps Critic below CPT (3+1) and a downward marker implies CPT -> Critic. Scope hollow-diamond comparison markers to data-admission-map at all widths; preserve auto-fit, the four independent admission contracts, prose, title, IDs, formulas and sources. Independent browser/pixel recheck remains pending.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（r、f、[0,1]、R_{\\rm repair}、f<1、1-f），公式、标题、锚点与引用未改。表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "prior_reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：Add a purpose-specific branching handoff before the existing admission table. Preserve status fields and distinguish infrastructure/invalid-task rejection from normal policy failures. T5 visual blocker fix: at 1440px JS/noJS, auto-fit wraps Critic below CPT (3+1) and a downward marker implies CPT -> Critic. Scope hollow-diamond comparison markers to data-admission-map at all widths; preserve auto-fit, the four independent admission contracts, prose, title, IDs, formulas and sources. Independent browser/pixel recheck remains pending.。"
     },
     {
@@ -11092,7 +11093,7 @@
         "entry": "agent-data-benchmarks",
         "anchor": "agent-benchmark-map"
       },
-      "reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 讲解连贯性续轮审阅：只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。 变量前置定义：补p\\in[0,1]、k\\ge1、(1-p)^k、p^k、n,c,k、0\\le c\\le n等首次使用前的说明，公式未改。",
+      "reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 讲解连贯性续轮审阅：只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。 变量前置定义：补p\\in[0,1]、k\\ge1、(1-p)^k、p^k、n,c,k、0\\le c\\le n等首次使用前的说明，公式未改。 表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "prior_reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。"
     },
     {
@@ -11999,7 +12000,8 @@
         "entry": "llm-research-map-2026",
         "anchor": "research-agent-data"
       },
-      "reason": "逐页审阅：资产、四路线、Harbor交接、迁移、榜单审计、实验、定量入口全部审阅。原理与算例：SQLite临时状态未交接反例；父span/请求0.05与0.10计费例。精简与证据：通用对象/合同表归任务主讲；四路线只讲生成空间区别，长实验按需；82/6627困难切片、19/20修复分歧及未重放状态保留。 完整算例与主题整合：归入数据主题，修正原下一章为后训练主讲的语义入口。 图示补充审阅：Add a branching transfer-boundary diagram beside the existing migration example. Do not alter artifact field names, paths, old numbers or sources.。"
+      "reason": "逐页审阅：资产、四路线、Harbor交接、迁移、榜单审计、实验、定量入口全部审阅。原理与算例：SQLite临时状态未交接反例；父span/请求0.05与0.10计费例。精简与证据：通用对象/合同表归任务主讲；四路线只讲生成空间区别，长实验按需；82/6627困难切片、19/20修复分歧及未重放状态保留。 完整算例与主题整合：归入数据主题，修正原下一章为后训练主讲的语义入口。 图示补充审阅：Add a branching transfer-boundary diagram beside the existing migration example. Do not alter artifact field names, paths, old numbers or sources.。 讲解连贯性续轮审阅：研究增量、artifact交接和审计已有具体例子与原图；不重复基础协议或刷新历史版本事实。表格表头作用域：仅给本页2张简单数据表的6个列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
+      "prior_reason": "逐页审阅：资产、四路线、Harbor交接、迁移、榜单审计、实验、定量入口全部审阅。原理与算例：SQLite临时状态未交接反例；父span/请求0.05与0.10计费例。精简与证据：通用对象/合同表归任务主讲；四路线只讲生成空间区别，长实验按需；82/6627困难切片、19/20修复分歧及未重放状态保留。 完整算例与主题整合：归入数据主题，修正原下一章为后训练主讲的语义入口。 图示补充审阅：Add a branching transfer-boundary diagram beside the existing migration example. Do not alter artifact field names, paths, old numbers or sources.。"
     },
     {
       "id": "research-agentic-rl",

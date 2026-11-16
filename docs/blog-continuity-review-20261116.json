@@ -326,7 +326,7 @@
     "assets/research/2026-11-14/sources.json": "bb58b86f1bb804059ec8cdb8c348b1a00ced2af7b1f5b17dff2402897474a888",
     "assets/research/agent-data-benchmarks/sources.json": "73696913acd37a2086159002073de85ac4140507a77fd33e98358e3821b61f6a",
     "assets/research/posttraining-20261114/sources.json": "a56d5b90aab056348e00b3873cf3657f0079d46629455c4a36a3208eec430d79",
-    "docs/organization-changes-20261115.json": "e09db441295072030edff300a4e8a13fe62f178fcf1d43e073d2876428752e24",
+    "docs/organization-changes-20261115.json": "6fdbc3d83cedf3f09f12c59c94ddcfff0d9bd75f57896770194628b1af5b2b97",
     "scripts/course.py": "43ada4e2cbc29dbaebedd4a53c8bc526bf16f50a020e741e43f0158d10540147",
     "scripts/mathematics.py": "8102723e919f851b947e213bafcb45cc8abe0901e0ea748af2e21599cb86448e",
     "scripts/pipeline.py": "f104bf650d404c5d4c4719a161744f85081c9260ab705c36e90b32482619951b",
@@ -335,7 +335,7 @@
     "scripts/reading.py": "d8d904ae0894663535d23a47fa1b4602e54ffab8a2d88a0eea03df29bae92ba0",
     "scripts/views.py": "8acd114a356f11b6d9a2a6312752cd4c208f5cfed594cb1e8dd516dd6984d3a4",
     "assets/site/scroll-region.js": "9e44e2ea9553c1e612d83675efe8bd0daecffdfe6206b6ec75d6d367e7690c85",
-    "docs/content-changes.json": "804342511685447522bf0788b34ae90c8baebbc1422859c383ab0038771361cf"
+    "docs/content-changes.json": "d80e777e12bf11b175266c13f9b089b4b12d1f1b8030ec233a703319d8d58449"
   },
   "catalog_updates": [
     {
@@ -1960,7 +1960,7 @@
       "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
       "changed": true,
       "sha256_before": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
-      "sha256_after": "dbb7755afe5eb87e2dd53e26a0c1b381b28bd0b7d3dc3aef9c17a4b6da56ad06",
+      "sha256_after": "e41d1b4bb319b1db485c6fa471bc7dddda637f7249b3fa9a7ab051d366f7f1d1",
       "examined": [
         {
           "anchor": "provenance",
@@ -1983,7 +1983,7 @@
           "judgment": "研究/供体/source lineage为独立单位，不能随机拆8列或千题面冒充泛化。"
         }
       ],
-      "reason": "改稿：仅在公式首次使用前补充符号定义（\\alpha_g\\ge0、\\operatorname{Var}、s_j>0、\\exp、\\log s_j、\\beta_{g0}），公式、标题、锚点与引用未改。",
+      "reason": "改稿：仅在公式首次使用前补充符号定义（\\alpha_g\\ge0、\\operatorname{Var}、s_j>0、\\exp、\\log s_j、\\beta_{g0}），公式、标题、锚点与引用未改。表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "changes": [
         {
           "anchor": "#reading-section-4",
@@ -1992,6 +1992,16 @@
           "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#provenance",
+          "kind": "表格表头作用域",
+          "summary": "为本页6张简单数据表的23个列头补充显式 scope=\"col\"；表头文字、数据、结构、锚点与引用未改。",
+          "assumptions": "表均为单行 thead 简单表，列头即列作用域；不新增 caption，不改变表格语义或视觉。",
+          "checks": [
+            "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
         }
@@ -2004,7 +2014,7 @@
       "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
       "changed": true,
       "sha256_before": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
-      "sha256_after": "df1281ca351ecf1d150b5e4107fe96a7833b3cd7c902be4480aa1bff69993d2f",
+      "sha256_after": "43e130f2e32c7b3d23d4958ece35ecf5c42a0af1e2edf2fd71ae11e92c00d503",
       "examined": [
         {
           "anchor": "design",
@@ -2027,7 +2037,7 @@
           "judgment": "允许多标签/undetermined，规格、方法差异、环境和budget区分，旧失败记录不覆盖。"
         }
       ],
-      "reason": "改稿：仅在公式首次使用前补充符号定义（G、n_{B\\ {\\rm only}}、n_{A\\ {\\rm only}}、n、n>0、n>1），公式、标题、锚点与引用未改。",
+      "reason": "改稿：仅在公式首次使用前补充符号定义（G、n_{B\\ {\\rm only}}、n_{A\\ {\\rm only}}、n、n>0、n>1），公式、标题、锚点与引用未改。表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "changes": [
         {
           "anchor": "#citation-sources-3",
@@ -2036,6 +2046,16 @@
           "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#design",
+          "kind": "表格表头作用域",
+          "summary": "为本页5张简单数据表的16个列头补充显式 scope=\"col\"；表头文字、数据、结构、锚点与引用未改。",
+          "assumptions": "表均为单行 thead 简单表，列头即列作用域；不新增 caption，不改变表格语义或视觉。",
+          "checks": [
+            "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
         }
@@ -2406,9 +2426,9 @@
     {
       "id": "agent-data-benchmarks",
       "source": "content/series/agent-data-benchmarks/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
-      "sha256_after": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "sha256_after": "e706ff28c74725161a60d56452f226b5319a197dfdc035e7280c0bfa76c0502b",
       "examined": [
         {
           "anchor": "overview",
@@ -2427,8 +2447,19 @@
           "judgment": "52项共用编号与新增科学章独立来源清楚，固定版本/访问快照不冒充独立复现。"
         }
       ],
-      "reason": "入口承担对象关系与学习目标，详细算例已有对应章；保留不扩入口。",
-      "changes": [],
+      "reason": "表格表头作用域：入口承担对象关系与学习目标，详细算例已有对应章；仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#boundaries",
+          "kind": "表格表头作用域",
+          "summary": "为入口页简单数据表的4个列头补充显式 scope=\"col\"；表头文字、数据、结构、锚点与引用未改。",
+          "assumptions": "表为单行 thead 简单表，列头即列作用域；不新增 caption，不改变表格语义或视觉。",
+          "checks": [
+            "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "检查导读、对象分类、来源/下载组织；没有重新调研52来源、运行装配、合成任务或benchmark。",
       "module": "training-data"
     },
@@ -2437,7 +2468,7 @@
       "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
       "changed": true,
       "sha256_before": "6f40a994b7dbbf4c480797340a4eb6cd7ff53363bea1076aaeaecbe771793785",
-      "sha256_after": "ab9fc825a00577d6ebcc4ff02676e4855dfb476565e36dd059e2c8c57647d3ff",
+      "sha256_after": "72960044083d8d1dfb9d3cc90dc5cbafa691ec8d470d19a0043dd5a07a7598fa",
       "examined": [
         {
           "anchor": "objects",
@@ -2460,7 +2491,7 @@
           "judgment": "冻结空间/预算与反馈扩张消融、逐family/失败/成本和未执行状态清楚。"
         }
       ],
-      "reason": "改稿：仅在公式首次使用前补充符号定义（r、f、[0,1]、R_{\\rm repair}、f<1、1-f），公式、标题、锚点与引用未改。",
+      "reason": "改稿：仅在公式首次使用前补充符号定义（r、f、[0,1]、R_{\\rm repair}、f<1、1-f），公式、标题、锚点与引用未改。表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "changes": [
         {
           "anchor": "#science",
@@ -2469,6 +2500,16 @@
           "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#objects",
+          "kind": "表格表头作用域",
+          "summary": "为本页8张简单数据表的28个列头补充显式 scope=\"col\"；表头文字、数据、结构、锚点与引用未改。",
+          "assumptions": "表均为单行 thead 简单表，列头即列作用域；不新增 caption，不改变表格语义或视觉。",
+          "checks": [
+            "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
         }
@@ -2481,7 +2522,7 @@
       "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
       "changed": true,
       "sha256_before": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
-      "sha256_after": "9c65bbf62656d64982f2a9d851201be757efac7d3edf574df5b5bf56aa794dee",
+      "sha256_after": "99f220fea42aee7135ac42af3fdb5e981b847031da9be85ecbeb5ccbba98c3fa",
       "examined": [
         {
           "anchor": "metrics",
@@ -2500,7 +2541,7 @@
           "judgment": "核心留出/诊断/控制按能力与产物选，来源族和固定预算条件充分。"
         }
       ],
-      "reason": "只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。 变量前置定义：补p\\in[0,1]、k\\ge1、(1-p)^k、p^k、n,c,k、0\\le c\\le n等首次使用前的说明，公式未改。",
+      "reason": "只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。 变量前置定义：补p\\in[0,1]、k\\ge1、(1-p)^k、p^k、n,c,k、0\\le c\\le n等首次使用前的说明，公式未改。 表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "changes": [
         {
           "anchor": "metrics",
@@ -2521,6 +2562,16 @@
           "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#map",
+          "kind": "表格表头作用域",
+          "summary": "为本页12张简单数据表的46个列头补充显式 scope=\"col\"；表头文字、数据、结构、锚点与引用未改。",
+          "assumptions": "表均为单行 thead 简单表，列头即列作用域；不新增 caption，不改变表格语义或视觉。",
+          "checks": [
+            "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
         }
@@ -2560,9 +2611,9 @@
     {
       "id": "research-agent-data",
       "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "211e586ffeaa1a67c534043b2eb8b0678bbe4b0e0bec6d5cff7015daec50fab8",
-      "sha256_after": "211e586ffeaa1a67c534043b2eb8b0678bbe4b0e0bec6d5cff7015daec50fab8",
+      "sha256_after": "f87122c27c2d83eacba344321892404282f48048fb2e16fa9195192f0aed5787",
       "examined": [
         {
           "anchor": "distinctions",
@@ -2581,8 +2632,19 @@
           "judgment": "request/span计费0.03+0.02=.05、父span重复计费反例与缓存/失败保留充分。"
         }
       ],
-      "reason": "研究增量、artifact交接和审计已有具体例子与原图；不重复基础协议或刷新历史版本事实。",
-      "changes": [],
+      "reason": "研究增量、artifact交接和审计已有具体例子与原图；不重复基础协议或刷新历史版本事实。表格表头作用域：仅给本页2张简单数据表的6个列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#distinctions",
+          "kind": "表格表头作用域",
+          "summary": "为本页2张简单数据表的6个列头补充显式 scope=\"col\"；表头文字、数据、结构、锚点与引用未改。",
+          "assumptions": "表均为单行 thead 简单表，列头即列作用域；不新增 caption，不改变表格语义或视觉。",
+          "checks": [
+            "Chrome 复核：该章2张表6个 th 在合并页中均带 scope=col",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "检查现存四路线归纳、迁移例和审计字段；不重放HAL/τ、Harbor adapter、数据库状态或所有引用实验。",
       "module": "training-data"
     },

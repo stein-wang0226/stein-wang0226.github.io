@@ -18,7 +18,7 @@
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
 <p>用成对实验解释改动，旧A–E记录在下载方案中保留兼容ID。<strong>步骤信用与采样各有独立组；OPD与推理预算属于不同轴，不能合成一项。</strong></p>
-<div class="reading-table"><table><thead><tr><th>比较轴</th><th>基线 → 改动</th><th>能回答</th><th>必须冻结</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">比较轴</th><th scope="col">基线 → 改动</th><th scope="col">能回答</th><th scope="col">必须冻结</th></tr></thead><tbody>
 <tr><td>监督轨迹</td><td>原模型 → 独立验收SFT</td><td>可靠行为监督的增量</td><td>来源、held-out、动作mask、示范生产与训练预算</td></tr>
 <tr><td>结果反馈</td><td>SFT → outcome GRPO</td><td>在固定起点下的RL增量</td><td>环境、verifier、长度与终评预算；另列训练资源</td></tr>
 <tr><td>步骤信用</td><td>outcome GRPO → 只改信用</td><td>中间证据的贡献</td><td>采样配额、optimizer、目标量、额外验证成本</td></tr>
@@ -34,7 +34,7 @@
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>。</p></section>
 
 <p><strong>检查可用信号：</strong>全对/全错组没有组内相对差异；噪声微小差异也不应当成可信信用。这里 \(G\) 是同题采样的候选轨迹条数；独立二元奖励下的有效组概率和G=8算例在<a href="../llm-posttraining/#posttraining-algorithms--rloo-grpo">GRPO主讲</a>，本页只维护诊断与对照。</p>
-<div class="reading-table"><table><thead><tr><th>异质来源</th><th>训练影响</th><th>本文方案</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">异质来源</th><th scope="col">训练影响</th><th scope="col">本文方案</th></tr></thead><tbody>
 <tr><td>难度 / 全对全错组</td><td>零方差组不提供相对信号</td><td>按task-family / 难度采样，统计有效组；动态过滤与固定预算分别比较</td></tr>
 <tr><td>奖励语义与噪声</td><td>组内标准化可能放大不可靠微小差异</td><td>schema分数与科学分数拆开；verifier version固定；环境故障单独标记</td></tr>
 <tr><td>轨迹长度 / 工具时间</td><td>loss权重、信用稀疏、长尾等待</td><td>记录action tokens、观察、尝试时长；同任务预算对照；截断不混为模型EOS</td></tr>
@@ -59,7 +59,7 @@
 <div class="stage"><b>CPU与验证</b><small>统计环境、重跑与grader<br>内存、超时、IO独立计量</small></div>
 <div class="stage"><b>持久化 / 观测</b><small>fixture、artifact、trace、ckpt<br>吞吐、lag、故障、谱系</small></div>
 </div><figcaption>本文规划；原件 / oracle / held-out隔离，神经reward和教师所需GPU另列。只给训练与rollout卡数，不代表全部资源需求已确定。</figcaption></figure>
-<div class="reading-table"><table><thead><tr><th>角色</th><th>规划配置</th><th>资源与边界</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">角色</th><th scope="col">规划配置</th><th scope="col">资源与边界</th></tr></thead><tbody>
 <tr><td>Dense actor</td><td>64卡，TP4 PP2 CP2 DP4</td><td>全参数AdamW基线；70B理想静态32.8GB/rank，激活等另计，非峰值测量</td></tr>
 <tr><td>MoE actor</td><td>512卡，TP2 PP4 CP2 DP32；ETP2 EP8，专家DP8</td><td>128专家、94层；规划24/23/23/24 stage；实际负载与通信待测</td></tr>
 <tr><td>rollout</td><td>Dense64卡 / MoE512卡</td><td>独立扩缩容；同步基线、one-step overlap、完全异步分三组</td></tr>
@@ -77,7 +77,7 @@
 <section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>。</p></section>
 
 <p>规划至少三个训练随机种子，并对相同held-out任务使用多个评估种子 / 重复尝试。训练seed是模型重复，评估seed是同模型生成重复，两者不是新增独立研究。统计按研究group重采样 / 分层，报告task-family、难度、来源熟悉度与有效样本数量。</p>
-<div class="reading-table"><table><thead><tr><th>指标</th><th>分母 / 边界</th><th>需要额外说明</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">指标</th><th scope="col">分母 / 边界</th><th scope="col">需要额外说明</th></tr></thead><tbody>
 <tr><td>科学成功率</td><td>固定任务、预算、verifier下的attempts</td><td>环境启动失败同时报告整体率与可执行条件率；不静默移除</td></tr>
 <tr><td>pass@k / best-of-k</td><td>真实k次尝试；选择规则固定</td><td>verifier rerank和全部尝试成本入账；不能用oracle挑选却声称普通pass@1</td></tr>
 <tr><td>训练效率</td><td>actor / rollout / reference / teacher GPU-hours及有效目标</td><td>队列等待、重采样、校正 / 过滤与零方差组</td></tr>
@@ -110,7 +110,7 @@ D_i=Y_{B,i}-Y_{A,i}\in\{-1,0,1\},\qquad
 </section>
 <section id="failure">
 <h2>失败分类决定下一步改哪里</h2>
-<div class="reading-table"><table><thead><tr><th>类别</th><th>具体触发</th><th>改进对象</th></tr></thead><tbody>
+<div class="reading-table"><table><thead><tr><th scope="col">类别</th><th scope="col">具体触发</th><th scope="col">改进对象</th></tr></thead><tbody>
 <tr><td>task_specification</td><td>配对 / 单位 / 字段 / 过滤政策未公开</td><td>任务合同；不是惩罚Agent来掩盖歧义</td></tr>
 <tr><td>data_semantics</td><td>FPKM误用、样本错位、供体 / run混淆</td><td>检索与元数据验证、科学训练样本</td></tr>
 <tr><td>scientific_design</td><td>忽略配对、反向contrast、BH集合错误</td><td>统计决策 / 可验证步骤与artifact</td></tr>

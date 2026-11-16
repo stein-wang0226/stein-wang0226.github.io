@@ -28,7 +28,7 @@
 \operatorname{pass@}k=1-(1-p)^k,\qquad
 \operatorname{pass}^{k}=p^k.
 \]</div>
-<table><thead><tr><th>指标</th><th>测量对象</th><th>p=0.6，k=3教学例</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">指标</th><th scope="col">测量对象</th><th scope="col">p=0.6，k=3教学例</th></tr></thead><tbody>
 <tr><td>pass@1</td><td>单次成功；多次repeats可平均估计</td><td>0.6</td></tr>
 <tr><td>pass@3</td><td>三条中至少一条成功</td><td>1−0.4³=0.936</td></tr>
 <tr><td>pass³</td><td>三次都成功，重复可靠性</td><td>0.6³=0.216</td></tr>
@@ -53,7 +53,7 @@
 <h2>当前版本与定位速查</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
 
-<table><thead><tr><th>名称</th><th>采用的快照</th><th>对象 / 规模</th><th>首要边界</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">名称</th><th scope="col">采用的快照</th><th scope="col">对象 / 规模</th><th scope="col">首要边界</th></tr></thead><tbody>
 <tr><td>Terminal-Bench</td><td><a href="index.html#ref-13">4.1.0，2026-11-03</a></td><td>Full 66任务；CPU-only 63</td><td>全部66项modified，无新增 / 删除；4.0成绩不可直接改标4.1</td></tr>
 <tr><td>Terminal-Bench-Science / TB Sci</td><td><a href="index.html#ref-15">0.1.0，2026-08-26</a></td><td>70任务，5领域</td><td>0.2是roadmap；native harness下测系统表现</td></tr>
 <tr><td>Terminal-Bench Challenges</td><td><a href="index.html#ref-16">2026-06首发项目协议</a></td><td>3项长时单项目挑战</td><td>无统一time / resource limit，不应与TB pass@1放一列</td></tr>
@@ -83,7 +83,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 
 <p>首发Rust Compiler Speedup、Inference Engine Codegolf、WASM WebGL Renderer三项挑战，面向day-scale单项目；提交最终repo与完整自主执行logs，按各任务的正确性或性能协议验收。<a href="index.html#ref-16">[16]</a> 没有统一时间和资源上限，就不适合与固定budget的TB成功率直接合并。</p>
 <p>对Challenges应列wall time、tokens / API cost、计算资源、人类介入、完整日志与产物revision；性能优化先过correctness gate，再按同硬件timing。一次项目成功并不估计某个广泛任务分布的pass@1。</p>
-<table><thead><tr><th>首发challenge</th><th>交付与正确性gate</th><th>性能口径</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">首发challenge</th><th scope="col">交付与正确性gate</th><th scope="col">性能口径</th></tr></thead><tbody>
 <tr><td>Rust compiler speedup</td><td>Compiler修改；20k+ tests全部通过</td><td>Cachegrind instruction count；52个真实crates，Opt profile，Full / IncrUnchanged / IncrPatched分别测</td></tr>
 <tr><td>Inference engine codegolf</td><td>Kimi K2.5 inference engine，单CUDA文件≤25 KB，16 H100；相对SGLang per-token mean KL≤0.1 nats</td><td>Throughput、TTFT、TPOT分别报告，不能用一个“速度”总数替代</td></tr>
 <tr><td>WASM WebGL renderer</td><td>无browser / GPU / external libs的JS / WASM renderer；2,071 Khronos CTS及three.js / Babylon.js visual regression</td><td>先满足API和渲染正确性；具体测试版本与产物固定</td></tr>
@@ -93,7 +93,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h2>HarborIndex：困难切片与迁移一致性</h2>
 <p>初版研究从54个adapter的6,627候选任务形成82题困难切片；当前Hub revision 5 / 1.4是80题。<a href="index.html#ref-17">[17]</a><a href="index.html#ref-18">[18]</a><a href="index.html#ref-19">[19]</a> 初版筛选漏斗用于解释方法，不能把82题原实验计数改成80再称同一结果。</p>
 <p>选择困难切片能拉开前沿系统差异，也会受所用筛选模型、budget及失败定义影响。它不是总体真实用户任务分布，也不是通用潜在能力指数。看结果时同时看SWE、安全、科学、数学与优化分项。</p>
-<table><thead><tr><th>统一框架能做</th><th>还要验证</th><th>报告中保留</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">统一框架能做</th><th scope="col">还要验证</th><th scope="col">报告中保留</th></tr></thead><tbody>
 <tr><td>统一task / job / reward格式</td><td>原生harness与adapter的权限、工具、终止语义、timeout是否一致</td><td>原生与迁移运行协议，paired差异</td></tr>
 <tr><td>统一sandbox及资源配置</td><td>文件交接、数据与依赖是否改变任务</td><td>Image digest、reset、verifier revision</td></tr>
 <tr><td>跨benchmark组织执行</td><td>验收异常、reward hacking、难度选择偏差</td><td>逐任务状态、错误归因、修订与重跑</td></tr>
@@ -112,7 +112,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h3>SWE-bench：真实issue基线与更严格的扩展</h3>
 <section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
 
-<table><thead><tr><th>家族</th><th>对象 / 协议</th><th>适合使用</th><th>局限 / 注意</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">家族</th><th scope="col">对象 / 协议</th><th scope="col">适合使用</th><th scope="col">局限 / 注意</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-24">SWE-bench Verified / Lite</a></td><td>Verified 500 issues；Lite 300。Repo + issue → patch → tests</td><td>经典repo-agent baseline与训练前后对照</td><td>公开历史patch污染；test completeness；scaffold与budget会影响结果</td></tr>
 <tr><td><a href="index.html#ref-24">Multilingual / Multimodal</a></td><td>各自语言 / 输入形式的独立split</td><td>跨语言或视觉issue泛化</td><td>不是Verified的同难度翻译；勿按名字假定统一题量</td></tr>
 <tr><td><a href="index.html#ref-25">SWE-bench Pro</a></td><td>官方overview：public 731 / private 276 / held-out 858，共1,865，41 repos</td><td>更广工程与隔离集；需写明具体使用split</td><td>旧50-turn / capped-cost与新250-turn / uncapped不同；copyleft不是零污染证明</td></tr>
@@ -123,7 +123,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <section id="aa">
 <h2>AA：综合指数怎样组合不同测量</h2>
 <p>AA在本文指Artificial Analysis。2026-11-14方法页为<strong>Intelligence Index v5.0.1</strong>，9评测按4类各25%组合。它仍使用Terminal-Bench 4.0，虽然TB官方最新为4.1；引用AA结果应保留AA自身版本。<a href="index.html#ref-27">[27]</a></p>
-<table><thead><tr><th>类别 / 总权重</th><th>成员与指数权重</th><th>主要评分</th><th>解读</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">类别 / 总权重</th><th scope="col">成员与指数权重</th><th scope="col">主要评分</th><th scope="col">解读</th></tr></thead><tbody>
 <tr><td>Knowledge Work · 25%</td><td>AA-Briefcase 1.1 15%；AutomationBench-AA 5%；GDP.pdf 5%</td><td>产物rubric / pairwise Elo；workflow objective；PDF answer rubric</td><td>工作产物、SaaS状态和文档回答不是同一种单位</td></tr>
 <tr><td>Coding · 25%</td><td>FrontierCode 2.0 15%；TB 4.0 10%</td><td>Tests + rubric blocking gate；terminal pass@1</td><td>AA采用的scaffold、turns、private题与TB版本都要记录</td></tr>
 <tr><td>Science · 25%</td><td>TB Science 0.1 15%；CritPt v2 Hard 10%</td><td>Terminal tests；官方grading server</td><td>专业执行与研究级问题的互补；不等于自主科学发现</td></tr>
@@ -138,7 +138,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h3>代码：从函数到真实库调用</h3>
 <section id="citation-sources-14" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>；<a href="https://arxiv.org/abs/2108.07732" title="Program Synthesis with Large Language Models · Austin, Jacob, Odena, Augustus, Nye, Maxwell 等 · 2021/08/16 · 2108.07732">MBPP</a>。</p></section>
 
-<table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">Benchmark</th><th scope="col">测量 / 评分</th><th scope="col">用途</th><th scope="col">边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-28">HumanEval</a></td><td>函数补全；unit tests / pass@k</td><td>经典代码生成基线</td><td>小函数 / 已公开题；不代表repo工具执行</td></tr>
 <tr><td><a href="index.html#ref-29">MBPP</a></td><td>自然语言到短Python程序；tests</td><td>基础程序合成与指令理解</td><td>题型较基础；不同prompt / split分别报告</td></tr>
 <tr><td><a href="index.html#ref-30">EvalPlus</a></td><td>强化HumanEval / MBPP测试输入</td><td>发现原测试遗漏的错误</td><td>更强verifier，不是长程Agent environment</td></tr>
@@ -148,7 +148,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h3>通用Agent：工具、检索、政策与skills</h3>
 <section id="citation-sources-15" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>；<a href="https://arxiv.org/abs/2406.12045" title="$\tau$-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains · Yao, Shunyu, Shinn, Noah, Razavi, Pedram 等 · 2024/06/17 · 2406.12045">τ-bench</a>；<a href="https://arxiv.org/abs/2311.12983" title="GAIA: a benchmark for General AI Assistants · Mialon, Grégoire, Fourrier, Clémentine, Swift, Craig 等 · 2023/11/21 · 2311.12983">GAIA</a>。</p></section>
 
-<table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">Benchmark</th><th scope="col">测量 / 评分</th><th scope="col">用途</th><th scope="col">边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-33">AgentBench</a></td><td>多类环境交互；各环境success / score</td><td>早期通用Agent能力地图</td><td>领域权重、工具和harness影响aggregate</td></tr>
 <tr><td><a href="index.html#ref-34">GAIA</a></td><td>多步检索、资料和工具；final answer正确性</td><td>现实助理与信息整合</td><td>Web随时间变化；答案正确不直接评估过程可靠性</td></tr>
 <tr><td><a href="index.html#ref-35">τ-bench / τ²-Bench</a></td><td>用户与agent交互、policy及DB状态；success / pass^k</td><td>客户服务、工具可靠性、协同控制</td><td>τ²允许user和agent共同改变环境；用户模拟器与政策必须固定</td></tr>
@@ -157,7 +157,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h3>Web与GUI：最终状态、reset与视觉</h3>
 <section id="citation-sources-16" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2307.13854" title="WebArena: A Realistic Web Environment for Building Autonomous Agents · Zhou, Shuyan, Xu, Frank F., Zhu, Hao 等 · 2023/07/25 · 2307.13854">WebArena</a>；<a href="https://arxiv.org/abs/2401.13649" title="VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks · Koh, Jing Yu, Lo, Robert, Jang, Lawrence 等 · 2024/01/24 · 2401.13649">VisualWebArena</a>；<a href="https://arxiv.org/abs/2404.07972" title="OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments · Xie, Tianbao, Zhang, Danyang, Chen, Jixuan 等 · 2024/04/11 · 2404.07972">OSWorld</a>。</p></section>
 
-<table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">Benchmark</th><th scope="col">测量 / 评分</th><th scope="col">用途</th><th scope="col">边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-37">WebArena</a></td><td>自托管网站，多步操作；functional state / answer checks</td><td>浏览器工具与Web状态</td><td>同站数据及reset一致；DOM-only不能替代视觉任务</td></tr>
 <tr><td><a href="index.html#ref-38">VisualWebArena</a></td><td>网页视觉与文字联合任务；状态 / 答案验收</td><td>视觉定位和Web行动</td><td>截图、渲染与工具可见面改变结果</td></tr>
 <tr><td><a href="index.html#ref-39">OSWorld</a> / <a href="index.html#ref-40">OSWorld 2.0</a></td><td>真实桌面与跨应用；execution / state checks；2.0说明含108长程任务、31自托管网站</td><td>GUI执行、文件产物及恢复</td><td>1.x / 2.0任务和预算不同；最终文件存在不足以证明所有状态约束</td></tr>
@@ -169,7 +169,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h2>科学评测：问答、代码、实验与研究产物</h2>
 <section id="citation-sources-17" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>。</p></section>
 
-<table><thead><tr><th>Benchmark</th><th>测量 / 评分</th><th>用途</th><th>边界</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">Benchmark</th><th scope="col">测量 / 评分</th><th scope="col">用途</th><th scope="col">边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-42">SciCode</a></td><td>科学问题到代码；子问题及主问题tests</td><td>科学知识与程序实现</td><td>单程序成功不证明自主科研流程</td></tr>
 <tr><td><a href="index.html#ref-43">LAB-Bench</a></td><td>文献、图表、数据库与生物实验相关题；answer accuracy</td><td>研究知识与资料理解</td><td>主要题目回答，不能替代真实工具和wet lab执行</td></tr>
 <tr><td><a href="index.html#ref-44">MLAgentBench</a></td><td>ML任务的探索与实验；完成及性能指标</td><td>代码执行、实验迭代</td><td>固定数据 / budget；metric提升可能依赖任务泄漏</td></tr>
@@ -189,7 +189,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <section id="frontier-comparison" data-frontier-audit="20261114">
 <h2>SkillsBench：固定 harness 内比较技能与成本</h2>
 <p><a href="https://arxiv.org/html/2602.12670v1">SkillsBench v1，Table 3 与 Appendix Table 13</a>的配对设置比较同模型、同 harness 下无技能与 curated skills；以下不是后来 SkillsBench 1.1 的榜单。成功率为 %，费用为论文估计的美元/次 trial。</p>
-<table><thead><tr><th>Harness / 模型</th><th>无技能成功率</th><th>Curated 成功率</th><th>自生成技能成功率</th><th>无技能→Curated 估计费用</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">Harness / 模型</th><th scope="col">无技能成功率</th><th scope="col">Curated 成功率</th><th scope="col">自生成技能成功率</th><th scope="col">无技能→Curated 估计费用</th></tr></thead><tbody>
 <tr><td>Codex / GPT-5.2</td><td>30.6</td><td>44.7</td><td>25.0</td><td>1.85→2.07 美元</td></tr>
 <tr><td>Gemini CLI / Gemini 3 Flash</td><td>31.3</td><td>48.7</td><td>未报告</td><td>0.54→0.57 美元</td></tr>
 </tbody></table>
@@ -199,7 +199,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h2>待执行：为任务合成选择一组互补留出</h2>
 <section id="citation-sources-21" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
 
-<table><thead><tr><th>训练目标</th><th>核心留出</th><th>补充诊断</th><th>控制项</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">训练目标</th><th scope="col">核心留出</th><th scope="col">补充诊断</th><th scope="col">控制项</th></tr></thead><tbody>
 <tr><td>Repo coding</td><td>SWE-bench Verified + 明确split的Pro / Live + DeepSWE</td><td>EvalPlus / BigCodeBench</td><td>Repo / time去污、diff交接、turns及成本</td></tr>
 <tr><td>Terminal / Harbor</td><td>TB 4.1 + HarborIndex固定revision</td><td>CPU-only另表；逐域及adapter parity</td><td>Full与subset分开，verifier修订、trials</td></tr>
 <tr><td>科学protocol</td><td>TB Science 0.1 + 目标领域artifact任务</td><td>SciCode / BixBench / AIRS按对象选择</td><td>数值容差、数据划分、valid submission</td></tr>

@@ -29,7 +29,7 @@
 <figcaption>这是综合公开方法得到的编辑流程，不是某一篇论文的完整实现。试解失败可能是题目错误、环境故障或策略能力不足，必须分别归因。</figcaption>
 </figure>
 <table>
-<thead><tr><th>路线 / 相关工作</th><th>机制与适用问题</th><th>需要额外检查</th></tr></thead>
+<thead><tr><th scope="col">路线 / 相关工作</th><th scope="col">机制与适用问题</th><th scope="col">需要额外检查</th></tr></thead>
 <tbody>
 <tr><td>仓库与测试驱动<br>SWE-smith；V4.1 coding pipeline</td><td>从可构建仓库、起始commit和代码变化构造任务；fail-to-pass证明修复有效，pass-to-pass保护已有功能。V4.1另有隔离构建、去泄漏、多Agent试解和独立审计</td><td>测试覆盖不足、oracle修复是否绕过规格、隐藏测试泄漏；SWE-smith是2025基础工作</td></tr>
 <tr><td>需求驱动<br>NexForge</td><td>先定义能力需求、真实场景和task profile，再编译问题、输入文件、依赖与可运行环境；适合覆盖已有题库遗漏的操作类型</td><td>生成规格是否自洽、同harness对照；论文引用的外部baseline可能使用不同scaffold</td></tr>
@@ -87,7 +87,7 @@ failure_class, latency, tool_calls, stop_reason</code></pre>
 <h2>待执行：从任务验收到合成闭环消融</h2>
 <details><summary>展开四阶段研究方案</summary>
 <table>
-<thead><tr><th>阶段</th><th>固定条件与改变项</th><th>验收产物</th></tr></thead>
+<thead><tr><th scope="col">阶段</th><th scope="col">固定条件与改变项</th><th scope="col">验收产物</th></tr></thead>
 <tbody>
 <tr><td>A · 任务验收</td><td>固定环境与verifier；运行oracle、负对照、不同策略试解和重置重跑</td><td>可构建率、oracle一致性、负对照误通过、失败归因、版本清单；阈值由任务风险预先定义</td></tr>
 <tr><td>B · Adapter parity</td><td>同状态 / 动作重放；仅改变原环境与适配环境</td><td>逐项观察、reward、资源与成本差异；每项修复后重跑</td></tr>
