@@ -46,7 +46,7 @@
     },
     {
       "source": "content/posts/harbor-framework-guide/index.html",
-      "sha256": "d5ddf39c4f0b183a1bfe50148c8cadf4f4c628429cf32f140b0c7fbe07948fcf",
+      "sha256": "a21a41253c16b088f95c5e8d9d39ca7a84c071c1229d118f1e6cc174c8fcd688",
       "reason": "逐页审阅：13节与scalingX17集全部审阅；版本、计数、源码、canary与未运行状态核对。原理与算例：observed/native/ambient/corrected counts→移除比例/归一误差→oracle gap；误收/误拒净值与分母；reward_valid均值；五个机制追问。精简与证据：删除重复目录与两次同义总结，长版本表按需；科学数学从代码框移到默认正文；Index筛选改机制图；三原执行图默认可见，600px限宽不变形且可放大；真实案例与计数/去重边界保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（g,c、O,T,U,C、\\rho_c、c），公式、标题、锚点与引用未改。",
       "prior_reason": "Approved learning rework: review all thirteen sections and community-resource slice, retain fixed release/main evidence, source numbering, original diagrams/canary and byte-exact archive. Expand counts/error/oracle gap and valid-reward denominators as LaTeX with clearly labelled examples, expose execution diagram, retain ratio at 600px max and test native zoom, consolidate duplicate directories/summaries and state retry/regrade conditions. Strict three-screen CDN-blocked and no-JS checks passed; no container, model or scientific reproduction."
     },
@@ -271,14 +271,14 @@
     },
     {
       "source": "content/posts/my-work-holon/full-report.html",
-      "sha256": "0c4b38a78cff07366ddaf963552ef1c2012586f1974b257e7953cc19f3a86815",
+      "sha256": "b0d288a8f44a8b322a00498393c27a4d65fc26eed6c6577ece25d638981b6e52",
       "reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；逐项复核50个原生MathML，修正GQA交互计算的矛盾表述。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（i、r_i、r_j、e_i），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。"
     },
     {
       "source": "content/posts/my-work-harbor/full-report.html",
-      "sha256": "959915738859741a90a4306582d6162025e9a9da464348d33d1bd0d56778cd39",
-      "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 图示补充审阅：Add a branching comparison beside the complete-path formula and original example. Leave the report's historical figures, statistics, sources and existing pipeline SVG intact; no full historical metric recheck.。",
+      "sha256": "8bec263834d76340360e963e26cac9024f052d7900d78c085af94ff49b0a83f0",
+      "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 图示补充审阅：Add a branching comparison beside the complete-path formula and original example. Leave the report's historical figures, statistics, sources and existing pipeline SVG intact; no full historical metric recheck.。 讲解连贯性续轮审阅：实际审阅段落已明确完整路径、隔离、cohort和历史成本边界；不改报告原稿、科研图、历史case或统计。",
       "prior_reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。"
     },
     {

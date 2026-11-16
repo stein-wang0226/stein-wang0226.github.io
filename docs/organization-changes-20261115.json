@@ -3625,7 +3625,8 @@
         "entry": "my-work-harbor-full",
         "anchor": null
       },
-      "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 图示补充审阅：Add a branching comparison beside the complete-path formula and original example. Leave the report's historical figures, statistics, sources and existing pipeline SVG intact; no full historical metric recheck.。"
+      "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 图示补充审阅：Add a branching comparison beside the complete-path formula and original example. Leave the report's historical figures, statistics, sources and existing pipeline SVG intact; no full historical metric recheck.。 讲解连贯性续轮审阅：实际审阅段落已明确完整路径、隔离、cohort和历史成本边界；不改报告原稿、科研图、历史case或统计。",
+      "prior_reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 图示补充审阅：Add a branching comparison beside the complete-path formula and original example. Leave the report's historical figures, statistics, sources and existing pipeline SVG intact; no full historical metric recheck.。"
     },
     {
       "id": "my-work-dllm-full",
