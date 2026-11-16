@@ -15,7 +15,7 @@
 </section>
 <section id="design">
 <h2>每次比较一个改动，明确基线与预算</h2>
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
 <p>用成对实验解释改动，旧A–E记录在下载方案中保留兼容ID。<strong>步骤信用与采样各有独立组；OPD与推理预算属于不同轴，不能合成一项。</strong></p>
 <div class="reading-table"><table><thead><tr><th scope="col">比较轴</th><th scope="col">基线 → 改动</th><th scope="col">能回答</th><th scope="col">必须冻结</th></tr></thead><tbody>
@@ -31,7 +31,7 @@
 </section>
 <section id="heterogeneity">
 <h2>异质 GRPO：难度、奖励与长度分别控制</h2>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>。</p></section>
 
 <p><strong>检查可用信号：</strong>全对/全错组没有组内相对差异；噪声微小差异也不应当成可信信用。这里 \(G\) 是同题采样的候选轨迹条数；独立二元奖励下的有效组概率和G=8算例在<a href="../llm-posttraining/#posttraining-algorithms--rloo-grpo">GRPO主讲</a>，本页只维护诊断与对照。</p>
 <div class="reading-table"><table><thead><tr><th scope="col">异质来源</th><th scope="col">训练影响</th><th scope="col">本文方案</th></tr></thead><tbody>
@@ -51,7 +51,7 @@
 <section id="resources">
 <h2>128 / 1024 H100方案中的每个角色都要入账</h2>
 <details><summary>展开角色配置、分片假设与容量阻塞项（规划，未运行）</summary>
-<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>；<a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>。</p></section>
+<section id="citation-sources-5" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>；<a href="https://verl.readthedocs.io/en/latest/" title="verl · 官方文档 / 原始出版页">verl</a>。</p></section>
 
 <figure><div class="flow" aria-label="工业后训练的四类资源">
 <div class="stage"><b>训练池</b><small>actor更新、reference<br>可选critic / 教师另核算</small></div>
@@ -74,7 +74,7 @@
 </section>
 <section id="measurement">
 <h2>质量与成本同时量，统计单位保持一致</h2>
-<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>。</p></section>
+<section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>。</p></section>
 
 <p>规划至少三个训练随机种子，并对相同held-out任务使用多个评估种子 / 重复尝试。训练seed是模型重复，评估seed是同模型生成重复，两者不是新增独立研究。统计按研究group重采样 / 分层，报告task-family、难度、来源熟悉度与有效样本数量。</p>
 <div class="reading-table"><table><thead><tr><th scope="col">指标</th><th scope="col">分母 / 边界</th><th scope="col">需要额外说明</th></tr></thead><tbody>

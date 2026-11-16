@@ -51,7 +51,7 @@
 <section id="versions">
 <div class="callout" id="evaluation-bridge"><strong>把测量对象放回系统：</strong><a href="s03_scientific_task_family.html">科学任务合同</a>定义待校准真值和容差；<a href="s04_cluster_training_evaluation.html">工业对照</a>记录策略/环境/预算/失败；<a href="/agent-systems/s03_trust_safety.html">权限与攻击</a>分clean/attacked；<a href="/llm-serving/s03_capacity_cost.html">部署成本</a>将失败与重试纳入分母。多维指标由任务需要选择，不能用更大的榜单总分替代这些验收。</div>
 <h2>当前版本与定位速查</h2>
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
 
 <table><thead><tr><th scope="col">名称</th><th scope="col">采用的快照</th><th scope="col">对象 / 规模</th><th scope="col">首要边界</th></tr></thead><tbody>
 <tr><td>Terminal-Bench</td><td><a href="index.html#ref-13">4.1.0，2026-11-03</a></td><td>Full 66任务；CPU-only 63</td><td>全部66项modified，无新增 / 删除；4.0成绩不可直接改标4.1</td></tr>
@@ -79,7 +79,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <p>首版70题覆盖5领域，任务需要在终端使用专业知识完成可执行产物。提案到发布经历920 proposals → 464 approved → 386 PR → 70 release，各门槛不同，不能把approved当入库题量。官方评测采用每模型3 trials及native harness，结果包含模型与执行系统差异。<a href="index.html#ref-15">[15]</a></p>
 <p>科学任务须区分代码可跑、检查通过、复现某结果与产生新科学发现；TB Sci高分不能单独支持最后一项。构建、数据下载、verifier timeout及数值容差可能造成无声误判。下一版0.2在调研日仍是路线规划，不写成已发布版本。</p>
 <h3>Challenges：长时间项目交付，先比正确性与资源</h3>
-<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
+<section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
 
 <p>首发Rust Compiler Speedup、Inference Engine Codegolf、WASM WebGL Renderer三项挑战，面向day-scale单项目；提交最终repo与完整自主执行logs，按各任务的正确性或性能协议验收。<a href="index.html#ref-16">[16]</a> 没有统一时间和资源上限，就不适合与固定budget的TB成功率直接合并。</p>
 <p>对Challenges应列wall time、tokens / API cost、计算资源、人类介入、完整日志与产物revision；性能优化先过correctness gate，再按同硬件timing。一次项目成功并不估计某个广泛任务分布的pass@1。</p>
@@ -102,7 +102,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 </section>
 <section id="deepswe">
 <h2>DeepSWE的两个含义，以及SWE-bench家族</h2>
-<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>。</p></section>
+<section id="citation-sources-8" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>。</p></section>
 
 <h3>Datacurve DeepSWE v1.1：original tasks + behavioral verifier</h3>
 <p>Benchmark含113 original工程任务，来自91个repo，涉及TypeScript、Go、Python、JavaScript、Rust；采用mini-swe-agent，评估long-horizon工程修改。交付committed diff后，放到干净verifier环境执行行为测试并生成CTRF；不向solver提供future git。<a href="index.html#ref-22">[22]</a></p>
@@ -110,7 +110,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <h3>Together / Agentica DeepSWE-Preview：RL模型 / recipe</h3>
 <p>这是2025-07的Qwen3-32B训练方案，采用约4.5k R2E环境。团队报告42.2% pass@1、71% pass@16、59% hybrid test-time scaling；三个数分别包含不同采样或选择预算。<a href="index.html#ref-23">[23]</a> 不能把它们当Datacurve benchmark成绩，也不能把pass@16写成单次成功率。</p>
 <h3>SWE-bench：真实issue基线与更严格的扩展</h3>
-<section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
+<section id="citation-sources-11" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
 
 <table><thead><tr><th scope="col">家族</th><th scope="col">对象 / 协议</th><th scope="col">适合使用</th><th scope="col">局限 / 注意</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-24">SWE-bench Verified / Lite</a></td><td>Verified 500 issues；Lite 300。Repo + issue → patch → tests</td><td>经典repo-agent baseline与训练前后对照</td><td>公开历史patch污染；test completeness；scaffold与budget会影响结果</td></tr>
@@ -136,7 +136,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <section id="classics">
 <h2>经典与常用评测：按测量对象快速定位</h2>
 <h3>代码：从函数到真实库调用</h3>
-<section id="citation-sources-14" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>；<a href="https://arxiv.org/abs/2108.07732" title="Program Synthesis with Large Language Models · Austin, Jacob, Odena, Augustus, Nye, Maxwell 等 · 2021/08/16 · 2108.07732">MBPP</a>。</p></section>
+<section id="citation-sources-14" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>；<a href="https://arxiv.org/abs/2108.07732" title="Program Synthesis with Large Language Models · Austin, Jacob, Odena, Augustus, Nye, Maxwell 等 · 2021/08/16 · 2108.07732">MBPP</a>。</p></section>
 
 <table><thead><tr><th scope="col">Benchmark</th><th scope="col">测量 / 评分</th><th scope="col">用途</th><th scope="col">边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-28">HumanEval</a></td><td>函数补全；unit tests / pass@k</td><td>经典代码生成基线</td><td>小函数 / 已公开题；不代表repo工具执行</td></tr>
@@ -146,7 +146,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <tr><td><a href="index.html#ref-32">BigCodeBench</a></td><td>复杂指令、多库组合；tests</td><td>实用函数与库使用</td><td>Complete / Instruct设置不同；仍不是完整repo生命周期</td></tr>
 </tbody></table>
 <h3>通用Agent：工具、检索、政策与skills</h3>
-<section id="citation-sources-15" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>；<a href="https://arxiv.org/abs/2406.12045" title="$\tau$-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains · Yao, Shunyu, Shinn, Noah, Razavi, Pedram 等 · 2024/06/17 · 2406.12045">τ-bench</a>；<a href="https://arxiv.org/abs/2311.12983" title="GAIA: a benchmark for General AI Assistants · Mialon, Grégoire, Fourrier, Clémentine, Swift, Craig 等 · 2023/11/21 · 2311.12983">GAIA</a>。</p></section>
+<section id="citation-sources-15" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>；<a href="https://arxiv.org/abs/2406.12045" title="$\tau$-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains · Yao, Shunyu, Shinn, Noah, Razavi, Pedram 等 · 2024/06/17 · 2406.12045">τ-bench</a>；<a href="https://arxiv.org/abs/2311.12983" title="GAIA: a benchmark for General AI Assistants · Mialon, Grégoire, Fourrier, Clémentine, Swift, Craig 等 · 2023/11/21 · 2311.12983">GAIA</a>。</p></section>
 
 <table><thead><tr><th scope="col">Benchmark</th><th scope="col">测量 / 评分</th><th scope="col">用途</th><th scope="col">边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-33">AgentBench</a></td><td>多类环境交互；各环境success / score</td><td>早期通用Agent能力地图</td><td>领域权重、工具和harness影响aggregate</td></tr>
@@ -155,7 +155,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 <tr><td><a href="index.html#ref-36">SkillsBench 1.1</a></td><td>87 tasks / 8 domains / 18 paired configurations；有 / 无skill对照</td><td>检验skills是否带来额外能力</td><td>固定模型 / harness / budget；skill曝光与baseline提示强度会影响增益</td></tr>
 </tbody></table>
 <h3>Web与GUI：最终状态、reset与视觉</h3>
-<section id="citation-sources-16" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2307.13854" title="WebArena: A Realistic Web Environment for Building Autonomous Agents · Zhou, Shuyan, Xu, Frank F., Zhu, Hao 等 · 2023/07/25 · 2307.13854">WebArena</a>；<a href="https://arxiv.org/abs/2401.13649" title="VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks · Koh, Jing Yu, Lo, Robert, Jang, Lawrence 等 · 2024/01/24 · 2401.13649">VisualWebArena</a>；<a href="https://arxiv.org/abs/2404.07972" title="OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments · Xie, Tianbao, Zhang, Danyang, Chen, Jixuan 等 · 2024/04/11 · 2404.07972">OSWorld</a>。</p></section>
+<section id="citation-sources-16" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2307.13854" title="WebArena: A Realistic Web Environment for Building Autonomous Agents · Zhou, Shuyan, Xu, Frank F., Zhu, Hao 等 · 2023/07/25 · 2307.13854">WebArena</a>；<a href="https://arxiv.org/abs/2401.13649" title="VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks · Koh, Jing Yu, Lo, Robert, Jang, Lawrence 等 · 2024/01/24 · 2401.13649">VisualWebArena</a>；<a href="https://arxiv.org/abs/2404.07972" title="OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments · Xie, Tianbao, Zhang, Danyang, Chen, Jixuan 等 · 2024/04/11 · 2404.07972">OSWorld</a>。</p></section>
 
 <table><thead><tr><th scope="col">Benchmark</th><th scope="col">测量 / 评分</th><th scope="col">用途</th><th scope="col">边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-37">WebArena</a></td><td>自托管网站，多步操作；functional state / answer checks</td><td>浏览器工具与Web状态</td><td>同站数据及reset一致；DOM-only不能替代视觉任务</td></tr>
@@ -167,7 +167,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 </section>
 <section id="science">
 <h2>科学评测：问答、代码、实验与研究产物</h2>
-<section id="citation-sources-17" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>。</p></section>
+<section id="citation-sources-17" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>。</p></section>
 
 <table><thead><tr><th scope="col">Benchmark</th><th scope="col">测量 / 评分</th><th scope="col">用途</th><th scope="col">边界</th></tr></thead><tbody>
 <tr><td><a href="index.html#ref-42">SciCode</a></td><td>科学问题到代码；子问题及主问题tests</td><td>科学知识与程序实现</td><td>单程序成功不证明自主科研流程</td></tr>
@@ -181,7 +181,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 </tbody></table>
 <p>按“知识回答 → 程序实现 → 实验迭代 → 研究产物”组织留出集更容易定位缺口。成功提交、数值接近、重现论文结论、提出新问题与验证新发现，是不同层次的验收；不要把它们统一写成“科研成功率”。</p>
 <h3>训练后仍保留基础评测</h3>
-<section id="citation-sources-18" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2009.03300" title="Measuring Massive Multitask Language Understanding · Hendrycks, Dan, Burns, Collin, Basart, Steven 等 · 2020/09/07 · 2009.03300">MMLU</a>；<a href="https://arxiv.org/abs/2110.14168" title="Training Verifiers to Solve Math Word Problems · Cobbe, Karl, Kosaraju, Vineet, Bavarian, Mohammad 等 · 2021/10/27 · 2110.14168">GSM8K</a>；<a href="https://arxiv.org/abs/2311.12022" title="GPQA: A Graduate-Level Google-Proof Q&amp;A Benchmark · Rein, David, Hou, Betty Li, Stickland, Asa Cooper 等 · 2023/11/20 · 2311.12022">GPQA</a>。</p></section>
+<section id="citation-sources-18" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2009.03300" title="Measuring Massive Multitask Language Understanding · Hendrycks, Dan, Burns, Collin, Basart, Steven 等 · 2020/09/07 · 2009.03300">MMLU</a>；<a href="https://arxiv.org/abs/2110.14168" title="Training Verifiers to Solve Math Word Problems · Cobbe, Karl, Kosaraju, Vineet, Bavarian, Mohammad 等 · 2021/10/27 · 2110.14168">GSM8K</a>；<a href="https://arxiv.org/abs/2311.12022" title="GPQA: A Graduate-Level Google-Proof Q&amp;A Benchmark · Rein, David, Hou, Betty Li, Stickland, Asa Cooper 等 · 2023/11/20 · 2311.12022">GPQA</a>。</p></section>
 
 <p><a href="index.html#ref-49">MMLU</a>用于学科知识、<a href="index.html#ref-50">GSM8K</a>用于基础多步数学、<a href="index.html#ref-51">IFEval</a>用于程序可验证的指令遵循、<a href="index.html#ref-52">GPQA</a>用于专家级科学问答。它们适合检查Agent训练是否损伤基础能力，不能作为tool use、long-horizon执行或GUI成功的证据。HLE-Diamond与CritPt等更前沿知识 / 科学题的具体设置见AA表。</p>
 </section>
@@ -197,7 +197,7 @@ harbor run -d terminal-bench/terminal-bench-cpu@4.1.0
 </section>
 <section id="selection">
 <h2>待执行：为任务合成选择一组互补留出</h2>
-<section id="citation-sources-21" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
+<section id="citation-sources-21" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2310.06770" title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez, Carlos E., Yang, John, Wettig, Alexander 等 · 2023/10/10 · 2310.06770">SWE-bench</a>；<a href="https://openai.com/index/introducing-swe-bench-verified/" title="SWE-bench Verified · 官方文档 / 原始出版页">SWE-bench Verified</a>。</p></section>
 
 <table><thead><tr><th scope="col">训练目标</th><th scope="col">核心留出</th><th scope="col">补充诊断</th><th scope="col">控制项</th></tr></thead><tbody>
 <tr><td>Repo coding</td><td>SWE-bench Verified + 明确split的Pro / Live + DeepSWE</td><td>EvalPlus / BigCodeBench</td><td>Repo / time去污、diff交接、turns及成本</td></tr>

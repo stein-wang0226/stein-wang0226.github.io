@@ -51,7 +51,7 @@
 </section>
 <section id="families">
 <h2>模型家族速查：版本、主干和证据分别登记</h2>
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>；<a href="https://arxiv.org/abs/2404.19737" title="Better &amp; Faster Large Language Models via Multi-token Prediction · 2024/04/30 · 2404.19737">Multi-Token Prediction</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>；<a href="https://arxiv.org/abs/2404.19737" title="Better &amp; Faster Large Language Models via Multi-token Prediction · 2024/04/30 · 2404.19737">Multi-Token Prediction</a>。</p></section>
 
 <p class="note">提示：窄屏下可在表内横向滚动查看完整列。</p>
 <table class="wide">
@@ -161,7 +161,7 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 </section>
 <section id="kimi">
 <h2>Kimi：KDA、深度选择与Stable LatentMoE共同扩展</h2>
-<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
+<section id="citation-sources-7" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
 
 <h3 id="kimi-versions">K2 → K3 → K3.1 Pro：全局读取的版本边界</h3>
 <p>K3报告Table 1将K2的61层、1.04T / 32.6B扩到93层、2.78T / 104.2B，hidden仍7168；routed从384 / top8到896 / top16，shared从1到2，expert inner从2048到3072，Attention heads从64到96。正文常用2.8T / 104B为圆整口径。升级同时包含KDA、Gated MLA、AttnRes、Stable LatentMoE与原生视觉，不是单独放大一个MoE。<a href="index.html#ref-5">[5] §2、Table 1</a></p>
@@ -241,7 +241,7 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 <p>GLM-5的高效Attention研究用9B / 40层、固定1:1 efficient / full的混合模型，在64K续训190B tokens；SWA窗口4096。层序搜索在16K RULER上用beam8，不能据此给5.3画相同最优层表。报告中DSA质量接近MLA的结果限对应对照，不能把“lossless by construction”延伸为任意稀疏比例都不丢质量。<a href="index.html#ref-52">[52] §2.1.1–2.1.2、Tables 2–5</a></p>
 <p class="note"><strong>未披露：</strong>5.3完整独立训练报告、KDA / mHC / IndexPool4逐项隔离消融、完整优化器与长度扩展配方未在当前已读材料给出。30T只作模型卡规格；不将GLM-5的Muon Split、indexer warmup或MTP数量当成5.3已经验证的训练计划。</p>
 <h3>AMD服务测量：能支持哪类结论？</h3>
-<section id="citation-sources-10" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></section>
+<section id="citation-sources-10" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></section>
 
 <table>
 <thead><tr><th>固定测试条件</th><th>DP8 + EP8</th><th>TP8</th><th>用途与限制</th></tr></thead>
@@ -372,7 +372,7 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 </section>
 <section id="closed">
 <h2>闭源前沿：记录披露内容，保留未知项</h2>
-<section id="citation-sources-15" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
+<section id="citation-sources-15" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
 
 <table>
 <thead><tr><th>公开版本</th><th>可引用材料</th><th>本章保留的边界</th></tr></thead>

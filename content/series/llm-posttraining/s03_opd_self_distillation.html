@@ -117,7 +117,7 @@ loss = -adv_distill * student_logp
 </section>
 <section id="industry-mopd">
 <h2>工业多教师：DeepSeek、Nemotron 与 MiMo 的选择不同</h2>
-<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2606.30406v1" title="MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · Ma, Wenhan, Wei, Jianyu, Zhao, Liang 等 · 2026/06/29 · 2606.30406v1">MOPD</a>；<a href="https://arxiv.org/abs/2609.34745" title="No Pain, More Gain: Iterative Merging for Effective Multi-Teacher On-Policy Distillation · Kim, Seonghyeon, Jang, Chaeyun, Lee, Noah 等 · 2026/09/28 · 2609.34745">IM-MOPD</a>。</p></section>
+<section id="citation-sources-5" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2606.30406v1" title="MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training · Ma, Wenhan, Wei, Jianyu, Zhao, Liang 等 · 2026/06/29 · 2606.30406v1">MOPD</a>；<a href="https://arxiv.org/abs/2609.34745" title="No Pain, More Gain: Iterative Merging for Effective Multi-Teacher On-Policy Distillation · Kim, Seonghyeon, Jang, Chaeyun, Lee, Noah 等 · 2026/09/28 · 2609.34745">IM-MOPD</a>。</p></section>
 
 <table>
 <thead><tr><th>公开路线</th><th>信号与状态</th><th>可以支持的结论</th></tr></thead>
@@ -220,7 +220,7 @@ i_t^*=\arg\max_i\sum_{x\in Q_i\setminus P_t}w_t(x).
 <li><b>任务域与学生状态</b><small>代码、科学、GUI；记录采样比例</small></li><li><b>匹配教师接口</b><small>同状态分布评分；标明可见特权信息</small></li><li><b>混合 RL / OPD / 回放</b><small>目标权重、教师覆盖、有效 token 分开</small></li><li><b>无教师独立验收</b><small>新域成功率与旧域能力回归同时看</small></li>
 </ol><p class="mechanism-return">↶ 旧域退化时检查采样与目标权重；不能只凭蒸馏 loss 下降判定整合成功。</p></figure>
 <h2>OPDArena：目标能力增加，仍需检查能力保留</h2>
-<section id="citation-sources-11" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+<section id="citation-sources-11" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
 
 <p>OPDArena 比较五个 Qwen Base、OpenR1-50k 一轮训练，主要结果取两个 seed 平均。其 OPD 采用 student-weighted Top-16 approximation；完整词表用于部分分布测量，不能把这项实验说成 full-vocabulary OPD。<a href="index.html#ref-36">[36]</a></p>
 <p>研究发现教师类型会影响保留，RLVR teacher 在相关设置中优于 SFT teacher；更大或更多教师不保证更少遗忘。它与原 OPSD 在 prompt、模板、教师和更新实现上存在差别，不能用一个标签覆盖为“自蒸馏无效”。</p>

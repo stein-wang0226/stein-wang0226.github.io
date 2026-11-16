@@ -83,7 +83,7 @@ L=\lambda W.
 <p>Dense64卡rollout池规划16个TP4组；若每组候选并发8，理论活跃生成上限128不是端到端每秒完成数。MoE512卡池、TP8和EP路线需重新核算模型与KV复制，不能用Dense每组并发直接乘64。完整128/1024卡集群规划在<a href="../agent-data-benchmarks/s04_cluster_training_evaluation.html">科学后训练方案</a>。</p>
 </section>
 <section id="cost"><h2 id="reading-section-6">每个成功任务的成本：计入失败尝试和各类资源</h2>
-<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
+<section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>。</p></section>
 <p>\(r\) 遍历互不重复的资源类别，\(u_r\) 是全部尝试的资源用量（如 GPU-hour、CPU-hour），\(v_r\) 是同类别单价（成本单位/资源单位）。\(C_{\rm total}\) 是总成本，\(N_{\rm success}\) 是同一统计边界内独立成功的任务数，\(C_{\rm success}\) 是成本单位/成功任务；分母须大于0。资源向量与单价必须单位匹配，失败尝试的用量已包括在 \(u_r\) 中。</p>
 <div class="reading-math">\[
 C_{\rm total}=\sum_r u_r\,v_r,\qquad

@@ -188,7 +188,7 @@ H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
 </section>
 <section id="latent-moe">
 <h2>LatentMoE：减少专家工作维度，容纳更细的专家</h2>
-<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
+<section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
 
 <p>传统MoE在hidden空间dispatch token并执行多个FFN。LatentMoE先将表示下投影到较窄latent，再完成路由专家计算并上投影回来。节约的维度可重新用于更多专家或不同宽度；因此需要同时说明hidden、latent、expert intermediate、top-k与共享专家。<a href="index.html#ref-51">[51]</a></p>
 <p class="math-notation" id="latent-moe-notation"><strong>宽度与路由对象：</strong>hidden 是主干输入输出的通道数 <var>d</var>，latent 是 routed expert 输入输出宽度，expert intermediate 是专家内部 FFN 宽度，三者不可互换；top-k 是每 token 选中的 routed expert 数，不含另计的 shared expert。原 LatentMoE 的 router 从原 hidden 输入计算分数，而 dispatch、routed expert 与汇总在 latent 空间进行，共享专家仍走完整 hidden 路径。因此“下投影后路由”不表示 router 必定读取 latent；具体家族按报告确认。图中箭头上的整数为宽度，routed/top/shared 为计数，不是时间或 FLOPs。<a href="index.html#ref-51">[51] §3，式(1)–(2)</a></p>
@@ -336,7 +336,7 @@ h^{(j+1)}&=\operatorname{Core}_\theta(h^{(j)},x),
 </figure>
 <details id="optional-reproduction"><summary>可选复现实验：尚未运行</summary>
 <p>下面保留原五类实验设计与必须保存的证据；这里只是可选复现方案，没有真实运行配置、训练日志、消融成绩或服务实测结果。</p>
-<section id="citation-sources-14" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>。</p></section>
+<section id="citation-sources-14" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>。</p></section>
 
 <table>
 <thead><tr><th>研究问题</th><th>最小可解释对照</th><th>必须保存的证据</th></tr></thead>

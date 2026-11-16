@@ -4711,7 +4711,8 @@
         "entry": "llm-serving",
         "anchor": null
       },
-      "reason": "逐页审阅：调度/加速/成本三问题、装配、掌握清单、固定实现。原理与算例：请求计算与状态交接。精简与证据：去旧三章目录与重复研究路线；实现版本说明保留。 完整算例与主题整合：把前沿diffusion投机章接在运行机制、精度与容量后，来源入口改为架构主讲与固定引用。"
+      "reason": "逐页审阅：调度/加速/成本三问题、装配、掌握清单、固定实现。原理与算例：请求计算与状态交接。精简与证据：去旧三章目录与重复研究路线；实现版本说明保留。 完整算例与主题整合：把前沿diffusion投机章接在运行机制、精度与容量后，来源入口改为架构主讲与固定引用。 讲解连贯性续轮审阅：保留。系列入口已把输入状态、正确性、服务指标和章节职责接清，不增加重复主讲或第二张入口图。",
+      "prior_reason": "逐页审阅：调度/加速/成本三问题、装配、掌握清单、固定实现。原理与算例：请求计算与状态交接。精简与证据：去旧三章目录与重复研究路线；实现版本说明保留。 完整算例与主题整合：把前沿diffusion投机章接在运行机制、精度与容量后，来源入口改为架构主讲与固定引用。"
     },
     {
       "id": "serving-runtime",
@@ -6136,7 +6137,8 @@
         "entry": "llm-posttraining",
         "anchor": null
       },
-      "reason": "逐页审阅：七主题中的反馈与更新入口、六章装配、掌握清单。原理与算例：原理→变体→配方→诊断。精简与证据：父页只装配唯一片段，删除第二目录与分散阅读路线。 分类与课程复查：修正过时来源数量说明，登记11月OPD补充；保留原理→变体→配方→诊断顺序。 完整算例与主题整合：接入Agentic RL前沿章，导读指向完整GRPO算例及实际算法增量。"
+      "reason": "逐页审阅：七主题中的反馈与更新入口、六章装配、掌握清单。原理与算例：原理→变体→配方→诊断。精简与证据：父页只装配唯一片段，删除第二目录与分散阅读路线。 分类与课程复查：修正过时来源数量说明，登记11月OPD补充；保留原理→变体→配方→诊断顺序。 完整算例与主题整合：接入Agentic RL前沿章，导读指向完整GRPO算例及实际算法增量。 讲解连贯性续轮审阅：入口、产物与学习顺序已有充分导读，补细节应落在对应主讲章而非继续扩入口。",
+      "prior_reason": "逐页审阅：七主题中的反馈与更新入口、六章装配、掌握清单。原理与算例：原理→变体→配方→诊断。精简与证据：父页只装配唯一片段，删除第二目录与分散阅读路线。 分类与课程复查：修正过时来源数量说明，登记11月OPD补充；保留原理→变体→配方→诊断顺序。 完整算例与主题整合：接入Agentic RL前沿章，导读指向完整GRPO算例及实际算法增量。"
     },
     {
       "id": "posttraining-supervision",
@@ -9100,7 +9102,8 @@
         "entry": "llm-architecture",
         "anchor": null
       },
-      "reason": "逐页审阅：架构入口、六章装配、状态/计算关系与掌握清单。原理与算例：表示→选择→更新→恢复。精简与证据：删除旧重复目录；源稿分章维护，正文连续阅读。 完整算例与主题整合：按基础、完整forward、模块、前沿机制、家族、缓存案例装配10节；显式入口直达完整算例，核心计算默认展开，代码按需展开。"
+      "reason": "逐页审阅：架构入口、六章装配、状态/计算关系与掌握清单。原理与算例：表示→选择→更新→恢复。精简与证据：删除旧重复目录；源稿分章维护，正文连续阅读。 完整算例与主题整合：按基础、完整forward、模块、前沿机制、家族、缓存案例装配10节；显式入口直达完整算例，核心计算默认展开，代码按需展开。 讲解连贯性续轮审阅：保留。入口职责、完整forward定位及证据边界已清楚，新增内容会重复子章主讲。",
+      "prior_reason": "逐页审阅：架构入口、六章装配、状态/计算关系与掌握清单。原理与算例：表示→选择→更新→恢复。精简与证据：删除旧重复目录；源稿分章维护，正文连续阅读。 完整算例与主题整合：按基础、完整forward、模块、前沿机制、家族、缓存案例装配10节；显式入口直达完整算例，核心计算默认展开，代码按需展开。"
     },
     {
       "id": "architecture-transformer",
@@ -10203,7 +10206,8 @@
         "entry": "llm-architecture",
         "anchor": "architecture-comparison"
       },
-      "reason": "逐页审阅：六比较轴、家族、架构/训练/服务、MTP/drafter、科学设计与证据全部审阅。原理与算例：参数、状态、预算、质量独立比较。精简与证据：型号名录按需，删除跨设备排名和重复原理长讲。 计算链路补充审阅：修正加入完整forward后的前五章说法；型号归本主题后续家族对照，跨主题入口仅作为来源参考。"
+      "reason": "逐页审阅：六比较轴、家族、架构/训练/服务、MTP/drafter、科学设计与证据全部审阅。原理与算例：参数、状态、预算、质量独立比较。精简与证据：型号名录按需，删除跨设备排名和重复原理长讲。 计算链路补充审阅：修正加入完整forward后的前五章说法；型号归本主题后续家族对照，跨主题入口仅作为来源参考。 讲解连贯性续轮审阅：保留。此章职责是比较框架和实验合同，具体数值归各主讲，重复增加例子/图会破坏分工。",
+      "prior_reason": "逐页审阅：六比较轴、家族、架构/训练/服务、MTP/drafter、科学设计与证据全部审阅。原理与算例：参数、状态、预算、质量独立比较。精简与证据：型号名录按需，删除跨设备排名和重复原理长讲。 计算链路补充审阅：修正加入完整forward后的前五章说法；型号归本主题后续家族对照，跨主题入口仅作为来源参考。"
     },
     {
       "id": "agent-data-benchmarks",
@@ -11818,7 +11822,8 @@
         "entry": "llm-research-map-2026",
         "anchor": null
       },
-      "reason": "逐页审阅：研究问题、证据层次、先修、七节装配、选题、归档与来源全部审阅。原理与算例：机制→对照→边界；掌握检查。精简与证据：移除旧覆盖表、三路线和七章重复目录；71原编号、15原件、SHA/许可说明保留；长来源/选题按需。 完整算例与主题整合：原跨主题长文改为参考来源与旧目录；七节正文归入所属主题，仅保留固定引用、原件、研究边界及自动生成的旧锚点定位。"
+      "reason": "逐页审阅：研究问题、证据层次、先修、七节装配、选题、归档与来源全部审阅。原理与算例：机制→对照→边界；掌握检查。精简与证据：移除旧覆盖表、三路线和七章重复目录；71原编号、15原件、SHA/许可说明保留；长来源/选题按需。 完整算例与主题整合：原跨主题长文改为参考来源与旧目录；七节正文归入所属主题，仅保留固定引用、原件、研究边界及自动生成的旧锚点定位。 讲解连贯性续轮审阅：这是来源与旧目录页，主讲在所属主题；已有组织路径足够，不为引用索引增算法图。",
+      "prior_reason": "逐页审阅：研究问题、证据层次、先修、七节装配、选题、归档与来源全部审阅。原理与算例：机制→对照→边界；掌握检查。精简与证据：移除旧覆盖表、三路线和七章重复目录；71原编号、15原件、SHA/许可说明保留；长来源/选题按需。 完整算例与主题整合：原跨主题长文改为参考来源与旧目录；七节正文归入所属主题，仅保留固定引用、原件、研究边界及自动生成的旧锚点定位。"
     },
     {
       "id": "research-agent-data",
@@ -12195,7 +12200,8 @@
         "entry": "llm-research-map-2026",
         "anchor": "research-agentic-rl"
       },
-      "reason": "逐页审阅：四维目标、三算法、信用五路线、异质性、异步、追踪、消融、证据全部审阅。原理与算例：等派发但有效组99.2/7.7→中等域92.8%例。精简与证据：GRPO/GSPO/CISPO重复公式及有效组概率长推导归后训练；保留RLDS/KnowGPO/GiGPO/SAPO/SAMPO具体差别、反思/因果边界、三种异步偏差。"
+      "reason": "逐页审阅：四维目标、三算法、信用五路线、异质性、异步、追踪、消融、证据全部审阅。原理与算例：等派发但有效组99.2/7.7→中等域92.8%例。精简与证据：GRPO/GSPO/CISPO重复公式及有效组概率长推导归后训练；保留RLDS/KnowGPO/GiGPO/SAPO/SAMPO具体差别、反思/因果边界、三种异步偏差。 讲解连贯性续轮审阅：前沿分类已接回唯一数学主讲；有效组、信用证据与异步交接无需重复增例。",
+      "prior_reason": "逐页审阅：四维目标、三算法、信用五路线、异质性、异步、追踪、消融、证据全部审阅。原理与算例：等派发但有效组99.2/7.7→中等域92.8%例。精简与证据：GRPO/GSPO/CISPO重复公式及有效组概率长推导归后训练；保留RLDS/KnowGPO/GiGPO/SAPO/SAMPO具体差别、反思/因果边界、三种异步偏差。"
     },
     {
       "id": "research-base-architecture",
@@ -12657,7 +12663,8 @@
         "entry": "llm-research-map-2026",
         "anchor": "research-inference-diffusion"
       },
-      "reason": "逐页审阅：四成本目标、三drafter、采样合同、准入、OPD角色、两论文表与实验全部审阅。原理与算例：周期90ms/5token=18ms与AR15ms反例；丢弃B后q=p仍全部A的调度反例。精简与证据：标准投机校正与成功成本长式归服务；并发1→128退化保留；温度/块长/τ/加速分开，独立trainer成本及未知硬件不省略。 完整算例与主题整合：归入推理主题，修正跨主题场景链接的原下一章措辞。 图示补充审阅：Revised one conflated method chain into branching comparison with explicit training boundary. Static preservation, unique-ID/default-visible structure, and unchanged numeric tables checked. No sampling-frequency, GPU, build, or browser test claimed.。"
+      "reason": "逐页审阅：四成本目标、三drafter、采样合同、准入、OPD角色、两论文表与实验全部审阅。原理与算例：周期90ms/5token=18ms与AR15ms反例；丢弃B后q=p仍全部A的调度反例。精简与证据：标准投机校正与成功成本长式归服务；并发1→128退化保留；温度/块长/τ/加速分开，独立trainer成本及未知硬件不省略。 完整算例与主题整合：归入推理主题，修正跨主题场景链接的原下一章措辞。 图示补充审阅：Revised one conflated method chain into branching comparison with explicit training boundary. Static preservation, unique-ID/default-visible structure, and unchanged numeric tables checked. No sampling-frequency, GPU, build, or browser test claimed.。 讲解连贯性续轮审阅：保留。proposal、target、准入、训练和服务边界清楚，已有对照图与选择偏差例足够，不用额外图伪证精确性。",
+      "prior_reason": "逐页审阅：四成本目标、三drafter、采样合同、准入、OPD角色、两论文表与实验全部审阅。原理与算例：周期90ms/5token=18ms与AR15ms反例；丢弃B后q=p仍全部A的调度反例。精简与证据：标准投机校正与成功成本长式归服务；并发1→128退化保留；温度/块长/τ/加速分开，独立trainer成本及未知硬件不省略。 完整算例与主题整合：归入推理主题，修正跨主题场景链接的原下一章措辞。 图示补充审阅：Revised one conflated method chain into branching comparison with explicit training boundary. Static preservation, unique-ID/default-visible structure, and unchanged numeric tables checked. No sampling-frequency, GPU, build, or browser test claimed.。"
     },
     {
       "id": "research-agent-frontiers",
@@ -12860,7 +12867,8 @@
         "entry": "llm-research-map-2026",
         "anchor": "research-agent-frontiers"
       },
-      "reason": "逐页审阅：GUI、科学三层、Skills版本、适配、并行/多教师、实验全部审阅。原理与算例：时间t→冻结→新任务→旧回归图；测试标签泄漏反例；20s串行/13s并行但资源20s例。精简与证据：删除第二幅同义总流程；运行memory定义归Harness，研究干预要点分点；所有版本、预算、公开履历与待执行边界保留。 完整算例与主题整合：归入Agent系统，数据合成按主题指向而不再引用旧章号。 图示补充审阅：The GUI table listed states and recovery but lacked a local visual loop showing observation freshness, coordinate conversion and actual environment feedback. Added one scene-specific diagram; retained existing adaptation diagrams and evidence tables.。"
+      "reason": "逐页审阅：GUI、科学三层、Skills版本、适配、并行/多教师、实验全部审阅。原理与算例：时间t→冻结→新任务→旧回归图；测试标签泄漏反例；20s串行/13s并行但资源20s例。精简与证据：删除第二幅同义总流程；运行memory定义归Harness，研究干预要点分点；所有版本、预算、公开履历与待执行边界保留。 完整算例与主题整合：归入Agent系统，数据合成按主题指向而不再引用旧章号。 图示补充审阅：The GUI table listed states and recovery but lacked a local visual loop showing observation freshness, coordinate conversion and actual environment feedback. Added one scene-specific diagram; retained existing adaptation diagrams and evidence tables.。 讲解连贯性续轮审阅：动作/观察和持续适配图已充分解释分层与时间边界；无新场景实验，保持原数字与公开范围。",
+      "prior_reason": "逐页审阅：GUI、科学三层、Skills版本、适配、并行/多教师、实验全部审阅。原理与算例：时间t→冻结→新任务→旧回归图；测试标签泄漏反例；20s串行/13s并行但资源20s例。精简与证据：删除第二幅同义总流程；运行memory定义归Harness，研究干预要点分点；所有版本、预算、公开履历与待执行边界保留。 完整算例与主题整合：归入Agent系统，数据合成按主题指向而不再引用旧章号。 图示补充审阅：The GUI table listed states and recovery but lacked a local visual loop showing observation freshness, coordinate conversion and actual environment feedback. Added one scene-specific diagram; retained existing adaptation diagrams and evidence tables.。"
     },
     {
       "id": "research-architecture-landscape",
@@ -13931,7 +13939,8 @@
         "entry": "llm-training-lifecycle",
         "anchor": null
       },
-      "reason": "逐页审阅：预训练→CPT→SFT→RL/验收→训练方法五章装配。原理与算例：阶段产物与监督接口交接。精简与证据：入口只保一条主线，训练阶段不再重复后训练全文。 分类与课程复查：增加阶段×目标/数据×预算×执行交叉表；连接Scaling、优化器与框架主讲，引用CS336及Smol课程组织。"
+      "reason": "逐页审阅：预训练→CPT→SFT→RL/验收→训练方法五章装配。原理与算例：阶段产物与监督接口交接。精简与证据：入口只保一条主线，训练阶段不再重复后训练全文。 分类与课程复查：增加阶段×目标/数据×预算×执行交叉表；连接Scaling、优化器与框架主讲，引用CS336及Smol课程组织。 讲解连贯性续轮审阅：入口已承担路线和阶段产物，具体公式在子章充分展开，保留不堆叠。",
+      "prior_reason": "逐页审阅：预训练→CPT→SFT→RL/验收→训练方法五章装配。原理与算例：阶段产物与监督接口交接。精简与证据：入口只保一条主线，训练阶段不再重复后训练全文。 分类与课程复查：增加阶段×目标/数据×预算×执行交叉表；连接Scaling、优化器与框架主讲，引用CS336及Smol课程组织。"
     },
     {
       "id": "llm-training-pretraining",

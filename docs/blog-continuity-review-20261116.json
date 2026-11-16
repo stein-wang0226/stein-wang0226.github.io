@@ -5,13 +5,13 @@
   "base_commit": "80148053b623c4b6e1fc5a1a062f1113e5039443",
   "summary": {
     "local_sources": 74,
-    "changed_sources": 48,
-    "retained_sources": 29,
-    "change_units": 90,
+    "changed_sources": 57,
+    "retained_sources": 17,
+    "change_units": 127,
     "added_diagrams": 1,
     "revised_diagrams": 2,
     "scope": "保留作者逐源examined、reason、changes、assumptions与evidence_boundary；完整报告只按作者列明的主讲段检查，不等于所有历史科研事实复核。",
-    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。 T12变量前置定义轮：41源在公式首次使用前补充或改写符号说明，其中32源由保留转为改稿；Kimi/Gemma两张自制图按报告原文修正router与local:global口径。公式、标题、锚点与引用未改。三个sources.json仅由citations.py refresh-usages重算used_in，故从冻结集移入精确集成集。该轮以全站扫描定位候选、逐页对照源文本修复，make check通过；未重跑浏览器像素、模型训练或科研复现。 T12窄屏后续：s06两表与受控任务四列表在390px下改为表内横向滚动并补提示，页面scrollWidth未增；48个URL×三宽度+无脚本复验0失败。 T15键盘可访问性：MathJax默认让每个公式成为Tab停点，架构组装页达516个；新增math-tabstop.js将内联公式设为tabindex=-1并保留显示公式；显示公式仍保留浏览器默认焦点环。由于course.py/pipeline.py/render.py为此前轮次已改、mathematics.py为本轮加载脚本，四个脚本及新脚本从冻结集移入精确集成集；正文SHA链、历史review与两份baseline未动。 T16键盘滚动：390px下全站2205个可横向滚动的内容区（1802表格、376代码块等）原先仅少数可聚焦，键盘无法查看溢出内容；新增scroll-region.js只给实际溢出的表格、代码、公式与图示加tabindex=0及分组标签，并在字体加载、窗口变化时重新判定。实测390px溢出区全部可聚焦、方向键可滚动，1440px无多余停点；reading.py与course.py仅各加一行加载标签。 reading.py同样从冻结集移入精确集成集。 T18全站对比度复核：107路由×390/1440共320144个文本节点，修复简报页变量配色后该页0失败；余5签名8组合均在凭据锁定的历史副本与完整报告，按原貌保留。当前通过限于本构建、真实Chrome与可计算纯色对比度，不含渐变/背景图区域。 Round10焦点可见性：键盘Tab到合并阅读页的research-chart嵌入object时:focus-visible匹配但无可见外框；course.py在装配页head注入3px青绿外框与4px偏移，仅影响焦点样式，图和正文源字节未改。真实Chrome在390/1440复验两个宿主页9个可聚焦object全部出现外框，无页面横向溢出、无控制台错误；未重做对比度、标题顺序、触控目标或锁定原件的审计。 Round13主导航地标：全站扫描确认dlm-survey是唯一可授权的真实内容页缺main地标；course.py仅在该装配页正文无main时用main包裹引入与正文，历史版本、保留完整报告与其他已含main的课程页不变。真实Chrome 390/1440复验main数量为1且无嵌套、跳转链接落到#site-main，关键区域几何与改前一致到0.01px、四组截图逐像素0差异、无横向溢出与控制台错误；未重跑对比度、标题顺序、触控目标或锁定原件审计。 Round14滚动区键盘可达：axe 4.10.2在107路由×1440检出scrollable-region-focusable 62页339节点，390px下479个真实溢出mjx-container中363个行内公式不可聚焦，其中短公式的3–5px溢出源于MathJax视觉隐藏的MathML层；scroll-region.js注入.reading-content mjx-assistive-mml{max-width:100%}，只把真实裁切的非display公式及纵向滚动的pre纳入键盘停点，并在窗口缩放、字体就绪、MathJax新增节点与details展开时重算；math-tabstop.js豁免data-scroll-focus。真实Chrome全站复扫该规则0页0节点；390/1440共76个含滚动区页面逐一核对，误标0、漏标0、非溢出公式多余停点0，公式方向键scrollLeft 0→49、纵向代码scrollTop 0→200，控制台错误0；余avoid-inline-spacing 1页810节点与color-contrast 4页9节点仍限于Mermaid图形内部与锁定/保留原件。reading.css、正文与凭据字节未改；未重做颜色、标题顺序或触控目标审计。 Round15语言标注：全站实测79个zh-CN页与28个en页中，首页声明zh-CN但英文正文4080字母、中文396字，/about/与/cv/的英文页混入中文链接与“推免”等，英文论文标题在中文页缺局部语言；外壳中文导航与中文页英文页脚亦未标注。views.py将首页改为en并给中文区块/链接标zh-CN，pipeline.py对英文页面正文仅包裹CJK文本节点（不触源码字节、script/style/svg/math内不包），render.py按页面语言本地化跳转链接并标注导航与页脚；content/pages、templates、正文源与凭据字节未改，views.py由冻结集移入精确集成集。真实Chrome 107路由：html lang en 23/zh-CN 84，语言标注断言0问题，文本节点cjk-in-en仅首页人名“王煜祥”1处（专有名词豁免），en-prose-in-zh 281处中240处为英文论文标题/参考文献h2与1条英文引文标题（作品名豁免），余40处集中于SHA锁定的holon完整报告英文段落；1440与390横向溢出0、控制台错误0。axe 4.10.2全站复扫无html-lang违规，余avoid-inline-spacing 1页810节点与color-contrast 4页9节点仍为Mermaid内部与锁定原件边界；未重做颜色、标题顺序或触控目标审计。 R17在Markdown渲染层为表格首行表头统一补scope=col，6个已发布Markdown源共61个th（my-work各页与publication/protagent），正文、锚点、结构与版式未改；构建与Chrome复核见发布记录。 R18窄屏表格键盘可达：真实Chrome在107路由×320px检出78路由3317个真实横向滚动区，修复后3317/3317具备tabindex≥0且嵌套滚动停点0；/my-work/与/publication/protagent/两页表格自身溢出32px/44px却无焦点入口（axe 4.10.2 scrollable-region-focusable各1节点），根因是两页未加载scroll-region.js且无.reading-content。scroll-region.js改为main回退并把table纳入候选，views.py与pipeline.py为两页补加载脚本；修复后两表获得tabindex=0、role=group与中英文方向标签，ArrowRight使scrollLeft 0→32/0→40。320px全站该规则0违规，1440px全站table[data-scroll-focus]为0、页面横向溢出0；390/1440两页无溢出、无多余停点、控制台错误0。同一轮链接审计107路由内部链接0失效、1850个片段目标经真实浏览器核对通过、两个独立子站线上200；焦点可见性1771个Tab停点0缺失指示；aria-hidden可聚焦0、正tabindex 0、重复id 0、空链接0。正文与凭据字节未改。 R19目标尺寸（WCAG 2.2 2.5.8 AA）：真实Chrome在107路由×390px按行内、24px间距与UA控件例外采集可见指针目标；初版脚本因间距比较把目标自身判false产生7041条假失败，修正后并排除closed details内不可见链接，余3处真实失败均为/my-work/protagent/的纯引用链接段落[1][2][5]。根因是split_long_prose在句末“。”后切分，把引用链接单独切成无正文的data-reading-split段落，全站构建中同类短尾段共3处（另有harbor-framework-guide的[26]、[35]）。reading.py改为切分后剩余段先去掉<a>链接、仍有拉丁字母或中文字符才切分（不合并正常短句），构建对比仅/my-work/protagent/index.html与/harbor-framework-guide/index.html变化，引用链接回到原句，链接独占段0；修复后390px同口径审计0失败。另发现axe 390 scrollable-region-focusable 1节点：/my-work/protagent/full-report.html的.wrap:nth-child(4)>.reading-table固有宽度351.328px、容器350px，溢出1px但scroll-region.js阈值>clientWidth+1未标记；改为任意正溢出即标记后该表获得tabindex=0、role=group与方向标签，ArrowRight使scrollLeft 0→1。320px同口径新增15个亚像素标记，均为closed details内不可见表，打开后仍标记且可滚动；1440px亚像素标记0、无多余停点；全站107路由axe 4.10.2复扫scrollable-region-focusable 0，余avoid-inline-spacing 1页1005节点与color-contrast 4页9节点为既有边界；make check 107页/305文件与learning_review.py check通过。 R20 内联文本间距与浅底对比度：全站axe 1440px余 avoid-inline-spacing 集中在 /harbor-framework-guide/ 的810个SVG节点，根因是导出内联样式1041处 letter-spacing:normal !important 锁定用户间距覆盖；移除该声明的 !important 而保留 normal 值后，该页 axe 1440/390 均为0，600×1183 生命周期图截图逐字节相同，强制1.4.12间距下页面横向溢出0、新增裁切0。另修 /my-work/harbor-task-sync/full-report.html 副标题与术语说明（#5f6b7a：白底5.43:1、#f4f5f7底4.97:1）及 /my-work/holon/full-report.html 导航版本标签（#5d6b63 在 #e9eee7 底4.76:1），两页 axe 1440/390 color-contrast 均为0；深底 .artifact-caption 保持 #8892a4 以免反向降对比。余 /legacy 与 /wyx0226.github.io 的3+3节点位于冻结归档副本，不改；重复“放大查看”名称由 figcaption 在2.4.4语境提供，冻结脚本不动；/llm-frontier-2026.html h1→h3 与速查页标题重复为既有最佳实践边界。 Round21可访问性：因果可见性表角单元格由空th改td（11个装配页共享）、harbor完整报告改唯一main、frontier页内页脚改具名region、reading.py介绍与快速复习段补地标名称；目标13路由×1440/390 axe复扫在改动后仅余MathJax表头、citation重名与frontier标题顺序（holon跳过链接已包入具名地标）；make check、全站复扫与线上发布核验尚待执行。"
+    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。 T12变量前置定义轮：41源在公式首次使用前补充或改写符号说明，其中32源由保留转为改稿；Kimi/Gemma两张自制图按报告原文修正router与local:global口径。公式、标题、锚点与引用未改。三个sources.json仅由citations.py refresh-usages重算used_in，故从冻结集移入精确集成集。该轮以全站扫描定位候选、逐页对照源文本修复，make check通过；未重跑浏览器像素、模型训练或科研复现。 T12窄屏后续：s06两表与受控任务四列表在390px下改为表内横向滚动并补提示，页面scrollWidth未增；48个URL×三宽度+无脚本复验0失败。 T15键盘可访问性：MathJax默认让每个公式成为Tab停点，架构组装页达516个；新增math-tabstop.js将内联公式设为tabindex=-1并保留显示公式；显示公式仍保留浏览器默认焦点环。由于course.py/pipeline.py/render.py为此前轮次已改、mathematics.py为本轮加载脚本，四个脚本及新脚本从冻结集移入精确集成集；正文SHA链、历史review与两份baseline未动。 T16键盘滚动：390px下全站2205个可横向滚动的内容区（1802表格、376代码块等）原先仅少数可聚焦，键盘无法查看溢出内容；新增scroll-region.js只给实际溢出的表格、代码、公式与图示加tabindex=0及分组标签，并在字体加载、窗口变化时重新判定。实测390px溢出区全部可聚焦、方向键可滚动，1440px无多余停点；reading.py与course.py仅各加一行加载标签。 reading.py同样从冻结集移入精确集成集。 T18全站对比度复核：107路由×390/1440共320144个文本节点，修复简报页变量配色后该页0失败；余5签名8组合均在凭据锁定的历史副本与完整报告，按原貌保留。当前通过限于本构建、真实Chrome与可计算纯色对比度，不含渐变/背景图区域。 Round10焦点可见性：键盘Tab到合并阅读页的research-chart嵌入object时:focus-visible匹配但无可见外框；course.py在装配页head注入3px青绿外框与4px偏移，仅影响焦点样式，图和正文源字节未改。真实Chrome在390/1440复验两个宿主页9个可聚焦object全部出现外框，无页面横向溢出、无控制台错误；未重做对比度、标题顺序、触控目标或锁定原件的审计。 Round13主导航地标：全站扫描确认dlm-survey是唯一可授权的真实内容页缺main地标；course.py仅在该装配页正文无main时用main包裹引入与正文，历史版本、保留完整报告与其他已含main的课程页不变。真实Chrome 390/1440复验main数量为1且无嵌套、跳转链接落到#site-main，关键区域几何与改前一致到0.01px、四组截图逐像素0差异、无横向溢出与控制台错误；未重跑对比度、标题顺序、触控目标或锁定原件审计。 Round14滚动区键盘可达：axe 4.10.2在107路由×1440检出scrollable-region-focusable 62页339节点，390px下479个真实溢出mjx-container中363个行内公式不可聚焦，其中短公式的3–5px溢出源于MathJax视觉隐藏的MathML层；scroll-region.js注入.reading-content mjx-assistive-mml{max-width:100%}，只把真实裁切的非display公式及纵向滚动的pre纳入键盘停点，并在窗口缩放、字体就绪、MathJax新增节点与details展开时重算；math-tabstop.js豁免data-scroll-focus。真实Chrome全站复扫该规则0页0节点；390/1440共76个含滚动区页面逐一核对，误标0、漏标0、非溢出公式多余停点0，公式方向键scrollLeft 0→49、纵向代码scrollTop 0→200，控制台错误0；余avoid-inline-spacing 1页810节点与color-contrast 4页9节点仍限于Mermaid图形内部与锁定/保留原件。reading.css、正文与凭据字节未改；未重做颜色、标题顺序或触控目标审计。 Round15语言标注：全站实测79个zh-CN页与28个en页中，首页声明zh-CN但英文正文4080字母、中文396字，/about/与/cv/的英文页混入中文链接与“推免”等，英文论文标题在中文页缺局部语言；外壳中文导航与中文页英文页脚亦未标注。views.py将首页改为en并给中文区块/链接标zh-CN，pipeline.py对英文页面正文仅包裹CJK文本节点（不触源码字节、script/style/svg/math内不包），render.py按页面语言本地化跳转链接并标注导航与页脚；content/pages、templates、正文源与凭据字节未改，views.py由冻结集移入精确集成集。真实Chrome 107路由：html lang en 23/zh-CN 84，语言标注断言0问题，文本节点cjk-in-en仅首页人名“王煜祥”1处（专有名词豁免），en-prose-in-zh 281处中240处为英文论文标题/参考文献h2与1条英文引文标题（作品名豁免），余40处集中于SHA锁定的holon完整报告英文段落；1440与390横向溢出0、控制台错误0。axe 4.10.2全站复扫无html-lang违规，余avoid-inline-spacing 1页810节点与color-contrast 4页9节点仍为Mermaid内部与锁定原件边界；未重做颜色、标题顺序或触控目标审计。 R17在Markdown渲染层为表格首行表头统一补scope=col，6个已发布Markdown源共61个th（my-work各页与publication/protagent），正文、锚点、结构与版式未改；构建与Chrome复核见发布记录。 R18窄屏表格键盘可达：真实Chrome在107路由×320px检出78路由3317个真实横向滚动区，修复后3317/3317具备tabindex≥0且嵌套滚动停点0；/my-work/与/publication/protagent/两页表格自身溢出32px/44px却无焦点入口（axe 4.10.2 scrollable-region-focusable各1节点），根因是两页未加载scroll-region.js且无.reading-content。scroll-region.js改为main回退并把table纳入候选，views.py与pipeline.py为两页补加载脚本；修复后两表获得tabindex=0、role=group与中英文方向标签，ArrowRight使scrollLeft 0→32/0→40。320px全站该规则0违规，1440px全站table[data-scroll-focus]为0、页面横向溢出0；390/1440两页无溢出、无多余停点、控制台错误0。同一轮链接审计107路由内部链接0失效、1850个片段目标经真实浏览器核对通过、两个独立子站线上200；焦点可见性1771个Tab停点0缺失指示；aria-hidden可聚焦0、正tabindex 0、重复id 0、空链接0。正文与凭据字节未改。 R19目标尺寸（WCAG 2.2 2.5.8 AA）：真实Chrome在107路由×390px按行内、24px间距与UA控件例外采集可见指针目标；初版脚本因间距比较把目标自身判false产生7041条假失败，修正后并排除closed details内不可见链接，余3处真实失败均为/my-work/protagent/的纯引用链接段落[1][2][5]。根因是split_long_prose在句末“。”后切分，把引用链接单独切成无正文的data-reading-split段落，全站构建中同类短尾段共3处（另有harbor-framework-guide的[26]、[35]）。reading.py改为切分后剩余段先去掉<a>链接、仍有拉丁字母或中文字符才切分（不合并正常短句），构建对比仅/my-work/protagent/index.html与/harbor-framework-guide/index.html变化，引用链接回到原句，链接独占段0；修复后390px同口径审计0失败。另发现axe 390 scrollable-region-focusable 1节点：/my-work/protagent/full-report.html的.wrap:nth-child(4)>.reading-table固有宽度351.328px、容器350px，溢出1px但scroll-region.js阈值>clientWidth+1未标记；改为任意正溢出即标记后该表获得tabindex=0、role=group与方向标签，ArrowRight使scrollLeft 0→1。320px同口径新增15个亚像素标记，均为closed details内不可见表，打开后仍标记且可滚动；1440px亚像素标记0、无多余停点；全站107路由axe 4.10.2复扫scrollable-region-focusable 0，余avoid-inline-spacing 1页1005节点与color-contrast 4页9节点为既有边界；make check 107页/305文件与learning_review.py check通过。 R20 内联文本间距与浅底对比度：全站axe 1440px余 avoid-inline-spacing 集中在 /harbor-framework-guide/ 的810个SVG节点，根因是导出内联样式1041处 letter-spacing:normal !important 锁定用户间距覆盖；移除该声明的 !important 而保留 normal 值后，该页 axe 1440/390 均为0，600×1183 生命周期图截图逐字节相同，强制1.4.12间距下页面横向溢出0、新增裁切0。另修 /my-work/harbor-task-sync/full-report.html 副标题与术语说明（#5f6b7a：白底5.43:1、#f4f5f7底4.97:1）及 /my-work/holon/full-report.html 导航版本标签（#5d6b63 在 #e9eee7 底4.76:1），两页 axe 1440/390 color-contrast 均为0；深底 .artifact-caption 保持 #8892a4 以免反向降对比。余 /legacy 与 /wyx0226.github.io 的3+3节点位于冻结归档副本，不改；重复“放大查看”名称由 figcaption 在2.4.4语境提供，冻结脚本不动；/llm-frontier-2026.html h1→h3 与速查页标题重复为既有最佳实践边界。 Round21可访问性：因果可见性表角单元格由空th改td（11个装配页共享）、harbor完整报告改唯一main、frontier页内页脚改具名region、reading.py介绍与快速复习段补地标名称；目标13路由×1440/390 axe复扫在改动后仅余MathJax表头、citation重名与frontier标题顺序（holon跳过链接已包入具名地标）；make check、全站复扫与线上发布核验尚待执行。 Round22来源地标去重：37个源共移除144处重复的“章节来源”区域名，来源链接、锚点与正文未改；新的section不再是无名称地标，内容仍位于main内。"
   },
   "sha_chain": {
     "historical_review": "docs/blog-diagram-review-20261115.json",
@@ -326,7 +326,7 @@
     "assets/research/2026-11-14/sources.json": "bb58b86f1bb804059ec8cdb8c348b1a00ced2af7b1f5b17dff2402897474a888",
     "assets/research/agent-data-benchmarks/sources.json": "73696913acd37a2086159002073de85ac4140507a77fd33e98358e3821b61f6a",
     "assets/research/posttraining-20261114/sources.json": "a56d5b90aab056348e00b3873cf3657f0079d46629455c4a36a3208eec430d79",
-    "docs/organization-changes-20261115.json": "612dc0a77fee731970b5f3157117760ef4cbc70c2516b75b97cb58efd197e61a",
+    "docs/organization-changes-20261115.json": "e1171869d93079c39570389c227442bf5defbf88434fd43741271ff1ff60fcfe",
     "scripts/course.py": "43ada4e2cbc29dbaebedd4a53c8bc526bf16f50a020e741e43f0158d10540147",
     "scripts/mathematics.py": "8102723e919f851b947e213bafcb45cc8abe0901e0ea748af2e21599cb86448e",
     "scripts/pipeline.py": "9684529df24c0edd8a12a5007061ea07f0c5780aa842b494ccb55f0839b2a116",
@@ -335,7 +335,7 @@
     "scripts/reading.py": "99465e7538326453b3a885fb1debcdcf862e2e687fd9221a28c9435a2bc7ec2a",
     "scripts/views.py": "b39b9fda69d8b3368aa19e70c50b9aecb7fd0f028853e5e9d883b695eac17ae7",
     "assets/site/scroll-region.js": "b8137455f1c1286f06a6716ceae557c2f2e621b686211d084279bc3d6d0be6d8",
-    "docs/content-changes.json": "d0b7f876ba50afd8569ef810af1c9647a95780da13804556095ad2475a82c752"
+    "docs/content-changes.json": "af937228e9138af51c17da071f052dc38092ca5e09a1f00900d6cb77dff97e38"
   },
   "catalog_updates": [
     {
@@ -1366,7 +1366,7 @@
       "source": "content/series/agent-systems/s01_rag_retrieval.html",
       "changed": true,
       "sha256_before": "1dda55a6e6fca6df4de3d696aa822bed107052c083c20e81c8f3d3dc2d491cfa",
-      "sha256_after": "f0afaee187afff7a2cbcbc70566ec4204f15e3569af4f6ef5571495196470822",
+      "sha256_after": "9c5881641326999631a191c73963c965087ea0ab4fc8909fb3313a2710322018",
       "examined": [
         {
           "anchor": "#retrieval",
@@ -1396,6 +1396,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-4",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "通读该源并复算教学数值；未运行Faiss、检索、Search-R1训练或重新核验外部论文性能。",
@@ -1406,7 +1417,7 @@
       "source": "content/series/agent-systems/s02_planning_compute.html",
       "changed": true,
       "sha256_before": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
-      "sha256_after": "a483b6179333d86ecc8c49cd28c090c7685ded2cb7d83790efcfb8961a88d97e",
+      "sha256_after": "e279169c3228736a5a3167349ce5197e74188b1197273fe6f0b11dc252c63c45",
       "examined": [
         {
           "anchor": "#search",
@@ -1435,6 +1446,17 @@
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
           ]
         }
       ],
@@ -1473,9 +1495,9 @@
     {
       "id": "llm-serving",
       "source": "content/series/llm-serving/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
-      "sha256_after": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "sha256_after": "2a8867bf43fbb7e9ac21647807098b221736cee230212a3e4fd1f3ba0c41804d",
       "examined": [
         {
           "anchor": "#purpose",
@@ -1487,7 +1509,19 @@
         }
       ],
       "reason": "保留。系列入口已把输入状态、正确性、服务指标和章节职责接清，不增加重复主讲或第二张入口图。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "检查入口引导、概念图、学习收束和版本说明；只读静态核对，未重新核验远端release、运行服务或验收装配页面。",
       "module": "architecture-inference"
     },
@@ -1496,7 +1530,7 @@
       "source": "content/series/llm-serving/s01_runtime_scheduling.html",
       "changed": true,
       "sha256_before": "3aaa41bee76cda1b77a9671dad63fd74e6a8f940be5fccffd5d0191c3355a29c",
-      "sha256_after": "9912309fa17299280f28a8aae5285d8f5d076726db3180c65e62b22cb06a4566",
+      "sha256_after": "90baf24c869c53b86f098e9ea8ddcd96b42e0af6f492ed471c010168d4d31d53",
       "examined": [
         {
           "anchor": "#phases",
@@ -1530,6 +1564,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "阅读phases/paging/prefix/implementation/mixed/evaluation及对应图和源码摘录；复算教学整数与规格算术，不重新执行固定后端、抓取源码或复现Kimi硬件测量。",
@@ -1540,7 +1585,7 @@
       "source": "content/series/llm-serving/s02_parallel_quantization.html",
       "changed": true,
       "sha256_before": "ffcae364ab6bdafe64332db107eeae8510c07c86603963a63c9d7a6597f1c29e",
-      "sha256_after": "a1e51113d8a17da8cacd0025f78f2bcce471a1b6a7c562ec574be675480fe42b",
+      "sha256_after": "7df7801fbf5fcc13644e95727729b173eafe243224caac1ab5da76db0d3c7c4e",
       "examined": [
         {
           "anchor": "#serving-parallel-domains",
@@ -1574,6 +1619,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "静态审阅parallel/disaggregation/precision/speculation/plans与既有图；独立复算教学量化、传输下界和离散概率，不运行量化kernel、connector或投机服务，不重现论文性能。",
@@ -1584,7 +1640,7 @@
       "source": "content/series/llm-serving/s03_capacity_cost.html",
       "changed": true,
       "sha256_before": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
-      "sha256_after": "0499239054aec2d8129f26f97f03ee341d978ea377bd482220b2e5ddb44dbbd1",
+      "sha256_after": "dd58a01ffd81dc7eedad90613dd457dc836731c5936671e3ac8dffb0ab0e7bb4",
       "examined": [
         {
           "anchor": "#ledger",
@@ -1618,6 +1674,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-6",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "阅读账本、容量、指标、rollout、成本、协议和来源；只复算文中理想规格与教学时间/成本，未测GPU峰值、SLO、实际报价或下载工件运行。",
@@ -1626,9 +1693,9 @@
     {
       "id": "llm-posttraining",
       "source": "content/series/llm-posttraining/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
-      "sha256_after": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "sha256_after": "665cc5f5af5e02cbd398ca906dde1092953a09b7f67556e0363653fa1c280a2f",
       "examined": [
         {
           "anchor": "overview",
@@ -1648,7 +1715,19 @@
         }
       ],
       "reason": "入口、产物与学习顺序已有充分导读，补细节应落在对应主讲章而非继续扩入口。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "检查入口/收束/下载状态及固定引用组织；未重新调研79项来源，也未运行课程装配或浏览器。",
       "module": "training-data"
     },
@@ -1657,7 +1736,7 @@
       "source": "content/series/llm-posttraining/s01_supervision_preference.html",
       "changed": true,
       "sha256_before": "1d5189256dd5b811190995191897a4a010f207a466c7ecd8aee41e16a77b5186",
-      "sha256_after": "31e98612c39c8c478b58166fd4b8ab17dc603f86d512dbdca6269b7bfbb7031f",
+      "sha256_after": "1b6236c4a2f43c7fd4dc7f7d7e9edf6790ecf2cfb40d26e6065b184bd11657c3",
       "examined": [
         {
           "anchor": "sft-objective",
@@ -1703,6 +1782,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "本轮检查监督/恢复/RFT/偏好/交接主讲；复算教学CE、DPO和有限差分，不执行SFT或复现SimPO/ReTerm论文表。",
@@ -1713,7 +1803,7 @@
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
       "changed": true,
       "sha256_before": "3b2f71d2979d3f781e4b69292b1be821ab27e6923a303b52cb035c7d2814a7fa",
-      "sha256_after": "2c4b1f6e67a618add82d58434133008704acb1f1f28fc6b4c695fa9652762aae",
+      "sha256_after": "53a84c6f759f881348e866806b48443da04946b4cd5dfb77828f167245599edf",
       "examined": [
         {
           "anchor": "policy-gradient",
@@ -1755,6 +1845,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "检查原理、GAE/GRPO/长度与ratio主讲以及配方/诊断；独立算术/有限差分只适用于教学值，不验证公开论文数值、最新模型性能或框架GPU实现。",
@@ -1765,7 +1866,7 @@
       "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
       "changed": true,
       "sha256_before": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
-      "sha256_after": "005c4cc2ec621144dab6df52e1dbbb6aa1f28075c5342884549c1e2bc147831b",
+      "sha256_after": "a2ef88b0b41f3d0dc9446a6b27a8cd14d86c212145168320d097cc31896a8814",
       "examined": [
         {
           "anchor": "why-on-policy",
@@ -1803,6 +1904,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-5",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "审阅上述主讲与recipe/自蒸馏介入边界；只复算固定prefix教学KL，不复现ECOS/Agentic-OPD/MOPD或所有历史模型实验。",
@@ -1813,7 +1925,7 @@
       "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
       "changed": true,
       "sha256_before": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
-      "sha256_after": "4814f37c3b23f8994c945b3d7b18a9e28faf37a0d8f4d03a406ebf0fbccdba42",
+      "sha256_after": "5cff9d5cd1a216259780d8ba2cb93649c3fcc34baa371f25f776df8b39706b5d",
       "examined": [
         {
           "anchor": "environment",
@@ -1847,6 +1959,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "本轮检查环境/信号/长程信用/GAR与三案例教学链；不重新复现PURE、RLDS、图式信用或grader实验表。",
@@ -1857,7 +1980,7 @@
       "source": "content/series/llm-posttraining/s05_frameworks_async.html",
       "changed": true,
       "sha256_before": "9722dd3f685411b5895121dd841bedf1798651af6d5c855107fdc77c3466e494",
-      "sha256_after": "f6334cac7a3b7597611cc33be8731ad5f8aaefb62762370c1345ee6c6e887d70",
+      "sha256_after": "1729e12d470eee4ec3040300471d84be70afa4c8ba111d046ae1fa750d24cdda",
       "examined": [
         {
           "anchor": "roles",
@@ -1895,6 +2018,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "审阅现存固定源码摘录/教学概率与版本说明，未重新读取远端源码、认证全部后端组合、执行异步GPU或复现AReaL耗时。",
@@ -1905,7 +2039,7 @@
       "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
       "changed": true,
       "sha256_before": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
-      "sha256_after": "e19b87b641640819e04becc170dbe0a9ccaf0c1dd19d3499edcc4759ce6fa642",
+      "sha256_after": "c559b975703548a44fc2278f58b6702d3028c26ef245eeb213f90f33e25a0ee1",
       "examined": [
         {
           "anchor": "code-case",
@@ -1943,6 +2077,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "检查教学任务合同和设计矩阵，不执行mean修复任务、RNA-seq、GUI状态操作、轨迹采集或模型训练。",
@@ -1953,7 +2098,7 @@
       "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
       "changed": true,
       "sha256_before": "34eafc818650fcb52194bf0ca476c9d52b24f12609e60c72d07851f913157480",
-      "sha256_after": "51865845db2c940b0f3e2e9b1ad8f4200f981a51e7115315777e0c4f3543f557",
+      "sha256_after": "838cc3cc19bdfa55fc9cd719b34d5a899e84e4f005d24d739808ad53fcc56447",
       "examined": [
         {
           "anchor": "peft",
@@ -1994,6 +2139,17 @@
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
           ]
         }
       ],
@@ -2059,7 +2215,7 @@
       "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
       "changed": true,
       "sha256_before": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
-      "sha256_after": "43e130f2e32c7b3d23d4958ece35ecf5c42a0af1e2edf2fd71ae11e92c00d503",
+      "sha256_after": "67ef0d24b95161127cf476fadf3420d525bef41e6082469fad39d7c02d5527aa",
       "examined": [
         {
           "anchor": "design",
@@ -2103,6 +2259,17 @@
             "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "复算独立教学任务的配对SE/区间，不等于研究group bootstrap或实际训练seed验证；所有集群、科学任务、吞吐/价格/成功率仍未执行。",
@@ -2111,9 +2278,9 @@
     {
       "id": "llm-architecture",
       "source": "content/series/llm-architecture/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
-      "sha256_after": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "sha256_after": "2db0164659fbb9d7e19e57ad4643ea430afdc8610829c778e53b01f5b6769dcb",
       "examined": [
         {
           "anchor": "#purpose",
@@ -2129,7 +2296,19 @@
         }
       ],
       "reason": "保留。入口职责、完整forward定位及证据边界已清楚，新增内容会重复子章主讲。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "入口引导/概念图/收束/来源说明的本轮静态阅读；不以入口通过替代子章或全部历史科研事实复现，未验收真实装配导航。",
       "module": "architecture-inference"
     },
@@ -2138,7 +2317,7 @@
       "source": "content/series/llm-architecture/s01_transformer_foundations.html",
       "changed": true,
       "sha256_before": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
-      "sha256_after": "01517fca52d6d1be2b81e99e4747f64d848c6f175178212ba65b3cb89bf4ab4d",
+      "sha256_after": "babd9b0da7c4226b82ebae2217b160cbc01e05b8a87fa45df1361852573e6319",
       "examined": [
         {
           "anchor": "#tensor-flow",
@@ -2246,6 +2425,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "逐节阅读tensor/mask/block/objective/state/evaluation；标准库NLL与局部logit梯度有限差分复算，非训练/模型性能复现。展示公式、代码和原ID保留；改正的行内导数是唯一有意公式表述修正。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。",
@@ -2256,7 +2446,7 @@
       "source": "content/series/llm-architecture/s02_attention_position_cache.html",
       "changed": true,
       "sha256_before": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
-      "sha256_after": "d94e627974669b251c31a53ff9230de0471c01ccc44443878ded907a3d537277",
+      "sha256_after": "bb0a55585e5495f1a7a87e0b254c0bc65219d759293bca497162a909e5160e6a",
       "examined": [
         {
           "anchor": "#attention-scaling",
@@ -2294,6 +2484,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "局部数学和教学字节/旋转/分块复算；Kimi Table3及全部历史论文成绩只静态保留条件，未重新查询来源、训练或执行GPU kernel。",
@@ -2304,7 +2505,7 @@
       "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
       "changed": true,
       "sha256_before": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
-      "sha256_after": "fae860562771949dcf128281488252bac7f2a6af3a30a9fa66ea0a9005e18eca",
+      "sha256_after": "9f7f7453967528b363954b1792a14b8866cedee5c90985b358614127e2d619ff",
       "examined": [
         {
           "anchor": "#swiglu",
@@ -2342,6 +2543,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "标准库复算教学router、输出、容量和网络payload；未执行真正SwiGLU专家、All-to-All或训练。论文性能表及latent工业配置仅静态范围核对，未作全历史事实复现。",
@@ -2352,7 +2564,7 @@
       "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
       "changed": true,
       "sha256_before": "29745847d46a33c3ce3e3ee28b935d0ee918cd4200259ba7d7b73e04dd4a810a",
-      "sha256_after": "150170c4c6ae57c9c583603875043422f5b6e11bc0192f80d7e98c61c0c66514",
+      "sha256_after": "87f1ddaf90fc3d68a2435ffcdc2761c1b5341d567eac2af9255832b045898a83",
       "examined": [
         {
           "anchor": "#norm-bypass-map",
@@ -2386,6 +2598,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "复算Norm教学例与LN常量平移不变性，链式法则和图作静态语义检查；未求真实网络Jacobian、重训mHC或复现失稳/性能曲线。",
@@ -2396,7 +2619,7 @@
       "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
       "changed": true,
       "sha256_before": "d27252caaf1b134a288b577d2c8bff9ae32682884b18647d1877a5942dc85cb1",
-      "sha256_after": "dc421ddd014a3a8122dbd0b81f484b0c7d3f0d98d27cdd414a6d42930f0ae6be",
+      "sha256_after": "ebb008c32cbf6d235238637885a8cb5636d7b4e5ca47e8be214a777e4a511dc9",
       "examined": [
         {
           "anchor": "#hybrid-state-layout",
@@ -2434,6 +2657,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-5",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "标准库教学外积/delta和标量SSM复算、混合图静态阅读；不是GDN/Mamba真实模型或跨权重迁移实现验证，工业质量与chunk性能未复现。",
@@ -2442,9 +2676,9 @@
     {
       "id": "architecture-comparison",
       "source": "content/series/llm-architecture/s06_model_comparison.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "b53a9e98958acaa2245f1498156336e316762d822057a99e8679f8fcd73586e1",
-      "sha256_after": "b53a9e98958acaa2245f1498156336e316762d822057a99e8679f8fcd73586e1",
+      "sha256_after": "b3381827beba0867230573493dd1c472af2a410b97326a234c6bae9e9bc7394c",
       "examined": [
         {
           "anchor": "#axes",
@@ -2464,7 +2698,19 @@
         }
       ],
       "reason": "保留。此章职责是比较框架和实验合同，具体数值归各主讲，重复增加例子/图会破坏分工。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "阅读六轴、家族定位、co-design、MTP及实验协议；局部方法/边界检查，不将后续型号表或全部闭源材料视为本轮事实复现，未运行任何对照。",
       "module": "architecture-inference"
     },
@@ -2473,7 +2719,7 @@
       "source": "content/series/agent-data-benchmarks/index.html",
       "changed": true,
       "sha256_before": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
-      "sha256_after": "e706ff28c74725161a60d56452f226b5319a197dfdc035e7280c0bfa76c0502b",
+      "sha256_after": "c2f815bad500d3a9faa92378deae54a0d2211bee54db3e30b05cc51befb4ae2a",
       "examined": [
         {
           "anchor": "overview",
@@ -2503,6 +2749,17 @@
             "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "检查导读、对象分类、来源/下载组织；没有重新调研52来源、运行装配、合成任务或benchmark。",
@@ -2513,7 +2770,7 @@
       "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
       "changed": true,
       "sha256_before": "6f40a994b7dbbf4c480797340a4eb6cd7ff53363bea1076aaeaecbe771793785",
-      "sha256_after": "72960044083d8d1dfb9d3cc90dc5cbafa691ec8d470d19a0043dd5a07a7598fa",
+      "sha256_after": "602b31bb41885a2cb51698132aa4e192f83be1e970550185eb4bf62ebca4a30a",
       "examined": [
         {
           "anchor": "objects",
@@ -2557,6 +2814,17 @@
             "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "检查公开方法归纳与已有教学算式，未执行环境工厂/校准/critic/SFT/RL或重新核验所有来源规模。",
@@ -2567,7 +2835,7 @@
       "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
       "changed": true,
       "sha256_before": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
-      "sha256_after": "99f220fea42aee7135ac42af3fdb5e981b847031da9be85ecbeb5ccbba98c3fa",
+      "sha256_after": "be4aa547d8cb7d4118673376a504046fe799b356eaefd3d0d38c845b08a73875",
       "examined": [
         {
           "anchor": "metrics",
@@ -2619,6 +2887,17 @@
             "Chrome 复核：agent-data-benchmarks 合并页 34 表 123 个 th 均带 scope=col",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "检查测量对象、指标及版本/成本边界；复算教学组合和配对数，不重新运行榜单、访问私有题、核验服务商实时价格或最新release。",
@@ -2627,9 +2906,9 @@
     {
       "id": "llm-research-map-2026",
       "source": "content/series/llm-research-map-2026/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
-      "sha256_after": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "sha256_after": "8152959ea8ce9bc85a4c5f7dfaa59cca75ee87d8b1d0ce0586a55b11c2052caf",
       "examined": [
         {
           "anchor": "#overview",
@@ -2649,7 +2928,19 @@
         }
       ],
       "reason": "这是来源与旧目录页，主讲在所属主题；已有组织路径足够，不为引用索引增算法图。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "通读本地来源页的引入、选题、归档和71项索引；未重新抓取或逐篇核验71个外部来源、原件许可与性能。",
       "module": "agent-multimodal-diffusion"
     },
@@ -2696,9 +2987,9 @@
     {
       "id": "research-agentic-rl",
       "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
-      "sha256_after": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "sha256_after": "3d06575b0523b260fee4ee586f398513df4d97304026ec97b5fd1fc06f5032f6",
       "examined": [
         {
           "anchor": "map",
@@ -2722,7 +3013,19 @@
         }
       ],
       "reason": "前沿分类已接回唯一数学主讲；有效组、信用证据与异步交接无需重复增例。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "检查现存研究归纳与解析示例，不扩新research，不复现引用模型、RLDS/KnowGPO/T1/SAMPO或routing replay。",
       "module": "training-data"
     },
@@ -2731,7 +3034,7 @@
       "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
       "changed": true,
       "sha256_before": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
-      "sha256_after": "3eec923ee1e5e2cae5a6940df11cdfa84042c6c3b36f12bb64fffbf96e7dd68b",
+      "sha256_after": "4af643395c201cf9c6918b2e8846274671e71523ff1b331e5a9121da274f5beb",
       "examined": [
         {
           "anchor": "#versions",
@@ -2765,6 +3068,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-1",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "本轮实际检查版本引入、CED/CSA2/cache/replay/Engram及实验收束，四SVG读取标签并验证原字节；只复算entry/层组/候选算术。未重新逐页核验51页原报告、历史科研事实、QAT质量或硬件性能，未声称bit-exact恢复。",
@@ -2773,9 +3087,9 @@
     {
       "id": "research-inference-diffusion",
       "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "0a764cfe94233a88eb102193aff264a0a74f5957403d4caca4188b507bb1eaad",
-      "sha256_after": "0a764cfe94233a88eb102193aff264a0a74f5957403d4caca4188b507bb1eaad",
+      "sha256_after": "10d5b4d3e9f6517187aea32c7c4f483e8ed42e2a75f87d01272fe7bc89d9c9d6",
       "examined": [
         {
           "anchor": "#budget",
@@ -2799,16 +3113,28 @@
         }
       ],
       "reason": "保留。proposal、target、准入、训练和服务边界清楚，已有对照图与选择偏差例足够，不用额外图伪证精确性。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "阅读budget/methods/exactness/opd/frontier-comparison/experiments；复算周期教学算术与可枚举选择反例，不重训或运行三方法、不复现原论文速度/概率频率，未确认全部DLM proposal可取得精确q。",
       "module": "architecture-inference"
     },
     {
       "id": "research-agent-frontiers",
       "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "1cd78ea81253458075098331d6605d8718abda6ad7926463c6334d8f0d290d98",
-      "sha256_after": "1cd78ea81253458075098331d6605d8718abda6ad7926463c6334d8f0d290d98",
+      "sha256_after": "db32ab405ffec7dd01d4faabd7a47bdbae30ad91ae9b663578712095a5c0a1cc",
       "examined": [
         {
           "anchor": "#gui-observation-action-map",
@@ -2828,7 +3154,19 @@
         }
       ],
       "reason": "动作/观察和持续适配图已充分解释分层与时间边界；无新场景实验，保持原数字与公开范围。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-4",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "通读GUI/科学/skill/持续适配/多Agent本地说明，复算关键路径教学例；未运行OSWorld、科学任务、LoRA或PARL实验。",
       "module": "agent-multimodal-diffusion"
     },
@@ -2837,7 +3175,7 @@
       "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
       "changed": true,
       "sha256_before": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
-      "sha256_after": "b37f817bcdc29ecfe318f78a81f1d44485276f3b09b6d93c65a3bc96d3678bd7",
+      "sha256_after": "284aca9cdc0195e42c6499056324079081e3e4b2bffa0d642c5726bc46bb320f",
       "examined": [
         {
           "anchor": "#state",
@@ -2885,6 +3223,17 @@
             "390/1440实测表宽640/772px，页面scrollWidth未增加",
             "make check：107 HTML页与链接/锚点检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "本轮阅读引导、状态推导、各家族边界和实验协议；对历史路径/层数量SVG读取实际文本、核对原字节，对KDA矩阵作局部复算。未再次外部核验九家完整报告/config或全部历史科研事实，AMD/MSA/模型性能未复现。",
@@ -2895,7 +3244,7 @@
       "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
       "changed": true,
       "sha256_before": "4e6d76d730a7d550013ddaf58778dca7b21c4992faec68b49a26da41f1b93792",
-      "sha256_after": "3b9944f3060648d06f5353574ecf272518f5668fca5c68e8feb980ae5e759647",
+      "sha256_after": "261f1d31c5f7c9d7af6bbdd9ceb527266e1893fbc1cf65d6b86cbe14d70bd7c7",
       "examined": [
         {
           "anchor": "#residual",
@@ -3056,6 +3405,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-6",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "实际检查residual/latent-moe/precision/depth/agent及实验收束；标准库复算AttnRes、mHC两个方向、固定分派payload和共享core标量例，两SVG静态保留。未重训AttnRes/mHC/LatentMoE/Huginn，未外部重核全部科研报告。 T10p仅源级呈现修复与准确保留；原raw布局失败未转为pass，当前主讲/参考浏览器和像素验收仍待独立执行。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。",
@@ -3064,9 +3424,9 @@
     {
       "id": "llm-training-lifecycle",
       "source": "content/series/llm-training-lifecycle/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
-      "sha256_after": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "sha256_after": "759b9545f41c645c3d53820c0ab411e1b06c62bc2a474c9af3fd8bbb94f5603a",
       "examined": [
         {
           "anchor": "overview",
@@ -3086,7 +3446,19 @@
         }
       ],
       "reason": "入口已承担路线和阶段产物，具体公式在子章充分展开，保留不堆叠。",
-      "changes": [],
+      "changes": [
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
+        }
+      ],
       "evidence_boundary": "检查导读、阶段地图、交付与固定引用组织，不验证工业报告全部事实或课程装配/线上内容。",
       "module": "training-data"
     },
@@ -3095,7 +3467,7 @@
       "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
       "changed": true,
       "sha256_before": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
-      "sha256_after": "9ec809e4bcfe18a43b19852c5923688f3db2ce5a728467c9a278b10084f7aa94",
+      "sha256_after": "09043571c7605208eb31645dcd00828b4e5058de8a48c86241dd254323e92c85",
       "examined": [
         {
           "anchor": "mixture-budget",
@@ -3133,6 +3505,17 @@
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
+        },
+        {
+          "anchor": "#citation-sources-5",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
+          ]
         }
       ],
       "evidence_boundary": "独立复算教学CE与配比，不执行预训练/规模阶梯/μP/WSD，未验证所有工业训练量或外推性能。",
@@ -3143,7 +3526,7 @@
       "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
       "changed": true,
       "sha256_before": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
-      "sha256_after": "7650304875282ca3d2700fc1ad06ca2cca36ee7783a210b4902735e3b606ea13",
+      "sha256_after": "5646e9bfb8809f6f4b5cc1e516ff026c4f5d46d75adb402628432ba713d07dc2",
       "examined": [
         {
           "anchor": "definitions",
@@ -3188,6 +3571,17 @@
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
             "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#citation-sources-4",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
           ]
         }
       ],
@@ -3272,7 +3666,7 @@
       "source": "content/posts/llm-frontier-2026/index.html",
       "changed": true,
       "sha256_before": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
-      "sha256_after": "9a3f02e99fc39c8d6a1a6b84fd6e646d8b46ff607b966358cd3ddbd450ecec2b",
+      "sha256_after": "7b168200448c8d17c8bdcc37856b95d230e38f020a770c3ff002795e866971a6",
       "examined": [
         {
           "anchor": "#frontier-evidence-bridge",
@@ -3364,6 +3758,17 @@
           "checks": [
             "axe21-frontier-duplicate-contentinfo",
             "axe21-frontier-region",
+            "make-check-107"
+          ]
+        },
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
             "make-check-107"
           ]
         }
@@ -4297,7 +4702,7 @@
       "source": "content/posts/harbor-framework-guide/index.html",
       "changed": true,
       "sha256_before": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
-      "sha256_after": "a21a41253c16b088f95c5e8d9d39ca7a84c071c1229d118f1e6cc174c8fcd688",
+      "sha256_after": "f186d8b101fc7565363cf34f074a257c4df3a12b0c4169f5ce4e28d7b6b63a4b",
       "examined": [
         {
           "anchor": "summary",
@@ -4351,6 +4756,17 @@
             "letter-spacing-computed-normal",
             "pixel-identical-600x1183",
             "text-spacing-no-new-clip"
+          ]
+        },
+        {
+          "anchor": "#citation-sources-4",
+          "kind": "accessibility",
+          "summary": "删除来源小节重复的 aria-label=\"章节来源\"，使这些 section 不再暴露为同名 region；来源链接与正文结构未改。",
+          "assumptions": "来源小节位于 main 内，去掉名称后不再进入地标列表，也不会落到地标之外；每个源内所有同名标签一次性移除，避免只改一半。",
+          "checks": [
+            "axe22-landmark-unique",
+            "r22-citation-block-screenshot-sha",
+            "make-check-107"
           ]
         }
       ],

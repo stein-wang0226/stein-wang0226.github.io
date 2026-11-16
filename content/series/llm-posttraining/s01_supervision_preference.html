@@ -12,7 +12,7 @@
 <section id="taxonomy">
 <h2>先分开四条轴：数据、反馈、目标与参数更新方式</h2>
 <!-- READING:RL-DIAGRAM:6 -->
-<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>；<a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>。</p></section>
+<section id="citation-sources-1" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>；<a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>。</p></section>
 
 <p class="lead">“有好答案”不自动决定做哪种后训练。完整动作示范可以做 SFT；同题好坏候选可以做偏好优化；当前策略和 verifier 可以构成 RL；教师条件分布可以构成 OPD。LoRA、全参数和量化则回答更新哪些参数、如何存储，属于另一条轴。</p>
 <table>
@@ -32,7 +32,7 @@
 <li><b>验证后的示范轨迹</b><small>用户题面、assistant 动作、工具观察</small></li><li><b>模板与角色 mask</b><small>观察作条件；选择 assistant 预测位置</small></li><li><b>next-token CE</b><small>只在有效监督位置比较示范 token</small></li><li><b>独立任务执行</b><small>检查工具协议、恢复能力与最终成功</small></li>
 </ol><p class="mechanism-return">↶ 失败与恢复路径可重新验证并纳入示范；输入 token 数不等于监督 token 数。</p></figure>
 <h2>SFT：目标 token、条件历史和样本权重</h2>
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
 
 <p>令 <code>hᵢ</code> 是预测第 i 个 token 时的历史，<code>mᵢ</code> 是目标 mask。对 Agent，通常学习 assistant 的动作、参数、解释和结束标记；system / user / tool 内容作为条件历史。具体角色边界由真实 chat template 决定。</p>
 <p>\(n=1,\ldots,N\) 索引有效轨迹，\(i\) 遍历该轨迹已对齐的预测位置，\(a_{ni}\) 是示范目标 token，\(h_{ni}\) 是其之前的可见历史；\(\pi_\theta\) 是参数 \(\theta\) 定义的策略。\(m_{ni}\) 表示该位置是否监督，\(N_n\) 是该轨迹有效目标数，\(\ell_{ni}\) 是单位置负自然对数概率。\(L_{\rm token},L_{\rm episode}\) 分别是按 token、按有效轨迹平均的损失；损失单位为 nat。</p>
@@ -63,7 +63,7 @@ p_v=\operatorname{softmax}(z)_v,\qquad
 </div><figcaption>mask=0 屏蔽该位置的预测损失，工具观察仍通过 attention 影响后续动作；不等于删除观察或切断全部梯度。</figcaption></figure>
 <p>离线训练使用示范前缀，即 teacher forcing；推理使用学生自己的动作历史。学生一个错误工具参数就可能进入示范没有覆盖的状态，随后持续偏离。这是补恢复数据、在线 RL 和 OPD 的共同动机，但三者提供的目标不同。</p>
 <h3>实现检查：模板、打包和截断</h3>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>。</p></section>
 
 <p>TRL 的 <code>assistant_only_loss</code> 需要模板提供可识别的 generation tags；开关本身不能纠正模板错误。Packing 还要检查不同样本 attention 的隔离语义，不能仅看 padding 节省。截断若切掉最后动作或结束标记，会把“未完成”训练成常见模式。<a href="index.html#ref-49">[49]</a></p>
 <pre><code># 教学检查，不是任意模型可直接运行的完整 recipe
@@ -77,7 +77,7 @@ audit_truncation_by_role_and_task_family()</code></pre>
 </section>
 <section id="recovery">
 <h2>恢复训练：保留学生失败历史，监督可靠纠正</h2>
-<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+<section id="citation-sources-4" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
 <p>教学任务：函数 <code>mean([])</code> 应抛出明确的 <code>ValueError</code>，非空列表保持原行为。学生第一次只在调用方捕获除零，工具回报单元测试仍失败；教师读真实错误后在函数入口处理空输入，再运行回归。训练要区分“失败状态的上下文价值”和“失败动作是否值得模仿”。</p>
 <table>
@@ -112,7 +112,7 @@ P(\text{至少一个成功}\mid x)=1-(1-p_x)^K,\qquad
 </section>
 <section id="preference">
 <h2>偏好优化：从 DPO 到无需成对标签的 KTO</h2>
-<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+<section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.18290" title="Direct Preference Optimization: Your Language Model is Secretly a Reward Model · Rafailov, Rafael, Sharma, Archit, Mitchell, Eric 等 · 2023/05/29 · 2305.18290">DPO</a>；<a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
 <p>设 <code>y+</code> 与 <code>y−</code> 是同一任务的偏好轨迹。DPO 将相对于参考策略的对数概率差转成偏好分类，标准离线版本没有每步环境探索。<a href="index.html#ref-12">[12]</a></p>
 <h3 id="dpo-derivation">从KL正则最优策略到偏好分类</h3>
@@ -192,7 +192,7 @@ L_{\rm SimPO}&=-\log\sigma(\Delta r_\theta-\gamma).
 </section>
 <section id="reinforcement-rft">
 <h2>强化 RFT：grader 必须对应任务意义</h2>
-<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+<section id="citation-sources-7" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2203.02155" title="Training language models to follow instructions with human feedback · Ouyang, Long, Wu, Jeff, Jiang, Xu 等 · 2022/03/04 · 2203.02155">RLHF / InstructGPT</a>；<a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
 
 <p>OpenAI Cookbook 用生命科学描述生成短答案，讨论 exact、fuzzy 和 model graders。这个案例说明 grader 的可用形态，不证明字符串相似就能判断科学正确；模型 grader 需要留出标注校准，不能只在训练答案上验收。<a href="index.html#ref-17">[17]</a></p>
 <p>教学代码任务更适合执行测试与变更限制：先判环境是否正常，再判补丁是否正确；错误类型、超时与基础设施故障分别记录。强化 RFT 是反馈循环的称呼，具体采用何种 actor/critic、ratio 或 baseline，要由实现文档说明，不从 API 命名推断。</p>
@@ -200,7 +200,7 @@ L_{\rm SimPO}&=-\log\sigma(\Delta r_\theta-\gamma).
 </section>
 <section id="industry">
 <h2 id="reading-section-8">实际后训练流程：不同数据与方法如何组合</h2>
-<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
+<section id="citation-sources-8" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2501.12948" title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning · DeepSeek-AI, Guo, Daya, Yang, Dejian 等 · 2025/01/22 · 2501.12948">DeepSeek-R1</a>。</p></section>
 
 <table>
 <thead><tr><th>公开报告</th><th>明确披露的路线</th><th>读者应提取的机制</th></tr></thead>

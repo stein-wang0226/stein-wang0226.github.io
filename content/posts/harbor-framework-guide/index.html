@@ -122,7 +122,7 @@ body{margin:0;background:var(--bg);color:var(--ink)}
 </section>
 <section id="team-map"><p class="eyebrow">02 · 最新评测概览</p>
 <h2>最新评测概览</h2>
-<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
+<section id="citation-sources-4" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
 
 <p><strong>按交付选用：</strong>TB 测终端工作流，Science 测科学产物，Challenges 测长程单项目，Index 测经审计的困难切片。它们的分数、预算和分母分别解释。</p>
 <details><summary>六项评测的正式版本、近期变化与官方依据</summary>
@@ -236,7 +236,7 @@ q_{\rm gap}&amp;=\frac{E(O)-E(C)}{E(O)-E(A)}
 <p>当前贡献要求科学 grounding、deterministic pytest 检查与前沿难度；不接受开放式 hypothesis generation / literature review 作为本类任务。提案、实现、domain review、technical review、最终 sign-off 组成质量流程。任务维护还要求具体查看修订后轨迹；pass rate 变化本身不能证明漏洞被关闭。<sup><a href="#cite-11">[11]</a></sup><sup><a href="#cite-36">[36]</a></sup></p>
 </section>
 <section id="challenges"><p class="eyebrow">05 · Challenges</p><h2>Challenges：长程项目与性能验收</h2>
-<section id="citation-sources-10" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
+<section id="citation-sources-10" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
 
 <p>Challenges 面向 days、token-intensive 的单任务。首发没有统一 time / resource limit，要求 Agent 从输入到最终 repo 完全自主，提交最终 artifact 和完整 logs。它测量项目完成与性能，不估计广泛任务分布中的同一 pass@1。<sup><a href="#cite-7">[7]</a></sup></p>
 <div class="table-wrap"><table><thead><tr><th>Challenge</th><th>项目交付</th><th>Correctness gate</th><th>性能口径</th></tr></thead><tbody>
@@ -279,7 +279,7 @@ q_{\rm gap}&amp;=\frac{E(O)-E(C)}{E(O)-E(A)}
 
 <div id="adapter-coverage" class="subsection">
 <h3>外部评测覆盖：88 个适配目录</h3>
-<section id="citation-sources-17" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2311.12022" title="GPQA: A Graduate-Level Google-Proof Q&amp;A Benchmark · Rein, David, Hou, Betty Li, Stickland, Asa Cooper 等 · 2023/11/20 · 2311.12022">GPQA</a>。</p></section>
+<section id="citation-sources-17" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2311.12022" title="GPQA: A Graduate-Level Google-Proof Q&amp;A Benchmark · Rein, David, Hou, Betty Li, Stickland, Asa Cooper 等 · 2023/11/20 · 2311.12022">GPQA</a>。</p></section>
 
 <p>截至本次固定提交，独立 Adapters 仓库的 <code>src/</code> 实际含 88 个目录，README 的结构说明仍写 85 个。这里按 GitHub contents API 的实际目录列出，覆盖 SWE-Bench、Aider Polyglot、GPQA、AIME 等外部评测；每项链接可核对转换实现、运行条件与 parity 文档。<strong>这是适配覆盖清单，不是各评测采用上游最新版本或已逐项验证可运行的声明。</strong><sup><a href="#cite-12">[12]</a></sup><sup><a href="#cite-44">[44]</a></sup></p>
 <details class="adapter-inventory"><summary>查看完整适配目录 · 88 项</summary><div>
@@ -628,20 +628,20 @@ harbor trial regrade "jobs/old-job/trial" -p path/to/updated-task -e modal</code
 <p>Simulated-user trial 将 task instruction 给 user agent，target 起初不知道完整任务，再通过对话发现要求。<code>--agent acp:...</code> 是选用 ACP registry 的 Agent；<code>--bridge acp</code> 是把 user 与 target 接起来，职责不同。当前 bridge 的 target 支持 Claude Code、Gemini CLI、Codex、OpenCode / V2，而 user 可以是任意 Harbor Agent。<sup><a href="#cite-33">[33]</a></sup><sup><a href="#cite-34">[34]</a></sup></p>
 <p>这类任务可测澄清、交互和需求变更，但 user model、persona、prompt 与双边成本都属于评测协议。不能把 user agent 意外透露答案的收益归因于 target 的工程能力。</p>
 <h3>Cookbook：reward 可以进入 harness 或参数优化</h3>
-<section id="citation-sources-30" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>。</p></section>
+<section id="citation-sources-30" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>。</p></section>
 
 <p>当前 Cookbook 列出 GEPA harness 优化，以及 Cortex、Tinker、Prime RL、SkyRL 等训练示例。它们说明 Harbor task 和反馈可接入优化循环；不意味着 Harbor 核心包独自提供所有训练器、算法或后端。<sup><a href="#cite-14">[14]</a></sup></p>
 <article class="case">
 <span class="case-tag">官方 optimization recipe · GEPA + MedAgentBench</span>
 <h3>用任务反馈修订 Agent harness</h3>
-<section id="citation-sources-31" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>。</p></section>
+<section id="citation-sources-31" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2308.03688" title="AgentBench: Evaluating LLMs as Agents · Liu, Xiao, Yu, Hao, Zhang, Hanchen 等 · 2023/08/07 · 2308.03688">AgentBench</a>。</p></section>
 
 <p>官方 recipe 使用 GEPA 的 <code>optimize_anything</code> 在 Harbor 中评估 MedAgentBench；配置包括被测 Agent / model、reflection model、worker 数与 iteration budget。README 给出的示例是 32 题 validation 集上 Codex / GPT-5-nano，3 轮约从 28% 到 50%。这是 recipe 报告的示例收益，未在本文复现，也不是 HarborIndex 或 TB 的榜单结果。<sup><a href="#cite-35">[35]</a></sup></p>
 <p>可复用的机制是“候选 harness → task trials → reward 与失败轨迹 → reflection → 下一候选”。最终判断应放到独立 held-out tasks；在优化集上不断调 prompt 产生的增长不能单独支持泛化结论。</p>
 </article>
 </section>
 <section id="practice"><p class="eyebrow">12 · 实验报告规范</p><h2>实验与结果报告</h2>
-<section id="citation-sources-32" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>。</p></section>
+<section id="citation-sources-32" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2107.03374" title="Evaluating Large Language Models Trained on Code · Chen, Mark, Tworek, Jerry, Jun, Heewoo 等 · 2021/07/07 · 2107.03374">HumanEval</a>。</p></section>
 
 <ol>
 <li><strong>固定快照。</strong>记录 Harbor tag、task / dataset 版本、registry revision、image digest、Agent / model / effort。<code>@latest</code> 适合探索，报告应保留实际解析结果。</li>

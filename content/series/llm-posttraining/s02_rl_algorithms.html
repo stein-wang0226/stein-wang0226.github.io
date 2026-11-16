@@ -79,7 +79,7 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 </ol><p class="mechanism-return">两条更新：actor 优化 clipped surrogate；critic 拟合回报。reference KL 是独立设计项。</p></figure>
 <h2>PPO 与 GAE：学习一个状态价值来降低方差</h2>
 <!-- READING:RL-DIAGRAM:3 -->
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>。</p></section>
 
 <p>PPO 用采样策略 <code>πold</code> 的 rollout 更新 <code>πθ</code>，critic 估计未来回报。GAE 将不同长度的 TD residual 混合，在价值误差与采样方差之间取舍。<a href="index.html#ref-1">[1]</a> <a href="index.html#ref-2">[2]</a></p>
 <p>MC回报完整但方差较大；一步TD用下一状态value代替真实后续，方差较低但受value误差影响。令 \(d_t=1\) 表示真实terminal，TD残差与GAE递推为：</p>
@@ -165,7 +165,7 @@ A\max(\rho,1-\epsilon_{\rm low}),&A&lt;0.
 <li><b>同一 prompt，G=4</b><small>采样四条回答；G=4 仅为教学例子</small></li><li><b>verifier → [1,0,0,0]</b><small>测试通过为 1，真实失败为 0</small></li><li><b>中心化 / std → A</b><small>[√3, −1/√3, −1/√3, −1/√3]</small></li><li><b>ratio、mask、聚合</b><small>提升胜者动作概率；降低失败候选概率</small></li>
 </ol><p class="mechanism-return">分支：若 reward 全同，组内任务优势为 0；可调整难度或补采。KL 等辅助项仍可能更新。</p></figure>
 <h2>RLOO 与 GRPO：用同题候选代替 learned baseline</h2>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
 <p>对同一prompt独立采样 \(G&gt;1\) 个候选，得到 \(R_1,\ldots,R_G\)。其他候选可估计同题的难度baseline，因此不一定要训练critic。原始组优势为：</p>
 <p>\(i,j=1,\ldots,G\) 遍历该题候选，\(R_i\) 是终评回报，\(\bar R,\sigma_R\) 是组均值和按分母 \(G\) 的总体标准差。\(A_i^{\rm RLOO},A_i^{\rm GRPO}\) 是两种候选优势，分母 \(\epsilon&gt;0\) 是与回报同单位的稳定常数，区别于 PPO clip 幅度；无稳定项的教学值只用于非零标准差组。</p>
@@ -224,7 +224,7 @@ P(\text{组内有成败差异})=1-p^G-(1-p)^G.
 <li><b>候选 i 的有效 token</b><small>长度 Tᵢ；逐 token 得到 ℓᵢₜ</small></li><li><b>序列平均</b><small>先除各自 Tᵢ，再对候选取平均</small></li><li><b>Token 平均</b><small>所有 ℓ 求和，除有效 token 总数</small></li><li><b>固定分母</b><small>所有 ℓ 求和，除 G × Tfixed</small></li>
 </ol><p class="mechanism-note">后三个节点是并列选择，不是连续三次归一化；比较时固定优势、ratio 与 mask。</p></figure>
 <h2>DAPO、Dr. GRPO：归一化与数据准入也是算法的一部分</h2>
-<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>。</p></section>
+<section id="citation-sources-5" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://huggingface.co/docs/trl/index" title="TRL · 官方文档 / 原始出版页">TRL</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>。</p></section>
 
 <table>
 <thead><tr><th>设计</th><th>为什么改</th><th>会带来什么新边界</th></tr></thead>
@@ -249,7 +249,7 @@ L_{\rm fixed}=\frac{\sum_i\sum_t\ell_{it}}{G T_{\rm fixed}}.
 </section>
 <section id="ratio-methods">
 <h2>GSPO、CISPO、Soft SAPO：控制更新的对象不同</h2>
-<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>；<a href="https://arxiv.org/abs/2506.13585v1" title="MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention · 2025/06/16 · 2506.13585v1">CISPO / MiniMax-M1</a>。</p></section>
+<section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>；<a href="https://arxiv.org/abs/2506.13585v1" title="MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention · 2025/06/16 · 2506.13585v1">CISPO / MiniMax-M1</a>。</p></section>
 
 <p>本节仍用 \(i\) 索引候选、\(t\) 索引有效策略 token，\(a_{it},h_{it}\) 是目标动作与其历史，\(A_i\) 是固定候选优势。GSPO 的 \(s_i\) 是 token log-ratio 平均后指数化的无单位几何比率，\(\bar s_i\) 是裁剪值，\(J_{\rm GSPO}\) 是候选平均代理目标。CISPO 中 \(\rho_{it}\) 是 token 概率比，\(w_{it}\) 是裁剪后停止梯度的权重，\(A_{it}\) 是固定 token 优势；\(\ell_{it}\) 在 CISPO <strong>重新表示 log-prob</strong>，不同于上节逐 token loss。mean 沿有效候选/token 聚合，具体权重与 clip 边界由原配方决定；sg 保留数值并阻断梯度。</p>
 <div class="reading-math" role="math" aria-label="GSPO序列ratio">\[
@@ -281,7 +281,7 @@ J=\operatorname{mean}[f(\rho)A],\quad
 </section>
 <section id="single-rollout">
 <h2>单轨迹长程训练：另外一种 SAPO，以及 SAO</h2>
-<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>。</p></section>
+<section id="citation-sources-7" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>。</p></section>
 
 <table>
 <thead><tr><th>路线</th><th>baseline / 信用</th><th>主要动机与限制</th></tr></thead>

@@ -57,7 +57,7 @@
 </section>
 <section id="skills">
 <h2>Skills：把流程文件变成可测的干预</h2>
-<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2602.12670v1" title="SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks · Li, Xiangyi, Chen, Wenbo, Liu, Yimin 等 · 2026/02/13 · 2602.12670v1">SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks</a>。</p></section>
+<section id="citation-sources-4" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2602.12670v1" title="SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks · Li, Xiangyi, Chen, Wenbo, Liu, Yimin 等 · 2026/02/13 · 2602.12670v1">SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks</a>。</p></section>
 
 <p>SkillsBench初版 <code>2602.12670v1</code>是86 tasks / 11 domains / 7 configurations；1.1官方发布是87 / 8 / 18 paired paper configurations。不要将初版任务数、新版分组和动态leaderboard拼成同一结果。<a href="index.html#ref-29">[29]</a> <a href="index.html#ref-41">[41]</a></p>
 <ul><li><strong>干预来源：</strong>任务分解、模板、工具约束与检查流程都可能改变行为。</li><li><strong>额外成本：</strong>读取token、错误指令和版本依赖必须计入。</li><li><strong>比较条件：</strong>no-skill/curated/self-generated做配对比较，工具与预算相同；curated有效不能推得自生成必然有效。</li></ul>
@@ -73,7 +73,7 @@
 </section>
 <section id="adaptation">
 <h2>Memory、harness、LoRA：持续学习应分层验收</h2>
-<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
+<section id="citation-sources-5" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
 
 <p>Macaron-V1讨论冻结base、per-turn LoRA routing、模型–harness版本链以及memory / context / parameters的不同更新层。它报告的自改进设置提供方法路线，但长期compounding continual learning与collective intelligence仍是open question，不能写成已经证实的长期复利。<a href="index.html#ref-28">[28]</a></p>
 <table>
@@ -90,7 +90,7 @@
 </section>
 <section id="multiagent">
 <h2>并行Agent与多教师：一个减少关键路径，一个整合能力</h2>
-<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
+<section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
 
 <p>Kimi K2.5的PARL / Agent Swarm研究orchestrator与subagent分解。比较并行策略要同时报告critical-path wall time与总tokens / GPU / 工具成本，不能只数subagent数量；并行不消除依赖、重复工作与协调失败。<a href="index.html#ref-30">[30]</a></p>
 <p><strong>训练整合与运行协作是两个轴：</strong>MOPD更新统一学生参数；并行子Agent增加运行时参与者。教师、logits范围和mask不同的结果不能合并为通用蒸馏结论。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-33">[33]</a> <a href="index.html#ref-1">[1]</a></p>

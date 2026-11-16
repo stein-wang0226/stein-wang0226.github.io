@@ -10,7 +10,7 @@
 <p><strong>两个状态一起更新：</strong>模型的已知信息、工具环境的真实状态。文字计划没有执行证据；分支和恢复必须保留两者。</p>
 </section>
 <section id="strategies"><h2>ReAct、计划执行与反思的分工</h2>
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.03629" title="ReAct: Synergizing Reasoning and Acting in Language Models · Yao, Shunyu, Zhao, Jeffrey, Yu, Dian 等 · 2022/10/06 · 2210.03629">ReAct</a>；<a href="https://arxiv.org/abs/2303.11366" title="Reflexion: Language Agents with Verbal Reinforcement Learning · Shinn, Noah, Cassano, Federico, Berman, Edward 等 · 2023/03/20 · 2303.11366">Reflexion</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.03629" title="ReAct: Synergizing Reasoning and Acting in Language Models · Yao, Shunyu, Zhao, Jeffrey, Yu, Dian 等 · 2022/10/06 · 2210.03629">ReAct</a>；<a href="https://arxiv.org/abs/2303.11366" title="Reflexion: Language Agents with Verbal Reinforcement Learning · Shinn, Noah, Cassano, Federico, Berman, Edward 等 · 2023/03/20 · 2303.11366">Reflexion</a>。</p></section>
 
 <table><thead><tr><th>策略</th><th>控制方式</th><th>适用与失败</th></tr></thead><tbody>
 <tr><td>ReAct</td><td>reasoning/action/observation交替，根据反馈选择行动</td><td>适合未知环境；可能重复工具、局部贪心、被观察中的注入带偏</td></tr>
@@ -22,7 +22,7 @@
 <figure class="mechanism-map"><figcaption>分析计划的依赖与回退</figcaption><ol class="mechanism-chain"><li><b>核对count与配对</b><small>失败 → 补来源审计，暂停依赖计算</small></li><li><b>固定design / contrast</b><small>失败 → 修设计，不能靠更多采样修复不可识别性</small></li><li><b>计算与输出</b><small>工具失败 → 从检查点修环境或重试</small></li><li><b>独立验收</b><small>产物不合格 → 定位列、方向或数值问题</small></li></ol></figure>
 </section>
 <section id="search"><h2>BoN、beam与MCTS：候选、评分与展开对象不同</h2>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.10601" title="Tree of Thoughts: Deliberate Problem Solving with Large Language Models · Yao, Shunyu, Yu, Dian, Zhao, Jeffrey 等 · 2023/05/17 · 2305.10601">Tree of Thoughts</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>；<a href="https://www.cs.utexas.edu/~shivaram/readings/b2hd-KocsisSzepesvari2006.html" title="MCTS / UCT · 官方文档 / 原始出版页">MCTS / UCT</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.10601" title="Tree of Thoughts: Deliberate Problem Solving with Large Language Models · Yao, Shunyu, Yu, Dian, Zhao, Jeffrey 等 · 2023/05/17 · 2305.10601">Tree of Thoughts</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>；<a href="https://www.cs.utexas.edu/~shivaram/readings/b2hd-KocsisSzepesvari2006.html" title="MCTS / UCT · 官方文档 / 原始出版页">MCTS / UCT</a>。</p></section>
 
 <h3>独立采样的收益：先推存在，再看选择</h3>
 <p>教学假设每条候选独立、单条成功概率均为\(p\)。全部失败需N次失败同时发生，因此：</p>
@@ -51,7 +51,7 @@ Q(s,a)+c\sqrt{\frac{\log N(s)}{N(s,a)}}\right].
 <p>有限采样的组合估计由任务评测主题逐步推导；本节只记住它估计“候选中至少一个成功”。交付一条时另报selector成功与开销，记录相关采样、工具隔离和缓存复用条件。</p></details>
 </section>
 <section id="verification"><h2>过程验证、结果验证与自评分</h2>
-<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+<section id="citation-sources-4" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
 
 <ul><li><strong>结果verifier：</strong>检查最终artifact和合同，是交付判断。</li><li><strong>过程verifier：</strong>检查局部合法性，用于剪枝和诊断；局部通过不保证整体通过。</li><li><strong>reward model / 自评分：</strong>提供近似选择信号，需校准且计成本；自信程度不能替代统计正确性。</li></ul>
 <p>测试时计算研究<a href="#ref-ttc">[4]</a>发现最合适的搜索/修订策略依赖问题难度；其数学任务中的compute-optimal收益不能直接外推到工具Agent。对科学任务，困难可能来自缺失数据、工具环境或不可识别design，而不是需要更长推理。</p>
@@ -83,7 +83,7 @@ Q(s,a)+c\sqrt{\frac{\log N(s)}{N(s,a)}}\right].
 <p><strong>训练G与部署N分开：</strong>组采样用于产生优势，BoN用于选择交付候选。CPU工具尾延迟、policy lag与服务排队各有不同瓶颈。</p>
 </section>
 <section id="evaluation"><h2>同预算研究方案</h2>
-<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.03629" title="ReAct: Synergizing Reasoning and Acting in Language Models · Yao, Shunyu, Zhao, Jeffrey, Yu, Dian 等 · 2022/10/06 · 2210.03629">ReAct</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+<section id="citation-sources-7" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.03629" title="ReAct: Synergizing Reasoning and Acting in Language Models · Yao, Shunyu, Zhao, Jeffrey, Yu, Dian 等 · 2022/10/06 · 2210.03629">ReAct</a>；<a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
 
 <p>本文建议冻结基础模型、合同、研究切分、工具环境和终评权限，比较单轨迹ReAct、带检查点的计划执行、BoN+独立selector、有限过程搜索。同时给相同总token/工具调用上限和相同墙钟上限两组报告，避免把并行与资源增加混为算法收益。</p>
 <p>结果应包含任务/研究组成功率、所有尝试成本、验证调用、重复操作、停止原因、环境失败、P95时长与selector误选。分支快照创建和清理也计成本。先分错误来源，再讨论“增加推理是否有用”；不在本轮实际运行。</p>

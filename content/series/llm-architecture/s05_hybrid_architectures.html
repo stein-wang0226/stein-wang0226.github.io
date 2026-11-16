@@ -67,7 +67,7 @@ h_t=\bar A_t h_{t-1}+\bar B_t x_t,\qquad y_t=C_t h_t+Dx_t.
 <p>Mamba 不只是普通 RNN 换名字：选择性参数和硬件算法让它适应语言等离散输入；Mamba-2 又以 SSD 提供结构化并行。原报告中的 kernel/层速度不是任意混合 LLM 的端到端收益。<a href="index.html#ref-7">[7] Mamba、SSD</a></p>
 <p>递推式有时间依赖，但训练并非只能 Python for-loop：chunkwise 算法以 chunk 的入状态、局部块计算和出状态组织 tensor-core 运算。GDN 还利用 WY 表示处理 delta 的依赖。更快 kernel 要连同 chunk 大小、状态读写、backward 和精度测量。</p></section>
 <section id="hybrid"><h2>混合层计划决定信息访问与状态预算</h2>
-<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2005.11401" title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks · Lewis, Patrick, Perez, Ethan, Piktus, Aleksandra 等 · 2020/05/22 · 2005.11401">RAG</a>。</p></section>
+<section id="citation-sources-5" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2005.11401" title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks · Lewis, Patrick, Perez, Ethan, Piktus, Aleksandra 等 · 2020/05/22 · 2005.11401">RAG</a>。</p></section>
 
 <table><thead><tr><th>信息对象</th><th>机制例子</th><th>访问/更新特性</th><th>主要失败</th></tr></thead><tbody>
 <tr><td>序列关联摘要</td><td>GDN/KDA、Mamba state</td><td>逐步递推、固定形状</td><td>关联冲突、覆盖、遗忘</td></tr>

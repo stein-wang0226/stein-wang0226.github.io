@@ -11,12 +11,12 @@
 <li><b>输出 y → 后续层</b><small>Pre 的局部 Jacobian 有显式 I 项；Post 的所有分支都经过相加后的 Norm Jacobian。</small></li>
 </ol><p class="mechanism-note">图只展开一个残差子层。两支必须同形才能相加；Norm 的位置影响梯度路径，但不单独保证完整网络稳定。</p></figure>
 <section id="purpose"><h2>稳定性来自一条完整数值路径</h2>
-<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
+<section id="citation-sources-1" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
 
 <p class="lead">深层网络既要传递表示，也要把梯度送回前层。残差、Norm、初始化和优化器共同控制尺度；任一机制的局部性质都不能独立保证大模型训练稳定。前沿残差改变信息读取方式，需要连同激活保存、通信和数值误差评估。</p>
 <p>先修：<a href="s01_transformer_foundations.html#block">decoder block</a>与链式法则。基础结论来自归一化论文和固定实现，前沿机制的具体报告见<a href="../llm-research-map-2026/s07_architecture_training.html#residual">本主题的前沿残差机制</a>。</p></section>
 <section id="norm-position"><h2>Pre-Norm 与 Post-Norm 的梯度路径</h2>
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1607.06450" title="Layer Normalization · Ba, Jimmy Lei, Kiros, Jamie Ryan, Hinton, Geoffrey E. · 2016/07/21 · 1607.06450">LayerNorm</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1607.06450" title="Layer Normalization · Ba, Jimmy Lei, Kiros, Jamie Ryan, Hinton, Geoffrey E. · 2016/07/21 · 1607.06450">LayerNorm</a>。</p></section>
 
 <p>固定单 token，\(x,y_{\rm pre},y_{\rm post}\in\mathbb R^d\) 是输入和两种替代布局的输出列向量，\(d\) 为隐藏维度；\(N,F\) 都保持此维度。\(J_F,J_N,J_{\rm pre},J_{\rm post}\in\mathbb R^{d\times d}\) 分别为函数输出对输入的局部 Jacobian，括号注明求值的输入点，\(I\) 为 \(d\times d\) 单位矩阵。按链式法则，Pre-Norm先归一再进入F，而直接相加的x导数为单位矩阵；Post-Norm对相加后的所有分支再作用同一个Norm Jacobian。</p>
 <div class="reading-math" role="math">\[
@@ -42,7 +42,7 @@ J_{\rm post}&=J_N(x+F(x))(I+J_F(x)).
 </div><figcaption>稳定性检查的依赖链。图不表示这些因素可以分别带来确定比例的收益。</figcaption></figure>
 <p>现代模型可能采用 residual scaling、额外 Norm、深度相关初始化、多路残差与融合 kernel。阅读 config 时需找出真实的运算顺序，不能只按参数名称判断。</p></section>
 <section id="rmsnorm"><h2>RMSNorm 保留均值，主要调整幅度</h2>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
 <p>\(i=1,\ldots,d\) 遍历单个 token 的隐藏坐标，\(x_i\) 是其分量；\(\mu,\sigma^2\) 是沿这 \(d\) 个坐标求出的均值和总体方差，分母为 \(d\)，不是 batch 数或样本方差的 \(d-1\)。\(g,b\in\mathbb R^d\) 是逐维缩放/偏置，\(\mathbf1\) 是全1向量，\(\varepsilon&gt;0\) 与平方统计量同尺度。LN 表示 LayerNorm；RMSNorm 不减均值，只按坐标平方均值缩放。</p>
 <div class="reading-math" role="math">\[
 \mu=\frac1d\sum_i x_i,\quad \sigma^2=\frac1d\sum_i(x_i-\mu)^2,\qquad

@@ -6,13 +6,13 @@
 <!-- READING:FRAGMENT:START -->
 <figure class="mechanism-map"><figcaption>服务调度：Prefill 与 Decode 的状态交接</figcaption><ol class="mechanism-chain"><li><b>请求进入队列</b><small>长度、优先级与剩余 KV 容量</small></li><li><b>Prefill 计算前缀</b><small>处理输入；分配或复用 KV 页</small></li><li><b>Decode 生成 token</b><small>读取已有 KV；追加当前 K/V</small></li><li><b>结束与资源回收</b><small>释放页面；更新调度和缓存</small></li></ol><p class="mechanism-return">↶ 未完成请求进入下一 Decode 批次；TTFT 与 TPOT 分别衡量两个阶段。</p></figure>
 <section id="overview"><p class="eyebrow">Runtime &amp; scheduling · 2026-11-14</p><h2>每次调度分配的是token计算与状态空间</h2>
-<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>。</p></section>
+<section id="citation-sources-1" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>。</p></section>
 
 <p class="lead">请求输入长度不同、输出何时结束未知。服务系统要在有限token计算预算与缓存空间内，让已有请求继续，并让新请求进入。PagedAttention管理状态位置，continuous batching管理参与计算的请求，chunked prefill管理长输入的计算粒度。</p>
 <p><strong>每轮同时受计算和状态预算约束。</strong>有空闲GPU计算槽，也可能因KV不足而不能接收新请求。</p>
 </section>
 <section id="phases"><h2 id="reading-section-2">Prefill 与 decode 的计算负载不同</h2>
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2005.11401" title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks · Lewis, Patrick, Perez, Ethan, Piktus, Aleksandra 等 · 2020/05/22 · 2005.11401">RAG</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2005.11401" title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks · Lewis, Patrick, Perez, Ethan, Piktus, Aleksandra 等 · 2020/05/22 · 2005.11401">RAG</a>。</p></section>
 
 <p>prefill处理新输入的多个位置，建立各层历史状态；decode使用已有状态生成后续位置。prefill的矩阵批量通常更大，decode低batch常受权重/KV读取和层间launch影响；这只是常见瓶颈，不是“prefill永远compute-bound、decode永远memory-bound”的定律。长度、并发、MoE、kernel、精度和网络会改变瓶颈。</p>
 <p>TTFT包含排队、输入预处理、prefix查找、prefill及首token产生；ITL描述输出token之间的间隔。一个长prefill占用设备，会干扰已有decode的尾延迟；过度偏向decode又可能让新请求等待。调度需定义SLO和公平性。</p>
@@ -29,7 +29,7 @@
 <p>静态批次可能等B结束才接C；连续批处理每轮重组。<strong>混合prefill与decode是调度选择，表格并不保证它们一轮耗时相等。</strong></p>
 </section>
 <section id="paging"><h2>PagedAttention解决物理存储，数学仍读取逻辑历史</h2>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2205.14135" title="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness · Dao, Tri, Fu, Daniel Y., Ermon, Stefano 等 · 2022/05/27 · 2205.14135">FlashAttention</a>；<a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2205.14135" title="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness · Dao, Tri, Fu, Daniel Y., Ermon, Stefano 等 · 2022/05/27 · 2205.14135">FlashAttention</a>；<a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>。</p></section>
 
 <p>连续为最大长度预留KV会浪费空间；逐请求扩容也容易产生碎片。PagedAttention把逻辑历史分block，由block table指向非连续物理页，kernel按映射访问。它降低外部碎片和重复分配，不把完整attention改成稀疏attention。最后一页仍可能有内部浪费，元数据、预留与临时区也存在。</p>
 <p class="math-notation">\(T\) 是一个请求需保存的 token 数，\(B\) 是每页可容纳的 token 槽数，\(n_{\rm block}\) 是页数，\(w\) 是末页空槽数；\(\lceil\cdot\rceil\) 表示向上取整。这里 \(B\) 是 page size，区别于架构章节中的 batch size。</p>
@@ -51,7 +51,7 @@ w=B\left\lceil\frac TB\right\rceil-T,\qquad 0\le w\lt B.
 </ol><p class="mechanism-note">箭头是逻辑页到物理页的地址映射，不是先执行 A 再执行 B；页 ID 为教学编号，不表示连续地址。状态内容仍按逻辑顺序读取。共享页有引用保护，写共享尾页需 copy-on-write 或等价机制；请求退出仅解除引用，可复用 prefix 是否留下由缓存策略决定。</p></figure>
 </section>
 <section id="prefix"><h2>Prefix复用与RadixAttention</h2>
-<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
+<section id="citation-sources-4" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>
 
 <ul><li><strong>命中条件：</strong>相同token前缀及权重、adapter、位置/模板、多模态内容与格式；语义相似不足以复用。</li><li><strong>生命周期：</strong>请求结束可保留prefix；正在使用的节点受引用保护，内存压力下回收未锁节点。</li><li><strong>隔离：</strong>租户、权限和版本入命名空间；命中时延也可能泄露信息，是否共享依威胁模型确定。</li></ul>
 <p>SGLang的RadixAttention以树组织不同请求的共享前缀，按匹配部分减少重算。固定v0.5.23实现中的<code>match_prefix</code>、<code>evict</code>与<code>inc_lock_ref/dec_lock_ref</code>分别负责匹配、回收与正在使用的节点保护。<a href="#ref-sglang">[2]</a> <a href="#ref-code">[3]</a></p>
@@ -67,7 +67,7 @@ evict_unlocked_nodes_under_pressure()
 <p><strong>换权重需重新检查缓存。</strong>旧策略KV通常不能直接作为新策略状态；长期memory和KV数值缓存是不同对象。</p>
 </section>
 <section id="implementation"><h2>vLLM V1：统一按进度和token预算调度</h2>
-<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></section>
+<section id="citation-sources-5" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>；<a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></section>
 
 <p>vLLM v0.32.0固定源码在scheduler中用<code>num_computed_tokens</code>和目标token数跟踪请求进度，每轮有<code>token_budget</code>；代码注释明确不依赖一个单独的prefill/decode阶段标签。缓存空间不足时有抢占和归还本轮预算的逻辑，不能把论文示意直接当当前状态机。</p>
 <table><thead><tr><th>固定入口</th><th>本文核对</th><th>未验证的组合</th></tr></thead><tbody>

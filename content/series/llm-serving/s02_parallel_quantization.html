@@ -25,7 +25,7 @@
 </ol><p class="mechanism-note">箭头从共同问题分到布局选择，不表示 TP → DP → EP 执行。PP 则按层/stage 切分，是另一维度；组重叠、KV 复制、通信算子与总卡数都必须核对具体框架，本图不是启动配置。</p></figure>
 </section>
 <section id="disaggregation"><h2>Prefill/decode分离：干扰减少，状态传输增加</h2>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2401.09670" title="DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving · Zhong, Yinmin, Liu, Shengyu, Chen, Junda 等 · 2024/01/18 · 2401.09670">DistServe</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2401.09670" title="DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving · Zhong, Yinmin, Liu, Shengyu, Chen, Junda 等 · 2024/01/18 · 2401.09670">DistServe</a>。</p></section>
 
 <p>DistServe<a href="#ref-distserve">[1]</a>将prefill和decode分配到不同GPU，为TTFT与TPOT分别选资源和并行。它改善goodput的报告依赖网络、放置、模型与SLO；小负载或长KV传输时，分離可能不划算。</p>
 <p class="math-notation">\(t_{\rm transfer}\) 是状态传输用时（秒），\(M_{\rm state}\) 是本次实际发送的状态字节数，\(B_{\rm effective}&gt;0\) 是有效传输带宽（bytes/s）；这里 \(B\) 不是 batch 大小，\(\ge\) 表示仅给出 payload 对应的时间下界。</p>
@@ -43,7 +43,7 @@ t_{\rm transfer}\ge\frac{M_{\rm state}}{B_{\rm effective}}.
 <p>本文工业规划先比较共置TP服务，再将PD或EP列为独立消融，避免一次改变所有变量。工具CPU、retrieval与verifier不属于PD两阶段，依然计入Agent墙钟和成本。</p>
 </section>
 <section id="precision"><h2>量化必须写对象、格式和计算dtype</h2>
-<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.17323" title="GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers · Frantar, Elias, Ashkboos, Saleh, Hoefler, Torsten 等 · 2022/10/31 · 2210.17323">GPTQ</a>；<a href="https://arxiv.org/abs/2306.00978" title="AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration · Lin, Ji, Tang, Jiaming, Tang, Haotian 等 · 2023/06/01 · 2306.00978">AWQ</a>；<a href="https://arxiv.org/abs/2305.14314" title="QLoRA: Efficient Finetuning of Quantized LLMs · Dettmers, Tim, Pagnoni, Artidoro, Holtzman, Ari 等 · 2023/05/23 · 2305.14314">QLoRA</a>。</p></section>
+<section id="citation-sources-4" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.17323" title="GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers · Frantar, Elias, Ashkboos, Saleh, Hoefler, Torsten 等 · 2022/10/31 · 2210.17323">GPTQ</a>；<a href="https://arxiv.org/abs/2306.00978" title="AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration · Lin, Ji, Tang, Jiaming, Tang, Haotian 等 · 2023/06/01 · 2306.00978">AWQ</a>；<a href="https://arxiv.org/abs/2305.14314" title="QLoRA: Efficient Finetuning of Quantized LLMs · Dettmers, Tim, Pagnoni, Artidoro, Holtzman, Ari 等 · 2023/05/23 · 2305.14314">QLoRA</a>。</p></section>
 <p class="math-notation">\(x\) 是待编码实数，\(q\) 是量化整数，\(\hat x\) 是恢复值；\(s&gt;0\) 是每整数步对应的实数 scale，\(z\) 是整数 zero-point，\(q_{\min},q_{\max}\) 是整数表示范围的端点。round 按最近整数舍入，clip 限制到该范围；下一节的 \(q(x)\) 改指 drafter 概率，与量化整数不同。</p>
 <div class="reading-math">\[
 q=\operatorname{clip}\left(\operatorname{round}(x/s)+z,q_{\min},q_{\max}\right),
@@ -89,7 +89,7 @@ y&amp;=a^\top w\\
 <p>低精度不仅验perplexity，还要验工具JSON、长上下文引用、科学design和独立任务成功。量化后目标模型分布改变，即使投机验证对该量化目标精确，也不保证与BF16目标相同。前沿FP4训练/推理对象分拆见<a href="../llm-research-map-2026/s07_architecture_training.html#precision">架构主题的低精度机制</a>。</p>
 </section>
 <section id="speculation"><h2>投机解码的精确性取决于验证协议</h2>
-<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2302.01318" title="Accelerating Large Language Model Decoding with Speculative Sampling · Chen, Charlie, Borgeaud, Sebastian, Irving, Geoffrey 等 · 2023/02/02 · 2302.01318">Speculative Sampling</a>；<a href="https://arxiv.org/abs/2211.17192" title="Fast Inference from Transformers via Speculative Decoding · Leviathan, Yaniv, Kalman, Matan, Matias, Yossi · 2022/11/30 · 2211.17192">Speculative Decoding</a>。</p></section>
+<section id="citation-sources-5" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2302.01318" title="Accelerating Large Language Model Decoding with Speculative Sampling · Chen, Charlie, Borgeaud, Sebastian, Irving, Geoffrey 等 · 2023/02/02 · 2302.01318">Speculative Sampling</a>；<a href="https://arxiv.org/abs/2211.17192" title="Fast Inference from Transformers via Speculative Decoding · Leviathan, Yaniv, Kalman, Matan, Matias, Yossi · 2022/11/30 · 2211.17192">Speculative Decoding</a>。</p></section>
 
 <p>draft提出多个候选，target并行验证，使目标模型一次前向处理更多位置。drafter可以是小AR、MTP头、树候选或diffusion；目标仍可能是AR。收益取决于接受长度、draft耗时、验证和状态恢复，而不是只看drafter单步速度。</p>
 <h3>接受质量加拒绝残差，为什么还原target</h3>

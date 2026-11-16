@@ -36,7 +36,7 @@
 </section>
 <section id="signal-types">
 <h2>五类反馈：名称相近，预测对象不同</h2>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
 
 <table>
 <thead><tr><th>信号</th><th>它回答什么</th><th>不应自动推断什么</th></tr></thead>
@@ -52,7 +52,7 @@
 </section>
 <section id="prm">
 <h2>过程监督：从 PRM800k 到标注、选择与训练的分歧</h2>
-<section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
+<section id="citation-sources-4" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2305.20050" title="Let&#x27;s Verify Step by Step · Lightman, Hunter, Kosaraju, Vineet, Burda, Yura 等 · 2023/05/31 · 2305.20050">Process supervision</a>。</p></section>
 
 <p>Let’s Verify Step by Step 通过步骤标注研究过程监督，PRM800k 是经典入口。Qwen 的 Lessons 指出 MC continuation 标注、LLM judge 和人类过程正确性之间存在差异；best-of-N 排序表现也不等价于在线训练中的抗投机能力。<a href="index.html#ref-37">[37]</a> <a href="index.html#ref-38">[38]</a></p>
 <table>
@@ -79,7 +79,7 @@ w_i=\frac{\exp(-r_i/T)}{\sum_j\exp(-r_j/T)},\qquad r_i^*=w_i r_i.
 <p><strong>投机算例：</strong>步骤分数[0.9,0.9,0.1]求和为1.9；再重复一次0.9，总和增至2.8而错误未修复。上述转换示意在 \(T\to0\) 时聚焦最低分，\(\gamma=1\) 时回报趋于0.1。实际后缀与聚合规则以PURE原文为准。</p>
 <p>这适合研究逻辑推理的弱链路，但可恢复 terminal Agent 中，前面一个错误动作以后可能被修复。若直接把最差历史步骤当整条任务上限，会惩罚有价值的恢复。迁移需验证是否符合任务的不可逆性假设。</p>
 <h3>Cliff：识别首个 pitfall 边界</h3>
-<section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
+<section id="citation-sources-7" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
 <p>Cliff 使用验证的教师解法辅助判断第一次出错位置，边界前后施加不同信用；坏教师时回退 GRPO，overlong 也有单独处理。附录含误判案例，说明首错定位本身不是可靠真值。<a href="index.html#ref-40">[40]</a></p>
 <p>科学设计若错用 contrast 且未修复，后续步骤会沿错误方向；代码先跑出错误再修好，则不满足“首错后全废”。应按任务分别测试边界质量、恢复率和反事实影响，避免把数学推导的假设自动应用到交互任务。</p>
@@ -89,7 +89,7 @@ w_i=\frac{\exp(-r_i/T)}{\sum_j\exp(-r_j/T)},\qquad r_i^*=w_i r_i.
 <li><b>读文件 → 错误补丁</b><small>动作产生局部状态变化</small></li><li><b>测试失败 → 观察</b><small>反馈提供错误位置；观察不作动作更新</small></li><li><b>修复 → 测试成功</b><small>终局 R=1，不能据此断定每步都好</small></li><li><b>R → 步骤 / token A</b><small>value、过程监督、状态分组各需额外条件</small></li>
 </ol><p class="mechanism-note">仅广播终局 reward 会同时强化绕路；细化优势要解释监督来源和对齐规则。</p></figure>
 <h2 id="reading-section-8">多步信用分配：重复状态、子任务与知识条件基线</h2>
-<section id="citation-sources-8" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>。</p></section>
+<section id="citation-sources-8" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>；<a href="https://arxiv.org/abs/2505.10978v3" title="Group-in-Group Policy Optimization for LLM Agent Training · Feng, Lang, Xue, Zhenghai, Liu, Tingcong 等 · 2025/05/16 · 2505.10978v3">GiGPO</a>。</p></section>
 
 <table>
 <thead><tr><th>路线</th><th>信用对象</th><th>何时有帮助</th><th>限制</th></tr></thead>

@@ -13,7 +13,7 @@
 <section id="overview">
 <p class="eyebrow">Training methods &amp; systems · 2026-11-14</p>
 <h2>先选择更新对象，再分配集群</h2>
-<section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
+<section id="citation-sources-1" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>。</p></section>
 
 <p class="lead">Pretraining、CPT、SFT、RL 描述训练链路；全参数、LoRA、优化器和并行策略决定同一阶段怎样更新。一个工业后训练方案要同时回答：哪些参数可训练、哪些状态常驻、哪些数据被采样、哪些环境实际执行，以及谁负责验证。</p>
 <p>先修：<a href="../llm-architecture/s03_ffn_moe_routing.html">FFN / MoE</a>、<a href="../llm-architecture/s04_residual_norm_stability.html">残差与稳定性</a>及<a href="s04_rl_evaluation.html">RL 循环</a>。本章建立方法和资源账本；<a href="#muon-industrial">Muon工业配方</a>在下文继续，<a href="../llm-research-map-2026/s07_architecture_training.html#precision">低精度对象与型号边界</a>见架构主题。</p>
@@ -26,7 +26,7 @@
 </section>
 <section id="peft">
 <h2>LoRA 与 QLoRA：冻结底座，仍需要反向传播</h2>
-<section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2002.05202" title="GLU Variants Improve Transformer · Shazeer, Noam · 2020/02/12 · 2002.05202">SwiGLU</a>；<a href="https://arxiv.org/abs/2305.13245" title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints · Ainslie, Joshua, Lee-Thorp, James, de Jong, Michiel 等 · 2023/05/22 · 2305.13245">GQA</a>；<a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>；<a href="https://arxiv.org/abs/2305.14314" title="QLoRA: Efficient Finetuning of Quantized LLMs · Dettmers, Tim, Pagnoni, Artidoro, Holtzman, Ari 等 · 2023/05/23 · 2305.14314">QLoRA</a>。</p></section>
+<section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2002.05202" title="GLU Variants Improve Transformer · Shazeer, Noam · 2020/02/12 · 2002.05202">SwiGLU</a>；<a href="https://arxiv.org/abs/2305.13245" title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints · Ainslie, Joshua, Lee-Thorp, James, de Jong, Michiel 等 · 2023/05/22 · 2305.13245">GQA</a>；<a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>；<a href="https://arxiv.org/abs/2305.14314" title="QLoRA: Efficient Finetuning of Quantized LLMs · Dettmers, Tim, Pagnoni, Artidoro, Holtzman, Ari 等 · 2023/05/23 · 2305.14314">QLoRA</a>。</p></section>
 
 <p>\(x,y\) 是宽 \(d_{\rm in},d_{\rm out}\) 的输入/输出列向量，\(W_0\) 是冻结底座权重；\(A,B\) 是可训练的低秩矩阵，\(r&gt;0\) 是增量秩，\(\alpha\) 是缩放超参数，\(\Delta W\) 是缩放后的权重增量。\(N_{\rm adapter},N_{\rm base}\) 是参数元素数；LoRA 的 \(A/B\) 不是 Attention 权重或 batch 数。下式逐项给出矩阵形状与同维输出相加：</p>
 <div class="reading-math">\[
@@ -69,7 +69,7 @@ result = result + lora_B(lora_A(dropout(x))) * scaling
 </section>
 <section id="optimizers">
 <h2>AdamW、Muon 与精度：更新规则不等于权重约束</h2>
-<section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>。</p></section>
+<section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>。</p></section>
 
 <p>\(W,W'\) 是更新前后参数矩阵，\(G\) 是同形梯度，\(M'\) 是更新后的动量，\(U\) 是近似 polar 更新方向；momentum、polar、scale 分别表示动量处理、奇异值尺度归一方向与按配方缩放。AdamW 的 \(\widehat m,\widehat v\) 是偏差修正的一阶/二阶原点矩，平方根和除法逐元素进行；\(\eta\) 是学习率，\(\lambda\) 是权重衰减。裁剪的 \(c&gt;0\) 是范数上限，\(\|G\|_2\) 指全部被裁剪梯度展平后的欧氏范数；两处分母的 \(\epsilon\) 分别与对应梯度尺度同单位，数值不能机械共用。撇号标记更新后，不是导数。</p>
 <div class="reading-math">\[
@@ -365,7 +365,7 @@ t_{\rm lower}=\max\left(\frac FP,\frac Q{B_{\rm HBM}},
 </section>
 <section id="parallel">
 <h2>并行维度先分清逻辑对象</h2>
-<section id="citation-sources-5" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
+<section id="citation-sources-5" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
 
 <div class="reading-table"><table><thead><tr><th>维度</th><th>主要切分</th><th>代价与约束</th></tr></thead><tbody>
 <tr><td>TP</td><td>矩阵 / head / FFN 通道</td><td>层内collective；head及矩阵可分性、KV复制</td></tr>
@@ -415,7 +415,7 @@ expert_DP = world_size // (ETP * EP * PP)
 <section id="cluster">
 <details><summary>按需查看：128/1024 H100 工业规模规划与静态账本（未运行）</summary>
 <h2>两套工业规模后训练规划</h2>
-<section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
+<section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.02054" title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models · Rajbhandari, Samyam, Rasley, Jeff, Ruwase, Olatunji 等 · 2019/10/04 · 1910.02054">ZeRO</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>；<a href="https://www.deepspeed.ai/docs/config-json/" title="DeepSpeed official docs · 官方文档 / 原始出版页">DeepSpeed official docs</a>。</p></section>
 
 <p>目标是讨论大模型系统约束，不为单个airway研究制造足量训练数据。Dense参考公开Qwen2.5-72B；MoE参考Qwen3-235B-A22B。它们是可固定规格的基线，前沿型号案例见架构主题。H100 80GB、8卡/节点和池比例由本文选择，配置尚未运行、端到端兼容尚未验证。<a href="#ref-models">[7]</a></p>
 <div class="reading-table"><table><thead><tr><th>规划</th><th>硬件与训练 actor</th><th>rollout 池</th><th>关键约束</th></tr></thead><tbody>
