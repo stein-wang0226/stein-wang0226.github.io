@@ -122,7 +122,7 @@
     },
     {
       "source": "content/posts/llm-frontier-2026/index.html",
-      "sha256": "6c42e82fff11f0b11b49522d93ee632af93c9589e56ab0d511af2e12b5b23b25",
+      "sha256": "9a3f02e99fc39c8d6a1a6b84fd6e646d8b46ff607b966358cd3ddbd450ecec2b",
       "visual_revision_reason": "2026-11-15: add source-to-mechanism-to-evidence reading diagram; preserve entries, dates and AUTO markers.",
       "reason": "逐页审阅：14节含模型、架构、优化器、Agent、RL、OPD、训练、评测、蛋白、证据与日志全部审阅。原理与算例：改动位置→比较条件；五个判断追问；polar有限近似、Clip-Higher与行为校正、教师接口边界。精简与证据：型号/许可证快照与原维护日志按需；收敛Muon/RL/OPD主讲，旧TB排名改历史；移除无共同条件榜单、领域CoT普遍结论，修正百万碱基单位。AUTO标记、原日期、last-updated与原稿逐字归档保持。 符号补充审阅：将三段美元价格改为明确货币单位，修复五个跨段误识别的数学输出；价格原数值及来源保留。 分类与课程复查：精简旧MiniMax混合性能概括并转主讲证据；跨主题可检索，动态追踪与基础教材分工保持。 讲解连贯性续轮审阅：修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。 对比度复核：只将浅色底上的青绿、绿、琥珀与红色文字及两处渐变底色整体加深一档，使小号标签、表头、日期与页脚达到4.5:1；正文、来源、数字、日期与自动标记不变。",
       "prior_reason": "Approved learning rework: review all frontier sections, retain date/AUTO semantics and byte-exact original, fold dated specifications/logs, consolidate duplicate optimizer/RL/OPD teaching, distinguish behavior correction and clipping, rewrite obsolete benchmark rankings as historical evidence, correct biological unit and unsupported universal claims, add five interview checks. Full current product/benchmark claims were not independently reverified."
@@ -148,7 +148,7 @@
     },
     {
       "source": "content/posts/transformer-decoder-flow/index.html",
-      "sha256": "785e99c25d4b2bafb10e847f4a357dec7dfcc8652ae4cff936b20bb5a6fd4b0e",
+      "sha256": "5b6d2794e15c8a771967247d6f9c1453a9dea400ba56f68f48c711c9b35b2762",
       "visual_revision_reason": "2026-11-15: add explicit training tensor flow and causal/shifted-label explanation; preserve layer formulas and PyTorch code.",
       "title_revision_reason": "2026-11-14 title audit: describe the actual forward-computation and tensor-dimension walkthrough in document title and h1; retain scientific text and interactive content.",
       "reason": "逐页审阅：公式/形状、cache/mask、参数账本与完整小模型全部审阅。原理与算例：NLL/attention；整段/逐token/多token缓存等价。精简与证据：修Llama3头型、SwiGLU计数、双shift、初始化/cache/device/mask；PyTorch2.8 CPU实现运行通过，非性能实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：从参考文章升为架构第2节；恢复embedding到loss、prefill到decode逐步形状推导，补齐两token的Norm/Attention/SwiGLU/head完整数值链；保留完整代码与原稿下载，修正warmup、mask、最终Norm、标签和采样边界。 讲解连贯性续轮审阅：只补0/1可见矩阵到加性mask的转换解释，防止照公式直接相加而泄漏未来；完整forward、手算、代码、图、来源和旧原稿入口均保留。 变量前置定义：补I、E、X_0=E[I]、X=X_{\\ell-1}、\\ell、U等首次使用前的说明，公式未改。",
@@ -271,13 +271,13 @@
     },
     {
       "source": "content/posts/my-work-holon/full-report.html",
-      "sha256": "b0d288a8f44a8b322a00498393c27a4d65fc26eed6c6577ece25d638981b6e52",
+      "sha256": "2e2a217d7258ad9f70d40d22ef9510e1591698dbac754550176c0d85703fcbf1",
       "reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；逐项复核50个原生MathML，修正GQA交互计算的矛盾表述。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（i、r_i、r_j、e_i），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。"
     },
     {
       "source": "content/posts/my-work-harbor/full-report.html",
-      "sha256": "8bec263834d76340360e963e26cac9024f052d7900d78c085af94ff49b0a83f0",
+      "sha256": "0816190055d8412972589d2aba50a5f84b1fac4c6c8f74b242630ea32c43cb78",
       "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 图示补充审阅：Add a branching comparison beside the complete-path formula and original example. Leave the report's historical figures, statistics, sources and existing pipeline SVG intact; no full historical metric recheck.。 讲解连贯性续轮审阅：实际审阅段落已明确完整路径、隔离、cohort和历史成本边界；不改报告原稿、科研图、历史case或统计。",
       "prior_reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。"
     },

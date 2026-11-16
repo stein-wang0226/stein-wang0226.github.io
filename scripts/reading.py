@@ -73,7 +73,7 @@ def project_learning(ctx, entry):
         link = ctx.rel(entry["url"], overview["url"])
         return ('<span id="work-study-guide" class="reading-anchor"></span>'
                 '<span id="work-report-start" class="reading-anchor"></span>'
-                f'<p class="site-page work-reading-link">快速复习与项目追问：'
+                f'<p class="site-page work-reading-link" role="region" aria-label="快速复习">快速复习与项目追问：'
                 f'<a href="{link}">{html.escape(overview["title"])}</a>。'
                 '本报告按章节展开方法、实验和复核证据。</p>')
     _, source = load_md(ctx.root / overview["source"])
@@ -138,7 +138,7 @@ def decorate(ctx, entry, text):
     # The frozen historical document keeps its own h1; the shell is a label.
     intro_title = (f'<p class="reading-original-title">{esc(entry["title"])}</p>'
                    if entry["status"] == "archived" else f'<h1>{esc(entry["title"])}</h1>')
-    intro = (f'<section class="reading-intro" id="{intro_id}" tabindex="-1">'
+    intro = (f'<section class="reading-intro" id="{intro_id}" tabindex="-1" aria-label="文章信息">'
              f'<p class="reading-path"><a href="{ctx.rel(path, "/blog/")}">博客与笔记</a> / '
              f'<a href="{ctx.rel(path, "/blog/")}?topic={esc(entry["topic"])}">{esc(topic)}</a></p>'
              f'{intro_title}<p>{esc(entry["summary"])}</p>'

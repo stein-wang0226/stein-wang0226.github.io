@@ -45,7 +45,7 @@ O_h&amp;=AV_h.
 \end{aligned}
 \]</div>
 <p>S是每个头内的query–key分数，转置只交换最后两维；[2,2,3,2]×[2,2,2,3]得到 [2,2,3,3]。M在合法key处为0、未来位置为−∞，广播到各样本与头。softmax沿key维归一化，每个query的一行和为1。</p>
-<table><caption>T=3时的因果可见性：行是query位置，列是key位置</caption><thead><tr><th></th><th>key 0</th><th>key 1</th><th>key 2</th></tr></thead><tbody><tr><th>query 0</th><td>可见</td><td>屏蔽</td><td>屏蔽</td></tr><tr><th>query 1</th><td>可见</td><td>可见</td><td>屏蔽</td></tr><tr><th>query 2</th><td>可见</td><td>可见</td><td>可见</td></tr></tbody></table>
+<table><caption>T=3时的因果可见性：行是query位置，列是key位置</caption><thead><tr><td></td><th>key 0</th><th>key 1</th><th>key 2</th></tr></thead><tbody><tr><th>query 0</th><td>可见</td><td>屏蔽</td><td>屏蔽</td></tr><tr><th>query 1</th><td>可见</td><td>可见</td><td>屏蔽</td></tr><tr><th>query 2</th><td>可见</td><td>可见</td><td>可见</td></tr></tbody></table>
 <p>A乘V_h：[2,2,3,3]×[2,2,3,2]得到O_h=[2,2,3,2]。<strong>A是“从哪些位置读取”的权重，O_h是读取后的表示</strong>，两者不是同一个张量。</p>
 <h3 id="forward-block">4. 拼头 → 输出投影 → 两条残差与SwiGLU</h3>
 <p class="math-notation">\(O_h\) 是各头输出，\(\operatorname{mergeHeads}\) 沿头维拼回；\(W_O\) 是输出投影矩阵，\(X\) 是本层输入，\(H_{\rm mid}=X+O\) 是注意力残差，\(Z\) 是第二次 RMSNorm 的结果；\(W_g,W_u\) 是 SwiGLU 的门/上投影，\(G=\operatorname{SiLU}(ZW_g)\)，\(U_f=ZW_u\)，\(W_d\) 是下投影，\(\Delta_f=(G\odot U_f)W_d\) 是 FFN 输出。</p>
