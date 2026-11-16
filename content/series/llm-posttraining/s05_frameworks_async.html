@@ -118,7 +118,7 @@ accepted_token_count, rejected_token_count, retry_reason</code></pre>
 <p>策略版本延迟使 rollout 用旧权重；同版本差异还来自精度、kernel、MoE routing、template、截断与采样温度。相同 checkpoint SHA 不能保证 log-prob 完全一致。verl 的三策略路线与 bypass 路线分别处理不同假设，需要按 recipe 解释。<a href="index.html#ref-52">[52]</a></p>
 <h3 id="async-full-example">一次跨版本交接：两段轨迹怎样重算 ratio</h3>
 <p><strong>输入：</strong>动作 \(a_0\) 在行为版本v7生成，等待工具时发布v8；恢复前用v8重建历史状态，再生成 \(a_1\)。训练端 old 固定v8、current 为v9，reference 另存。以下概率都是同一已采动作、同一真实历史上的教学值，行为概率包括实际采样配置；v8采样端与v8训练端也可能因温度或数值实现不同而不一致。</p>
-<table><caption>行为分母逐段保存，不能由最后一个版本号替代</caption><thead><tr><th>动作 / behavior</th><th>\(\mu\)</th><th>\(\pi_{\rm old}\)</th><th>\(\pi_\theta\)</th><th>更新比 × 校正比</th></tr></thead><tbody>
+<table><caption>行为分母逐段保存，不能由最后一个版本号替代</caption><thead><tr><th>动作 / behavior</th><th style="position:relative"><span aria-hidden="true">\(\mu\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">行为策略概率 μ</span></th><th style="position:relative"><span aria-hidden="true">\(\pi_{\rm old}\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">旧策略概率 π old</span></th><th style="position:relative"><span aria-hidden="true">\(\pi_\theta\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">当前策略概率 π theta</span></th><th>更新比 × 校正比</th></tr></thead><tbody>
 <tr><td>\(a_0\) / v7</td><td>0.20</td><td>0.22</td><td>0.24</td><td>\((12/11)\times1.10=1.20\)</td></tr>
 <tr><td>\(a_1\) / v8</td><td>0.50</td><td>0.45</td><td>0.60</td><td>\((4/3)\times0.90=1.20\)</td></tr>
 </tbody></table>

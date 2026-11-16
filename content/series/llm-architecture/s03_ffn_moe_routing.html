@@ -49,7 +49,7 @@ W_r=\begin{pmatrix}\log4&amp;\log2&amp;0\\0&amp;\log4&amp;\log2\end{pmatrix},
 \qquad s=xW_r.
 \]</div>
 <p>\(W_r\) 是 \(2\times3\) 路由矩阵，log 为自然对数。对A，\(\exp(s)=(4,2,1)\)，softmax 得 \((4/7,2/7,1/7)\)；选择专家1、2后除以 \(6/7\)，得到权重 \(2/3,1/3\)。表中其余行按同一规则计算，选中顺序按分数从大到小。</p>
-<table><caption>路由计算 → 专家 assignment → 恢复 token 顺序</caption><thead><tr><th>输入</th><th>\(\exp(s)\)</th><th>选中专家 / 权重</th><th>加权输出 \(y\)</th></tr></thead><tbody>
+<table><caption>路由计算 → 专家 assignment → 恢复 token 顺序</caption><thead><tr><th>输入</th><th style="position:relative"><span aria-hidden="true">\(\exp(s)\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">路由分数的指数 exp(s)</span></th><th>选中专家 / 权重</th><th>加权输出 \(y\)</th></tr></thead><tbody>
 <tr><td>A：(1,0)</td><td>(4,2,1)</td><td>1：2/3；2：1/3</td><td>\((2/3)x_A+(1/3)2x_A=(4/3,0)\)</td></tr>
 <tr><td>B：(0,1)</td><td>(1,4,2)</td><td>2：2/3；3：1/3</td><td>\((2/3)2x_B+(1/3)3x_B=(0,7/3)\)</td></tr>
 <tr><td>C：(1,1)</td><td>(4,8,2)</td><td>2：2/3；1：1/3</td><td>\((2/3)2x_C+(1/3)x_C=(5/3,5/3)\)</td></tr>

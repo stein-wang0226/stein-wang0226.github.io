@@ -122,7 +122,7 @@
     },
     {
       "source": "content/posts/llm-frontier-2026/index.html",
-      "sha256": "7b168200448c8d17c8bdcc37856b95d230e38f020a770c3ff002795e866971a6",
+      "sha256": "0126ab5eb4344f5cb4399feb0f49432c73a722583db820b992375b817a11a83e",
       "visual_revision_reason": "2026-11-15: add source-to-mechanism-to-evidence reading diagram; preserve entries, dates and AUTO markers.",
       "reason": "逐页审阅：14节含模型、架构、优化器、Agent、RL、OPD、训练、评测、蛋白、证据与日志全部审阅。原理与算例：改动位置→比较条件；五个判断追问；polar有限近似、Clip-Higher与行为校正、教师接口边界。精简与证据：型号/许可证快照与原维护日志按需；收敛Muon/RL/OPD主讲，旧TB排名改历史；移除无共同条件榜单、领域CoT普遍结论，修正百万碱基单位。AUTO标记、原日期、last-updated与原稿逐字归档保持。 符号补充审阅：将三段美元价格改为明确货币单位，修复五个跨段误识别的数学输出；价格原数值及来源保留。 分类与课程复查：精简旧MiniMax混合性能概括并转主讲证据；跨主题可检索，动态追踪与基础教材分工保持。 讲解连贯性续轮审阅：修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。 对比度复核：只将浅色底上的青绿、绿、琥珀与红色文字及两处渐变底色整体加深一档，使小号标签、表头、日期与页脚达到4.5:1；正文、来源、数字、日期与自动标记不变。",
       "prior_reason": "Approved learning rework: review all frontier sections, retain date/AUTO semantics and byte-exact original, fold dated specifications/logs, consolidate duplicate optimizer/RL/OPD teaching, distinguish behavior correction and clipping, rewrite obsolete benchmark rankings as historical evidence, correct biological unit and unsupported universal claims, add five interview checks. Full current product/benchmark claims were not independently reverified."
@@ -342,7 +342,7 @@
     },
     {
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
-      "sha256": "53a84c6f759f881348e866806b48443da04946b4cd5dfb77828f167245599edf",
+      "sha256": "5354895504ae280d70977c75d2163cdfe488e048a62669aadb0fdcea288e0934",
       "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件。 更新与状态链路复查：展开GAE两决策的TD、优势、固定lambda-return目标、actor/critic损失；独立控制bootstrap和片段递推，比较误标terminal后的符号。 图示补充审阅：Make value bootstrap and next-advantage continuation visually independent without replacing any formula, table or numerical example.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（\\theta、\\tau、p(h_0)、p_\\theta(\\tau)、t=0,\\ldots,T-1、\\gamma\\in[0,1]），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。"
     },
@@ -360,7 +360,7 @@
     },
     {
       "source": "content/series/llm-posttraining/s05_frameworks_async.html",
-      "sha256": "1729e12d470eee4ec3040300471d84be70afa4c8ba111d046ae1fa750d24cdda",
+      "sha256": "62460376a4eebc720d02493f9e93e21b7a074afe6f7d83c5c54c9067d5602b1e",
       "reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：用跨v7/v8采样与v8/v9训练的两段轨迹复算两类ratio、乘积/几何平均与clip顺序；说明逐段behavior分母和状态访问边界。 图示补充审阅：Add a layered handoff beside the existing ratio table. Keep numerical calculations, framework configurations, reference role and cache caveats unchanged.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（i、C_i、B_i、t_i、a_i\\in(0,1]、\\propto），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。"
     },
@@ -408,7 +408,7 @@
     },
     {
       "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
-      "sha256": "9f7f7453967528b363954b1792a14b8866cedee5c90985b358614127e2d619ff",
+      "sha256": "5dc6a0d0fa68f6020741fc6b202a02dfeef2fea94f15786d1451f539d12d53ac",
       "reason": "逐页审阅：FFN、router、容量、参数/通信、latent专家、EP与消融全部审阅。原理与算例：两/三矩阵计数；top-k门控；容量和负载。精简与证据：规格名录折叠，不能用总参数替代激活参数或真实吞吐。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：将分散路由与容量例改为同批四token的分数、top-2归一、专家重排、输出、overflow和跨rank payload；固定简化专家与丢弃规则。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（W_1,W_2、d\\times f,f\\times d、b_1,b_2、f,d、W_{\\rm gate},W_{\\rm up}、d\\times f），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：FFN、router、容量、参数/通信、latent专家、EP与消融全部审阅。原理与算例：两/三矩阵计数；top-k门控；容量和负载。精简与证据：规格名录折叠，不能用总参数替代激活参数或真实吞吐。"
     },
