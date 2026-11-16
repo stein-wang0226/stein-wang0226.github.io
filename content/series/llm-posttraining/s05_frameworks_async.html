@@ -149,6 +149,7 @@ accepted_token_count, rejected_token_count, retry_reason</code></pre>
 <p>长 trajectory 的 ratio 乘积容易高方差；几何平均、clip、mask 或 residual filter 改变目标与样本利用。它们是稳定训练的近似，不应自动称“完全无偏校正”。</p>
 <h3>完成顺序偏移不属于 token ratio</h3>
 <p>短代码任务先返回，长科学任务还在跑；如果训练持续吃“先到的样本”，科学域占比会下降。即使所有 token 的 log-prob 完全准确，也不会自动补回缺失的域。V4.1 将完成顺序和数值对齐分开讨论；MiMo 用域预算、时长和接受率调节并发。<a href="index.html#ref-25">[25]</a> <a href="index.html#ref-27">[27]</a></p>
+<p>下式 \(i\) 遍历任务域，\(C_i\) 是分配给该域的并发槽数，\(B_i\) 是期望有效准入率（条/单位时间），\(t_i\) 是平均尝试耗时（同一时间单位），\(a_i\in(0,1]\) 是尝试完成后被接受的比例；\(\propto\) 表示共享比例系数的资源关系，不给出绝对槽数。这里 \(B_i\) 不是 batch，\(a_i\) 不是策略动作，零接受率不能用有限并发照式补足。</p>
 <div class="reading-math" role="math" aria-label="域并发预算示意">\[
 C_i\propto\frac{B_i\,t_i}{a_i}.
 \]</div>

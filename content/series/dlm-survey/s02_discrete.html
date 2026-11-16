@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>离散扩散：转移核与加权 MLM</title></head><body>
 <!-- READING:FRAGMENT:START -->
 <h2 id="kernel">从转移矩阵到可训练的去噪器</h2>
-<p class="math-notation"><strong>符号：</strong>\(K\) 为该核的状态数，\(x_0,x_t,i,j,v\) 是词表/状态编号，\(\operatorname{Cat}\) 表示按给定概率行向量采样分类状态；\(\mathbf1(i=j)\) 为指示函数，\(\beta_t\) 为扰动概率，\(M\) 为 mask 状态。一般核按其状态集合计 \(K\)；吸收核若单独加入 mask，需计入这一个额外状态。下面 \(x_t^i\) 的上标 \(i\) 改指序列位置。</p>
+<p class="math-notation"><strong>符号：</strong>\(K\) 为该核的状态数，\(x_0,x_t,i,j,v\) 是词表/状态编号，\(\operatorname{Cat}\) 表示按给定概率行向量采样分类状态；\(\mathbf1(i=j)\) 为指示函数，\(\beta_t\) 为扰动概率，\(M\) 为 mask 状态。一般核按其状态集合计 \(K\)；吸收核若单独加入 mask，需计入这一个额外状态。下面 \(x_t^i\) 的上标 \(i\) 改指序列位置；\(p_\theta\) 是以 \(\theta\) 为参数的模型预测分布。</p>
 <p><strong>离散扩散在词表上移动概率质量。</strong>本节使用行向量：\(Q_t[i,j]\) 表示第 t 步从 i 到 j 的概率，每行和为 1；干净 token 的 one-hot 为 \(e_x\)，累积核为 \(\bar Q_t=Q_1\cdots Q_t\)。</p>
 <div class="reading-math">\[q(x_t\mid x_0)=\operatorname{Cat}(e_{x_0}\bar Q_t).\]</div>
 <table><thead><tr><th>核</th><th>转移规则</th><th>要记住</th></tr></thead><tbody>
@@ -22,7 +22,7 @@ q(i\mid j,x)
 p_\theta(i\mid x_t)&=\sum_v q(i\mid x_t,v)\,p_\theta(v\mid x_t).
 \end{aligned}\]</div>
 <h3 id="absorbing-example">吸收核算例：为什么反向能揭示原值？</h3>
-<p>令 \(\alpha_s\) 为时刻 s 保留原值的概率，且 \(s\lt t\)。若当前是 M，已在 s 被 mask 的概率为 \(1-\alpha_s\)，在 s 到 t 才被 mask 的概率为 \(\alpha_s-\alpha_t\)。二者相加为当前 mask 概率 \(1-\alpha_t\)。</p>
+<p>令 \(x_s\) 为时刻 \(s\) 的状态，\(\alpha_s\) 为时刻 s 保留原值的概率，且 \(s\lt t\)。若当前是 M，已在 s 被 mask 的概率为 \(1-\alpha_s\)，在 s 到 t 才被 mask 的概率为 \(\alpha_s-\alpha_t\)。二者相加为当前 mask 概率 \(1-\alpha_t\)。</p>
 <div class="reading-math">\[\begin{aligned}
 q(x_s=x_0\mid x_t=M,x_0)&=\frac{\alpha_s-\alpha_t}{1-\alpha_t},\\
 q(x_s=M\mid x_t=M,x_0)&=\frac{1-\alpha_s}{1-\alpha_t}.
@@ -68,7 +68,7 @@ w(t)&=\frac{-\alpha'_t}{1-\alpha_t}.
 <tr><td>SEDD</td><td>预测离散分布比率</td><td>见本页预测目标节，不重复一套 score 推导</td></tr>
 </tbody></table>
 <details id="duality"><summary>Uniform 与高斯对偶：能推出什么？</summary>
-<p class="math-notation">该段 \(r\) 是 argmax 后选中正确类的概率，\(a_t\) 是对应 uniform 混合的保留系数；\(\mathbf1/K\) 为均匀概率向量。\(T_\#q\) 表示先按 \(q\) 采样再施加同一确定映射 \(T\) 所得到的分布，称为推前分布；此处 \(T\) 是映射，不是采样步数。</p>
+<p class="math-notation">该段 \(r\) 是 argmax 后选中正确类的概率，\(a_t\) 是对应 uniform 混合的保留系数；\(\mathbf1/K\) 为均匀概率向量。\(T_\#q\) 表示先按 \(q\) 采样再施加同一确定映射 \(T\) 所得到的分布，称为推前分布；此处 \(T\) 是映射，不是采样步数；\(z_t\) 是加噪后逐位置取 argmax 得到的离散状态。</p>
 <p>one-hot 加各维对称高斯噪声后取 argmax，由错误类别的对称性，正确类概率记为 r，其余每类为 (1−r)/(K−1)。因此该<strong>单时刻边际</strong>可写为 uniform 混合：</p>
 <div class="reading-math">\[\begin{aligned}
 q(z_t\mid x)&=\operatorname{Cat}\left(a_te_x+(1-a_t)\frac{\mathbf1}{K}\right),\\

@@ -70,10 +70,10 @@ Q(s,a)+c\sqrt{\frac{\log N(s)}{N(s,a)}}\right].
 </section>
 <section id="budget"><h2>预算、停止与工业rollout容量</h2>
 <p>预算包括生成、重算、检索、工具、验证、排队与失败重试。若能估计行动a带来的成功概率增量，且收益和成本已换成同一单位，可用教学决策式：</p>
+<p class="math-notation">\(\Delta p_a\) 表示当前状态下，采取 \(a\) 相比不采取 \(a\) 的成功概率增量；\(V\) 是一次成功的价值，\(\Delta C(a)\) 是新增成本，\(\Delta U(a)\) 是净收益。价值和成本必须使用同一单位；这里 \(V\) 不是 RL 的状态价值函数。</p>
 <div class="reading-math">\[
 \Delta U(a)=V\,\Delta p_a-\Delta C(a).
 \]</div>
-<p class="math-notation">\(\Delta p_a\) 表示当前状态下，采取 \(a\) 相比不采取 \(a\) 的成功概率增量；\(V\) 是一次成功的价值，\(\Delta C(a)\) 是新增成本，\(\Delta U(a)\) 是净收益。价值和成本必须使用同一单位；这里 \(V\) 不是 RL 的状态价值函数。</p>
 <p>教学取成功价值100单位：再查一次预计增量0.05、成本2，净收益3；另一条分支增量0.01、成本3，净收益−2。<strong>概率未知就用可解释停止规则，再在留出任务上校准，不编造精确价值。</strong></p>
 <table><thead><tr><th>条件</th><th>行动</th><th>验证信号</th></tr></thead><tbody>
 <tr><td>仍缺必要证据，预算和权限允许</td><td>针对缺口续查或补计算</td><td>新增原文、解除阻塞、可验产物</td></tr>

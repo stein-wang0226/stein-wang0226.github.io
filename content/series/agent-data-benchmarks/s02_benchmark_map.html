@@ -23,7 +23,7 @@
 <p class="note">这是测量对象分类，不是单向能力等级。一个函数题可能非常难，一个GUI任务也可能短；不同环境不可用一个未经校准的总分排序。</p>
 </section>
 <section id="metrics"><h2>先读懂pass@1、pass@k与pass^k</h2>
-<p>令一次成功概率为p。在<strong>独立同分布</strong>尝试的教学假设下，k次全部失败概率是\((1-p)^k\)，k次全部成功是\(p^k\)，所以：</p>
+<p>令一次成功概率为 \(p\in[0,1]\)，\(k\ge1\) 是同题、同协议下尝试次数，取整数。pass@k 表示至少一次成功的概率，pass^k 表示全部成功的概率，均无量纲。在<strong>独立同分布</strong>尝试的教学假设下，k次全部失败概率是\((1-p)^k\)，k次全部成功是\(p^k\)，所以：</p>
 <div class="reading-math">\[
 \operatorname{pass@}k=1-(1-p)^k,\qquad
 \operatorname{pass}^{k}=p^k.
@@ -36,6 +36,7 @@
 <p>工具故障、相同prompt与共享错误前提会使尝试相关，不能直接按独立式外推。<strong>执行3 repeats后平均success，仍在估计pass@1，不是pass@3。</strong></p>
 <h3>有限n条样本：从失败组合数得到估计</h3>
 <p>一题已生成n条，有c条成功。从这n条中等概率、不放回选k条，总组合数为\(\binom nk\)；全部失败必须从n−c条失败中选，组合数为\(\binom{n-c}k\)。因此：</p>
+<p>这里 \(n,c,k\) 都是整数，\(0\le c\le n\)、\(1\le k\le n\)；\(\binom nk\) 表示从 \(n\) 条中选 \(k\) 条的无序组合数，帽号表示基于已生成样本的估计。该分母为正，求的是一题内部的候选存在性，不把不同题混成一个样本池。</p>
 <div class="reading-math">\[
 \widehat{\operatorname{pass@}k}
 =1-\frac{\binom{n-c}{k}}{\binom nk},\qquad 1\le k\le n.

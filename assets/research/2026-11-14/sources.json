@@ -44,6 +44,9 @@
         "/llm-research-map-2026/s03_base_architecture.html#versions",
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
+        "/llm-research-map-2026/s07_architecture_training.html#experiments",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#residual"
       ],
@@ -107,6 +110,7 @@
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
         "/llm-research-map-2026/s03_base_architecture.html#citation-sources-1",
         "/llm-research-map-2026/s03_base_architecture.html#versions",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-training-lifecycle/#overview",
         "/llm-training-lifecycle/s01_pretraining.html#budget",
         "/llm-training-lifecycle/s01_pretraining.html#sources"
@@ -270,6 +274,9 @@
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#kimi",
         "/llm-research-map-2026/s06_architecture_landscape.html#state",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-optimizer",
         "/llm-research-map-2026/s07_architecture_training.html#latent-moe",
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
@@ -1413,6 +1420,8 @@
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
         "/llm-training-lifecycle/s01_pretraining.html#budget",
@@ -1625,7 +1634,8 @@
       "used_in": [
         "/llm-frontier-2026.html#models",
         "/llm-frontier-2026.html#sources",
-        "/llm-research-map-2026/s03_base_architecture.html#versions"
+        "/llm-research-map-2026/s03_base_architecture.html#versions",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families"
       ],
       "historical_used_in": [
         "/assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt",
@@ -1797,6 +1807,9 @@
       "official_report_note": "Downloaded outside repository to inspect; no redistribution license assumed. Official report cover date 2026-08-26 differs from arXiv v1 submission 2026-08-31.",
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#qwen",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-optimizer",
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
         "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
@@ -2078,6 +2091,7 @@
       "used_in": [
         "/llm-architecture/s03_ffn_moe_routing.html#frontier-comparison",
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
         "/llm-research-map-2026/s07_architecture_training.html#latent-moe",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
@@ -2620,6 +2634,8 @@
         "/llm-posttraining/s06_task_cases_experiments.html#code-case",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#mimo",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
+        "/llm-research-map-2026/s07_architecture_training.html#experiments",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
         "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
@@ -2886,6 +2902,7 @@
       "used_in": [
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#step",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
         "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
@@ -3322,6 +3339,7 @@
       "used_for": "Attention over depth and block approximation.",
       "local_asset": null,
       "used_in": [
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
@@ -3372,6 +3390,8 @@
       "local_asset": null,
       "used_in": [
         "/llm-architecture/s04_residual_norm_stability.html#frontier-comparison",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
         "/llm-research-map-2026/s07_architecture_training.html#residual",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],
@@ -3431,6 +3451,8 @@
       "used_for": "Scalable matrix orthogonalization and shape-dependent learning-rate scaling.",
       "local_asset": null,
       "used_in": [
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-optimizer",
+        "/llm-research-map-2026/s07_architecture_training.html#experiments",
         "/llm-research-map-2026/s07_architecture_training.html#muon",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
         "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"
@@ -3672,6 +3694,8 @@
       "used_for": "Recurrent depth with shared weights; no inference about closed-model architecture.",
       "local_asset": null,
       "used_in": [
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
         "/llm-research-map-2026/s07_architecture_training.html#depth",
         "/llm-research-map-2026/s07_architecture_training.html#sources"
       ],

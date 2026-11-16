@@ -22,7 +22,7 @@ assistant: filter_csv(input="sample.csv",
                       output="out.csv")            # target
 tool: Wrote 2 rows to out.csv                       # context
 assistant: Cleaned CSV written to out.csv.          # target</code></pre>
-<p>设序列为 \(x_{1:T}\)，\(m_t=1\) 表示该位置是需要学习的 assistant 输出，\(m_t=0\) 表示只作条件或 padding。本例保留工具输出参与后续预测，损失为：</p>
+<p>设序列为 \(x_{1:T}\)，长度 \(T\) 以 token 计，预测位置 \(t=1,\ldots,T\)，\(x_t\) 是该位置的 token，\(x_{\lt t}\) 是该位置前缀。\(\theta\) 是模型参数，\(p_\theta\) 是在该前缀下沿词表归一的下一 token 概率；\(\log\) 为自然对数。固定目标 mask 中，\(m_t=1\) 表示需要学习的 assistant 输出，\(m_t=0\) 表示只作条件或 padding；求和都覆盖同一组位置，要求 \(\sum_t m_t>0\)，空目标须跳过。\(L_{\mathrm{SFT}}\) 是有效目标 token 平均负对数似然，单位为 nat/token。本例保留工具输出参与后续预测，损失为：</p>
 <div class="reading-math">\[
 L_{\mathrm{SFT}}=-\frac{\sum_{t=1}^{T}m_t\log p_\theta(x_t\mid x_{&lt;t})}{\sum_t m_t}.
 \]</div>
@@ -32,6 +32,7 @@ L_{\mathrm{SFT}}=-\frac{\sum_{t=1}^{T}m_t\log p_\theta(x_t\mid x_{&lt;t})}{\sum_
 <li><b>预测 filter_csv</b><small>动作 token 的 mask=1，计算动作 CE</small></li>
 <li><b>动作 loss 反向传播</b><small>更新利用观察的模型参数；没有直接拟合观察文本的目标</small></li></ol></figure>
 <p>把后续动作隐藏状态写成 \(h_t=f_\theta(x_{&lt;t})\)，动作损失 \(\ell_t=-\log p_\theta(x_t\mid h_t)\) 的梯度仍含：</p>
+<p>这里 \(f_\theta\) 是前缀到隐藏表示的可微映射。将参数展平为 \(P\) 维列向量，隐藏表示 \(h_t\) 为 \(d\) 维列向量，则 \(\partial_\theta h_t\) 是 \(d\times P\) Jacobian；\(\ell_t\) 是单个动作 token 的标量损失。下式 \(\nabla\) 表示列梯度，\(\partial_\theta\ell_t|_{h_t}\) 是固定表示只沿输出分支求导，转置 Jacobian 将 \(d\) 维表示梯度映射回 \(P\) 维参数空间。</p>
 <div class="reading-math">\[
 \nabla_\theta\ell_t
 =\left.\partial_\theta\ell_t\right|_{h_t}

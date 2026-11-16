@@ -90,7 +90,7 @@ html{scroll-behavior:smooth;scroll-padding-top:1rem}
 <section id="objectives">
 <h2>目标函数与因子分解</h2>
 <h3>AR 与吸收式掩码扩散</h3>
-<p class="math-notation">x 是长度 L 的 token 序列，θ 是模型参数，i 为位置，x&lt;i 为前缀。τ∈(0,1] 是 mask 比例/扰动时间，xτ 为扰动态，m 为 mask token；qτ 为已知扰动分布，pθ 为去噪预测，1{·} 为指示，ℓᵢ 为位置 NLL，E 对数据/时间/扰动平均。</p>
+<p class="math-notation">x 是长度 L 的 token 序列，θ 是模型参数，i 为位置，x&lt;i 为前缀；\(x_i\) 是第 \(i\) 个位置的干净 token，\(z_i\) 是该位置的扰动态取值（原 token 或 mask）。τ∈(0,1] 是 mask 比例/扰动时间，xτ 为扰动态，m 为 mask token；qτ 为已知扰动分布，pθ 为去噪预测，1{·} 为指示，ℓᵢ 为位置 NLL，E 对数据/时间/扰动平均。</p>
 <div class="reading-math">\[
 p_\theta(x_{1:L})=\prod_{i=1}^L p_\theta(x_i\mid x_{\lt i})
 \]</div>
@@ -166,7 +166,7 @@ b^*&=\arg\min_{b\in U}H_b
 <section id="theory">
 <span data-reading-plot-zoom></span>
 <h2>ICL 理论与可识别性</h2>
-<p class="math-notation">X_P∈R^(P×d)/y_P∈R^P 为提示输入/输出，X_R∈R^(R×d) 为待预测输入；w/μ_P∈R^d 为真实权重/后验均值，σ² 为噪声方差。I 为 d×d 单位矩阵，A 为正则化 Gram 矩阵，逆号表示矩阵逆，rank 为矩阵秩；风险式的 d 为输入维度，isotropic/sphere 分别标出权重先验的归一约定。</p>
+<p class="math-notation">X_P∈R^(P×d)/y_P∈R^P 为提示输入/输出，X_R∈R^(R×d) 为待预测输入，\(y_R\) 是查询输出；w/μ_P∈R^d 为真实权重/后验均值，σ² 为噪声方差，\(\epsilon\) 是观测噪声。I 为 d×d 单位矩阵，A 为正则化 Gram 矩阵，逆号表示矩阵逆，rank 为矩阵秩；风险式的 d 为输入维度，isotropic/sphere 分别标出权重先验的归一约定。</p>
 <p>每个序列采样一个潜在向量 <code>w</code>，由同一向量产生 P 个演示标签和 R 个查询标签。令 <code>Xₚ</code> 为演示矩阵，<code>Xᵣ</code> 为查询矩阵，观测噪声为独立高斯。给定演示后，后验均值解是岭回归，响应的平方误差最优解是把这个后验均值作用到全部查询。</p>
 <div class="reading-math">\[
 \begin{aligned}

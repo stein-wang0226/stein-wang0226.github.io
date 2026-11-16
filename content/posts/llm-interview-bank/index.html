@@ -41,7 +41,7 @@ K&=D_{\rm KL}(p\Vert q),\\
 \mathbb E_p[u-\log u-1]&=K,\\
 \mathbb E_p[u]&=1 .
 \end{aligned}\]</div><p class="math-notation">这里 \(p,q\) 是同一候选集合上的两分布，\(a\sim p\) 为所采动作，\(u\) 为反向概率比，\(K\) 为 KL 标量；\(\mathbb E_p\) 按 \(p\) 加权平均，\(\Vert\) 分隔两个被比较的分布。共同支持和可积性是这些期望等式的条件。</p><p class="followup"><strong>追问：</strong>old/current 的更新 KL 与 reference KL 分开；不能直接对非负 K3 采样值普通反传就声称得到完整 KL 梯度。</p></details>
-<details class="interview-card"><summary>DPO 怎样从 KL 正则目标推导？β 是反比吗？</summary><p><strong>三步：</strong>最优策略 π*∝πref·exp(r/β)；反解 r=βlog(π*/πref)+βlog Z；同 prompt 的偏好差消去 log Z，得 sigmoid 分类 loss。β 在原目标控制 KL 正则强度；训练中又缩放 preference logit，不是“KL 的反比”或单一学习率旋钮。</p><div class="reading-math" role="math">\[
+<details class="interview-card"><summary>DPO 怎样从 KL 正则目标推导？β 是反比吗？</summary><p><strong>三步：</strong>最优策略 π*∝πref·exp(r/β)；反解 r=βlog(π*/πref)+βlog Z；同 prompt 的偏好差消去 log Z，得 sigmoid 分类 loss。设 \(y_w,y_l\) 为同一 prompt 下的偏好/不偏好回答，\(\theta\) 是当前策略参数；β 在原目标控制 KL 正则强度；训练中又缩放 preference logit，不是“KL 的反比”或单一学习率旋钮。</p><div class="reading-math" role="math">\[
 \begin{aligned}
 \ell_w&=\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\rm ref}(y_w\mid x)},\\
 \ell_l&=\log\frac{\pi_\theta(y_l\mid x)}{\pi_{\rm ref}(y_l\mid x)},\\

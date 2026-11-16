@@ -8,6 +8,7 @@
 <figure class="mechanism-map"><figcaption>两种训练目标，汇入同一视觉条件链</figcaption><ol class="mechanism-chain"><li><b>图像 / 帧 → patch</b><small>processor 决定 resize、crop、grid、时间戳</small></li><li><b>视觉编码器</b><small>patch 表示；图文对比可训练双塔</small></li><li><b>Connector / cross-attention</b><small>投影、压缩或独立读取视觉状态</small></li><li><b>文本预测与行动</b><small>回答 loss / 偏好 / 结果奖励，独立验收</small></li></ol><p class="mechanism-note">CLIP 的全局图文匹配与 VLM 的条件生成是不同目标。检索好不自动证明计数、OCR 或空间推理好。</p></figure>
 <h3 id="sec1-1">1.1 从像素到 token：形状与预算</h3>
 <p>设图像经 processor 后为 H×W、C 个通道，patch 边长 P，H/W 可被 P 整除。一个 patch 展平为 CP² 维，经共享线性层变成 dv 维；等价于 kernel=stride=P 的卷积。加空间位置后由 encoder 让 patch 交互。</p>
+<p class="math-notation">\(N\) 是 patch 数，\(X_{\rm patch}\) 是展平后的 patch 矩阵，\(W_p\) 是共享线性投影，\(E_{\rm pos}\) 是空间位置嵌入，\(Z_0\) 是相加后送进 encoder 的初始 token 表示。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 N&=(H/P)(W/P),\\
@@ -19,7 +20,7 @@ W_p&\in\mathbb R^{CP^2\times d_v}.
 <ul><li><strong>CLS / pooling：</strong>汇总全局表征适合分类/图文匹配；patch 级输出保留空间条件，具体取层和归一化由 checkpoint 决定。</li><li><strong>CNN / Swin：</strong>局部性与层级结构提供不同归纳偏置；全局 ViT 更灵活，但不是所有任务都更优。</li><li><strong>预训练目标：</strong>CLIP/SigLIP 对齐图文；MAE 重建 masked 图像；DINO 类自蒸馏学表示；SAM/SAM2 学可提示分割及视频记忆。它们不能用同一“视觉能力分数”代替。</li></ul>
 <p>来源：<a href="https://arxiv.org/abs/2010.11929">ViT</a>、<a href="https://arxiv.org/abs/2103.00020">CLIP</a>。</p>
 <h3 id="clip-siglip">1.2 CLIP：为什么匹配对的相似度会上升？</h3>
-<p class="math-notation">\(i,j,k=1,\ldots,N\) 索引 batch 中配对图文；\(S,p,q\) 均为 \(N\times N\) 矩阵。\(p_{ij}\) 按行归一，\(q_{ij}\) 按列归一；\(\mathbf1[i=j]\) 为匹配对指示。\(\sigma(z)=1/(1+e^{-z})\) 为 sigmoid，SigLIP 的 \(b\) 是可训练 bias。</p>
+<p class="math-notation">\(i,j,k=1,\ldots,N\) 索引 batch 中配对图文；\(S,p,q\) 均为 \(N\times N\) 矩阵，\(S_{ik}\) 是第 \(i\) 张图与第 \(k\) 段文本的相似度，\(S_{kj}\) 是第 \(k\) 段文本与第 \(j\) 张图的相似度。\(p_{ij}\) 按行归一，\(q_{ij}\) 按列归一，\(p_{ii},q_{ii}\) 是各自方向的正确配对概率；\(\mathbf1[i=j]\) 为匹配对指示。\(\sigma(z)=1/(1+e^{-z})\) 为 sigmoid，SigLIP 的 \(b\) 是可训练 bias。</p>
 <p>batch 有 N 个配对 (Ii,Ti)。双塔输出向量分别 L2 归一为 vi/uj，learnable scale a=exp(t) 相当于逆温度。相似度 Sij=a·viᵀuj，<strong>这里已经缩放一次，loss 中不要再除温度。</strong></p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
@@ -85,7 +86,7 @@ Q\in\mathbb R^{M\times d}.
 <ul><li><strong>MLP：</strong>映射维度、非线性适配；保 token 适合细节，但长输入昂贵。</li><li><strong>Q-Former / Perceiver：</strong>学固定 query 聚合；BLIP-2 与 Flamingo 的具体层结构/目标不同。</li><li><strong>spatial merge：</strong>按相邻 grid 重组再投影，常见 2×2→1；保局部结构仍可能丢细节。</li><li><strong>判断：</strong>LLaVA-1.5 支持简单 MLP 是有力基线，不能据此宣布连接器全局最优。等 encoder、数据、LLM 与视觉 token 预算做对照。</li></ul>
 <p>来源：<a href="https://arxiv.org/abs/2310.03744">LLaVA-1.5</a>、<a href="https://arxiv.org/abs/2301.12597">BLIP-2</a>、<a href="https://arxiv.org/abs/2204.14198">Flamingo</a>。</p>
 <h3 id="sec1-4">1.6 条件生成 loss：视觉标签被 mask，梯度仍能过去</h3>
-<p>图像 embedding、用户文本和历史观察组成条件 c，assistant 回答为 y。训练目标只在有效回答 token m_t=1 上计算 CE；视觉没有文本 label 不意味着 encoder 没有梯度，<strong>它通过后续回答对视觉条件的依赖接收反传</strong>，除非被冻结/detach。</p>
+<p>图像 embedding、用户文本和历史观察组成条件 c，assistant 回答为 y，第 t 个回答 token 为 \(y_t\)。训练目标只在有效回答 token m_t=1 上计算 CE；视觉没有文本 label 不意味着 encoder 没有梯度，<strong>它通过后续回答对视觉条件的依赖接收反传</strong>，除非被冻结/detach。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 \ell_t&=-\log p_\theta(y_t\mid c,y_{\lt t}),\\
@@ -130,7 +131,7 @@ y_{\rm orig}&=y_{\rm crop}/s_y+o_y.
 <p><strong>逆变换顺序：</strong>若输出是归一坐标或离散bin，先按工具合同还原处理图像素，再减左/上padding，再除以resize比例，最后加原图crop偏移。补充二维复算：处理图像素为(40,30)，左/上padding为(8,6)，resize比例均为2，原图crop原点为(100,50)，得到原图坐标 \(((40-8)/2+100,(30-6)/2+50)=(116,62)\)。这是像素坐标教学例；GUI工具若使用窗口坐标、逻辑点或屏幕像素，还须另用窗口/显示缩放元数据映射，不能直接把原图坐标当点击接口。动作前也要确认截图时间、焦点与布局未过期。</p>
 <p><strong>视觉幻觉：</strong>物体、属性、关系分别评；POPE 的 yes/no 对象存在探测不能覆盖全部。数据去错、grounding 监督、分辨率与偏好训练可改失败率，但 CoT、自检、引用都不保证忠实。</p>
 <details><summary>展开 VCD 的正确对比对象与限制</summary>
-<p class="math-notation">VCD 中 \(v,v'\) 为原图/扰动图，\(z(v)\) 为词表 logits，\(\alpha\) 为对比分支权重；\(w,u\) 为词表项，\(M\) 为原图条件下最大 token 概率，\(\eta\) 为相对概率阈值，\(\mathcal A\) 为允许采样集合。ColPali 式的 \(q_i,d_j\) 则是同维查询/page patch embedding，\(N_q,N_d\) 为各自数量，内积再按每个查询 token 的最大匹配求和。</p>
+<p class="math-notation">VCD 中 \(v,v'\) 为原图/扰动图，\(z(v)\) 为词表 logits，\(p_v(w)=p(w\mid v)\) 是原图条件下的词表分布，\(\alpha\) 为对比分支权重；\(w,u\) 为词表项，\(M\) 为原图条件下最大 token 概率，\(\eta\) 为相对概率阈值，\(\mathcal A\) 为允许采样集合。ColPali 式的 \(q_i,d_j\) 则是同维查询/page patch embedding，\(N_q,N_d\) 为各自数量，内积再按每个查询 token 的最大匹配求和。</p>
 <p>原 VCD 将原图 v 与噪声扰动图 v′ 的 logits 对比，抑制对视觉退化仍过强的先验；同时限制在原图概率足够大的候选中采样。不是单纯减“无图 logits”。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}

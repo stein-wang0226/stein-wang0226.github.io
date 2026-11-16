@@ -9,6 +9,20 @@
 <body>
 <main class="training-lifecycle">
 <!-- READING:FRAGMENT:START -->
+<style>
+.training-lifecycle .model-report-diagram{margin:24px 0;padding:18px;border:1px solid #b9cec6;border-radius:8px;background:#f5f9f6}
+.training-lifecycle .model-report-diagram figcaption{font-size:14px;line-height:1.7;color:#29483e}
+.training-lifecycle .model-report-diagram .model-node{min-width:0;padding:12px;border:1px solid #cad9d2;border-radius:6px;background:#fff;overflow-wrap:anywhere}
+.training-lifecycle .model-report-diagram .model-node b,.training-lifecycle .model-report-diagram .model-node small{display:block}
+.training-lifecycle .model-report-diagram .model-node small{font-size:13px;line-height:1.7;margin-top:5px;color:#405c52}
+.training-lifecycle .model-report-diagram .model-branches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.training-lifecycle .model-report-diagram .model-branches.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.training-lifecycle .model-report-diagram .model-edge{margin:10px 0;font-size:13px;line-height:1.7;font-weight:600;color:#315c4c}
+.training-lifecycle .model-report-diagram .model-control{border-style:dashed;background:#edf3fb}
+.training-lifecycle .model-report-diagram .model-source{margin:12px 0 0;font-size:13px;line-height:1.7}
+.training-lifecycle .family-nav{display:flex;flex-wrap:wrap;gap:8px 16px;padding:12px 0;font-size:14px}
+@media(max-width:600px){.training-lifecycle .model-report-diagram{padding:12px}.training-lifecycle .model-report-diagram .model-branches,.training-lifecycle .model-report-diagram .model-branches.three{grid-template-columns:1fr}.training-lifecycle .model-report-diagram .model-node small,.training-lifecycle .model-report-diagram .model-edge,.training-lifecycle .model-report-diagram .model-source{font-size:13px}}
+</style>
 <section id="overview">
 <p class="eyebrow">Architecture landscape · 2026-11-14</p>
 <h2>从单个模型案例，扩展到不同团队的架构选择</h2>
@@ -22,6 +36,8 @@
 <p class="lead">DeepSeek V4.1是一个具体案例，不能覆盖整个基模方向。本章把Qwen、Kimi、Nemotron、GLM、MiniMax、MiMo、Step及Gemma接到同一组问题：<strong>历史保存成什么、哪些层访问全局、专家在哪个维度计算、多模态如何进入主干，以及这些选择怎样影响真实任务成本</strong>。</p>
 <ul><li><strong>状态不同：</strong>递归矩阵、压缩KV、稀疏读取和滑动窗口不能互换。</li><li><strong>计划具体：</strong>混合架构要核对实际层表，不能只背一个比例。</li><li><strong>归因有限：</strong>数据、配方和执行系统共同影响能力，参数量与Attention名称不足以预测排名。</li></ul>
 <p class="note">截止2026-11-14。规格按报告与固定config登记，未作同条件本地复现；前面的架构机制用于理解家族差异，后面继续拆解DeepSeek缓存。编号对应<a href="index.html#sources">固定来源索引</a>。</p>
+<nav class="family-nav" aria-label="本章模型系列与模块比较"><a href="#families">统一速查</a><a href="#deepseek-series">DeepSeek</a><a href="#qwen">Qwen</a><a href="#kimi">Kimi</a><a href="#nemotron">Nemotron</a><a href="#glm">GLM</a><a href="#minimax">MiniMax</a><a href="#mimo">MiMo</a><a href="#step">Step</a><a href="#gemma">Gemma</a><a href="#module-matrix">跨模块比较</a><a href="#closed">闭源边界</a></nav>
+<p>阅读方式：先按系列核对版本和主干，再到<a href="#module-matrix">跨模块矩阵</a>横向比较。下文的报告实验均为<strong>团队自报、单一团队证据</strong>；同团队的论文、模型卡和配置互相补充，却不是独立复现实验。中间的<a href="#state">历史访问机制</a>提供共同符号，不代替各型号的层计划。</p>
 <table>
 <thead><tr><th>比较对象</th><th>应回答的问题</th><th>需要单独计量</th></tr></thead>
 <tbody>
@@ -36,10 +52,10 @@
 <h2>模型家族速查：版本、主干和证据分别登记</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>；<a href="https://arxiv.org/abs/2404.19737" title="Better &amp; Faster Large Language Models via Multi-token Prediction · 2024/04/30 · 2404.19737">Multi-Token Prediction</a>。</p></section>
 
-<details><summary>展开九个家族的版本与完整规格表</summary><table>
+<table>
 <thead><tr><th>家族 / 当前分析版本</th><th>公开参数口径</th><th>结构主线</th><th>本章证据</th></tr></thead>
 <tbody>
-<tr><td><a href="s03_base_architecture.html">DeepSeek V4.1-Flash</a></td><td>552B主干 + 196B Engram；prefill / decode为8B / 16B active</td><td>CED、CSA2跨层稀疏检索、FP4 KV、bounded replay、mHC</td><td>固定v1完整报告<a href="index.html#ref-1">[1]</a>；1017能力更新另计</td></tr>
+<tr><td><a href="#deepseek-series">DeepSeek V4.1-Flash</a></td><td>552B主干 + 196B Engram；prefill / decode为8B / 16B active</td><td>CED、CSA2跨层稀疏检索、FP4 KV、bounded replay、mHC</td><td>固定v1完整报告<a href="index.html#ref-1">[1]</a>；1017能力更新另计</td></tr>
 <tr><td><a href="#qwen">Qwen3.8-Flash-Next / Qwen3.5</a></td><td>3.8为125B主干 + 51B n-gram表、6B active；3.5代表款397B / 17B</td><td>GDN + 周期global；3.8加入QSA、4路GR及查表容量</td><td>发布、报告及两版固定config <a href="index.html#ref-44">[44–46]</a> <a href="index.html#ref-71">[71]</a></td></tr>
 <tr><td><a href="#kimi">Kimi K3 / K3.1 Pro</a></td><td>2.8T总量 / 104B active</td><td>KDA + Gated MLA → Gated DSA；AttnRes、Stable LatentMoE</td><td>K3完整报告<a href="index.html#ref-5">[5]</a>；K3.1固定card / config <a href="index.html#ref-47">[47]</a></td></tr>
 <tr><td><a href="#nemotron">Nemotron 3 Ultra</a></td><td>550B总量 / 55B active</td><td>Mamba–Transformer–MoE混合，LatentMoE、MTP、NVFP4训练</td><td>完整报告及固定config <a href="index.html#ref-33">[33]</a> <a href="index.html#ref-50">[50]</a></td></tr>
@@ -50,8 +66,31 @@
 <tr><td><a href="#gemma">Gemma 4系列</a></td><td>E2B / E4B、12B、26B-A4B、31B各有独立结构</td><td>Local / Global、KV sharing；12B为encoder-free多模态</td><td>完整技术报告<a href="index.html#ref-59">[59]</a></td></tr>
 </tbody>
 </table>
-</details>
 <p>这是结构与证据地图，表中active不是统一FLOPs单位，也不是部署显存。DeepSeek的查表参数、Qwen的host n-gram表、Step的视觉参数均单列；Nemotron的108个子模块不与Transformer block数直接横比。</p>
+<h3 id="deepseek-series">DeepSeek 系列：V4 的 CSA / HCA → V4.1-Flash 的 CED / CSA2</h3>
+<p>前序V4-Flash报告284B总量、13B active，以CSA稀疏读取和HCA高压缩dense读取混合；V4.1-Flash不是把旧缓存换成FP4这么简单，而是改用纯CSA2，并将40层分成20层causal encoder和20层decoder。主干552B、Engram另196B；prefill 8B / decode 16B active是CED执行路径口径。1017是后训练能力更新，未据此认定层表改变。来源：<a href="index.html#ref-2">[2] §1</a>、<a href="index.html#ref-1">[1] §2.1–2.3</a>、<a href="index.html#ref-40">[40]</a>。</p>
+<h4 id="deepseek-plan">主干、输入输出与真实层计划</h4>
+<table><thead><tr><th>对象</th><th>V4.1-Flash 固定报告 / 配置</th><th>张量与读取关系</th></tr></thead><tbody>
+<tr><td>文本与视觉入口</td><td>hidden 5120；ViT 32层、hidden 1024、16 heads、patch 14；2D-RoPE / RMSNorm / SwiGLU</td><td>图像经3×3 pixel-unshuffle将visual token缩至1/9，再由2层MLP投到5120，插入图像位置；文本embedding与视觉分支汇入同一主干</td></tr>
+<tr><td>Encoder 1–20</td><td>前2层SWA-only；后18层为3组，每组Full + Reuse×5；压缩比2</td><td>三组分别保存global缓存；每层另有自己的query和窗口128的SWA；encoder末层表示提供decoder的global投影输入</td></tr>
+<tr><td>Decoder 21–40</td><td>5组，每组4层；首组Full + Reuse×3，随后4组Reindex + Reuse×3；压缩比1</td><td>五个计算组共享一份global KV；各层自己的query与SWA仍不同。首索引扫描全历史，后4次只在首层候选池内重排</td></tr>
+<tr><td>Attention / MoE</td><td>64 query heads、head 512、query rank 1280；indexer 32 heads、head 128、top512；每层384 routed / top6 + 1 shared，expert inner 2304</td><td>Full生成共享KV及indexer K；Reindex复用缓存但重新选位置；Reuse连候选一起复用。shared与被选routed专家并行求和，不是串联</td></tr>
+</tbody></table>
+<figure class="mechanism-map model-report-diagram" id="deepseek-diagram">
+<figcaption><strong>自制架构图 · variant：DeepSeek V4.1-Flash，非 V4 / 1017 能力图。</strong>展开CED的张量分支与专家分支，层计划采用报告的1-based层号。</figcaption>
+<div class="model-branches"><div class="model-node"><b>文本 token → embedding 5120</b><small>因果序列输入</small></div><div class="model-node"><b>图像 → ViT ×32</b><small>3×3 unshuffle → 2层MLP → 5120；插入图像位置</small></div></div>
+<p class="model-edge">两种输入汇入同一序列 → causal encoder ×20 → 末层表示；由此分成两个依赖分支</p>
+<div class="model-branches"><div class="model-node"><b>全历史分支：global投影</b><small>Encoder已有3组压缩缓存；末层表示生成decoder共享global KV / indexer K。首层选2048个8位置block，Reindex再选512位置</small></div><div class="model-node"><b>尾部分支：decoder bounded replay</b><small>最后128个encoder outputs通过decoder，重建逐层SWA；这是近似状态，不是整个长prompt都执行decoder</small></div></div>
+<p class="model-edge">生成时新token依次执行 encoder ×20 → decoder ×20；decoder同时读取共享global与本层SWA → 输出分布</p>
+<div class="model-node"><b>每层FFN输入在 mHC 残差流中读取，分派为两条并行支路</b><div class="model-branches"><div class="model-node"><b>1 shared expert</b><small>完整hidden路径</small></div><div class="model-node"><b>Router → 384选6 routed experts</b><small>inner 2304；原score作混合权重</small></div></div><small>两路输出相加后写回残差；Engram仅在zero-based层1 / 14注入，不画成每层必经的第三专家</small></div>
+<p class="model-source">依据<a href="index.html#ref-1">[1] §2.1–2.5、§3.2</a>及<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/314113f8a7dadb388215396ba5fbee2c610a04d6/config.json">固定config</a>自制。省略投影head布局、mHC矩阵与GPU调度；两分支表示依赖，不保证实际并发。原论文 / 原图见<a href="s03_base_architecture.html#ced">CED专例</a>。</p>
+</figure>
+<h4 id="deepseek-residual">路由、残差与位置</h4>
+<p>文本与图像的路由correction bias分开更新，只影响选择，不替代原score混合权重；SwiGLU clamp为10。Single-Pass mHC扩为4路，以20步Sinkhorn处理混合约束，并使用上一block的input-mixing系数，融合pre-norm。报告的activation traffic 20d→10d只指该残差映射，不能写成总训练成本减半。Engram两个查表模块使用{2,3,4}-gram、8 hash heads和FP8，去掉原Engram的短卷积；推理host RDMA预取与RL rollout GPU驻留是不同放置策略。<a href="index.html#ref-1">[1] §2.1、§2.4.1、§3.1–3.2</a></p>
+<p><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/314113f8a7dadb388215396ba5fbee2c610a04d6/config.json">固定config</a>登记YaRN factor 16、原始65536 / 最大1048576位置，普通RoPE theta 10000、压缩路径theta 160000，路由字段<code>scoring_func=sqrtsoftplus</code>。这些是发布checkpoint规格，不能反推所有训练阶段使用同一长度；其<code>compress_ratios</code>数组有43项，不将额外模块项算成43层主干。</p>
+<h4 id="deepseek-recipe">训练配方、推理成本与证据缺口</h4>
+<p>v1报告45T多模态预训练，从64K开始直接稀疏训练、无dense warmup，34T时扩到1M；batch固定100.6M tokens，warmup 2000 steps，学习率2.6e-4保持到28T、cosine降至40T的2.6e-5、再保持到45T。二维linear矩阵用Muon，Q/K按head处理；RMSNorm等用AdamW，embedding / head / Engram用momentum与Sinkhorn。主KV的FP4 QAT发生在post-training，局部KV为FP8，不代表全模型训练或权重都是FP4。<a href="index.html#ref-1">[1] §2.4、§3.1</a></p>
+<p>DSpark是独立投机支路：3 blocks、窗口128、并行预测5位置；预训练主干完成后先冻结主干训练drafter，再在post-training联合训练但draft loss不回传主干。global缓存890 B/token由格式及共享计划推得，SWA、Engram、weights、workspace和恢复IO另计；bounded replay 128不是bit-exact。报告没有提供同预算隔离全部新模块的完整因果消融，也没有本章负载下的完整显存 / Agent成功成本。本章未执行模型实验。详细字节推导和恢复路径见<a href="s03_base_architecture.html#cache">缓存专例</a>。</p>
 </section>
 <section id="state">
 <h2>先理解四条历史访问路径</h2>
@@ -62,8 +101,8 @@
 </figure>
 <ul><li><strong>MLA：</strong>缩小每token的缓存表示，条目仍随历史增长。</li><li><strong>GDN/KDA：</strong>将关联压入有限矩阵；global混合层仍保存KV。</li><li><strong>DSA/QSA/MSA：</strong>保留可检索历史，减少本次读取候选；索引与gather另计。</li><li><strong>SWA：</strong>直接读取窗口，远距离传播由多层结构与global层补充。</li></ul>
 <h3>GDN → KDA：从整体遗忘到按通道控制</h3>
-<p class="math-notation">以下 \(q_t,k_t\in\mathbb R^{d_k}\)、\(v_t,o_t\in\mathbb R^{d_v}\) 均为列向量；\(t\) 为 token 位置，\(\beta_t\) 为修正幅度。\(A_t,I\) 是 \(d_k\times d_k\) 矩阵，\(\alpha_t\) 为标量保留系数，\(\boldsymbol\alpha_t\) 为 key 通道保留向量，Diag 将它放到对角线。此处状态为 \(d_k\times d_v\)，是架构主讲中 \(d_v\times d_k\) 状态的转置，读取方向也随之转置。</p>
-<p>基础delta更新已在架构主讲展开。这里采用Kimi Linear的转置方向：\(S\in\mathbb R^{d_k\times d_v}\)，输出 \(o_t=S_t^\top q_t\)。GDN用标量遗忘；KDA将其扩成key通道的对角门控。<a href="index.html#ref-49">[49]</a> <a href="index.html#ref-48">[48] §2–3</a></p>
+<p class="math-notation">以下 \(q_t,k_t\in\mathbb R^{d_k}\)、\(v_t,o_t\in\mathbb R^{d_v}\) 均为列向量；\(t\) 为 token 位置，\(\beta_t\) 为修正幅度。\(A_t,I\) 是 \(d_k\times d_k\) 矩阵，\(\alpha_t\) 为标量保留系数，\(\boldsymbol\alpha_t\) 为 key 通道保留向量，Diag 将它放到对角线。\(S_t\in\mathbb R^{d_k\times d_v}\) 是递归状态，\(S_{t-1}\) 为上一位置的同一状态，输出 \(o_t=S_t^\top q_t\)。此处状态方向是架构主讲中 \(d_v\times d_k\) 状态的转置，读取方向也随之转置。</p>
+<p>基础delta更新已在架构主讲展开。这里采用Kimi Linear的转置方向。GDN用标量遗忘；KDA将其扩成key通道的对角门控。<a href="index.html#ref-49">[49]</a> <a href="index.html#ref-48">[48] §2–3</a></p>
 <div class="reading-math" role="math" aria-label="GDN和KDA的递归状态公式">\[
 \begin{aligned}
 A_t&=I-\beta_t k_tk_t^\top,\\
@@ -90,45 +129,115 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 </section>
 <section id="qwen">
 <h2>Qwen：混合状态、稀疏global与主干外的容量</h2>
-<p>Qwen3.5-397B-A17B已采用GDN/global混合；Qwen3.8进一步引入QSA、4路GR和主干外51B查表容量。下面分对象核对，避免把三项改动合成一个“稀疏”标签。<a href="index.html#ref-71">[71]</a> <a href="index.html#ref-44">[44–46]</a></p>
-<table>
-<thead><tr><th>机制</th><th>来源描述</th><th>理解时的边界</th></tr></thead>
-<tbody>
-<tr><td>GDN + global</td><td>48层：36 GDN、12 global槽</td><td>递归层没有逐token global KV，不代表整个模型没有全局缓存</td></tr>
-<tr><td>QSA</td><td>压缩比4；indexer budget 2048；在CPT引入</td><td>预算和压缩比不能直接换算成4倍端到端速度</td></tr>
-<tr><td>Gated Residual</td><td>残差扩为4路，elementwise gate读取</td><td>与mHC双随机混合、AttnRes深度选择不是相同操作</td></tr>
-<tr><td>N-gram表</td><td>125B主模型之外51B，放在accelerator外</td><td>容量与访问带宽分别计；不能只按125B估总参数存储</td></tr>
-</tbody>
-</table>
-<ul><li><strong>Config标签不等于kernel：</strong><code>full_attention</code>标记global槽，仍需追到实际模块。</li><li><strong>版本分开：</strong>固定PDF封面2026-08-26，arXiv v1为08-31；消融限该报告的模型与负载。<a href="index.html#ref-45">[45]</a> <a href="index.html#ref-46">[46]</a></li></ul>
+<h3 id="qwen-versions">系列升级：3.5-397B-A17B → 3.8-Flash-Next</h3>
+<p>Qwen3.5已经用GDN / global混合；3.8继续保留周期全局槽，但将其中的读取改为QSA，残差改为4路Gated Residual（GR），另加host n-gram容量。3.8的125B backbone + 51B查表、6B active不能与3.5的397B / 17B直接按总参数比例推断质量或速度。证据分别是3.5固定config、3.8设计报告与固定config；报告PDF封面2026-08-26、arXiv v1提交08-31，不将两日期合并。<a href="index.html#ref-71">[71]</a> <a href="index.html#ref-44">[44]</a> <a href="index.html#ref-45">[45]</a> <a href="index.html#ref-46">[46]</a></p>
+<table><thead><tr><th>规格轴</th><th>3.5-397B-A17B 固定config</th><th>3.8-Flash-Next 报告 / 固定config</th></tr></thead><tbody>
+<tr><td>主干宽度 / 层数</td><td>hidden 4096，60层；45 GDN + 15 global</td><td>hidden 2560，48层；36 GDN + 12 QSA；global位于1-based 4、8、…、48，即每组3 GDN后1 global</td></tr>
+<tr><td>GDN heads / 状态</td><td>16 key / 64 value heads，head 128</td><td>16 key / 48 value heads，head 128；短因果卷积宽4；递归矩阵不随序列增加条目，global缓存仍增长</td></tr>
+<tr><td>Global heads</td><td>32 query / 2 KV，head 256</td><td>24 query / 2 KV，head 256；config的<code>full_attention</code>是槽位标签，实际稀疏选择由QSA解释</td></tr>
+<tr><td>专家</td><td>512 routed / top10，shared intermediate 1024</td><td>512 routed / top10，shared intermediate 640；共享支路与routed支路相加，不是latent expert空间</td></tr>
+<tr><td>位置 / 多模态</td><td>以前序固定config为准，不套用3.8新增项</td><td>partial RoPE 0.25、theta 1e7；默认262144位置。vision 27层、hidden 1152、16 heads、patch 16、merge 2、temporal patch 2，投到2560；vocab 248320</td></tr>
+</tbody></table>
+<h3 id="qwen-diagram-heading">3.8 的混合层与主干外查表</h3>
+<figure class="mechanism-map model-report-diagram" id="qwen-diagram">
+<figcaption><strong>自制架构图 · 主图 variant：Qwen3.8-Flash-Next；前序3.5只在上表横比。</strong>3 GDN → 1 QSA为固定配置的真实周期，不把组成柱图当完整层序。</figcaption>
+<div class="model-branches"><div class="model-node"><b>文本 → embedding 2560</b><small>词表248320；token序列还用于n-gram索引</small></div><div class="model-node"><b>图像 / 视频 → vision ×27</b><small>空间merge 2、temporal patch 2 → projector → 2560，与文本在序列入口汇合</small></div></div>
+<div class="model-node model-control"><b>仅 Layer 2：host n-gram table → 预取 / gated注入</b><small>51B在accelerator外；这不是每个block反复查询的global KV</small></div>
+<p class="model-edge">主干48层 = [GDN → GDN → GDN → QSA] ×12；每层的GR读取 → 当前Attention → 写回，再读取 → MoE → 写回</p>
+<div class="model-branches"><div class="model-node"><b>GDN层内部</b><small>Q/K/V短因果conv；Q/K L2 → scalar decay + delta write → 递归状态读取 → RMSNorm / sigmoid output gate</small></div><div class="model-node"><b>QSA层内部：数据路与选择路汇合</b><small>数据路保存global GQA KV；选择路将未旋转K按4 token平均 → partial RoPE → indexer选512 microblocks；所选KV及未完整尾block供main Attention读取</small></div></div>
+<div class="model-node"><b>FFN：shared支路 ∥ Router → 512选10 routed支路 → 求和</b><small>GR从4条残差分支逐元素读取并平均为模块输入，再以逐branch scalar gate写回；不是4个串行Transformer，也不是mHC的双随机混合</small></div>
+<p class="model-edge">最后残差读出 → 输出head；具体融合kernel与调度省略</p>
+<p class="model-source">依据<a href="index.html#ref-45">[45] §2.1–2.3</a>与<a href="index.html#ref-46">[46] 固定config</a>自制。∥表示结构并行支路，不保证执行并发；QSA候选预算是2048 <strong>tokens</strong>，压缩比4后为512 blocks，不是2048 blocks。</p>
+</figure>
+<h3 id="qwen-state-residual">状态更新、GR 与 QSA 的分工</h3>
+<p>GDN的Q/K/V先短因果卷积，Q/K做L2 normalization；scalar decay保留旧状态，delta rule修正当前key对应的value，读取后经zero-centered RMSNorm与sigmoid输出gate。它把历史关联压进有限矩阵，不具备任意历史token的精确随机读取。QSA则保留global KV，由4 query index heads / 1 key head、head 128的indexer选择历史microblocks；未旋转key先平均池化再作partial RoPE，末尾不完整block补入main Attention。两条路径改变的对象不同。<a href="index.html#ref-45">[45] §2.1</a></p>
+<p>GR逐路RMSNorm，从全部4路预测elementwise read gate并平均得到module input；write gate每路为scalar，去掉mHC式的残差混合矩阵。GR融合并替代原pre-norm，不在图上再串联一个重复pre-norm。单个Layer 2的n-gram embedding增加查表容量，host prefetch降低等待的可能性，却仍受访问带宽与放置约束。<a href="index.html#ref-45">[45] §2.2–2.3</a></p>
+<h3 id="qwen-recipe">配方与消融的实际条件</h3>
+<p>报告以Muon处理二维hidden矩阵；embedding、输出head、router及GR低秩投影保留AdamW，n-gram表使用不带weight decay的Adam，并重新拟合最优学习率 / batch。QSA在256K continued pre-training引入：先冻结主干，以dense Attention蒸馏indexer 1000 steps，LR 1e-3、每step 8×256K tokens，约2B tokens，再切换稀疏主干适配。报告测试1M能力不等于固定config默认上下文自动变成1M。<a href="index.html#ref-45">[45] §2.1.2、§3</a></p>
+<p>Attention消融用28层25B-A3B，400B tokens @4K + 80B @32K，固定每4层一个global槽，比较full、窗口128 SWA与GDN；GR另有25B-A3B / 560B对照。4倍optimal LR压力测试属于中等规模的特定设置，不能证明任何模型在4倍LR均稳定。7.6× prefill / 4.9× decode限QSA kernel：前者16K chunk / batch1，后者batch4 / next_n4，不是整个3.8的端到端速度。全部是团队消融，未独立重跑。<a href="index.html#ref-45">[45] 图5–6、§2.2、§3</a></p>
+<p class="note"><strong>成本与未披露：</strong>递归state、QSA global缓存、indexer / gather、4路残差激活、51B host表和视觉encoder分别计量。当前读取报告未完整给出最终全部预训练token绝对数和视觉训练配方，不用相对预算或config补猜，也未得到同条件Agent成功成本。</p>
 </section>
 <section id="kimi">
 <h2>Kimi：KDA、深度选择与Stable LatentMoE共同扩展</h2>
 <section id="citation-sources-7" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
 
-<p>Kimi K3报告公开2.8T总参数、104B active、原生视觉及1M上下文。它并非只换Attention：KDA负责高效序列混合，周期Gated MLA提供global访问，Attention Residuals选择前层表示，Stable LatentMoE把专家计算放进更窄的latent空间。<a href="index.html#ref-5">[5]</a></p>
-<p>K3.1 Pro固定配置列出93层，即<strong>69 KDA + 24 Gated DSA</strong>；模型卡说明从K3的full-attention Gated MLA层改为Gated DSA。因此K3完整报告能解释基础机制，但K3.1当前global路径应引用新card/config。不能把K3实验表直接重命名为K3.1结果。<a href="index.html#ref-47">[47]</a></p>
+<h3 id="kimi-versions">K2 → K3 → K3.1 Pro：全局读取的版本边界</h3>
+<p>K3报告Table 1将K2的61层、1.04T / 32.6B扩到93层、2.78T / 104.2B，hidden仍7168；routed从384 / top8到896 / top16，shared从1到2，expert inner从2048到3072，Attention heads从64到96。正文常用2.8T / 104B为圆整口径。升级同时包含KDA、Gated MLA、AttnRes、Stable LatentMoE与原生视觉，不是单独放大一个MoE。<a href="index.html#ref-5">[5] §2、Table 1</a></p>
+<p>K3是69 KDA + 24 Gated MLA；K3.1 Pro固定配置在同一全局位置改为Gated DSA，仍69 KDA + 24 global。全局层位于1-based 4、8、…、92、93，即23组“3 KDA + 1 global”后再1 global；第一层为dense FFN，其余92层MoE，不能根据概览图写成每层都是MoE。K3论文的MTP层数1与K3.1 config的<code>num_nextn_predict_layers=0</code>也必须分开。<a href="index.html#ref-5">[5] Table 1</a> <a href="index.html#ref-47">[47]</a></p>
 <p>2026-11-04的vLLM工程报告给出了该模型的索引/潜在KV字节与8×GB300单请求prefill对照。其<strong>稀疏读取流量、状态存储容量和token分片加速</strong>是三个不同对象，详见<a href="../llm-serving/s01_runtime_scheduling.html#kimi-sparse-traffic">推理主讲的公式与数据</a>。</p>
-<table>
-<thead><tr><th>结构</th><th>具体公开设计</th><th>要追问什么</th></tr></thead>
-<tbody>
-<tr><td>KDA</td><td>通道遗忘、lower-bounded log-decay、输出gate；与chunk算法共同设计</td><td>状态恢复、多分支rollout、长历史检索怎样管理？</td></tr>
-<tr><td>AttnRes</td><td>沿深度选择此前表示，而非固定累加全部残差</td><td>保存哪些block summary？选择与跨pipeline访问成本是多少？</td></tr>
-<tr><td>Stable LatentMoE</td><td>hidden 7168 → latent 3584；896 routed、top16、2 shared；RMSNorm、SiTU-GLU、Quantile Balancing</td><td>通信维度和专家数同时变化，质量与负载是否匹配？</td></tr>
-<tr><td>训练优化</td><td>K3 Per-head Muon；K2使用MuonClip</td><td>按head拆矩阵与QK clipping是不同措施，不能合并成一个名称</td></tr>
-</tbody>
-</table>
-<p>论文中“scaling efficiency”包含架构和配方的综合作用；不能称为KDA单模块的速度倍数。进一步推导见本主题的<a href="s07_architecture_training.html#latent-moe">LatentMoE</a>和训练主题的<a href="../llm-training-lifecycle/s05_training_methods_systems.html#muon-industrial">Muon工业配方</a>。</p>
+<h3 id="kimi-attention">序列状态、深度选择与专家并行</h3>
+<p>KDA为96 heads、head 128、conv 4，沿key通道先遗忘再delta修正，log-decay下界−5，读取经head-wise RMSNorm与full-rank sigmoid output gate。下界服务chunk算法的数值范围，不让它变成softmax Attention。K3 global采用NoPE MLA，512维latent缓存仍有token轴；K3.1 Gated DSA在其上加入32-head / 128维、top2048的indexer，固定config的RoPE维度0。NoPE通过KDA递归门控隐式表达顺序，不能再套一套未报告的YaRN。<a href="index.html#ref-5">[5] §2.1</a> <a href="index.html#ref-47">[47]</a></p>
+<p>Block AttnRes沿深度读取embedding、已完成block summary与当前block partial sum：pseudo-query与RMS-normalized keys产生softmax权重，随后混合表示，避免固定累加全部历史层。K3以12层为一个AttnRes block，共8个（末块不满），加embedding最多9个summary来源；这个12层分组与4层Attention周期是不同分组。summary驻留、pipeline传输和partial sum仍有成本。<a href="index.html#ref-5">[5] §2.2</a></p>
+<figure class="mechanism-map model-report-diagram" id="kimi-diagram">
+<figcaption><strong>自制架构图 · K3 / K3.1 Pro共用骨架，global框内二选一。</strong>Attention周期与AttnRes深度来源分开画。</figcaption>
+<div class="model-branches"><div class="model-node"><b>文本 → embedding 7168</b><small>作为主干输入，也保留为AttnRes来源</small></div><div class="model-node"><b>图像 / 视频 → MoonViT-V2 ×27</b><small>空间 / 时间Attention、temporal pooling；2×2 shuffle → MLP → 7168</small></div></div>
+<div class="model-node model-control"><b>AttnRes sources → RMS keys / pseudo-query → softmax读入当前模块</b><small>embedding + 已完成12层block summaries + 当前partial sum；不是token维global KV，也不是模块输出的串行必经栈</small></div>
+<p class="model-edge">93层： [KDA → KDA → KDA → global] ×23 → 最后global；Layer 1 dense FFN，其余92 Stable LatentMoE</p>
+<div class="model-branches"><div class="model-node"><b>KDA：有限递归矩阵</b><small>96 heads ×128；通道decay → delta write → output gate</small></div><div class="model-node"><b>Global variant二选一</b><small>K3：Gated MLA / NoPE，保留latent512逐token缓存<br>K3.1：Gated DSA，indexer top2048 → 稀疏读取；不是先MLA再串行DSA两层</small></div></div>
+<div class="model-node"><b>Stable LatentMoE 输入7168 → 两条并行支路</b><div class="model-branches"><div class="model-node"><b>2 shared experts</b><small>保持full-width 7168</small></div><div class="model-node"><b>Router 在 hidden 7168 上算分 → 896选16 → 被选token down到3584</b><small>routed experts inner3072 / SiTU-GLU → 加权聚合 → RMSNorm → up到7168；router不读latent</small></div></div><small>shared输出 + routed输出 → 写入当前AttnRes partial sum；QB bias只影响被选集合</small></div>
+<p class="model-source">依据<a href="index.html#ref-5">[5] §2.1–2.4、Table 1</a>、真实v1 PDF §2.2–2.3与<a href="index.html#ref-47">[47] 固定config</a>自制；略去head广播、kernel与summary传输，不将K3消融画成K3.1验证结果。</p>
+</figure>
+<p>Stable LatentMoE将routed专家的输入 / 输出维度缩到3584，而2 shared仍在7168完整宽度并行计算；routed聚合之后、up-projection之前插RMSNorm，才与shared输出相加。SiTU-GLU分别softcap gate线性因子和up分支，两个cap为4 / 25；QB按目标负载的score分位数更新expert bias，下一step生效、推理冻结。bias用于选择而不进入mixture weights，不能将“选择更均匀”等同为“所有专家同权重”。<a href="index.html#ref-5">[5] §2.3</a></p>
+<h3 id="kimi-vision-recipe">原生视觉与训练条件</h3>
+<p>MoonViT-V2为27层、约401M、patch14、12 heads，RMSNorm并去掉linear bias；从头以NTP训练，而非在完成文本模型后做单独对齐。图像和视频共享参数，分解帧内空间 / 帧间时间Attention并做temporal pooling，2×2 shuffle再将visual token缩至1/4，支持最高3584×3584输入。报告的from-scratch与SigLIP初始化比较限其预训练消融，不能泛化为任何视觉预训练都无用。<a href="index.html#ref-5">[5] §2.4、图6</a></p>
+<p>Per-head Muon拆分Q/K/V矩阵，与weight clipping和QB共同稳定训练；cosine warmup为总步数1%，weight decay 0.1。预训练8K→64K，cooldown 256K→1M。cosine / WSD对照固定minimum LR，但分别重新搜索最优peak LR和batch，不是直接共用同一超参；整体约2.5× scaling efficiency含架构、数据与配方的共同作用，不是KDA吞吐。部署量化将routed experts用MXFP4、激活MXFP8，shared、latent projections、router和Attention保留较高精度。<a href="index.html#ref-5">[5] §2.5、§3.2–3.4</a></p>
+<p class="note"><strong>成本与未披露：</strong>KDA状态与逐token MLA / DSA缓存、AttnRes summaries、latent投影与EP通信都需另计。报告未披露完整预训练token绝对总量，K3.1新增global路径的全部受控消融也未给出；旧K3结果不重命名为K3.1结果。未做本地模型复现，继续推导见<a href="s07_architecture_training.html#latent-moe">LatentMoE机制</a>。</p>
 </section>
 <section id="nemotron">
 <h2>Nemotron：混合子模块、LatentMoE与训练稳定性</h2>
-<ul><li><strong>计数单位：</strong>108为Mamba/Attention/MoE子模块总计；LatentMoE是8192→2048、512 routed/top22。<a href="index.html#ref-33">[33] §2</a> <a href="index.html#ref-50">[50]</a> <a href="index.html#ref-51">[51]</a></li><li><strong>负结果：</strong>NVFP4用于部分大GEMM，§2.7后期失稳切BF16仍未解决；高精度不能替代根因排查。<a href="index.html#ref-33">[33]</a></li><li><strong>发布差别：</strong>训练两个共享MTP头，released config一个模块；默认262144上下文，1M需额外设置。<a href="index.html#ref-50">[50]</a></li></ul>
-<p><a href="../assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf">完整报告</a>还包含专家后训练与OPD，能力增益不能全部归因于Mamba。</p>
+<h3 id="nemotron-plan">Nano / Super 的前序路线与 Ultra 固定主干</h3>
+<p>Nemotron 3 Ultra沿Nano / Super的Mamba–Transformer–MoE路线扩到550B / 55B。固定config的108项是<strong>子模块序列</strong>：48 Mamba、12 Attention、48 MoE，不是108个都含Attention+FFN的Transformer blocks。公开分析同时包含NVFP4训练、LatentMoE、MTP与多阶段后训练，不能只用“Mamba模型”概括。<a href="index.html#ref-33">[33] §2.1–2.2</a> <a href="index.html#ref-50">[50]</a> <a href="index.html#ref-51">[51]</a></p>
+<table><thead><tr><th>模块</th><th>Ultra 规格</th><th>状态 / 计算边界</th></tr></thead><tbody>
+<tr><td>主干 / global位置</td><td>hidden 8192；Attention子模块1-based位置8、15、24、33、40、49、58、65、74、83、90、99</td><td>不假设“每9层一个Attention”的统一周期；序列由实际config安排</td></tr>
+<tr><td>Mamba</td><td>state dimension 128、groups 8、256 heads、head 64、conv 4；state cache float32</td><td>递归SSM state与短卷积缓存，不是逐token KV；global Attention仍保存历史KV</td></tr>
+<tr><td>Global GQA</td><td>64 query / 2 KV heads、head128；RoPE theta10000</td><td>本章核实文本自回归路径；默认262144 context，1M需额外设置，不把评测上限当默认值</td></tr>
+<tr><td>LatentMoE</td><td>8192→2048；512 routed / top22，expert inner5120；1 full-width shared、inner10240；ReLU²</td><td>routed聚合回投8192后与shared相加；配置probability normalization、routed scale5与通信成本分别看</td></tr>
+<tr><td>残差 / norm</td><td>config登记pre-norm residual rescale、epsilon 1e-5</td><td>已读资料未在本次展开完整norm公式 / 每个融合点，不仅凭字段名补成其他家族的RMSNorm结构</td></tr>
+</tbody></table>
+<figure class="mechanism-map model-report-diagram" id="nemotron-diagram">
+<figcaption><strong>自制架构图 · variant：Nemotron 3 Ultra。</strong>主干框是子模块组成与global位置说明，不是108个Transformer blocks的顺序图。</figcaption>
+<div class="model-node"><b>文本embedding 8192 → 固定混合子模块序列 → 最后读出 / text head</b><small>48 Mamba + 12 GQA + 48 LatentMoE；global位置见上表，非机械重复3:1</small></div>
+<div class="model-branches"><div class="model-node"><b>Mamba子模块：输入 → SSM / conv → 输出</b><small>state128、groups8、heads256×64、conv4；维护float32递归state</small></div><div class="model-node"><b>GQA子模块：query读全历史KV</b><small>64Q / 2KV ×128；逐token缓存随历史增长，与Mamba state共存</small></div></div>
+<p class="model-edge">上面是不同子模块的内部机制，按config串接，不是同一层同时执行二选一；MoE子模块内部才有下面的并行分支</p>
+<div class="model-branches"><div class="model-node"><b>full-width shared expert</b><small>8192输入 / 输出，inner10240</small></div><div class="model-node"><b>Router 在 hidden 8192 上算分 → 512选22 → 被选token下投影到2048</b><small>routed ReLU² experts，inner5120 → 加权聚合 → up到8192；router不读latent</small></div></div>
+<div class="model-node"><b>两路相加 → 残差更新</b><small>低latent宽度降低专家dispatch表示宽度，但新增投影与更多激活专家不能忽略</small></div>
+<div class="model-node model-control"><b>独立MTP投机支路 → 草稿 → 主干验证</b><small>报告训练2步共享权重的Attention+MoE模块；发布config仅1个MTP模块。草稿不是主干所有token必经路径</small></div>
+<p class="model-source">依据<a href="index.html#ref-33">[33] §2.1–2.2、Table 1、§3.4</a>、<a href="index.html#ref-50">[50] 固定config</a>自制。省略SSM离散化、所有norm融合与调度，不补视觉 / 音频入口或主干不存在的配对block。</p>
+</figure>
+<h3 id="nemotron-recipe">NVFP4 训练与后训练阶段</h3>
+<p>报告预训练20T，约15T侧重数据多样性、最后5T侧重质量；WSD先200B warmup到2.5e-4，最后5T按minus-sqrt降至2.5e-6，再做1M长度扩展。后训练依次SFT、RLVR、Multi-Objective OPD（MOPD）及MTP Boosting；Boosting冻结主干、只训练drafter以适应推理时草稿噪声，不将teacher带来的提升归因于Mamba。<a href="index.html#ref-33">[33] §2.3–2.4、§3</a></p>
+<p>NVFP4不是全部算子四位训练：last16 layers、Mamba out、latent projections、QKV / Attention out、MTP与embedding等保留较高精度。论文在5T / 10T / 16T节点分支切BF16并继续74B tokens，报告loss gap小于0.4%；这是短续训分支，不是从头全程BF16的匹配对照。<a href="index.html#ref-33">[33] §2.7</a></p>
+<h3 id="nemotron-negative-results">失稳记录与服务数字的条件</h3>
+<p>第一次约8T失稳，团队定位local output gradient从FP32改BF16丢失MTP梯度，rollback到FP32后恢复；第二次约16T失稳原因未定，切BF16没有解决，提前anneal缓解。两个事件不能合并成“FP4导致所有失稳”或“高精度自动解决”。报告up-to 6×吞吐限GB200、8K输入 / 64K输出的最大吞吐设置：Ultra用TensorRT-LLM、对照用vLLM，并取有无speculation的最佳配置，非严格同runtime的架构因果测量。<a href="index.html#ref-33">[33] §2.7、服务测量</a></p>
+<p class="note"><strong>未披露 / 未验证：</strong>本次原文未完整列出norm算子映射、视觉入口或单独隔离每个架构模块的对照；没有本地质量、state恢复及Agent成功成本复现。阅读<a href="../assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf">原报告PDF</a>时将团队负结果与服务系统测量分开。</p>
 </section>
 <section id="glm">
 <h2>GLM：旧报告、新配置与独立服务测量分层阅读</h2>
 <p>GLM-5的技术报告以Agentic Engineering为目标，公开DSA、训练与长程Agent系统。GLM-5.3-Flash进一步采用KDA与DSA / MLA混合：320B / 18B，45层中34 KDA、11 global层；FFN侧是3 dense + 42 MoE，288 routed、top8、1 shared，并使用IndexPool4和mHC。<a href="index.html#ref-52">[52]</a> <a href="index.html#ref-53">[53]</a> <a href="index.html#ref-66">[66]</a></p>
 <p>Attention类型与FFN类型是两张层表。原GLM-5报告不能证明5.3每个新增结构；新模型卡/config负责当前规格，旧论文负责技术前序。</p>
+<h3 id="glm-versions">GLM-5 的 DSA 前序与 5.3-Flash 的新主干</h3>
+<p>GLM-5报告80层、744B / 40B、256 experts；Muon Split沿head拆分更新，并比较MLA / GQA缓存及多种高效Attention。MLA的576维latent缓存与8 KV heads GQA的2048通道口径用于报告中的存储分析；将head维192→256同时head数减少1/3是该版本设计，不套到5.3。DSA在mid-training后引入：1000 steps、每step 14×202752长度序列的indexer warmup，随后20B sparse adaptation；3步MTP共享权重。<a href="index.html#ref-52">[52] §2.1、Tables 1–5</a></p>
+<p>5.3-Flash模型卡称其为新训练base，320B / 18B、30T多模态；这些是卡的披露，不是GLM-5论文的一组新消融。当前config主干hidden4096、45层；1-based 4、8、…、44是11个global DSA槽，其余34个KDA，最后45层仍KDA。FFN独立为前三层dense（inner12288）、随后42 MoE（expert inner2048）。<a href="index.html#ref-53">[53]</a></p>
+<table><thead><tr><th>5.3模块</th><th>固定config规格</th><th>明确保留的边界</th></tr></thead><tbody>
+<tr><td>KDA</td><td>64 heads、head128、conv4、log-decay lower bound−5</td><td>有限矩阵state；不将11 global KV当成消失</td></tr>
+<tr><td>DSA / MLA</td><td>64 heads、query rank1536、KV latent512；NoPE head256 / value256、RoPE dim0</td><td>global缓存保留token轴；稀疏检索与latent容量是不同因素</td></tr>
+<tr><td>Indexer</td><td>32 heads、head128、top2048；<code>index_k_pool=4</code>、<code>index_k_pool_tail=true</code></td><td>IndexPool4是配置证据；未读完整实现，不仅按字段名补池化 / 尾部公式</td></tr>
+<tr><td>MoE / residual</td><td>288 routed / top8 + 1 shared；sigmoid score、top-k normalize、scale2.5；mHC4路、Sinkhorn20、epsilon1e-6</td><td>路由选择、混合权重、mHC投影约束分别计；不是Qwen GR或Kimi AttnRes</td></tr>
+<tr><td>Norm / position / vision</td><td>RMSNorm eps1e-5、SwiGLU limit10、max1048576；vision24层、hidden1024、16 heads、patch14、merge2、temporal patch2→4096</td><td>global RoPE dim0是NoPE配置；多模态输入处理与text active参数分开</td></tr>
+</tbody></table>
+<figure class="mechanism-map model-report-diagram" id="glm-diagram">
+<figcaption><strong>自制架构图 · variant：GLM-5.3-Flash；GLM-5只作技术前序。</strong>将Attention层表、FFN层表与indexer选择支路分别表示。</figcaption>
+<div class="model-branches"><div class="model-node"><b>文本embedding 4096</b><small>因果token序列</small></div><div class="model-node"><b>视觉tower ×24 → merger / projector</b><small>hidden1024 → 主干4096，与文本汇合</small></div></div>
+<p class="model-edge">45层主干： [KDA → KDA → KDA → DSA] ×11 → KDA；以mHC四路残差承接模块读写</p>
+<div class="model-branches"><div class="model-node"><b>KDA槽：递归state读写</b><small>64 heads ×128，conv4，通道gate lower bound−5</small></div><div class="model-node"><b>DSA槽：main latent KV数据路 + indexer选择路</b><small>KV512 / NoPE；32×128 indexer top2048选择后供Attention读取。IndexPool4 / tail仅登记字段，不画未核实算法</small></div></div>
+<p class="model-edge">上述是按层号选择的不同Attention模块；FFN另按层号分段，不将34 KDA误写为34 dense FFN</p>
+<div class="model-branches"><div class="model-node"><b>FFN Layer 1–3：dense</b><small>inner12288</small></div><div class="model-node"><b>FFN Layer 4–45：MoE</b><small>1 shared ∥ Router → 288选8 routed（inner2048）；输出相加写回mHC</small></div></div>
+<p class="model-edge">最后读出 → 文本输出；未画未经完整报告披露的训练stage或新增投机拓扑</p>
+<p class="model-source">依据<a href="index.html#ref-53">[53] 固定card / config</a>自制；DSA前序解释来自<a href="index.html#ref-52">[52] §2.1</a>。图是checkpoint结构整理，不是5.3训练消融或kernel调度图。</p>
+</figure>
+<h3 id="glm-ablation">原报告消融能解释什么</h3>
+<p>GLM-5的高效Attention研究用9B / 40层、固定1:1 efficient / full的混合模型，在64K续训190B tokens；SWA窗口4096。层序搜索在16K RULER上用beam8，不能据此给5.3画相同最优层表。报告中DSA质量接近MLA的结果限对应对照，不能把“lossless by construction”延伸为任意稀疏比例都不丢质量。<a href="index.html#ref-52">[52] §2.1.1–2.1.2、Tables 2–5</a></p>
+<p class="note"><strong>未披露：</strong>5.3完整独立训练报告、KDA / mHC / IndexPool4逐项隔离消融、完整优化器与长度扩展配方未在当前已读材料给出。30T只作模型卡规格；不将GLM-5的Muon Split、indexer warmup或MTP数量当成5.3已经验证的训练计划。</p>
 <h3>AMD服务测量：能支持哪类结论？</h3>
 <section id="citation-sources-10" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://docs.vllm.ai/en/latest/" title="vLLM official docs · 官方文档 / 原始出版页">vLLM official docs</a>。</p></section>
 
@@ -138,25 +247,90 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 <tr><td>8×MI300X；vLLM 0.31.0；96k输入 / 32k输出；并发256</td><td>4719 output tok/s</td><td>2317 output tok/s</td><td>AMD 2026-11-11的随机token服务测试；支持该配置的并行策略比较，不能当作Agent成功率或普遍速度比</td></tr>
 </tbody>
 </table>
-<p>这是与模型团队不同来源的系统测量，补充了配置核对，但测试输入、并发和输出分布决定结果。真实Agent有工具等待、短轮、prefix复用和不同完成时间，需重新测量。<a href="index.html#ref-65">[65]</a></p>
+<p>这是与模型团队不同来源的系统测量，补充了配置核对，但测试输入、并发和输出分布决定结果。真实Agent有工具等待、短轮、prefix复用和不同完成时间，需重新测量。<a href="index.html#ref-65">[65]</a> 本轮保留既有AMD来源与数表，未重新读取该provider测量原文，不计作本轮新增架构核实或独立模型实验。</p>
 </section>
 <section id="minimax">
 <h2>MiniMax：按GQA group选block的MSA</h2>
 <p>MiniMax Sparse Attention把长历史划分成block，让<strong>不同GQA group分别选择相关block</strong>再执行Attention。它保留可被query检索的历史；不是KDA那种有限递归状态，也不等同MLA的latent KV表示。<a href="index.html#ref-54">[54] v2</a></p>
 <p>M3.1-Flash公开428B / 23B、1M context，并将前三个full Attention层改为MSA；其MoE层分布仍保留前三个dense FFN。因此“前三层已经稀疏”需说明是在Attention侧，不能写成这三层FFN也变成MoE。<a href="index.html#ref-55">[55]</a></p>
+<h3 id="minimax-plan">M3 → M3.1-Flash：Attention 与 FFN 两张层表</h3>
+<table><thead><tr><th>对象</th><th>M3.1-Flash 固定card / config</th><th>与MSA论文的关系</th></tr></thead><tbody>
+<tr><td>主干</td><td>60层、hidden6144、64 query / 4 KV heads、head128；text / image / video输入，text输出</td><td>M3.1将前三Attention层也转MSA，所以当前60层均MSA；不是“60个MoE层”</td></tr>
+<tr><td>FFN</td><td>3 dense，inner12288；57 MoE，128 routed / top4 + 1 shared、expert inner3072</td><td>论文109B实验是41层、3 dense + 38 MoE、hidden3072；不把其规格冒充428B</td></tr>
+<tr><td>Norm / gate / position</td><td>per-head QK norm、<code>use_gemma_norm</code>；<code>swiglu_oai</code>系数1.702、limit7、无output gate；partial RoPE64维、theta1e7、最大1M</td><td>登记配置事实，不按norm名称补未读取的融合算子完整公式</td></tr>
+<tr><td>Vision</td><td>32层、hidden1280、16 heads、patch14、merge2、temporal patch2→6144</td><td>视觉token在主干入口与文本汇合；encoder与视觉token成本独立于23B text active</td></tr>
+<tr><td>量化 / speculation</td><td>配置含Attention MXFP8及expert NVFP4等异构量化；卡称包含DSpark</td><td>不是全模型FP4；卡未完整展开DSpark topology，不套用DeepSeek的3 blocks / 5 positions</td></tr>
+</tbody></table>
+<h3 id="minimax-selector">MSA 的 selector 只选位置，不产生第二份输出</h3>
+<p>原论文Index Branch为每个GQA group生成一个index query，所有group共享一个index key；因此不同group可选择不同历史blocks。论文主实验每group选择16个128-token blocks，并保证local block入选；main GQA仅在选中的KV上计算Attention。index branch只提供候选，不能画成与main Attention相加的第二个value输出。其训练用teacher Attention的KL监督，teacher stop-gradient、index input detach，梯度限制到index projections。<a href="index.html#ref-54">[54] v2 §3.1–3.2</a></p>
+<figure class="mechanism-map model-report-diagram" id="minimax-diagram">
+<figcaption><strong>自制架构图 · 主干 variant：M3.1-Flash；展开框为MSA v2论文机制。</strong>16×128是论文实验的选择预算，本图不将其当作未经核对的428B固定字段。</figcaption>
+<div class="model-branches"><div class="model-node"><b>文本embedding 6144</b><small>与visual tokens按输入序列拼接</small></div><div class="model-node"><b>图像 / 视频 → vision ×32 → merger / projector</b><small>1280 → 6144</small></div></div>
+<p class="model-edge">60个MSA Attention层；FFN独立为前3 dense、后57 MoE → text head</p>
+<div class="model-node"><b>一个MSA模块的输入分成数据路与选择路</b><div class="model-branches"><div class="model-node"><b>数据路：main Q / GQA KV</b><small>历史KV保持可检索；等待group-specific block IDs，再gather所选KV</small></div><div class="model-node model-control"><b>选择路：每group index Q + shared index K</b><small>按block打分 → 每group选blocks；local block必选 → block IDs送给数据路，不直接输出value表示</small></div></div><small>所选KV + main Q → group-specific Attention → 唯一main输出</small></div>
+<div class="model-node model-control"><b>仅训练：dense teacher → KL → index projections</b><small>teacher stop-gradient，index input detach；推理时不执行dense teacher</small></div>
+<div class="model-node"><b>MoE层：1 shared ∥ Router → 128选4 routed → 求和 / 残差</b><small>Layer 1–3改用dense FFN，不是先dense再MoE的串行双FFN</small></div>
+<p class="model-source">依据<a href="index.html#ref-54">[54] §3</a>、<a href="index.html#ref-55">[55] 固定card / config</a>自制。图省略group广播、block gather布局、norm与残差融合；selector箭头是控制依赖，不能当第二Attention输出或端到端测速。</p>
+</figure>
+<h3 id="minimax-recipe">训练实验与发布规格分开</h3>
+<p>论文109B / 41层模型总训练3T：PT路线先40B dense warmup再稀疏；CPT路线先2.6T full、再400B引入MSA（含40B indexer warmup），另有140B长上下文扩展。其MoE为128 / top4 / shared1、main64Q / 4KV / head128；block预算、loss与attention sink等消融在10.53B / 16层pilot进行，不能称作428B M3.1逐项消融。<a href="index.html#ref-54">[54] §5.1、附录消融</a></p>
 <div class="callout caution"><strong>加速数字的对象：</strong>MSA论文的109B、3T训练对照，以及H800上1M长度kernel的14.2× / 7.6×，不是428B M3.1完整Agent任务的端到端加速。论文的kernel、模型实验和新发布模型要分别标明。</div>
 <p>值得展开的研究问题是group-specific候选是否减少共享检索的损失、选择器能否找到远距离关键信息，以及block gather是否适合实际硬件。比较时同时测候选召回、长上下文质量、indexer和Attention时间；没有这些量，单个稀疏率难以解释成本。</p>
+<p class="note"><strong>未披露：</strong>当前428B模型完整预训练数据量 / 优化器 / 长度扩展recipe、DSpark详细拓扑与升级隔离消融未在已读card / config给出。norm字段也不等于完整实现证据。未执行模型复现，MSA的KV容量、selector开销、gather带宽与drafter验证成本需分别测量。</p>
 </section>
 <section id="mimo">
 <h2>MiMo：局部 / 全局主干与扩散drafter共同设计</h2>
-<ul><li><strong>主干：</strong>Pro为1.02T/42B、60 SWA+10 GA；Flash为310B/15B、39 SWA+9 GA；窗口128、无shared experts。</li><li><strong>Drafter：</strong>5层、窗口1024、anchor后预测7 token；AR target仍需验证。</li><li><strong>配方：</strong>pretrain AdamW；mid-training hidden矩阵用Muown，其余embedding/head/router仍AdamW；同阶段引入MXFP4 QAT。</li><li><strong>开放边界：</strong>蒸馏模型与RL代码公开不等于Pro/Flash全部权重公开。<a href="index.html#ref-56">[56]</a></li></ul>
+<h3 id="mimo-plan">V2.6 Pro / Flash：两个主干 variant，不用统一比例替代层表</h3>
+<p>V2.6报告将局部 / 全局主干、多模态、训练配方、MXFP4 QAT和diffusion drafter共同设计。Pro与Flash各有独立规格，不能套成相同的5:1或7:1周期；本次报告读取核实组成及首层global，未取得其余global位置的完整固定config，不画出猜测层序。蒸馏9B和RL框架开放也不等于Pro / Flash全部权重开放。<a href="index.html#ref-56">[56] §2、Table 1</a></p>
+<table><thead><tr><th>规格</th><th>V2.6 Pro</th><th>V2.6 Flash</th></tr></thead><tbody>
+<tr><td>参数 / 主干</td><td>1.02T / 42B；70层、hidden6144</td><td>310B / 15B；48层、hidden4096</td></tr>
+<tr><td>Attention组成</td><td>60 SWA + 10 GA；128Q / 8KV</td><td>39 SWA + 9 GA；SWA64Q / 8KV、GA64Q / 4KV</td></tr>
+<tr><td>Heads / 窗口</td><td colspan="2">QK head192、value128、SWA窗口128；首block为GA + dense FFN，其余FFN为MoE</td></tr>
+<tr><td>专家</td><td>384 routed / top8，无shared</td><td>256 routed / top8，无shared</td></tr>
+<tr><td>未完整枚举</td><td colspan="2">除首层外的精确global位置、expert intermediate维度、完整norm / residual算子与RoPE机制未在本次已读报告完整列出；不从其他SWA模型类推</td></tr>
+</tbody></table>
+<h3 id="mimo-inputs">文本、视觉与音频的汇入链路</h3>
+<p>视觉encoder为28层、24 local + 4 global、hidden1280、32Q / 8KV、head64、约681M，patch为2×16×16、merge2×2；local按row / column序列交替，周期global沟通跨区域，视觉塔以超过4T visual tokens的NTP训练。音频则先经24层tokenizer（12 SWA + 12 GA，hidden1024、约308M），得到20个RVQ codebooks、25Hz表示，再由6层约127M的patch encoder对每4 frames作局部双向Attention，拼接 / projection后为6.25Hz。两个音频阶段串联，视觉和音频与文本是并行输入分支。<a href="index.html#ref-56">[56] §2.2–2.3</a></p>
+<figure class="mechanism-map model-report-diagram" id="mimo-diagram">
+<figcaption><strong>自制架构图 · variants：MiMo-V2.6 Pro / Flash。</strong>图示多模态入口、主干组成及独立drafter，不冒称完整global层顺序。</figcaption>
+<div class="model-branches three"><div class="model-node"><b>文本 → embedding</b><small>主干宽度：Pro6144 / Flash4096</small></div><div class="model-node"><b>图像 / 视频 → vision ×28</b><small>24 local / 4 global；patch2×16×16 → merge2×2 → 主干输入</small></div><div class="model-node"><b>音频 → tokenizer ×24</b><small>20 RVQ / 25Hz → patch encoder ×6，每4 frames局部双向 → concat / project，6.25Hz → 主干输入</small></div></div>
+<p class="model-edge">三入口汇成统一token序列 → 自回归target主干；首block均GA + dense FFN</p>
+<div class="model-branches"><div class="model-node"><b>Pro target</b><small>70层：60 SWA / 10 GA；384选8 experts，无shared；此框是组成汇总</small></div><div class="model-node"><b>Flash target</b><small>48层：39 SWA / 9 GA；256选8 experts，无shared；此框是组成汇总</small></div></div>
+<div class="model-node"><b>主干历史读取：SWA本层窗口128，GA本层全局KV → routed-only MoE → target输出分布</b><small>Pro / Flash是二选一型号，不串行执行两个target；音频输出codec及未披露norm细节不在此图展开</small></div>
+<div class="model-node model-control"><b>可选投机支路：clean anchor + target hidden → 5层dense SWA drafter</b><small>窗口1024；block内双向Attention，并行预测anchor后7 positions → AR target验证 → 接受 / 拒绝；正常AR生成不必先走drafter</small></div>
+<p class="model-source">依据<a href="index.html#ref-56">[56] §2.1–2.4、Table 1</a>自制。输入箭头表示编码 / 汇入关系；target组成不表示全层顺序，草稿并行预测不等于主模型无需因果验证。</p>
+</figure>
+<h3 id="mimo-recipe">两阶段预训练、Muown 与 QAT</h3>
+<p>预训练先text再omni：Flash 48T = 26T text + 22T omni，Pro 30T = 27T + 3T，长度32K→256K，优化器AdamW。mid-training扩256K→1M，以Muown更新hidden矩阵，embedding / output head / router仍AdamW，并在该阶段引入MXFP4 QAT；随后较短SFT、大规模RL。mid-training优化器不能反写为全部预训练从头Muon，QAT也不能表述为全部算子FP4。<a href="index.html#ref-56">[56] §3.1–3.2</a></p>
+<p class="note"><strong>成本与证据缺口：</strong>局部窗口KV与global KV、视觉 / 音频编码、RVQ token规则、drafter预测与target验证、QAT格式转换均需计量。当前报告整体能力与服务结果无法隔离单个模块贡献；未执行同target下drafter / QAT受控重跑，也未核实未发布固定config中的具体层序或norm细节。</p>
 <p>这一家族特别适合研究<strong>同一主模型固定时，drafter、QAT与服务并发怎样改变接受长度和总成功成本</strong>；如果同时更换主干和后训练checkpoint，就只能评估系统整体。</p>
 </section>
 <section id="step">
 <h2>Step：局部Attention、MTP与矩阵更新的数值细节</h2>
 <p>Step 3.5 Flash报告196B总量、11B active，SWA / Full为3:1、窗口512，并使用3个MTP模块。Step 3.7 Flash固定模型卡则给出约198B，包含196B文本与1.8B视觉、45层、256K上下文。<a href="index.html#ref-57">[57]</a> <a href="index.html#ref-58">[58]</a></p>
 <p>应同时保留“3.5训练报告”和“3.7当前配置”，不能用前者冒充后者单独完整报告。视觉分支还增加输入编码和token成本，仅比较文本active不足以解释GUI任务效率。</p>
+<h3 id="step-plan">Step 3.5 的层序与 3.7 的配置差异</h3>
+<table><thead><tr><th>模块</th><th>Step 3.5 Flash 原报告</th><th>Step 3.7 Flash 固定config / card</th></tr></thead><tbody>
+<tr><td>主干 / 参数</td><td>45 blocks、hidden4096、vocab128896；196B / 11B主干，含MTP另198B / 13B口径</td><td>约198B包含196B text + 1.8B vision；不是前序“含MTP198B”的同一个拆分</td></tr>
+<tr><td>Attention计划</td><td>首global + [SWA×3 + global]×11；共33 local / 12 full，local窗口512</td><td><code>num_hidden_layers=45</code>，但<code>layer_types</code>及<code>rope_theta</code>各48项；前45项是12 full / 33 local，尾3项local，不能直接称48层backbone</td></tr>
+<tr><td>Heads / FFN</td><td>Full64Q / local96Q，8KV、head128；前三dense inner11264，后42 MoE、288 routed / top8 + 1 shared、inner1280</td><td>本章用固定字段核对发布规格，不以3.5消融补3.7未知训练条件</td></tr>
+<tr><td>Residual / position</td><td>zero-centered RMSNorm、head-wise output gate；global RoPE64维、local128维</td><td>global theta5e6 / local1e4，max262144，scaling factor2、original131072；配置长度不等于前序每阶段长度</td></tr>
+<tr><td>多模态 / MTP</td><td>3 dense SWA MTP模块；主训练只训1个，最终finetune克隆至第2 / 3个</td><td>vision47层、hidden1536、16 heads、patch14、projector stride2；声明MTP3，未读实现不能仅凭尾3项local断言它们就是MTP</td></tr>
+</tbody></table>
+<figure class="mechanism-map model-report-diagram" id="step-diagram">
+<figcaption><strong>自制架构图 · 主干层序 variant：Step 3.5 Flash；3.7视觉升级单独标示。</strong>仅3.5报告的45层序完整展开，3.7数组差异不静默消除。</figcaption>
+<div class="model-branches"><div class="model-node"><b>3.5 / 3.7：文本embedding → text主干</b><small>3.5 hidden4096；前3 dense FFN，后42 MoE</small></div><div class="model-node"><b>仅3.7：图像 → vision ×47 → projector</b><small>hidden1536、patch14、stride2 → text输入；不声称3.5已经含相同视觉塔</small></div></div>
+<div class="model-node"><b>3.5 Attention完整计划：global → [SWA → SWA → SWA → global] ×11</b><small>local96Q / full64Q，8KV ×128；SWA窗口512，global读取完整历史；output gate按head作用</small></div>
+<div class="model-node"><b>MoE层：1 shared ∥ Router → 288选8 routed → 加权合并 / 残差</b><small>expert inner1280；leading 3 layers改用dense FFN，Attention层序与FFN类型分开</small></div>
+<p class="model-edge">主干 → next-token head；主干hidden / token embedding供独立MTP支路</p>
+<div class="model-node model-control"><b>MTP：模块1 → 模块2 → 模块3的逐步草稿 → target验证</b><small>3.5主训练只训练模块1，最后克隆 / finetune到3模块；不能画成MiMo式一次并行7位置的diffusion drafter</small></div>
+<div class="model-node model-control"><b>3.7配置警示：声明45，数组48</b><small>full positions zero-based0、4、…、44；尾3 local具体归属未读实现，不放进backbone层序图</small></div>
+<p class="model-source">依据<a href="index.html#ref-57">[57] §2.2–2.3、附录Table 6</a>、<a href="index.html#ref-58">[58] 固定card / config</a>自制。图略去norm融合与投机接受策略；两版参数与训练阶段不合并。</p>
+</figure>
+<h3 id="step-recipe">训练与消融实际覆盖的模型</h3>
+<p>报告为loss-free expert balancing另加EP rank-level auxiliary balancing，使专家选择与跨卡负载各有约束；局部query heads由64扩到96用于补偿混合Attention质量，head-wise output gate抑制sink。完整pipeline消融用30B-A3B / 1.4T、4K→32K并含64K SFT，固定SWA窗口512、禁用MTP；100B-A10B的head gate / sink对照仅pre-training。不能将两种对照称作最终196B或3.7视觉升级的隔离验证。<a href="index.html#ref-57">[57] §2.2–2.3、附录</a></p>
 <p><strong>数值反例：</strong>3.5的Polar Express迭代在BF16出现罕见outlier，改<strong>该迭代</strong>到FP16后不再出现。范围限该近似测试；矩阵分组与精度见训练主题的<a href="../llm-training-lifecycle/s05_training_methods_systems.html#muon-industrial">工业Muon配方</a>，不能推广为全模型FP16。</p>
+<p class="note"><strong>未披露 / 成本：</strong>3.7完整独立训练报告、视觉入口升级的隔离消融、数组尾项实现归属未在本次读取证据覆盖；完整预训练recipe未逐字段核实，不补猜。窗口512的local KV、12 full层global KV、视觉encoder、3 MTP与验证开销分别计，未做本地质量或延迟复现。</p>
 </section>
 <section id="gemma">
 <h2>Gemma 4：端侧、多模态和KV复用也是架构前沿</h2>
@@ -171,6 +345,28 @@ DA=\frac12\begin{bmatrix}1&-1\\0&0\end{bmatrix}.
 </tbody>
 </table>
 <p>“Gemma 4都没有encoder”是错误概括；encoder-free具体指12B路线。对GUI或移动Agent，截图与音频输入频率、token预算及恢复能力，可能比单次文本吞吐更影响使用体验。<a href="../assets/research/2026-11-14/gemma4-2607.02770v1.pdf">下载技术报告</a>。</p>
+<figure class="mechanism-map model-report-diagram" id="gemma-diagram">
+<figcaption><strong>自制架构图 · variants：E2B / E4B、12B、26B-A4B、31B 四类结构。</strong>共享的是local / global比例与位置编码策略，不是同一张层表；数字只按报告型号登记。</figcaption>
+<div class="model-branches"><div class="model-node"><b>E2B / E4B：端侧小模型</b><small>有效2.3B / 4.5B（总5B / 8B）；per-layer embeddings；local:global为E2B 4:1、E4B 5:1；报告另给KV cache 20/35、18/42的共享比</small></div><div class="model-node"><b>12B：unified encoder-free</b><small>48×48×3图像patch与40ms音频块直接projection进主干；5:1 local:global</small></div></div>
+<div class="model-branches"><div class="model-node"><b>26B-A4B：稀疏MoE</b><small>26B总参数 / 3.8B激活；5:1；550M ViT编码视觉</small></div><div class="model-node"><b>31B：dense</b><small>5:1；550M ViT编码视觉；与26B-A4B分开登记容量</small></div></div>
+<p class="model-edge">共同层序：连续local sliding-window block，每4或5个插入1个global；global层用p-RoPE（p=0.25），local层用RoPE；global层K=V只在12B / 26B-A4B / 31B成立</p>
+<div class="model-node"><b>输入与推理支路</b><small>E2B / E4B用150M ViT（patch16）与305M音频encoder；更大型号用550M ViT。MTP drafter为独立embedder + 4层Transformer，交叉读取主模型KV，不改变主干层表</small></div>
+<p class="model-source">依据<a href="index.html#ref-59">[59] §2、§2.1–2.6、Table 3</a>自制。省略per-layer embedding的共享细节、视觉encoder内部层数与移动量化分组；“global KV降37.5%”是报告在p-RoPE与K=V口径下的估计，不外推到全部型号或全部负载。</p>
+</figure>
+<h3 id="module-matrix">跨模块对照：把九个家族放回同一组问题</h3>
+<p>下表不重列参数，而是按模块追问“谁改变了什么对象”。同一格里的家族可以给出不同答案；写在一起的机制仍须回到各自报告核对层表。</p>
+<table>
+<thead><tr><th>模块</th><th>各家族的答案</th><th>读表边界</th></tr></thead>
+<tbody>
+<tr><td>历史状态</td><td>DeepSeek用3组global缓存 + 逐层SWA；Qwen为36 GDN + 12 global；Kimi为KDA + Gated DSA；Nemotron为Mamba-2 + 12层GQA；GLM为KDA + DSA/MLA；MiniMax保留KV并用MSA选block；MiMo / Step为SWA + GA；Gemma为local / global交替</td><td>递归state、逐token KV、压缩latent与稀疏候选不是同一种“压缩”；不能按名字互换</td></tr>
+<tr><td>全局读取</td><td>Qwen QSA压缩比4、indexer预算2048；Kimi Gated DSA；DeepSeek CSA2首层2048个8位置block、Reindex 512位置；MiniMax 16×128 selector为论文实验预算；Step报告12个full层</td><td>预算、压缩比和top-k不换算成端到端倍数；indexer扫描、gather与元数据另计</td></tr>
+<tr><td>深度与残差</td><td>Kimi AttnRes沿深度选前层表示；Qwen 4路GR；DeepSeek / GLM mHC受约束多流；其余家族按各自报告层表</td><td>深度选择不是重复执行权重；mHC双随机只约束res混合，GR取消旧流混合</td></tr>
+<tr><td>专家与容量</td><td>DeepSeek 384选6 + 1 shared；Kimi 896选16 + 2 shared、latent 3584；Nemotron 512选22 + 1 shared、latent 2048；Qwen另有51B主干外n-gram表；MiMo无shared专家；Step用细粒度MoE；Gemma 26B-A4B为3.8B激活</td><td>总量、激活量、查表容量与部署显存分开；latent宽度只缩小专家表示，不缩小全部通信</td></tr>
+<tr><td>输入与多模态</td><td>DeepSeek用ViT + Engram查表；Kimi原生视觉；MiMo文本 / 视觉 / 音频；Step 3.7约1.8B视觉参数；Gemma 12B为encoder-free、其余用ViT与音频encoder</td><td>encoder-free只指12B；视觉与音频token进入上下文，也计入KV与延迟</td></tr>
+<tr><td>低精度与训练</td><td>DeepSeek FP4 KV在post-training做QAT、局部KV为FP8；Nemotron NVFP4预训练并保留高精度例外；MiMo MXFP4 QAT；Step仅Polar Express迭代改FP16；Gemma量化用于部署与int8 KV</td><td>训练精度、QAT与部署量化分属不同阶段；局部算子例外不能写成“全模型4bit”</td></tr>
+</tbody>
+</table>
+<p class="note">模块表的用途是定位差异，不是给家族排名。每一格的完整条件、版本与未披露项仍以对应小节和<a href="index.html#sources">固定来源</a>为准。</p>
 </section>
 <section id="closed">
 <h2>闭源前沿：记录披露内容，保留未知项</h2>

@@ -12,7 +12,7 @@
 <p>先修：<a href="s01_transformer_foundations.html#block">block 与矩阵形状</a>。基础 FFN 来源于 Transformer；门控变体见 GLU 原论文，稀疏训练工程用 Switch 作明确案例。<a href="index.html#ref-1">[1]</a><a href="index.html#ref-5">[5]</a></p></section>
 <section id="swiglu"><h2>两矩阵 FFN 与三矩阵 SwiGLU</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2002.05202" title="GLU Variants Improve Transformer · Shazeer, Noam · 2020/02/12 · 2002.05202">SwiGLU</a>。</p></section>
-
+<p>普通 FFN 的 \(W_1,W_2\) 是 \(d\times f,f\times d\) 权重，\(b_1,b_2\) 是 \(f,d\) 维偏置。SwiGLU 的 \(W_{\rm gate},W_{\rm up}\) 都为 \(d\times f\)，\(W_{\rm down}\) 为 \(f\times d\)；\(g(x),u(x)\) 是两个 \(f\) 维中间行向量。SiLU 式中 \(z\) 是激活输入，sigmoid 为 \(\sigma(z)=1/(1+e^{-z})\)，对向量逐元素应用。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 \operatorname{FFN}(x)&=\phi(xW_1+b_1)W_2+b_2,\\
@@ -28,6 +28,7 @@ u(x)&=xW_{\rm up},\\
 <p>gate 分支和 up 分支分别投影，元素乘积产生输入依赖的通道选择，再回到 hidden 维度。这里的 gate 是每 token 的通道门控，和 MoE router 的专家选择不同。固定 Llama 实现的 <code>LlamaMLP.forward</code> 正是 <code>act(gate_proj(x))*up_proj(x)</code> 后经 down_proj。<a href="index.html#ref-8">[8] L143–156</a></p>
 <p>如果只换非线性而保持 f 不变，参数和 GEMM 也变多；所谓“公平激活函数比较”需明确是否等参数、等 FLOPs 或等训练算力。现代专家宽度可能更细，还叠加共享专家与 latent 投影。</p></section>
 <section id="routing"><h2>Router 决定 token 走向哪些专家</h2>
+<p>\(s\in\mathbb R^E\) 是 router 给当前 token 的专家分数向量，TopK 返回最高 \(k\) 个分数的专家索引集合 \(I\)。\(y\in\mathbb R^d\) 是恢复到主干的输出，\(E_e(x)\) 和 \(E_{\rm shared}(x)\) 都是同维专家输出；\(g_e(x)\) 是选中路径的标量权重。此抽象式尚未限定权重归一方法，下面的算例才固定为沿专家轴 softmax、选中后再归一。</p>
 <div class="reading-math" role="math">\[
 s=\operatorname{Router}(x),\quad I=\operatorname{TopK}(s),\qquad
 y=\sum_{e\in I}g_e(x)E_e(x)+E_{\rm shared}(x).
@@ -42,7 +43,7 @@ y=\sum_{e\in I}g_e(x)E_e(x)+E_{\rm shared}(x).
 </div><figcaption>专家并行的概念路径。单设备也要重排；不同实现可能采用 AllGather/ReduceScatter 或融合通信，并非一律同一 collective。</figcaption></figure>
 <details><summary>top-k 是可微的吗？</summary><p>离散选择本身通常不对所有候选传播普通连续梯度；选中路径的 gate 和专家参与训练，router 还可从辅助目标获得梯度。不同 straight-through、soft routing、loss-free balancing 的处理不相同。不能因为选择离散就说 router 完全不学习。</p></details>
 <h3 id="moe-full-example">完整路由算例：四个 token 怎样派发并恢复输出</h3>
-<p><strong>输入与简化：</strong>四个二维行向量 \(x_A=(1,0),x_B=(0,1),x_C=(1,1),x_D=(2,0)\)，三个专家、top-2；router 先做 softmax，再将选中权重重新归一化。为看清派发与加权，专家简化为 \(E_1(x)=x,E_2(x)=2x,E_3(x)=3x\)，共享输出取0；真实专家的 SwiGLU 已在上一节展开。本例先执行 dropless 路径，不是任何模型的训练配置。</p>
+<p><strong>输入与简化：</strong>四个二维行向量 \(x_A=(1,0),x_B=(0,1),x_C=(1,1),x_D=(2,0)\)，A–D 是 token 身份标签，不是矩阵或维度；三个专家、top-2，专家编号为1–3。\(W_r\in\mathbb R^{2\times3}\) 是本例路由权重，log 是自然对数；router 先沿三个专家做 softmax，再将选中权重重新归一化。为看清派发与加权，专家简化为 \(E_1(x)=x,E_2(x)=2x,E_3(x)=3x\)，共享输出取0；真实专家的 SwiGLU 已在上一节展开。本例先执行 dropless 路径，不是任何模型的训练配置。</p>
 <div class="reading-math" role="math">\[
 W_r=\begin{pmatrix}\log4&amp;\log2&amp;0\\0&amp;\log4&amp;\log2\end{pmatrix},
 \qquad s=xW_r.
@@ -55,7 +56,7 @@ W_r=\begin{pmatrix}\log4&amp;\log2&amp;0\\0&amp;\log4&amp;\log2\end{pmatrix},
 <tr><td>D：(2,0)</td><td>(16,4,1)</td><td>1：4/5；2：1/5</td><td>\((4/5)x_D+(1/5)2x_D=(12/5,0)\)</td></tr>
 </tbody></table>
 <figure class="mechanism-map"><figcaption>同一批 token 在派发前后保留身份和 gate 权重</figcaption><ol class="mechanism-chain"><li><b>原顺序 A、B、C、D</b><small>记录各自的两个 assignment</small></li><li><b>按专家重排</b><small>E₁：A,C,D；E₂：A,B,C,D；E₃：B</small></li><li><b>各专家计算</b><small>返回二维输出，保留 token ID</small></li><li><b>按 token 回收</b><small>加权后恢复 A、B、C、D 顺序</small></li></ol></figure>
-<p><strong>容量检查：</strong>四个 token 产生八条 assignment，专家负载为[3,4,1]。若另采用容量系数 \(c=1\)、每专家槽位 \(C_{\rm slot}=\lceil cNk/E\rceil=\lceil8/3\rceil=3\)，专家2溢出一条；\(N=4\) 是本批 token 数，\(k=2,E=3\)，槽位统计 assignment。假设按A→D顺序丢掉D到专家2的路径且不重新归一，D输出变成 \((4/5)x_D=(8/5,0)\)，与 dropless 的 \((12/5,0)\) 不同。若重新归一或转路由，又是另一种结果。空闲专家的槽位不会自动补给忙碌专家。</p>
+<p><strong>容量检查：</strong>四个 token 产生八条 assignment，专家负载为[3,4,1]。这里 \(N=4\) 是本批 token 数、\(k=2\) 是每 token 的选中数、\(E=3\) 是专家数，\(c\) 是无单位容量系数，\(C_{\rm slot}\) 是每专家 assignment 槽位数，\(\lceil\cdot\rceil\) 表示向上取整。若另采用 \(c=1\)，则 \(C_{\rm slot}=\lceil cNk/E\rceil=\lceil8/3\rceil=3\)，专家2溢出一条。假设按A→D顺序丢掉D到专家2的路径且不重新归一，D输出变成 \((4/5)x_D=(8/5,0)\)，与 dropless 的 \((12/5,0)\) 不同。若重新归一或转路由，又是另一种结果。空闲专家的槽位不会自动补给忙碌专家。</p>
 <p><strong>通信检查：</strong>设rank 0持有token A,C和专家1、2，rank 1持有token B,D和专家3。dropless时，B→专家2、D→专家1、D→专家2三条路径跨rank；每条发送二维BF16向量，纯dispatch payload为 \(3\times2\times2=12\) B，combine同形状另12 B。24 B仅为两个方向的表示数据，排除gate/索引元数据、对齐、协议与反向通信；本地assignment不计网络传输。这也说明通信量取决于token和专家的放置。</p>
 </section>
 <section id="balance"><h2>负载与容量既影响效率，也影响学习机会</h2>
@@ -69,6 +70,7 @@ W_r=\begin{pmatrix}\log4&amp;\log2&amp;0\\0&amp;\log4&amp;\log2\end{pmatrix},
 <p><a href="#moe-full-example">上面的完整算例</a>已显示：均匀平均负载不能保证峰值不溢出，丢弃一条路径还会改变对应token的输出。容量公式中的分子要计入top-k产生的assignment数；具体取整和跨rank统计口径仍由实现定义。</p>
 <ul><li><strong>学习：</strong>按层/域查看assignment、gate entropy、梯度和overflow。</li><li><strong>效率：</strong>看最忙专家、GEMM利用率和通信P95；平均均衡可能掩盖峰值。</li><li><strong>一致性：</strong>训练与rollout的router、精度和选择偏置需兼容。</li></ul></section>
 <section id="parameters"><h2>总参数、激活参数与通信分别算账</h2>
+<p>\(P_{\rm expert}\) 是所有路由专家的矩阵参数元素数，\(P_{\rm active,routed}\) 是单 token 选中专家的参数元素数；均假设每专家是宽 \(f\)、输入输出宽 \(d\) 的三矩阵 SwiGLU，排除 bias。\(D_{\rm dispatch}\) 是一次派发的单向 payload 字节，\(N_{\rm remote\ assignments}\) 计跨设备路径数，\(d_{\rm sent}\) 是每路径发送的表示元素数，\(b\) 是 byte/元素。</p>
 <div class="reading-math" role="math">\[
 P_{\rm expert}=3Edf,\qquad P_{\rm active,routed}=3kdf,\qquad
 D_{\rm dispatch}\approx N_{\rm remote\ assignments}\,d_{\rm sent}\,b.
@@ -77,6 +79,7 @@ D_{\rm dispatch}\approx N_{\rm remote\ assignments}\,d_{\rm sent}\,b.
 <p>所有专家权重仍需存储并分布到设备；top-k 小不意味着整个模型能装入单卡。专家训练状态可按专家 DP 分片，非专家参数按普通 DP 管理。dispatch/combine 要传表示和元数据，网络拓扑、负载偏斜与 overlap 决定实际时间。</p>
 <p>若固定总参数增加 E 并缩小单专家，激活 FLOPs 可能下降，但更小的 GEMM 未必更快；若固定激活计算增大 E，权重容量和 checkpoint IO 增加。两类设计要分开对照。</p></section>
 <section id="latent"><h2>LatentMoE 把专家工作空间缩窄</h2>
+<p>此处 \(r\) 是 latent 宽度，\(z\) 是 \(r\) 维行向量；可训练 \(P_{\rm down},P_{\rm up}\) 的形状分别为 \(d\times r,r\times d\)。\(E_e(z)\) 改为在 latent 空间输入输出 \(r\) 维，\(y_{\rm routed}\) 是还原到 \(d\) 维的路由支路输出；\(\sum_e\) 仅累加选中专家（或等价地令未选中的 \(g_e=0\)）。\(P_{\rm projection}\) 是两组投影的参数元素数，这里的 \(P\) 前缀不表示概率。</p>
 <div class="reading-math" role="math">\[
 z=xP_{\rm down}\in\mathbb R^r,\quad r&lt;d,\qquad
 y_{\rm routed}=\left[\sum_e g_eE_e(z)\right]P_{\rm up},\quad

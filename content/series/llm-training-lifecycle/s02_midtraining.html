@@ -176,7 +176,7 @@ save_checkpoint(agent, "agent-sft")</code></pre>
 <section id="mixture">
 <h2>配比、回放和目标权重是三个独立选择</h2>
 <p>按样本数混合容易被超长 stdout 改变输入预算。按输入 token 设配比更便于记账，但目标 token 与梯度权重仍需单独计量。一条 10,000-token trace 若只有500 assistant目标，其输入占用与监督贡献不同。</p>
-<p>令桶 \(k\) 的输入占比为 \(w_k\)，目标密度为 \(\rho_k=N_{{\rm target},k}/N_{{\rm input},k}\)。桶内平均损失为 \(L_k\)。全局目标token平均的权重由实际目标数决定：</p>
+<p>下面的 \(j,k\) 都索引数据桶；\(N_{{\rm input},k}>0\) 与 \(N_{{\rm target},k}\) 分别是桶内输入和有效目标 token 数。令输入占比为 \(w_k\)，目标密度为 \(\rho_k=N_{{\rm target},k}/N_{{\rm input},k}\)，桶内有效目标平均损失为 \(L_k\)。\(q_k\) 是全局目标平均中该桶的实际权重；\(L_{\rm global}\) 是全局目标 token 平均损失，\(L_{\rm bucket}\) 是先按桶求均值再显式加权的损失，\(\alpha_k\) 是后一种目标指定的非负、和为 1 的桶权重。分母须有有效目标；无目标桶不能先计算其均值。全局目标token平均的权重由实际目标数决定：</p>
 <div class="reading-math" role="math">\[
 q_k=\frac{w_k\rho_k}{\sum_jw_j\rho_j},\qquad
 L_{\rm global}=\sum_kq_kL_k,\qquad

@@ -39,7 +39,7 @@
 <section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://www.nowpublishers.com/article/Details/INR-019" title="BM25 · 官方文档 / 原始出版页">BM25</a>；<a href="https://doi.org/10.1145/1571941.1572114" title="RRF · 官方文档 / 原始出版页">RRF</a>。</p></section>
 
 <h3>BM25：词频饱和与长度归一</h3>
-<p class="math-notation">下面 \(q\) 是查询词项集合，\(d\) 是文档，\(t\) 是词项；\(|d|\) 为文档词项数，avgdl 为语料平均文档长度，\(\ell_d\) 为无量纲长度调整项。IDF 衡量词项的稀有程度，不是事实可信度。</p>
+<p class="math-notation">下面 \(q\) 是查询词项集合，\(d\) 是文档，\(t\) 是词项；\(|d|\) 为文档词项数，avgdl 为语料平均文档长度，\(\ell_d\) 为无量纲长度调整项；\(k_1&gt;0\) 控制词频饱和，\(b\in[0,1]\) 控制长度归一。IDF 衡量词项的稀有程度，不是事实可信度。</p>
 <p>同一关键词多出现几次有帮助，但重复一百次不该得到一百倍分数。BM25用饱和词频项处理这一点，再按文档长度调整。以下是常用的无查询词频扩展形式；不同实现的IDF约定需单独核对。</p>
 <div class="reading-math">\[
 \begin{aligned}
@@ -117,11 +117,11 @@ return answer_with_citations(evidence) or explicit_unresolved_report()</code></p
 <section id="evaluation"><h2>分别评估检索、生成和完整任务</h2>
 <section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2309.15217" title="Ragas: Automated Evaluation of Retrieval Augmented Generation · Es, Shahul, James, Jithin, Espinosa-Anke, Luis 等 · 2023/09/26 · 2309.15217">RAGAS</a>；<a href="https://www.nowpublishers.com/article/Details/INR-019" title="BM25 · 官方文档 / 原始出版页">BM25</a>。</p></section>
 
+<p class="math-notation">竖线表示集合元素数，\(\cap\) 表示交集；Recall 要求相关集合 \(R\) 非空。MRR 对 \(M\) 条查询平均，\(r_i\) 是第 \(i\) 条查询首个相关结果的名次，未命中时倒数定义为 0。这里 \(L_k\) 是前 \(k\) 条结果集合，区别于 RRF 中第 \(j\) 路的列表 \(L_j\)。</p>
 <div class="reading-math">\[
 \operatorname{Recall@}k=\frac{|R\cap L_k|}{|R|},\qquad
 \operatorname{MRR}=\frac1M\sum_{i=1}^M\frac1{r_i}.
 \]</div>
-<p class="math-notation">竖线表示集合元素数，\(\cap\) 表示交集；Recall 要求相关集合 \(R\) 非空。MRR 对 \(M\) 条查询平均，\(r_i\) 是第 \(i\) 条查询首个相关结果的名次，未命中时倒数定义为 0。这里 \(L_k\) 是前 \(k\) 条结果集合，区别于 RRF 中第 \(j\) 路的列表 \(L_j\)。</p>
 <p>\(R\)为标注相关证据，\(L_k\)为前k条；MRR中未命中查询贡献0。两条必要证据只召回一条，Recall为1/2，但多跳问题可能仍完全无法回答。</p>
 <ul><li><strong>引用支持：</strong>有原文支持的已核对引用／已核对引用。两条中一条支持，支持率50%。</li>
 <li><strong>引用完整：</strong>重要事实是否都有证据。只引用一句正确背景也不能覆盖全部结论。</li>

@@ -11,6 +11,7 @@
 <p>先修：<a href="s01_transformer_foundations.html#attention-mask">QKV 与 causal mask</a>。本文 B 为并发序列数、T 为保存的历史 token 数、L 为采用该机制的层数、Hq/Hkv 为 query/KV heads、dh 为每个 K/V head 的宽度。K/V 宽度相同只是本节基础假设。</p>
 </section>
 <section id="attention-scaling"><h2>为什么点积要除以 \(\sqrt{d_h}\)</h2>
+<p class="math-notation">本节 \(q,k\in\mathbb R^{d_h}\) 是单头 query/key 列向量，\(\ell=1,\ldots,d_h\) 索引分量，\(s\) 是内积 score，\({}^\top\) 为转置，Var 表示方差。随后 softmax 的 \(s_j,p_i\) 分别是候选 \(j\) 的 score 和候选 \(i\) 的概率，\(i,j\) 遍历同一候选 key 集合，归一轴是候选轴；Jacobian 是概率对这些 score 的偏导，\(\mathbf1[i=j]\) 是相等指示。</p>
 <p>先用可计算的近似解释尺度：假设query和key各分量独立、均值0、方差1，且两者相互独立。每项 \(q_\ell k_\ell\) 的均值为0、方差为1；求和 \(d_h\) 项的方差变成 \(d_h\)。</p>
 <div class="reading-math" role="math">\[
 s=q^\top k=\sum_{\ell=1}^{d_h}q_\ell k_\ell,\qquad
@@ -18,7 +19,7 @@ s=q^\top k=\sum_{\ell=1}^{d_h}q_\ell k_\ell,\qquad
 \operatorname{Var}\!\left(\frac{s}{\sqrt{d_h}}\right)=1.
 \]</div>
 <p>未缩放的score会随维度变大，使softmax更尖。其Jacobian为 \(\partial p_i/\partial s_j=p_i(\mathbf1[i=j]-p_j)\)，接近0/1的概率会让许多导数变小。缩放缓解该初始化尺度问题；真实Q/K不一定独立或单位方差，还需Norm、初始化与数值监控。</p>
-<p class="math-notation"><strong>符号：</strong>\(q,k\in\mathbb R^{d_h}\) 是单头 query/key，\(\ell\) 索引其分量，\({}^\top\) 表示转置，\(\operatorname{Var}\) 是方差。Jacobian 中的 \(s_j\) 是第 \(j\) 个候选的 score，\(p_i\) 是其 softmax 权重，\(\mathbf1[i=j]\) 是指示函数。后面的 RoPE 段落用 \(p\) 表示位置，含义在该段重新定义。</p>
+<p>后面的 RoPE 段落用 \(p\) 表示位置，不再表示 softmax 概率，并在该段重新定义。</p>
 <p><strong>两候选例：</strong>\(d_h=4\)，score为[2,0]。未缩放权重为[0.8808,0.1192]；除以2后为[0.7311,0.2689]。value为[2,4]时输出分别约2.2384、2.5379。缩放改变读取分布，不能省略后再声称与原Attention等价。<a href="index.html#ref-1">[1] §3.2</a></p>
 </section>
 <section id="head-sharing"><h2>MHA、MQA、GQA：写入头和读取头可以不同</h2>
@@ -41,7 +42,7 @@ s=q^\top k=\sum_{\ell=1}^{d_h}q_\ell k_\ell,\qquad
 <section id="kv-bytes"><h2>从形状推导缓存字节</h2>
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2104.09864" title="RoFormer: Enhanced Transformer with Rotary Position Embedding · Su, Jianlin, Lu, Yu, Pan, Shengfeng 等 · 2021/04/20 · 2104.09864">RoPE</a>。</p></section>
 
-<p>每层的K为 \([B,T,H_{\rm kv},d_K]\)，V为 \([B,T,H_{\rm kv},d_V]\)。元素数分别乘每值字节 \(b\)，再累加层数。宽度相同时得到熟悉的系数2：</p>
+<p>每层的K为 \([B,T,H_{\rm kv},d_K]\)，V为 \([B,T,H_{\rm kv},d_V]\)，\(d_K,d_V\) 分别为 key/value 的每头宽度。\(M_{\rm KV}\) 是全部 \(B\) 条等长历史、\(L\) 层的缓存总字节，不是 attention mask；\(b\) 是 byte/元素，区别于并发序列数 \(B\)。元素数分别乘每值字节 \(b\)，再累加层数；\(M_{\rm KV}/(BT)\) 是每条序列每个历史 token 的 byte/token。宽度相同时得到熟悉的系数2：</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 M_{\rm KV}&=BTLH_{\rm kv}(d_K+d_V)b,\\
@@ -96,6 +97,7 @@ q'_i&=R(i\omega)q_i,\quad k'_j=R(j\omega)k_j,\\
 <h3 id="online-softmax-example">完整分块算例：不保存全部权重，怎样得到同一个输出</h3>
 <p><strong>输入：</strong>一个宽度1的query \(q=1\)，三个允许读取的key为 \((0,\log2,\log4)\)，value为 \((1,2,4)\)；\(\sqrt{d_h}=1\)，所以score就是key值。本例只演示单query的online softmax，未运行GPU kernel。</p>
 <p>整行计算的权重为 \((1,2,4)/7\)，输出 \((1+4+16)/7=3\)。现在把前两个候选放进第一块，最后一个放进第二块。维护三个累计量：最大score \(m\)、相对该最大值的指数和 \(\ell\)、加权value和 \(n\)，最终输出 \(n/\ell\)。这里 \(m\) 是数值稳定用的最大值，区别于loss mask。</p>
+<p>更新式中 \(J\) 是本次新块的候选索引集合，\(j\) 遍历其中的 key，\(s_j,v_j\) 是该候选的 score/value；撇号表示更新后的累计量。\(a\) 是旧基准到新最大值基准的指数缩放系数。多维 value 时 \(n,n'\) 是同维向量，本例是标量；至少一个有限可见 score 才能得到正的 \(\ell\) 并最终归一。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 m'&amp;=\max(m,\max_{j\in J}s_j),\quad a=e^{m-m'},\\
@@ -103,7 +105,6 @@ m'&amp;=\max(m,\max_{j\in J}s_j),\quad a=e^{m-m'},\\
 n'&amp;=an+\sum_{j\in J}e^{s_j-m'}v_j.
 \end{aligned}
 \]</div>
-<p>\(J\) 为新块的候选索引，\(s_j,v_j\) 是其score与value；撇号表示更新后的累计量，\(a\) 将旧块的累计值换到新的最大值基准。多维value时 \(n\) 是与value同维的向量，本例为标量。</p>
 <table><thead><tr><th>处理阶段</th><th>最大值 \(m\)</th><th>指数和 \(\ell\)</th><th>加权和 \(n\)</th></tr></thead><tbody>
 <tr><td>第一块：(0,log2)</td><td>log2</td><td>1/2+1=3/2</td><td>(1/2)×1+1×2=5/2</td></tr>
 <tr><td>第二块：log4；旧量缩放1/2</td><td>log4</td><td>(1/2)×(3/2)+1=7/4</td><td>(1/2)×(5/2)+4=21/4</td></tr>

@@ -70,6 +70,7 @@
 <h2>PURE 与 Cliff：稠密奖励也可能强化坏过程</h2>
 <h3>PURE：求和会奖励重复“正确步骤”</h3>
 <p class="math-notation">下面 \(i,j\) 索引所考虑的步骤，\(r_i\) 为步骤分数，\(R_{\rm sum}\) 为简单累计；\(T&gt;0\) 是软最小值的温度，\(w_i\) 为归一化权重，\(r_i^*\) 为加权反馈。这里 \(T\) 不是轨迹长度；温度应与分数同尺度，趋近 0 时权重聚焦最低分步骤。</p>
+<p>分母对所考虑的全部步骤 \(j\) 求和，指数值正且步骤集合非空。随后算例的 \(\gamma\) 是时间奖励折扣，取1表示不折扣；长程图中的 \(R\) 是终局回报，\(A\) 是由额外证据得到的优势。信用例的 \(Q,V\) 分别是假设的动作价值与状态价值，不能从一次终局成功直接读取。</p>
 <p>如果每个看起来正确的小步骤都有正 reward，模型可能把一个步骤拆成很多片、重复安全陈述或拖长推理，以增加总和。PURE 研究以最差后续步骤为中心的目标，抑制此类投机。<a href="index.html#ref-39">[39]</a></p>
 <div class="reading-math" role="math" aria-label="PURE过程奖励">\[
 R_{\rm sum}=\sum_i r_i,\qquad
@@ -123,6 +124,7 @@ w_i=\frac{\exp(-r_i/T)}{\sum_j\exp(-r_j/T)},\qquad r_i^*=w_i r_i.
 <section id="gar">
 <h2>MiMo GAR：同样通过的代码路径，质量仍有差别</h2>
 <p class="math-notation">\(i\) 索引候选，pass 是通过且具有正优势的集合，\(A_i\) 为原优势，\(f_i\) 为 grader 给出的质量因子；\(\lambda\) 将加权后的总正优势归一回原总量，\(A_i'\) 为调整后优势。此处 \(\lambda\) 是归一系数，区别于 GAE 的多步混合参数。</p>
+<p>以下恒等式要求 pass 集合的原总优势为正、质量加权分母非零，且不作上限裁剪或重中心化；\(f_i\) 是无单位质量权重，撇号只表示调整后。实际配方的 cap、无效 grade 回退和重新中心化不包含在这个教学恒等式中。</p>
 
 
 <p>MiMo-V2.6 §4.3.2 的 Grader-Augmented Reinforcement 为混合成功/失败的代码组提供质量因子：grader 结合任务、仓库、patch、tests 等信息判断成功路径质量，在通过路径的 advantage 上做调整。<a href="index.html#ref-27">[27]</a></p>

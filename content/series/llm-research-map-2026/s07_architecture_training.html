@@ -33,6 +33,7 @@
 </section>
 <section id="residual">
 <h2>从固定残差累加，到选择深度与混合残差流</h2>
+<p class="math-notation" id="residual-notation"><strong>先读符号：</strong>以下先固定一个 token，省略 batch 与序列轴；<var>l</var> 是层/子层编号，<var>d</var> 是该主干的 hidden 通道数，<var>x</var><sub>l</sub> 是 <var>d</var> 维状态，<var>F</var><sub>l</sub> 是输入输出同为 <var>d</var> 维的 Attention 或 FFN 子层。Norm 作用于这个 token 的通道向量，不沿层或 token 求平均；具体采用哪种 Norm 由模型确定。下文的 RMSNorm 用通道平方均值加 epsilon 后的平方根作除数，再乘逐通道可学习 scale；epsilon 是防止零除的稳定项，不是学习率。实数空间记作 R，向量按列书写、上标 T 表示转置；mHC 节会明确改用逐流行向量。</p>
 <p>普通Pre-Norm为 \(x_{l+1}=x_l+F_l(\operatorname{Norm}(x_l))\)。新方法改变的是<strong>读取深度表示</strong>或<strong>传递多路残差</strong>；下面沿这两个对象展开。</p>
 <figure class="mechanism-map residual-routes" id="residual-route-comparison">
 <figcaption>残差设计：四条独立路线的可用表示与操作</figcaption>
@@ -87,6 +88,7 @@
 </details>
 <h3>Attention Residuals：Attention轴在深度上</h3>
 <p class="math-notation">对固定 token，\(l\) 是当前层，\(i,j\lt l\) 遍历可用前层；\(q_l,h_i\in\mathbb R^d\)。\(s_{l,i}\) 为匹配得分，\(a_{l,i}\) 为沿深度归一化的非负权重，\(\widetilde h_l\) 为加权后的模块输入；波浪号表示构造的新表示。</p>
+<p class="math-notation" id="attnres-notation"><var>q</var><sub>l</sub> 是当前层可学习的 pseudo-query；<var>h</var><sub>i</sub> 在此统称候选 value，不等于普通残差式的累计状态。K3 原式的候选包含 embedding 与前层模块输出，Block 版则包含 embedding、已完成 block 的输出和当前 block 的局部和。<var>i</var> 是被读取候选的索引，<var>j</var> 在分母遍历同一个非空候选集合；二者都小于当前深度，不遍历序列位置。RMSNorm 只处理用于匹配的 key，点积得分和权重都是标量；exp 是自然指数，softmax 分母是所有候选指数之和，严格为正且使权重和为 1。下面两表示教学例仅保留两个候选、取 <var>d</var> = 2，log 表示自然对数，sqrt 表示平方根；读出仍是原 value 的 <var>d</var> 维列向量。<a href="index.html#ref-5">[5] §2.2，式(8)–(10)</a></p>
 <p>AttnRes为当前层设置可学习query，从前面层的表示得到归一化key，再用softmax权重读取这些表示。对同一token位置，概念式如下；它选择的是<strong>前层表示</strong>，没有替代序列中的token Attention。<a href="index.html#ref-60">[60]</a></p>
 <div class="reading-math" role="math" aria-label="Attention Residuals沿深度的选择公式">\[
 \begin{aligned}
@@ -127,8 +129,9 @@ a_{l,i}&=\frac{\exp(s_{l,i})}{\sum_{j\lt l}\exp(s_{l,j})},\\
 </noscript>
 <ul><li><strong>Full：</strong>保留更多历史层表示，增加状态与访问成本。</li><li><strong>Block：</strong>读取已完成block的summary与当前局部累积；K3采用该方向。</li><li><strong>验收：</strong>能力之外还测保存激活、重算、融合kernel和pipeline通信。<a href="index.html#ref-60">[60]</a> <a href="index.html#ref-5">[5] §2.2</a></li></ul>
 <h3>mHC：约束多路残差的混合矩阵</h3>
+<p class="math-notation" id="mhc-notation"><var>n</var> 是同一 token 的残差流数，不是 token 数；<var>X</var><sub>l</sub> 每行是一条 <var>d</var> 维流。下式的 <var>H</var> 是 <var>H</var><sub>l</sub><sup>res</sup> 的简写，<var>H</var><sub>ij</sub> 表示输出流 <var>i</var> 读取输入流 <var>j</var> 的标量权重，二者均遍历 1 至 <var>n</var>。pre、post、res 是映射职责标签，不是乘方；所有乘法均为矩阵乘法。pre 先把 [n,d] 汇成 [1,d]，post 再把模块的 [1,d] 输出分发为 [n,d]，与旧流支同形相加。后面证明中的 <var>r</var> 只枚举凸组合的置换项，不是流或层编号；所有非负权重总和为 1。谱范数衡量矩阵对欧氏长度的最大放大率，不是 RMSNorm 算子；二乘二算例取 <var>n</var> = 2，列向量 (1, −1) 与 (1, 1) 描述两流的系数方向，不是两个 token。</p>
 <p class="math-notation">单 token 下，\(H_l^{\rm res}\) 为 \(n\times n\)，\(H_l^{\rm pre}\) 为 \(1\times n\)，\(H_l^{\rm post}\) 为 \(n\times1\)，\(F_l\) 将 \(1\times d\) 表示映射回同形。\(\mathbf1\) 为 \(n\) 维全 1 向量；双随机指元素非负且行列和都为 1。证明中的 \(P_r\) 为置换矩阵、\(\lambda_r\) 为凸组合权重，\(\|H\|_2\) 为谱范数（最大奇异值）。</p>
-<p>\(X_l\in\mathbb R^{n\times d}\)表示n路残差。pre映射汇入模块，post映射分发输出，res映射混合旧流；mHC通过Sinkhorn近似约束res矩阵。<a href="index.html#ref-61">[61] §3</a></p>
+<p>\(X_l\in\mathbb R^{n\times d}\)表示n路残差。pre映射汇入模块，post映射分发输出，res映射混合旧流；mHC通过Sinkhorn近似约束res矩阵。<a href="index.html#ref-61">[61] §2、§4.1</a></p>
 <div class="reading-math" role="math" aria-label="mHC结构与双随机约束">\[
 \begin{aligned}
 X_{l+1}&=H_l^{\rm res}X_l\\
@@ -177,15 +180,18 @@ H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
 </div>
 </noscript>
 <p><strong>算例含义：</strong>同向分量\((1,1)\)保持，差异分量缩为一半；并非所有信息都消失，也没有限制F路径。有限轮Sinkhorn只近似约束，应监控行列和误差、gradient norm与失稳频率。</p>
+<p id="single-pass-scope"><strong>Single-Pass 的对象与分母：</strong>下面的 <var>A</var> 是报告定义的 [1,n] 输入混合系数，对应 pre；Single-Pass 使用前一 block 产生的 <var>A</var>，不是复用前一 block 的激活。<var>d</var> 仍是 hidden 宽度。报告在 <var>n</var> = 4、单 token、残差映射含输入 pre-norm 的口径下，将原多 kernel 的 20d 次激活值读写与部署 Mega-mHC 的 10d 次读写比较，50% 的分母是原映射的 20d，既不是全模型字节也不是端到端时间；融合普通 mHC 的对应口径为 14d。预训练保留多 kernel 实现，不能把部署融合收益转写成训练或服务吞吐倍数。<a href="index.html#ref-1">[1] §2.4.1，式(2)–(6)</a></p>
 <p>DeepSeek V4.1使用n=4的Single-Pass mHC，复用上一block的A，将报告定义的activation traffic从20d降到10d；这是该映射流量减少50%，不是完整训练时间减半。GLM-5.3配置也采用mHC，但不能直接继承DeepSeek的kernel数值。<a href="index.html#ref-1">[1] §2.4.1</a> <a href="index.html#ref-53">[53]</a></p>
 <h3>Qwen GR：读4路流的元素门控</h3>
 <p>Qwen3.8的Gated Residual把残差流扩为4路，通过elementwise gate读取；gate沿通道工作。它与mHC的行列约束、AttnRes的跨深度softmax具有不同参数化、状态和数值路径。应依据原报告的融合与消融比较，不凭“四路”认定三者相同。<a href="index.html#ref-45">[45]</a></p>
+<p id="gr-norm-scope">GR 先对每条 <var>d</var> 维分支各作 RMSNorm，再从所有分支预测逐分支、逐通道的 sigmoid gate；读入是门控后各分支的平均，分母为分支数 4，不是沿深度 softmax。模块输出通过每分支一个数据依赖标量写回旧流，GR 移除了 mHC 的旧流混合算子，不施加双随机约束。该门控读取已替代模块的 pre-normalization，不能机械地再套一次上方 Standard 的 Norm。额外成本包括多流状态、gate 投影和读写；报告中的 Norm、gate 和写回是不同对象。<a href="index.html#ref-45">[45] §2.2，式(29)–(34)、表5</a></p>
 </section>
 <section id="latent-moe">
 <h2>LatentMoE：减少专家工作维度，容纳更细的专家</h2>
 <section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
 
 <p>传统MoE在hidden空间dispatch token并执行多个FFN。LatentMoE先将表示下投影到较窄latent，再完成路由专家计算并上投影回来。节约的维度可重新用于更多专家或不同宽度；因此需要同时说明hidden、latent、expert intermediate、top-k与共享专家。<a href="index.html#ref-51">[51]</a></p>
+<p class="math-notation" id="latent-moe-notation"><strong>宽度与路由对象：</strong>hidden 是主干输入输出的通道数 <var>d</var>，latent 是 routed expert 输入输出宽度，expert intermediate 是专家内部 FFN 宽度，三者不可互换；top-k 是每 token 选中的 routed expert 数，不含另计的 shared expert。原 LatentMoE 的 router 从原 hidden 输入计算分数，而 dispatch、routed expert 与汇总在 latent 空间进行，共享专家仍走完整 hidden 路径。因此“下投影后路由”不表示 router 必定读取 latent；具体家族按报告确认。图中箭头上的整数为宽度，routed/top/shared 为计数，不是时间或 FLOPs。<a href="index.html#ref-51">[51] §3，式(1)–(2)</a></p>
 <p>投影与专家汇总公式已在<a href="../llm-architecture/s03_ffn_moe_routing.html#latent">MoE主讲</a>展开。这里比较模型的latent宽度与稳定化配方；router输入、Norm顺序和shared路径必须以该实现为准。</p>
 <figure>
 <object class="research-chart wide" type="image/svg+xml" data="../assets/research/architecture-20261114/latent-moe-paths.svg" aria-label="Nemotron和Kimi的latent专家路径"><p>Nemotron为8192→2048→512 routed top22→8192；Kimi为7168→3584→896 routed top16→7168。仅比较路由表示宽度，共享路径及额外算子另计。</p></object>
@@ -199,6 +205,7 @@ H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
 <tr><td>Kimi K3 / K3.1</td><td>7168 → 3584；896 routed、top16、2 shared</td><td>Stable LatentMoE：投影后RMSNorm、SiTU-GLU、Quantile Balancing</td></tr>
 </tbody>
 </table>
+<p id="latent-norm-scope"><strong>表中“投影后 RMSNorm”的准确位置：</strong>K3 §2.3 的式(11)将 RMSNorm 放在选中 routed experts 的加权汇总之后、上投影之前，归一化对象是汇总后的 latent 向量，不是下投影输出、router 分数或 shared 输出；随后上投影回 hidden 才与 shared 路径相加。SiTU-GLU 改的是专家非线性，Quantile Balancing 改的是按 router 分数分位数设定的专家偏置，不能把三项统称为一个 Norm。下方通信算例的 1024 是分派次数（可含同 token 的多个目的地），BF16 每值 2 B，MiB 按 2<sup>20</sup> B；16 MiB 与 4 MiB 只来自次数、宽度和每值字节的乘积。<a href="index.html#ref-5">[5] §2.3–2.3.3</a></p>
 <ul><li><strong>RMSNorm：</strong>控制投影后的latent尺度。</li><li><strong>SiTU-GLU：</strong>改变专家非线性。</li><li><strong>Quantile Balancing：</strong>以分位估计调节路由，不能等同普通aux loss或batch平均负载。完整定义见K3 §2.3及附录C–D。<a href="index.html#ref-5">[5]</a></li></ul>
 <h3>最小通信口径</h3>
 <p><strong>同分派算例：</strong>固定1024次远端分派、BF16每值2 B，8192维单向表示为16 MiB，2048维为4 MiB；这只缩小12 MiB表示payload。投影、元数据、padding、复制、combine与尾部等待另计，实际网络去重策略也会改变字节。</p>
@@ -223,6 +230,7 @@ H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
 </section>
 <section id="depth">
 <h2 id="recurrent-depth">Recurrent depth：推理预算也可以放进潜在计算</h2>
+<p class="math-notation" id="recurrent-notation"><strong>本式的抽象范围：</strong><var>θ</var> 是 Core 在所有迭代间共享的参数，不是更新步号；<var>K</var> 为非负整数执行次数，<var>j</var> 从 0 至 K−1。固定一个 token 时各潜在状态都是 <var>d</var> 维，logits 是词表大小维的未归一化分数；恢复序列轴时分别为 [序列长,d] 与 [序列长,词表大小]，词表概率还需另做 softmax。这里把入口与初始状态简写在 Pre 中，仅用于职责说明；Huginn 原式将 prelude 得到的固定输入表示与随机初始化的潜在状态分开，并在每次 core 中注入前者，不能把下式当作其逐算子实现。后面的收敛例另取一维标量状态，0.5 和 1 是人为常数，不是 Huginn 权重、Norm 或测量结果。<a href="index.html#ref-64">[64] §3.1–3.2</a></p>
 <p class="math-notation">\(x\) 是输入 token/表示，\(h^{(j)}\) 是第 \(j\) 次迭代后的潜在状态；上标是迭代编号，非乘方。\(K\) 是 core 执行次数，Pre/Core/Post 分别负责入口表示、共享参数的状态更新和最终词表 logits。</p>
 <p>Huginn的公开研究采用共享权重的recurrent depth：先得到token表示，再让同一个核心模块在潜在状态上迭代，最后输出token分布。推理时改变迭代次数，把更多算力用于token内部计算。<a href="index.html#ref-64">[64]</a></p>
 <div class="reading-math" role="math" aria-label="共享权重递归深度的概念公式">\[
@@ -266,8 +274,68 @@ h^{(j+1)}&=\operatorname{Core}_\theta(h^{(j)},x),
 <p>对Harbor或GUI任务，最终仍需固定工具、validator与总预算，报告成功率、逐域失败和成本。并行策略的随机token服务测量只能回答其定义的吞吐问题；数据异质性、零方差组和验证器错误还会改变实际学习信号。</p>
 </section>
 <section id="experiments">
-<h2>待执行：把架构、优化和系统做成独立对照</h2>
-<details><summary>展开残差、专家、优化器、精度与深度五类实验</summary>
+<h2 id="reading-section-14">已整理的文献对照：架构模块、优化器参数更新与执行系统</h2>
+<p class="lead">三张对照已按改变对象、原报告、机制成本和证据边界整理，默认可读。这里总结的是<strong>已有文献与作者公开实验</strong>，不是本章新跑出的训练、消融或服务测量；尚未运行的五类复现实验独立保留在后面的可选折叠区。</p>
+<section class="card" id="comparison-architecture" aria-labelledby="comparison-architecture-title">
+<h3 id="comparison-architecture-title">对照一：架构模块</h3>
+<dl>
+<dt><strong>改变对象</strong></dt>
+<dd>改变前向中可读取的表示、残差写回、专家工作宽度或共享 core 的执行深度；这些变化会经反向传播影响梯度，但不是直接指定 optimizer 更新规则。</dd>
+<dt><strong>代表方法和报告出处</strong></dt>
+<dd><ul>
+<li><strong>AttnRes：</strong>同 token 沿深度匹配归一化 key，再读原 value；Full 与 Block 的候选状态不同。机制入口为<a href="index.html#ref-60">Attention Residuals [60]</a>，本次可读原文核对依据为<a href="index.html#ref-5">Kimi K3 [5] §2.2，式(8)–(10)</a>，不从缺正文的 HTML 转换页摘取成绩。</li>
+<li><strong>mHC：</strong>pre 汇入、post 写回、res 混合旧流；Sinkhorn 近似双随机只约束 res。<a href="index.html#ref-61">mHC [61] §2、§4.1–4.3、§5</a>；Single-Pass 的输入系数移位另见<a href="index.html#ref-1">DeepSeek V4.1 [1] §2.4.1</a>。</li>
+<li><strong>GR：</strong>逐分支 Norm、元素 gate 读取与逐分支标量写回，取消旧流混合，不是 mHC 或深度 Attention。<a href="index.html#ref-45">Qwen3.8 [45] §2.2，式(29)–(34)、表5</a>。</li>
+<li><strong>LatentMoE：</strong>router 与 shared 路径保持 hidden 对象，routed dispatch/专家/汇总在 latent 空间；效率型与重分配专家容量型分开。<a href="index.html#ref-51">LatentMoE [51] §3–4，表1–2</a>；家族规格见<a href="index.html#ref-33">Nemotron [33] §2.1，表1</a>与<a href="index.html#ref-5">K3 [5] §2.3</a>。</li>
+<li><strong>Huginn：</strong>同一 core 权重在潜在状态上重复执行，测试迭代预算与生成 token 数是两条轴。<a href="index.html#ref-64">Huginn [64] §3、§5–6</a>。</li>
+</ul></dd>
+<dt><strong>关键机制和成本</strong></dt>
+<dd>AttnRes 的候选状态保存/访问与跨 pipeline 通信、mHC/GR 的多流激活及映射读写、LatentMoE 的投影与专家分派、Huginn 的每 token 多次 core 执行分别记账。宽度压缩、旧流谱范数界或参数共享都不直接给出端到端加速；服务阶段不执行 optimizer，但仍须支付架构前向成本。</dd>
+<dt><strong>可比较实验与证据限制</strong></dt>
+<dd><strong>作者已有对照：</strong>mHC §5 的 Baseline/HC/mHC 与附录配置；Qwen 表5 的残差组件消融、§3.3 图13的同数据顺序/学习率日程/optimizer 架构增量对照；LatentMoE §4 的宽度与容量设计空间；Huginn 同 checkpoint 的测试迭代扫描。比较时固定主干、数据、token、精度与预算并分列训练 FLOPs、显存、loss 和任务指标。跨家族公开结果不是统一消融；Qwen 完整架构还包含其他改动，Huginn 训练的非递归 baseline 与主模型 token 预算不同，不能将其跨模型排名归因给递归一项。本文没有复现这些实验。</dd>
+</dl>
+</section>
+<section class="card" id="comparison-optimizer" aria-labelledby="comparison-optimizer-title">
+<h3 id="comparison-optimizer-title">对照二：优化器参数更新</h3>
+<dl>
+<dt><strong>改变对象</strong></dt>
+<dd>反向传播给出每个参数同形的梯度之后，optimizer 根据梯度、历史状态和配方构造参数更新；它不增加残差候选或替代 Attention。Muon 近似正交化的是梯度动量构造的<strong>更新矩阵</strong>，不是把权重矩阵强制设为正交。</dd>
+<dt><strong>代表方法和报告出处</strong></dt>
+<dd>AdamW 作逐元素一阶/二阶矩缩放并使用解耦 weight decay；Muon 以 Newton–Schulz 近似矩阵正交化，再按矩阵形状调整更新尺度和衰减。<a href="index.html#ref-62">Muon / Moonlight [62] §2.1–2.3、§3–5</a>；K3 的 per-head 分组见<a href="index.html#ref-5">[5] §2.5</a>，Qwen 的真实参数分工与 fused 矩阵拆分见<a href="index.html#ref-45">[45] §3.1</a>。完整推导仍由<a href="../llm-training-lifecycle/s05_training_methods_systems.html#muon-industrial">训练主题主讲</a>承接。</dd>
+<dt><strong>关键机制和成本</strong></dt>
+<dd>记录参数分组、动量、学习率、update scale、weight decay、迭代次数与迭代精度。Muon 的矩阵更新不能任意按存储分片独立计算；通信须恢复算法定义的完整矩阵或语义子矩阵，另计 gather、矩阵迭代和临时显存。Qwen 将 router、输入 embedding、输出 head 和 GR 的两项低秩投影留给 AdamW；不是所有二维张量都适用 Muon。optimizer 只在训练更新发生，不计入固定 checkpoint 的 prefill/decode。</dd>
+<dt><strong>可比较实验与证据限制</strong></dt>
+<dd><strong>作者已有对照：</strong>Moonlight §3 的 update RMS 与 compute-optimal scaling、§4 的 Moonlight/Moonlight-A 同训练设置对照、§5 的预训练与 SFT optimizer 交叉；Qwen §3.3 分别比较原结构 AdamW、原结构 Muon、Muon 加 GR。应分别报告等 token 与等训练算力，调各自配方，并分列 forward/backward、optimizer、通信和恢复时间。update RMS 是更新元素平方均值的平方根，不是梯度范数、权重范数或激活 RMSNorm；计算效率曲线不等于每 step 加速，SFT 的 optimizer 切换也没有普遍优势结论。本文不新增跨报告性能倍数。</dd>
+</dl>
+</section>
+<section class="card" id="comparison-execution" aria-labelledby="comparison-execution-title">
+<h3 id="comparison-execution-title">对照三：执行系统</h3>
+<dl>
+<dt><strong>改变对象</strong></dt>
+<dd>实现和调度既定的前向、反向、optimizer 或服务请求：kernel 融合、重算、并行分片、通信重叠、低精度格式、KV/state 缓存各有对象。训练 step、optimizer step、prefill、decode 与工具环境不是同一速度指标；QAT 会改变训练路径，应与固定 checkpoint 的服务量化另列。</dd>
+<dt><strong>代表方法和报告出处</strong></dt>
+<dd><a href="index.html#ref-61">mHC [61] §4.3</a>的融合/重算/DualPipe；<a href="index.html#ref-1">DeepSeek [1] §2.4.1</a>的部署 Mega-mHC；<a href="index.html#ref-5">K3 [5] 的 Block AttnRes kernel 与 P2P Muon 实现</a>；<a href="index.html#ref-45">Qwen [45] §3.1</a>的 Canzona 完整语义矩阵调度；<a href="index.html#ref-33">Nemotron [33] §2.2、§2.7</a>的训练 NVFP4 与高精度保护；<a href="index.html#ref-56">MiMo [56] mid-training QAT 与训练/rollout 一致性</a>；<a href="index.html#ref-57">Step [57] 的 Polar Express 迭代精度</a>。Huginn 的迭代停止和 KV 共享另见<a href="index.html#ref-64">[64] §6</a>。</dd>
+<dt><strong>关键机制和成本</strong></dt>
+<dd>按对象登记权重、激活、梯度、optimizer 状态和服务 KV/state 的 dtype、scale、例外及版本。融合减少中间读写/launch，重算用算力换显存，通信重叠受依赖与拓扑限制；均不等同改变学习规则。已有数值核对只使用<a href="#single-pass-scope">上文 DeepSeek 的单 token、四流、含 pre-norm 残差映射口径</a>：原实现 20d 与 Single-Pass 部署 10d 是激活值读写数，不是测得的训练或服务速度。本文不由此推算 tokens/s。</dd>
+<dt><strong>可比较实验与证据限制</strong></dt>
+<dd><strong>作者已有证据：</strong>DeepSeek 分列预训练多 kernel 与部署融合；Nemotron 从已有 checkpoint 切 BF16 的分支实验未解决全部后期失稳；Step 仅调整 optimizer 正交化迭代的精度，不能称全模型 FP16；MiMo 对齐 trainer 与 rollout 的专家量化约束。系统比较应固定 checkpoint/架构、硬件、软件版本、batch、上下文、并行度与精度对象；训练计有效更新 token/总墙钟时间，服务分别计 TTFT（首 token 等待）、TPOT（输出 token 间隔）和输出 token/服务时间，并同时记录质量、峰值内存与尾延迟。随机 token 测量、架构组合收益或局部 I/O 推导不能作为 Agent 学习效率；精度与 routing 变化还需核对概率一致性。</dd>
+</dl>
+</section>
+<figure class="mechanism-map" id="training-serving-responsibilities">
+<figcaption>职责分层：训练形成权重版本，服务独立执行该版本的前向</figcaption>
+<h3>训练更新链</h3>
+<ol>
+<li><strong>前向架构：</strong>数据 + 当前训练权重 → 模块输出与 loss；同时留下反向所需激活或重算信息。</li>
+<li><strong>反向梯度：</strong>loss 的导数 + 前向依赖 → 每个参数同形的梯度；按训练设置累积与归约。</li>
+<li><strong>Optimizer：</strong>梯度 + 当前权重 + optimizer 历史状态 → 更新后的权重与历史状态；算法规定更新方向，系统负责实现其矩阵与通信语义。</li>
+<li><strong>权重版本：</strong>保存 checkpoint、参数分组与必要恢复状态；按发布/同步策略装载到服务，不表示每步立即上线。</li>
+</ol>
+<h3>服务执行链</h3>
+<p>已装载的权重版本 + 请求 + 该版本兼容的 KV/state → 调度与前向架构的 prefill/decode（递归 core 按预算执行）→ logits、输出 token 与新缓存。固定 checkpoint 的服务不做反向或 optimizer；服务用的量化表示须单独标记，不能把训练状态直接当成 KV。</p>
+<p class="mechanism-note">箭头表示真实数据依赖与版本装载，不表示 GPU 时间或吞吐增益。训练系统覆盖前向、反向、更新和同步；服务系统覆盖请求、缓存与前向执行。Agentic RL 另有“带权重版本标记的 rollout + 环境反馈 → 训练样本”反馈边，须检查版本 lag 与 logprob/routing 一致性，不把服务 token 直接当梯度。来源：<a href="index.html#ref-62">[62] §2.3</a>、<a href="index.html#ref-1">[1] §2.4.1</a>、<a href="index.html#ref-56">[56] 训练–推理一致性</a>及本页<a href="#agent">Agent 训练检查项</a>。</p>
+</figure>
+<details id="optional-reproduction"><summary>可选复现实验：尚未运行</summary>
+<p>下面保留原五类实验设计与必须保存的证据；这里只是可选复现方案，没有真实运行配置、训练日志、消融成绩或服务实测结果。</p>
 <section id="citation-sources-14" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>。</p></section>
 
 <table>
@@ -281,7 +349,7 @@ h^{(j+1)}&=\operatorname{Core}_\theta(h^{(j)},x),
 </tbody>
 </table>
 </details>
-<p>上述对照尚未运行。不同家族报告中的优胜结果仅在各自实验条件下成立；本章完成的是机制总结和实验设计。学习时回到<a href="s06_architecture_landscape.html#families">模型家族表</a>，把每个新名称放到明确的张量对象、预算与证据上。</p>
+<p><strong>完成边界：</strong>上方三张文献对照已整理；折叠区五类复现实验尚未运行。不同家族报告中的优胜结果仅在各自实验条件下成立，本文没有声称完成真实训练或消融。学习时回到<a href="s06_architecture_landscape.html#families">模型家族表</a>，把每个新名称放到明确的张量对象、预算与证据上。</p>
 </section>
 <section id="sources">
 <h2>核心原论文与完整模型报告</h2>

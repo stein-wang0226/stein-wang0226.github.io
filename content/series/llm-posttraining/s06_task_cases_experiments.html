@@ -53,6 +53,7 @@ def mean(values):
 </table>
 <p>独立终评应覆盖空、单元素、负数、重复值和规定数值类型，检查测试目录没有被改。真实仓库按项目、问题来源和解法簇隔离 train / heldout；同一个模板的不同文件名不应当作全新泛化任务。</p>
 <p>该案例连接 ReTerm 的恢复思路、MiMo 的成功质量信号与 OPD 学生状态；它本身不是这些论文的原始实验。<a href="index.html#ref-16">[16]</a> <a href="index.html#ref-27">[27]</a> <a href="index.html#ref-30">[30]</a></p>
+<p>下图只比较同一动作预测位置：\(h\) 是含失败观察的实际前缀，\(y\) 是教师示范 token，\(a\) 是学生采样 token；\(\pi(\cdot\mid h)\) 与 \(q(\cdot\mid h)\) 分别是同词表、同前缀下的学生与教师概率。\(\log\) 为自然对数；\(R\) 是独立终评得到的轨迹回报，\(A\) 是经组 baseline 或 critic 得到的优势，不是教师概率。图中单 token 负 log-prob 是 SFT 损失项，OPD 数值仅是未加 baseline 的局部上升权重，并非完整轨迹目标。</p>
 <figure class="mechanism-map"><figcaption>同一失败prefix，三类目标怎样接上下一动作</figcaption><ol class="mechanism-chain mechanism-options">
 <li><b>实际历史</b><small>错误patch → test失败 → 新prefix h</small></li>
 <li><b>恢复SFT</b><small>可靠教师给修复token y；最小化−log π(y|h)</small></li>

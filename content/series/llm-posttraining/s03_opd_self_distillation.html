@@ -21,6 +21,7 @@
 <div class="stage"><b>学生独立执行</b><small>部署不提供答案和教师<br>真实 verifier 与能力回归</small></div>
 </div><figcaption>GKD 支持不同 divergence 和生成混合；MiniLLM 与 TML 给出 reverse-KL 蒸馏路径。并非所有 OPD 都使用同一种 loss。<a href="index.html#ref-28">[28]</a> <a href="index.html#ref-29">[29]</a> <a href="index.html#ref-30">[30]</a></figcaption></figure>
 <p>教学代码任务中，教师通常直接修空输入；学生却可能先改调用方，收到 <code>test_empty_input FAILED</code>。静态教师路径没有这个错误历史；OPD 的教师要在这个 prefix 上指出下一动作的分布。教师必须能理解学生的实际状态，不能悄悄换成一条理想历史。</p>
+<p class="math-notation">\(\theta,\bar\theta\) 分别是当前学生参数和生成本批轨迹的固定学生快照，\(h\) 是动作前 prefix，\(d_{\bar\theta}\) 是其访问 prefix 的分布；\(\pi_\theta,\pi_T\) 是学生和冻结教师的条件概率，下标 \(T\) 指 teacher。\(D\) 是选定的分布差异，\(\cdot\) 表示同一候选词表，\(\mathbb E\) 对访问 prefix 平均，\(L_{\rm OPD}\) 是本批固定访问分布的局部蒸馏目标。</p>
 <div class="reading-math" role="math" aria-label="OPD固定rollout分布目标">\[
 L_{\rm OPD}(\theta)=\mathbb E_{h\sim d_{\bar\theta}}
 D\!\left(\pi_\theta(\cdot\mid h),\pi_T(\cdot\mid h)\right).
@@ -36,6 +37,7 @@ D\!\left(\pi_\theta(\cdot\mid h),\pi_T(\cdot\mid h)\right).
 
 
 <p>令固定 prefix 上的学生概率是 <code>pᵥ</code>、教师概率是 <code>qᵥ</code>，教师分支无梯度。reverse-KL 对学生具有概率的候选施加约束，forward-KL 则按教师概率加权。支持集、温度和词表对齐必须先定义。</p>
+<p>词表大小为 \(V\)，\(v,k=1,\ldots,V\) 遍历同一词表；\(p,q,z\in\mathbb R^V\) 分别是学生概率、教师概率和学生 logits，softmax 沿词表轴归一。\(D_{\rm reverse},D_{\rm forward}\) 是两个方向的标量 KL，log 为自然对数，单位 nat；reverse 要求 \(p_v&gt;0\) 处 \(q_v&gt;0\)，forward 要求反向支持，梯度推导用正概率。\(z_k\) 是学生分数，\(u_v\) 是学生/教师 log-ratio，\(\mathbf1[v=k]\) 为相等指示；这里 \(V\) 不是状态价值。</p>
 <div class="reading-math" role="math" aria-label="反向和正向KL">\[
 D_{\rm reverse}=\sum_v p_v(\log p_v-\log q_v),\qquad
 D_{\rm forward}=\sum_v q_v(\log q_v-\log p_v).
@@ -76,8 +78,7 @@ loss.backward()</code></pre>
 <li><b>a 从学生 p 采样</b><small>记录当前 prefix 和动作</small></li><li><b>教师给 log q(a)</b><small>在同一 prefix 上评分</small></li><li><b>detach(log q−log p+b)</b><small>构成局部蒸馏优势；b 仅依赖状态</small></li><li><b>−A × log πθ(a|h)</b><small>优势作权重；策略 log-prob 反传</small></li>
 </ol><p class="mechanism-note">若数据来自旧策略，另核对 ratio 与截断；直接反传平均 log p−log q 不自动得到此梯度。</p></figure>
 <h2>采样 token 的蒸馏信号：数值估计和正确梯度是两件事</h2>
-
-
+<p>固定 prefix \(h\)，\(a\sim p\) 是学生采样 token，\(p(a),q(a)\) 是同词表同状态下的学生/教师概率；\(u(a)\) 是两者自然 log-ratio，\(g(a)=\nabla_\theta\log p(a)\) 是与学生参数同维的 score 梯度。\(b(h)\) 是仅依赖状态、不依赖所采动作的标量 baseline，\(A_{\rm distill}\) 是停止梯度的蒸馏优势；sg 保留数值但阻断梯度。期望按当前学生概率加权，教师及 prefix 固定，不包含状态访问分布的参数导数。</p>
 <div class="reading-math" role="math" aria-label="采样蒸馏梯度">\[
 \begin{aligned}
 &D_{\rm reverse}=\mathbb E_{a\sim p}[u(a)],\quad u(a)=\log p(a)-\log q(a),\\
@@ -127,10 +128,11 @@ loss = -adv_distill * student_logp
 <tr><td>MOPD 研究 <a href="index.html#ref-66">[66]</a></td><td>多教师 OPD 的能力整合，MiMo-V2.6 另扩展 MOPD2</td><td>需要按任务选择教师、预算和覆盖，不能只增加教师数量</td></tr>
 </tbody>
 </table>
-<p>教师路由可以按任务域选择专家。若概率混合 \(q=\sum_jw_jq_j\)，使用的是 \(\log(\sum_jw_jq_j)\)；若加权多个reverse-KL，使用的是 \(\sum_jw_j\log q_j\)，对应归一化几何混合而非算术混合。两者目标不同，须写清权重与路由条件。</p>
+<p>教师路由可以按任务域选择专家。这里 \(j\) 索引教师，\(q_j\) 是同 prefix、同词表的教师分布，\(w_j\ge0\) 是该 prefix 的混合权重、和为1，\(q\) 是混合教师分布。若概率混合 \(q=\sum_jw_jq_j\)，使用的是 \(\log(\sum_jw_jq_j)\)；若加权多个reverse-KL，使用的是 \(\sum_jw_j\log q_j\)，对应归一化几何混合而非算术混合。两者目标不同，须写清权重与路由条件，且被学生赋正概率的词表项需满足对应教师支持。</p>
 <p>“大教师更好”也依赖教师对学生访问状态的适应性。教师自己的 task score 很高，仍可能在学生损坏的 shell 状态上给低质量反馈；此时更强信号可能更稳定地推错。终评要看统一学生的目标能力、原有能力和同成本表现。</p>
 <h3 id="historical-teachers">Agentic-OPD：从历史checkpoint找互补教师</h3>
 <p><a href="https://arxiv.org/html/2611.12799v1#S3">Agentic-OPD（2026-11-09），§3–4</a>保存一次RL训练的多个checkpoint，把验证集最好的checkpoint作为学生起点，再整合其他时刻仍保留的能力。Highest Coverage Next（HCN）选择能覆盖学生当前失败题的教师；教师平均分最高，不保证最适合补当前缺口。</p>
+<p>路由式的 \(t\) 是教师调度轮，\(i\) 遍历教师池，\(Q_i\) 是教师 \(i\) 在路由验证集上解出的题，\(P_t\) 是当前学生解出的题；\(x\) 是题目，集合差 \(Q_i\setminus P_t\) 只保留教师会而学生不会的题。\(w_t(x)\ge0\) 是优先级权重，argmax 返回本轮教师编号 \(i_t^*\)，并列时需按调度规则选择；它不索引 token。</p>
 <div class="reading-math" role="math">\[
 i_t^*=\arg\max_i\sum_{x\in Q_i\setminus P_t}w_t(x).
 \]</div>
@@ -173,7 +175,7 @@ i_t^*=\arg\max_i\sum_{x\in Q_i\setminus P_t}w_t(x).
 <tr><td>SDPG <a href="index.html#ref-33">[33]</a></td><td>特权上下文自教师</td><td>outcome PG + 正优势 gate 的 OPD + scheduled β 与 reference UKL</td><td>gate 和 schedule 是实验稳定器，非普遍必需条件</td></tr>
 </tbody>
 </table>
-<p>下式简记特权上下文教师为 \(\pi_p\)，outcome policy-gradient损失为 \(L_{\rm PG}\)，reference UKL项为 \(L_{\rm UKL}\)。</p>
+<p>下式简记特权上下文冻结教师为 \(\pi_p\)，outcome policy-gradient损失为 \(L_{\rm PG}\)，reference UKL项为 \(L_{\rm UKL}\)；\(D_{\rm priv}\) 是同一 prefix 上学生到特权教师的 KL。\(k\) 是更新步，\(\beta(k)\) 是随步数安排的蒸馏权重，\(\alpha\) 是参考正则权重，\(A\) 是固定 outcome 优势；\(\mathbf1[A&gt;0]\) 仅在正优势样本打开蒸馏，\(L\) 是合计损失。这里 \(k\) 不表示 top-k 候选数，\(\alpha,\beta\) 也不是扩散日程。</p>
 <div class="reading-math" role="math" aria-label="SDPG组合结构示意">\[
 \begin{aligned}
 &D_{\rm priv}=D_{\rm KL}(\pi_\theta\Vert\pi_p),\\

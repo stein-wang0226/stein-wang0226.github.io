@@ -16,7 +16,7 @@ J(\theta)&=\mathbb E_{\tau\sim p_\theta}R(x_0),\\
 [R(x_0)\nabla_\theta\log p_\theta(\tau)].
 \end{aligned}\]</div>
 <h3 id="elbo-gap">下界松度、估计方差和 ratio 偏差</h3>
-<p>以辅助路径分布 q 定义 ELBO，由 Jensen 不等式：</p>
+<p>以辅助路径分布 \(q(\tau\mid x)\) 定义 ELBO，记 \(q_x=q(\tau\mid x)\)，文本 log-likelihood 与该 ELBO 的差为 \(\Delta_\theta(x)=\log p_\theta(x)-L_\theta(x)\)；由 Jensen 不等式：</p>
 <div class="reading-math">\[\begin{aligned}
 \log p_\theta(x)
 &=\log\mathbb E_{q(\tau\mid x)}
@@ -34,7 +34,7 @@ J(\theta)&=\mathbb E_{\tau\sim p_\theta}R(x_0),\\
 </tbody></table>
 <p>因此“ELBO 有 bias”不够具体；<strong>MC 可以无偏估计某个下界，但这个下界仍不等于文本 log-likelihood。</strong></p>
 <h3 id="spg">SPG：优势固定，按符号选择 likelihood 界</h3>
-<p class="math-notation">\(L_\theta,U_\theta\) 分别为文本 log-likelihood 的下/上界，区别于通常被最小化的损失 \(\mathcal L\)；\(\Delta_\theta\) 为界与真实 log-likelihood 的差。\(i=1,\ldots,G\) 索引候选，\(A_i\) 为固定奖励优势，\(J_{\rm bound}\) 是要最大化的代理目标。</p>
+<p class="math-notation">\(L_\theta,U_\theta\) 分别为文本 log-likelihood 的下/上界，区别于通常被最小化的损失 \(\mathcal L\)；\(\Delta_\theta\) 为界与真实 log-likelihood 的差。\(i=1,\ldots,G\) 索引候选，\(x_i\) 是第 \(i\) 条候选文本，\(A_i\) 为固定奖励优势，\(J_{\rm bound}\) 是要最大化的代理目标。</p>
 <p>令 \(L_\theta(x)\leq\log p_\theta(x)\leq U_\theta(x)\)，奖励优势 A 在更新中固定。A 为正时，用下界；A 为负时，不等式乘负数翻转，\(A\,U_\theta\leq A\log p_\theta\)。教学构造为：</p>
 <div class="reading-math">\[J_{\rm bound}=\frac1G\sum_i
 \begin{cases}A_iL_\theta(x_i),&A_i\geq0,\\

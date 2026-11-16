@@ -207,7 +207,7 @@ body{margin:0;background:var(--bg);color:var(--ink)}
 </tbody></table></div>
 <h4 id="ambient-error">科学验收怎样把“改善”写成算式</h4>
 <p class="math-notation">下面 \(N_c\) 为细胞的 observed 总 count，\(E(X)\) 为候选矩阵 \(X\) 相对 native 真值的归一绝对误差。oracle 式的 \(j(c)\) 为细胞所在 batch，\(b_g^{(j)}\) 为该 batch 的污染基因份额，\(B_{gc}\) 为估算污染 count，\(A_{gc}\) 为参考校正；round_even 为最近整数、半整数取偶数。\(q_{\rm gap}\) 为相对“不校正→参考校正”误差改善的完成比例，要求相应分母非零。</p>
-<p>\(g,c\)分别为基因和细胞，\(O,T,U,C\)分别为 observed、hidden native、hidden ambient 和提交的 corrected counts。矩阵须先按基因/细胞标识对齐；文件中的索引从 1 开始。</p>
+<p>\(g,c\)分别为基因和细胞，\(O,T,U,C\)分别为 observed、hidden native、hidden ambient 和提交的 corrected counts。\(\rho_c\) 是细胞 \(c\) 的真实污染比例；矩阵须先按基因/细胞标识对齐，文件中的索引从 1 开始。</p>
 <div class="reading-math">\[
 \begin{aligned}
 N_c&amp;=\sum_g O_{gc},\\

@@ -18,7 +18,7 @@
 <section id="norm-position"><h2>Pre-Norm 与 Post-Norm 的梯度路径</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1607.06450" title="Layer Normalization · Ba, Jimmy Lei, Kiros, Jamie Ryan, Hinton, Geoffrey E. · 2016/07/21 · 1607.06450">LayerNorm</a>。</p></section>
 
-<p>令 \(N\) 为Norm，\(F\) 为子层，\(J\) 表示局部Jacobian。按链式法则，Pre-Norm先归一再进入F，而直接相加的x导数为单位矩阵；Post-Norm对相加后的所有分支再作用同一个Norm Jacobian。</p>
+<p>固定单 token，\(x,y_{\rm pre},y_{\rm post}\in\mathbb R^d\) 是输入和两种替代布局的输出列向量，\(d\) 为隐藏维度；\(N,F\) 都保持此维度。\(J_F,J_N,J_{\rm pre},J_{\rm post}\in\mathbb R^{d\times d}\) 分别为函数输出对输入的局部 Jacobian，括号注明求值的输入点，\(I\) 为 \(d\times d\) 单位矩阵。按链式法则，Pre-Norm先归一再进入F，而直接相加的x导数为单位矩阵；Post-Norm对相加后的所有分支再作用同一个Norm Jacobian。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 y_{\rm pre}&=x+F(N(x)),\\
@@ -27,6 +27,7 @@ y_{\rm post}&=N(x+F(x)),\\
 J_{\rm post}&=J_N(x+F(x))(I+J_F(x)).
 \end{aligned}
 \]</div>
+<p>深度递推中 \(\ell=0,\ldots,L-1\) 索引残差子层，\(x_\ell\) 是入表示，\(J_\ell=\partial x_{\ell+1}/\partial x_\ell\)；\(x_0,x_L\) 是首末表示。原式沿用 \(L\) 同时记总层数和标量损失：下标/乘积端点中的 \(L\) 是层数，\(\nabla_x L\) 中的 \(L\) 是损失。方向例中的 \(c,a\) 是标量，\(\mathbf1\in\mathbb R^d\) 是全1向量。</p>
 <div class="reading-math" role="math">\[
 \nabla_{x_\ell}L=J_\ell^\top\nabla_{x_{\ell+1}}L,\qquad
 \frac{\partial x_L}{\partial x_0}=J_{L-1}\cdots J_1J_0.
@@ -42,7 +43,7 @@ J_{\rm post}&=J_N(x+F(x))(I+J_F(x)).
 <p>现代模型可能采用 residual scaling、额外 Norm、深度相关初始化、多路残差与融合 kernel。阅读 config 时需找出真实的运算顺序，不能只按参数名称判断。</p></section>
 <section id="rmsnorm"><h2>RMSNorm 保留均值，主要调整幅度</h2>
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1910.07467" title="Root Mean Square Layer Normalization · Zhang, Biao, Sennrich, Rico · 2019/10/16 · 1910.07467">RMSNorm</a>。</p></section>
-
+<p>\(i=1,\ldots,d\) 遍历单个 token 的隐藏坐标，\(x_i\) 是其分量；\(\mu,\sigma^2\) 是沿这 \(d\) 个坐标求出的均值和总体方差，分母为 \(d\)，不是 batch 数或样本方差的 \(d-1\)。\(g,b\in\mathbb R^d\) 是逐维缩放/偏置，\(\mathbf1\) 是全1向量，\(\varepsilon&gt;0\) 与平方统计量同尺度。LN 表示 LayerNorm；RMSNorm 不减均值，只按坐标平方均值缩放。</p>
 <div class="reading-math" role="math">\[
 \mu=\frac1d\sum_i x_i,\quad \sigma^2=\frac1d\sum_i(x_i-\mu)^2,\qquad
 \operatorname{LN}(x)=g\odot\frac{x-\mu\mathbf1}{\sqrt{\sigma^2+\varepsilon}}+b,\quad

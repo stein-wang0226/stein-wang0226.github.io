@@ -45,10 +45,10 @@
 <p><strong>核心区别：</strong>普通decoder逐层生成自己的KV；CED改变global KV来源，CSA2再跨层复用。下面沿张量所有权追踪这两步。</p>
 <h3>张量来源：global C / Z 与本层 Q / SWA</h3>
 <p>Hidden维度5120。Decoder的Full层用encoder末层表示生成global latent与压缩权重：<a href="index.html#ref-1">[1] §2.2–2.3</a></p>
+<p class="math-notation">\(H_{20}\) 是 encoder 第 20 层的 token 表示；省略 batch 轴时形状为 \(N\times5120\)，\(N\) 为历史位置数。\(l\) 索引使用投影的 decoder 层/共享组，\(W_l^{KV},W_l^Z\) 是从 hidden 宽度映射到各自输出通道的矩阵；\(C_l,Z_l\) 保留 token 轴，具体 head/压缩布局按报告配置展开。</p>
 <div class="reading-math" role="math">\[
 C_l=H_{20}W_l^{KV},\qquad Z_l=H_{20}W_l^Z.
 \]</div>
-<p class="math-notation">\(H_{20}\) 是 encoder 第 20 层的 token 表示；省略 batch 轴时形状为 \(N\times5120\)，\(N\) 为历史位置数。\(l\) 索引使用投影的 decoder 层/共享组，\(W_l^{KV},W_l^Z\) 是从 hidden 宽度映射到各自输出通道的矩阵；\(C_l,Z_l\) 保留 token 轴，具体 head/压缩布局按报告配置展开。</p>
 <ul><li><strong>Global来源：</strong>C/Z是压缩表示与权重，不能按两份传统K/V重复计费。</li><li><strong>Local来源：</strong>本层query与SWA KV仍读取本层hidden。</li><li><strong>规格：</strong>主Attention为64 query heads、512 channels、query compression 1280；indexer为32 query heads、128 channels。</li></ul>
 <figure>
 <object class="research-chart wide" type="image/svg+xml" data="../assets/research/agent-data-benchmarks/ced-path.svg" aria-label="CED global缓存与局部SWA张量来源图"><p>图示内容：长prompt → 20层encoder → decoder global投影；尾部encoder输出重放产生decoder SWA；新token通过完整encoder与decoder。</p></object>

@@ -4,7 +4,7 @@
 <h2 id="time">连续时间的核心：先定义概率路径</h2>
 <p><strong>FM 学所选路径的速度；score 模型学噪声分布的 log 密度梯度。</strong>二者可以在特定路径和动力学下连接，不代表任意损失、网络和采样器都一样。本节 FM 使用噪声 t=0、数据 t=1；DDPM/前向 SDE 使用数据到噪声，转换时显式反转时间。</p>
 <h3 id="conditional-path">条件路径 → 条件速度</h3>
-<p class="math-notation">\(y,x_t,\epsilon\in\mathbb R^d\) 分别为数据端点、路径状态和标准高斯噪声；\(a_t,b_t\) 是确定的标量路径系数，点号表示对连续时间求导。\(u_t(x\mid y)\) 是给定数据端点的速度，\(u_t(x)\) 是边际速度，\(u_\theta\) 是网络估计；速度与状态同维。\(\mathbb E[\cdot\mid x_t=x]\) 按与当前状态相容的端点后验平均，不是对所有端点等权平均。</p>
+<p class="math-notation">\(y,x_t,\epsilon\in\mathbb R^d\) 分别为数据端点、路径状态和标准高斯噪声；\(a_t,b_t\) 是确定的标量路径系数，点号表示对连续时间求导。\(u_t(x\mid y)\) 是给定数据端点的速度，\(u_t(x)\) 是边际速度，\(u_\theta\) 是网络估计；速度与状态同维。\(\mathbb E[\cdot\mid x_t=x]\) 按与当前状态相容的端点后验平均，不是对所有端点等权平均。\(p_t(x)\) 是时刻 \(t\) 的边际密度，\(p_t(x\mid y)\) 是给定数据端点 \(y\) 的条件密度。</p>
 <p>取数据 y、噪声 ε，定义 \(x_t=a_ty+b_t\epsilon\)。路径条件分布为 \(\mathcal N(a_ty,b_t^2I)\)，沿同一噪声端点对时间求导：</p>
 <div class="reading-math">\[\begin{aligned}
 \dot x_t&=\dot a_ty+\dot b_t\epsilon,\\
@@ -41,7 +41,7 @@ u_t(x)&=\mathbb E[u_t(x\mid y)\mid x_t=x].
 <tr><td>假设网络此处输出 \(u=3\)</td><td>\(\mathbb E[(u-U)^2\mid x]=(3-2)^2+2=3\)</td><td>边际损失为1；条件损失多出常数2，二者对 \(u\) 的导数均为2</td></tr>
 <tr><td>用理想边际场做Euler一步</td><td>从 \(t=0.5,x=0\)，步长 \(h=0.1\)</td><td>\(x_{0.6}^{\rm Euler}=0+0.1\times2=0.2\)</td></tr>
 </tbody></table>
-<p>表中 \(x\) 是固定时刻的路径点，\(U\) 是随机条件监督，\(u\) 是网络在该点的标量输出；Cov与Var为协方差与方差。单条配对给出4，但其他端点配对也可能经过同一点，后验平均为2；训练目标不是把每一条样本直线都变成推理轨迹。</p>
+<p>表中 \(x\) 是固定时刻的路径点，\(U\) 是随机条件监督，\(u\) 是网络在该点的标量输出；Cov与Var为协方差与方差。\(z\sim\mathcal N(0,1)\) 是轨迹坐标，沿一条轨迹固定，不是每一步重新抽取的 SDE 噪声。单条配对给出4，但其他端点配对也可能经过同一点，后验平均为2；训练目标不是把每一条样本直线都变成推理轨迹。</p>
 <div class="reading-math">\[
 \begin{aligned}
 u_t(x)&amp;=2+\frac{2t-1}{t^2+(1-t)^2}(x-2t),\\
@@ -80,7 +80,7 @@ d\phi(X_t)&=
 <p>随机积分项的期望在相应可积条件下为零；对漂移项分部积分一次、扩散项两次，得到 \(\int\phi[-\nabla\cdot(f_tp_t)+g_t^2\Delta p_t/2]dx\)。由 φ 的任意性得密度方程。</p>
 </details>
 <h3 id="vp-sde">DDPM 的连续极限与逆向</h3>
-<p>这里 s=0 为数据、s=1 为噪声。令 DDPM 每步 β≈β(s)Δs，展开 \(\sqrt{1-\beta\Delta s}\approx1-\beta\Delta s/2\)，得到 VP-SDE：</p>
+<p>这里 \(s=0\) 为数据、\(s=1\) 为噪声，\(X_s\) 是时刻 \(s\) 的状态，\(p_s\) 是其边际密度。令 DDPM 每步 β≈β(s)Δs，展开 \(\sqrt{1-\beta\Delta s}\approx1-\beta\Delta s/2\)，得到 VP-SDE：</p>
 <div class="reading-math">\[\begin{aligned}
 dX_s&=-\tfrac12\beta(s)X_s\,ds+\sqrt{\beta(s)}\,dW_s,\\
 dX_s&=\left[-\tfrac12\beta(s)X_s

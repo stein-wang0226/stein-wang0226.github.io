@@ -35,6 +35,7 @@
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
 
 <p>令 <code>hᵢ</code> 是预测第 i 个 token 时的历史，<code>mᵢ</code> 是目标 mask。对 Agent，通常学习 assistant 的动作、参数、解释和结束标记；system / user / tool 内容作为条件历史。具体角色边界由真实 chat template 决定。</p>
+<p>\(n=1,\ldots,N\) 索引有效轨迹，\(i\) 遍历该轨迹已对齐的预测位置，\(a_{ni}\) 是示范目标 token，\(h_{ni}\) 是其之前的可见历史；\(\pi_\theta\) 是参数 \(\theta\) 定义的策略。\(m_{ni}\) 表示该位置是否监督，\(N_n\) 是该轨迹有效目标数，\(\ell_{ni}\) 是单位置负自然对数概率。\(L_{\rm token},L_{\rm episode}\) 分别是按 token、按有效轨迹平均的损失；损失单位为 nat。</p>
 <p>teacher forcing把示范前缀固定，条件概率连乘取负log后变成逐token交叉熵。令 \(N\) 为有效轨迹数，\(m_{ni}\in\{0,1\}\) 为监督mask，\(N_n\) 为第n条轨迹的有效目标数；仅对 \(N_n&gt;0\) 的轨迹取平均。先排除无目标轨迹，再计数并重新索引，下式两种平均都在这个有效集合上计算；若整批没有目标，跳过该批更新，不用除零或把空轨迹的loss填0：</p>
 <div class="reading-math" role="math" aria-label="监督损失">\[
 \begin{aligned}
@@ -46,6 +47,7 @@ L_{\rm episode}&=\frac1N\sum_n\frac{\sum_i m_{ni}\ell_{ni}}{N_n}.
 \]</div>
 <p>两个分母并不等价。token-mean 使较长的目标轨迹拥有更多总权重；episode-mean 给每条 episode 相同权重，单 token 的权重随长度下降。长恢复链路与短成功路径混合时，要报告实际采用哪一种，不能只写“assistant-only SFT”。</p>
 <p class="math-notation"><strong>符号：</strong>\(n\) 索引轨迹，\(i\) 索引预测位置，\(a_{ni}\) 是示范目标 token，\(h_{ni}\) 是它之前的可见历史，\(\theta\) 是模型参数；\(\ell_{ni}\) 是单位置负对数概率。下式的 \(z_{ni,v}\) 是词表项 \(v\) 的 logit，\(p_{ni,v}\) 是 softmax 概率；\(\mathbf1[\cdot]\) 为条件成立取 1、否则取 0 的指示函数。</p>
+<p>梯度式固定一个预测位置时简记 \(z,p_v\) 为词表 logits 向量及概率，softmax 沿整个词表 \(v\) 轴归一；\(n',i'\) 是遍历全部轨迹/目标位置的分母哑索引，非另一批样本。这里无下标的 \(L\) 专指 \(L_{\rm token}\)，mask 固定且有效目标总数大于0；这是对 logits 的直接偏导。</p>
 <p><strong>mask算例：</strong>输入为“题面 → 工具动作 → 观察 → 修复动作”。两个assistant目标token的正确概率为0.5、0.25，则token平均损失为 \(-(\log0.5+\log0.25)/2\approx1.0397\)。题面和观察不进入分母，却仍被后续动作Attention读取。</p>
 <div class="reading-math" role="math" aria-label="mask对logits的直接梯度">\[
 p_v=\operatorname{softmax}(z)_v,\qquad
@@ -98,6 +100,7 @@ audit_truncation_by_role_and_task_family()</code></pre>
 <div class="stage"><b>筛选与配额</b><small>去重、来源族与难度<br>覆盖成功和恢复</small></div>
 <div class="stage"><b>静态 SFT</b><small>验证动作交叉熵<br>新的留出集验收</small></div>
 </div><figcaption>DeepSeek-R1 在推理 RL 后构建拒绝采样数据，再做包含其他能力的 SFT；这体现循环，不是所有模型统一的阶段顺序。<a href="index.html#ref-18">[18]</a></figcaption></figure>
+<p class="math-notation">下式 \(x\) 是固定任务，\(p_x\in[0,1]\) 是一次独立尝试成功的概率，\(K\) 是尝试次数；\(P(\cdot\mid x)\) 与 \(\mathbb E[\cdot\mid x]\) 分别为给定此题的事件概率和保留条数期望。至少一次成功的补集公式假定这 \(K\) 次同分布且独立；保留全部成功时才使用第二个条数口径。</p>
 <div class="reading-math" role="math" aria-label="拒绝采样后的任务分布">\[
 P(\text{至少一个成功}\mid x)=1-(1-p_x)^K,\qquad
 \mathbb E[\text{保留全部成功的条数}\mid x]=Kp_x.
@@ -114,6 +117,7 @@ P(\text{至少一个成功}\mid x)=1-(1-p_x)^K,\qquad
 <p>设 <code>y+</code> 与 <code>y−</code> 是同一任务的偏好轨迹。DPO 将相对于参考策略的对数概率差转成偏好分类，标准离线版本没有每步环境探索。<a href="index.html#ref-12">[12]</a></p>
 <h3 id="dpo-derivation">从KL正则最优策略到偏好分类</h3>
 <p>先对同一prompt \(x\) 的文本候选分布推导。简记 \(p_y=\pi(y\mid x)\)、\(q_y=\pi_{\rm ref}(y\mid x)\)、\(r_y=r(x,y)\)。参考策略在候选支持上概率非零，\(\beta&gt;0\) 控制KL正则；优化期望reward并约束 \(\sum_y p_y=1\)：</p>
+<p>这里 \(y\) 遍历完整回答候选，\(\pi\) 是待优化策略，\(\pi_{\rm ref}\) 是冻结参考，\(r_y\) 是标量奖励；星号表示最优概率。拉格朗日乘子 \(\eta\) 对应概率和为1的约束，\(Z(x)\) 是候选上的有限正归一常数，求和对象为 \(q_y\exp(r_y/\beta)\)。\(\beta\) 与奖励同尺度，使 \(r_y/\beta\) 无单位；log 是自然对数。</p>
 <div class="reading-math" role="math" aria-label="KL正则最优策略">\[
 \begin{aligned}
 \max_p\ &\sum_y p_y r_y-\beta\sum_y p_y\log\frac{p_y}{q_y},\\
@@ -134,6 +138,7 @@ L_{\rm DPO}&=-\log\sigma(z),\\
 \]</div>
 <h3 id="dpo-full-example">完整偏好对：token 概率怎样变成 loss 和更新方向</h3>
 <p><strong>输入：</strong>同一 prompt 的 chosen / rejected 各有两个回答 token，第二个包含结束边界。表内是各自真实历史下，已选 token 的条件概率；prompt 与 padding 不计入回答似然。教学取 \(\beta=0.2\)，reference 冻结，使用原始 DPO 的<strong>回答 log-prob 求和</strong>，不做长度平均。<a href="index.html#ref-12">[12] §4、式7</a></p>
+<p>\(i=1,2\) 索引各候选内回答 token，\(p_{\theta,i}^{\pm}\) 是这个已选 token 在自身候选前缀上的条件概率，上标 \(+\!/-\) 标识 chosen/rejected，不是正负数或乘方。这里 \(L\) 简记该偏好对的 \(L_{\rm DPO}\)；后面的 \(c\) 是 \(\beta[1-\sigma(z)]\) 给出的局部梯度系数，不是 token 概率增量。</p>
 <table><caption>两候选分别 teacher forcing；省略词表中其他 token</caption><thead><tr><th>候选</th><th>当前两个 token 概率</th><th>参考概率</th><th>回答似然与相对比</th></tr></thead><tbody>
 <tr><td>chosen \(y^+\)</td><td>0.6、0.5</td><td>0.5、0.4</td><td>\(\pi_\theta=0.30,\ \pi_{\rm ref}=0.20\)；比为1.5</td></tr>
 <tr><td>rejected \(y^-\)</td><td>0.4、0.25</td><td>0.5、0.4</td><td>\(\pi_\theta=0.10,\ \pi_{\rm ref}=0.20\)；比为0.5</td></tr>
@@ -173,6 +178,7 @@ c&\approx0.089058,\\
 <tr><td>KTO <a href="index.html#ref-15">[15]</a></td><td>非成对 desirable / undesirable 标签，参考 KL baseline</td><td>需要</td><td>好坏样本比例和权重需要校准，不等于任意二值任务 reward 的在线 RL</td></tr>
 </tbody>
 </table>
+<p>SimPO 重新定义 \(r_\theta(x,y)\) 为回答平均 log-prob 的缩放分数，不是上面外部奖励 \(r_y\)。\(|y|&gt;0\) 是回答的目标 token 数，\(\beta\) 缩放平均 log-prob，\(\Delta r_\theta\) 是同题 chosen/rejected 分数差，\(\gamma\) 是偏好间隔而非 RL 折扣；\(L_{\rm SimPO}\) 是该对的 sigmoid 分类损失。</p>
 <div class="reading-math" role="math" aria-label="SimPO概念目标">\[
 \begin{aligned}
 r_\theta(x,y)&=\frac{\beta}{|y|}\log\pi_\theta(y\mid x),\\

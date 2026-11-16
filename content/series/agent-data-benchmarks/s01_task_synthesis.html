@@ -104,6 +104,7 @@ audit/                    # 此处为建议的审计伴随产物，非Harbor必�
 <tr><td>科学数据分析</td><td>数据来源与预处理可追溯</td><td>统计假设、图表与研究产物一致</td><td>标签泄漏、错误聚合、无依据显著性</td></tr>
 <tr><td>加速任务</td><td>相同输入下结果正确</td><td>固定硬件、编译、warmup与重复timing</td><td>删计算、减精度超容差、缓存测试答案</td></tr>
 </tbody></table>
+<p>修复奖励式局部重用 \(r\)：现在它是修复后在同一冻结测试集合中的通过比例，\(f\) 是 faulty baseline 的通过比例，二者都在 \([0,1]\) 内且无量纲。\(R_{\rm repair}\) 是对尚未通过部分的进展归一化后、以 0 为下限的奖励；要求 \(f<1\)，分母 \(1-f\) 才为正。</p>
 <div class="reading-math">\[
 R_{\rm repair}=\max\left(0,\frac{r-f}{1-f}\right)\quad(f&lt;1).
 \]</div>

@@ -5,6 +5,7 @@
 <body><main class="training-lifecycle">
 <!-- READING:FRAGMENT:START --><style>.masked-gradient-scroll{display:block;max-width:100%;overflow-x:auto;padding:.25rem 0}.masked-gradient-scroll > mjx-container:not([display="true"]){max-width:none;overflow:visible}</style>
 <p class="math-notation"><strong>读式约定：</strong>\(\theta\) 表示模型参数，\({}^\top\) 为转置；softmax 对标明的候选轴归一，\(\mathbf1[\cdot]\) 为指示函数。下文 \(L\) 在形状表中表示 block 数，在 NLL 推导中表示标量损失，均按所在段落理解；词表大小 \(V\) 与 value 矩阵 \(V_{\rm val}\) 分开记。</p>
+<p>先读下面的流图：\(B\) 是一个 batch 中的序列数，\(T\) 是每条序列的 token 位置数；正文形状表把同一个长度记为 \(S\)，即本页 \(T=S\)，不是两种独立长度。\(d\) 是每个位置的隐藏表示维度，\(V\) 是词表大小；方括号依次列出张量各轴的元素数，IDs 是整数 token 编号。</p>
 <figure class="mechanism-map"><figcaption>Decoder 张量流：从 token 到预测分布</figcaption><ol class="mechanism-chain"><li><b>IDs → embedding</b><small>[B,T] → [B,T,d]；位置机制</small></li><li><b>Attention 读取历史</b><small>Q/K/V、因果 mask 与输出投影</small></li><li><b>FFN 与残差更新</b><small>多层维持主干维度 d</small></li><li><b>LM head → logits</b><small>[B,T,V]；训练对齐右移标签</small></li></ol><p class="mechanism-return">↶ 推理采样新 token 后继续；训练可并行计算位置，因果 mask 阻止读取未来。</p></figure>
 <section id="purpose"><h2>把一次语言预测走成可检查的数据流</h2>
 <section id="citation-sources-1" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
@@ -33,6 +34,8 @@
 <p>单 head 的 score 是每个 query 对各个 key 的匹配强度，value 是实际被加权读取的内容。输出仍保留 S 个位置，Attention 没有把整句压成一个向量。FFN 在同一层逐位置共享参数；位置之间的新信息交换主要来自 token mixer。</p>
 </section>
 <section id="attention-mask"><h2>Causal mask 决定允许使用的证据</h2>
+<p>本节固定<strong>一条序列、一个 head</strong>，省略 batch/head 轴：输入激活 \(X\in\mathbb R^{S\times d}\) 右乘三组可训练投影 \(W_Q,W_K,W_V\in\mathbb R^{d\times d_h}\)，其中 \(d_h\) 是该 head 的维度。\(Q,K,V_{\rm val}\in\mathbb R^{S\times d_h}\) 分别是 query、key、value；这里 \(V_{\rm val}\) 是 value 矩阵，不能与词表大小 \(V\) 混用。\(A\in\mathbb R^{S\times S}\) 是注意力概率，\(M\in\mathbb R^{S\times S}\) 是加性 mask，\(O\in\mathbb R^{S\times d_h}\) 是该 head 的输出，还未拼接 heads 或作输出投影。</p>
+<p>\(i,j=0,\ldots,S-1\) 是<strong>零基</strong>位置索引：行 \(i\) 对应 query，列 \(j\) 对应 key。\(QK^\top\) 的每项是这对位置的内积 score，除以 \(\sqrt{d_h}\) 后加 \(M\)；softmax 对每个固定 \(i\) 沿 \(j\) 归一，允许访问的位置至少有一个。加性 \(M_{ij}=0\) 表示不改变 score，\(-\infty\) 表示屏蔽；下方另列的<strong>可见矩阵</strong>用 1 表示允许、0 表示屏蔽，不是可直接加到 score 的 \(M\)。</p>
 <div class="reading-math" role="math">\[
 Q=XW_Q,\quad K=XW_K,\quad V_{\rm val}=XW_V,\qquad
 A=\operatorname{softmax}_{j}\!\left(\frac{QK^\top}{\sqrt{d_h}}+M\right),\quad O=AV_{\rm val}.
@@ -48,8 +51,7 @@ M_{ij}=\begin{cases}0&j\leq i\\-\infty&j>i\end{cases},\qquad
 <p>科学 Agent 阅读实验说明时，上下文内的每个位置也受同样约束。能读到文本不代表具备文件权限、事实验证或完整长期记忆；这些由<a href="../agent-harness-guide.html">Harness</a>和<a href="../agent-systems/">Agent 系统</a>处理。</p>
 </section>
 <section id="block"><h2>一个 block 如何保留旧表示并加入新信息</h2>
-
-
+<p>此处恢复 batch 轴：\(X\) 是本 block 的输入，\(U\) 是 Attention 支路输出与旧输入相加后的中间表示，\(Y\) 是 FFN 支路更新后的 block 输出，三者都是 \([B,S,d]\)。RMSNorm 逐位置沿 \(d\) 轴归一；Attention 包含各 head 的拼接与输出投影，FFN 也投影回 \(d\)，因此两处加号都是同形状逐元素相加。下一 block 接收 \(Y\)，第二个支路读取的是 \(U\)。</p>
 <div class="reading-math" role="math">\[
 U=X+\operatorname{Attention}(\operatorname{RMSNorm}(X)),\qquad
 Y=U+\operatorname{FFN}(\operatorname{RMSNorm}(U)),\quad
@@ -85,7 +87,8 @@ logits = final_norm(x) @ output_weight     # [B,S,V]
 loss = CE(logits[:, :-1], labels[:, 1:])
 # API 内部已 shift 时，调用者不要再 shift
 # labels 与 attention_mask、loss_mask 的含义各不相同</code></pre>
-<p>先从一条序列的条件概率开始：链式法则将联合概率拆为下一token概率的乘积；取log变求和，最大化似然等价于最小化负log-likelihood。以目标token索引 \(i\) 表示监督位置：</p>
+<p>先从一条序列的条件概率开始：\(x_{1:S}\) 是长度 \(S\) 的真实 token 序列，\(x_i\) 是第 \(i\) 个目标，\(x_{&lt;i}\) 是其之前的真实前缀；\(p_\theta\) 是参数 \(\theta\) 定义的概率模型。这里目标位置 \(i=1,\ldots,S\) 使用<strong>一基</strong>记号，与 mask 节的零基 query 位置不同；代码中的 logits 位置须按 shift 对齐。链式法则将联合概率拆为条件概率乘积，\(\prod\) 表示连乘，log 是自然对数；\(\ell_i\) 是单目标负 log-prob，单位为 nat。</p>
+<p>扩展到 batch，\(b=1,\ldots,B\) 索引序列，\(x_{b,i}\) 与 \(\ell_{b,i}\) 是该序列的目标和单目标损失。固定 \(m_{b,i}\in\{0,1\}\) 表示是否监督这个目标，分母 \(N_{\rm valid}=\sum_{b,i}m_{b,i}&gt;0\) 是有效目标数，不是输入 token 总数。\(L\) 是有效目标的平均标量损失；它与前文表示 block 层数的 \(L\) 重名，仅在本节表示损失。以下对全部已对齐的 batch/目标位置求和：</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 p_\theta(x_{1:S})&=\prod_{i=1}^{S}p_\theta(x_i\mid x_{&lt;i}),\\
@@ -95,7 +98,8 @@ p_\theta(x_{1:S})&=\prod_{i=1}^{S}p_\theta(x_i\mid x_{&lt;i}),\\
 L&=\frac{\sum_{b,i}m_{b,i}\ell_{b,i}}{\sum_{b,i}m_{b,i}}.
 \end{aligned}
 \]</div>
-<p>logits \(z\) 经softmax得 \(p_j=e^{z_j}/\sum_k e^{z_k}\)。正确目标为 \(y\) 时，单token损失 \(\ell=-\log p_y=-z_y+\log\sum_k e^{z_k}\)，其梯度为 \(\partial\ell/\partial z_j=p_j-\mathbf1[j=y]\)。对上面的平均损失，令 \(N_{\rm valid}=\sum_{b,i}m_{b,i}&gt;0\)，固定mask后有 <span class="masked-gradient-scroll" tabindex="0" role="group" aria-label="平均 masked 损失梯度，可横向滚动">\(\partial L/\partial z_{b,i,j}=(m_{b,i}/N_{\rm valid})(p_{b,i,j}-\mathbf1[j=y_{b,i}])\)</span>。这里 \(j\) 索引词表，\(y_{b,i}\) 是该位置的目标ID；被mask位置的直接logit梯度为0，但它仍可作为后续目标的条件。这把“提高目标概率”接回可计算的梯度。</p>
+<p>下面固定一个已对齐目标位置，\(z\in\mathbb R^V\) 是词表 logits 向量，\(z_j\) 是词表项 \(j\) 的分数，\(p_j\) 是其归一概率，\(y\) 是正确目标 ID，\(\ell\) 是单 token 损失。\(j,k=0,\ldots,V-1\) 都遍历词表，\(k\) 仅作分母求和索引；它们不再是 query/key 位置。softmax 沿词表轴归一，\(e\) 是自然常数；\(\mathbf1[j=y]\) 在目标项为1，其余为0。恢复 batch/位置下标后，\(z_{b,i,j},p_{b,i,j}\) 分别是该位置的词表分数与概率，\(y_{b,i}\) 是正确目标 ID；以下偏导固定 mask，并把各位置 logits 当作独立变量，不是模型参数 \(\theta\) 的总梯度。</p>
+<p>logits \(z\) 经softmax得 \(p_j=e^{z_j}/\sum_k e^{z_k}\)。正确目标为 \(y\) 时，单token损失 \(\ell=-\log p_y=-z_y+\log\sum_k e^{z_k}\)，其梯度为 \(\partial\ell/\partial z_j=p_j-\mathbf1[j=y]\)。对上面的平均损失，有 <span class="masked-gradient-scroll" tabindex="0" role="group" aria-label="平均 masked 损失梯度，可横向滚动">\(\partial L/\partial z_{b,i,j}=(m_{b,i}/N_{\rm valid})(p_{b,i,j}-\mathbf1[j=y_{b,i}])\)</span>。被mask位置的直接logit梯度为0，但它仍可作为后续目标的条件。这把“提高目标概率”接回可计算的梯度。</p>
 <noscript>
 <div id="masked-gradient-nojs-derivation" role="group" aria-label="无脚本平均 masked 梯度推导">
 <p><strong>无脚本推导：先求单 token 导数，再乘平均权重。</strong>b 索引序列，i 索引 shift 后对齐的目标位置，j 索引词表；y<sub>b,i</sub> 是正确目标 ID。m<sub>b,i</sub> 取 1 表示监督、0 表示不计该目标；固定 mask，令 N 为所有 m 的总和，即原式 N<sub>valid</sub>，且 N &gt; 0。</p>

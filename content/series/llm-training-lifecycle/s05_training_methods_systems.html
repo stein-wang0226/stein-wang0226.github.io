@@ -28,6 +28,7 @@
 <h2>LoRA 与 QLoRA：冻结底座，仍需要反向传播</h2>
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2002.05202" title="GLU Variants Improve Transformer · Shazeer, Noam · 2020/02/12 · 2002.05202">SwiGLU</a>；<a href="https://arxiv.org/abs/2305.13245" title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints · Ainslie, Joshua, Lee-Thorp, James, de Jong, Michiel 等 · 2023/05/22 · 2305.13245">GQA</a>；<a href="https://arxiv.org/abs/2106.09685" title="LoRA: Low-Rank Adaptation of Large Language Models · Hu, Edward J., Shen, Yelong, Wallis, Phillip 等 · 2021/06/17 · 2106.09685">LoRA</a>；<a href="https://arxiv.org/abs/2305.14314" title="QLoRA: Efficient Finetuning of Quantized LLMs · Dettmers, Tim, Pagnoni, Artidoro, Holtzman, Ari 等 · 2023/05/23 · 2305.14314">QLoRA</a>。</p></section>
 
+<p>\(x,y\) 是宽 \(d_{\rm in},d_{\rm out}\) 的输入/输出列向量，\(W_0\) 是冻结底座权重；\(A,B\) 是可训练的低秩矩阵，\(r&gt;0\) 是增量秩，\(\alpha\) 是缩放超参数，\(\Delta W\) 是缩放后的权重增量。\(N_{\rm adapter},N_{\rm base}\) 是参数元素数；LoRA 的 \(A/B\) 不是 Attention 权重或 batch 数。下式逐项给出矩阵形状与同维输出相加：</p>
 <div class="reading-math">\[
 \begin{aligned}
 W_0&amp;\in\mathbb R^{d_{\mathrm{out}}\times d_{\mathrm{in}}},\\
@@ -70,6 +71,7 @@ result = result + lora_B(lora_A(dropout(x))) * scaling
 <h2>AdamW、Muon 与精度：更新规则不等于权重约束</h2>
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2304.11277" title="PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel · Zhao, Yanli, Gu, Andrew, Varma, Rohan 等 · 2023/04/21 · 2304.11277">FSDP</a>；<a href="https://docs.pytorch.org/docs/stable/fsdp.html" title="PyTorch FSDP API · 官方文档 / 原始出版页">PyTorch FSDP API</a>。</p></section>
 
+<p>\(W,W'\) 是更新前后参数矩阵，\(G\) 是同形梯度，\(M'\) 是更新后的动量，\(U\) 是近似 polar 更新方向；momentum、polar、scale 分别表示动量处理、奇异值尺度归一方向与按配方缩放。AdamW 的 \(\widehat m,\widehat v\) 是偏差修正的一阶/二阶原点矩，平方根和除法逐元素进行；\(\eta\) 是学习率，\(\lambda\) 是权重衰减。裁剪的 \(c&gt;0\) 是范数上限，\(\|G\|_2\) 指全部被裁剪梯度展平后的欧氏范数；两处分母的 \(\epsilon\) 分别与对应梯度尺度同单位，数值不能机械共用。撇号标记更新后，不是导数。</p>
 <div class="reading-math">\[
 \begin{aligned}
 \text{AdamW:}\quad W'&amp;=(1-\eta\lambda)W-\eta\frac{\widehat m}{\sqrt{\widehat v}+\epsilon},\\
@@ -92,6 +94,7 @@ U\approx\operatorname{polar}(M'),\quad W'=W-\eta\operatorname{scale}(U),\\
 <div class="stage"><b>AdamW</b><small>保留 Adam 更新<br>单独施加权重衰减</small></div>
 </div><figcaption>教学关系图：Adam 还吸收了自适应缩放思想，并不是从 Momentum 唯一推导出的算法。</figcaption></figure>
 <h4>1. SGD：当前梯度决定下一步</h4>
+<p>本小节省略更新下标，\(g=\nabla_\theta L(\theta)\) 是当前点的损失梯度，\(\Delta\theta\) 是拟采取的参数增量，\(\eta&gt;0\) 是二次步长惩罚的尺度；\({}^\top\) 为转置，\(\|\cdot\|_2\) 是参数向量的欧氏范数。\(\theta_t,\eta_t,g_t\) 恢复为第 \(t\) 次更新后的参数、该步学习率与入梯度。</p>
 <div class="reading-math">\[
 \begin{aligned}
 L(\theta+\Delta\theta)&amp;\approx L(\theta)+g^\top\Delta\theta,\\
@@ -102,6 +105,7 @@ L(\theta+\Delta\theta)&amp;\approx L(\theta)+g^\top\Delta\theta,\\
 \]</div>
 <p>这个局部线性化加二次步长惩罚解释了梯度下降方向；minibatch 梯度将它变成 SGD。它不保存梯度历史。不同坐标的梯度尺度差异或 batch 噪声可能让同一个 η 很难兼顾所有方向，但不能据此断言 SGD 在所有任务都差。</p>
 <h4>2. Momentum：对历史方向做平滑</h4>
+<p>\(u_t\) 是与参数同形的 sum-buffer 动量，\(\mu\in[0,1)\) 是旧方向保留系数；\(k=1,\ldots,t\) 遍历历史更新，\(g_k\) 是第 \(k\) 次更新的梯度。\(m_t\) 改为 EMA 一阶矩，\(\beta_1\in[0,1)\) 是 EMA 保留系数；两种缓冲都从零初始化，即 \(u_0=m_0=0\)，同系数下仍相差 \(1-\mu\) 的尺度。</p>
 <div class="reading-math">\[
 \begin{aligned}
 u_t&amp;=\mu u_{t-1}+g_t,\\
@@ -113,6 +117,7 @@ m_t&amp;=(1-\mu)u_t\quad(\mu=\beta_1,\ m_0=0).
 \]</div>
 <p>持续同向的梯度会累积，交替方向会部分抵消。sum-buffer 与 EMA 两种写法存在 (1−μ) 的尺度差，学习率要相应换算；不能直接拿相同数值的 η 比更新幅度。Nesterov 又改变取方向的位置，需核对具体实现。定义可对照<a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.SGD.html">PyTorch SGD / momentum 文档</a>。</p>
 <h4>3. Adam：一阶矩给方向，二阶原点矩给尺度</h4>
+<p>\(m_t,v_t\) 是从0初始化、与参数同形的一阶及二阶原点矩，\(\beta_1,\beta_2\in[0,1)\) 分别保留旧方向与旧平方尺度；\(\odot\) 是逐坐标乘法，帽号表示除去零初始化权重不足后的修正。分母 \(\epsilon&gt;0\) 位于平方根外，与梯度尺度同单位，\(t\) 仍只在真正 optimizer update 时增加。</p>
 <div class="reading-math">\[
 \begin{aligned}
 m_t&amp;=\beta_1m_{t-1}+(1-\beta_1)g_t,\\
@@ -123,6 +128,7 @@ v_t&amp;=\beta_2v_{t-1}+(1-\beta_2)(g_t\odot g_t),\\
 \end{aligned}
 \]</div>
 <p><strong>m 是梯度的指数加权均值；v 是梯度平方的指数加权均值。</strong>v 不是中心化方差，也不是完整 Hessian：方差还需要减去均值平方，Hessian 则描述损失的二阶导数。sqrt(v̂) 大的坐标会缩小更新；较小的坐标相对放大。β₁ 控制方向记忆，β₂ 控制尺度记忆；Adam 保存两份与参数同形状的状态。</p>
+<p>以下期望按 minibatch 随机采样计算，并暂用单坐标：\(a,b\) 是不随步数变化的一阶与二阶原点矩，即各步梯度均值与平方梯度均值。\(k\) 遍历实际历史更新，\(j=0,\ldots,t-1\) 只索引几何级数指数；此处 \(b\) 不是 batch 数，\(a,b\) 也不是后面矩阵边长。</p>
 <div class="reading-math">\[
 \begin{aligned}
 m_t&amp;=(1-\beta_1)\sum_{k=1}^{t}\beta_1^{t-k}g_k,\\
@@ -135,6 +141,7 @@ m_t&amp;=(1-\beta_1)\sum_{k=1}^{t}\beta_1^{t-k}g_k,\\
 <p class="math-notation">这里 \(\mathbb E\) 对 minibatch 的随机采样取平均，\(a,b\) 分别是单坐标梯度的一阶与二阶原点矩；\(k,j\) 是历史更新索引。\(\mu\) 是 sum-buffer 动量系数，\(\beta_1,\beta_2\) 是 EMA 保留系数；帽号表示零初始化的偏差修正，平方、平方根和除法都逐坐标进行。</p>
 <p>偏差修正针对零初始化，不代表能消除非平稳数据、策略变化或梯度估计的所有偏差；比值 m̂/sqrt(v̂) 本身也不是某个“真实更新”的无偏估计。学习率 warmup 和偏差修正作用不同，不能互相替代。<a href="https://arxiv.org/abs/1412.6980v9">Adam §2–3</a>。</p>
 <h4>4. AdamW：为什么 Adam 加 L2 不等于解耦衰减</h4>
+<p>\(\widetilde L\) 是加入 L2 惩罚的损失，\(\widetilde g\) 是其梯度；波浪号区别于未加惩罚的 \(L,g\)，\(\lambda\) 是惩罚/解耦衰减系数。只讨论衰减时的 \(T\) 是总更新次数，\(\theta_0\) 是初始参数，\(\prod_t\) 遍历这些更新，不是 token 长度。</p>
 <div class="reading-math">\[
 \begin{aligned}
 \widetilde L(\theta)&amp;=L(\theta)+\frac{\lambda}{2}\|\theta\|_2^2,\\
@@ -186,8 +193,8 @@ for t, g in enumerate((2.0, -1.0), start=1):
 
 <h3 id="optimizer-landscape">业界与研究路线：优化方向、减少状态、改善矩阵几何</h3>
 <h4 id="muon-mechanism">Muon：把矩阵动量的奇异值尺度和方向分开</h4>
-<p>对二维动量矩阵作薄 SVD，\(M=U\Sigma V^\top\)。非退化子空间上的 polar 方向 \(UV^\top\) 保留左右方向，去掉奇异值幅度；矩形矩阵只能在相应行或列子空间满足正交关系。Muon 用矩阵乘法近似这个方向，再按形状与配方缩放更新。</p>
-<p class="math-notation">此处若 \(M\) 为 \(p\times q\)、秩为 \(r\)，薄 SVD 的 \(U,V\) 分别为 \(p\times r,q\times r\)，\(\Sigma\) 为奇异值对角阵；\(UV^\top\) 与 \(M\) 同形。这里 \(U\) 是左奇异向量矩阵，区别于概览中的整块更新方向 \(U\)。成本表的 \(n=pq\)、\(b\) 个块、刷新周期 \(f\) 都在各自公式中重新定义。</p>
+<p>此处 \(M\) 是 \(p\times q\)、秩 \(r\) 的二维动量矩阵，薄 SVD 的 \(U,V\) 分别为 \(p\times r,q\times r\) 左右奇异向量，\(\Sigma\) 是 \(r\times r\) 奇异值对角阵，\({}^\top\) 是转置。这里 \(U\) 不再是概览中的整个更新方向，\(V\) 也不是词表大小。对其作薄 SVD，\(M=U\Sigma V^\top\)。非退化子空间上的 polar 方向 \(UV^\top\) 保留左右方向，去掉奇异值幅度；矩形矩阵只能在相应行或列子空间满足正交关系。Muon 用矩阵乘法近似这个方向，再按形状与配方缩放更新。下面 \(I_2\) 是二维单位矩阵。</p>
+<p class="math-notation">\(UV^\top\) 与 \(M\) 同形；成本表的 \(n=pq\)、\(b\) 个块、刷新周期 \(f\) 都在各自公式中重新定义。</p>
 <div class="reading-math">\[
 M=\begin{bmatrix}3&amp;0\\0&amp;1\end{bmatrix}
 \quad\Longrightarrow\quad
@@ -225,6 +232,7 @@ M=\begin{bmatrix}3&amp;0\\0&amp;1\end{bmatrix}
 
 <h3 id="optimizer-cost">成本账本：显存、FLOPs、带宽与通信分别计算</h3>
 <p>下面是<strong>根据状态形状推导的逻辑容量</strong>，不是实测峰值。令一个矩阵W∈R<sup>p×q</sup>、n=pq，持久浮点状态统一按FP32计，每元素4 bytes；不含权重、梯度、master、激活、临时buffer和分片。小张量例外、dtype、blocking与具体实现会改变容量。</p>
+<p>表中 \(b\) 是 Adam-mini 的结构块数，\(r\) 是单侧低秩投影宽度，\(f\) 是 SOAP 分解刷新周期（更新步），\(k\) 是 Muon 近似迭代数；它们各自属于不同算法。后面容量式 \(N\) 是全部可训练参数元素数，\(\rho\in[0,1]\) 是其中使用单份 Muon 动量的参数比例，\(M_{\rm AdamW},M_{\rm one}\) 是权重/梯度/master/状态合计静态字节，\(M_{\rm optimizer}\) 只计优化器状态。</p>
 <div class="reading-table" style="overflow-x:auto"><table>
 <thead><tr><th>方法</th><th>主要持久状态 / 矩阵</th><th>FP32状态容量</th><th>每次更新的主要工作</th></tr></thead><tbody>
 <tr><td>SGD / Momentum</td><td>0 / n个动量元素</td><td>0 / 4n bytes</td><td>O(n)逐元素读写；Momentum多一份状态</td></tr>
@@ -252,6 +260,7 @@ M=\begin{bmatrix}3&amp;0\\0&amp;1\end{bmatrix}
 <p>MiB按2<sup>20</sup>bytes；上述理想式尚未做ZeRO/FSDP分片。MoE按可训练的总参数计状态，前向计算则取决于实际路由；不能用“每token激活参数量”替代全部优化器状态量。原集群<a href="#cluster">16N静态账本</a>可按真实分组替换state项。</p>
 <h4>Muon的矩阵乘法，怎样换算为FLOPs？</h4>
 <p>一种五次多项式实现先规范化 X，转置使 \(a=\min(p,q),b=\max(p,q)\)。多项式系数 \(a_0,b_0,c_0\) 依配方确定；一次迭代含：</p>
+<p>这里 \(X\in\mathbb R^{a\times b}\) 是规范化后的动量工作矩阵，不是 token 输入激活；\(A,B\in\mathbb R^{a\times a}\) 分别是 Gram 矩阵和多项式中间矩阵，\(X'\) 是一轮后同形工作矩阵。\(F_{\rm round},F_k\) 是一轮/共 \(k\) 轮主矩阵乘法的 FLOPs，\(a,b\) 是边长、与前面梯度矩或块数无关。后文比较线性层的 \(B\) 专指一次逻辑更新处理的 token 总数，不是此中间矩阵。</p>
 <div class="reading-math">\[
 \begin{aligned}
 A&amp;=XX^\top,\qquad B=b_0A+c_0A^2,\qquad X'=a_0X+BX,\\
@@ -345,7 +354,7 @@ t_{\rm lower}=\max\left(\frac FP,\frac Q{B_{\rm HBM}},
 \qquad I=\frac FQ,\qquad P_{\rm attainable}\le\min(P,B_{\rm HBM}I).
 \]</div>
 <p>完整重叠时接近最大项；依赖、启动开销、低占用率与额外I/O会使真实时间更长。不能把同时发生的三段测量简单相加，也不能把这一下界当承诺性能。</p>
-<p>以BF16线性层 \(X_{M\times K}W_{K\times N}\) 为例，假设每份输入/权重只从HBM读一次、输出写一次，主乘法约 \(2MKN\) FLOPs，流量约 \(2(MK+KN+MN)\) bytes；当 \(M\ll K,N\) 时，\(I\approx M\)。这里 \(M\) 是<strong>一次局部矩阵乘法处理的token数</strong>，\(K,N\) 是输入/输出通道数，不是全局训练batch或参数总量。</p>
+<p>线性层例中 \(M\) 是一次局部 GEMM 处理的 token 数，\(K,N\) 是输入/输出通道数；这里 \(M\) 不是容量、\(N\) 不是全模型参数数。输入激活 \(X\) 与权重 \(W\) 分别为 \(M\times K,K\times N\)，输出为 \(M\times N\)。以BF16线性层 \(X_{M\times K}W_{K\times N}\) 为例，假设每份输入/权重只从HBM读一次、输出写一次，主乘法约 \(2MKN\) FLOPs，流量约 \(2(MK+KN+MN)\) bytes；当 \(M\ll K,N\) 时，\(I\approx M\)。</p>
 <p><strong>教学例：</strong>若某硬件与dtype下 \(P/B_{\rm HBM}=200\) FLOPs/byte，则 \(M=16\) 的理想权重读取受限，\(M=512\) 可能越过该界。真实tile重复读取、KV与网络还需另算。增加梯度累积次数不会自动扩大每次局部GEMM的 \(M\)，所以“global batch变大”不保证kernel更快。</p>
 <table><thead><tr><th>观测到的瓶颈</th><th>优先检查的方向</th><th>一起报告的代价</th></tr></thead><tbody>
 <tr><td>参数 / 状态容量不足</td><td>FSDP / ZeRO、TP / PP、低精度状态或offload</td><td>聚合峰值、通信、精度与恢复兼容</td></tr>
@@ -387,6 +396,7 @@ t_{\rm lower}=\max\left(\frac FP,\frac Q{B_{\rm HBM}},
 <figure class="mechanism-map"><figcaption>全状态分片省常驻内存，以层级聚合和通信换取计算</figcaption><ol class="mechanism-chain"><li><b>rank 常驻自己的 shard</b><small>权重、梯度、master 与 m/v</small></li><li><b>计算当前层前 all-gather</b><small>临时取得该层完整计算参数</small></li><li><b>反向 → reduce-scatter</b><small>归约后梯度回到负责的 rank</small></li><li><b>本地更新 → 下轮聚合</b><small>释放/重取按策略；临时区与重叠另计</small></li></ol></figure>
 <p><strong>4 GB 是理想持久状态，不是峰值。</strong>当前层完整参数、预取、通信 bucket、激活和 allocator 可能同时存在；不同 master 与梯度 dtype 也会改变账本。</p>
 <h3 id="batch-accounting">Global batch：只沿独立数据副本增加</h3>
+<p>\(B_{\rm micro}\) 是每个独立数据副本每次前向的序列数，\(A_{\rm accum}\) 是一次更新累积的 microbatch 次数，\(D_{\rm data}\) 是独立数据副本数；\(B_{\rm global}\) 是该更新处理的序列总数。\(A_{\rm accum}\) 不是 LoRA 矩阵，\(D_{\rm data}\) 不是模型维度；变长样本仍要另计有效 token。</p>
 <div class="reading-math">\[
 B_{\mathrm{global}}=B_{\mathrm{micro}}\times A_{\mathrm{accum}}\times D_{\mathrm{data}}.
 \]</div>
@@ -413,6 +423,7 @@ expert_DP = world_size // (ETP * EP * PP)
 <tr><td>大型MoE</td><td>1024卡 / 128节点；512训练卡<br>TP2×PP4×CP2×DP32=512</td><td>512卡；TP8为初始比较路线，EP服务为另一个消融</td><td>ETP2×PP4×EP8×专家DP8=512；128专家可分8组。94层不能四等分，规划24/23/23/24层</td></tr>
 </tbody></table></div>
 <p>MoE 的 TP8 rollout 可能复制4个KV heads；EP方案也不能再将同一并行域乘一次。节点放置、服务kernel、权重转换、94层stage负载与CP支持需要未来联合检查。不能从进程数乘积成立推断方案可直接投产。</p>
+<p>下面 \(N\) 恢复为近似可训练参数数，\(M_{\rm logical}\) 是全模型静态字节，\(M_{\rm rank}\) 是 actor 每 rank 理想常驻字节，\(M_{\rm reference}\) 是共置冻结参考权重字节。分母的 \(4\times2\) 来自 TP4×PP2 模型切分，额外8来自 DP×CP 状态分片；CP 不另切权重，GB 按 \(10^9\) byte 计。</p>
 <div class="reading-math">\[
 \begin{aligned}
 N&amp;=70\times10^9,\qquad M_{\mathrm{logical}}=16N\ \text{bytes},\\

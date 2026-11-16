@@ -4454,7 +4454,7 @@ E_i^{\rm row}&\approx \frac{B s_i}{e_iR_i}.
 它只是 row-equivalent coverage；multipair 每次访问会重新随机选择 pair，不能把
 <code>2 passes</code> 理解为每个 pair 恰好出现两次。</p>
 <h4>9. 用 token 目标反推数据集 fetch 权重</h4>
-<p>先根据训练目标确定 token ratio，再用校准均值转换成 record-level fetch weight：</p>
+<p>先根据训练目标确定 group \(i\) 的目标 token 比例 \(r_i\)（分母中的 \(r_j\) 遍历各 group），再用校准均值 \(e_i\) 转换成 record-level fetch weight：</p>
 <div class="reading-math">\[
 w_i=\frac{r_i/e_i}{\sum_j r_j/e_j}.
 \]</div>

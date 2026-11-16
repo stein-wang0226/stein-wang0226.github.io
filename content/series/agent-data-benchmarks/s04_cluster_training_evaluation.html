@@ -33,7 +33,7 @@
 <h2>异质 GRPO：难度、奖励与长度分别控制</h2>
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>；<a href="https://arxiv.org/abs/2503.14476" title="DAPO: An Open-Source LLM Reinforcement Learning System at Scale · Yu, Qiying, Zhang, Zheng, Zhu, Ruofei 等 · 2025/03/18 · 2503.14476">DAPO</a>；<a href="https://arxiv.org/abs/2503.20783" title="Understanding R1-Zero-Like Training: A Critical Perspective · Liu, Zichen, Chen, Changyu, Li, Wenjun 等 · 2025/03/26 · 2503.20783">Dr. GRPO</a>。</p></section>
 
-<p><strong>检查可用信号：</strong>全对/全错组没有组内相对差异；噪声微小差异也不应当成可信信用。独立二元奖励下的有效组概率和G=8算例在<a href="../llm-posttraining/#posttraining-algorithms--rloo-grpo">GRPO主讲</a>，本页只维护诊断与对照。</p>
+<p><strong>检查可用信号：</strong>全对/全错组没有组内相对差异；噪声微小差异也不应当成可信信用。这里 \(G\) 是同题采样的候选轨迹条数；独立二元奖励下的有效组概率和G=8算例在<a href="../llm-posttraining/#posttraining-algorithms--rloo-grpo">GRPO主讲</a>，本页只维护诊断与对照。</p>
 <div class="reading-table"><table><thead><tr><th>异质来源</th><th>训练影响</th><th>本文方案</th></tr></thead><tbody>
 <tr><td>难度 / 全对全错组</td><td>零方差组不提供相对信号</td><td>按task-family / 难度采样，统计有效组；动态过滤与固定预算分别比较</td></tr>
 <tr><td>奖励语义与噪声</td><td>组内标准化可能放大不可靠微小差异</td><td>schema分数与科学分数拆开；verifier version固定；环境故障单独标记</td></tr>
@@ -87,6 +87,7 @@
 <p><strong>资源向量分项报告：</strong>GPU-hours、CPU-hours、tokens、存储与网络不同单位，不能直接相加。GPU-hours由各设备秒数相加再除3600；active和reserved分别保留。同样8卡预留2小时就是16 GPU-hours，即使只有一半时间执行kernel，不能把剩余资源称为免费。</p>
 <h3>配对比较：平均分相同也可能换了一批成功任务</h3>
 <p class="math-notation">\(i=1,\ldots,n\) 索引配对任务，\(Y_{A,i},Y_{B,i}\in\{0,1\}\) 为两方案独立终评结果；\(D_i\) 是同题差值，\(\bar D\) 是其均值，\(n_{\rm only}\) 为仅一个方案成功的任务数。\(\widehat{\operatorname{SE}}\) 是估计标准误，度量均值的不确定性；横线表示平均，帽号表示估计值。</p>
+<p>其中 \(n_{B\ {\rm only}}\) 与 \(n_{A\ {\rm only}}\) 分别计仅 B 成功、仅 A 成功的任务，两者和为上述分歧数。求和覆盖全部 \(n\) 个配对任务；均值需要 \(n>0\)，标准误式需要 \(n>1\)。\(D_i\)、均值与标准误均是成功比例尺度，乘 100 后以百分点报告；这里的 \(A,B\) 是方案标签，不是优势或矩阵。</p>
 <p>同100项教学任务、同预算与verifier：A成功60，B成功64。若其中A独有8、B独有12，二者都成功52、都失败28；B的净增量4个百分点由这20个分歧任务产生。</p>
 <div class="reading-math">\[
 D_i=Y_{B,i}-Y_{A,i}\in\{-1,0,1\},\qquad

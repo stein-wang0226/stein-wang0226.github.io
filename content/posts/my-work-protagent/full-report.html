@@ -137,7 +137,7 @@ r_{\rm answer}&=\ell(y)Q+0.5J+V
                     ↓                          ↓
             checkpoint / metrics       tool → observation → answer</pre><p class="caption">图 3｜项目执行拓扑的抽象。具体硬件分配及 patch 顺序需看对应运行工件；不直接修改被忽略的 external/ROLL_internal 工作树。</p><p>可复现单元是模型、数据版本、工具数据库、代码及 patch、prompt、解码、checkpoint 和评分协议的联合记录。Path B 等部署名称不能代替运行前依赖检查。</p><p class="source">来源：<a href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/infra/SFT_RL_INFRASTRUCTURE.md">训练基础设施</a>；<a href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/docs/infra/NATIVE_TOOLS_ISSUE_AND_FIX.md">native 工具守门</a>；<a href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/tools/registry.py">registry</a>；<a href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/tools/executor.py">executor</a>；<a href="https://github.com/stein-wang0226/ProtAgent/blob/d66fa7c287d196d5c26ec23e53c02327c5bbc6a8/protagent/tools/preflight.py">preflight</a>。</p></section>
 <section id="results"><h2><small>07 / CLOSED-LOOP RESULTS</small>全样本分母与工具控制</h2>
-<p class="math-notation">评价式的 i 为任务编号，extract 为答案抽取，R_tok 为 token 级匹配分数，zᵢ 为是否超过阈值的 0/1 指示；p̂ 是 1000 项独立协议记录的平均成功比例，不是训练 reward 的平均值。</p>
+<p class="math-notation">评价式的 i 为任务编号，\(y_i\) 是第 \(i\) 个任务的回答，\(y_i^*\) 是其参考答案，extract 为答案抽取，R_tok 为 token 级匹配分数，zᵢ 为是否超过阈值的 0/1 指示；p̂ 是 1000 项独立协议记录的平均成功比例，不是训练 reward 的平均值。</p>
 <p>从 answer 标签提取文本，计算参考 annotation token recall；严格大于 0.5 才成功。缺失、未答与不可解析样本计失败：</p>
 <div class="reading-math">\[
 \begin{aligned}

@@ -59,6 +59,7 @@
 <h3 id="mixture-budget">数据混合：配比、重复次数与有效监督分别记账</h3>
 <p>先按来源冻结留出集，再比较候选配比。混合并非“高质量桶越多越好”：小桶被反复读取可能过拟合，代码比例提高也可能挤压多语言覆盖。建议先在固定小模型、token预算和学习率调度上比较，再把候选带入规模阶梯；这是实验设计建议。</p>
 <p class="math-notation">设桶 \(j\) 有 \(U_j\) 个可用唯一token，总预算为 \(D\) 个输入token，按token口径分配比例 \(p_j\)，且 \(\sum_jp_j=1\)。\(D_j\) 是该桶的计划读取量，\(r_j\) 是平均重复倍数；\(f_j\) 是读入token中参与直接loss的比例，\(\tilde p_j\) 是全局目标token平均下的目标数量占比。</p>
+<p>\(k\) 与 \(j\) 遍历同一数据桶集合，\(k\) 仅作分母求和索引；要求 \(U_j&gt;0\)、\(p_j,f_j\) 非负且全局有效目标比例 \(\sum_kp_kf_k&gt;0\)。这里重复倍数无单位，输入/目标量按同一个 tokenizer 的 token 计数。</p>
 <div class="reading-math" role="math">\[
 D_j=p_jD,\qquad r_j=\frac{p_jD}{U_j},\qquad
 \tilde p_j=\frac{p_jf_j}{\sum_kp_kf_k}.
@@ -70,6 +71,7 @@ D_j=p_jD,\qquad r_j=\frac{p_jD}{U_j},\qquad
 <h2>Causal LM：每个 token 的条件预测</h2>
 <p class="math-notation">\(x_{1:n}\) 是长度 \(n\) 的 token 序列，\(x_{\lt i}\) 是第 \(i\) 位之前的前缀，\(\theta\) 是模型参数；\(\prod\) 将各位置条件概率相乘，log 为自然对数，\(L_{\rm LM}\) 为有效目标位置的平均负 log-prob。预算节的 \(N\) 是参与矩阵计算的参数元素数，\(T\) 是实际处理 token 数，\(C\) 单位为 FLOPs，区别于数据序列长度 \(n\)。</p>
 <p>decoder用前文预测下一token，训练可同时计算已知历史下的多个位置。条件概率因子分解、softmax梯度与shift已在架构页展开；这里关注数据进入目标时的边界与分母。</p>
+<p>下式 \(i=1,\ldots,n\) 索引真实目标 token，\(x_i\) 是其 ID，\(p_\theta\) 是模型条件概率；固定 \(m_i\in\{0,1\}\) 指示是否监督该目标，分母是有效目标数、须大于0。padding 或边界目标可屏蔽，但仍可能保留作条件；此处使用一基序列记号。</p>
 <div class="reading-math" role="math">\[
 p_\theta(x_{1:n})=\prod_{i=1}^np_\theta(x_i\mid x_{&lt;i}),\qquad
 L_{\rm LM}=-\frac{\sum_i m_i\log p_\theta(x_i\mid x_{&lt;i})}{\sum_i m_i}.
@@ -77,6 +79,7 @@ L_{\rm LM}=-\frac{\sum_i m_i\log p_\theta(x_i\mid x_{&lt;i})}{\sum_i m_i}.
 <p>\(m_i\in\{0,1\}\)表示目标是否有效；padding和需隔离的文档起点按配方处理。下面固定一种独立文档打包规则，同时检查attention隔离和shift后的目标位置。</p>
 <h3 id="packing-full-example">完整packing算例：可见历史与预测标签分别怎样对齐</h3>
 <p><strong>输入与规则：</strong>文档一[甲,乙]、文档二[丙,丁]，打包成长度4的[甲,乙,丙,丁]。本例不插入BOS/EOS、不加padding；文档内部causal attention，文档之间隔离，两个文档首token不作预测目标。若实际配方插入各自的BOS或使用不同边界规则，标签与mask应随之改变。</p>
+<p>本例位置采用零基0–3，\(A_{\rm allow}\in\{0,1\}^{4\times4}\) 是可见性矩阵，行/query、列/key，1允许、0屏蔽；不是归一注意力概率，也不是加性 mask。加到 score 上时允许处为0、屏蔽处为 \(-\infty\)。\(m\) 是按目标 token 身份排列的四维 loss 指示向量，shift 时随 labels 一起取 \(m[1:]\)。</p>
 <div class="reading-math">\[
 A_{\rm allow}=
 \begin{pmatrix}
@@ -128,7 +131,7 @@ def clean(rows):
 
 <p>Chinchilla 讨论的是固定训练算力下，如何同时选择模型规模与数据量。它不能被简化成对所有部署目标都有效的固定 token / parameter 比例。模型长期推理成本、数据质量、MoE 激活规模和继续训练价值会改变取舍。<a href="index.html#ref-14">[14]</a></p>
 <h3 id="compute-derivation">\(6NT\)从哪里来，何时不够用</h3>
-<p>对稠密矩阵 \(y=xW\)，一次乘加按2 FLOPs计；每token的矩阵前向约 \(2N\)。反向既计算输入梯度又计算权重梯度，两次相似矩阵乘法合计约 \(4N\)，前后向约 \(6N\)，再乘实际处理token数 \(T\)。</p>
+<p>固定一个稠密线性映射，\(x\) 是输入行向量、\(W\) 是权重矩阵、\(y\) 是输出行向量，\(N\) 是参与该映射的权重元素数，\(T\) 是实际处理 token 数。对稠密矩阵 \(y=xW\)，一次乘加按2 FLOPs计；每token的矩阵前向约 \(2N\)。反向既计算输入梯度又计算权重梯度，两次相似矩阵乘法合计约 \(4N\)，前后向约 \(6N\)，再乘 \(T\)。\(C_{\rm forward/backward/train}\) 分别是对应前向/反向/合计运算量，单位 FLOPs。</p>
 <div class="reading-math" role="math">\[
 C_{\rm forward}\approx2NT,\quad C_{\rm backward}\approx4NT,\qquad
 C_{\rm train}\approx6NT.
@@ -157,6 +160,7 @@ L(N,D)=E+A N^{-\alpha}+B D^{-\beta},\qquad C\approx\kappa ND.
 \]</div>
 <h3>代入预算，再令边际收益平衡</h3>
 <p>固定 \(C\) 后，增大 \(N\) 就必须减小 \(D=C/(\kappa N)\)。因此只需最小化一个变量；对 \(\log N\) 求导可以直接比较两项收益。</p>
+<p>\(N_*,D_*\) 用星号标记该拟合模型的最优参数数与 token 数，\(\propto\) 只保留幂次、忽略固定比例系数；要求 \(C,\kappa,N,D&gt;0\)。这不是对所有训练阶段均成立的经验配方。</p>
 <div class="reading-math" role="math">\[
 \begin{aligned}
 L(N\mid C)&amp;=E+A N^{-\alpha}+B(\kappa N/C)^\beta,\\
@@ -192,8 +196,9 @@ D_*&amp;=\frac{C}{\kappa N_*}\ \propto\ C^{\alpha/(\alpha+\beta)}.
 <p><strong>IsoFLOP 怎么做：</strong>给定一个 \(C\)，对多个 \(N\) 分配 \(D=C/(\kappa N)\)，比较训练终点损失，得到该预算下的最佳规模；在多个预算重复。长 cosine 训练的早期 checkpoint 尚未完成衰减，不能直接充当短预算训练的最优终点。Chinchilla §2 特别讨论了这一偏差。</p>
 <p><strong>超参数如何迁移：</strong>学习率、初始化与参数化要一起定义；不能把小模型的最优 LR 原样套给任意大模型。跨规模先验证更新与激活尺度；更换 AdamW/Muon、dense/MoE 或数据混合后，应重新检查拟合。详细更新规则见<a href="s05_training_methods_systems.html#adamw-hyperparameters">优化器参数</a>，batch 的统计分母见<a href="s05_training_methods_systems.html#batch-accounting">全局 batch 账本</a>。</p>
 <h3 id="mup-transfer">μP / μTransfer：迁移的是参数化后的配方</h3>
-<p><a href="https://arxiv.org/abs/2203.03466v2">Tensor Programs V</a>研究在最大更新参数化（μP）下，把小模型调出的超参数迁移到更宽模型。初始化时独立随机项的和常按 \(\sqrt n\) 增长，训练后相关更新的贡献却可能按 \(n\) 增长；只让初始化方差稳定，并不保证更新后的激活稳定。</p>
+<p><a href="https://arxiv.org/abs/2203.03466v2">Tensor Programs V</a>研究在最大更新参数化（μP）下，把小模型调出的超参数迁移到更宽模型。此段 \(n\) 是随宽度增加的求和项数，不再是前面的文本长度。初始化时独立随机项的和常按 \(\sqrt n\) 增长，训练后相关更新的贡献却可能按 \(n\) 增长；只让初始化方差稳定，并不保证更新后的激活稳定。</p>
 <p>因此要同时定义<strong>哪些轴随宽度变化、初始化尺度、输出层缩放和逐参数组学习率</strong>。例如官方 <a href="https://github.com/microsoft/mup#how-mup-works-under-the-hood">mup实现</a>对具有两个宽度轴的隐藏矩阵，在Adam下使用下式；它不是所有参数共享的缩放规则。</p>
+<p>fan_in 与 base_fan_in 分别是此隐藏矩阵的当前输入宽度与基准输入宽度，\(m&gt;0\) 是二者的无单位倍数，不是 loss mask；\(\eta_{\rm base}\) 是搜索的基础学习率，\(\eta_{\rm hidden}\) 是这一参数组实际使用的学习率。</p>
 <div class="reading-math" role="math">\[
 m=\frac{\mathrm{fan\_in}}{\mathrm{base\_fan\_in}},
 \qquad \eta_{\rm hidden}=\frac{\eta_{\rm base}}m.

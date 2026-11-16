@@ -20,6 +20,7 @@
 <h2>从最终成败到动作梯度，中间隔着信用分配</h2>
 <p class="lead">Agent episode 包含策略动作和环境观察。模型只控制动作；最后 reward 要转成哪些动作应增加或减少概率的信号，再决定用怎样的概率比、裁剪和分母完成更新。</p>
 <p><strong>关键问题：</strong>环境测试不能对模型参数求导，怎样把测试成败变成梯度？答案是对<strong>采样概率</strong>求导。设 \(h_t\) 是动作前可见历史、\(a_t\) 是可控动作、\(r_t\) 是执行后的奖励，轨迹含 \(T\) 次决策。简记 \(\pi_t=\pi_\theta(a_t\mid h_t)\)、\(P_t=P(h_{t+1}\mid h_t,a_t)\)；环境转移在本次优化中不依赖 \(\theta\)。</p>
+<p>先定义轨迹式：\(\theta\) 是 actor 参数，\(\tau\) 是含初态、动作与环境观察的完整轨迹，\(p(h_0)\) 是初态分布，\(p_\theta(\tau)\) 是轨迹概率；\(t=0,\ldots,T-1\) 是决策索引，\(\gamma\in[0,1]\) 为无单位奖励折扣，\(R(\tau)\) 是折扣累计回报，\(J\) 是其期望。轨迹求和用于离散路径，连续状态用积分；log 为自然对数，\(\nabla_\theta\) 对 actor 参数求梯度，\(g_t\) 是第 \(t\) 个动作的 log-prob 参数梯度。</p>
 <div class="reading-math" role="math" aria-label="轨迹概率与期望回报">\[
 \begin{aligned}
 p_\theta(\tau)&=p(h_0)\prod_{t=0}^{T-1}\pi_t P_t,\\
@@ -43,7 +44,7 @@ g_t&=\nabla_\theta\log\pi_\theta(a_t\mid h_t),\\
 \]</div>
 <h3 id="reward-to-go">为什么只用当前动作之后的奖励</h3>
 <!-- READING:RL-DIAGRAM:2 -->
-<p>给定 \(h_t\)，过去奖励已确定，与当前动作的采样无关。它乘上score-function的条件期望为零，可以删掉而不改期望。令 \(G_t=\sum_{k=t}^{T-1}\gamma^{k-t}r_k\)，得到reward-to-go：</p>
+<p>给定 \(h_t\)，过去奖励已确定，与当前动作的采样无关。它乘上score-function的条件期望为零，可以删掉而不改期望。\(k\) 遍历从当前到末端的决策，\(G_t\) 是从当前步起算的折扣未来回报，令 \(G_t=\sum_{k=t}^{T-1}\gamma^{k-t}r_k\)。下式 \(c(h_t)\) 是只依赖历史的标量，\(a\) 遍历该历史下可选动作；期望给定当前历史按策略采样，不是跨任意状态等权平均：</p>
 <div class="reading-math" role="math" aria-label="去除过去奖励后的梯度">\[
 \begin{aligned}
 \mathbb E_{a_t\sim\pi_\theta}[c(h_t)g_t]
@@ -56,6 +57,7 @@ g_t&=\nabla_\theta\log\pi_\theta(a_t\mid h_t),\\
 <h3 id="baseline-proof">baseline为什么能减，critic又学什么</h3>
 <!-- READING:RL-DIAGRAM:1 -->
 <p>把上式中的 \(c(h_t)\) 换成 \(b(h_t)\)，即可减去一个<strong>不依赖当前动作</strong>的baseline。计算actor loss时将它作为固定权重；若不加区分地把baseline分支也反传，便不再是这条推导。</p>
+<p>\(Q^\pi(h,a)\) 是策略 \(\pi\) 在历史 \(h\) 先执行动作 \(a\) 后的期望未来回报，\(V^\pi(h)\) 是按该策略动作概率平均的状态价值，\(A^\pi(h,a)\) 是两者之差；单位均与回报相同。critic 的 \(V_\phi\) 是参数 \(\phi\) 的价值估计，\(\phi\) 不同于 actor 的 \(\theta\)。</p>
 <div class="reading-math" role="math" aria-label="价值与优势">\[
 Q^\pi(h,a)=\mathbb E[G_t\mid h_t=h,a_t=a],\quad
 V^\pi(h)=\mathbb E_{a\sim\pi}[Q^\pi(h,a)],\quad
@@ -81,6 +83,7 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 
 <p>PPO 用采样策略 <code>πold</code> 的 rollout 更新 <code>πθ</code>，critic 估计未来回报。GAE 将不同长度的 TD residual 混合，在价值误差与采样方差之间取舍。<a href="index.html#ref-1">[1]</a> <a href="index.html#ref-2">[2]</a></p>
 <p>MC回报完整但方差较大；一步TD用下一状态value代替真实后续，方差较低但受value误差影响。令 \(d_t=1\) 表示真实terminal，TD残差与GAE递推为：</p>
+<p>\(d_t\in\{0,1\}\) 是真实终止指示，\(V(h_t)\) 是采样时的状态价值估计，\(\delta_t\) 是一步 TD 残差，\(\hat A_t\) 是估计优势；\(\lambda\in[0,1]\) 混合多步误差，不同于权重衰减或到达率。\(\gamma\) 仍是折扣；终止时下一 value 与下一优势都被切断，有限片段末端须另规定 bootstrap。</p>
 <div class="reading-math" role="math" aria-label="TD残差与GAE递推">\[
 \delta_t=r_t+\gamma(1-d_t)V(h_{t+1})-V(h_t),\qquad
 \hat A_t=\delta_t+\gamma\lambda(1-d_t)\hat A_{t+1}.
@@ -89,6 +92,7 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 <p>没有跨terminal项时展开得到 \(\delta_t+\gamma\lambda\delta_{t+1}+(\gamma\lambda)^2\delta_{t+2}+\cdots\)。无限时域或末端处理正确时，它对应把多步TD优势按 \((1-\lambda)\lambda^{n-1}\) 混合；\(\lambda=1\) 的极限接近MC减baseline，\(\lambda=0\) 只用一步TD。</p>
 <h3 id="gae-full-example">两步完整算例：reward → TD → advantage → actor / critic</h3>
 <p><strong>输入：</strong>两个可控决策 \(t=0,1\)，\(\gamma=1,\lambda=0.5\)，reward=[0,1]，采样时 value=[0.4,0.6,0]，第二步真实终止。工具观察只是下一决策的历史，不另当作策略动作。末端 \(\hat A_2=0\)，从后向前递推：</p>
+<p>表中的 \(\hat V_t\) 是固定 critic 回归目标，定义为采样时价值 \(V_{\rm rollout}(h_t)\) 加固定优势 \(\hat A_t\)，不是当前 critic 自己产生的新标签。</p>
 <table><thead><tr><th>决策</th><th>TD 残差 \(\delta_t\)</th><th>GAE \(\hat A_t\)</th><th>critic 目标 \(\hat V_t\)</th></tr></thead><tbody>
 <tr><td>末步 \(t=1\)</td><td>\(1-0.6=0.4\)</td><td>0.4</td><td>\(0.6+0.4=1.0\)</td></tr>
 <tr><td>首步 \(t=0\)</td><td>\(0+0.6-0.4=0.2\)</td><td>\(0.2+0.5\times0.4=0.4\)</td><td>\(0.4+0.4=0.8\)</td></tr>
@@ -121,7 +125,8 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 <h3 id="ppo-ratio">旧策略采样，当前策略怎样复用数据</h3>
 <!-- READING:RL-DIAGRAM:4 -->
 <!-- READING:RL-DIAGRAM:5 -->
-<p>固定旧策略访问到的状态与优势，对动作分布作换测度：\(\mathbb E_{a\sim\pi_\theta}[f(a)]=\mathbb E_{a\sim\pi_{\rm old}}[\rho(a)f(a)]\)。PPO据此构造局部代理目标；<strong>单步ratio没有完整校正状态访问分布</strong>。</p>
+<p>固定旧策略 \(\pi_{\rm old}\) 访问到的历史与优势，\(f(a)\) 是这个历史下可积的动作函数，\(\rho(a)\) 是当前/旧策略的同动作概率比；换测度要求旧策略覆盖当前策略的动作支持。对动作分布有：\(\mathbb E_{a\sim\pi_\theta}[f(a)]=\mathbb E_{a\sim\pi_{\rm old}}[\rho(a)f(a)]\)。PPO据此构造局部代理目标；<strong>单步ratio没有完整校正状态访问分布</strong>。</p>
+<p>\(\rho_t,\bar\rho_t\) 是决策 \(t\) 的原/裁剪概率比，\(\epsilon_{\rm low/high}\) 是相对1的无单位下/上幅度；clip 将数值限制到注明区间，min 取较小项。\(\mathbb E_{\rm old}\) 按旧策略数据平均，\(\hat A_t\) 在 actor 更新中固定，\(J_{\rm clip}\) 被最大化、loss 通常取其负号。接下来的 \(j(\rho,A)\) 是单样本代理项，\(\rho&gt;0,A\) 简记固定样本的比率和优势。</p>
 <div class="reading-math" role="math" aria-label="PPO代理目标">\[
 \begin{aligned}
 \rho_t&=\frac{\pi_\theta(a_t\mid h_t)}{\pi_{\rm old}(a_t\mid h_t)},\\
@@ -163,6 +168,7 @@ A\max(\rho,1-\epsilon_{\rm low}),&A&lt;0.
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
 <p>对同一prompt独立采样 \(G&gt;1\) 个候选，得到 \(R_1,\ldots,R_G\)。其他候选可估计同题的难度baseline，因此不一定要训练critic。原始组优势为：</p>
+<p>\(i,j=1,\ldots,G\) 遍历该题候选，\(R_i\) 是终评回报，\(\bar R,\sigma_R\) 是组均值和按分母 \(G\) 的总体标准差。\(A_i^{\rm RLOO},A_i^{\rm GRPO}\) 是两种候选优势，分母 \(\epsilon&gt;0\) 是与回报同单位的稳定常数，区别于 PPO clip 幅度；无稳定项的教学值只用于非零标准差组。</p>
 <div class="reading-math" role="math" aria-label="组相对优势">\[
 \bar R=\frac1G\sum_jR_j,\quad
 \sigma_R=\sqrt{\frac1G\sum_j(R_j-\bar R)^2},\qquad
@@ -193,6 +199,7 @@ A_i^{\rm GRPO}=\frac{R_i-\bar R}{\sigma_R+\epsilon}.
 <p><strong>接到参数更新：</strong>设当前四类logits为z，p=softmax(z)。对固定优势，令cᵢ=∂J/∂log pᵢ，则本例c=(0,0,−0.158771,−0.129904)，经softmax得到 \(\partial J/\partial z_i=c_i-p_i\sum_jc_j\)。所以A/B的自身代理项进入平台，概率仍可能被共享归一化和其他项改变。梯度随后交给优化器，下一轮用新策略重新采样。</p>
 <figure class="mechanism-map"><figcaption>一组数据怎样成为实际优化信号</figcaption><ol class="mechanism-chain"><li><b>采样与终评</b><small>保存old log-prob；reward=[1,0,0,0]</small></li><li><b>固定组优势</b><small>mean=1/4，std=√3/4</small></li><li><b>重算与裁剪</b><small>ratio=[1.3,0.7,1.1,0.9]；J=0.115470</small></li><li><b>反传与新采样</b><small>loss=−J；更新logits，再运行verifier</small></li></ol></figure>
 <h3 id="heterogeneous">异质数据：标准化不能保证每个任务都有学习机会</h3>
+<p>下式只讨论同题 \(G\) 次独立、同成功率 \(p\in[0,1]\) 的 Bernoulli 终评；\(p\) 是单次成功概率，不是策略的完整概率向量。事件是组内至少一个成功且至少一个失败。</p>
 <div class="reading-math" role="math" aria-label="二值奖励有效组概率">\[
 P(\text{组内有成败差异})=1-p^G-(1-p)^G.
 \]</div>
@@ -212,6 +219,7 @@ P(\text{组内有成败差异})=1-p^G-(1-p)^G.
 <p>每题除以自己的标准差还会改变隐式权重：微小但不可靠的奖励差也可能被放大。中心化只处理数值，不会消除任务梯度冲突或 completion bias。需逐域监控全零/全一组、奖励方差、有效动作 token 和错误类型。</p>
 </section>
 <section id="normalization">
+<p>先定义聚合图与公式的对象：\(i=1,\ldots,G\) 索引候选，\(t=1,\ldots,T_i\) 只遍历该候选有效策略 token，\(T_i&gt;0\) 是其有效长度，\(\ell_{it}\) 在本节泛指已含优势、ratio、mask/正则的逐 token loss。\(T_{\rm fixed}&gt;0\) 是预先固定的长度标尺，\(L_{\rm seq/token/fixed}\) 是三种替代聚合结果；padding 和工具观察不计入这些有效位置。</p>
 <figure class="mechanism-map"><figcaption>同一批 token loss，分母如何改变样本权重</figcaption><ol class="mechanism-chain mechanism-options">
 <li><b>候选 i 的有效 token</b><small>长度 Tᵢ；逐 token 得到 ℓᵢₜ</small></li><li><b>序列平均</b><small>先除各自 Tᵢ，再对候选取平均</small></li><li><b>Token 平均</b><small>所有 ℓ 求和，除有效 token 总数</small></li><li><b>固定分母</b><small>所有 ℓ 求和，除 G × Tfixed</small></li>
 </ol><p class="mechanism-note">后三个节点是并列选择，不是连续三次归一化；比较时固定优势、ratio 与 mask。</p></figure>
@@ -243,6 +251,7 @@ L_{\rm fixed}=\frac{\sum_i\sum_t\ell_{it}}{G T_{\rm fixed}}.
 <h2>GSPO、CISPO、Soft SAPO：控制更新的对象不同</h2>
 <section id="citation-sources-6" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>；<a href="https://arxiv.org/abs/2506.13585v1" title="MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention · 2025/06/16 · 2506.13585v1">CISPO / MiniMax-M1</a>。</p></section>
 
+<p>本节仍用 \(i\) 索引候选、\(t\) 索引有效策略 token，\(a_{it},h_{it}\) 是目标动作与其历史，\(A_i\) 是固定候选优势。GSPO 的 \(s_i\) 是 token log-ratio 平均后指数化的无单位几何比率，\(\bar s_i\) 是裁剪值，\(J_{\rm GSPO}\) 是候选平均代理目标。CISPO 中 \(\rho_{it}\) 是 token 概率比，\(w_{it}\) 是裁剪后停止梯度的权重，\(A_{it}\) 是固定 token 优势；\(\ell_{it}\) 在 CISPO <strong>重新表示 log-prob</strong>，不同于上节逐 token loss。mean 沿有效候选/token 聚合，具体权重与 clip 边界由原配方决定；sg 保留数值并阻断梯度。</p>
 <div class="reading-math" role="math" aria-label="GSPO序列ratio">\[
 \begin{aligned}
 &s_i=\exp\!\left(\frac1{T_i}\sum_t\log
@@ -261,6 +270,7 @@ J_{\rm CISPO}&\approx\operatorname{mean}_{i,t}[w_{it}A_{it}\ell_{it}].
 \]</div>
 <p>\(\operatorname{sg}\) 表示stop-gradient；这是目标结构示意，具体边界与聚合见原配方。</p>
 <p>MiniMax-M1 的 CISPO 在 clipped IS 系数上做 detach，再用 log-policy 梯度；不能把它描述为 PPO 的 min 两项裁剪。比率单位、权重边界和 token 聚合都需与报告一致。<a href="index.html#ref-8">[8]</a></p>
+<p>Soft SAPO 下式的 \(\rho,A\) 是固定样本的概率比与优势，\(f\) 是 ratio 的代理变换；\(\sigma(z)=1/(1+e^{-z})\) 是 sigmoid，\(u\) 是门控值。这里 \(\tau&gt;0\) 是无单位斜率参数，不是前文轨迹 \(\tau\) 或生成温度；\(J\) 按原配方有效样本平均并最大化，正负优势可分别选择斜率。</p>
 <div class="reading-math" role="math" aria-label="Soft SAPO软门控">\[
 f(\rho)=\frac4\tau\sigma(\tau(\rho-1)),\quad
 J=\operatorname{mean}[f(\rho)A],\quad

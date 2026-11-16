@@ -4,7 +4,7 @@
 <h2 id="parameterization">先固定路径，再比较预测对象</h2>
 <p><strong>预测对象是描述生成过程的坐标。</strong>改变输出坐标后，若不相应调整损失权重、时间采样和求解器，就可能改变训练问题。本节 VP 路径使用干净数据 \(x_0\)，\(x_t=a_tx_0+s_t\epsilon\)，其中 \(a_t^2+s_t^2=1\)。</p>
 <h3 id="vp-conversion">VP v 的换算是二维旋转</h3>
-<p class="math-notation">\(x_0,x_t,\epsilon,v_t\) 是同维连续向量，\(\epsilon\) 为标准高斯噪声；\(a_t,s_t\) 分别缩放信号和噪声，VP 是方差保持路径。这里 \(v_t\) 是所定义的预测坐标，点号 \(\dot x_t\) 才是时间导数；帽号表示模型预测。\(\nabla_x\log p_t(x)\) 是空间 log 密度梯度，不是对模型参数 \(\theta\) 求导。</p>
+<p class="math-notation">\(x_0,x_t,\epsilon,v_t\) 是同维连续向量，\(\epsilon\) 为标准高斯噪声；\(a_t,s_t\) 分别缩放信号和噪声，VP 是方差保持路径。这里 \(v_t\) 是所定义的预测坐标，点号 \(\dot x_t\) 才是时间导数；帽号表示模型预测。\(\nabla_x\log p_t(x)\) 是空间 log 密度梯度，不是对模型参数 \(\theta\) 求导；\(q(x_t\mid x_0)\) 是给定干净数据 \(x_0\) 的条件密度。</p>
 <div class="reading-math">\[\begin{aligned}
 v_t&=a_t\epsilon-s_tx_0,\\
 \begin{pmatrix}x_t\\v_t\end{pmatrix}

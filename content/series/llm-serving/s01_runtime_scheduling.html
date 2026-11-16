@@ -32,11 +32,11 @@
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2205.14135" title="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness · Dao, Tri, Fu, Daniel Y., Ermon, Stefano 等 · 2022/05/27 · 2205.14135">FlashAttention</a>；<a href="https://arxiv.org/abs/2309.06180" title="Efficient Memory Management for Large Language Model Serving with PagedAttention · Kwon, Woosuk, Li, Zhuohan, Zhuang, Siyuan 等 · 2023/09/12 · 2309.06180">PagedAttention</a>。</p></section>
 
 <p>连续为最大长度预留KV会浪费空间；逐请求扩容也容易产生碎片。PagedAttention把逻辑历史分block，由block table指向非连续物理页，kernel按映射访问。它降低外部碎片和重复分配，不把完整attention改成稀疏attention。最后一页仍可能有内部浪费，元数据、预留与临时区也存在。</p>
+<p class="math-notation">\(T\) 是一个请求需保存的 token 数，\(B\) 是每页可容纳的 token 槽数，\(n_{\rm block}\) 是页数，\(w\) 是末页空槽数；\(\lceil\cdot\rceil\) 表示向上取整。这里 \(B\) 是 page size，区别于架构章节中的 batch size。</p>
 <div class="reading-math">\[
 n_{\rm block}=\left\lceil\frac TB\right\rceil,\qquad
 w=B\left\lceil\frac TB\right\rceil-T,\qquad 0\le w\lt B.
 \]</div>
-<p class="math-notation">\(T\) 是一个请求需保存的 token 数，\(B\) 是每页可容纳的 token 槽数，\(n_{\rm block}\) 是页数，\(w\) 是末页空槽数；\(\lceil\cdot\rceil\) 表示向上取整。这里 \(B\) 是 page size，区别于架构章节中的 batch size。</p>
 <p>教学取\(T=35,B=16\)：3页共48槽，末页13槽空闲。这里只是整数槽计数，不含metadata、预留和workspace。</p>
 <table><caption>非连续物理页保持逻辑token顺序</caption><thead><tr><th>逻辑页</th><th>token位置</th><th>物理页ID（教学）</th></tr></thead><tbody>
 <tr><td>0</td><td>0–15</td><td>7</td></tr><tr><td>1</td><td>16–31</td><td>2</td></tr><tr><td>2</td><td>32–34；余13槽</td><td>11</td></tr></tbody></table>

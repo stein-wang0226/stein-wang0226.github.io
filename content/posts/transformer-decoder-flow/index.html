@@ -14,6 +14,7 @@
 <p><strong>固定一组贯穿全节的尺寸：</strong>B=2、T=3、d=4、H=2、D=2、F=8、V=5、L=2。B是样本数，T是输入token数，d是表示宽度，H/D是头数/每头宽度，F是FFN中间宽度，V是词表大小，L是层数。下方可运行代码采用更大的 d=32；计算顺序完全相同。</p>
 <h3 id="forward-embedding">1. IDs → embedding → 第一个 Pre-Norm</h3>
 <p>取一个样本的输入ID为 [1,2,3]，另一个为 [2,4,1]。查表不做token之间的混合：每个整数选出一行可学习向量。每层有独立的Norm缩放参数，统计沿最后一维进行。</p>
+<p class="math-notation">\(I\) 是 ID 张量，\(E\) 是 embedding 表，\(X_0=E[I]\) 是嵌入后的输入，\(X=X_{\ell-1}\) 是第 \(\ell\) 层的输入，\(U\) 是它经过第一次 RMSNorm 的结果。</p>
 <div class="reading-math">\[
 \begin{aligned}
 I&amp;\in\{0,\ldots,V-1\}^{B\times T},\\
@@ -23,6 +24,7 @@ X&amp;=X_{\ell-1},\quad U=\operatorname{RMSNorm}_{\ell,1}(X).
 \]</div>
 <p>I为ID张量，E为embedding表，X₀和每层输入X均为 [2,3,4]；ℓ从1到L索引层。U是归一化结果，形状仍为 [2,3,4]。<strong>后面的QKV投影接收U，残差保留原始X</strong>。RMSNorm和RoPE的逐项定义见本节下方公式。</p>
 <h3 id="forward-qkv">2. 三组投影 → 拆头 → 旋转Q/K</h3>
+<p class="math-notation">\(U\) 是上一节归一化后的输入，\(W_Q,W_K,W_V\) 是三个投影矩阵；\(\widetilde Q,\widetilde K,\widetilde V\) 是投影后、尚未拆头的张量，\(Q,K\) 是拆头后的 query/key，\(V_h\) 是拆头后的 value 张量（下标 \(h\) 表示头维，区别于词表大小 \(V\)）。</p>
 <div class="reading-math">\[
 \begin{aligned}
 \widetilde Q&amp;=UW_Q,\quad\widetilde K=UW_K,\quad\widetilde V=UW_V,\\
@@ -34,6 +36,7 @@ V_h=\operatorname{splitHeads}(\widetilde V).
 <p>按行向量右乘约定，W_Q/W_K/W_V各为 [4,4]；带波浪线的投影为 [2,3,4]。先reshape成 [2,3,2,2]，再交换序列/头维成 [2,2,3,2]。V_h是value张量，区别于词表大小V；splitHeads只重排维度，不新增参数。</p>
 <p>对Q/K在位置p=0/1/2应用RoPE，得到Q_r/K_r，形状不变；V_h不旋转。<strong>RoPE是成对维度的线性旋转，不是给embedding加位置向量</strong>。同一内容向量的旋转内积引入相对位移；内容本身仍随上下文和层改变。</p>
 <h3 id="forward-attention">3. 打分 → 因果mask → softmax → 加权value</h3>
+<p class="math-notation">\(Q_r,K_r\) 是旋转后的 query/key，\(V_h\) 是上一节的 value 张量，\(D\) 是每头维度；\(S\) 是 query–key 打分矩阵，\(M\) 是因果 mask，\(A\) 是 softmax 后的注意力权重，\(O_h=AV_h\) 是每个头读取后的输出。</p>
 <div class="reading-math">\[
 \begin{aligned}
 S&amp;=Q_rK_r^\top/\sqrt D,\\
@@ -45,6 +48,7 @@ O_h&amp;=AV_h.
 <table><caption>T=3时的因果可见性：行是query位置，列是key位置</caption><thead><tr><th></th><th>key 0</th><th>key 1</th><th>key 2</th></tr></thead><tbody><tr><th>query 0</th><td>可见</td><td>屏蔽</td><td>屏蔽</td></tr><tr><th>query 1</th><td>可见</td><td>可见</td><td>屏蔽</td></tr><tr><th>query 2</th><td>可见</td><td>可见</td><td>可见</td></tr></tbody></table>
 <p>A乘V_h：[2,2,3,3]×[2,2,3,2]得到O_h=[2,2,3,2]。<strong>A是“从哪些位置读取”的权重，O_h是读取后的表示</strong>，两者不是同一个张量。</p>
 <h3 id="forward-block">4. 拼头 → 输出投影 → 两条残差与SwiGLU</h3>
+<p class="math-notation">\(O_h\) 是各头输出，\(\operatorname{mergeHeads}\) 沿头维拼回；\(W_O\) 是输出投影矩阵，\(X\) 是本层输入，\(H_{\rm mid}=X+O\) 是注意力残差，\(Z\) 是第二次 RMSNorm 的结果；\(W_g,W_u\) 是 SwiGLU 的门/上投影，\(G=\operatorname{SiLU}(ZW_g)\)，\(U_f=ZW_u\)，\(W_d\) 是下投影，\(\Delta_f=(G\odot U_f)W_d\) 是 FFN 输出。</p>
 <div class="reading-math">\[
 \begin{aligned}
 O&amp;=\operatorname{mergeHeads}(O_h)W_O,\\
@@ -56,6 +60,7 @@ G&amp;=\operatorname{SiLU}(ZW_g),\quad U_f=ZW_u,\\
 <p>先将O_h变回 [2,3,2,2] 再拼成 [2,3,4]，右乘W_O=[4,4]。H_mid是第一条残差输出，Z是第二次Norm结果。W_g/W_u为 [4,8]，得到G/U_f=[2,3,8]；逐元素相乘后右乘W_d=[8,4]，得到Δ_f=[2,3,4]，才能与H_mid相加。</p>
 <p>SiLU(z)=z·sigmoid(z)，⊙是逐元素乘法。FFN独立处理每个位置的通道；本层跨位置通信发生在Attention。L层各自重复以上运算，hidden形状始终为 [2,3,4]。</p>
 <h3 id="forward-loss">5. 最终Norm → LM head → 标签右移 → 标量loss</h3>
+<p class="math-notation">\(X_L\) 是最后一层输出的 hidden 状态，\(W_{\rm lm}\) 是 LM head 投影，\(Z_{\rm lm}\) 是 logit 张量，\(p_{b,t}\) 是样本 \(b\) 在位置 \(t\) 的下一 token 分布，\(I_{b,t+1}\) 是右移后的监督 token ID。</p>
 <div class="reading-math">\[
 \begin{aligned}
 Z_{\rm lm}&amp;=\operatorname{RMSNorm}_{\rm final}(X_L)W_{\rm lm},\\
@@ -130,7 +135,7 @@ x'&amp;=h+\operatorname{SwiGLU}(N(h)),\\
 \]</div>
 <p>RMSNorm 不减均值；数值稳定依赖精度与 ε。Pre-Norm 提供残差梯度路径，<strong>不意味着无需 warmup</strong>。SwiGLU 无 bias 参数量为3dF，普通两矩阵 FFN 为2dF；同参数预算可把 SwiGLU 的 F 调小。</p>
 <h3 id="rope-implementation">相邻配对 RoPE：缓存位置不能从零重启</h3>
-<p class="math-notation">\(p\) 为 token 逻辑位置，\(j=0,\ldots,D/2-1\) 为维度对编号；\(\omega_j\) 为弧度/位置的频率，\(c_j,s_j\) 为余弦/正弦，撇号表示旋转后的分量。缓存节的 \(i\) 从 0 索引本次 query、\(j\) 索引历史与当前 key；\(\mathbf1\) 是可见性指示，层数用 \(L\)，标量训练 loss 也在其段落用 \(L\)。</p>
+<p class="math-notation">\(p\) 为 token 逻辑位置，\(j=0,\ldots,D/2-1\) 为维度对编号；\(\omega_j\) 为弧度/位置的频率，\(c_j,s_j\) 为余弦/正弦，撇号表示旋转后的分量；\(x_{2j},x_{2j+1}\) 是第 \(j\) 对相邻维度分量。缓存节的 \(i\) 从 0 索引本次 query、\(j\) 索引历史与当前 key；\(\mathbf1\) 是可见性指示，层数用 \(L\)，标量训练 loss 也在其段落用 \(L\)。</p>
 <div class="reading-math">\[
 \begin{aligned}
 \omega_j&amp;=10000^{-2j/D},\\

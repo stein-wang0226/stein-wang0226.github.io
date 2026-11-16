@@ -536,6 +536,7 @@
         "/llm-posttraining/s03_opd_self_distillation.html#industry-mopd",
         "/llm-research-map-2026/s03_base_architecture.html#citation-sources-1",
         "/llm-research-map-2026/s03_base_architecture.html#versions",
+        "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-training-lifecycle/#overview",
         "/llm-training-lifecycle/s01_pretraining.html#budget",
         "/llm-training-lifecycle/s01_pretraining.html#sources"
@@ -582,6 +583,9 @@
         "/llm-research-map-2026/s03_base_architecture.html#versions",
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
+        "/llm-research-map-2026/s07_architecture_training.html#experiments",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#residual"
       ],
@@ -622,6 +626,8 @@
         "/llm-research-map-2026/s05_agent_frontiers.html#multiagent",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#nemotron",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-architecture",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
         "/llm-training-lifecycle/s01_pretraining.html#budget",
@@ -663,6 +669,8 @@
         "/llm-posttraining/s06_task_cases_experiments.html#code-case",
         "/llm-research-map-2026/s06_architecture_landscape.html#families",
         "/llm-research-map-2026/s06_architecture_landscape.html#mimo",
+        "/llm-research-map-2026/s07_architecture_training.html#comparison-execution",
+        "/llm-research-map-2026/s07_architecture_training.html#experiments",
         "/llm-research-map-2026/s07_architecture_training.html#precision",
         "/llm-research-map-2026/s07_architecture_training.html#sources",
         "/llm-training-lifecycle/s05_training_methods_systems.html#optimizers"

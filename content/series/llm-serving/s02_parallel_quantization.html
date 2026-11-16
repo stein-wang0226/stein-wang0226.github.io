@@ -28,10 +28,10 @@
 <section id="citation-sources-3" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2401.09670" title="DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving · Zhong, Yinmin, Liu, Shengyu, Chen, Junda 等 · 2024/01/18 · 2401.09670">DistServe</a>。</p></section>
 
 <p>DistServe<a href="#ref-distserve">[1]</a>将prefill和decode分配到不同GPU，为TTFT与TPOT分别选资源和并行。它改善goodput的报告依赖网络、放置、模型与SLO；小负载或长KV传输时，分離可能不划算。</p>
+<p class="math-notation">\(t_{\rm transfer}\) 是状态传输用时（秒），\(M_{\rm state}\) 是本次实际发送的状态字节数，\(B_{\rm effective}&gt;0\) 是有效传输带宽（bytes/s）；这里 \(B\) 不是 batch 大小，\(\ge\) 表示仅给出 payload 对应的时间下界。</p>
 <div class="reading-math">\[
 t_{\rm transfer}\ge\frac{M_{\rm state}}{B_{\rm effective}}.
 \]</div>
-<p class="math-notation">\(M_{\rm state}\) 是本次实际发送的状态字节数，\(B_{\rm effective}\) 是有效传输带宽（bytes/s），相除得到秒；它不是 batch 大小，\(\ge\) 表示仅给出传输时间下界。</p>
 <p>取状态10GiB、有效链路25GB/s，纯传输下界为\(10\times2^{30}/(25\times10^9)\approx0.4295\)秒。GB与GiB不同；真实还含序列化、scale、分片重排、协议、同步、排队和目标分配。多请求并发传输会共享带宽。</p>
 <p>KV发送方和接收方必须一致理解层布局、dtype/scales、位置、模型版本和block映射。PD两侧TP大小不同，还需重排；跨节点以可用带宽和并发测量，不用NIC标称速度代替端到端吞吐。混合模型可能还需递归/卷积状态，V4.1压缩共享cache也有独特结构。</p>
 <figure class="mechanism-map" id="pd-state-handoff"><figcaption>PD 分离的跨服务边界：发送状态，不是只发送生成文本</figcaption><ol class="mechanism-chain">
@@ -44,12 +44,11 @@ t_{\rm transfer}\ge\frac{M_{\rm state}}{B_{\rm effective}}.
 </section>
 <section id="precision"><h2>量化必须写对象、格式和计算dtype</h2>
 <section id="citation-sources-4" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2210.17323" title="GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers · Frantar, Elias, Ashkboos, Saleh, Hoefler, Torsten 等 · 2022/10/31 · 2210.17323">GPTQ</a>；<a href="https://arxiv.org/abs/2306.00978" title="AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration · Lin, Ji, Tang, Jiaming, Tang, Haotian 等 · 2023/06/01 · 2306.00978">AWQ</a>；<a href="https://arxiv.org/abs/2305.14314" title="QLoRA: Efficient Finetuning of Quantized LLMs · Dettmers, Tim, Pagnoni, Artidoro, Holtzman, Ari 等 · 2023/05/23 · 2305.14314">QLoRA</a>。</p></section>
-
+<p class="math-notation">\(x\) 是待编码实数，\(q\) 是量化整数，\(\hat x\) 是恢复值；\(s&gt;0\) 是每整数步对应的实数 scale，\(z\) 是整数 zero-point，\(q_{\min},q_{\max}\) 是整数表示范围的端点。round 按最近整数舍入，clip 限制到该范围；下一节的 \(q(x)\) 改指 drafter 概率，与量化整数不同。</p>
 <div class="reading-math">\[
 q=\operatorname{clip}\left(\operatorname{round}(x/s)+z,q_{\min},q_{\max}\right),
 \qquad \hat x=s(q-z).
 \]</div>
-<p class="math-notation">这里 \(x\) 是待编码实数，\(q\) 是量化整数，\(\hat x\) 是恢复值；round 按最近整数舍入，clip 将结果限制到整数范围 \([q_{\min},q_{\max}]\)。下一节的 \(q(x)\) 改指 drafter 概率分布，与量化整数不同。</p>
 <p>\(s&gt;0\)为scale，\(z\)为整数zero-point；对称形式取\(z=0\)。未饱和时、按最近整数舍入，误差至多\(s/2\)；越过表示范围后，这个误差界不再成立。</p>
 <table><caption>教学量化算例，不是GPTQ/AWQ实际配置</caption><thead><tr><th>设置</th><th>输入</th><th>整数q</th><th>恢复值与误差</th></tr></thead><tbody>
 <tr><td>对称，s=0.25，q∈[−7,7]</td><td>0.62</td><td>2</td><td>0.50，绝对误差0.12</td></tr>
@@ -57,6 +56,7 @@ q=\operatorname{clip}\left(\operatorname{round}(x/s)+z,q_{\min},q_{\max}\right),
 <tr><td>非对称，s=0.5，z=1，q∈[0,3]</td><td>−0.5、0、0.5、1</td><td>0、1、2、3</td><td>四个值均精确恢复</td></tr></tbody></table>
 <h3 id="quantized-dot-example">完整点积算例：编码权重 → 恢复 → 输出误差</h3>
 <p><strong>输入与简化：</strong>一组权重 \(w=(0.62,-0.87,1.12,2.00)\)，激活 \(a=(2,-1,0.5,1)\)。仅对权重使用上面的对称4-bit教学量化，\(s=0.25,z=0,q\in[-7,7]\)；恢复后用高精度算点积，激活和累积不量化。这里 \(a\) 是输入向量，区别于下一节的投机接受率 \(\alpha\)。</p>
+<p>\(i=1,\ldots,4\) 索引权重/激活的对应分量，\(a_i,w_i\) 分别是第 \(i\) 个激活与原始权重，\(q_i,\hat w_i\) 是编码整数与恢复权重，\(\delta_i\) 是恢复值减原值的误差；\(a,w,\hat w\) 在点积中按列向量记，\({}^\top\) 为转置。\(y,\hat y\) 是原权重与恢复权重的标量点积输出，\(|\cdot|\) 为绝对值，下面的求和遍历这四个坐标。</p>
 <table><thead><tr><th>分量</th><th>\(w_i/s\) → 舍入/裁剪 \(q_i\)</th><th>恢复 \(\hat w_i\)</th><th>误差 \(\delta_i=\hat w_i-w_i\)</th><th>输出误差贡献 \(a_i\delta_i\)</th></tr></thead><tbody>
 <tr><td>1：0.62</td><td>2.48 → 2</td><td>0.50</td><td>−0.12</td><td>−0.24</td></tr>
 <tr><td>2：−0.87</td><td>−3.48 → −3</td><td>−0.75</td><td>0.12</td><td>−0.12</td></tr>
@@ -93,11 +93,11 @@ y&amp;=a^\top w\\
 
 <p>draft提出多个候选，target并行验证，使目标模型一次前向处理更多位置。drafter可以是小AR、MTP头、树候选或diffusion；目标仍可能是AR。收益取决于接受长度、draft耗时、验证和状态恢复，而不是只看drafter单步速度。</p>
 <h3>接受质量加拒绝残差，为什么还原target</h3>
-<p>固定同一个前缀，令draft分布为\(q\)、target为\(p\)。先抽\(x\sim q\)，以\(\min(1,p(x)/q(x))\)接受；由于候选来自q，q为0的位置不会被提议。位置x被“直接接受”的概率质量为：</p>
+<p>固定同一个前缀，令draft分布为\(q\)、target为\(p\)，二者都是同一词表上的归一条件概率；\(x\) 是候选 token，不是量化实数。先抽\(x\sim q\)，以\(\min(1,p(x)/q(x))\)接受；由于候选来自q，仅在 \(q(x)&gt;0\) 的提议项求此比值。词表项x被“直接接受”的概率质量为：</p>
 <div class="reading-math">\[
 q(x)\min\left(1,\frac{p(x)}{q(x)}\right)=\min(p(x),q(x)).
 \]</div>
-<p>总接受率记为\(\alpha\)。发生拒绝的概率为\(1-\alpha\)，从归一化正残差\(r\)重采样：</p>
+<p>总接受率记为\(\alpha\)，\(\sum_x\) 遍历词表项。发生拒绝的概率为\(1-\alpha\)，当 \(\alpha&lt;1\) 时从归一化正残差分布 \(r\) 重采样；\([u]_+=\max(u,0)\) 是标量正部。\(P(\text{输出 }x)\) 是接受与拒绝两条路径合计的最终概率；\(\alpha=1\) 时全部接受，不需要定义零分母的 \(r\)：</p>
 <div class="reading-math">\[
 \begin{aligned}
 \alpha&amp;=\sum_x\min(p(x),q(x)),\\

@@ -30,7 +30,7 @@ x_t&=\sqrt{\alpha_t}x_{t-1}+\sqrt{\beta_t}\epsilon_t.
 <div class="reading-math">\[q(x_t\mid x_{t-1})
 =q(x_{t-1}\mid x_t,x_0)
 \frac{q(x_t\mid x_0)}{q(x_{t-1}\mid x_0)}.\]</div>
-<p>后一个比值从 t=2 到 T 相乘，分子/分母相消，剩下 \(q(x_T\mid x_0)/q(x_1\mid x_0)\)。与先验和 t=1 合并后：</p>
+<p>后一个比值从 t=2 到 T 相乘，分子/分母相消，剩下 \(q(x_T\mid x_0)/q(x_1\mid x_0)\)。这里 \(q_t^-\) 是给定 \(x_t,x_0\) 的真实后验，\(p_t^-\) 是模型的反向转移；与先验和 t=1 合并后：</p>
 <div class="reading-math">\[\begin{aligned}
 q_t^-&=q(x_{t-1}\mid x_t,x_0),\\
 p_t^-&=p_\theta(x_{t-1}\mid x_t),\\
@@ -62,7 +62,7 @@ E(y)&=A\|y-b/A\|^2+\text{常数}.
 \end{aligned}\]</div>
 <p>教学例取 αₜ=0.9、βₜ=0.1、\(\bar\alpha_{t-1}=0.8\)、x₀=1、ε=0，则 xₜ=√0.72。A=14、后验方差 1/14≈0.07143、均值≈0.89443；给定 x₀ 的后验有精确高斯解。</p>
 <h3 id="noise-loss">第五步：均值误差换算成噪声误差</h3>
-<p>由前向闭式解消去 x₀，后验均值可写为 \(\tilde\mu_t=\alpha_t^{-1/2}(x_t-\beta_t\epsilon/\sqrt{1-\bar\alpha_t})\)。将 ε 换为 εθ 参数化 μθ；固定模型方差时，KL 的 θ 相关项是均值差 MSE：</p>
+<p>由前向闭式解消去 x₀，后验均值可写为 \(\tilde\mu_t=\alpha_t^{-1/2}(x_t-\beta_t\epsilon/\sqrt{1-\bar\alpha_t})\)。将 ε 换为 εθ 参数化 μθ；固定模型方差时，KL 的 θ 相关项是均值差 MSE，单个时间步的带权损失记为 \(\mathcal L_t\)：</p>
 <div class="reading-math">\[\begin{aligned}
 \mathcal L_t
 &=\mathbb E\frac{\|\tilde\mu_t-\mu_\theta\|^2}{2\sigma_t^2}
@@ -99,7 +99,7 @@ c_t&=\frac{\beta_t^2}{2\sigma_t^2\alpha_t(1-\bar\alpha_t)}.
 <p class="mechanism-note">图采用本节固定方差、原 DDPM 祖先采样约定；真实后验额外需要 x₀，不能把模型均值当作解析真后验。下面的完整算例分别给出 ε=0.5 与 z₂=−0.5。</p>
 </figure>
 <h3 id="ddpm-full-example">完整标量算例：加噪 → 预测误差 → 反向采样</h3>
-<p><strong>输入：</strong>只为手算采用两步日程，\(\alpha_1=0.8,\alpha_2=0.9\)，故 \(\beta_2=0.1,\bar\alpha_2=0.72\)。取真实 \(x_0=1\)、累计标准噪声的一次抽样 \(\epsilon=0.5\)，假设模型在 \(t=2\) 输出 \(\epsilon_\theta=0.3\)。本例固定反向方差 \(\sigma_2^2=\tilde\beta_2=1/14\)，不裁剪预测的 \(x_0\)。</p>
+<p><strong>输入：</strong>只为手算采用两步日程，\(\alpha_1=0.8,\alpha_2=0.9\)，故 \(\beta_2=0.1,\bar\alpha_2=0.72\)。取真实 \(x_0=1\)、累计标准噪声的一次抽样 \(\epsilon=0.5\)，假设模型在 \(t=2\) 输出 \(\epsilon_\theta=0.3\)。本例固定反向方差 \(\sigma_2^2=\tilde\beta_2=1/14\)，不裁剪预测的 \(x_0\)。后文算例中 \(x_2\) 是 \(t=2\) 的加噪状态，反向采样另抽独立噪声 \(z_2=-0.5\)。</p>
 <table style="min-width:38rem"><caption>同一组输入贯穿训练损失与反向采样</caption><thead><tr><th style="min-width:7em" scope="col">步骤</th><th scope="col">计算</th><th scope="col">结果</th></tr></thead><tbody>
 <tr><td>训练输入</td><td>\(x_2=\sqrt{0.72}+\sqrt{0.28}\times0.5\)</td><td>1.113103</td></tr>
 <tr><td>噪声简化loss</td><td>\((0.5-0.3)^2\)</td><td>0.04；对预测噪声导数−0.4</td></tr>
