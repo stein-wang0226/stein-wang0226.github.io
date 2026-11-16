@@ -39,7 +39,12 @@ def split_long_prose(body):
                 if char in "。！？" and not stack and length >= 100:
                     cuts.append(token.start() + offset + 1)
                     length = 0
-        cuts = [cut for cut in cuts if inner[cut:].strip()]
+        # Keep citation-link-only tails with their sentence instead of splitting them out.
+        def has_prose(segment):
+            outside_links = re.sub(r"<a\b[^>]*>.*?</a>", "", segment, flags=re.S | re.I)
+            visible = html.unescape(re.sub(r"<[^>]+>", "", outside_links))
+            return re.search(r"[A-Za-z\u4e00-\u9fff]", visible) is not None
+        cuts = [cut for cut in cuts if inner[cut:].strip() and has_prose(inner[cut:])]
         if not cuts:
             return match[0]
         starts, ends = [0] + cuts, cuts + [len(inner)]

@@ -34,8 +34,10 @@
   const sync = () => {
     const elements = [...scope.querySelectorAll(kinds), ...scope.querySelectorAll(formulas)];
     // Read all widths before writing so the loop does not force a reflow per element.
+    // Any positive overflow counts: a table can miss its container by a subpixel and
+    // still scroll, and axe's scrollable-region-focusable reports that same region.
     const state = elements.map(el => [el,
-      el.scrollWidth > el.clientWidth + 1, el.scrollHeight > el.clientHeight + 1]);
+      el.scrollWidth > el.clientWidth, el.scrollHeight > el.clientHeight]);
     state.forEach(([el, x, y]) => {
       const [scrollX, scrollY] = (x || y) ? scrolls(el, x, y) : [false, false];
       if (scrollX || scrollY) {
