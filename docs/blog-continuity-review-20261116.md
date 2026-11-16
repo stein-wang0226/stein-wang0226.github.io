@@ -1169,3 +1169,11 @@ T9 未执行当前构建、引用/迁移完整验收、17 项站点流水线测�
 ## T10z 必要无脚本推导续接
 
 原31单元完整保留，精确追加2单元为33；仍74源13改/61保留。s01 `8330479acfddbcd8c5b1456bacb95f2f2230b066a3521899edc4033cf01708d3` → `a0e8f6d2fee1076ce3cc3a9514a6c504ed20aa29a26883cbc1618db81bdbc30b`。只增加noscript两处必要说明，catalog摘要和日期仍准确。原失败/待补及局部通过各自保留；源核证不替代真实浏览器、独立像素或发布。
+
+## T15 公式键盘序列与共享脚本基线
+
+MathJax 默认给每个公式容器 `tabindex="0"`，以便键盘打开公式菜单。全站71个含公式页面共有17793个公式容器，其中16159个是行内符号；架构组装页的Tab停点达985个，键盘用户需要穿过472个行内公式才能继续阅读。新增 `assets/site/math-tabstop.js`：在 `.reading-content` 内把非 `display="true"` 的公式设为 `tabindex="-1"`，并用 MutationObserver 处理折叠展开后新排版的公式；显示公式保留Tab可达，辅助 MathML 不变。`scripts/mathematics.py` 只增加一行加载标签。
+
+真实Chrome复核：架构组装页行内公式Tab停点472→0，显示公式44个保留；训练生命周期页24个显示公式保留；s07显示公式获得可键盘聚焦的默认焦点环；`mjx-merror`、控制台错误与页面脚本错误均为0。7个代表页面前30次Tab均无不可见焦点。三宽度48个URL加无脚本验收0失败；107个HTML页完整扫描无控制台错误、失败资源、溢出或空公式（3个旧章节别名页在客户端跳转时中止字体请求，属导航取消）。`make check` 通过107 HTML页/304公开文件。
+
+此前 `scripts/course.py`、`scripts/pipeline.py`、`scripts/render.py` 已在Round 4–5修改但未登记，`learning_review.py check` 因此长期在冻结集失配；本轮按既有“冻结集移入精确集成集”规则，把上述三个脚本与本轮 `scripts/mathematics.py`、新脚本移入 `integrated_files` 并记录精确SHA，冻结集240项、正文74源SHA链、历史review与两份baseline均未改，`learning_review.py check` 重新通过。边界：未重跑模型训练或科研复现，未把默认焦点环改成站点样式环。

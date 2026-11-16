@@ -83,5 +83,6 @@ def decorate_math(ctx, entry, text):
     root = root.removesuffix("index.html")
     tags = (f'<script defer src="{ctx.asset(path, "/assets/site/math-config.js")}" '
             f'data-mathjax-root="{root}"></script>'
-            f'<script defer src="{ctx.asset(path, "/assets/site/math.js")}"></script>')
+            f'<script defer src="{ctx.asset(path, "/assets/site/math.js")}"></script>'
+            f'<script defer src="{ctx.asset(path, "/assets/site/math-tabstop.js")}"></script>')
     return text.replace("</head>", tags + "</head>", 1)
