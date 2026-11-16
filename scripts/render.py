@@ -18,6 +18,8 @@ FAVICON_LINK = ('<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=\'http
                 '%20font-size=\'28\'%20font-weight=\'700\'%20text-anchor=\'middle\'%20fill=\'%23f7f5f0\'%3E'
                 'YW%3C/text%3E%3C/svg%3E">')
 START, END = "<!-- SITE:NAV:START -->", "<!-- SITE:NAV:END -->"
+CJK_RUN = re.compile(r"([\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]+)")
+LANG_OPAQUE = {"script", "style", "svg", "math", "template", "textarea"}
 PUBLIC_EXTENSIONS = {
     ".html", ".css", ".js", ".pdf", ".svg", ".ico", ".woff", ".woff2",
     ".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".json", ".xml", ".txt", ".csv",
@@ -26,6 +28,29 @@ PRIVATE_PARTS = {
     "content", "templates", "scripts", "docs", "licenses", "drafts",
     "__pycache__", "node_modules", ".automation", ".github", ".git", ".venv",
 }
+
+
+def mark_cjk_runs(fragment):
+    """Give Chinese text its own language inside an English content page.
+
+    The locked page sources cannot carry lang attributes, so the rendered
+    fragment wraps only CJK text nodes; tags, scripts, SVG and MathML stay
+    byte-identical.
+    """
+    parts = re.split(r"(<[^>]+>)", fragment)
+    depth, out = 0, []
+    for part in parts:
+        if part.startswith("<"):
+            name = re.match(r"</?([A-Za-z0-9-]+)", part)
+            opaque = bool(name) and name.group(1).lower() in LANG_OPAQUE
+            if opaque and part.startswith("</"):
+                depth = max(0, depth - 1)
+            elif opaque and not part.endswith("/>"):
+                depth += 1
+        elif not depth:
+            part = CJK_RUN.sub(r'<span lang="zh-CN">\1</span>', part)
+        out.append(part)
+    return "".join(out)
 
 
 def input_digest(root):
@@ -158,8 +183,9 @@ class BuildContext:
             path = path[:-10]
         return self.site["url"].rstrip("/") + "/" + path
 
-    def navigation(self, path):
+    def navigation(self, path, lang="zh-CN"):
         path = route_path(path)
+        english = lang.lower().startswith("en")
         links = []
         work_page = next((p for p in self.site.get("pages", []) if p["id"] == "my-work"), None)
         work_prefix = route_path(work_page["url"]).removesuffix("index.html") if work_page else None
@@ -174,21 +200,29 @@ class BuildContext:
                 ) and not (work_prefix and path.startswith(work_prefix))
             )
             current = ' aria-current="page"' if active else ""
-            links.append(f'<a href="{html.escape(rel(path, item["url"]), quote=True)}"{current}>'
-                         f'{html.escape(item["label"])}</a>')
-        return (f'{START}\n<a class="site-skip" href="#site-main">跳转到正文</a>'
-                '<nav class="site-nav" aria-label="主导航">'
-                f'<a class="site-brand" href="{rel(path, "/")}">'
+            label = item["label"]
+            # The nav label is Chinese; English labels need their own language,
+            # while Chinese labels inherit from the nav element.
+            cjk = bool(re.search(r"[\u3400-\u9fff]", label))
+            label_lang = ' lang="en"' if not cjk and re.search(r"[A-Za-z]", label) else ""
+            links.append(f'<a href="{html.escape(rel(path, item["url"]), quote=True)}"{current}'
+                         f'{label_lang}>{html.escape(label)}</a>')
+        skip = "Skip to content" if english else "跳转到正文"
+        return (f'{START}\n<a class="site-skip" href="#site-main">{skip}</a>'
+                '<nav class="site-nav" aria-label="主导航" lang="zh-CN">'
+                f'<a class="site-brand" href="{rel(path, "/")}" lang="en">'
                 '<span class="site-monogram" aria-hidden="true">S.</span>Stein\'s Notes</a>'
                 f'<div class="site-links">{"".join(links)}</div></nav>\n{END}')
 
-    def footer(self, path):
+    def footer(self, path, lang="zh-CN"):
         commit = self.metadata["commit"]
         label = (commit[:12] if commit else "unavailable") + (
             " + local changes" if self.metadata["dirty"] else ""
         )
         source = self.site.get("repository", "https://github.com/stein-wang0226/stein-wang0226.github.io")
-        return ('<footer class="site-footer"><span>Yuxiang Wang · Research &amp; Notes</span>'
+        # The footer copy is English; mark it when the page itself is Chinese.
+        attr = ' lang="en"' if not lang.lower().startswith("en") else ""
+        return (f'<footer class="site-footer"{attr}><span>Yuxiang Wang · Research &amp; Notes</span>'
                 f'<a href="{html.escape(source, quote=True)}">GitHub · Source</a>'
                 f'<a class="site-build" href="{rel(path, "build-info.json")}">Build {html.escape(label)}</a></footer>')
 
@@ -210,9 +244,9 @@ class BuildContext:
 <link rel="canonical" href="{self.canonical(path)}">
 <link rel="stylesheet" href="{self.asset(path, "assets/site/site.css")}">{style_tags}{script_tag}
 </head><body class="site-body">
-{self.navigation(path)}
+{self.navigation(path, lang)}
 <main class="site-page" id="site-main" tabindex="-1">{body}</main>
-{self.footer(path)}
+{self.footer(path, lang)}
 </body></html>
 ''')
 

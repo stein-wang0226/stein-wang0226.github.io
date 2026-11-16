@@ -242,10 +242,40 @@ def render_home(ctx):
                                count=len(rows),
                                recent=recent,
                                featured="".join(card(ctx, e, "/") for e in recommendations))
+    # The homepage prose is English while the shell and note sections are Chinese.
+    # Mark each switch explicitly; fail loudly if the template anchor drifts.
+    for old, new in (
+            ('<section class="home-hero" aria-label="个人介绍">',
+             '<section class="home-hero" aria-label="Personal introduction">'),
+            ('<a href="about/">详细介绍</a>', '<a href="about/" lang="zh-CN">详细介绍</a>'),
+            ('<a href="cv/">在线 CV</a>', '<a href="cv/" lang="zh-CN">在线 CV</a>'),
+            ('<a href="publications/">论文列表</a>',
+             '<a href="publications/" lang="zh-CN">论文列表</a>'),
+            ('download="Yuxiang-Wang-Resume-zh.pdf">中文简历 · PDF</a>',
+             'download="Yuxiang-Wang-Resume-zh.pdf" lang="zh-CN">中文简历 · PDF</a>'),
+            ('<section class="profile-selected" aria-labelledby="selected-work">',
+             '<section class="profile-selected" aria-labelledby="selected-work" lang="en">'),
+            ('<h2 id="selected-work">Selected Work · 近期工作</h2>',
+             '<h2 id="selected-work">Selected Work · <span lang="zh-CN">近期工作</span></h2>'),
+            ('<a href="cv/#selected-projects">完整项目经历</a>',
+             '<a href="cv/#selected-projects" lang="zh-CN">完整项目经历</a>'),
+            ('<section class="home-blog">', '<section class="home-blog" lang="zh-CN">'),
+            ('<section class="home-recommendations">',
+             '<section class="home-recommendations" lang="zh-CN">'),
+            ('<section>\n  <div class="section-heading"><h2>最近更新</h2>',
+             '<section lang="zh-CN">\n  <div class="section-heading"><h2>最近更新</h2>'),
+            ('<a href="blog/?sort=updated-desc">查看全部更新</a>',
+             '<a href="blog/?sort=updated-desc" lang="zh-CN">查看全部更新</a>'),
+            ('<h2>精选论文</h2>', '<h2><span lang="zh-CN">精选论文</span></h2>'),
+            ('<a href="publications/">全部论文</a>',
+             '<a href="publications/" lang="zh-CN">全部论文</a>')):
+        if body.count(old) != 1:
+            raise ValueError(f"home template: expected one language anchor, found {body.count(old)}: {old}")
+        body = body.replace(old, new)
     ctx.page("/", "Yuxiang Wang · Research & Notes", body,
              "Yuxiang Wang at Fudan and ByteDance Seed: scientific Harbor tasks, Agentic RL, "
              "GUI agent environments, and diffusion language models.",
-             styles=("/assets/site/profile.css",))
+             lang="en", styles=("/assets/site/profile.css",))
 
 
 def render_my_work(ctx, record, meta, body):

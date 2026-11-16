@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 
 from catalog import load_content
-from render import BuildContext, DEFAULT_OUTPUT, FAVICON_LINK, ROOT, external_output, input_digest, load_md, md, publication_date, route_path
+from render import BuildContext, DEFAULT_OUTPUT, FAVICON_LINK, ROOT, external_output, input_digest, load_md, mark_cjk_runs, md, publication_date, route_path
 
 
 def git_metadata(root):
@@ -75,9 +75,10 @@ def render_academic(ctx):
                        '">Publications</a> · <a href="' + ctx.rel(record["url"], "/blog/") + \
                        '">博客与笔记</a></p>'
         title = record["title"]
+        article = mark_cjk_runs(f'<article class="prose">{md(body)}{addition}</article>')
         ctx.page(record["url"], title, f'<p class="eyebrow">{html.escape(title)}</p>'
                  f'<h1>{html.escape(meta.get("title", title))}</h1>'
-                 f'<article class="prose">{md(body)}{addition}</article>', lang="en",
+                 f'{article}', lang="en",
                  styles=("/assets/site/profile.css",))
     ctx.page("404.html", "Page not found", '<p class="eyebrow">404</p><h1>Page not found</h1>'
              '<p>Browse the <a href="/blog/">blog</a> or return to '
