@@ -7,7 +7,7 @@
     "local_sources": 74,
     "changed_sources": 57,
     "retained_sources": 17,
-    "change_units": 131,
+    "change_units": 132,
     "added_diagrams": 1,
     "revised_diagrams": 2,
     "scope": "保留作者逐源examined、reason、changes、assumptions与evidence_boundary；完整报告只按作者列明的主讲段检查，不等于所有历史科研事实复核。",
@@ -326,7 +326,7 @@
     "assets/research/2026-11-14/sources.json": "bb58b86f1bb804059ec8cdb8c348b1a00ced2af7b1f5b17dff2402897474a888",
     "assets/research/agent-data-benchmarks/sources.json": "73696913acd37a2086159002073de85ac4140507a77fd33e98358e3821b61f6a",
     "assets/research/posttraining-20261114/sources.json": "a56d5b90aab056348e00b3873cf3657f0079d46629455c4a36a3208eec430d79",
-    "docs/organization-changes-20261115.json": "e1171869d93079c39570389c227442bf5defbf88434fd43741271ff1ff60fcfe",
+    "docs/organization-changes-20261115.json": "3b71955c49d14c3e24dba1d58ff37aad8087602e9734701264511a480f9a63d7",
     "scripts/course.py": "43ada4e2cbc29dbaebedd4a53c8bc526bf16f50a020e741e43f0158d10540147",
     "scripts/mathematics.py": "8102723e919f851b947e213bafcb45cc8abe0901e0ea748af2e21599cb86448e",
     "scripts/pipeline.py": "ae7837d87a72e3072cb7617beb6d9e73e660179a53d72e0bb6f9ec6cfd0e157a",
@@ -336,7 +336,7 @@
     "assets/site/print.css": "6fe5516c335298f6d81025fed779e35a1374a6d877577314ca81a4bd9c73a5dd",
     "scripts/views.py": "b39b9fda69d8b3368aa19e70c50b9aecb7fd0f028853e5e9d883b695eac17ae7",
     "assets/site/scroll-region.js": "b8137455f1c1286f06a6716ceae557c2f2e621b686211d084279bc3d6d0be6d8",
-    "docs/content-changes.json": "e799aa5264f243aa88f431a5e9a7a429eed576f0d00d75394934362d81807a43"
+    "docs/content-changes.json": "80209453661152793bbbd3eb7ec1582960e884ae5db59947cbed4fe9c75a9183"
   },
   "catalog_updates": [
     {
@@ -3700,7 +3700,7 @@
       "source": "content/posts/llm-frontier-2026/index.html",
       "changed": true,
       "sha256_before": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
-      "sha256_after": "f615ac0ae98e0351e77f3da4ba0cb6acec3df327d5ea6a2bb2a3e951e851f39d",
+      "sha256_after": "2e41623535ba272e2305e4184ed01eb9fcf4feca363e5134aae3a10a1742f1e0",
       "examined": [
         {
           "anchor": "#frontier-evidence-bridge",
@@ -3717,9 +3717,13 @@
         {
           "anchor": "#arch",
           "judgment": "GLM/Qwen/Kimi/CED概括混同线性Attention，局部改为递归状态、稀疏读取、跨层复用不同对象；Huginn潜在深度与CoT、GPT传闻边界保留。"
+        },
+        {
+          "anchor": "#frontier-page-style",
+          "judgment": "读取≤640px断点下的页首布局与样式：返回链接绝对定位在左上，说明标签在居中内容首行；320px时两者文字行相交，640px以上不相交。"
         }
       ],
-      "reason": "修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。 对比度复核：只将浅色底上的青绿、绿、琥珀与红色文字及两处渐变底色整体加深一档，使小号标签、表头、日期与页脚达到4.5:1；正文、来源、数字、日期与自动标记不变。",
+      "reason": "修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。 对比度复核：只将浅色底上的青绿、绿、琥珀与红色文字及两处渐变底色整体加深一档，使小号标签、表头、日期与页脚达到4.5:1；正文、来源、数字、日期与自动标记不变。 R39窄屏重排复核：320px宽度下页首绝对定位返回链接与说明标签首行文字真实重叠；仅在本页≤640px断点为kicker增加上外边距、让内容让开链接，并给页内style补id作为续轮锚点；桌面宽度、正文、来源与共享样式未改。",
       "changes": [
         {
           "anchor": "#models",
@@ -3814,6 +3818,18 @@
           "checks": [
             "axe23-heading-order",
             "r23-frontier-heading-screenshot-sha",
+            "make-check-107"
+          ]
+        },
+        {
+          "anchor": "#frontier-page-style",
+          "kind": "reflow",
+          "summary": "320px重排下页首绝对定位返回链接与说明标签首行真实重叠（2倍像素采样下重叠带共享墨迹151像素，hero滚入视口后范围x44–117.5、y29.5–32 CSS px）；仅在本页≤640px媒体查询内给.hero .kicker加2rem上外边距，使居中内容下移让开链接；页内style补id便于逐字节定位，桌面宽度与共享样式不变。",
+          "assumptions": "按WCAG 1.4.10以320 CSS px视口且无页面级水平滚动验证；重叠判定取真实文本行矩形与像素遮罩，重叠区域同时含两段文字墨迹；返回链接仍为页首绝对定位入口，不改为静态流。",
+          "checks": [
+            "r39-reflow-320-textline-geometry",
+            "r39-frontier-320-pixel-ink-overlap",
+            "r39-frontier-320-720-1440-before-after",
             "make-check-107"
           ]
         }
