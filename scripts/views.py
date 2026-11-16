@@ -299,7 +299,8 @@ def render_my_work(ctx, record, meta, body):
              '<div class="my-work-folder"><header class="work-header">'
              f'<h1>{esc(meta["title"])}</h1><p class="intro">{esc(meta["description"])}</p>'
              '</header>' + content + '</div>', meta["description"], lang="zh-CN",
-             styles=("/assets/site/my-work.css",))
+             styles=("/assets/site/my-work.css",),
+             script="/assets/site/scroll-region.js")
 
 
 def render_blog(ctx):

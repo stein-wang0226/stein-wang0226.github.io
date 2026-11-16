@@ -1,6 +1,6 @@
 /* Wide tables, code and formulas scroll; make only the scrolling ones keyboard reachable. */
 (() => {
-  const scope = document.querySelector('.reading-content');
+  const scope = document.querySelector('.reading-content') || document.querySelector('main');
   if (!scope) return;
   // MathJax's visually hidden MathML runs a few pixels wider than the visible
   // formula; cap it so only real glyph clipping counts as a scroll region.
@@ -18,10 +18,11 @@
     ? (x && y ? 'scrolls horizontally and vertically'
       : x ? 'scrolls horizontally' : 'scrolls vertically')
     : (x && y ? '可横向和纵向滚动' : x ? '可横向滚动' : '可上下滚动');
-  const kinds = '.reading-table, pre, .equation, figure';
+  const kinds = '.reading-table, pre, .equation, figure, table';
   const formulas = 'mjx-container:not([display="true"])';
   const kind = el => el.tagName === 'MJX-CONTAINER' ? 'equation'
     : el.tagName === 'PRE' ? 'pre'
+    : el.tagName === 'TABLE' ? 'table'
     : el.classList.contains('reading-table') ? 'table'
     : el.classList.contains('equation') ? 'equation' : 'figure';
   const marked = 'data-scroll-focus';

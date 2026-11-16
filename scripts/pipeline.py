@@ -34,7 +34,8 @@ def render_academic(ctx):
                  f'<h1>{html.escape(meta["title"])}</h1>'
                  f'<p class="paper-meta">{html.escape(publication_date(meta))} · '
                  f'{html.escape(meta["venue"])}</p>{link}'
-                 f'<article class="prose">{md(body)}{citation}</article>', meta["excerpt"], lang="en")
+                 f'<article class="prose">{md(body)}{citation}</article>', meta["excerpt"], lang="en",
+                 script="/assets/site/scroll-region.js")
         cards = dated_cards if meta["date"] else manuscript_cards
         cards.append('<article class="publication-card">'
                      f'<p class="paper-meta">{html.escape(publication_date(meta))} · '
