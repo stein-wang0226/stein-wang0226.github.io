@@ -173,14 +173,27 @@ def render_artifact(ctx):
               "\n</urlset>\n")
     ctx.write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {ctx.site['url']}/sitemap.xml\n")
     ctx.write(".nojekyll", "")
-    # One icon for every generated document, including templates that own their head.
+    # Pages that own their head still share the icon and canonical URL; the catalog
+    # supplies an authored description where the template has none.
+    by_route = {route_path(entry["url"]): entry for entry in ctx.entries
+                if entry.get("origin") == "local"}
     for path in ctx.generated:
         if not path.endswith(".html"):
             continue
         target = ctx.output / path
         text = target.read_text(encoding="utf-8")
+        additions = []
         if 'rel="icon"' not in text:
-            target.write_text(text.replace("</head>", FAVICON_LINK + "</head>", 1), encoding="utf-8")
+            additions.append(FAVICON_LINK)
+        if 'rel="canonical"' not in text:
+            additions.append(f'<link rel="canonical" href="{ctx.canonical(path)}">')
+        entry = by_route.get(path)
+        if 'name="description"' not in text and entry and entry.get("summary"):
+            additions.append('<meta name="description" content="'
+                             + html.escape(entry["summary"], quote=True) + '">')
+        if additions:
+            target.write_text(text.replace("</head>", "".join(additions) + "</head>", 1),
+                              encoding="utf-8")
     files = {path: hashlib.sha256((ctx.output / path).read_bytes()).hexdigest()
              for path in sorted(ctx.generated)}
     ctx.write("build-info.json", json.dumps(
