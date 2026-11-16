@@ -7,6 +7,8 @@
     if (node.nodeType !== 1) return;
     const containers = node.matches('mjx-container') ? [node] : node.querySelectorAll('mjx-container');
     containers.forEach(container => {
+      // scroll-region.js makes clipped formulas keyboard scrollable; leave those alone.
+      if (container.hasAttribute('data-scroll-focus')) return;
       if (container.getAttribute('display') !== 'true' && container.getAttribute('tabindex') === '0') {
         container.setAttribute('tabindex', '-1');
       }
