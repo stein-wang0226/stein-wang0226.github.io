@@ -34,20 +34,20 @@
     },
     {
       "source": "content/posts/my-work-protagent/full-report.html",
-      "sha256": "f44de32336f806dd4ca09acf0082f9c90761f4bb21461c4f5ef5bff71d2a0941",
-      "reason": "逐页审阅：13节全部审阅。原理与算例：对数导数→去过去奖→step return→策略token，reward guard与全样本分母。精简与证据：四臂/配方同义表合并；原3SVG保持比，可放大；逐seed/阈值/γλ/PFUA表及来源保留；不再克隆导读三节。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：实际检查段落已有监督、回报、评测分母和复现限制，科学正文与原件保持。T10x仅将报告目录重置断点760px对齐既有单列布局850px，解除761–850px目录浮动吸顶对标题和正文的真实遮挡；未修改共享样式或历史统计。",
+      "sha256": "c17b7b989f1190ee398d6c60cb17991fb2aa1ed8f4b4df4ce806a82377d77fca",
+      "reason": "逐页审阅：13节全部审阅。原理与算例：对数导数→去过去奖→step return→策略token，reward guard与全样本分母。精简与证据：四臂/配方同义表合并；原3SVG保持比，可放大；逐seed/阈值/γλ/PFUA表及来源保留；不再克隆导读三节。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：实际检查段落已有监督、回报、评测分母和复现限制，科学正文与原件保持。T10x仅将报告目录重置断点760px对齐既有单列布局850px，解除761–850px目录浮动吸顶对标题和正文的真实遮挡；未修改共享样式或历史统计。 变量前置定义：补y_i、i、y_i^*等首次使用前的说明，公式未改。",
       "prior_reason": "Approved learning rework: review 13 sections, expand policy gradient, step return, token objective, reward guard and scoring denominator; consolidate repeated tables, preserve fixed seed/PFUA/threshold evidence and original SVGs. Strict math, actual SVG width, no-JS and three-screen zoom checks passed; no model or biological reproduction."
     },
     {
       "source": "content/posts/my-work-dllm/full-report.html",
-      "sha256": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
-      "reason": "逐页审阅：全章节审阅。原理与算例：AR/吸收/块目标；ICL二次型配方、rank风险例；三OR mask；熵与affinity。精简与证据：修概念mask套用LM1B的错误；CLI按需，原3图保持比可放大；ARR表/SEDD差异/smoke范围保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "810a55c152fa03c294c8810464c05a06e8805c15588d0fa28e4f857cc0029574",
+      "reason": "逐页审阅：全章节审阅。原理与算例：AR/吸收/块目标；ICL二次型配方、rank风险例；三OR mask；熵与affinity。精简与证据：修概念mask套用LM1B的错误；CLI按需，原3图保持比可放大；ARR表/SEDD差异/smoke范围保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（x_i、i、z_i、y_R、\\epsilon），公式、标题、锚点与引用未改。",
       "prior_reason": "Approved learning rework: review all sections, expand posterior square completion, rank-risk and threshold FLOPs, correct actual scatdit mask, convert pseudo formulas to LaTeX and fold configs. Preserve ARR figures with zoom and source-cell gaps; strict three-screen math/width/no-JS/zoom checks passed. No model experiment."
     },
     {
       "source": "content/posts/harbor-framework-guide/index.html",
-      "sha256": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
-      "reason": "逐页审阅：13节与scalingX17集全部审阅；版本、计数、源码、canary与未运行状态核对。原理与算例：observed/native/ambient/corrected counts→移除比例/归一误差→oracle gap；误收/误拒净值与分母；reward_valid均值；五个机制追问。精简与证据：删除重复目录与两次同义总结，长版本表按需；科学数学从代码框移到默认正文；Index筛选改机制图；三原执行图默认可见，600px限宽不变形且可放大；真实案例与计数/去重边界保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。",
+      "sha256": "d5ddf39c4f0b183a1bfe50148c8cadf4f4c628429cf32f140b0c7fbe07948fcf",
+      "reason": "逐页审阅：13节与scalingX17集全部审阅；版本、计数、源码、canary与未运行状态核对。原理与算例：observed/native/ambient/corrected counts→移除比例/归一误差→oracle gap；误收/误拒净值与分母；reward_valid均值；五个机制追问。精简与证据：删除重复目录与两次同义总结，长版本表按需；科学数学从代码框移到默认正文；Index筛选改机制图；三原执行图默认可见，600px限宽不变形且可放大；真实案例与计数/去重边界保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（g,c、O,T,U,C、\\rho_c、c），公式、标题、锚点与引用未改。",
       "prior_reason": "Approved learning rework: review all thirteen sections and community-resource slice, retain fixed release/main evidence, source numbering, original diagrams/canary and byte-exact archive. Expand counts/error/oracle gap and valid-reward denominators as LaTeX with clearly labelled examples, expose execution diagram, retain ratio at 600px max and test native zoom, consolidate duplicate directories/summaries and state retry/regrade conditions. Strict three-screen CDN-blocked and no-JS checks passed; no container, model or scientific reproduction."
     },
     {
@@ -129,16 +129,16 @@
     },
     {
       "source": "content/posts/llm-interview-bank/index.html",
-      "sha256": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "sha256": "00f3c97d9ad8b2167171d7b3b2c653f602f9c2cf52e747a8a788399ead32f845",
       "visual_revision_reason": "2026-11-15: native knowledge cards, keyword filtering, explicit answer flow and readable multiline LaTeX; old source archived exactly.",
-      "reason": "逐页审阅：470问的11领域全部审阅：LLM、偏好、RL、Agentic、VLM、Agent、RAG、服务、代码、评测、开放题；155旧答核对口径。原理与算例：90卡全部附短答与追问；KL/DPO关键式，SFT/GQA/Norm/RoPE/LoRA/DPO/PPO/GAE/group/采样完整教学代码，online-softmax与经典算法不变量。精简与证据：合并同义问、删除无来源频率/公司排名；全470原问及旧答逐字归档，旧公开锚点保留；完整PG/GAE/GRPO推导与六论文数值配方归唯一主讲。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 分类与课程复查：补Scaling ladder/μP/WSD短答与边界并链接推导；增相关次主题，避免只在架构分类找到综合题库。",
+      "reason": "逐页审阅：470问的11领域全部审阅：LLM、偏好、RL、Agentic、VLM、Agent、RAG、服务、代码、评测、开放题；155旧答核对口径。原理与算例：90卡全部附短答与追问；KL/DPO关键式，SFT/GQA/Norm/RoPE/LoRA/DPO/PPO/GAE/group/采样完整教学代码，online-softmax与经典算法不变量。精简与证据：合并同义问、删除无来源频率/公司排名；全470原问及旧答逐字归档，旧公开锚点保留；完整PG/GAE/GRPO推导与六论文数值配方归唯一主讲。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 分类与课程复查：补Scaling ladder/μP/WSD短答与边界并链接推导；增相关次主题，避免只在架构分类找到综合题库。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（y_w,y_l、\\theta），公式、标题、锚点与引用未改。",
       "prior_reason": "Approved full learning rewrite: review all 470 question topics and 155 prior answers, consolidate repeated forms into 90 answered cards across 11 domains, preserve original questions/answers/citations in the byte-exact archived source and old public anchors. Expand concise derivation checkpoints and substantive runnable code, link unique full proofs/recipes. Correct PPO hard bounds, RoPE extrapolation guarantees, model-count memory claims, GRPO/RLVR and outdated framework support. CPU teaching-code checks and strict three-screen CDN-blocked/browser/no-JS checks passed; not a GPU performance or scientific reproduction."
     },
     {
       "source": "content/posts/rl-interview-guide/index.html",
-      "sha256": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "sha256": "6e6379e0d11e8c8177adc0a96b25d7c719d605669e29014301bbe47ad1222adf",
       "visual_revision_reason": "2026-11-15: add a compact learning diagram, restore prominent core-role discovery and current/original links in the shared reading shell; retain all six original SVG diagrams and detailed derivations. Historical source is unchanged.",
-      "reason": "逐页审阅：符号、算法卡、数值卡、参数影响、诊断、短答与历史入口全部审阅。原理与算例：关键目标与作用；完整推导定位后训练。精简与证据：修G/KL方向/显存/epochs矛盾；合并重复长讲，现代RLVR/Agentic/OPD覆盖保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "reason": "逐页审阅：符号、算法卡、数值卡、参数影响、诊断、短答与历史入口全部审阅。原理与算例：关键目标与作用；完整推导定位后训练。精简与证据：修G/KL方向/显存/epochs矛盾；合并重复长讲，现代RLVR/Agentic/OPD覆盖保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（t=0,\\ldots,T-1、T、\\theta、G_t、G、h_t,a_t,r_t），公式、标题、锚点与引用未改。",
       "prior_reason": "Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified. Follow-up RL audit: make GRPO group size recipe-dependent, add compact Offline RL/Decision Transformer/planning/self-play/MARL/distributional/model-based coverage, and remove an unsupported blanket ranking of offline LLM RL. Follow-up recipe expansion: add source-labeled GRPO-family numeric cards, correct universal clip/KL claims, distinguish prompt/trajectory/mini-batch and inner epochs, and link the compact interview table to the authoritative post-training chapter. Editorial coherence pass: separate original GRPO derivation from later variants, keep one compact numeric card, correct overgeneralized critic-memory, group-size and single-step-MDP wording, align the later comparison table with the recipe card, and fix the sampled KL-ratio direction and interpretation. Superseded wording remains in a labeled same-page history block for preservation checks."
     },
     {
@@ -148,32 +148,32 @@
     },
     {
       "source": "content/posts/transformer-decoder-flow/index.html",
-      "sha256": "4274cd293730453e7399d0f6465c6eb6aed1720be3db2d126ebf03c1eda241b0",
+      "sha256": "785e99c25d4b2bafb10e847f4a357dec7dfcc8652ae4cff936b20bb5a6fd4b0e",
       "visual_revision_reason": "2026-11-15: add explicit training tensor flow and causal/shifted-label explanation; preserve layer formulas and PyTorch code.",
       "title_revision_reason": "2026-11-14 title audit: describe the actual forward-computation and tensor-dimension walkthrough in document title and h1; retain scientific text and interactive content.",
-      "reason": "逐页审阅：公式/形状、cache/mask、参数账本与完整小模型全部审阅。原理与算例：NLL/attention；整段/逐token/多token缓存等价。精简与证据：修Llama3头型、SwiGLU计数、双shift、初始化/cache/device/mask；PyTorch2.8 CPU实现运行通过，非性能实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：从参考文章升为架构第2节；恢复embedding到loss、prefill到decode逐步形状推导，补齐两token的Norm/Attention/SwiGLU/head完整数值链；保留完整代码与原稿下载，修正warmup、mask、最终Norm、标签和采样边界。 讲解连贯性续轮审阅：只补0/1可见矩阵到加性mask的转换解释，防止照公式直接相加而泄漏未来；完整forward、手算、代码、图、来源和旧原稿入口均保留。",
+      "reason": "逐页审阅：公式/形状、cache/mask、参数账本与完整小模型全部审阅。原理与算例：NLL/attention；整段/逐token/多token缓存等价。精简与证据：修Llama3头型、SwiGLU计数、双shift、初始化/cache/device/mask；PyTorch2.8 CPU实现运行通过，非性能实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：从参考文章升为架构第2节；恢复embedding到loss、prefill到decode逐步形状推导，补齐两token的Norm/Attention/SwiGLU/head完整数值链；保留完整代码与原稿下载，修正warmup、mask、最终Norm、标签和采样边界。 讲解连贯性续轮审阅：只补0/1可见矩阵到加性mask的转换解释，防止照公式直接相加而泄漏未来；完整forward、手算、代码、图、来源和旧原稿入口均保留。 变量前置定义：补I、E、X_0=E[I]、X=X_{\\ell-1}、\\ell、U等首次使用前的说明，公式未改。",
       "prior_reason": "Add prerequisites, data-flow reading route and symbolic shape-tracking exercise. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/posts/vlm-knowledge-interview/index.html",
-      "sha256": "d4ebceb2140d3a8b22bb22395ec42072dc2f36547fc6e82d163f9acef5e273ea",
+      "sha256": "cc95a8f001f73437b79ff05bae411c230688e552495110f72084a66de8cb0f0e",
       "visual_revision_reason": "2026-11-15: teaching chain, spatial transformation flow, worked examples, concise native interview cards and multiline local LaTeX.",
       "title_revision_reason": "2026-11-14 title audit: replace colloquial interview-experience wording with core knowledge and interview questions in title and h1; preserve questions, answers and sources.",
-      "reason": "逐页审阅：六部分全部审阅：核心表示与目标、前沿路线、11问、3组代码、来源、掌握清单。原理与算例：patch/MLP/query形状与参数；CLIP/SigLIP梯度和两对算例；视觉条件反传；tiling/merge/视频预算；crop坐标；VCD、ColPali MaxSim；完整patch/projector/resampler/mask/tiling。精简与证据：删除跨论文榜单/无出处倍数，代表路线按需；修正336/14=576、SigLIP负例通信/O(N)、MLP最优/统一四阶段、M-RoPE三等分、VCD无图对比、不同图像不可互看及max12却15tiles；精确原稿和全部原链接继续保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：The existing common visual pipeline did not show the materially different fusion/state-storage paths of concatenation, independent cross-attention and encoder-decoder. Added one local architecture comparison without duplicating formulas or altering historical tables/code.。 讲解连贯性续轮审阅：主体原理、完整算例与接口图已充分；只补平均loss可定义条件、padding二维逆映射和返回总数三个确证复算/接口缺口。",
+      "reason": "逐页审阅：六部分全部审阅：核心表示与目标、前沿路线、11问、3组代码、来源、掌握清单。原理与算例：patch/MLP/query形状与参数；CLIP/SigLIP梯度和两对算例；视觉条件反传；tiling/merge/视频预算；crop坐标；VCD、ColPali MaxSim；完整patch/projector/resampler/mask/tiling。精简与证据：删除跨论文榜单/无出处倍数，代表路线按需；修正336/14=576、SigLIP负例通信/O(N)、MLP最优/统一四阶段、M-RoPE三等分、VCD无图对比、不同图像不可互看及max12却15tiles；精确原稿和全部原链接继续保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：The existing common visual pipeline did not show the materially different fusion/state-storage paths of concatenation, independent cross-attention and encoder-decoder. Added one local architecture comparison without duplicating formulas or altering historical tables/code.。 讲解连贯性续轮审阅：主体原理、完整算例与接口图已充分；只补平均loss可定义条件、padding二维逆映射和返回总数三个确证复算/接口缺口。 变量前置定义：补N、X_{\\rm patch}、W_p、E_{\\rm pos}、Z_0、i,j,k=1,\\ldots,N等首次使用前的说明，公式未改。",
       "prior_reason": "Approved section-by-section VLM rewrite: expand patch/MLP/query shapes, CLIP/SigLIP score gradients, conditional language-loss visual backprop, resolution/video budget, grounding coordinates and ColPali example; keep 11 concise interview answers and complete teaching code. Correct patch count, sigmoid negative communication, universal-stage/MLP claims, M-RoPE equal splits, VCD and invalid tiling output. Archive exact prior source/citations/unverified rankings; preserve old public locations. CPU teaching-code and strict three-screen/no-JS/CDN-blocked checks passed; no model training/performance replication."
     },
     {
       "source": "content/series/dlm-survey/s00a_ddpm.html",
-      "sha256": "5e5b0285788ae59a578511af837fce3515a14af9b43778fdf33407ba57fbb8e1",
+      "sha256": "aea236a64707c8fb32bc813bddb08a43e787ab525e51800195e565c6138bbfbe",
       "visual_revision_reason": "2026-11-15: add DDPM forward-noise/training/reverse-sampling diagram; retain original derivations and scientific units.",
-      "reason": "逐页审阅：模型→Jensen→裂项→后验→noise loss→采样全部审阅。原理与算例：前向方差递推；t≥2裂项；精度α/β、A14/variance1/14/mean0.89443；固定方差MSE。精简与证据：修正漏α、连续q(x0|x0)=1、有限逆边缘精确Gaussian、simple=ELBO、末步投影数据流形；必要五步推导保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：补加噪输入、噪声loss/导数、解析与预测均值、等方差KL、独立反向噪声及最后一步输出，限定两步日程为教学。 图示补充审阅：A combined old chain blurred a single-time training update with iterative generation. Revised and moved one figure to the main sampling explanation, explicitly separating learned prediction, fixed coordinate transformation, state update and independent noise.。",
+      "reason": "逐页审阅：模型→Jensen→裂项→后验→noise loss→采样全部审阅。原理与算例：前向方差递推；t≥2裂项；精度α/β、A14/variance1/14/mean0.89443；固定方差MSE。精简与证据：修正漏α、连续q(x0|x0)=1、有限逆边缘精确Gaussian、simple=ELBO、末步投影数据流形；必要五步推导保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：补加噪输入、噪声loss/导数、解析与预测均值、等方差KL、独立反向噪声及最后一步输出，限定两步日程为教学。 图示补充审阅：A combined old chain blurred a single-time training update with iterative generation. Revised and moved one figure to the main sampling explanation, explicitly separating learned prediction, fixed coordinate transformation, state update and independent noise.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（q(x_T\\mid x_0)/q(x_1\\mid x、q_t^-、x_t,x_0、p_t^-、\\tilde\\mu_t=\\alpha_t^{-1/2、\\mathcal L_t），公式、标题、锚点与引用未改。",
       "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s00b_flow_sde.html",
-      "sha256": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
+      "sha256": "1e624b9bafb9a5ef1ae1d4a1d7b5e53ce8fee043c3daa4550426b3250a58a7c8",
       "visual_revision_reason": "2026-11-15: add Flow Matching endpoint/path/velocity/integration diagram with explicit time convention; retain equations.",
-      "reason": "逐页审阅：时间、ODE/SDE、路径、条件/边际、score、PF、OT、DDPM连接、训练、求解器与原附录A–F全部审阅。原理与算例：条件速度；方差分解证明；test-function连续性；Ito/FP；score抵消；VP极限与逆SDE。精简与证据：删除独立配对自动OT、一/少步必然、所有loss/网络等价；明确生成/前向时间、理想边际vs路径、空间无关g条件。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：补可解析高斯例的条件监督、端点后验、边际速度、条件方差、回归梯度与Euler/解析输出对照，区分配对直线与推理场。",
+      "reason": "逐页审阅：时间、ODE/SDE、路径、条件/边际、score、PF、OT、DDPM连接、训练、求解器与原附录A–F全部审阅。原理与算例：条件速度；方差分解证明；test-function连续性；Ito/FP；score抵消；VP极限与逆SDE。精简与证据：删除独立配对自动OT、一/少步必然、所有loss/网络等价；明确生成/前向时间、理想边际vs路径、空间无关g条件。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：补可解析高斯例的条件监督、端点后验、边际速度、条件方差、回归梯度与Euler/解析输出对照，区分配对直线与推理场。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（y,x_t,\\epsilon\\in\\mathbb R、a_t,b_t、u_t(x\\mid y)、u_t(x)、u_\\theta、\\mathbb E[\\cdot\\mid x_t=x]），公式、标题、锚点与引用未改。",
       "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
@@ -186,16 +186,16 @@
     },
     {
       "source": "content/series/dlm-survey/s02_discrete.html",
-      "sha256": "854adb16f985d667686bca32b9f46d8be84e76159322b6fb26bd173e63980c70",
+      "sha256": "870507896d51b2f84ba8a9976cb778c5107ccfa4873e9ee7e478b0a67faf1d1d",
       "visual_revision_reason": "2026-11-15: diagram absorbing mask corruption and iterative fill; distinguish method-specific remasking and kernels.",
-      "reason": "逐页审阅：D3PM、贝叶斯、VLB、MDLM、LLaDA、Dream/Seed/适配、SEDD、对偶全部审阅。原理与算例：行向量Bayes；吸收揭示0.6/0.4；SUBS后验KL→CE→连续权重；t0.25/0.75；对称argmax边际。精简与证据：线性weight修正1/t；可见token梯度、remasking/carry-over与GQA/cache分开；LLaDA原论文配方保留；无条件历史数字与错误CART/CTMC公式移出当前正文。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：确证缺口是一般后验的支持域及预测分布如何接到一次反向抽样，其他已有推导和图保留。",
+      "reason": "逐页审阅：D3PM、贝叶斯、VLB、MDLM、LLaDA、Dream/Seed/适配、SEDD、对偶全部审阅。原理与算例：行向量Bayes；吸收揭示0.6/0.4；SUBS后验KL→CE→连续权重；t0.25/0.75；对称argmax边际。精简与证据：线性weight修正1/t；可见token梯度、remasking/carry-over与GQA/cache分开；LLaDA原论文配方保留；无条件历史数字与错误CART/CTMC公式移出当前正文。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：确证缺口是一般后验的支持域及预测分布如何接到一次反向抽样，其他已有推导和图保留。 变量前置定义：补K、x_0,x_t,i,j,v、\\operatorname{Cat}、\\mathbf1(i=j)、\\beta_t、M等首次使用前的说明，公式未改。",
       "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
       "source": "content/series/dlm-survey/s03_block.html",
-      "sha256": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "sha256": "04c5d73d16fa8cb7fdaef0ef478c3ec70e2bfa82fa50ec4a6e68d83f0f83df2f",
       "visual_revision_reason": "2026-11-15: diagram prefix/current-block/denoising/commit with inner and outer loops; retain original content.",
-      "reason": "逐页审阅：因子化、插值、训练、cache、SSD-LM、适配、SFT/BlockGen、drafter、混合模式、Fast-dLLM全部审阅。原理与算例：4token两块mask；clean/noisy泄漏；128token/16块/4轮与32块/8轮。精简与证据：删除伪单调定理、虚构simplex Gaussian、重复DFlash数值；精确因子化不等于块边际精确；保留现代路线与cache充分条件。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "reason": "逐页审阅：因子化、插值、训练、cache、SSD-LM、适配、SFT/BlockGen、drafter、混合模式、Fast-dLLM全部审阅。原理与算例：4token两块mask；clean/noisy泄漏；128token/16块/4轮与32块/8轮。精简与证据：删除伪单调定理、虚构simplex Gaussian、重复DFlash数值；精确因子化不等于块边际精确；保留现代路线与cache充分条件。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（x^{(j)}、j、x^{(\\lt j)}、\\mathcal L_{\\rm NELBO}^{(j、M、p_\\theta(x)），公式、标题、锚点与引用未改。",
       "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
@@ -207,10 +207,10 @@
     },
     {
       "source": "content/series/dlm-survey/s05_paradigms.html",
-      "sha256": "b88d7ec72ff8f07f66b5cada2460c6690bc3716aae492e72f252bfcd6ffb224c",
+      "sha256": "99c9a00eaff4e3029b42cbc13b88c2660c735c9134dd85ba268a7a86ec85b709",
       "visual_revision_reason": "2026-11-15: diagram alternative prediction targets as branches, distinguishing conversions from loss equivalence.",
       "title_revision_reason": "2026-11-14 title audit: replace grand-unification framing with comparison of prediction targets and parameterizations; keep formulas and assumptions unchanged.",
-      "reason": "逐页审阅：连续三目标、score、SEDD、DFM、对照、追问全部审阅。原理与算例：VP旋转/逆变换数值例；MSE时间权重；score条件期望；ratio散度导数；两状态master例。精简与证据：修正epsilon低噪声归零、VP-v=FM、SEDD缺r项/比率softmax；DFM纠错后ID保留；旧错误冻结全文移到原稿。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：This core coordinate-conversion explanation had no diagram. Added one branched map with the existing scalar numbers and endpoint/score caveats, preserving every original formula and example.。",
+      "reason": "逐页审阅：连续三目标、score、SEDD、DFM、对照、追问全部审阅。原理与算例：VP旋转/逆变换数值例；MSE时间权重；score条件期望；ratio散度导数；两状态master例。精简与证据：修正epsilon低噪声归零、VP-v=FM、SEDD缺r项/比率softmax；DFM纠错后ID保留；旧错误冻结全文移到原稿。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：This core coordinate-conversion explanation had no diagram. Added one branched map with the existing scalar numbers and endpoint/score caveats, preserving every original formula and example.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（x_0,x_t,\\epsilon,v_t、\\epsilon、a_t,s_t、v_t、\\dot x_t、\\nabla_x\\log p_t(x)），公式、标题、锚点与引用未改。",
       "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
@@ -232,9 +232,9 @@
     },
     {
       "source": "content/series/dlm-survey/s08_elbo_rl.html",
-      "sha256": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "sha256": "7a7ac9fbdd63cc8bf1c0538b47889262501dad53d7ef129c838ec839c4829dd4",
       "visual_revision_reason": "2026-11-15: diagram diffusion rollout/reward/probability-target/update; keep ELBO-versus-exact-probability boundary.",
-      "reason": "逐页审阅：原14节的界、SPG/GDSD、d1、偏好/轨迹/方差、uniform迁移全部审阅。原理与算例：denoiser/path/marginal；Jensen gap；三误差；SPG正负例；指数倾斜0.7311；冻结centered-score目标。精简与证据：保留SPG v1四任务数据；删除与现代修订冲突的重复SPG公式、无条件梯度方差倍率、Gaussian投影精确文本概率、uniform迁移保证；未核实命名/题号明确仅线索。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "reason": "逐页审阅：原14节的界、SPG/GDSD、d1、偏好/轨迹/方差、uniform迁移全部审阅。原理与算例：denoiser/path/marginal；Jensen gap；三误差；SPG正负例；指数倾斜0.7311；冻结centered-score目标。精简与证据：保留SPG v1四任务数据；删除与现代修订冲突的重复SPG公式、无条件梯度方差倍率、Gaussian投影精确文本概率、uniform迁移保证；未核实命名/题号明确仅线索。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（q(\\tau\\mid x)、q_x=q(\\tau\\mid x)、\\Delta_\\theta(x)=\\log p_\\t、L_\\theta,U_\\theta、\\mathcal L、\\Delta_\\theta），公式、标题、锚点与引用未改。",
       "prior_reason": "Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
     },
     {
@@ -271,8 +271,8 @@
     },
     {
       "source": "content/posts/my-work-holon/full-report.html",
-      "sha256": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
-      "reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；逐项复核50个原生MathML，修正GQA交互计算的矛盾表述。",
+      "sha256": "0c4b38a78cff07366ddaf963552ef1c2012586f1974b257e7953cc19f3a86815",
+      "reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；逐项复核50个原生MathML，修正GQA交互计算的矛盾表述。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（i、r_i、r_j、e_i），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：21节正文审阅：MoT/参数、配置/packing/loss、数据、配比、scaling、优化器、CPT、scoring、基准、完整结果、Ladder、C30、WT/FIM、SFT、结构、生成、探索、复盘、源码与来源。原理与算例：token/modality reducer 2:8例；mask后监督与长度权重；拒绝采样分布；fetch/预算/coverage；polar反例；DiD逐步相减。精简与证据：核心学习定位与五追问；修PSC跨tier/绝对margin混淆与残留强调标记，分点复盘；原图保持比例可放大，手机图min-width裁切修正。保固定7de0f4版本、完整原表、源文档/样例与逐字原件；长源表未逐格复算、无GPU/科学实验。"
     },
     {
@@ -289,14 +289,14 @@
     },
     {
       "source": "content/series/agent-systems/s01_rag_retrieval.html",
-      "sha256": "1dda55a6e6fca6df4de3d696aa822bed107052c083c20e81c8f3d3dc2d491cfa",
-      "reason": "逐页审阅：对象、索引、检索、Agentic、分层评测、论文结果、追问、来源全部审阅。原理与算例：BM25饱和/长度项；单位向量与cosine；两路RRF；Recall/MRR。精简与证据：删除第二幅同义总流程；索引经验分点；保留Faiss固定提交与未运行状态、PROGRESS退化/成本边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：The existing overview taught evidence sufficiency but did not visualize the policy-action versus external-observation interface used by the nearby SFT/RL mask explanation. All original outside-figure content is preserved.。",
+      "sha256": "f0afaee187afff7a2cbcbc70566ec4204f15e3569af4f6ef5571495196470822",
+      "reason": "逐页审阅：对象、索引、检索、Agentic、分层评测、论文结果、追问、来源全部审阅。原理与算例：BM25饱和/长度项；单位向量与cosine；两路RRF；Recall/MRR。精简与证据：删除第二幅同义总流程；索引经验分点；保留Faiss固定提交与未运行状态、PROGRESS退化/成本边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：The existing overview taught evidence sufficiency but did not visualize the policy-action versus external-observation interface used by the nearby SFT/RL mask explanation. All original outside-figure content is preserved.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（q、d、t、|d|、\\ell_d、k_1&gt;0），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：对象、索引、检索、Agentic、分层评测、论文结果、追问、来源全部审阅。原理与算例：BM25饱和/长度项；单位向量与cosine；两路RRF；Recall/MRR。精简与证据：删除第二幅同义总流程；索引经验分点；保留Faiss固定提交与未运行状态、PROGRESS退化/成本边界。"
     },
     {
       "source": "content/series/agent-systems/s02_planning_compute.html",
-      "sha256": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
-      "reason": "逐页审阅：策略、搜索、验证、环境、预算、对照、论文结果、来源全部审阅。原理与算例：独立失败概率→BoN；selector条件成功；UCT两分支；净收益教学例。精简与证据：去重复总流程和pass@k组合长讲；分支状态与副作用图、停止表替代原则段；保留Search-R1++下降项。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "a483b6179333d86ecc8c49cd28c090c7685ded2cb7d83790efcfb8961a88d97e",
+      "reason": "逐页审阅：策略、搜索、验证、环境、预算、对照、论文结果、来源全部审阅。原理与算例：独立失败概率→BoN；selector条件成功；UCT两分支；净收益教学例。精简与证据：去重复总流程和pass@k组合长讲；分支状态与副作用图、停止表替代原则段；保留Search-R1++下降项。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（\\Delta p_a、a、V、\\Delta C(a)、\\Delta U(a)），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：策略、搜索、验证、环境、预算、对照、论文结果、来源全部审阅。原理与算例：独立失败概率→BoN；selector条件成功；UCT两分支；净收益教学例。精简与证据：去重复总流程和pass@k组合长讲；分支状态与副作用图、停止表替代原则段；保留Search-R1++下降项。"
     },
     {
@@ -312,20 +312,20 @@
     },
     {
       "source": "content/series/llm-serving/s01_runtime_scheduling.html",
-      "sha256": "3aaa41bee76cda1b77a9671dad63fd74e6a8f940be5fccffd5d0191c3355a29c",
-      "reason": "逐页审阅：阶段、分页、prefix、实现、混合状态、对照、来源全部审阅。原理与算例：连续批处理三轮；35token/16槽分页；逻辑→物理映射；两请求共享32prefix例。精简与证据：去第二同义总图；prefix条件分点、瓶颈诊断表；固定vLLM/SGLang源码与未运行范围保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 分类与课程复查：增补Kimi K3.1索引→候选→潜在KV读取图、每层流量公式及GB300单请求TTFT；区别读取与容量。 图示补充审阅：Added only the missing shared physical-state ownership diagram. Static checks preserved all old IDs, links, comments/markers, tables, code, formulas, scripts/styles, research objects, and all non-diagram content; numerical page checks executed. Build and browser checks deferred to integration.。",
+      "sha256": "9912309fa17299280f28a8aae5285d8f5d076726db3180c65e62b22cb06a4566",
+      "reason": "逐页审阅：阶段、分页、prefix、实现、混合状态、对照、来源全部审阅。原理与算例：连续批处理三轮；35token/16槽分页；逻辑→物理映射；两请求共享32prefix例。精简与证据：去第二同义总图；prefix条件分点、瓶颈诊断表；固定vLLM/SGLang源码与未运行范围保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 分类与课程复查：增补Kimi K3.1索引→候选→潜在KV读取图、每层流量公式及GB300单请求TTFT；区别读取与容量。 图示补充审阅：Added only the missing shared physical-state ownership diagram. Static checks preserved all old IDs, links, comments/markers, tables, code, formulas, scripts/styles, research objects, and all non-diagram content; numerical page checks executed. Build and browser checks deferred to integration.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（T、B、n_{\\rm block}、w、\\lceil\\cdot\\rceil），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：阶段、分页、prefix、实现、混合状态、对照、来源全部审阅。原理与算例：连续批处理三轮；35token/16槽分页；逻辑→物理映射；两请求共享32prefix例。精简与证据：去第二同义总图；prefix条件分点、瓶颈诊断表；固定vLLM/SGLang源码与未运行范围保留。"
     },
     {
       "source": "content/series/llm-serving/s02_parallel_quantization.html",
-      "sha256": "ffcae364ab6bdafe64332db107eeae8510c07c86603963a63c9d7a6597f1c29e",
-      "reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：由三词表接受/残差概率推进到一轮B/B/C提议、首token接受、次token拒绝补A、丢弃后缀与KV恢复，区分输出提交和缓存计算。 计算链路补充审阅：补权重整数编码、饱和、恢复、点积输出误差和含scale存储账本；低精度链接直达架构precision主讲。 图示补充审阅：Added two genuinely missing layouts: nonsequential parallel domains and cross-service state transfer. Static preservation, unique/default-visible four-node structure, TP arithmetic, and transfer units checked. No framework compatibility, GPU service, full build, or browser test claimed.。",
+      "sha256": "a1e51113d8a17da8cacd0025f78f2bcce471a1b6a7c562ec574be675480fe42b",
+      "reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：由三词表接受/残差概率推进到一轮B/B/C提议、首token接受、次token拒绝补A、丢弃后缀与KV恢复，区分输出提交和缓存计算。 计算链路补充审阅：补权重整数编码、饱和、恢复、点积输出误差和含scale存储账本；低精度链接直达架构precision主讲。 图示补充审阅：Added two genuinely missing layouts: nonsequential parallel domains and cross-service state transfer. Static preservation, unique/default-visible four-node structure, TP arithmetic, and transfer units checked. No framework compatibility, GPU service, full build, or browser test claimed.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（t_{\\rm transfer}、M_{\\rm state}、B_{\\rm effective}&gt;0、B、\\ge、x），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：并行、PD、量化、投机、规划、来源全部审阅。原理与算例：GiB/GB传输下界；舍入/饱和误差；接受min(p,q)→残差→p；三词表质量；提交长度/真实加速例。精简与证据：工业规划按需；MTP、贪心/采样和量化target边界保留；原论文收益不当本地测量。"
     },
     {
       "source": "content/series/llm-serving/s03_capacity_cost.html",
-      "sha256": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
-      "reason": "逐页审阅：账本、70B例、指标、rollout、成本、协议、来源全部审阅。原理与算例：唯一物理槽/本地head账本；70B/TP4/32K逐维；TTFT/ITL/TPOT时间例；Little稳定条件；全部尝试资源/成功。精简与证据：去第二总图；资源不能跨单位直接相加、费用避免重复；CSV/JSON规划不冒充实测。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "0499239054aec2d8129f26f97f03ee341d978ea377bd482220b2e5ddb44dbbd1",
+      "reason": "逐页审阅：账本、70B例、指标、rollout、成本、协议、来源全部审阅。原理与算例：唯一物理槽/本地head账本；70B/TP4/32K逐维；TTFT/ITL/TPOT时间例；Little稳定条件；全部尝试资源/成功。精简与证据：去第二总图；资源不能跨单位直接相加、费用避免重复；CSV/JSON规划不冒充实测。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（M_{\\rm peak}、l、T_l、h_l、d_l、b_{K,l},b_{V,l}），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：账本、70B例、指标、rollout、成本、协议、来源全部审阅。原理与算例：唯一物理槽/本地head账本；70B/TP4/32K逐维；TTFT/ITL/TPOT时间例；Little稳定条件；全部尝试资源/成功。精简与证据：去第二总图；资源不能跨单位直接相加、费用避免重复；CSV/JSON规划不冒充实测。"
     },
     {
@@ -336,55 +336,56 @@
     },
     {
       "source": "content/series/llm-posttraining/s01_supervision_preference.html",
-      "sha256": "f7f16e1092ea8ae816770182914cbeca3358d5dc81e9bd86309eae595f765589",
-      "reason": "逐页审阅：SFT、模板/packing、恢复、拒绝采样、偏好、反馈与准入全部审阅。原理与算例：mask 梯度；KL 正则最优策略→DPO 分类目标。精简与证据：方法结论分点，保留KTO/恢复训练来源与退化，偏好细讲唯一主讲。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：补DPO从回答token条件概率、似然求和、reference差值到loss/梯度；以共享首位置的三参数模型复算一步SGD。 讲解连贯性续轮审阅：仅消除有效轨迹集合与N分母的局部歧义；完整DPO、mask、恢复和拒绝采样算例已充分。",
+      "sha256": "31e98612c39c8c478b58166fd4b8ab17dc603f86d512dbdca6269b7bfbb7031f",
+      "reason": "逐页审阅：SFT、模板/packing、恢复、拒绝采样、偏好、反馈与准入全部审阅。原理与算例：mask 梯度；KL 正则最优策略→DPO 分类目标。精简与证据：方法结论分点，保留KTO/恢复训练来源与退化，偏好细讲唯一主讲。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：补DPO从回答token条件概率、似然求和、reference差值到loss/梯度；以共享首位置的三参数模型复算一步SGD。 讲解连贯性续轮审阅：仅消除有效轨迹集合与N分母的局部歧义；完整DPO、mask、恢复和拒绝采样算例已充分。 变量前置定义：补n=1,\\ldots,N、i、a_{ni}、h_{ni}、\\pi_\\theta、\\theta等首次使用前的说明，公式未改。",
       "prior_reason": "逐页审阅：SFT、模板/packing、恢复、拒绝采样、偏好、反馈与准入全部审阅。原理与算例：mask 梯度；KL 正则最优策略→DPO 分类目标。精简与证据：方法结论分点，保留KTO/恢复训练来源与退化，偏好细讲唯一主讲。"
     },
     {
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
-      "sha256": "3b2f71d2979d3f781e4b69292b1be821ab27e6923a303b52cb035c7d2814a7fa",
-      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件。 更新与状态链路复查：展开GAE两决策的TD、优势、固定lambda-return目标、actor/critic损失；独立控制bootstrap和片段递推，比较误标terminal后的符号。 图示补充审阅：Make value bootstrap and next-advantage continuation visually independent without replacing any formula, table or numerical example.。",
+      "sha256": "2c4b1f6e67a618add82d58434133008704acb1f1f28fc6b4c695fa9652762aae",
+      "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件。 更新与状态链路复查：展开GAE两决策的TD、优势、固定lambda-return目标、actor/critic损失；独立控制bootstrap和片段递推，比较误标terminal后的符号。 图示补充审阅：Make value bootstrap and next-advantage continuation visually independent without replacing any formula, table or numerical example.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（\\theta、\\tau、p(h_0)、p_\\theta(\\tau)、t=0,\\ldots,T-1、\\gamma\\in[0,1]），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。"
     },
     {
       "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
-      "sha256": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
-      "reason": "逐页审阅：学生轨迹、局部KL、采样梯度、教师接口、多教师、自蒸馏、引导、遗忘全部审阅。原理与算例：reverse-KL 局部导数；数值估计与梯度估计区别。精简与证据：教师接口/成本和监控分点，保工业路线与退化，OPD原理集中本章。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 分类与课程复查：在多教师/自蒸馏原节加入Agentic-OPD与ECOS；核对top-k、验证切分、命令监督、遗忘与额外成本。",
+      "sha256": "005c4cc2ec621144dab6df52e1dbbb6aa1f28075c5342884549c1e2bc147831b",
+      "reason": "逐页审阅：学生轨迹、局部KL、采样梯度、教师接口、多教师、自蒸馏、引导、遗忘全部审阅。原理与算例：reverse-KL 局部导数；数值估计与梯度估计区别。精简与证据：教师接口/成本和监控分点，保工业路线与退化，OPD原理集中本章。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 分类与课程复查：在多教师/自蒸馏原节加入Agentic-OPD与ECOS；核对top-k、验证切分、命令监督、遗忘与额外成本。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（\\theta,\\bar\\theta、h、d_{\\bar\\theta}、\\pi_\\theta,\\pi_T、T、D），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：学生轨迹、局部KL、采样梯度、教师接口、多教师、自蒸馏、引导、遗忘全部审阅。原理与算例：reverse-KL 局部导数；数值估计与梯度估计区别。精简与证据：教师接口/成本和监控分点，保工业路线与退化，OPD原理集中本章。"
     },
     {
       "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
-      "sha256": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
-      "reason": "逐页审阅：状态机、反馈、过程监督、PURE/Cliff、多步信用、MiMo/RLDS与案例全部审阅。原理与算例：重复正确步骤漏洞；局部优势与credit粒度。精简与证据：保GraphGPO/ReBel/EFCA/MileGPO等区别与因果边界；经验、奖励漏洞与追问分点。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "4814f37c3b23f8994c945b3d7b18a9e28faf37a0d8f4d03a406ebf0fbccdba42",
+      "reason": "逐页审阅：状态机、反馈、过程监督、PURE/Cliff、多步信用、MiMo/RLDS与案例全部审阅。原理与算例：重复正确步骤漏洞；局部优势与credit粒度。精简与证据：保GraphGPO/ReBel/EFCA/MileGPO等区别与因果边界；经验、奖励漏洞与追问分点。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（j、\\gamma、R、A、Q,V、f_i），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：状态机、反馈、过程监督、PURE/Cliff、多步信用、MiMo/RLDS与案例全部审阅。原理与算例：重复正确步骤漏洞；局部优势与credit粒度。精简与证据：保GraphGPO/ReBel/EFCA/MileGPO等区别与因果边界；经验、奖励漏洞与追问分点。"
     },
     {
       "source": "content/series/llm-posttraining/s05_frameworks_async.html",
-      "sha256": "9722dd3f685411b5895121dd841bedf1798651af6d5c855107fdc77c3466e494",
-      "reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：用跨v7/v8采样与v8/v9训练的两段轨迹复算两类ratio、乘积/几何平均与clip顺序；说明逐段behavior分母和状态访问边界。 图示补充审阅：Add a layered handoff beside the existing ratio table. Keep numerical calculations, framework configurations, reference role and cache caveats unchanged.。",
+      "sha256": "f6334cac7a3b7597611cc33be8731ad5f8aaefb62762370c1345ee6c6e887d70",
+      "reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：用跨v7/v8采样与v8/v9训练的两段轨迹复算两类ratio、乘积/几何平均与clip顺序；说明逐段behavior分母和状态访问边界。 图示补充审阅：Add a layered handoff beside the existing ratio table. Keep numerical calculations, framework configurations, reference role and cache caveats unchanged.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（i、C_i、B_i、t_i、a_i\\in(0,1]、\\propto），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：框架、配置映射、同步/异步、版本偏移、部分轨迹、Lightning/slime与成本全部审阅。原理与算例：策略/数值/完成顺序三偏移；旧KV跨权重边界。精简与证据：次要配置按需；固定源码与12类框架口径保留，三种偏差不混成token ratio。"
     },
     {
       "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
-      "sha256": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
-      "reason": "逐页审阅：代码、科学、GUI三任务、反馈、轨迹、实验、诊断与交付全部审阅。原理与算例：输入→动作→产物→反馈→训练目标。精简与证据：GRPO/OPD重复全文归主讲；保独立验收、环境状态、特权信息和未执行实验边界。"
+      "sha256": "e19b87b641640819e04becc170dbe0a9ccaf0c1dd19d3499edcc4759ce6fa642",
+      "reason": "逐页审阅：代码、科学、GUI三任务、反馈、轨迹、实验、诊断与交付全部审阅。原理与算例：输入→动作→产物→反馈→训练目标。精简与证据：GRPO/OPD重复全文归主讲；保独立验收、环境状态、特权信息和未执行实验边界。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（h、y、a、\\pi(\\cdot\\mid h)、q(\\cdot\\mid h)、\\log），公式、标题、锚点与引用未改。",
+      "prior_reason": "逐页审阅：代码、科学、GUI三任务、反馈、轨迹、实验、诊断与交付全部审阅。原理与算例：输入→动作→产物→反馈→训练目标。精简与证据：GRPO/OPD重复全文归主讲；保独立验收、环境状态、特权信息和未执行实验边界。"
     },
     {
       "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
-      "sha256": "34eafc818650fcb52194bf0ca476c9d52b24f12609e60c72d07851f913157480",
-      "reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：新增训练系统四层职责图，区分模型结构、优化器、并行状态布局与后训练编排；复用原有实现和固定版本框架地图。 分类与课程复查：完整保留AdamW/Muon推导；补四层训练架构、TorchTitan/MaxText固定源码、框架验收、roofline和nGPT整套配方证据。 完整算例与主题整合：Muon工业配方六项对照与逻辑矩阵、分布式切片、状态恢复接到polar推导后；保留原固定引用和适用边界。 计算链路补充审阅：把Muon摘要中的旧跨主题跳转改为本章工业配方，避免来回跳转。 图示补充审阅：Correct one misleading existing topology and add an ownership comparison. Keep LoRA formulas/examples, optimizer derivations, capacity numbers and process-group code unchanged.。",
+      "sha256": "51865845db2c940b0f3e2e9b1ad8f4200f981a51e7115315777e0c4f3543f557",
+      "reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：新增训练系统四层职责图，区分模型结构、优化器、并行状态布局与后训练编排；复用原有实现和固定版本框架地图。 分类与课程复查：完整保留AdamW/Muon推导；补四层训练架构、TorchTitan/MaxText固定源码、框架验收、roofline和nGPT整套配方证据。 完整算例与主题整合：Muon工业配方六项对照与逻辑矩阵、分布式切片、状态恢复接到polar推导后；保留原固定引用和适用边界。 计算链路补充审阅：把Muon摘要中的旧跨主题跳转改为本章工业配方，避免来回跳转。 图示补充审阅：Correct one misleading existing topology and add an ownership comparison. Keep LoRA formulas/examples, optimizer derivations, capacity numbers and process-group code unchanged.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（x,y、d_{\\rm in},d_{\\rm out}、W_0、A,B、r&gt;0、\\alpha），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：LoRA、AdamW/Muon、超参/算例、优化器证据、分片、batch、规划全部审阅。原理与算例：SGD→Momentum→Adam→AdamW；偏差修正；LoRA首步；polar反例；ZeRO/batch账本。精简与证据：论文效果与显存/FLOPs/带宽/通信分开；工业规划按需，未运行GPU配置明确标记。"
     },
     {
       "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
-      "sha256": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
-      "reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "dbb7755afe5eb87e2dd53e26a0c1b381b28bd0b7d3dc3aef9c17a4b6da56ad06",
+      "reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（\\alpha_g\\ge0、\\operatorname{Var}、s_j>0、\\exp、\\log s_j、\\beta_{g0}），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：来源冲突、任务族、统计、输出、verifier、切分、轨迹、追问、来源全部审阅。原理与算例：NB均值/方差；offset；8×5配对design；contrast消供体项；raw比4而log2FC=1；BH四检验。精简与证据：去第二同义总图；来源树改有分支的机制图；科学schema、许可与方法差异保留；未下载/未执行/容差未冻结状态不变。"
     },
     {
       "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
-      "sha256": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
-      "reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "df1281ca351ecf1d150b5e4107fe96a7833b3cd7c902be4480aa1bff69993d2f",
+      "reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（G、n_{B\\ {\\rm only}}、n_{A\\ {\\rm only}}、n、n>0、n>1），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：实验、异质信号、长度、角色、测量、失败、门槛、来源全部审阅。原理与算例：配对胜负→差分→标准误/区间；研究组bootstrap步骤；设备小时例。精简与证据：双A–E改6独立比较轴，下载JSON同步；步骤信用/采样拆组；GRPO与KV长算归唯一主讲；集群长配置按需。"
     },
     {
@@ -395,32 +396,32 @@
     },
     {
       "source": "content/series/llm-architecture/s01_transformer_foundations.html",
-      "sha256": "a0e8f6d2fee1076ce3cc3a9514a6c504ed20aa29a26883cbc1618db81bdbc30b",
-      "reason": "逐页审阅：条件预测、张量路径、mask、block、teacher forcing、状态成本与不变量全部审阅。原理与算例：NLL/softmax导数；4token causal mask；标签shift。精简与证据：机制展开、结论短卡；修AR训练串行等混淆，原来源和旧定位保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：修正一个影响梯度复算的归一化缺口和一个旧章序衔接标签；保留已有张量图、mask例、shift、NLL算例与状态表。 T10e将平均masked梯度原行内公式移入局部可键盘横滚的block显示span，保留全部数学字节、目标下标、闭括号与符号说明，不改共享CSS。 T10z仅追加两处noscript必要说明：block的X/U/Y形状与顺序双残差，平均masked梯度的索引、softmax导数、固定m/N缩放和原算例-0.25。移除两块恢复改前全字节；原LaTeX、代码、图、ID、引用、样式和正文不改。",
+      "sha256": "01517fca52d6d1be2b81e99e4747f64d848c6f175178212ba65b3cb89bf4ab4d",
+      "reason": "逐页审阅：条件预测、张量路径、mask、block、teacher forcing、状态成本与不变量全部审阅。原理与算例：NLL/softmax导数；4token causal mask；标签shift。精简与证据：机制展开、结论短卡；修AR训练串行等混淆，原来源和旧定位保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：修正一个影响梯度复算的归一化缺口和一个旧章序衔接标签；保留已有张量图、mask例、shift、NLL算例与状态表。 T10e将平均masked梯度原行内公式移入局部可键盘横滚的block显示span，保留全部数学字节、目标下标、闭括号与符号说明，不改共享CSS。 T10z仅追加两处noscript必要说明：block的X/U/Y形状与顺序双残差，平均masked梯度的索引、softmax导数、固定m/N缩放和原算例-0.25。移除两块恢复改前全字节；原LaTeX、代码、图、ID、引用、样式和正文不改。 变量前置定义：补B、T、S、T=S、d、V等首次使用前的说明，公式未改。",
       "prior_reason": "逐页审阅：条件预测、张量路径、mask、block、teacher forcing、状态成本与不变量全部审阅。原理与算例：NLL/softmax导数；4token causal mask；标签shift。精简与证据：机制展开、结论短卡；修AR训练串行等混淆，原来源和旧定位保留。"
     },
     {
       "source": "content/series/llm-architecture/s02_attention_position_cache.html",
-      "sha256": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
-      "reason": "逐页审阅：历史访问、MHA/MQA/GQA、cache、RoPE、稀疏、Flash/Paged与对照全部审阅。原理与算例：点积方差缩放；二维旋转与相对位移；缓存字节算例。精简与证据：型号/框架次表按需；长式分行，原图与共同预算条件保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：补齐单query从Q/K/V、整行softmax到两块最大值/指数和/加权和及输出的完整复算，解释两项同步重缩放与浮点边界。",
+      "sha256": "d94e627974669b251c31a53ff9230de0471c01ccc44443878ded907a3d537277",
+      "reason": "逐页审阅：历史访问、MHA/MQA/GQA、cache、RoPE、稀疏、Flash/Paged与对照全部审阅。原理与算例：点积方差缩放；二维旋转与相对位移；缓存字节算例。精简与证据：型号/框架次表按需；长式分行，原图与共同预算条件保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：补齐单query从Q/K/V、整行softmax到两块最大值/指数和/加权和及输出的完整复算，解释两项同步重缩放与浮点边界。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（q,k\\in\\mathbb R^{d_h}、\\ell=1,\\ldots,d_h、s、{}^\\top、s_j,p_i、j），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：历史访问、MHA/MQA/GQA、cache、RoPE、稀疏、Flash/Paged与对照全部审阅。原理与算例：点积方差缩放；二维旋转与相对位移；缓存字节算例。精简与证据：型号/框架次表按需；长式分行，原图与共同预算条件保留。"
     },
     {
       "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
-      "sha256": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
-      "reason": "逐页审阅：FFN、router、容量、参数/通信、latent专家、EP与消融全部审阅。原理与算例：两/三矩阵计数；top-k门控；容量和负载。精简与证据：规格名录折叠，不能用总参数替代激活参数或真实吞吐。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：将分散路由与容量例改为同批四token的分数、top-2归一、专家重排、输出、overflow和跨rank payload；固定简化专家与丢弃规则。",
+      "sha256": "fae860562771949dcf128281488252bac7f2a6af3a30a9fa66ea0a9005e18eca",
+      "reason": "逐页审阅：FFN、router、容量、参数/通信、latent专家、EP与消融全部审阅。原理与算例：两/三矩阵计数；top-k门控；容量和负载。精简与证据：规格名录折叠，不能用总参数替代激活参数或真实吞吐。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：将分散路由与容量例改为同批四token的分数、top-2归一、专家重排、输出、overflow和跨rank payload；固定简化专家与丢弃规则。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（W_1,W_2、d\\times f,f\\times d、b_1,b_2、f,d、W_{\\rm gate},W_{\\rm up}、d\\times f），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：FFN、router、容量、参数/通信、latent专家、EP与消融全部审阅。原理与算例：两/三矩阵计数；top-k门控；容量和负载。精简与证据：规格名录折叠，不能用总参数替代激活参数或真实吞吐。"
     },
     {
       "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
-      "sha256": "29745847d46a33c3ce3e3ee28b935d0ee918cd4200259ba7d7b73e04dd4a810a",
-      "reason": "逐页审阅：梯度、Norm、初始化/QK/长上下文、AttnRes/mHC与故障全部审阅。原理与算例：Pre/Post-Norm链式法则；LN/RMS算例。精简与证据：修免warmup绝对化；新残差增量归研究地图，基础与诊断集中本章。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：将过时研究地图第07章提示改为本主题前沿残差机制，旧来源URL继续兼容。 图示补充审阅：Revised one insufficient bypass layout; kept stability checklist, full Jacobian/Norm derivations, numeric examples, and author metrics. Static preservation and default-visible unique-ID diagram checks passed. Build/browser checks deferred.。",
+      "sha256": "150170c4c6ae57c9c583603875043422f5b6e11bc0192f80d7e98c61c0c66514",
+      "reason": "逐页审阅：梯度、Norm、初始化/QK/长上下文、AttnRes/mHC与故障全部审阅。原理与算例：Pre/Post-Norm链式法则；LN/RMS算例。精简与证据：修免warmup绝对化；新残差增量归研究地图，基础与诊断集中本章。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 计算链路补充审阅：将过时研究地图第07章提示改为本主题前沿残差机制，旧来源URL继续兼容。 图示补充审阅：Revised one insufficient bypass layout; kept stability checklist, full Jacobian/Norm derivations, numeric examples, and author metrics. Static preservation and default-visible unique-ID diagram checks passed. Build/browser checks deferred.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（x,y_{\\rm pre},y_{\\rm post}、d、N,F、J_F,J_N,J_{\\rm pre},J_{\\rm、I、d\\times d），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：梯度、Norm、初始化/QK/长上下文、AttnRes/mHC与故障全部审阅。原理与算例：Pre/Post-Norm链式法则；LN/RMS算例。精简与证据：修免warmup绝对化；新残差增量归研究地图，基础与诊断集中本章。"
     },
     {
       "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
-      "sha256": "d27252caaf1b134a288b577d2c8bff9ae32682884b18647d1877a5942dc85cb1",
-      "reason": "逐页审阅：外积、衰减/delta、Mamba/SSD、混合层、分支恢复与对照全部审阅。原理与算例：状态外积；遗忘与定向覆盖反例；SSM标量状态。精简与证据：经验精炼，有限状态压缩边界保留，cache与恢复不自动等价。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：用SSM前缀、两分支、错误共享、重放、截窗和换参数的完整数值链说明状态恢复，链接partial rollout主讲。 图示补充审阅：Revised two misleading layouts, retaining all recursive derivations and restoration tables. Static preservation plus exact SSM arithmetic and default-visible diagram checks passed. No model recovery implementation or browser test claimed.。",
+      "sha256": "dc421ddd014a3a8122dbd0b81f484b0c7d3f0d98d27cdd414a6d42930f0ae6be",
+      "reason": "逐页审阅：外积、衰减/delta、Mamba/SSD、混合层、分支恢复与对照全部审阅。原理与算例：状态外积；遗忘与定向覆盖反例；SSM标量状态。精简与证据：经验精炼，有限状态压缩边界保留，cache与恢复不自动等价。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 更新与状态链路复查：用SSM前缀、两分支、错误共享、重放、截窗和换参数的完整数值链说明状态恢复，链接partial rollout主讲。 图示补充审阅：Revised two misleading layouts, retaining all recursive derivations and restoration tables. Static preservation plus exact SSM arithmetic and default-visible diagram checks passed. No model recovery implementation or browser test claimed.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（t=1,2,\\ldots、i=1,\\ldots,t、k_i,v_i、i、S_t\\in\\mathbb R^{d_v\\times、t），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：外积、衰减/delta、Mamba/SSD、混合层、分支恢复与对照全部审阅。原理与算例：状态外积；遗忘与定向覆盖反例；SSM标量状态。精简与证据：经验精炼，有限状态压缩边界保留，cache与恢复不自动等价。"
     },
     {
@@ -437,14 +438,14 @@
     },
     {
       "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
-      "sha256": "6f40a994b7dbbf4c480797340a4eb6cd7ff53363bea1076aaeaecbe771793785",
-      "reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：Add a purpose-specific branching handoff before the existing admission table. Preserve status fields and distinguish infrastructure/invalid-task rejection from normal policy failures. T5 visual blocker fix: at 1440px JS/noJS, auto-fit wraps Critic below CPT (3+1) and a downward marker implies CPT -> Critic. Scope hollow-diamond comparison markers to data-admission-map at all widths; preserve auto-fit, the four independent admission contracts, prose, title, IDs, formulas and sources. Independent browser/pixel recheck remains pending.。",
+      "sha256": "ab9fc825a00577d6ebcc4ff02676e4855dfb476565e36dd059e2c8c57647d3ff",
+      "reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：Add a purpose-specific branching handoff before the existing admission table. Preserve status fields and distinguish infrastructure/invalid-task rejection from normal policy failures. T5 visual blocker fix: at 1440px JS/noJS, auto-fit wraps Critic below CPT (3+1) and a downward marker implies CPT -> Critic. Scope hollow-diamond comparison markers to data-admission-map at all widths; preserve auto-fit, the four independent admission contracts, prose, title, IDs, formulas and sources. Independent browser/pixel recheck remains pending.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（r、f、[0,1]、R_{\\rm repair}、f<1、1-f），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。"
     },
     {
       "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
-      "sha256": "ae83158ab1137b57376e782ef1160d1aa96d2fa8b1d88799f84ed695044b74ea",
-      "reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 讲解连贯性续轮审阅：只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。",
+      "sha256": "9c65bbf62656d64982f2a9d851201be757efac7d3edf574df5b5bf56aa794dee",
+      "reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 讲解连贯性续轮审阅：只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。 变量前置定义：补p\\in[0,1]、k\\ge1、(1-p)^k、p^k、n,c,k、0\\le c\\le n等首次使用前的说明，公式未改。",
       "prior_reason": "逐页审阅：测量对象、版本、各领域、指标、SkillsBench、选择全部审阅。原理与算例：pass@k/pass^k独立式；不放回失败组合→有限样本估计；n5/c2/k2=0.7。精简与证据：指标先讲，完整版本/领域名录按需；成功成本只短回顾；保留原表、未复现说明和费用子集分母。"
     },
     {
@@ -466,8 +467,8 @@
     },
     {
       "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
-      "sha256": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
-      "reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：归入架构主题，明确drafter与异步对齐分别属于推理和后训练。",
+      "sha256": "3eec923ee1e5e2cae5a6940df11cdfa84042c6c3b36f12bb64fffbf96e7dd68b",
+      "reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：归入架构主题，明确drafter与异步对齐分别属于推理和后训练。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（H_{20}、N\\times5120、N、l、W_l^{KV},W_l^Z、C_l,Z_l），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：版本、CED、CSA2、FP4/890B、replay、Engram、mHC/MoE、家族与负载全部审阅。原理与算例：C/Z张量来源；百万历史首次扫描与16384候选；entry→2.5entry/token→890B逐项。精简与证据：重复memory分类/episode总时间式移出；原4SVG及放大保留；encoder/decoder replay近似、HBM/host不同口径不相乘；短轮成本列表。"
     },
     {
@@ -484,14 +485,14 @@
     },
     {
       "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
-      "sha256": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
-      "reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：补充经典骨架到高效模块、混合状态与前沿家族的学习链路图，以及全站四类目录入口；保留固定版本规格和全部来源，本轮未重新核验所有型号。 分类与课程复查：增补经典→前沿学习图和四类目录关系；Kimi连接新服务字节/TTFT证据，九家族固定版本规格保持。 完整算例与主题整合：家族比较接在架构机制后，修正前后节顺序及集中来源编号描述。 计算链路补充审阅：Muon链接直达训练主讲并修正本页措辞；家族节收束指向前面残差机制及后续DeepSeek缓存专例。",
+      "sha256": "97c4abae95cf0a1bed50b705230dd6fdb810c0ebf353e9d9848f51b9dd7a9e63",
+      "reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：补充经典骨架到高效模块、混合状态与前沿家族的学习链路图，以及全站四类目录入口；保留固定版本规格和全部来源，本轮未重新核验所有型号。 分类与课程复查：增补经典→前沿学习图和四类目录关系；Kimi连接新服务字节/TTFT证据，九家族固定版本规格保持。 完整算例与主题整合：家族比较接在架构机制后，修正前后节顺序及集中来源编号描述。 计算链路补充审阅：Muon链接直达训练主讲并修正本页措辞；家族节收束指向前面残差机制及后续DeepSeek缓存专例。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（q_t,k_t\\in\\mathbb R^{d_k}、v_t,o_t\\in\\mathbb R^{d_v}、t、\\beta_t、A_t,I、d_k\\times d_k），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：比较轴、九家族、状态、Qwen/Kimi/Nemotron/GLM/MiniMax/MiMo/Step/Gemma、闭源、实验全部审阅。原理与算例：GDN标量→KDA通道gate；AD≠DA矩阵例；实际层数与独立服务测量。精简与证据：大规格表/实验按需；模型要点分点；NVFP4失稳切BF16无效、Step迭代精度反例、GLM随机token负载及型号例外保留。"
     },
     {
       "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
-      "sha256": "e1e1694fa3ebe4969551282a1f4292752a701e4cbc2fb69eeeb620a8fae07c44",
-      "reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：归入架构并置于家族比较前；主线收敛为残差流、LatentMoE与递归深度，Muon工业分组与分布式说明迁至训练主讲，旧段保留语义链接。 图示补充审阅：Added three nearby mechanism diagrams for real gaps beyond the existing overview/LatentMoE SVGs. Static preservation, exact numeric/shape checks, default-visible unique IDs, and four-node semantic layout checks passed. Browser, full-site, and model execution deferred.。 讲解连贯性续轮审阅：仅补AttnRes两表示例的query、Norm简化条件和key/value复核点，使公式真正连接到原输出；其余残差、latent与深度图保持原样。 T10e为原残差对照SVG增加局部横滚容器及1160px最小阅读宽度；按原viewBox864和最小9px注记推导至少1152px内容宽，留边框余量，不改资源、图内字节/ID/语义/比例。 T10p按独立六组合字线相交核实，新增默认四路线HTML主讲，类型、可用表示、操作与注记逐行对应且行间不串行；原figure/object/fallback/caption/URL及1160px横滚保留于原生参考details。原SVG字节与内部字线相交局限未改变，主讲可读性和参考保留/展开分开验收。 T10y仅追加四处noscript语义HTML：AttnRes得分/深度softmax/原value读出及两表示逐步复算，mHC逐流双支更新/约束及理想双随机证明/二乘二矩阵。移除四块可恢复改前全部字节，原LaTeX、图、引用、ID、样式和参考折叠不改。",
+      "sha256": "3b9944f3060648d06f5353574ecf272518f5668fca5c68e8feb980ae5e759647",
+      "reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：归入架构并置于家族比较前；主线收敛为残差流、LatentMoE与递归深度，Muon工业分组与分布式说明迁至训练主讲，旧段保留语义链接。 图示补充审阅：Added three nearby mechanism diagrams for real gaps beyond the existing overview/LatentMoE SVGs. Static preservation, exact numeric/shape checks, default-visible unique IDs, and four-node semantic layout checks passed. Browser, full-site, and model execution deferred.。 讲解连贯性续轮审阅：仅补AttnRes两表示例的query、Norm简化条件和key/value复核点，使公式真正连接到原输出；其余残差、latent与深度图保持原样。 T10e为原残差对照SVG增加局部横滚容器及1160px最小阅读宽度；按原viewBox864和最小9px注记推导至少1152px内容宽，留边框余量，不改资源、图内字节/ID/语义/比例。 T10p按独立六组合字线相交核实，新增默认四路线HTML主讲，类型、可用表示、操作与注记逐行对应且行间不串行；原figure/object/fallback/caption/URL及1160px横滚保留于原生参考details。原SVG字节与内部字线相交局限未改变，主讲可读性和参考保留/展开分开验收。 T10y仅追加四处noscript语义HTML：AttnRes得分/深度softmax/原value读出及两表示逐步复算，mHC逐流双支更新/约束及理想双随机证明/二乘二矩阵。移除四块可恢复改前全部字节，原LaTeX、图、引用、ID、样式和参考折叠不改。 变量前置定义：补h_1=(2,0)^\\top,h_2=(0,4)^\\、(\\sqrt2,0)^\\top,(0,\\sqrt2)、q_l=(0,\\log3/\\sqrt2)^\\top、\\log3、(0.5,3)^\\top、X_l\\in\\mathbb R^{n\\times d等首次使用前的说明，公式未改。",
       "prior_reason": "逐页审阅：残差、latent专家、工业Muon、精度、深度、Agent对齐、独立实验、来源全部审阅。原理与算例：AttnRes得分→权重→原表示读取及(0.5,3)例；双随机凸组合范数推导与差异缩半；16→4MiB同分派；递归状态1/1.5/1.75。精简与证据：基础Muon与LatentMoE公式归训练/架构；新机制必要过程默认展开；完整工业参数分工、矩阵切片边界、Single-Pass20d→10d限制及原SVG保留。"
     },
     {
@@ -502,20 +503,20 @@
     },
     {
       "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
-      "sha256": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
-      "reason": "逐页审阅：数据、CLM/FIM、预算、长上下文、恢复、阶段准入全部审阅。原理与算例：packing边界；6NT前向/反向来由。精简与证据：保真实token/重复/预算区别，工程结论分点、共同预算证据保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：补充Chinchilla损失模型、固定算力最优分配推导、符号与适用边界；增加scaling ladder流程、IsoFLOP与调度偏差解释及面试追问。依据Kaplan与Chinchilla原论文；实验流程为建议，未作训练复现。 分类与课程复查：补固定算力最优解、IsoFLOP/scaling ladder、μP/WSD机制与图；新增混合token、重复倍数与目标占比算例。 计算链路补充审阅：将打包概念例展开为四token可见矩阵、未shift目标mask、shift标签与有效分母；分别验attention隔离和跨文档目标屏蔽。",
+      "sha256": "9ec809e4bcfe18a43b19852c5923688f3db2ce5a728467c9a278b10084f7aa94",
+      "reason": "逐页审阅：数据、CLM/FIM、预算、长上下文、恢复、阶段准入全部审阅。原理与算例：packing边界；6NT前向/反向来由。精简与证据：保真实token/重复/预算区别，工程结论分点、共同预算证据保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 结构补充审阅：补充Chinchilla损失模型、固定算力最优分配推导、符号与适用边界；增加scaling ladder流程、IsoFLOP与调度偏差解释及面试追问。依据Kaplan与Chinchilla原论文；实验流程为建议，未作训练复现。 分类与课程复查：补固定算力最优解、IsoFLOP/scaling ladder、μP/WSD机制与图；新增混合token、重复倍数与目标占比算例。 计算链路补充审阅：将打包概念例展开为四token可见矩阵、未shift目标mask、shift标签与有效分母；分别验attention隔离和跨文档目标屏蔽。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（k、j、U_j&gt;0、p_j,f_j、\\sum_kp_kf_k&gt;0、i=1,\\ldots,n），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：数据、CLM/FIM、预算、长上下文、恢复、阶段准入全部审阅。原理与算例：packing边界；6NT前向/反向来由。精简与证据：保真实token/重复/预算区别，工程结论分点、共同预算证据保留。"
     },
     {
       "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
-      "sha256": "b40a0542bccff925536a61b4dd408efcec8840385d5a68162667daeee44ce47d",
-      "reason": "逐页审阅：阶段、工业配方、受控结果、数据/伪代码、配比回放与科学交接全部审阅。原理与算例：CSV四视角；输入比例与目标比例反例。精简与证据：长论文路线表按需；保能力下降与混杂条件，CPT不由名称决定目标。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：仅补确证的CSV类型/空值条件和输出检查，保持原样本/代码/引用；其余配比与归因解释充分。",
+      "sha256": "7650304875282ca3d2700fc1ad06ca2cca36ee7783a210b4902735e3b606ea13",
+      "reason": "逐页审阅：阶段、工业配方、受控结果、数据/伪代码、配比回放与科学交接全部审阅。原理与算例：CSV四视角；输入比例与目标比例反例。精简与证据：长论文路线表按需；保能力下降与混杂条件，CPT不由名称决定目标。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：仅补确证的CSV类型/空值条件和输出检查，保持原样本/代码/引用；其余配比与归因解释充分。 变量前置定义：补j,k、N_{{\\rm input},k}>0、N_{{\\rm target},k}、w_k、\\rho_k=N_{{\\rm target},k}/、L_k等首次使用前的说明，公式未改。",
       "prior_reason": "逐页审阅：阶段、工业配方、受控结果、数据/伪代码、配比回放与科学交接全部审阅。原理与算例：CSV四视角；输入比例与目标比例反例。精简与证据：长论文路线表按需；保能力下降与混杂条件，CPT不由名称决定目标。"
     },
     {
       "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
-      "sha256": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
-      "reason": "逐页审阅：协议策略、角色mask、轨迹准入、拒绝采样、偏好/教师与RL交接全部审阅。原理与算例：mask的直接梯度与条件反传；筛选偏移。精简与证据：DPO/OPD/PPO重复推导归后训练；结论按准入条件与失败信号精简。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。",
+      "sha256": "2af2fb193bb301998cb1103ec249d5bbeb2d2f39bc12f403e339039007b2aba8",
+      "reason": "逐页审阅：协议策略、角色mask、轨迹准入、拒绝采样、偏好/教师与RL交接全部审阅。原理与算例：mask的直接梯度与条件反传；筛选偏移。精简与证据：DPO/OPD/PPO重复推导归后训练；结论按准入条件与失败信号精简。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（x_{1:T}、T、t=1,\\ldots,T、x_t、x_{\\lt t}、\\theta），公式、标题、锚点与引用未改。",
       "prior_reason": "逐页审阅：协议策略、角色mask、轨迹准入、拒绝采样、偏好/教师与RL交接全部审阅。原理与算例：mask的直接梯度与条件反传；筛选偏移。精简与证据：DPO/OPD/PPO重复推导归后训练；结论按准入条件与失败信号精简。"
     },
     {

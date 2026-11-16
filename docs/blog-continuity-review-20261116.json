@@ -5,13 +5,13 @@
   "base_commit": "80148053b623c4b6e1fc5a1a062f1113e5039443",
   "summary": {
     "local_sources": 74,
-    "changed_sources": 13,
-    "retained_sources": 61,
-    "change_units": 33,
+    "changed_sources": 45,
+    "retained_sources": 29,
+    "change_units": 74,
     "added_diagrams": 1,
     "revised_diagrams": 2,
     "scope": "保留作者逐源examined、reason、changes、assumptions与evidence_boundary；完整报告只按作者列明的主讲段检查，不等于所有历史科研事实复核。",
-    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。"
+    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。 T12变量前置定义轮：41源在公式首次使用前补充或改写符号说明，其中32源由保留转为改稿；Kimi/Gemma两张自制图按报告原文修正router与local:global口径。公式、标题、锚点与引用未改。三个sources.json仅由citations.py refresh-usages重算used_in，故从冻结集移入精确集成集。该轮以全站扫描定位候选、逐页对照源文本修复，make check通过；未重跑浏览器像素、模型训练或科研复现。"
   },
   "sha_chain": {
     "historical_review": "docs/blog-diagram-review-20261115.json",
@@ -26,8 +26,8 @@
       "input_sha256": "1a79b6024a3cb550ceb04e252d75453e78365c4a283c585fd177bdb18a4901fd",
       "counts": {
         "sources": 18,
-        "changed": 4,
-        "retained": 14
+        "changed": 14,
+        "retained": 4
       },
       "checks_file": "architecture-inference-checks.json",
       "checks_sha256": "6f01c79a84748931d247a0c0e43ad33c56d4c393150ab43f5715a2cbdd7a1b14",
@@ -50,8 +50,8 @@
       "input_sha256": "3a7ba497022eb0133f64d5b2fcbb214543f24a74b6ff81017c58e196d929eb26",
       "counts": {
         "sources": 29,
-        "changed": 6,
-        "retained": 23
+        "changed": 19,
+        "retained": 10
       },
       "checks_file": "checks.json",
       "checks_sha256": "6e92b19995c33784ee88b5b1f9e80fdaccef9a138ceabd75a87868819fe58719",
@@ -68,8 +68,8 @@
       "input_sha256": "dcb12f31547ec1e959710bca13499e1e35e00b53f32ae224f34ff72a1e4c16ce",
       "counts": {
         "sources": 27,
-        "changed": 3,
-        "retained": 24
+        "changed": 12,
+        "retained": 15
       },
       "checks_file": "agent-multimodal-diffusion/checks.json",
       "checks_sha256": "1503eb5e856d17f18da5597916fb44a82b98c83d2d0b400393d04f139ee66830",
@@ -174,7 +174,6 @@
     "assets/research/2026-11-14/programgym-2610.13395v1.pdf": "d1c4e4c3b39c90f6702c7dd8403b128dffdb3c3c13c597f960001ef8c93d044c",
     "assets/research/2026-11-14/rlds-2609.27035v1.pdf": "15bb088aaeae730807da6cd41895af0be5a6f6210185ace9ad335f729273ae8b",
     "assets/research/2026-11-14/sapo-single-2608.19842v1.pdf": "7c71b61820ab37694ac9b0f73c1d0533b2311b30a006b7ee25fd8bf645c45288",
-    "assets/research/2026-11-14/sources.json": "1e34bcb6a21bf55acea8553a8525d87855057457747fc012a08c643c7b9ff1c1",
     "assets/research/2026-11-14/swesmith-2504.21798v1.pdf": "15321ed2d58b1ae263a1b0ddad8a5a20f7062a776be850a3acf9dd7323833afd",
     "assets/research/agent-data-benchmarks/bounded-replay.svg": "c4649c46a6cf647f21c5e37afca2ed01f1608840177b0fb535c90541900eeb74",
     "assets/research/agent-data-benchmarks/ced-path.svg": "40f041a4bf2fa1a228671fb593a777e9ccf20a919867d6cabb95e4b45fd5a88e",
@@ -182,7 +181,6 @@
     "assets/research/agent-data-benchmarks/figure-data.json": "5235aaf019e3e55a6b6046c77dc23444df6c72d97d46404fb30b706e603f4088",
     "assets/research/agent-data-benchmarks/global-kv-bytes.csv": "f4cf2956f27ac7a030470fc18287d3ef3005b81a12c03b33dfc07a66d95b27a9",
     "assets/research/agent-data-benchmarks/global-kv-bytes.svg": "ae6f31f56ffce4b3cca814ffbc78f64a530b8eae583d8ec34ad68fb460035d8d",
-    "assets/research/agent-data-benchmarks/sources.json": "d079bec50018bb400f509024705a8e579c6605c74dfd61d45663665233a86957",
     "assets/research/agent-data-benchmarks/task-synthesis-flow.svg": "b161f47124ef8aa256996c64b65b2311e42d80ba4251b0d50d34ec00b7f13f13",
     "assets/research/architecture-20261114/figure-data.json": "f16c3fd43b34731fd650b863ef521806eb89522dd0592f52a216dfc5da8e5105",
     "assets/research/architecture-20261114/history-paths.svg": "f5686b9bd537ec3c75d5ca06308add5bdd2965aabd6aa6c4b5bc22e2bb96e9ea",
@@ -215,7 +213,6 @@
     "assets/research/posttraining-20261114/group-signal.svg": "69548ad19fd1babeee06b77c1a61357bbffaf2574d9df547e638a4c82c96a4cf",
     "assets/research/posttraining-20261114/mimo-compute.csv": "7f3589ab2d347d7c45fd3413fbb0d579b81d25202274ed461340fd4ddf0b725e",
     "assets/research/posttraining-20261114/mimo-compute.svg": "75b2d5c97277b8a8da9040bbf65cfd84d637db1e0e9c6967079c2a713d052d8b",
-    "assets/research/posttraining-20261114/sources.json": "37a25b9bde4880686700ab31c33f08dd84527b7083f49db98794b05fd415b875",
     "assets/research/scientific-agent-design-20261114/README.md": "417c58c3e0de1863b5c5f939c9d65c786cba4c39a3ea09cee9620e1d8c9ed59e",
     "assets/research/scientific-agent-design-20261114/cluster-plan.json": "69b1d5f3621ff85a5cf20dcd320fae2dd9c2ba5ebf5049af839dd72dac777751",
     "assets/research/scientific-agent-design-20261114/cost-record.schema.json": "83539b1b8684b7244cc614b5ebb7e2202632e3a6b60fb492d00a8c4e30e38b1b",
@@ -331,9 +328,12 @@
     "templates/post.md": "396ea466be4f85aef8d90210787aa4e3ea577d2ec712e7bd9c1c0440836d53a9"
   },
   "integrated_files": {
-    "docs/organization-changes-20261115.json": "c9a08ef657f0b7561b946f02c0ef59b90520c6621fa395378dfa028039efc2f1",
-    "docs/content-changes.json": "9c6461f949fe54f4d9f5af655cfbe91f5a07410d74bff44e18dc0bcb5d8a4210",
-    "content/catalog.json": "30c0178b1a92cfcccf2d6651a4ca88969a938bd94c832fc395a1f67414d85311"
+    "content/catalog.json": "30c0178b1a92cfcccf2d6651a4ca88969a938bd94c832fc395a1f67414d85311",
+    "assets/research/2026-11-14/sources.json": "bb58b86f1bb804059ec8cdb8c348b1a00ced2af7b1f5b17dff2402897474a888",
+    "assets/research/agent-data-benchmarks/sources.json": "73696913acd37a2086159002073de85ac4140507a77fd33e98358e3821b61f6a",
+    "assets/research/posttraining-20261114/sources.json": "a56d5b90aab056348e00b3873cf3657f0079d46629455c4a36a3208eec430d79",
+    "docs/organization-changes-20261115.json": "aa24f32a9e8939ee7d4901aa0834d1698e793569e0982b6a196e7bb521033723",
+    "docs/content-changes.json": "8b6146d8baf965082e846b43be420f1a2ab78e326537f8cb452e3bfba6caef92"
   },
   "catalog_updates": [
     {
@@ -1063,9 +1063,9 @@
     {
       "id": "my-work-holon-full",
       "source": "content/posts/my-work-holon/full-report.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
-      "sha256_after": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "sha256_after": "0c4b38a78cff07366ddaf963552ef1c2012586f1974b257e7953cc19f3a86815",
       "examined": [
         {
           "anchor": "#chapter-2",
@@ -1100,8 +1100,19 @@
           "judgment": "读取研究复盘与single-seed、sidecar、SFT稿件、data-ready限制，保留历史范围。"
         }
       ],
-      "reason": "所读主讲已有MoT分路、训练/评测链、margin分解与codec权衡图；图和文字说明互补，完整报告已有舍入与实验边界，无需重复增补。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（i、r_i、r_j、e_i），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#chapter-5",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖i、r_i、r_j、e_i；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "本次只阅读列出的主讲段、3.3算例、5.2算例、12章DiD及16章SEPIT split/gate原文，并静态查看6张指定图；未通读全部artifact折叠区或21章所有历史材料，未复现训练、73行全榜、bootstrap、codec或ProtText-Eval实验。",
       "module": "agent-multimodal-diffusion"
     },
@@ -1110,7 +1121,7 @@
       "source": "content/posts/my-work-protagent/full-report.html",
       "changed": true,
       "sha256_before": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
-      "sha256_after": "f44de32336f806dd4ca09acf0082f9c90761f4bb21461c4f5ef5bff71d2a0941",
+      "sha256_after": "c17b7b989f1190ee398d6c60cb17991fb2aa1ed8f4b4df4ce806a82377d77fca",
       "examined": [
         {
           "anchor": "sft",
@@ -1137,7 +1148,7 @@
           "judgment": "核对第13–14/45–47/59行局部目录与单列断点；第59行精确替换可恢复改前SHA，未以CSS声明替代浏览器实看。"
         }
       ],
-      "reason": "实际检查段落已有监督、回报、评测分母和复现限制，科学正文与原件保持。T10x仅将报告目录重置断点760px对齐既有单列布局850px，解除761–850px目录浮动吸顶对标题和正文的真实遮挡；未修改共享样式或历史统计。",
+      "reason": "实际检查段落已有监督、回报、评测分母和复现限制，科学正文与原件保持。T10x仅将报告目录重置断点760px对齐既有单列布局850px，解除761–850px目录浮动吸顶对标题和正文的真实遮挡；未修改共享样式或历史统计。 变量前置定义：补y_i、i、y_i^*等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "#setting",
@@ -1156,6 +1167,16 @@
             "path": "/tmp/my-blogs-continuity-review-20261116/reports/t10x-protagent-full-768-source-ready-001.json",
             "sha256": "8d5902310d5720153d218ded4363bb942723159f5ece9c6e9dc08ebfb3d9e24d"
           }
+        },
+        {
+          "anchor": "#results",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖y_i、i、y_i^*；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
         }
       ],
       "evidence_boundary": "审阅范围为04/05/07/10与12节所列阅读链路，核对的是现存文本条件及教学算式；未重新复现四臂三seed、MMseqs2同源审计、OOD/PFUA、bootstrap区间或所有历史实验。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。",
@@ -1201,9 +1222,9 @@
     {
       "id": "my-work-dllm-full",
       "source": "content/posts/my-work-dllm/full-report.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
-      "sha256_after": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "sha256_after": "810a55c152fa03c294c8810464c05a06e8805c15588d0fa28e4f857cc0029574",
       "examined": [
         {
           "anchor": "#objectives",
@@ -1242,8 +1263,19 @@
           "judgment": "699/630日志、27/32 Gen-PPL及历史CPU/MI308X smoke均为原记录，不写成本轮复现。"
         }
       ],
-      "reason": "所读理论、算法、受控任务、LM1B与框架章节已将调度、状态、监督与实验口径讲清；三张证据图和已有流程图保留，不重复增加。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（x_i、i、z_i、y_R、\\epsilon），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#objectives",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖x_i、i、z_i、y_R、\\epsilon；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "实际阅读所列章节与其完整公式/配置算例，静态查看ICL、PF、Sudoku三张嵌入PNG；没有读取699/630条原始日志、恢复D5/P5、独立重算论文表值或复跑任何历史smoke/训练/采样。",
       "module": "agent-multimodal-diffusion"
     },
@@ -1275,9 +1307,9 @@
     {
       "id": "agent-rag",
       "source": "content/series/agent-systems/s01_rag_retrieval.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "1dda55a6e6fca6df4de3d696aa822bed107052c083c20e81c8f3d3dc2d491cfa",
-      "sha256_after": "1dda55a6e6fca6df4de3d696aa822bed107052c083c20e81c8f3d3dc2d491cfa",
+      "sha256_after": "f0afaee187afff7a2cbcbc70566ec4204f15e3569af4f6ef5571495196470822",
       "examined": [
         {
           "anchor": "#retrieval",
@@ -1296,17 +1328,28 @@
           "judgment": "论文EM单位和0.41/1.89/2.36百分点只作报告表差值，不当引用支持率或本地实验。"
         }
       ],
-      "reason": "公式、独立算例、动作/观察图和证据停止规则相接充分，无需新增图。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（q、d、t、|d|、\\ell_d、k_1&gt;0），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#citation-sources-4",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖q、d、t、|d|、\\ell_d、k_1&gt;0；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "通读该源并复算教学数值；未运行Faiss、检索、Search-R1训练或重新核验外部论文性能。",
       "module": "agent-multimodal-diffusion"
     },
     {
       "id": "agent-planning",
       "source": "content/series/agent-systems/s02_planning_compute.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
-      "sha256_after": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "sha256_after": "a483b6179333d86ecc8c49cd28c090c7685ded2cb7d83790efcfb8961a88d97e",
       "examined": [
         {
           "anchor": "#search",
@@ -1325,8 +1368,19 @@
           "judgment": "两论文表不能拼因素因果排名；搜索次数不等于延迟，保留。"
         }
       ],
-      "reason": "已有完整BoN/UCT算例与状态分支图；外部副作用不能靠prompt回滚的条件已就近说明。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（\\Delta p_a、a、V、\\Delta C(a)、\\Delta U(a)），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#budget",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖\\Delta p_a、a、V、\\Delta C(a)、\\Delta U(a)；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "通读该源，复算BoN/UCT/收益教学值；分支runner、科学任务、rollout和论文训练未执行。",
       "module": "agent-multimodal-diffusion"
     },
@@ -1383,9 +1437,9 @@
     {
       "id": "serving-runtime",
       "source": "content/series/llm-serving/s01_runtime_scheduling.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "3aaa41bee76cda1b77a9671dad63fd74e6a8f940be5fccffd5d0191c3355a29c",
-      "sha256_after": "3aaa41bee76cda1b77a9671dad63fd74e6a8f940be5fccffd5d0191c3355a29c",
+      "sha256_after": "9912309fa17299280f28a8aae5285d8f5d076726db3180c65e62b22cb06a4566",
       "examined": [
         {
           "anchor": "#phases",
@@ -1408,17 +1462,28 @@
           "judgment": "132L+576min(L,2048)读取与24(132+576)存储是两账本；22.9%渐近比、16992/13824 bytes复算一致，GB300单请求prefill表不归因于读取公式。"
         }
       ],
-      "reason": "保留。分页、调度、复用和稀疏流量均有实际输入、状态、输出与排除项，既有共享页图已清楚，不重复补图。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（T、B、n_{\\rm block}、w、\\lceil\\cdot\\rceil），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖T、B、n_{\\rm block}、w、\\lceil\\cdot\\rceil；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "阅读phases/paging/prefix/implementation/mixed/evaluation及对应图和源码摘录；复算教学整数与规格算术，不重新执行固定后端、抓取源码或复现Kimi硬件测量。",
       "module": "architecture-inference"
     },
     {
       "id": "serving-parallel",
       "source": "content/series/llm-serving/s02_parallel_quantization.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "ffcae364ab6bdafe64332db107eeae8510c07c86603963a63c9d7a6597f1c29e",
-      "sha256_after": "ffcae364ab6bdafe64332db107eeae8510c07c86603963a63c9d7a6597f1c29e",
+      "sha256_after": "a1e51113d8a17da8cacd0025f78f2bcce471a1b6a7c562ec574be675480fe42b",
       "examined": [
         {
           "anchor": "#serving-parallel-domains",
@@ -1441,17 +1506,28 @@
           "judgment": "B接受、第二B拒绝后补A，后缀C丢弃；输出A与计算A的KV分开，draft/target各自恢复；30/22约1.36不误称3倍。"
         }
       ],
-      "reason": "保留。并行布局和PD边界图、完整量化与投机轨迹均足够，收益与精确性条件明确，无须新增图或重编。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（t_{\\rm transfer}、M_{\\rm state}、B_{\\rm effective}&gt;0、B、\\ge、x），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补5处符号说明，覆盖t_{\\rm transfer}、M_{\\rm state}、B_{\\rm effective}&gt;0、B、\\ge、x；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "静态审阅parallel/disaggregation/precision/speculation/plans与既有图；独立复算教学量化、传输下界和离散概率，不运行量化kernel、connector或投机服务，不重现论文性能。",
       "module": "architecture-inference"
     },
     {
       "id": "serving-capacity",
       "source": "content/series/llm-serving/s03_capacity_cost.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
-      "sha256_after": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "sha256_after": "0499239054aec2d8129f26f97f03ee341d978ea377bd482220b2e5ddb44dbbd1",
       "examined": [
         {
           "anchor": "#ledger",
@@ -1474,8 +1550,19 @@
           "judgment": "全部10次尝试、4成功、8GPU-h/20CPU-h及教学单价明确；总18、每成功4.5复算一致；零成功未定义与失败不重复计费保留。"
         }
       ],
-      "reason": "保留。完整容量和成本例已有输入、单位、分母及未验证条件，入口图只连接账本到服务结果，无重复补充必要。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（M_{\\rm peak}、l、T_l、h_l、d_l、b_{K,l},b_{V,l}），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#ledger",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补4处符号说明，覆盖M_{\\rm peak}、l、T_l、h_l、d_l、b_{K,l},b_{V,l}；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "阅读账本、容量、指标、rollout、成本、协议和来源；只复算文中理想规格与教学时间/成本，未测GPU峰值、SLO、实际报价或下载工件运行。",
       "module": "architecture-inference"
     },
@@ -1513,7 +1600,7 @@
       "source": "content/series/llm-posttraining/s01_supervision_preference.html",
       "changed": true,
       "sha256_before": "1d5189256dd5b811190995191897a4a010f207a466c7ecd8aee41e16a77b5186",
-      "sha256_after": "f7f16e1092ea8ae816770182914cbeca3358d5dc81e9bd86309eae595f765589",
+      "sha256_after": "31e98612c39c8c478b58166fd4b8ab17dc603f86d512dbdca6269b7bfbb7031f",
       "examined": [
         {
           "anchor": "sft-objective",
@@ -1536,7 +1623,7 @@
           "judgment": "checkpoint/tokenizer/template/tools/谱系和独立任务执行交接明确。"
         }
       ],
-      "reason": "仅消除有效轨迹集合与N分母的局部歧义；完整DPO、mask、恢复和拒绝采样算例已充分。",
+      "reason": "仅消除有效轨迹集合与N分母的局部歧义；完整DPO、mask、恢复和拒绝采样算例已充分。 变量前置定义：补n=1,\\ldots,N、i、a_{ni}、h_{ni}、\\pi_\\theta、\\theta等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "sft-objective",
@@ -1549,6 +1636,16 @@
             "sft-mask-example",
             "source-preservation"
           ]
+        },
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补7处符号说明，覆盖n=1,\\ldots,N、i、a_{ni}、h_{ni}、\\pi_\\theta、\\theta；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
         }
       ],
       "evidence_boundary": "本轮检查监督/恢复/RFT/偏好/交接主讲；复算教学CE、DPO和有限差分，不执行SFT或复现SimPO/ReTerm论文表。",
@@ -1557,9 +1654,9 @@
     {
       "id": "posttraining-algorithms",
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "3b2f71d2979d3f781e4b69292b1be821ab27e6923a303b52cb035c7d2814a7fa",
-      "sha256_after": "3b2f71d2979d3f781e4b69292b1be821ab27e6923a303b52cb035c7d2814a7fa",
+      "sha256_after": "2c4b1f6e67a618add82d58434133008704acb1f1f28fc6b4c695fa9652762aae",
       "examined": [
         {
           "anchor": "policy-gradient",
@@ -1590,17 +1687,28 @@
           "judgment": "Bernoulli有效组概率、相关采样限制、全同task梯度与辅助目标区别就近存在。"
         }
       ],
-      "reason": "核心推导、完整数值与边界已充分；独立复算通过，不机械增加公式/图或扩论文配方。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（\\theta、\\tau、p(h_0)、p_\\theta(\\tau)、t=0,\\ldots,T-1、\\gamma\\in[0,1]），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#policy-gradient",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补12处符号说明，覆盖\\theta、\\tau、p(h_0)、p_\\theta(\\tau)、t=0,\\ldots,T-1、\\gamma\\in[0,1]；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "检查原理、GAE/GRPO/长度与ratio主讲以及配方/诊断；独立算术/有限差分只适用于教学值，不验证公开论文数值、最新模型性能或框架GPU实现。",
       "module": "training-data"
     },
     {
       "id": "posttraining-opd",
       "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
-      "sha256_after": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "sha256_after": "005c4cc2ec621144dab6df52e1dbbb6aa1f28075c5342884549c1e2bc147831b",
       "examined": [
         {
           "anchor": "why-on-policy",
@@ -1627,17 +1735,28 @@
           "judgment": "teacher KL下降不等于综合能力提升；目标域、保留域和全学生终评充分。"
         }
       ],
-      "reason": "局部梯度、监督位置、状态支持和独立部署条件已有完整链路；保留原图与数值，不扩大多教师调研。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（\\theta,\\bar\\theta、h、d_{\\bar\\theta}、\\pi_\\theta,\\pi_T、T、D），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#why-on-policy",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补6处符号说明，覆盖\\theta,\\bar\\theta、h、d_{\\bar\\theta}、\\pi_\\theta,\\pi_T、T、D；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "审阅上述主讲与recipe/自蒸馏介入边界；只复算固定prefix教学KL，不复现ECOS/Agentic-OPD/MOPD或所有历史模型实验。",
       "module": "training-data"
     },
     {
       "id": "posttraining-rewards",
       "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
-      "sha256_after": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "sha256_after": "4814f37c3b23f8994c945b3d7b18a9e28faf37a0d8f4d03a406ebf0fbccdba42",
       "examined": [
         {
           "anchor": "environment",
@@ -1660,17 +1779,28 @@
           "judgment": "代码、科学和GUI产物/状态不变量及投机路径明确；无需再补四节点图。"
         }
       ],
-      "reason": "反馈来源、信用假设、可恢复性、终止与产物验收均有具体例子和边界，未发现需局部增补的确证缺口。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（j、\\gamma、R、A、Q,V、f_i），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#pure-cliff",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖j、\\gamma、R、A、Q,V、f_i；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "本轮检查环境/信号/长程信用/GAR与三案例教学链；不重新复现PURE、RLDS、图式信用或grader实验表。",
       "module": "training-data"
     },
     {
       "id": "posttraining-frameworks",
       "source": "content/series/llm-posttraining/s05_frameworks_async.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "9722dd3f685411b5895121dd841bedf1798651af6d5c855107fdc77c3466e494",
-      "sha256_after": "9722dd3f685411b5895121dd841bedf1798651af6d5c855107fdc77c3466e494",
+      "sha256_after": "f6334cac7a3b7597611cc33be8731ad5f8aaefb62762370c1345ee6c6e887d70",
       "examined": [
         {
           "anchor": "roles",
@@ -1697,17 +1827,28 @@
           "judgment": "rollout/training/grader、teacher、拒绝与重试成本单列，不把算力比例换成美元。"
         }
       ],
-      "reason": "版本、概率、状态续段和服务产物交接已有完整两线图及数值；复算符合，保留不增补。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（i、C_i、B_i、t_i、a_i\\in(0,1]、\\propto），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#async-full-example",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖i、C_i、B_i、t_i、a_i\\in(0,1]、\\propto；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "审阅现存固定源码摘录/教学概率与版本说明，未重新读取远端源码、认证全部后端组合、执行异步GPU或复现AReaL耗时。",
       "module": "training-data"
     },
     {
       "id": "posttraining-cases",
       "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
-      "sha256_after": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "sha256_after": "e19b87b641640819e04becc170dbe0a9ccaf0c1dd19d3499edcc4759ce6fa642",
       "examined": [
         {
           "anchor": "code-case",
@@ -1734,17 +1875,28 @@
           "judgment": "权重/协议/tasks/谱系/独立结果和旧能力交付树完整。"
         }
       ],
-      "reason": "三种任务已把输入、反馈、监督/评测分母与交付贯通；不将待执行矩阵扩写为虚构日志或新实验。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（h、y、a、\\pi(\\cdot\\mid h)、q(\\cdot\\mid h)、\\log），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖h、y、a、\\pi(\\cdot\\mid h)、q(\\cdot\\mid h)、\\log；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "检查教学任务合同和设计矩阵，不执行mean修复任务、RNA-seq、GUI状态操作、轨迹采集或模型训练。",
       "module": "training-data"
     },
     {
       "id": "training-methods-systems",
       "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "34eafc818650fcb52194bf0ca476c9d52b24f12609e60c72d07851f913157480",
-      "sha256_after": "34eafc818650fcb52194bf0ca476c9d52b24f12609e60c72d07851f913157480",
+      "sha256_after": "51865845db2c940b0f3e2e9b1ad8f4200f981a51e7115315777e0c4f3543f557",
       "examined": [
         {
           "anchor": "peft",
@@ -1775,17 +1927,28 @@
           "judgment": "128/1024池与70B32.8125GB静态账本明确是规划，CPU/teacher/reference另计，不称投产可用。"
         }
       ],
-      "reason": "更新对象、符号、数值、状态所有权、复算条件和恢复合同已有详细主讲；未发现应补的新局部缺口。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（x,y、d_{\\rm in},d_{\\rm out}、W_0、A,B、r&gt;0、\\alpha），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补14处符号说明，覆盖x,y、d_{\\rm in},d_{\\rm out}、W_0、A,B、r&gt;0、\\alpha；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "独立复算LoRA教学量、AdamW、状态字节、Muon主乘法与进程数；不验证所有优化器论文数据、GPU耗时、kernel、框架支持或集群运行。",
       "module": "training-data"
     },
     {
       "id": "scientific-task-family",
       "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
-      "sha256_after": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "sha256_after": "dbb7755afe5eb87e2dd53e26a0c1b381b28bd0b7d3dc3aef9c17a4b6da56ad06",
       "examined": [
         {
           "anchor": "provenance",
@@ -1808,17 +1971,28 @@
           "judgment": "研究/供体/source lineage为独立单位，不能随机拆8列或千题面冒充泛化。"
         }
       ],
-      "reason": "统计输入、符号/单位、分母、输出和未知reference边界齐全；保留原图、全部公式与科学结果未知状态。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（\\alpha_g\\ge0、\\operatorname{Var}、s_j>0、\\exp、\\log s_j、\\beta_{g0}），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#reading-section-4",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补4处符号说明，覆盖\\alpha_g\\ge0、\\operatorname{Var}、s_j>0、\\exp、\\log s_j、\\beta_{g0}；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "只复算现有NB/offset/BH教学数值并检查合同；未下载GEO/SRA/airway、运行DESeq2/edgeR、生成基因结果、验证许可/容差或科学盲测。",
       "module": "training-data"
     },
     {
       "id": "cluster-training-evaluation",
       "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
-      "sha256_after": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "sha256_after": "df1281ca351ecf1d150b5e4107fe96a7833b3cd7c902be4480aa1bff69993d2f",
       "examined": [
         {
           "anchor": "design",
@@ -1841,8 +2015,19 @@
           "judgment": "允许多标签/undetermined，规格、方法差异、环境和budget区分，旧失败记录不覆盖。"
         }
       ],
-      "reason": "方案状态、资源量纲、实验归因与统计单位已有充分条件；原教学SE约.0448正确，不应增图或改未测配置。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（G、n_{B\\ {\\rm only}}、n_{A\\ {\\rm only}}、n、n>0、n>1），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#citation-sources-3",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖G、n_{B\\ {\\rm only}}、n_{A\\ {\\rm only}}、n、n>0、n>1；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "复算独立教学任务的配对SE/区间，不等于研究group bootstrap或实际训练seed验证；所有集群、科学任务、吞吐/价格/成功率仍未执行。",
       "module": "training-data"
     },
@@ -1876,7 +2061,7 @@
       "source": "content/series/llm-architecture/s01_transformer_foundations.html",
       "changed": true,
       "sha256_before": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
-      "sha256_after": "a0e8f6d2fee1076ce3cc3a9514a6c504ed20aa29a26883cbc1618db81bdbc30b",
+      "sha256_after": "01517fca52d6d1be2b81e99e4747f64d848c6f175178212ba65b3cb89bf4ab4d",
       "examined": [
         {
           "anchor": "#tensor-flow",
@@ -1907,7 +2092,7 @@
           "judgment": "两块精确追加、移除恢复全源；局部教学复算通过，真实阅读仍待新当前独立验收。"
         }
       ],
-      "reason": "修正一个影响梯度复算的归一化缺口和一个旧章序衔接标签；保留已有张量图、mask例、shift、NLL算例与状态表。 T10e将平均masked梯度原行内公式移入局部可键盘横滚的block显示span，保留全部数学字节、目标下标、闭括号与符号说明，不改共享CSS。 T10z仅追加两处noscript必要说明：block的X/U/Y形状与顺序双残差，平均masked梯度的索引、softmax导数、固定m/N缩放和原算例-0.25。移除两块恢复改前全字节；原LaTeX、代码、图、ID、引用、样式和正文不改。",
+      "reason": "修正一个影响梯度复算的归一化缺口和一个旧章序衔接标签；保留已有张量图、mask例、shift、NLL算例与状态表。 T10e将平均masked梯度原行内公式移入局部可键盘横滚的block显示span，保留全部数学字节、目标下标、闭括号与符号说明，不改共享CSS。 T10z仅追加两处noscript必要说明：block的X/U/Y形状与顺序双残差，平均masked梯度的索引、softmax导数、固定m/N缩放和原算例-0.25。移除两块恢复改前全字节；原LaTeX、代码、图、ID、引用、样式和正文不改。 变量前置定义：补B、T、S、T=S、d、V等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "#objective",
@@ -1974,6 +2159,16 @@
             "path": "/tmp/my-blogs-continuity-review-20261116/t10z-source-repair-001/source-ready.json",
             "sha256": "ce7c42813c69e6eccf307470a954c51854f8a3dc7c1f2d1744436479f9d30510"
           }
+        },
+        {
+          "anchor": "#attention-mask",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补31处符号说明，覆盖B、T、S、T=S、d、V；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
         }
       ],
       "evidence_boundary": "逐节阅读tensor/mask/block/objective/state/evaluation；标准库NLL与局部logit梯度有限差分复算，非训练/模型性能复现。展示公式、代码和原ID保留；改正的行内导数是唯一有意公式表述修正。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。",
@@ -1982,9 +2177,9 @@
     {
       "id": "architecture-attention",
       "source": "content/series/llm-architecture/s02_attention_position_cache.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
-      "sha256_after": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
+      "sha256_after": "d94e627974669b251c31a53ff9230de0471c01ccc44443878ded907a3d537277",
       "examined": [
         {
           "anchor": "#attention-scaling",
@@ -2011,17 +2206,28 @@
           "judgment": "Kimi Linear同1.4T设置与发布5.7T分开；保留EvalPlus非最优负结果，不以资源机制代替硬件性能。"
         }
       ],
-      "reason": "保留。尺度、缓存、RoPE和online softmax都能从输入算到输出，既有图和算例不需增补。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（q,k\\in\\mathbb R^{d_h}、\\ell=1,\\ldots,d_h、s、{}^\\top、s_j,p_i、j），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#attention-scaling",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补4处符号说明，覆盖q,k\\in\\mathbb R^{d_h}、\\ell=1,\\ldots,d_h、s、{}^\\top、s_j,p_i、j；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "局部数学和教学字节/旋转/分块复算；Kimi Table3及全部历史论文成绩只静态保留条件，未重新查询来源、训练或执行GPU kernel。",
       "module": "architecture-inference"
     },
     {
       "id": "architecture-moe",
       "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
-      "sha256_after": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
+      "sha256_after": "fae860562771949dcf128281488252bac7f2a6af3a30a9fa66ea0a9005e18eca",
       "examined": [
         {
           "anchor": "#swiglu",
@@ -2048,17 +2254,28 @@
           "judgment": "Table3能力与Table5另一73B服务模型分开；并发4/64外不占优的结果与成本缺失保留。"
         }
       ],
-      "reason": "保留。完整路由、重排身份图、容量分支和通信例构成可复算链，不用新图取代已有推导。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（W_1,W_2、d\\times f,f\\times d、b_1,b_2、f,d、W_{\\rm gate},W_{\\rm up}、d\\times f），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补6处符号说明，覆盖W_1,W_2、d\\times f,f\\times d、b_1,b_2、f,d、W_{\\rm gate},W_{\\rm up}、d\\times f；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "标准库复算教学router、输出、容量和网络payload；未执行真正SwiGLU专家、All-to-All或训练。论文性能表及latent工业配置仅静态范围核对，未作全历史事实复现。",
       "module": "architecture-inference"
     },
     {
       "id": "architecture-residual",
       "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "29745847d46a33c3ce3e3ee28b935d0ee918cd4200259ba7d7b73e04dd4a810a",
-      "sha256_after": "29745847d46a33c3ce3e3ee28b935d0ee918cd4200259ba7d7b73e04dd4a810a",
+      "sha256_after": "150170c4c6ae57c9c583603875043422f5b6e11bc0192f80d7e98c61c0c66514",
       "examined": [
         {
           "anchor": "#norm-bypass-map",
@@ -2081,17 +2298,28 @@
           "judgment": "27B/262B tokens、n4条件与MATH较HC低保留；同token非同FLOPs，不从分数证明稳定性。"
         }
       ],
-      "reason": "保留。布局对照、梯度限制、Norm算例和科研负结果均已有就近边界，无确证补图缺口。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（x,y_{\\rm pre},y_{\\rm post}、d、N,F、J_F,J_N,J_{\\rm pre},J_{\\rm、I、d\\times d），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#citation-sources-2",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补3处符号说明，覆盖x,y_{\\rm pre},y_{\\rm post}、d、N,F、J_F,J_N,J_{\\rm pre},J_{\\rm、I、d\\times d；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "复算Norm教学例与LN常量平移不变性，链式法则和图作静态语义检查；未求真实网络Jacobian、重训mHC或复现失稳/性能曲线。",
       "module": "architecture-inference"
     },
     {
       "id": "architecture-hybrid",
       "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "d27252caaf1b134a288b577d2c8bff9ae32682884b18647d1877a5942dc85cb1",
-      "sha256_after": "d27252caaf1b134a288b577d2c8bff9ae32682884b18647d1877a5942dc85cb1",
+      "sha256_after": "dc421ddd014a3a8122dbd0b81f484b0c7d3f0d98d27cdd414a6d42930f0ae6be",
       "examined": [
         {
           "anchor": "#hybrid-state-layout",
@@ -2118,8 +2346,19 @@
           "judgment": "两个私有状态从同一快照恢复，底部只汇总管理不合并数值；真实KV/卷积/位置/权重需要一并快照。"
         }
       ],
-      "reason": "保留。递推、状态形状、分叉、换窗及换参数恢复已有完整算例和分支图，不机械增加。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（t=1,2,\\ldots、i=1,\\ldots,t、k_i,v_i、i、S_t\\in\\mathbb R^{d_v\\times、t），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#linear",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补3处符号说明，覆盖t=1,2,\\ldots、i=1,\\ldots,t、k_i,v_i、i、S_t\\in\\mathbb R^{d_v\\times、t；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "标准库教学外积/delta和标量SSM复算、混合图静态阅读；不是GDN/Mamba真实模型或跨权重迁移实现验证，工业质量与chunk性能未复现。",
       "module": "architecture-inference"
     },
@@ -2184,9 +2423,9 @@
     {
       "id": "agent-task-synthesis",
       "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "6f40a994b7dbbf4c480797340a4eb6cd7ff53363bea1076aaeaecbe771793785",
-      "sha256_after": "6f40a994b7dbbf4c480797340a4eb6cd7ff53363bea1076aaeaecbe771793785",
+      "sha256_after": "ab9fc825a00577d6ebcc4ff02676e4855dfb476565e36dd059e2c8c57647d3ff",
       "examined": [
         {
           "anchor": "objects",
@@ -2209,8 +2448,19 @@
           "judgment": "冻结空间/预算与反馈扩张消融、逐family/失败/成本和未执行状态清楚。"
         }
       ],
-      "reason": "产线、分流、有效任务/样本、容差与反馈/交付均有原图和例子；保留原数据准入图，不重复增内容。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（r、f、[0,1]、R_{\\rm repair}、f<1、1-f），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#science",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖r、f、[0,1]、R_{\\rm repair}、f<1、1-f；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "检查公开方法归纳与已有教学算式，未执行环境工厂/校准/critic/SFT/RL或重新核验所有来源规模。",
       "module": "training-data"
     },
@@ -2219,7 +2469,7 @@
       "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
       "changed": true,
       "sha256_before": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
-      "sha256_after": "ae83158ab1137b57376e782ef1160d1aa96d2fa8b1d88799f84ed695044b74ea",
+      "sha256_after": "9c65bbf62656d64982f2a9d851201be757efac7d3edf574df5b5bf56aa794dee",
       "examined": [
         {
           "anchor": "metrics",
@@ -2238,7 +2488,7 @@
           "judgment": "核心留出/诊断/控制按能力与产物选，来源族和固定预算条件充分。"
         }
       ],
-      "reason": "只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。",
+      "reason": "只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。 变量前置定义：补p\\in[0,1]、k\\ge1、(1-p)^k、p^k、n,c,k、0\\le c\\le n等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "metrics",
@@ -2250,6 +2500,16 @@
             "paired-standard-error",
             "source-preservation",
             "local-anchor-target"
+          ]
+        },
+        {
+          "anchor": "#metrics",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补3处符号说明，覆盖p\\in[0,1]、k\\ge1、(1-p)^k、p^k、n,c,k、0\\le c\\le n；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
         }
       ],
@@ -2350,9 +2610,9 @@
     {
       "id": "research-base-architecture",
       "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
-      "sha256_after": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "sha256_after": "3eec923ee1e5e2cae5a6940df11cdfa84042c6c3b36f12bb64fffbf96e7dd68b",
       "examined": [
         {
           "anchor": "#versions",
@@ -2375,8 +2635,19 @@
           "judgment": "参数查表、KV和外部memory/skill职责不同；MoE、mHC流量50%及不同Engram放置条件均局部限定。"
         }
       ],
-      "reason": "保留。缓存账本、张量所有权、两种bounded replay的触发/输入/写入及近似边界已完整，既有四张科研图无需重复。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（H_{20}、N\\times5120、N、l、W_l^{KV},W_l^Z、C_l,Z_l），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#ced",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖H_{20}、N\\times5120、N、l、W_l^{KV},W_l^Z、C_l,Z_l；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "本轮实际检查版本引入、CED/CSA2/cache/replay/Engram及实验收束，四SVG读取标签并验证原字节；只复算entry/层组/候选算术。未重新逐页核验51页原报告、历史科研事实、QAT质量或硬件性能，未声称bit-exact恢复。",
       "module": "architecture-inference"
     },
@@ -2445,9 +2716,9 @@
     {
       "id": "research-architecture-landscape",
       "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
-      "sha256_after": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
+      "sha256_after": "97c4abae95cf0a1bed50b705230dd6fdb810c0ebf353e9d9848f51b9dd7a9e63",
       "examined": [
         {
           "anchor": "#state",
@@ -2474,8 +2745,19 @@
           "judgment": "Gemma12B encoder-free例外及闭源披露范围在相邻段落明确，memory/换窗不能反推Loop Transformer。"
         }
       ],
-      "reason": "保留。版本、转置、层计划和性能归因均有局部条件，已有历史路径/层数量图充分；该主讲可作为修正滚动页机制分类的既有依据。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（q_t,k_t\\in\\mathbb R^{d_k}、v_t,o_t\\in\\mathbb R^{d_v}、t、\\beta_t、A_t,I、d_k\\times d_k），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#families",
+          "kind": "系列展开与自制架构图",
+          "summary": "按九个模型家族补齐版本、层计划、Attention、专家、残差、多模态与成本细节，并新增Kimi与Gemma自制架构图；Kimi改述为router在hidden 7168上算分、再将选中token降到3584，Gemma改述为E2B 4:1、E4B 5:1的local:global比例。另补历史访问机制的符号前置说明；公式、旧锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "本轮阅读引导、状态推导、各家族边界和实验协议；对历史路径/层数量SVG读取实际文本、核对原字节，对KDA矩阵作局部复算。未再次外部核验九家完整报告/config或全部历史科研事实，AMD/MSA/模型性能未复现。",
       "module": "architecture-inference"
     },
@@ -2484,7 +2766,7 @@
       "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
       "changed": true,
       "sha256_before": "4e6d76d730a7d550013ddaf58778dca7b21c4992faec68b49a26da41f1b93792",
-      "sha256_after": "e1e1694fa3ebe4969551282a1f4292752a701e4cbc2fb69eeeb620a8fae07c44",
+      "sha256_after": "3b9944f3060648d06f5353574ecf272518f5668fca5c68e8feb980ae5e759647",
       "examined": [
         {
           "anchor": "#residual",
@@ -2527,7 +2809,7 @@
           "judgment": "四块精确追加核对；noscript条件与原公式/算例语义一致，独立源级复算不替代实际像素。"
         }
       ],
-      "reason": "仅补AttnRes两表示例的query、Norm简化条件和key/value复核点，使公式真正连接到原输出；其余残差、latent与深度图保持原样。 T10e为原残差对照SVG增加局部横滚容器及1160px最小阅读宽度；按原viewBox864和最小9px注记推导至少1152px内容宽，留边框余量，不改资源、图内字节/ID/语义/比例。 T10p按独立六组合字线相交核实，新增默认四路线HTML主讲，类型、可用表示、操作与注记逐行对应且行间不串行；原figure/object/fallback/caption/URL及1160px横滚保留于原生参考details。原SVG字节与内部字线相交局限未改变，主讲可读性和参考保留/展开分开验收。 T10y仅追加四处noscript语义HTML：AttnRes得分/深度softmax/原value读出及两表示逐步复算，mHC逐流双支更新/约束及理想双随机证明/二乘二矩阵。移除四块可恢复改前全部字节，原LaTeX、图、引用、ID、样式和参考折叠不改。",
+      "reason": "仅补AttnRes两表示例的query、Norm简化条件和key/value复核点，使公式真正连接到原输出；其余残差、latent与深度图保持原样。 T10e为原残差对照SVG增加局部横滚容器及1160px最小阅读宽度；按原viewBox864和最小9px注记推导至少1152px内容宽，留边框余量，不改资源、图内字节/ID/语义/比例。 T10p按独立六组合字线相交核实，新增默认四路线HTML主讲，类型、可用表示、操作与注记逐行对应且行间不串行；原figure/object/fallback/caption/URL及1160px横滚保留于原生参考details。原SVG字节与内部字线相交局限未改变，主讲可读性和参考保留/展开分开验收。 T10y仅追加四处noscript语义HTML：AttnRes得分/深度softmax/原value读出及两表示逐步复算，mHC逐流双支更新/约束及理想双随机证明/二乘二矩阵。移除四块可恢复改前全部字节，原LaTeX、图、引用、ID、样式和参考折叠不改。 变量前置定义：补h_1=(2,0)^\\top,h_2=(0,4)^\\、(\\sqrt2,0)^\\top,(0,\\sqrt2)、q_l=(0,\\log3/\\sqrt2)^\\top、\\log3、(0.5,3)^\\top、X_l\\in\\mathbb R^{n\\times d等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "#residual",
@@ -2635,6 +2917,16 @@
             "path": "/tmp/my-blogs-continuity-review-20261116/t10y-source-repair-001/source-ready.json",
             "sha256": "c0bb6edf0715bc71f772850e8e1056fcd4b337449e28881500be325d8ed715ec"
           }
+        },
+        {
+          "anchor": "#comparison-architecture",
+          "kind": "独立对照与符号前置定义",
+          "summary": "新增架构、优化器、系统三份默认展开的独立文献对照，未运行的本地实验仍留在折叠区；同时补齐残差四路线、算例向量与索引的前置定义。公式、旧锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
         }
       ],
       "evidence_boundary": "实际检查residual/latent-moe/precision/depth/agent及实验收束；标准库复算AttnRes、mHC两个方向、固定分派payload和共享core标量例，两SVG静态保留。未重训AttnRes/mHC/LatentMoE/Huginn，未外部重核全部科研报告。 T10p仅源级呈现修复与准确保留；原raw布局失败未转为pass，当前主讲/参考浏览器和像素验收仍待独立执行。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。",
@@ -2672,9 +2964,9 @@
     {
       "id": "llm-training-pretraining",
       "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
-      "sha256_after": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
+      "sha256_after": "9ec809e4bcfe18a43b19852c5923688f3db2ce5a728467c9a278b10084f7aa94",
       "examined": [
         {
           "anchor": "mixture-budget",
@@ -2701,8 +2993,19 @@
           "judgment": "optimizer/scheduler/RNG/sampler与权重共同恢复，模型卡阶段/数据污染交接充分。"
         }
       ],
-      "reason": "目标、packing、预算和规模外推均已有默认可读完整算例与检查条件；无需机械增加图或新论文。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（k、j、U_j&gt;0、p_j,f_j、\\sum_kp_kf_k&gt;0、i=1,\\ldots,n），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#mixture-budget",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补7处符号说明，覆盖k、j、U_j&gt;0、p_j,f_j、\\sum_kp_kf_k&gt;0、i=1,\\ldots,n；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "独立复算教学CE与配比，不执行预训练/规模阶梯/μP/WSD，未验证所有工业训练量或外推性能。",
       "module": "training-data"
     },
@@ -2711,7 +3014,7 @@
       "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
       "changed": true,
       "sha256_before": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
-      "sha256_after": "b40a0542bccff925536a61b4dd408efcec8840385d5a68162667daeee44ce47d",
+      "sha256_after": "7650304875282ca3d2700fc1ad06ca2cca36ee7783a210b4902735e3b606ea13",
       "examined": [
         {
           "anchor": "definitions",
@@ -2734,7 +3037,7 @@
           "judgment": "A-D初始化与E额外SFT预算对照、CPT与sci-posttrain命名空间及未执行状态充分。"
         }
       ],
-      "reason": "仅补确证的CSV类型/空值条件和输出检查，保持原样本/代码/引用；其余配比与归因解释充分。",
+      "reason": "仅补确证的CSV类型/空值条件和输出检查，保持原样本/代码/引用；其余配比与归因解释充分。 变量前置定义：补j,k、N_{{\\rm input},k}>0、N_{{\\rm target},k}、w_k、\\rho_k=N_{{\\rm target},k}/、L_k等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "data",
@@ -2747,6 +3050,16 @@
             "mixture-density",
             "source-preservation"
           ]
+        },
+        {
+          "anchor": "#mixture",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖j,k、N_{{\\rm input},k}>0、N_{{\\rm target},k}、w_k、\\rho_k=N_{{\\rm target},k}/、L_k；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
         }
       ],
       "evidence_boundary": "检查现存配方/数据/伪代码/分母与交接，独立复算字符串/数值0和目标密度；不重跑Nemotron消融、合成数据、CPT或Harbor实验。",
@@ -2755,9 +3068,9 @@
     {
       "id": "llm-training-sft-rft",
       "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
-      "sha256_after": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "sha256_after": "2af2fb193bb301998cb1103ec249d5bbeb2d2f39bc12f403e339039007b2aba8",
       "examined": [
         {
           "anchor": "sft",
@@ -2776,8 +3089,19 @@
           "judgment": "schema/停止错误、全失败/全成功各有交接判定，模板、split、image、verifier和预算字段明确。"
         }
       ],
-      "reason": "本章聚焦行为/接口交接，数学主讲链接已有完整推导；现有例子够用，不重复DPO或RL章节。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（x_{1:T}、T、t=1,\\ldots,T、x_t、x_{\\lt t}、\\theta），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#sft",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖x_{1:T}、T、t=1,\\ldots,T、x_t、x_{\\lt t}、\\theta；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "检查教学监督链和准入协议；未执行模板render、SFT/RFT或验证工具合法率，示例2048/8仍非推荐配方。",
       "module": "training-data"
     },
@@ -2963,7 +3287,7 @@
       "source": "content/posts/transformer-decoder-flow/index.html",
       "changed": true,
       "sha256_before": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
-      "sha256_after": "4274cd293730453e7399d0f6465c6eb6aed1720be3db2d126ebf03c1eda241b0",
+      "sha256_after": "785e99c25d4b2bafb10e847f4a357dec7dfcc8652ae4cff936b20bb5a6fd4b0e",
       "examined": [
         {
           "anchor": "#training-forward",
@@ -2990,7 +3314,7 @@
           "judgment": "完整代码逐行核对Norm、相邻RoPE、mask、两残差、shift、缓存断言与生成；原代码块字节保留，AST解析通过，不称实际执行。"
         }
       ],
-      "reason": "只补0/1可见矩阵到加性mask的转换解释，防止照公式直接相加而泄漏未来；完整forward、手算、代码、图、来源和旧原稿入口均保留。",
+      "reason": "只补0/1可见矩阵到加性mask的转换解释，防止照公式直接相加而泄漏未来；完整forward、手算、代码、图、来源和旧原稿入口均保留。 变量前置定义：补I、E、X_0=E[I]、X=X_{\\ell-1}、\\ell、U等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "#cache",
@@ -3002,6 +3326,16 @@
             "t8a-full-forward-numeric",
             "t8a-preservation"
           ]
+        },
+        {
+          "anchor": "#tensor-formulas",
+          "kind": "前置符号定义",
+          "summary": "六处公式前补I/E/X0、W_Q/W_K/W_V、Q/K/V、W_O、LM头与采样符号的形状、索引和局部重名说明；公式与数值算例未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
         }
       ],
       "evidence_boundary": "完整主讲forward、手算、decode/公式和全代码实际阅读；标准库独立数学复算不执行模型。当前python3无torch，仅AST/静态保留，不证明PyTorch缓存断言或三屏MathJax已通过；原科研图/URL/原稿链接未改。",
@@ -3010,9 +3344,9 @@
     {
       "id": "rl-interview-guide",
       "source": "content/posts/rl-interview-guide/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
-      "sha256_after": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "sha256_after": "6e6379e0d11e8c8177adc0a96b25d7c719d605669e29014301bbe47ad1222adf",
       "examined": [
         {
           "anchor": "symbols",
@@ -3035,8 +3369,19 @@
           "judgment": "历史稿/下载与当前主讲修订关系清楚，保留旧URL。"
         }
       ],
-      "reason": "复习页应维持短答与原理入口，当前边界充分；归档旧误述不回写到当前短卡。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（t=0,\\ldots,T-1、T、\\theta、G_t、G、h_t,a_t,r_t），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#symbols",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖t=0,\\ldots,T-1、T、\\theta、G_t、G、h_t,a_t,r_t；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "检查口述机制、条件、例子与原理链接；未重新认证所有历史问答/科研事实或真实浏览器深链接。",
       "module": "training-data"
     },
@@ -3113,9 +3458,9 @@
     {
       "id": "llm-interview-bank",
       "source": "content/posts/llm-interview-bank/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
-      "sha256_after": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "sha256_after": "00f3c97d9ad8b2167171d7b3b2c653f602f9c2cf52e747a8a788399ead32f845",
       "examined": [
         {
           "anchor": "#sec-overview",
@@ -3150,8 +3495,19 @@
           "judgment": "m=-inf/ell=o=0、重标两累计量及遮挡块条件齐全，关联具体Attention主讲已有完整算例。"
         }
       ],
-      "reason": "保留。架构/推理短答与代码卡已给关键条件和主讲位置，新增长例会重复；其余跨领域卡不据本轮阅读升级事实审阅状态。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（y_w,y_l、\\theta），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#sec-rlhf",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖y_w,y_l、\\theta；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "实际检查overview、sec-llm、sec-infra及CE/GQA/Norm/RoPE/sampling/online代码卡；全源只静态保留代码/ID/引用。未执行PyTorch卡，未逐题重新核验RL/VLM/Agent/RAG等全部历史问答、公司频次或论文性能。",
       "module": "architecture-inference"
     },
@@ -3160,7 +3516,7 @@
       "source": "content/posts/vlm-knowledge-interview/index.html",
       "changed": true,
       "sha256_before": "e1e60d5464056de954069787baf2103fd83acadbd1f8d7a350494df02ab5b23c",
-      "sha256_after": "d4ebceb2140d3a8b22bb22395ec42072dc2f36547fc6e82d163f9acef5e273ea",
+      "sha256_after": "cc95a8f001f73437b79ff05bae411c230688e552495110f72084a66de8cb0f0e",
       "examined": [
         {
           "anchor": "#clip-siglip",
@@ -3195,7 +3551,7 @@
           "judgment": "补max_tiles只约束crop、thumbnail使总返回最多max_tiles+1的真实代码合同，原shape例保留。"
         }
       ],
-      "reason": "主体原理、完整算例与接口图已充分；只补平均loss可定义条件、padding二维逆映射和返回总数三个确证复算/接口缺口。",
+      "reason": "主体原理、完整算例与接口图已充分；只补平均loss可定义条件、padding二维逆映射和返回总数三个确证复算/接口缺口。 变量前置定义：补N、X_{\\rm patch}、W_p、E_{\\rm pos}、Z_0、i,j,k=1,\\ldots,N等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "#sec1-4",
@@ -3225,6 +3581,16 @@
           "checks": [
             "vlm-grid-budget",
             "preserve:vlm-knowledge-interview"
+          ]
+        },
+        {
+          "anchor": "#sec1-1",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补7处符号说明，覆盖N、X_{\\rm patch}、W_p、E_{\\rm pos}、Z_0、i,j,k=1,\\ldots,N；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
         }
       ],
@@ -3263,9 +3629,9 @@
     {
       "id": "dlm-ddpm",
       "source": "content/series/dlm-survey/s00a_ddpm.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "5e5b0285788ae59a578511af837fce3515a14af9b43778fdf33407ba57fbb8e1",
-      "sha256_after": "5e5b0285788ae59a578511af837fce3515a14af9b43778fdf33407ba57fbb8e1",
+      "sha256_after": "aea236a64707c8fb32bc813bddb08a43e787ab525e51800195e565c6138bbfbe",
       "examined": [
         {
           "anchor": "#posterior",
@@ -3280,17 +3646,28 @@
           "judgment": "逐项复算加噪、MSE/梯度、真/模型均值、独立z采样、KL交叉检查和最后输出；两步末端非标准高斯先验的限制充分。"
         }
       ],
-      "reason": "完整标量输入到最终输出算例与两分路图已就近完整，无需新增内容。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（q(x_T\\mid x_0)/q(x_1\\mid x、q_t^-、x_t,x_0、p_t^-、\\tilde\\mu_t=\\alpha_t^{-1/2、\\mathcal L_t），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#decomposition",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补3处符号说明，覆盖q(x_T\\mid x_0)/q(x_1\\mid x、q_t^-、x_t,x_0、p_t^-、\\tilde\\mu_t=\\alpha_t^{-1/2、\\mathcal L_t；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "通读并独立复算标量教学链，不训练网络或复现DDPM论文实验；未运行MathJax/浏览器。",
       "module": "agent-multimodal-diffusion"
     },
     {
       "id": "dlm-flow-sde",
       "source": "content/series/dlm-survey/s00b_flow_sde.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
-      "sha256_after": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
+      "sha256_after": "1e624b9bafb9a5ef1ae1d4a1d7b5e53ce8fee043c3daa4550426b3250a58a7c8",
       "examined": [
         {
           "anchor": "#conditional-path",
@@ -3313,8 +3690,19 @@
           "judgment": "正向h>0/逆向网格、布朗√步长与固定ODE轨迹z区分，未发现时间方向缺口。"
         }
       ],
-      "reason": "条件监督→边际场图和完整高斯例已说明训练/推理与求解误差；时间方向就近给出，不重复作图。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（y,x_t,\\epsilon\\in\\mathbb R、a_t,b_t、u_t(x\\mid y)、u_t(x)、u_\\theta、\\mathbb E[\\cdot\\mid x_t=x]），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#conditional-path",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补3处符号说明，覆盖y,x_t,\\epsilon\\in\\mathbb R、a_t,b_t、u_t(x\\mid y)、u_t(x)、u_\\theta、\\mathbb E[\\cdot\\mid x_t=x]；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "通读并独立复算解析教学例；未数值训练FM/score网络或重跑论文采样器。",
       "module": "agent-multimodal-diffusion"
     },
@@ -3348,7 +3736,7 @@
       "source": "content/series/dlm-survey/s02_discrete.html",
       "changed": true,
       "sha256_before": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
-      "sha256_after": "854adb16f985d667686bca32b9f46d8be84e76159322b6fb26bd173e63980c70",
+      "sha256_after": "870507896d51b2f84ba8a9976cb778c5107ccfa4873e9ee7e478b0a67faf1d1d",
       "examined": [
         {
           "anchor": "#kernel",
@@ -3371,7 +3759,7 @@
           "judgment": "候选重mask与已提交值carry-over的状态图足够，无需为三状态教学计算加图。"
         }
       ],
-      "reason": "确证缺口是一般后验的支持域及预测分布如何接到一次反向抽样，其他已有推导和图保留。",
+      "reason": "确证缺口是一般后验的支持域及预测分布如何接到一次反向抽样，其他已有推导和图保留。 变量前置定义：补K、x_0,x_t,i,j,v、\\operatorname{Cat}、\\mathbf1(i=j)、\\beta_t、M等首次使用前的说明，公式未改。",
       "changes": [
         {
           "anchor": "#bayes",
@@ -3392,6 +3780,16 @@
             "discrete-reverse-draw",
             "preserve:dlm-discrete"
           ]
+        },
+        {
+          "anchor": "#kernel",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补5处符号说明，覆盖K、x_0,x_t,i,j,v、\\operatorname{Cat}、\\mathbf1(i=j)、\\beta_t、M；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
         }
       ],
       "evidence_boundary": "通读并独立计算有限状态教学核、后验、加权CE与抽样；未运行LLaDA/D3PM/MDLM模型、训练配方或论文性能复现。",
@@ -3400,9 +3798,9 @@
     {
       "id": "dlm-block",
       "source": "content/series/dlm-survey/s03_block.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
-      "sha256_after": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "sha256_after": "04c5d73d16fa8cb7fdaef0ef478c3ec70e2bfa82fa50ec4a6e68d83f0f83df2f",
       "examined": [
         {
           "anchor": "#factorization",
@@ -3421,8 +3819,19 @@
           "judgment": "8×4=32并另计8commit、4×8仍32却不同长度的完整计数例可复算，保留两层循环图。"
         }
       ],
-      "reason": "可见性矩阵、内外循环图和成本例已说明状态依赖，无需重复补图。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（x^{(j)}、j、x^{(\\lt j)}、\\mathcal L_{\\rm NELBO}^{(j、M、p_\\theta(x)），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#factorization",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖x^{(j)}、j、x^{(\\lt j)}、\\mathcal L_{\\rm NELBO}^{(j、M、p_\\theta(x)；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "通读并复算矩阵/调用教学计数；未测试实际KV等价、kernel、模型训练或缓存性能。",
       "module": "agent-multimodal-diffusion"
     },
@@ -3458,9 +3867,9 @@
     {
       "id": "dlm-paradigms",
       "source": "content/series/dlm-survey/s05_paradigms.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "b88d7ec72ff8f07f66b5cada2460c6690bc3716aae492e72f252bfcd6ffb224c",
-      "sha256_after": "b88d7ec72ff8f07f66b5cada2460c6690bc3716aae492e72f252bfcd6ffb224c",
+      "sha256_after": "99c9a00eaff4e3029b42cbc13b88c2660c735c9134dd85ba268a7a86ec85b709",
       "examined": [
         {
           "anchor": "#vp-coordinate-map",
@@ -3483,8 +3892,19 @@
           "judgment": "两状态流入流出与0.1步长概率守恒例完整。"
         }
       ],
-      "reason": "换算图和连续/离散算例就近充分，已有日程和分母限制，无新增图必要。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（x_0,x_t,\\epsilon,v_t、\\epsilon、a_t,s_t、v_t、\\dot x_t、\\nabla_x\\log p_t(x)），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#vp-conversion",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖x_0,x_t,\\epsilon,v_t、\\epsilon、a_t,s_t、v_t、\\dot x_t、\\nabla_x\\log p_t(x)；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "通读并复算VP与两状态教学值；没有训练SEDD/DFM或复現少步性能。",
       "module": "agent-multimodal-diffusion"
     },
@@ -3549,9 +3969,9 @@
     {
       "id": "dlm-elbo-rl",
       "source": "content/series/dlm-survey/s08_elbo_rl.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
-      "sha256_after": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "sha256_after": "7a7ac9fbdd63cc8bf1c0538b47889262501dad53d7ef129c838ec839c4829dd4",
       "examined": [
         {
           "anchor": "#probability",
@@ -3574,8 +3994,19 @@
           "judgment": "rollout/估计/更新三份随机性与新任务分母分开，论文数字保留历史来源。"
         }
       ],
-      "reason": "关键概率/界/教师角色已有充分推导和例子，未发现需新图的缺口。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（q(\\tau\\mid x)、q_x=q(\\tau\\mid x)、\\Delta_\\theta(x)=\\log p_\\t、L_\\theta,U_\\theta、\\mathcal L、\\Delta_\\theta），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#elbo-gap",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补2处符号说明，覆盖q(\\tau\\mid x)、q_x=q(\\tau\\mid x)、\\Delta_\\theta(x)=\\log p_\\t、L_\\theta,U_\\theta、\\mathcal L、\\Delta_\\theta；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "通读并核算SPG不等式与二分类倾斜教学例；未复现SPG/GDSD训练、全部定理或性能表。",
       "module": "agent-multimodal-diffusion"
     },
@@ -3702,9 +4133,9 @@
     {
       "id": "harbor-framework-guide",
       "source": "content/posts/harbor-framework-guide/index.html",
-      "changed": false,
+      "changed": true,
       "sha256_before": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
-      "sha256_after": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "sha256_after": "d5ddf39c4f0b183a1bfe50148c8cadf4f4c628429cf32f140b0c7fbe07948fcf",
       "examined": [
         {
           "anchor": "summary",
@@ -3735,8 +4166,19 @@
           "judgment": "repeat/retry、全部尝试费用、artifact/regrade、canary和固定终评条件充分。"
         }
       ],
-      "reason": "所审执行/反馈/产物/分母链路已有原图、固定源码与小算例，保留不扩大项目/数据集调研。",
-      "changes": [],
+      "reason": "改稿：仅在公式首次使用前补充符号定义（g,c、O,T,U,C、\\rho_c、c），公式、标题、锚点与引用未改。",
+      "changes": [
+        {
+          "anchor": "#ambient-error",
+          "kind": "前置符号定义",
+          "summary": "在公式首次出现前补1处符号说明，覆盖g,c、O,T,U,C、\\rho_c、c；公式、标题、锚点与引用未改。",
+          "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
+          "checks": [
+            "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        }
+      ],
       "evidence_boundary": "实际审阅概述、Science数学、执行/验证/有效奖励/重评分/多步骤/报告协议段；只复算教学gap和有效率，不执行Linux Worker、Harbor容器、17数据集、88adapter、历史重评分或任何榜单模型。",
       "module": "training-data"
     }
