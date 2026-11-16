@@ -8,7 +8,22 @@
 </head>
 <body>
 <main class="training-lifecycle">
-<!-- READING:FRAGMENT:START -->
+<!-- READING:FRAGMENT:START --><style>
+.residual-designs-scroll{max-width:100%;overflow-x:auto}
+.residual-designs-scroll > .research-chart.layers{min-width:1160px;max-width:none}
+.mechanism-map.residual-routes{background:#fcfbf7}
+.residual-routes .residual-route-list{display:grid;gap:16px;list-style:none;margin:0;padding:0}
+.residual-routes .residual-route{min-width:0;margin:0;padding:14px;border:1px solid #b8cbc3;border-left:3px solid #0f766e;border-radius:4px;background:#fff;font-size:16px;line-height:1.65;overflow-wrap:anywhere}
+.residual-routes .residual-route h3{margin:0 0 12px;font-size:18px;line-height:1.5;color:#172d35}
+.residual-routes .residual-route-path{display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);gap:10px;align-items:center}
+.residual-routes .residual-route-path dl{min-width:0;margin:0}
+.residual-routes .residual-route-path dt{font-weight:600;color:#0f766e}
+.residual-routes .residual-route-path dd{margin:6px 0 0}
+.residual-routes .residual-route-path code{font-size:16px;white-space:normal;overflow-wrap:anywhere}
+.residual-routes .residual-route-arrow{justify-self:center;font-size:24px;line-height:1;color:#0f766e}
+.residual-routes .residual-route-note,.residual-routes .residual-route-limits{margin:14px 0 0;font-size:16px;line-height:1.65;color:#52666b}
+@media(max-width:600px){.residual-routes .residual-route-path{grid-template-columns:minmax(0,1fr)}.residual-routes .residual-route-arrow{transform:rotate(90deg)}}
+</style>
 <section id="overview">
 <p class="eyebrow">Architecture &amp; training · 2026-11-14</p>
 <h2>从基础模块走向新的信息传递方式</h2>
@@ -19,11 +34,57 @@
 <section id="residual">
 <h2>从固定残差累加，到选择深度与混合残差流</h2>
 <p>普通Pre-Norm为 \(x_{l+1}=x_l+F_l(\operatorname{Norm}(x_l))\)。新方法改变的是<strong>读取深度表示</strong>或<strong>传递多路残差</strong>；下面沿这两个对象展开。</p>
+<figure class="mechanism-map residual-routes" id="residual-route-comparison">
+<figcaption>残差设计：四条独立路线的可用表示与操作</figcaption>
+<ul class="residual-route-list" role="list">
+<li class="residual-route" id="residual-route-standard">
+<h3>Standard · 普通 Pre-Norm 残差</h3>
+<div class="residual-route-path">
+<dl><dt>可用表示</dt><dd>当前 x（current x）</dd></dl>
+<span class="residual-route-arrow" aria-hidden="true">→</span>
+<dl><dt>操作</dt><dd><code>x + F(Norm(x))</code></dd></dl>
+</div>
+<p class="residual-route-note"><strong>注记：</strong>Fixed additive path，即固定加法路径。</p>
+</li>
+<li class="residual-route" id="residual-route-attnres">
+<h3>AttnRes · 沿深度读取表示</h3>
+<div class="residual-route-path">
+<dl><dt>可用表示</dt><dd>前层或已完成 block 的状态（earlier layer or block states）</dd></dl>
+<span class="residual-route-arrow" aria-hidden="true">→</span>
+<dl><dt>操作</dt><dd>沿深度 softmax（Softmax over depth）</dd></dl>
+</div>
+<p class="residual-route-note"><strong>注记：</strong>Select previous representations，即选择并加权读取可用前层表示；不是序列 token Attention。<a href="index.html#ref-60">[60]</a></p>
+</li>
+<li class="residual-route" id="residual-route-mhc">
+<h3>mHC · 受约束的多路残差混合</h3>
+<div class="residual-route-path">
+<dl><dt>可用表示</dt><dd>n 路并行残差流（n parallel streams）</dd></dl>
+<span class="residual-route-arrow" aria-hidden="true">→</span>
+<dl><dt>操作</dt><dd>受约束混合与模块写回（Constrained mixing + F）</dd></dl>
+</div>
+<p class="residual-route-note"><strong>注记：</strong>Doubly stochastic residual mixing；双随机约束作用于旧残差的 res 混合，不约束整个 F 或 pre/post 路径。<a href="index.html#ref-61">[61]</a></p>
+</li>
+<li class="residual-route" id="residual-route-gr">
+<h3>GR · 元素级门控读取</h3>
+<div class="residual-route-path">
+<dl><dt>可用表示</dt><dd>4 路残差分支（4 branches）</dd></dl>
+<span class="residual-route-arrow" aria-hidden="true">→</span>
+<dl><dt>操作</dt><dd>元素级 gate 读取（Elementwise gate read）</dd></dl>
+</div>
+<p class="residual-route-note"><strong>注记：</strong>Qwen GR channel-wise reading，即 Qwen GR 沿通道门控读取。<a href="index.html#ref-45">[45]</a></p>
+</li>
+</ul>
+<p class="residual-route-limits">四行是独立的机制对照，不是按行串行执行；每行箭头只表示该行可用状态到操作的信息依赖。来源为<a href="index.html#ref-60">[60] AttnRes</a>、<a href="index.html#ref-61">[61] mHC</a>、<a href="index.html#ref-45">[45] GR</a>，没有表示算子时间、层数比例或训练优劣。Standard 对应上方 Pre-Norm 公式，AttnRes 与 mHC 的完整概念式继续在下文展开；DeepSeek Single-Pass mHC、Kimi Block AttnRes还各有独立工程实现。</p>
+</figure>
+<details id="residual-svg-reference">
+<summary>原 SVG 与来源说明</summary>
+<p>此处保留原 SVG、原图注与查阅链接；旧图前三条注记与下一框线接近并相交，是原图的呈现局限，原 SVG 字节未改动。默认主讲为上方四路线 HTML 对照，参考原图可展开后横向滚动查阅。</p>
 <figure>
-<object class="research-chart layers" type="image/svg+xml" data="../assets/research/architecture-20261114/residual-designs.svg" aria-label="普通残差、Attention Residuals、mHC与Gated Residual比较"><p>普通残差固定累加；AttnRes沿深度选择历史表示；mHC通过受约束矩阵混合多个残差流；Qwen GR用元素级gate读取4路残差。</p></object>
+<div class="residual-designs-scroll" tabindex="0" role="group" aria-label="残差设计对照图，可横向滚动"><object class="research-chart layers" type="image/svg+xml" data="../assets/research/architecture-20261114/residual-designs.svg" aria-label="普通残差、Attention Residuals、mHC与Gated Residual比较"><p>普通残差固定累加；AttnRes沿深度选择历史表示；mHC通过受约束矩阵混合多个残差流；Qwen GR用元素级gate读取4路残差。</p></object></div>
 <figcaption>机制示意来源：[60] AttnRes、[61] mHC、[45] GR。箭头表示信息依赖，图没有表示算子时间、层数比例或训练优劣。DeepSeek Single-Pass mHC、Kimi Block AttnRes还各有独立工程实现。</figcaption>
 <p class="figure-links"><a href="../assets/research/architecture-20261114/residual-designs.svg" target="_blank" rel="noopener">放大查看 / SVG</a></p>
 </figure>
+</details>
 <h3>Attention Residuals：Attention轴在深度上</h3>
 <p class="math-notation">对固定 token，\(l\) 是当前层，\(i,j\lt l\) 遍历可用前层；\(q_l,h_i\in\mathbb R^d\)。\(s_{l,i}\) 为匹配得分，\(a_{l,i}\) 为沿深度归一化的非负权重，\(\widetilde h_l\) 为加权后的模块输入；波浪号表示构造的新表示。</p>
 <p>AttnRes为当前层设置可学习query，从前面层的表示得到归一化key，再用softmax权重读取这些表示。对同一token位置，概念式如下；它选择的是<strong>前层表示</strong>，没有替代序列中的token Attention。<a href="index.html#ref-60">[60]</a></p>
@@ -34,6 +95,16 @@ a_{l,i}&=\frac{\exp(s_{l,i})}{\sum_{j\lt l}\exp(s_{l,j})},\\
 \widetilde h_l&=\sum_{i\lt l}a_{l,i}h_i.
 \end{aligned}
 \]</div>
+<noscript>
+<div class="math-fallback" id="attnres-nojs-formula" role="note" aria-label="无脚本阅读：AttnRes三步计算">
+<p><strong>无脚本读式：得分、深度权重、原表示读出。</strong>固定同一个 token，<var>l</var> 是当前层，<var>i</var>、<var>j</var> 只遍历可用前层；<var>q</var><sub>l</sub> 是可学习 query，<var>h</var><sub>i</sub> 是前层的 <var>d</var> 维表示。</p>
+<ol>
+<li><strong>得分：</strong>先对每个 <var>h</var><sub>i</sub> 作 RMSNorm 得到 key，再与 <var>q</var><sub>l</sub> 按维相乘并求和，得到标量 <var>s</var><sub>l,i</sub>。原式的上标 T 表示转置，用于列向量的点积，不是乘方。</li>
+<li><strong>softmax：</strong>令 <var>Z</var> 为所有可用前层的 exp(<var>s</var><sub>l,j</sub>) 之和；每个权重 <var>a</var><sub>l,i</sub> = exp(<var>s</var><sub>l,i</sub>) / <var>Z</var>。exp 是以自然常数 e 为底的指数函数；分母沿深度求和，得到非负且总和为 1 的权重，不沿 token 位置归一化。</li>
+<li><strong>读出：</strong>把每个权重 <var>a</var><sub>l,i</sub> 乘到原表示 <var>h</var><sub>i</sub> 的各维，再把所有前层的对应维相加，得到带波浪号的新模块输入。这里读的是未作该 key 归一化的 value，不把 RMSNorm 后的 key 当作内容。</li>
+</ol>
+</div>
+</noscript>
 <p>\(q_l\)是当前层可学习query；\(h_i\)是同一token的可用前层表示。先算归一化key的得分，再沿深度softmax，最后读取原表示；它没有替代token Attention。</p>
 <figure class="mechanism-map" id="attnres-depth-read"><figcaption>AttnRes：同一 token 的历史表示分成 key 与 value 两条路径</figcaption><ol class="mechanism-chain mechanism-compare">
 <li><b>可用前层表示 hᵢ</b><small>固定 token 位置，i 沿深度变化；不是不同 token 的序列 KV。</small></li>
@@ -41,7 +112,19 @@ a_{l,i}&=\frac{\exp(s_{l,i})}{\sum_{j\lt l}\exp(s_{l,j})},\\
 <li><b>内容路径 → 原表示 hᵢ</b><small>保留未作该 key 归一化的 value；等待对应的深度权重，不把 Norm 后的 key 当成读出内容。</small></li>
 <li><b>两路汇合 → 模块输入</b><small>逐表示 aₗ,ᵢhᵢ 求和得到 h̃ₗ，再进入当前 Attention/FFN 子层；两表示例读出 (0.5,3)。</small></li>
 </ol><p class="mechanism-note">这是前式的概念数据依赖。Full 的候选是可用历史表示；Block 改为已完成 block 的 summary 与当前局部累积，不把所有层激活永久保存。具体 Norm/融合/分块顺序按报告实现；本图不添加第二条普通残差累加路径。</p></figure>
-<p><strong>两表示算例：</strong>若 \(h_1=(2,0),h_2=(0,4)\)，得分为0与\(\log3\)，权重就是1/4与3/4，模块输入为\((0.5,3)\)。选择按表示得分变化，固定残差累加则不会得到这一加权结果。</p>
+<p><strong>两表示算例：</strong>取 \(h_1=(2,0)^\top,h_2=(0,4)^\top\)，RMSNorm的逐维scale为1，教学例令epsilon为0（两输入均非零）。归一化key分别为 \((\sqrt2,0)^\top,(0,\sqrt2)^\top\)；令 \(q_l=(0,\log3/\sqrt2)^\top\)，点积得分为0与\(\log3\)。softmax权重就是1/4与3/4，再读取未归一化的value，模块输入为\((0.5,3)^\top\)。复核时权重和为1，且不能把Norm后的key代入value求和；真实实现的epsilon、scale与query由模型定义，本例不是Kimi配置。选择按表示得分变化，固定残差累加则不会得到这一加权结果。</p>
+<noscript>
+<div class="math-fallback" id="attnres-nojs-example" role="note" aria-label="无脚本阅读：AttnRes两表示逐步复算">
+<p><strong>无脚本复算：两路列向量的分量按从上到下列出。</strong>输入分别为 (2, 0) 和 (0, 4)，逐维 scale = 1、epsilon = 0，且两输入均非零。符号 &radic;2 表示 2 的平方根，ln 3 表示自然对数；对应原式的 log 3。</p>
+<ol>
+<li><strong>归一化 key：</strong>第一路的 RMS 除数为 &radic;[(2<sup>2</sup> + 0<sup>2</sup>) / 2] = &radic;2，所以 key 为 (2 / &radic;2, 0) = (&radic;2, 0)。第二路除数为 &radic;[(0<sup>2</sup> + 4<sup>2</sup>) / 2] = &radic;8 = 2&radic;2，所以 key 为 (0, 4 / (2&radic;2)) = (0, &radic;2)。</li>
+<li><strong>点积得分：</strong>query 的两分量为 (0, ln 3 / &radic;2)。第一路得分是 0 &times; &radic;2 + (ln 3 / &radic;2) &times; 0 = 0；第二路是 0 &times; 0 + (ln 3 / &radic;2) &times; &radic;2 = ln 3。</li>
+<li><strong>深度权重：</strong>exp(0) = 1，exp(ln 3) = 3；分母为 1 + 3 = 4，所以权重为 1/4、3/4，权重和为 1。</li>
+<li><strong>读取原 value：</strong>第一维是 (1/4) &times; 2 + (3/4) &times; 0 = 0.5；第二维是 (1/4) &times; 0 + (3/4) &times; 4 = 3。因此模块输入为 (0.5, 3)，不能用归一化 key 的分量替代 2 和 4。</li>
+</ol>
+<p>这是上述教学条件下的精确计算，不是 Kimi 的实际配置，也没有证明真实模型的质量或训练增益。</p>
+</div>
+</noscript>
 <ul><li><strong>Full：</strong>保留更多历史层表示，增加状态与访问成本。</li><li><strong>Block：</strong>读取已完成block的summary与当前局部累积；K3采用该方向。</li><li><strong>验收：</strong>能力之外还测保存激活、重算、融合kernel和pipeline通信。<a href="index.html#ref-60">[60]</a> <a href="index.html#ref-5">[5] §2.2</a></li></ul>
 <h3>mHC：约束多路残差的混合矩阵</h3>
 <p class="math-notation">单 token 下，\(H_l^{\rm res}\) 为 \(n\times n\)，\(H_l^{\rm pre}\) 为 \(1\times n\)，\(H_l^{\rm post}\) 为 \(n\times1\)，\(F_l\) 将 \(1\times d\) 表示映射回同形。\(\mathbf1\) 为 \(n\) 维全 1 向量；双随机指元素非负且行列和都为 1。证明中的 \(P_r\) 为置换矩阵、\(\lambda_r\) 为凸组合权重，\(\|H\|_2\) 为谱范数（最大奇异值）。</p>
@@ -53,6 +136,17 @@ X_{l+1}&=H_l^{\rm res}X_l\\
 H_{ij}&\ge0,\quad H\mathbf1=\mathbf1,\quad H^\top\mathbf1=\mathbf1.
 \end{aligned}
 \]</div>
+<noscript>
+<div class="math-fallback" id="mhc-nojs-update" role="note" aria-label="无脚本阅读：mHC逐流更新与约束">
+<p><strong>无脚本读式：两支计算后逐流相加。</strong><var>X</var><sub>l</sub> 有 <var>n</var> 行、<var>d</var> 列，每行是一条残差流；记第 <var>j</var> 行为 <var>x</var><sub>l,j</sub>。res 矩阵为 <var>n</var> &times; <var>n</var>，pre 为 1 &times; <var>n</var>，post 为 <var>n</var> &times; 1。</p>
+<ol>
+<li><strong>旧流支：</strong>对输出流 <var>r</var>，把每条旧流 <var>x</var><sub>l,j</sub> 乘以标量 <var>H</var><sub>l</sub><sup>res</sup>[<var>r</var>, <var>j</var>]，再沿所有输入流 <var>j</var> 求和，得到旧流混合的第 <var>r</var> 行。</li>
+<li><strong>模块支：</strong>把各 <var>x</var><sub>l,j</sub> 乘以 <var>H</var><sub>l</sub><sup>pre</sup>[1, <var>j</var>] 并相加，得到 1 &times; <var>d</var> 的模块输入 <var>u</var>；计算 <var>f</var> = <var>F</var><sub>l</sub>(<var>u</var>)，形状仍为 1 &times; <var>d</var>。给第 <var>r</var> 条流写回 <var>H</var><sub>l</sub><sup>post</sup>[<var>r</var>, 1] &times; <var>f</var>。</li>
+<li><strong>输出：</strong>新流 <var>x</var><sub>l+1,r</sub> = 旧流混合的第 <var>r</var> 行 + 第 <var>r</var> 条流的模块写回；二者都是 <var>d</var> 维行向量，合起来仍是 <var>n</var> &times; <var>d</var>。两支都从旧 <var>X</var><sub>l</sub> 读取，不是 res、pre、post 串行相乘。</li>
+</ol>
+<p><strong>约束：</strong>原式中的 <var>H</var> 指旧流的 res 混合矩阵：每个元素非负，每行权重和为 1，每列权重和也为 1。全 1 列向量记作 1；<var>H</var>1 = 1 检查行和，<var>H</var><sup>T</sup>1 = 1 检查列和。约束不作用于整个 <var>F</var> 或 pre/post 路径；有限轮 Sinkhorn 只近似满足这些条件。</p>
+</div>
+</noscript>
 <figure class="mechanism-map" id="mhc-stream-layout"><figcaption>mHC：旧流混合与模块写回是并行的数据依赖</figcaption><ol class="mechanism-chain mechanism-compare">
 <li><b>n 路残差 Xₗ：[n,d]</b><small>同一 token 的多路表示；两支都读取 Xₗ，不把 n 路当成 n 个历史 token。</small></li>
 <li><b>旧流支：HʳᵉˢXₗ</b><small>[n,n] × [n,d] → [n,d]。Sinkhorn 近似约束 Hʳᵉˢ 非负、行列和为 1。</small></li>
@@ -65,6 +159,23 @@ H=\begin{bmatrix}0.75&0.25\\0.25&0.75\end{bmatrix},
 \quad H\begin{bmatrix}1\\-1\end{bmatrix}
 =\tfrac12\begin{bmatrix}1\\-1\end{bmatrix}.
 \]</div>
+<noscript>
+<div class="math-fallback" id="mhc-nojs-proof-example" role="note" aria-label="无脚本阅读：mHC范数证明与二乘二矩阵复算">
+<p><strong>无脚本证明：仅讨论理想双随机的旧流矩阵。</strong><var>H</var> 可写成若干置换矩阵 <var>P</var><sub>r</sub> 的加权和，权重 &lambda;<sub>r</sub> 非负、总和为 1。置换只重排向量分量，欧氏长度不变；对任意向量 <var>v</var>，三角不等式给出：长度(<var>H</var><var>v</var>) 不超过各项 &lambda;<sub>r</sub> &times; 长度(<var>P</var><sub>r</sub><var>v</var>) 之和，而这个和等于长度(<var>v</var>)。所以最大欧氏长度放大率，也就是谱范数，不超过 1。</p>
+<p>两个理想双随机矩阵 <var>A</var>、<var>B</var> 的乘积仍非负。行和满足 <var>AB</var>1 = <var>A</var>(<var>B</var>1) = <var>A</var>1 = 1；列和满足 (<var>AB</var>)<sup>T</sup>1 = <var>B</var><sup>T</sup>(<var>A</var><sup>T</sup>1) = <var>B</var><sup>T</sup>1 = 1。这里的 1 都是全 1 列向量，因此乘积仍双随机；这不是整个网络或模块写回的稳定性证明。</p>
+<p><strong>2 &times; 2 教学矩阵 <var>H</var>：</strong>下表按行给出输出流、按列给出输入流的混合权重。</p>
+<table>
+<thead><tr><th scope="col">输出流</th><th scope="col">输入流 1</th><th scope="col">输入流 2</th></tr></thead>
+<tbody><tr><th scope="row">流 1</th><td>0.75</td><td>0.25</td></tr><tr><th scope="row">流 2</th><td>0.25</td><td>0.75</td></tr></tbody>
+</table>
+<p>两行和分别为 0.75 + 0.25 = 1、0.25 + 0.75 = 1；两列和分别为 0.75 + 0.25 = 1、0.25 + 0.75 = 1，且四个元素均非负。它也等于 0.75 &times; 单位矩阵 + 0.25 &times; 交换两路的置换矩阵，符合上面的凸组合条件。</p>
+<ol>
+<li><strong>差异分量：</strong>输入列向量 (1, &minus;1)，第一行得到 0.75 &times; 1 + 0.25 &times; (&minus;1) = 0.5；第二行得到 0.25 &times; 1 + 0.75 &times; (&minus;1) = &minus;0.5。结果 (0.5, &minus;0.5) 是原向量的一半。</li>
+<li><strong>同向分量：</strong>输入 (1, 1)，两行分别得到 0.75 + 0.25 = 1、0.25 + 0.75 = 1，结果仍为 (1, 1)。差异缩小不等于所有信息消失，也不限制 <var>F</var>、pre 或 post 路径。</li>
+</ol>
+<p>上述行列和与范数结论使用精确双随机条件；有限轮 Sinkhorn 的近似结果仍须检查行列和误差，不能直接继承精确证明。</p>
+</div>
+</noscript>
 <p><strong>算例含义：</strong>同向分量\((1,1)\)保持，差异分量缩为一半；并非所有信息都消失，也没有限制F路径。有限轮Sinkhorn只近似约束，应监控行列和误差、gradient norm与失稳频率。</p>
 <p>DeepSeek V4.1使用n=4的Single-Pass mHC，复用上一block的A，将报告定义的activation traffic从20d降到10d；这是该映射流量减少50%，不是完整训练时间减半。GLM-5.3配置也采用mHC，但不能直接继承DeepSeek的kernel数值。<a href="index.html#ref-1">[1] §2.4.1</a> <a href="index.html#ref-53">[53]</a></p>
 <h3>Qwen GR：读4路流的元素门控</h3>

@@ -35,7 +35,7 @@
 <section id="citation-sources-2" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1706.03762" title="Attention Is All You Need · Vaswani, Ashish, Shazeer, Noam, Parmar, Niki 等 · 2017/06/12 · 1706.03762">Transformer</a>。</p></section>
 
 <p>令 <code>hᵢ</code> 是预测第 i 个 token 时的历史，<code>mᵢ</code> 是目标 mask。对 Agent，通常学习 assistant 的动作、参数、解释和结束标记；system / user / tool 内容作为条件历史。具体角色边界由真实 chat template 决定。</p>
-<p>teacher forcing把示范前缀固定，条件概率连乘取负log后变成逐token交叉熵。令 \(N\) 为轨迹数，\(m_{ni}\in\{0,1\}\) 为监督mask，\(N_n\) 为第n条轨迹的有效目标数；仅对 \(N_n&gt;0\) 的轨迹取平均：</p>
+<p>teacher forcing把示范前缀固定，条件概率连乘取负log后变成逐token交叉熵。令 \(N\) 为有效轨迹数，\(m_{ni}\in\{0,1\}\) 为监督mask，\(N_n\) 为第n条轨迹的有效目标数；仅对 \(N_n&gt;0\) 的轨迹取平均。先排除无目标轨迹，再计数并重新索引，下式两种平均都在这个有效集合上计算；若整批没有目标，跳过该批更新，不用除零或把空轨迹的loss填0：</p>
 <div class="reading-math" role="math" aria-label="监督损失">\[
 \begin{aligned}
 N_n&=\sum_i m_{ni},\\

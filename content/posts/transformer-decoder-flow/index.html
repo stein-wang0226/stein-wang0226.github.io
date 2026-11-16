@@ -152,6 +152,7 @@ M_{i,j}&amp;=\mathbf 1[j\le S+i],\\
 L&amp;=\frac{1}{B(T-1)}\sum_{b=1}^{B}\sum_{t=0}^{T-2}\ell_{b,t}.
 \end{aligned}
 \]</div>
+<p><strong>两种mask表示不要混用：</strong>这里的 \(M_{i,j}\) 是0/1可见性指示，对应代码里的布尔 <code>allowed</code>；前向公式中加到score的 \(M\) 则在可见处为0、屏蔽处为−∞。代码用 <code>masked_fill(~allowed, -inf)</code> 完成转换，不能直接把0/1矩阵加到score。已有3个缓存token、再输入2个时，两行allowed为[1,1,1,1,0]和[1,1,1,1,1]，只有第一行最后一个key被屏蔽。</p>
 <p>代码里 labels 从 input_ids 复制，在 loss 中用 logits[:,:−1] 与 labels[:,1:] 做一次位移。<strong>不要预先位移 labels 后再切片一次</strong>。实际训练 padding/角色位置置 ignore_index，并按有效目标数归一化。</p>
 <h3 id="kv-accounting">字节算例：头数和共享条件要明确</h3>
 <div class="reading-math">\[

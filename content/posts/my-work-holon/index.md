@@ -185,6 +185,8 @@ Negative Ladder 的 margin 是 **mismatch NLL − matched NLL**；null 条件用
 \]</div>
 
 95% CI **[0.0037273, 0.0066557]** 来自 union-component block bootstrap。它覆盖冻结样本的相关性，不覆盖重新训练 seed 的变化；每配方单 seed、token share 未独立审计、expanded pool 非 strict protein-OOD 的边界继续保留。
+
+**复算精度：**表中的端点已经舍入，直接计算 PSC 的 `0.0322274−0.0380793` 得 −0.0058519，再与 PS8 的差相减得 +0.0051415；上式保留原逐样本完整精度聚合的 −0.0058518 与 +0.0051416。不能用显示表的七位小数重建原 bootstrap 或据此判断结果矛盾；独立重算 CI 还需要逐 anchor 结果、依赖组件划分和重采样配置。[6](#ref-6)
 <!-- WORK:EXAMPLE:END -->
 
 <!-- WORK:REVIEW:START -->

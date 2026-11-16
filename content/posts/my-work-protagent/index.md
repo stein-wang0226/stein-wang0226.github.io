@@ -19,14 +19,14 @@ ProtAgent 研究紧凑蛋白领域智能体能否学习调用真实生物信息�
 
 这里没有学习 value critic 的主方法使用 REINFORCE。它通过“奖励高的已采样动作提高概率、奖励低的降低概率”优化期望回报；baseline、normalization、whitening 和 KL 用来控制更新，但不能为缺失的生物事实提供真值。**信用分配** 问的是一次成功或失败应影响哪些早先动作。[1](#ref-1)
 
-<figure class="work-mechanism">
-<svg viewBox="0 0 840 200" role="img" aria-labelledby="protagent-loop-title protagent-loop-desc" xmlns="http://www.w3.org/2000/svg">
-<title id="protagent-loop-title">ProtAgent 的真实工具闭环与训练信号</title><desc id="protagent-loop-desc">策略产生动作，工具执行返回观察，观察加入历史；局部动作奖励和终止答案奖励组成逐步回报用于更新策略。</desc>
+<figure class="work-mechanism" style="max-width:100%;overflow-x:auto">
+<svg style="min-width:780px" viewBox="0 0 840 200" role="img" aria-labelledby="protagent-loop-title protagent-loop-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="protagent-loop-title">ProtAgent 的工具调用回合与训练信号</title><desc id="protagent-loop-desc">策略产生工具调用，真实工具执行返回观察，观察加入历史继续决策；最终答案走终止评分分支，不送入工具执行。局部动作奖励和终止答案奖励组成逐步回报用于更新策略。实心箭头标明流向；观察回历史的拱桥跨过调用奖励竖线，交叉不表示汇合。</desc>
 <g fill="#f7f5f0" stroke="#a9cec7"><rect x="5" y="15" width="175" height="65" rx="6"/><rect x="225" y="15" width="175" height="65" rx="6"/><rect x="445" y="15" width="175" height="65" rx="6"/><rect x="665" y="15" width="170" height="65" rx="6"/><rect x="225" y="130" width="395" height="55" rx="6"/></g>
-<g stroke="#0f766e" stroke-width="2" fill="none"><path d="M180 48H225M400 48H445M620 48H665M750 80V105H92V80M312 80V130M750 105V157H620"/></g>
-<g fill="#172d35" text-anchor="middle" font-family="system-ui,sans-serif" font-size="17"><text x="92" y="43">策略与历史</text><text x="92" y="65" font-size="13">蛋白、问题、观察</text><text x="312" y="43">assistant 动作</text><text x="312" y="65" font-size="13">有效调用或最终答案</text><text x="532" y="43">真实工具执行</text><text x="532" y="65" font-size="13">结果、失败与版本</text><text x="750" y="43">新 observation</text><text x="750" y="65" font-size="13">返回历史继续决策</text><text x="422" y="165">局部 reward → 逐步 return → actor 更新</text></g>
+<g stroke="#0f766e" stroke-width="2.5" fill="none"><path d="M180 48H213"/><path d="M400 48H433"/><path d="M620 48H653"/><path d="M750 80V105H322Q312 85 302 105H92V92"/><path d="M312 80V88M312 102V118"/><path d="M790 80V157H632"/></g><g fill="#0f766e" aria-hidden="true"><polygon points="225,48 213,42 213,54"/><polygon points="445,48 433,42 433,54"/><polygon points="665,48 653,42 653,54"/><polygon points="92,80 86,92 98,92"/><polygon points="312,130 306,118 318,118"/><polygon points="620,157 632,151 632,163"/></g>
+<g fill="#172d35" text-anchor="middle" font-family="system-ui,sans-serif" font-size="17"><text x="92" y="43">策略与历史</text><text x="92" y="65" font-size="13">蛋白、问题、观察</text><text x="312" y="43">assistant 调用</text><text x="312" y="65" font-size="13">调用参数与格式</text><text x="532" y="43">真实工具执行</text><text x="532" y="65" font-size="13">结果、失败与版本</text><text x="750" y="43">新 observation</text><text x="750" y="65" font-size="13">返回历史继续决策</text><text x="422" y="165">局部 reward → 逐步 return → actor 更新</text></g>
 </svg>
-<figcaption>动作和最终答案是策略输出；工具观察作为条件进入下一步，不能对其做 assistant 模仿监督。<a href="#ref-1">1</a><a href="#ref-3">3</a></figcaption>
+<figcaption>上行只画工具调用回合；策略也可以生成最终答案，进入终止评分而不执行工具或再接一条观察。调用与终止奖励随后按下文return规则合并。工具观察作为条件进入下一步，不能对其做 assistant 模仿监督。<a href="#ref-1">1</a><a href="#ref-3">3</a></figcaption>
 </figure>
 <!-- WORK:KNOWLEDGE:END -->
 

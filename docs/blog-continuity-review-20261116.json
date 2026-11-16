@@ -1,0 +1,3744 @@
+{
+  "schema_version": 1,
+  "record_kind": "scoped-continuity-integration",
+  "as_of": "2026-11-16",
+  "base_commit": "80148053b623c4b6e1fc5a1a062f1113e5039443",
+  "summary": {
+    "local_sources": 74,
+    "changed_sources": 13,
+    "retained_sources": 61,
+    "change_units": 33,
+    "added_diagrams": 1,
+    "revised_diagrams": 2,
+    "scope": "保留作者逐源examined、reason、changes、assumptions与evidence_boundary；完整报告只按作者列明的主讲段检查，不等于所有历史科研事实复核。",
+    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。"
+  },
+  "sha_chain": {
+    "historical_review": "docs/blog-diagram-review-20261115.json",
+    "rule": "冻结diagram.sha256_after = 实际8014805源字节SHA = continuity.sha256_before；continuity.sha256_after = 当前源字节SHA。",
+    "refresh": "只更新changed页的reason/SHA；setdefault保留prior_reason；所有unchanged凭据和共享资源保持原值；refresh强制实际Git且幂等。",
+    "shallow_check": "仅真正shallow clone且801对象缺失时，check使用冻结旧文档和integrated_files精确字节SHA；有Git始终验证实际基线。--verify-git-base或refresh不能降级。"
+  },
+  "modules": [
+    {
+      "module": "architecture-inference",
+      "input_file": "t9-t10z-integration-001/architecture-inference.json",
+      "input_sha256": "1a79b6024a3cb550ceb04e252d75453e78365c4a283c585fd177bdb18a4901fd",
+      "counts": {
+        "sources": 18,
+        "changed": 4,
+        "retained": 14
+      },
+      "checks_file": "architecture-inference-checks.json",
+      "checks_sha256": "6f01c79a84748931d247a0c0e43ad33c56d4c393150ab43f5715a2cbdd7a1b14",
+      "numeric_check_count": 11,
+      "evidence_boundary": "数值为标准库局部独立复算；原报告性能只静态保留。当前python3未安装torch，完整代码AST通过但模型训练/cache断言未执行。无网络、全站build/browser/refresh/commit/push。 T10p续接副本仅更新s07源级呈现记录；原checks保持原输入的教学复算范围，新增源保留核证见T10p独立报告，不作为当前浏览器通过。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。",
+      "source_repair_evidence": {
+        "path": "/tmp/my-blogs-continuity-review-20261116/t10y-source-repair-001/source-ready.json",
+        "sha256": "c0bb6edf0715bc71f772850e8e1056fcd4b337449e28881500be325d8ed715ec"
+      },
+      "source_repair_evidences": [
+        {
+          "path": "/tmp/my-blogs-continuity-review-20261116/t10z-source-repair-001/source-ready.json",
+          "sha256": "ce7c42813c69e6eccf307470a954c51854f8a3dc7c1f2d1744436479f9d30510"
+        }
+      ]
+    },
+    {
+      "module": "training-data",
+      "input_file": "t9-t10x-integration-001/training-data.json",
+      "input_sha256": "3a7ba497022eb0133f64d5b2fcbb214543f24a74b6ff81017c58e196d929eb26",
+      "counts": {
+        "sources": 29,
+        "changed": 6,
+        "retained": 23
+      },
+      "checks_file": "checks.json",
+      "checks_sha256": "6e92b19995c33784ee88b5b1f9e80fdaccef9a138ceabd75a87868819fe58719",
+      "numeric_check_count": 35,
+      "evidence_boundary": "已验证29源覆盖与当前字节SHA、原锚点/公式/代码/来源URL/标记保留、35项教学算术、两图静态结构和新链接source目标；未验证真实页面装配、像素/公式渲染、运行时权限/重评分、模型训练、全部历史科研断言或线上发布。完整报告实际审阅段落见training-data.json，未伪称全部实验复现。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。",
+      "source_repair_evidence": {
+        "path": "/tmp/my-blogs-continuity-review-20261116/reports/t10x-protagent-full-768-source-ready-001.json",
+        "sha256": "8d5902310d5720153d218ded4363bb942723159f5ece9c6e9dc08ebfb3d9e24d"
+      }
+    },
+    {
+      "module": "agent-multimodal-diffusion",
+      "input_file": "agent-multimodal-diffusion.json",
+      "input_sha256": "dcb12f31547ec1e959710bca13499e1e35e00b53f32ae224f34ff72a1e4c16ce",
+      "counts": {
+        "sources": 27,
+        "changed": 3,
+        "retained": 24
+      },
+      "checks_file": "agent-multimodal-diffusion/checks.json",
+      "checks_sha256": "1503eb5e856d17f18da5597916fb44a82b98c83d2d0b400393d04f139ee66830",
+      "numeric_check_count": 42,
+      "evidence_boundary": "模块静态源保留与教学算术；不是本轮构建、三屏浏览器或科研实验复现。"
+    }
+  ],
+  "immutable_baselines": {
+    "docs/content-migration-manifest.json": "11361df792389fc3c516eebbdbe874911a72f9660c29c630fb7b6442cd01258a",
+    "docs/organization-audit-20261114.json": "2b80203ef8ae46a7e3b9bf8ed40b3766d6359caa1c67663050834985f0012407"
+  },
+  "frozen_files": {
+    "assets/Yuxiang-Wang-Resume-zh.pdf": "639a6be51226e0cb58ba251674430343b34fcd3be1cf23ffce9f48c4c0e700ab",
+    "assets/archive/Curriculum_Vitae-before-20261114.pdf": "66b3c0d7c7cf44f23caf4cae80eaaac4e8948373fe39b682fc2111c2735ccde6",
+    "assets/archive/blog-before-learning-rework-20261115/archive/rl-interview-guide/index.html.txt": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+    "assets/archive/blog-before-learning-rework-20261115/posts/agent-harness-guide/index.html.txt": "41bfda2ea2a56d8b0ef47363b4e7889665b8564aa3a7b9a76ce8767aacf1a554",
+    "assets/archive/blog-before-learning-rework-20261115/posts/agentic-rl-guide/index.html.txt": "f1bcc70c977ac5cb9c852a029cc00f8d76f658055f7add68f80c6ebd37f8d155",
+    "assets/archive/blog-before-learning-rework-20261115/posts/distributed-training-guide/index.html.txt": "aa41ba2c02d0626766321b60453e446267f8e1e18db9ec69c75454c6a3d0c75e",
+    "assets/archive/blog-before-learning-rework-20261115/posts/harbor-framework-guide/index.html.txt": "435bf84f873205e69d3a9c425783a805134960f180728de7232afaa5580797a8",
+    "assets/archive/blog-before-learning-rework-20261115/posts/llm-frontier-2026/index.html.txt": "f1e7b38eaec80f5c72138ed0030732095c43af9f70bc17ed93853a7a4fd14474",
+    "assets/archive/blog-before-learning-rework-20261115/posts/llm-interview-bank/index.html.txt": "c1acd023193e5805a4186f970bfbbee25a31ebc9365ea52051d5ab33f9ed5313",
+    "assets/archive/blog-before-learning-rework-20261115/posts/my-work-dllm/full-report.html.txt": "740a75826196dc2f355c9d7bbf9ed23546cf24132b8ec88536426a47a08c4f23",
+    "assets/archive/blog-before-learning-rework-20261115/posts/my-work-dllm/index.md.txt": "e1ed57a562a6c038b035efd716e7ae9ae6dd2cc2783de8e42fb950bffbbc8c1f",
+    "assets/archive/blog-before-learning-rework-20261115/posts/my-work-harbor/full-report.html.txt": "ee5d67a57adda305a96b55748e97b26b6a39fb3388097593eaa2e93a8ea2c0bb",
+    "assets/archive/blog-before-learning-rework-20261115/posts/my-work-harbor/index.md.txt": "cd7aa0fbcefa536373973bc674d881626c04b5efa843b035c3b8fa40df7b3b0e",
+    "assets/archive/blog-before-learning-rework-20261115/posts/my-work-holon/full-report.html.txt": "bfb0cf1bd43acdb888bc697bd90918834d3f7cc56b1df6dd62ccb4f8d1f05bb0",
+    "assets/archive/blog-before-learning-rework-20261115/posts/my-work-holon/index.md.txt": "74c41a2631c48aa5b127b289aae14a44e97729c9bc9789773b5486a9f18846bd",
+    "assets/archive/blog-before-learning-rework-20261115/posts/my-work-protagent/full-report.html.txt": "ddde1e21eca9037eaa5f349add0c53687ee090c3ae2414056bedae6a13b8dd99",
+    "assets/archive/blog-before-learning-rework-20261115/posts/my-work-protagent/index.md.txt": "48c3d619dbd7937ea57280307819cd449003a349c859a1af4e92c6f1883f77f7",
+    "assets/archive/blog-before-learning-rework-20261115/posts/rl-interview-guide/index.html.txt": "fd5cedc033aff57186e7ba8037cc6ce937c7cdaf13e9ae7e2e928c96900e2984",
+    "assets/archive/blog-before-learning-rework-20261115/posts/transformer-decoder-flow/index.html.txt": "6e7c4255de3c7710afe0b9ceef69484cf9313aad186e175fffbf4d3ef749050c",
+    "assets/archive/blog-before-learning-rework-20261115/posts/vlm-knowledge-interview/index.html.txt": "e1d46a5dfd7d22d82fa319b9a54dd5ed11e2e035cec62ff0aba474e8de6884d4",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/index.html.txt": "21447ac70c7146d5e0935d083a80a3013d27fd4808173680c4c13b67fcee634b",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s01_task_synthesis.html.txt": "b20f74fb2083eef2cda999d3dbbb3825737d4c064a1bf4f78d7da847160d5f0b",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s02_benchmark_map.html.txt": "8155e9b54453592758a7183e516abca6d9c5079b34ad819b53a0d2db8f0ddd19",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s03_scientific_task_family.html.txt": "7e42021deed263b55e6e4afc2eafed239ce21fd17515cf3befd1d3a505bef280",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-data-benchmarks/s04_cluster_training_evaluation.html.txt": "094ae337693a90996cd2dad1095690b7d6d1bd8c94262deddd6ed696088a575d",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-systems/index.html.txt": "57b8bdd504f8d88db217b96e37c1cc3189fdf3de937d4cc3e66a039f2452bf32",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-systems/s01_rag_retrieval.html.txt": "8e3e62e7218fa56b39c8f39ac21fe3b00c52cba2f52094ea9fe90f0b1a6f4c87",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-systems/s02_planning_compute.html.txt": "9b903d6c1633ac9412295f03163602eb99433e5fa2e2d6df38e443febcf57d29",
+    "assets/archive/blog-before-learning-rework-20261115/series/agent-systems/s03_trust_safety.html.txt": "a2e1f9ef17d33d717bd9d90a7580aa025014ec3a1f38ffe46f6d8fe444fbebf6",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/index.html.txt": "a3b89f55a7d537d5c31511fc8587903602fdc27f9f95399b9964ed7d62d9c65b",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s00a_ddpm.html.txt": "6d991160e94e5cf3bf684d7d1bafb6a041ac916ffc607e81ab7b0db76d19e266",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s00b_flow_sde.html.txt": "57bdf72025bd02cffc44a59f4c0902248f4c87ed51be94a6cd7ead7556735584",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s01_overview.html.txt": "c589cccccb9d4f4c3178efe97c53e71200f7e5546ef6b9fdbe16d04faa977c0c",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s02_discrete.html.txt": "40e8507b87c262fe9b399d469851d92e3c255c278fc3f4a81d3b0dfc95e4e07c",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s03_block.html.txt": "09d18941bf2b36caebe3d786002087b9ea3b353a3db4494dbdac14ec37e2ab11",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s04_continuous.html.txt": "6d5a91f8ca886e9018016baf977e447d91ad9526f03561b9bb72d5b3d3689cdc",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s05_paradigms.html.txt": "2dda088c118d6eee8359f59d27cb9d29e3d410865ed2d879937cce1084328865",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s06_scaling.html.txt": "7e79cddbdd97e07411b2f686e8dda82da7142431c69b69ac1bb6d057e926b64f",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s07_speculative.html.txt": "ed974e015ce5605bc73f59f03ffb1813a052e484d030e4b65795ad2f433472aa",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s08_elbo_rl.html.txt": "77aa04ffb6994d19de8bfb0f5129f5f9f8af1cbf1df69d12a4a576fe47dee704",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s09_commercial.html.txt": "e588434c27ea5803d8b0e0b0ad6881f03f8ca579d9400fbd1acf3fca8cb9fed1",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s10_comparison.html.txt": "976140a8c99c6a10ff5396409d36ef9fe38c0cc1a12a0621261996b4318e88ef",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s11_loop_transformer.html.txt": "7ea7b6dc9b57b395f756bb8428019775389110fd872f44aea60b57a630af4387",
+    "assets/archive/blog-before-learning-rework-20261115/series/dlm-survey/s12_vae.html.txt": "ec31a990fec575ba86da0f53d59e41fe7d03a71f44378a8d51957163aade3ccd",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/index.html.txt": "17ad76e8fc05ffeca2996df9abaa259791967e91666f5a5e9462633e4bd2578e",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s01_transformer_foundations.html.txt": "7b7a54beff1ce63022e84477142ee6025661fcb28cff78ddd6438a5dc06de2eb",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s02_attention_position_cache.html.txt": "5ec9fffe4e685129676356566310bae85128194db0fab2afecb79b29597a668f",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s03_ffn_moe_routing.html.txt": "bc740c2a4080ab5d85e4d3e90c4a9890cc85df9e6931b3d9460a631e756fd8c8",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s04_residual_norm_stability.html.txt": "1ab5c0250f0b1e38106722ac07e527c837c55ebc2f7d682bd5a1840dbbf10ec3",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s05_hybrid_architectures.html.txt": "eb9ec82d7849ecc30f744d5a7418dd0359b1c58be829ef82434d1196b3dadbba",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-architecture/s06_model_comparison.html.txt": "03d558ad96748c1f6f858b19b5d68566b63addccbc9d15049dba5064daa43f4c",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/index.html.txt": "e255eb8fa376fc1a630792585e36dcd9d031eeeacdac98d65daf359a75bf34eb",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s01_supervision_preference.html.txt": "a4328f8e14397e3afc9e14251ada372bd26cfe83f9199b8b42bd20c555a7f813",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt": "639d9af554e65960deffd9d5c9047356321fea02ec3b2b47712bd0b34e07164b",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s03_opd_self_distillation.html.txt": "02af3dc2561f1ce70dbcae8a9846fd4d35450b7ae64c83ac1fc9c8ba3b0173df",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s04_environment_reward_credit.html.txt": "23ecb01a09c776b6e95e89f44f77241591f7697a35bc70fa29a833b1741d1436",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s05_frameworks_async.html.txt": "1580023adfac931a0d33bbdddaa484af62e40b802bcd359d6daa45b02c008f1e",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s06_task_cases_experiments.html.txt": "31caf818180050ca0e6d9b67dd04dfd4c7af250540b2d2535cbdb0a14992b064",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/index.html.txt": "dcca5ef3ac0793f602148096a7ba25bb4399565bb90742f3bf5d0e814eb1bf92",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s01_agent_data_bench.html.txt": "9d46cb2c141ac5a298892a790943ea103396a04a82e2f94918357c6b2a143040",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s02_agentic_rl.html.txt": "87f765c9b9810a2160466329c9717eaa789cab55e9456aa651f8671d89aab4c7",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s03_base_architecture.html.txt": "476bdfc9a914bcec244c09ecb3ebc680ee3c119a55ef648ecce3a79952f41701",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s04_inference_diffusion.html.txt": "94abfffe5d9241e8b8ac94967aacb17ec4ce9cfae746278808a395f8741d2efc",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s05_agent_frontiers.html.txt": "37a12b4ceb8507bb2942f5f7390facad6426cb3532ba21c7ce1a25db017b9108",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s06_architecture_landscape.html.txt": "ad22cf943cd2698317f294bd1e4f831a1e2309893863ec9f5db20769b2a3f90e",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-research-map-2026/s07_architecture_training.html.txt": "1afa5f02c15ab6cffdb0c97d31609aa76e3fc39361d44b1172ab0cfb9334d875",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-serving/index.html.txt": "4ef990ad35f6cf9a63b7fd6bfd5f1f312aa1c31b0d2bf0f80bc59de456b5a398",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-serving/s01_runtime_scheduling.html.txt": "e3ef1937d01ab2145d9d960ba1020c1f20284c9a66349216927dec3bad1b4d0c",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-serving/s02_parallel_quantization.html.txt": "a06adc4dccafeceb178087936bc90b28b8153865311a777d61f774d70a54f56d",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-serving/s03_capacity_cost.html.txt": "a77c8ae736eed76b60634a0f2fa7a3e95f7df7ef3809521341ad0dd674570b99",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/index.html.txt": "98b194ccd9eed9fa98b8b34ad8a13e9e8620e888ef0620bd4555188cad760e2a",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s01_pretraining.html.txt": "c45bb82ff913000257d2fbd0c1805d61406d56ffdc410060fa435c7b52abdf53",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s02_midtraining.html.txt": "eb3392dd48306da237e5729245a82d1b07a5ed9cac1d18ef212b540232013bf7",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s03_sft_rft.html.txt": "59bfbcdc3f13cfe21ea509736caf1a6b4d7bebe789d6164f60cd947769fe364a",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s04_rl_evaluation.html.txt": "85c827df1cc9fdb0a90fff2d181e9125a08ac8dad78780084e4ee81d6c450b28",
+    "assets/archive/blog-before-learning-rework-20261115/series/llm-training-lifecycle/s05_training_methods_systems.html.txt": "7f5b8bd8eefe2cbfb26e0f48072327cb3efca8129eff1df26bb51699277ffa66",
+    "assets/research/2026-11-14/DeepSeek-MIT-LICENSE.txt": "f2c6c602815669d292889e5be8c802f2ed950653b77999b1584e8e6aed25d040",
+    "assets/research/2026-11-14/NOTICE.txt": "0e5ae50ea0613842a5d9acffb974e2d7b7b1a351371e3aac972203b949668fce",
+    "assets/research/2026-11-14/arlarena-2602.21534v3.pdf": "f50eeaea6b4ca43b6e8519e2ca26b250dd98d50c5a4559da4c6e8b0000be97e4",
+    "assets/research/2026-11-14/deepseek-v41-2609.19969v1.pdf": "ba68e2e40408125ae6d2f63a9a241b61c73910691c74ec1a2a7023c851eac08d",
+    "assets/research/2026-11-14/dflash-2602.06036v1.pdf": "d44fabf907b17766915c7e064f7a6cecf46bc717bcf0c0d2f65e4031f56cae74",
+    "assets/research/2026-11-14/dspark-2607.05147v1.pdf": "522036b0cc16ad4678bd7c278dd0a0ab4da31170af7b97c2041067cc09a8289a",
+    "assets/research/2026-11-14/engram-2601.07372v1.pdf": "90bf37b36cf5b507705c53d54f6e8142870fba23955f82a6a3b0aa1a983193a3",
+    "assets/research/2026-11-14/evosyn-2610.12593v1.pdf": "6084dc82f1bafe25f2dc9673726693008eabcd547dd9c382629db4580e78a55f",
+    "assets/research/2026-11-14/gdn-2412.06464v3.pdf": "55f84f2ae9c4e52ff494bfa699499867f5e9e17514994ac71de43888363a5fb9",
+    "assets/research/2026-11-14/gemma4-2607.02770v1.pdf": "c3928186251a3f33caf7412f1a8fe7486e8350a7eeecf4146766a183ba22074a",
+    "assets/research/2026-11-14/glm5-2602.15763v1.pdf": "4a97eab759d4576b8a93cac0cdf8e25b8fc4c01d71c61f759548eab6796e6ac7",
+    "assets/research/2026-11-14/latent-moe-2601.18089v1.pdf": "8308307d9519455b7332ae81debbde5af931fb5a20aa9053046875e1361f5515",
+    "assets/research/2026-11-14/nemotron-ultra-2606.15007v1.pdf": "66afad9d2e1bbcab2431af59396f681a5e1546f0a6aff8fcd999f7151b87821c",
+    "assets/research/2026-11-14/programgym-2610.13395v1.pdf": "d1c4e4c3b39c90f6702c7dd8403b128dffdb3c3c13c597f960001ef8c93d044c",
+    "assets/research/2026-11-14/rlds-2609.27035v1.pdf": "15bb088aaeae730807da6cd41895af0be5a6f6210185ace9ad335f729273ae8b",
+    "assets/research/2026-11-14/sapo-single-2608.19842v1.pdf": "7c71b61820ab37694ac9b0f73c1d0533b2311b30a006b7ee25fd8bf645c45288",
+    "assets/research/2026-11-14/sources.json": "1e34bcb6a21bf55acea8553a8525d87855057457747fc012a08c643c7b9ff1c1",
+    "assets/research/2026-11-14/swesmith-2504.21798v1.pdf": "15321ed2d58b1ae263a1b0ddad8a5a20f7062a776be850a3acf9dd7323833afd",
+    "assets/research/agent-data-benchmarks/bounded-replay.svg": "c4649c46a6cf647f21c5e37afca2ed01f1608840177b0fb535c90541900eeb74",
+    "assets/research/agent-data-benchmarks/ced-path.svg": "40f041a4bf2fa1a228671fb593a777e9ccf20a919867d6cabb95e4b45fd5a88e",
+    "assets/research/agent-data-benchmarks/csa2-layer-plan.svg": "64f47678a1526d22fa4bc59f7e7c8e099a19142cebddcccb199bf4a6ded98a31",
+    "assets/research/agent-data-benchmarks/figure-data.json": "5235aaf019e3e55a6b6046c77dc23444df6c72d97d46404fb30b706e603f4088",
+    "assets/research/agent-data-benchmarks/global-kv-bytes.csv": "f4cf2956f27ac7a030470fc18287d3ef3005b81a12c03b33dfc07a66d95b27a9",
+    "assets/research/agent-data-benchmarks/global-kv-bytes.svg": "ae6f31f56ffce4b3cca814ffbc78f64a530b8eae583d8ec34ad68fb460035d8d",
+    "assets/research/agent-data-benchmarks/sources.json": "d079bec50018bb400f509024705a8e579c6605c74dfd61d45663665233a86957",
+    "assets/research/agent-data-benchmarks/task-synthesis-flow.svg": "b161f47124ef8aa256996c64b65b2311e42d80ba4251b0d50d34ec00b7f13f13",
+    "assets/research/architecture-20261114/figure-data.json": "f16c3fd43b34731fd650b863ef521806eb89522dd0592f52a216dfc5da8e5105",
+    "assets/research/architecture-20261114/history-paths.svg": "f5686b9bd537ec3c75d5ca06308add5bdd2965aabd6aa6c4b5bc22e2bb96e9ea",
+    "assets/research/architecture-20261114/hybrid-layer-counts.csv": "5a4d5716d093a38031dc0dd5466fca3f2d971f6532dc7ab0191d6bc26356ab45",
+    "assets/research/architecture-20261114/hybrid-layer-counts.svg": "aef6f834b23cb198696a313adfd5878e2f927b368379dc2d77f6f4001f413ee4",
+    "assets/research/architecture-20261114/latent-moe-paths.svg": "5439d3698a4aa871e0e9c9fd6087b3bdc88f5f0e60304d2a45612cb1fa40b18e",
+    "assets/research/architecture-20261114/latent-moe-specs.csv": "3f8ec8c5d15dbe5fb1cde53a9bb49cd73f2ea19f49b08ae9a74e64f94cc41c89",
+    "assets/research/architecture-20261114/residual-designs.svg": "2707f92a8f2630b2f73bc01a8acc33a35aff20eaab55a313ed6554d938ba23af",
+    "assets/research/codex-memory-20261115/LICENSE-openai.txt": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc",
+    "assets/research/codex-memory-20261115/NOTICE-openai.txt": "9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915",
+    "assets/research/codex-memory-20261115/ad-hoc-instructions.txt": "d36a36083d92f9d44efbd95e0e4b6e81d7d149e812f2bca2009b6dd4b8aa93e7",
+    "assets/research/codex-memory-20261115/compaction-prompt.txt": "ab0c334d4faca17e3afbb9b16967c1b2fdcc7242a9a0880af57949fa236d6d07",
+    "assets/research/codex-memory-20261115/memory-read-v1.txt": "2bc7736029884b714860a6f0d6b2fd26598bba58f2213b787f01fe2a491f4326",
+    "assets/research/codex-memory-20261115/memory-read-v2.txt": "2f81fa2e89f341a1b7b3cf11ee7b855087c4ab84ddad920980475465ef28ff27",
+    "assets/research/codex-memory-20261115/phase1-input.txt": "2e54c74909238022305c269c862910bb29509fda8b58ce671ef011f8d6453047",
+    "assets/research/codex-memory-20261115/phase1-system-v1.txt": "cf795e8a2f5f52d333af2613bf1ff79178112f5fd2161cc181a8ddf52e59da33",
+    "assets/research/codex-memory-20261115/phase2-consolidation-v1.txt": "1450e24f84c03375aa5114c6c0857f515395129dcc00f65263221d03866852a0",
+    "assets/research/codex-memory-20261115/phase2-consolidation-v2.txt": "7334fdb4aa5d958bcff54568a375d0b0145c19a611a1a22faa6bf251a46a5f0e",
+    "assets/research/codex-memory-20261115/sources.json": "5335edb429b82a93569215b3db7a8deac0dfba735135a4a9250188f5bb0c3dbc",
+    "assets/research/codex-memory-20261115/user-notes-original.txt": "29718f9ab57eba9f7410f260059a6997414fdee5a7c6e33ee1d2e5538e9e40bd",
+    "assets/research/my-work/dllm-original.html.txt": "1a9a865b7f446fb87b139424363fcdc886c385b31e34c2252560f75a978b50d7",
+    "assets/research/my-work/harbor-original.html.txt": "1b1bd2c7bab7c46a6ccb98a2d8ac49f764c9d7aeb4b84e26056f4dea9ad8f529",
+    "assets/research/my-work/holon-original.html.txt": "38dad9427c12e3522bee780c3cf08cc5ef876e38a0d1094ff1a72dbe98222df9",
+    "assets/research/my-work/protagent-original.html.txt": "b963c1874ef39c03f0b33f16232aa276cbf5996138459e24f3cd1048d421516a",
+    "assets/research/my-work/sources.json": "de6d38d5bf43db8467466e2a4c2af30298a23bed7df41fd1d8af658c12549be7",
+    "assets/research/posttraining-20261114/case-contracts.json": "87045f55e206f6a742fff7b5a099fe8af9d8f2423a84ce98437cf58ac8796ff0",
+    "assets/research/posttraining-20261114/experiment-matrix.csv": "c2094105768476143a4103f890a36237ff6e90a2a8c2a91befdc3d32c831efec",
+    "assets/research/posttraining-20261114/figure-data.json": "20493a7b340d60ed06018bb52c099dd46a4723fbe9775328810c8c59294ecf81",
+    "assets/research/posttraining-20261114/group-signal.csv": "e84fdee092bff3947c5bc55cf64ee713c669896db793ec28f5d9858a4e1fc13c",
+    "assets/research/posttraining-20261114/group-signal.svg": "69548ad19fd1babeee06b77c1a61357bbffaf2574d9df547e638a4c82c96a4cf",
+    "assets/research/posttraining-20261114/mimo-compute.csv": "7f3589ab2d347d7c45fd3413fbb0d579b81d25202274ed461340fd4ddf0b725e",
+    "assets/research/posttraining-20261114/mimo-compute.svg": "75b2d5c97277b8a8da9040bbf65cfd84d637db1e0e9c6967079c2a713d052d8b",
+    "assets/research/posttraining-20261114/sources.json": "37a25b9bde4880686700ab31c33f08dd84527b7083f49db98794b05fd415b875",
+    "assets/research/scientific-agent-design-20261114/README.md": "417c58c3e0de1863b5c5f939c9d65c786cba4c39a3ea09cee9620e1d8c9ed59e",
+    "assets/research/scientific-agent-design-20261114/cluster-plan.json": "69b1d5f3621ff85a5cf20dcd320fae2dd9c2ba5ebf5049af839dd72dac777751",
+    "assets/research/scientific-agent-design-20261114/cost-record.schema.json": "83539b1b8684b7244cc614b5ebb7e2202632e3a6b60fb492d00a8c4e30e38b1b",
+    "assets/research/scientific-agent-design-20261114/experiment-plan.json": "9cf677b1c6801dfaeb59c2ae7f5eae2cec2cb410799c6fa61d600a999bf80aa4",
+    "assets/research/scientific-agent-design-20261114/failure-taxonomy.json": "0b6466f5099419774d82b0fb15dec5c3d0a0875792cca6b2f7ad4ba923be3318",
+    "assets/research/scientific-agent-design-20261114/instruction-draft.md": "18b67786deb9ab37d48b3909f1d719de54f81c42602c29ac77289dbcde1089bc",
+    "assets/research/scientific-agent-design-20261114/output.schema.json": "61d35e81d44d2b83d9e4d66ad935af0f3e3d9b4fabe5617423fd07816771aebe",
+    "assets/research/scientific-agent-design-20261114/serialization-contract.md": "6e8374d8372bec3d6b3bbc4631cfb8ddec54ba941ebcad5681f02e6353ee5cf3",
+    "assets/research/scientific-agent-design-20261114/study-audit.json": "7d7d1185d045b6997f56b70cc2e1350ca6be6dc4b83067ea5b69d2b86d907142",
+    "assets/research/scientific-agent-design-20261114/trajectory.schema.json": "37cdb6f8d1ab057800a44237b5d762601404e8b77e9474f726ca9d568c522307",
+    "assets/research/serving-design-20261114/capacity-estimates.csv": "68441e6d2cd893e630dfb4869dae300d2c08dda4ebf6bfa02ff3a8133a9d3551",
+    "assets/research/serving-design-20261114/capacity-plan.json": "461eadab80b08e4b659a81a19ef38a22a79fd7c2bb3547c0c7a8b9fc03894dd3",
+    "assets/research/serving-design-20261114/measurement-protocol.md": "8e61d50d3cf40f72e84549fc63eb368672526c7e26f7c6da545e3b2b13a2e415",
+    "assets/site/citations.js": "424d2df5f052479881fc39a6be04eb6b22da5403a6397efc408b6346ddebe6a6",
+    "assets/site/course.css": "c6158de1285c1b9a9eca975ab4d4303d0c4ff2262f44ec751e2fa3c05340c749",
+    "assets/site/course.js": "5f4688615b5945570a627badb8437deafd4c48776d2bf09cc48dbcea2e18ea02",
+    "assets/site/jetbrains-mono-latin.woff2": "2c32b9b3ee358c119e210f6f5195f9bd34894d78a785ff2e95d60e718e400af4",
+    "assets/site/literata-latin.woff2": "c614760279d75a6fdededaef709d39d23a3d1d271b84adb18c7774e9aee5cfc4",
+    "assets/site/math-config.js": "abdf99fe97229158e400392321ba235ae277ca83b304ae360cac4f1fc10ce569",
+    "assets/site/math.js": "6bea0ef3eb2ff55f5e62985c5c57838c3c6ec07f129523f3f53a6c0cfa0b89bd",
+    "assets/site/my-work.css": "a9ff5ecb0735f62ade01a7f4b8d443b320f9f964590473a6bb5e6c7baa06b77f",
+    "assets/site/profile.css": "c5b334256a5d7b1e7efb80df126cc32361f7a9aab1ba47b8f6210e5593936e2e",
+    "assets/site/reading.js": "b038debfff63dc2f59c2ad80a5d506b56c1f6a2abd4a8302c8e0b056b583e1b4",
+    "assets/site/sora-latin.woff2": "3902474d3ece89c8580d5ef3325cf58753e6e45a86f9957b4dacc4fce2e7fde1",
+    "assets/site/training-lifecycle.css": "5ebc89c2fcaadf66fa012a6dbf3b62ccc900ba0b86f02789cb1a08c886415631",
+    "assets/site/vendor/mathjax/LICENSE.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "assets/site/vendor/mathjax/input/tex/extensions/boldsymbol.js": "d6771fee0772db2657796c8d0e20e1878bb3237f6d3ed1e828e1834a4ff743ca",
+    "assets/site/vendor/mathjax/input/tex/extensions/braket.js": "2abb032ca0eaff9fb2322a28b5d14ba058e7934d3e56974c55f574059e907a4c",
+    "assets/site/vendor/mathjax/input/tex/extensions/mathtools.js": "04272d69a0b64783cd5b66820d6f8220ee510409d0b12c38626404be9ed9689c",
+    "assets/site/vendor/mathjax/tex-svg.js": "d4295dc33744836935c1399feece5159577b34c5c8ffb9f1c6324cd82e03a882",
+    "content/archive/agent-base-mid-training-20261114.original.html": "9be90744e1db851023a2a2e26d02d53df2d43ec20eb814314bcdca0df92a5061",
+    "content/archive/notes-before-migration.json": "884aaf4f2eb9249a51c24159f4e2109f9081be8383795476a615d3b2860d95fa",
+    "content/archive/profile-before-20261114/2024-stm-dynamic-graph-fraud.md": "55af6e2f958932db7fee9177aeb6f96616064a8a09a586afc0a490c2f6abf3f0",
+    "content/archive/profile-before-20261114/2026-locality-aware-dlm.md": "6fc90c102889981b03d5a26201667ebba966d99f41cfff357d17d841c7bd65f5",
+    "content/archive/profile-before-20261114/2026-semantic-dlm-plus.md": "4a7fb97d1289b97338a114995da42e3054d884baf921fb564861abca9ec4eb5d",
+    "content/archive/profile-before-20261114/README.md": "9fbd4cf1c04890d7e1384e1abf37f6808c13af3ef62eb1e4ee93b31961d262cc",
+    "content/archive/profile-before-20261114/about.md": "aac94711234dd76d99195d23fa2ceafb5606dbf1a42f677be8415f719de522cf",
+    "content/archive/profile-before-20261114/cv.md": "530c9a23784a4650b4115e35263d6b363cdfd8d087388c2a39d07bab9819f7de",
+    "content/archive/profile-before-20261114/uploaded-resume.original.pdf": "13763f188510ea377ce5b9895601524cf9c1b36287e049baab5e30642b1f0e72",
+    "content/archive/rl-interview-guide/index.html": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+    "content/pages/my-work.md": "d1e82218f60cfadb2f6355c46a1e601c81cfe4df8e82d00017cb0193168471ec",
+    "content/posts/harbor-framework-guide/_shared/fonts/JetBrains-Mono-OFL.txt": "b2fe5e8987594e9ffd1d2ca52a2f5d73eb8335243893c5d6254b5ad69269591d",
+    "content/posts/harbor-framework-guide/_shared/fonts/Literata-OFL.txt": "72ef68216a08669b2a977fe788a4aea6114636adbbe0bc6aa9192f63f8d400d0",
+    "content/posts/harbor-framework-guide/_shared/fonts/Sora-OFL.txt": "855bd3bf8c48eaa45d3c0bbc077a12c977f3ca9a8efb3124e049b9300d56837f",
+    "content/posts/harbor-framework-guide/_shared/fonts/jetbrains-mono-latin.woff2": "2c32b9b3ee358c119e210f6f5195f9bd34894d78a785ff2e95d60e718e400af4",
+    "content/posts/harbor-framework-guide/_shared/fonts/literata-latin.woff2": "c614760279d75a6fdededaef709d39d23a3d1d271b84adb18c7774e9aee5cfc4",
+    "content/posts/harbor-framework-guide/_shared/fonts/sora-latin.woff2": "3902474d3ece89c8580d5ef3325cf58753e6e45a86f9957b4dacc4fce2e7fde1",
+    "content/posts/harbor-framework-guide/_shared/js/ECharts-LICENSE.txt": "634293835b43a6dd2094fa39182a3d9a6b9ca43b7fdb9ac354e8037af2a3093a",
+    "content/posts/harbor-framework-guide/_shared/js/Mermaid-LICENSE.txt": "ec9fb67dcb25eccc416ed56e1aab819222c805a2a4bfe4cb19e7556bf2ffde80",
+    "content/posts/harbor-framework-guide/_shared/js/echarts.min.js": "e84270bd0cd5bdf60fefc26d00c2a391cb2e81f4d26a7a9ee16185a54773a3cf",
+    "content/posts/harbor-framework-guide/_shared/js/mermaid.min.js": "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e",
+    "content/posts/harbor-framework-guide/assets/Harbor-Apache-2.0.txt": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "content/posts/harbor-framework-guide/assets/charts.js": "938f1ce052f3c040a13bd0beb7c6fd98f417c479f1c18dc56a314aea4e22bcf3",
+    "content/posts/harbor-framework-guide/assets/lifecycle.svg": "3657041997dcc987c9a62d28bb3e167999e8d4f0222bc656670ded7e219cb433",
+    "content/posts/harbor-framework-guide/assets/regrade-counts.csv": "f3db36b709b67f36bb1dc493a851fbddb006b1fae5a6c506fa6176015062e38d",
+    "content/posts/harbor-framework-guide/assets/reuse.svg": "7b7b442b0cd0b9d372b9d10e7d2a78fa5f1ac0a1a95e2cbf9fa29e7a5dbf61a7",
+    "content/posts/harbor-framework-guide/assets/scalingx-datasets.json": "41578976b4f9b3fb76ae28f17016117d11863d6f675e3388d70ad45609ecdfa9",
+    "content/posts/harbor-framework-guide/assets/sources.json": "eca7afbc4d68ca56d3e1880dc5cc4fa38c0245862b0a4683ea435245a2153d34",
+    "content/posts/harbor-framework-guide/assets/verification.svg": "0778ce1683408aa22343b117ec39e9e8c8b0141411dd21d93c95e6fadb3ae710",
+    "content/publications/2026-semantic-diffusion-lm.md": "a78423d7df8790c0c441900f52590ed8782ec253a0efa3d13cd5115e5fee08fc",
+    "content/publications/cua-recovery.md": "7d9ed09c73b2f8a07c5bff65f75a54dff1ca65a181ea1251e52b463a240d1910",
+    "content/publications/protagent.md": "dec0e3f2dd5ac01938276b243759a4e20f33cd6c77767095ebd26b5a6aede198",
+    "content/redirects.json": "71187cd716b37f3e77a82d06a1e37f77cc2f965b687e622436fcfb4676748109",
+    "content/series/dlm-survey/generate.py": "c361352f1bf44447a7fdafbb3560511fe20512689b71031aa70db7749113a815",
+    "content/series/dlm-survey/s12_vae_summary.md": "f8151f9541b2b6a9b3fc01df09c4ad5f9b5c395797b36ec151b0b0b7659fa5bf",
+    "content/series/dlm-survey/shared.css": "f3dac3c69922f07b573502d06c13c043f00c43e2eab1a35a9f2719d05dc7de2c",
+    "content/series/dlm-survey/style.css": "1e86703b1fd10e86af4ef824eae5746c35567fa75678151897b0e66a4197a36e",
+    "content/site.json": "958de766c3c7de61d130eac684bb23bb88fb5c07336a7cd257b404b8fb62f7d1",
+    "docs/blog-curriculum-review-20261115.json": "a705ba708ccd661f03fe3ed077c81da76613b34ec40290134443d8185ad8704f",
+    "docs/blog-curriculum-review-20261115.md": "6f751076b1cb3d6861fb512b6adeef27d46c7e50433be4b761f5a90d79aa2793",
+    "docs/blog-curriculum-validation-20261115.json": "dfb59e21db89ab5d3e41136406a0748f7152d5dadc5deac728848b3ebf850c61",
+    "docs/blog-diagram-review-20261115.json": "158af8062a6bf2b4d52eb6f024cd5fb5cc0637925b734085b36d4e31ed80761f",
+    "docs/blog-diagram-review-20261115.md": "5ba41b0505d57d2a025b7407b7e2ec010d0eb1757533cd1125e81e5b1941fb53",
+    "docs/blog-forward-integration-20261115.json": "58aeabe396cd97b8996a0a1929dba4236dabc069655c72ce02a0aab02f78de34",
+    "docs/blog-forward-integration-20261115.md": "5b36cd2a3ec0f4f90dc7e1f2c3da34118dfe0a67c3e2c3c4dfae160954c810f7",
+    "docs/blog-forward-validation-20261115.json": "aab9f8cf073159f289c8d848ac0e6cff9e21d35c1b082fe6b732ca69e84eb6d3",
+    "docs/blog-learning-page-review-20261115.md": "cf1d34931a3706108674c93b5e99ea21bd667416d643df68dc5a182027bdb535",
+    "docs/blog-learning-rework-checkpoint-20261115.md": "a932602b4a92a0c2ebef9579378ff9daa8a6aca62c46e09e7e1f428b91a265ef",
+    "docs/blog-learning-validation-20261115.json": "788d433e3d22e3768859308fcb2d829a3ca03cf5e5415b739689adcfe1b94eda",
+    "docs/blog-research-review-20261114.md": "e185505f2ae62ad74afb2b2e4e2c8a1e763971b5d56379f1d58d99ac06e43e10",
+    "docs/blog-structure-review-20261115.json": "d8e10c52c3c067fcd04cad2561f8966cf87ec1b3f35e74498415d789be5365c7",
+    "docs/blog-structure-review-20261115.md": "ef28477d47834c9daafaacbc3e4c4eaa292bd86c9c4a732ac5a36ea17f46da2a",
+    "docs/blog-symbol-review-20261115.json": "2eb93aa178a1fa1439e7d48ec7a6d98efa1a5e5451915f407d7fca830a42ac90",
+    "docs/blog-symbol-review-20261115.md": "e24626a590e04b7df6132a6b89094aa335fe7a00a43df7623ca93ca2d5d883d5",
+    "docs/blog-symbol-validation-20261115.json": "48616783551d3c62a0e540169d37822bfd1ad42553322fee97e81864b7fda8ee",
+    "docs/blog-update-state-review-20261115.json": "8934beecd935af6711d9d2f6c2d81aaefa15095b03c6d6ee495c54b90bbb1e25",
+    "docs/blog-update-state-review-20261115.md": "fc43238941c711fa522b7af59090b05a1f9c8ff749663587df491cbab3cc38e9",
+    "docs/blog-update-state-validation-20261115.json": "ff1de15bdb97696e79a4b19892874e8de519a975c1b0db36aa7731ee6c434970",
+    "docs/blog-worked-example-review-20261115.json": "d9115385e0a30974e4d831fb055fe66d2437fa76006b8c0f6919060fae6baa8a",
+    "docs/blog-worked-example-review-20261115.md": "b6dfdceda5f9d21c9e5043891e3aa0ca2a3383cc7cba1687b3025c40be277e9d",
+    "docs/blog-worked-example-validation-20261115.json": "d1c2fc19c865f93e8bdfcc33732a02ea6410c03cebd17ffea0921dc635af8be3",
+    "docs/content-migration-manifest.json": "11361df792389fc3c516eebbdbe874911a72f9660c29c630fb7b6442cd01258a",
+    "docs/my-work-quality-review-20261114.md": "ca2702483431f14de3b995d56cf1afc9a5186a8346be0edc2328e1d75af97322",
+    "docs/organization-audit-20261114.json": "2b80203ef8ae46a7e3b9bf8ed40b3766d6359caa1c67663050834985f0012407",
+    "scripts/architecture_figures.py": "bd57e0ab7a3fd2a275b5fd7c731a8ee575b170f788a5316114032ba307d58d74",
+    "scripts/build.py": "e1b40252d0a891558f5dc36e728359c5f6bdc4fa7e33dee397ebfbccbacf5b73",
+    "scripts/catalog.py": "340495f44a019da4e700e008d4edf372724597a9a6d203393b2339abfbab3e03",
+    "scripts/check.py": "9d1be06c8dcb51885040888a09497e8ad1cfef7bbc9996e599f05b88583ec56d",
+    "scripts/citations.py": "3424af3f1a913b47753b3d7766fded45a1b9430ab28f98ce8d945866741ca0e3",
+    "scripts/course.py": "497b201a832bd625844e3b3b77446305eb251e70bafd9d4eb3f15d8d2c01b44f",
+    "scripts/export.py": "87d105a38649865d43a201f9217c71e8e69372e328a647536539204386f29776",
+    "scripts/governance.py": "21a8bdbc0f344724e4e6f526cddd3a1ea3e1ee2321ca2a8a8a48d17028c43361",
+    "scripts/mathematics.py": "6748acb470a6be950221653b290b9dd589ca74f08d100c1ea5749c056060b49d",
+    "scripts/new_post.py": "f7ef92f0591f77da7b6687ed3692f1c401307a364dd1c8e84cb23d4acf26b7a0",
+    "scripts/organization.py": "ffa500130ee789b503a3c362a63283466c7eddf632ca610923935fb70876943e",
+    "scripts/pipeline.py": "36ab4d997db5b323ddf708ad36729613f9ac1e4784c67a0a110efe921984bb09",
+    "scripts/profile.py": "d4779f71242a6320cf263167487a9a762cf456df484d3362c3de72464d82bbcd",
+    "scripts/reading.py": "1144d0dad0960b7ecd70e049f30620b480c155f063c4c0c56e1184333ca58367",
+    "scripts/render.py": "c428c0bec5ff748d6af89763184bc851f0d958c880e8cf2029488dd1ee13bbe7",
+    "scripts/research_figures.py": "e3701e78305224ebe5823dde77f42a66ac2f0cd36b53be80744b955d83d3aee2",
+    "scripts/test_pipeline.py": "11dd8bd4e0778496411683e31507e484c99ca017313f7f0d6c731480ab22ca1b",
+    "scripts/views.py": "617edb1688377445eb4c8c999b9229d4e668b3499de999884b2957ef5deb70d8",
+    "templates/post.md": "396ea466be4f85aef8d90210787aa4e3ea577d2ec712e7bd9c1c0440836d53a9"
+  },
+  "integrated_files": {
+    "docs/organization-changes-20261115.json": "c9a08ef657f0b7561b946f02c0ef59b90520c6621fa395378dfa028039efc2f1",
+    "docs/content-changes.json": "9c6461f949fe54f4d9f5af655cfbe91f5a07410d74bff44e18dc0bcb5d8a4210",
+    "content/catalog.json": "30c0178b1a92cfcccf2d6651a4ca88969a938bd94c832fc395a1f67414d85311"
+  },
+  "catalog_updates": [
+    {
+      "id": "my-work-holon",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "my-work-protagent",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "my-work-harbor",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "posttraining-supervision",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "architecture-transformer",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "agent-benchmark-map",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "research-architecture-training",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "llm-training-midtraining",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "transformer-decoder-flow",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "vlm-knowledge-interview",
+      "fields": [
+        "updated"
+      ]
+    },
+    {
+      "id": "dlm-discrete",
+      "fields": [
+        "summary",
+        "updated"
+      ]
+    }
+  ],
+  "catalog_date_boundary": "仅11份实际改稿人工updated改为2026-11-16；前沿滚动页保留last-updated自动来源及原日期，不伪称重新核验全页。",
+  "change_positions": {
+    "architecture-transformer": [
+      {
+        "anchor": "#objective",
+        "source_lines": [
+          68,
+          91
+        ],
+        "changed_current_lines": [
+          88
+        ]
+      },
+      {
+        "anchor": "#block",
+        "source_lines": [
+          50,
+          67
+        ],
+        "changed_current_lines": [
+          58
+        ]
+      },
+      {
+        "anchor": "#objective",
+        "source_lines": [
+          67,
+          91
+        ],
+        "changed_current_lines": [
+          6,
+          88
+        ],
+        "repair_task": "T10e",
+        "target_keys": [
+          "architecture-transformer:4fa6d2f47c5223a5"
+        ]
+      },
+      {
+        "anchor": "#block-nojs-recurrence",
+        "source_lines": [
+          58,
+          67
+        ],
+        "changed_current_lines": [
+          58,
+          67
+        ],
+        "repair_task": "T10z",
+        "compiled_selector": "[id=\"architecture-transformer--block-nojs-recurrence\"]",
+        "mandatory_mode": "nojs",
+        "js_default_hidden_required": true,
+        "target_keys": [
+          "architecture-transformer:4440209b30835a36",
+          "architecture-transformer:4fa6d2f47c5223a5",
+          "architecture-transformer:7b9c37f3a9c2a210",
+          "architecture-transformer:93869c53fc4f89f4"
+        ]
+      },
+      {
+        "anchor": "#masked-gradient-nojs-derivation",
+        "source_lines": [
+          99,
+          109
+        ],
+        "changed_current_lines": [
+          99,
+          109
+        ],
+        "repair_task": "T10z",
+        "compiled_selector": "[id=\"architecture-transformer--masked-gradient-nojs-derivation\"]",
+        "mandatory_mode": "nojs",
+        "js_default_hidden_required": true,
+        "target_keys": [
+          "architecture-transformer:4440209b30835a36",
+          "architecture-transformer:4fa6d2f47c5223a5",
+          "architecture-transformer:7b9c37f3a9c2a210",
+          "architecture-transformer:93869c53fc4f89f4"
+        ]
+      }
+    ],
+    "research-architecture-training": [
+      {
+        "anchor": "#residual",
+        "source_lines": [
+          19,
+          72
+        ],
+        "changed_current_lines": [
+          44
+        ]
+      },
+      {
+        "anchor": "#residual",
+        "source_lines": [
+          19,
+          70
+        ],
+        "changed_current_lines": [
+          12,
+          23
+        ],
+        "repair_task": "T10e",
+        "target_keys": [
+          "research-architecture-training:f8f6c89eee810ac6",
+          "research-architecture-training:f39677496339fa5d"
+        ]
+      },
+      {
+        "anchor": "#residual-route-comparison",
+        "source_lines": [
+          11,
+          87
+        ],
+        "changed_current_lines": [
+          11,
+          26,
+          37,
+          87
+        ],
+        "repair_task": "T10p",
+        "target_keys": [
+          "research-architecture-training:f8f6c89eee810ac6",
+          "research-architecture-training:f39677496339fa5d"
+        ]
+      },
+      {
+        "anchor": "#attnres-nojs-formula",
+        "source_lines": [
+          98,
+          107
+        ],
+        "changed_current_lines": [
+          98,
+          107
+        ],
+        "repair_task": "T10y",
+        "compiled_selector": "#research-architecture-training--attnres-nojs-formula",
+        "mandatory_mode": "nojs",
+        "js_default_hidden_required": true,
+        "target_keys": [
+          "research-architecture-training:d02f8820e4c360d9",
+          "research-architecture-training:f8f6c89eee810ac6",
+          "research-architecture-training:6e3bc8250ecb7b88",
+          "research-architecture-training:f39677496339fa5d"
+        ]
+      },
+      {
+        "anchor": "#attnres-nojs-example",
+        "source_lines": [
+          116,
+          127
+        ],
+        "changed_current_lines": [
+          116,
+          127
+        ],
+        "repair_task": "T10y",
+        "compiled_selector": "#research-architecture-training--attnres-nojs-example",
+        "mandatory_mode": "nojs",
+        "js_default_hidden_required": true,
+        "target_keys": [
+          "research-architecture-training:d02f8820e4c360d9",
+          "research-architecture-training:f8f6c89eee810ac6",
+          "research-architecture-training:6e3bc8250ecb7b88",
+          "research-architecture-training:f39677496339fa5d"
+        ]
+      },
+      {
+        "anchor": "#mhc-nojs-update",
+        "source_lines": [
+          139,
+          149
+        ],
+        "changed_current_lines": [
+          139,
+          149
+        ],
+        "repair_task": "T10y",
+        "compiled_selector": "#research-architecture-training--mhc-nojs-update",
+        "mandatory_mode": "nojs",
+        "js_default_hidden_required": true,
+        "target_keys": [
+          "research-architecture-training:d02f8820e4c360d9",
+          "research-architecture-training:f8f6c89eee810ac6",
+          "research-architecture-training:6e3bc8250ecb7b88",
+          "research-architecture-training:f39677496339fa5d"
+        ]
+      },
+      {
+        "anchor": "#mhc-nojs-proof-example",
+        "source_lines": [
+          162,
+          178
+        ],
+        "changed_current_lines": [
+          162,
+          178
+        ],
+        "repair_task": "T10y",
+        "compiled_selector": "#research-architecture-training--mhc-nojs-proof-example",
+        "mandatory_mode": "nojs",
+        "js_default_hidden_required": true,
+        "target_keys": [
+          "research-architecture-training:d02f8820e4c360d9",
+          "research-architecture-training:f8f6c89eee810ac6",
+          "research-architecture-training:6e3bc8250ecb7b88",
+          "research-architecture-training:f39677496339fa5d"
+        ]
+      }
+    ],
+    "llm-frontier-2026": [
+      {
+        "anchor": "#models",
+        "source_lines": [
+          227,
+          358
+        ],
+        "changed_current_lines": [
+          292,
+          299,
+          307,
+          337
+        ]
+      },
+      {
+        "anchor": "#models",
+        "source_lines": [
+          227,
+          358
+        ],
+        "changed_current_lines": [
+          292,
+          299,
+          307,
+          337
+        ]
+      },
+      {
+        "anchor": "#models",
+        "source_lines": [
+          227,
+          358
+        ],
+        "changed_current_lines": [
+          292,
+          299,
+          307,
+          337
+        ]
+      },
+      {
+        "anchor": "#arch",
+        "source_lines": [
+          405,
+          458
+        ],
+        "changed_current_lines": [
+          416,
+          452
+        ]
+      },
+      {
+        "anchor": "#arch",
+        "source_lines": [
+          405,
+          458
+        ],
+        "changed_current_lines": [
+          444
+        ],
+        "repair_task": "T10d",
+        "target_key": "llm-frontier-2026:bcfaf9708260f116",
+        "artifact_selector": "[id=\"reading-topic-44\"]"
+      }
+    ],
+    "transformer-decoder-flow": [
+      {
+        "anchor": "#cache",
+        "source_lines": [
+          145,
+          166
+        ],
+        "changed_current_lines": [
+          155
+        ]
+      }
+    ],
+    "my-work-protagent": [
+      {
+        "anchor": "work-knowledge",
+        "source_lines": [
+          16,
+          32
+        ],
+        "changed_current_lines": [
+          24,
+          27,
+          29
+        ]
+      },
+      {
+        "anchor": "work-knowledge",
+        "source_lines": [
+          16,
+          32
+        ],
+        "changed_current_lines": [
+          22,
+          23
+        ],
+        "repair_task": "T10c"
+      },
+      {
+        "anchor": "work-knowledge",
+        "source_lines": [
+          16,
+          32
+        ],
+        "changed_current_lines": [
+          24,
+          26
+        ],
+        "repair_task": "T10h",
+        "target_keys": [
+          "my-work-protagent:32df35b7cb5e07fb"
+        ]
+      }
+    ],
+    "my-work-harbor": [
+      {
+        "anchor": "work-knowledge",
+        "source_lines": [
+          16,
+          33
+        ],
+        "changed_current_lines": [
+          26,
+          30
+        ]
+      },
+      {
+        "anchor": "work-knowledge",
+        "source_lines": [
+          16,
+          33
+        ],
+        "changed_current_lines": [
+          22,
+          23
+        ],
+        "repair_task": "T10c"
+      }
+    ],
+    "posttraining-supervision": [
+      {
+        "anchor": "sft-objective",
+        "source_lines": [
+          30,
+          75
+        ],
+        "changed_current_lines": [
+          38
+        ]
+      }
+    ],
+    "agent-benchmark-map": [
+      {
+        "anchor": "metrics",
+        "source_lines": [
+          25,
+          48
+        ],
+        "changed_current_lines": [
+          47
+        ]
+      }
+    ],
+    "llm-training-midtraining": [
+      {
+        "anchor": "data",
+        "source_lines": [
+          100,
+          176
+        ],
+        "changed_current_lines": [
+          125
+        ]
+      }
+    ],
+    "my-work-holon": [
+      {
+        "anchor": "#work-example",
+        "source_lines": [
+          168,
+          192
+        ],
+        "changed_current_lines": [
+          188,
+          189
+        ]
+      }
+    ],
+    "vlm-knowledge-interview": [
+      {
+        "anchor": "#sec1-4",
+        "source_lines": [
+          87,
+          105
+        ],
+        "changed_current_lines": [
+          98
+        ]
+      },
+      {
+        "anchor": "#sec1-6",
+        "source_lines": [
+          120,
+          149
+        ],
+        "changed_current_lines": [
+          130
+        ]
+      },
+      {
+        "anchor": "#code3",
+        "source_lines": [
+          259,
+          289
+        ],
+        "changed_current_lines": [
+          288
+        ]
+      }
+    ],
+    "dlm-discrete": [
+      {
+        "anchor": "#bayes",
+        "source_lines": [
+          13,
+          23
+        ],
+        "changed_current_lines": [
+          19
+        ]
+      },
+      {
+        "anchor": "#absorbing-example",
+        "source_lines": [
+          24,
+          31
+        ],
+        "changed_current_lines": [
+          31
+        ]
+      }
+    ],
+    "my-work-protagent-full": [
+      {
+        "anchor": "#setting",
+        "source_lines": [
+          59,
+          64
+        ],
+        "changed_current_lines": [
+          59
+        ],
+        "repair_task": "T10x",
+        "position_note": "修复在setting正文之前的head局部CSS，第59行；setting作为现存可定位阅读锚点，不称该段科学正文改变。",
+        "target_keys": [
+          "my-work-protagent-full:e80d3724d4712db8"
+        ]
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "my-work-holon",
+      "source": "content/posts/my-work-holon/index.md",
+      "changed": true,
+      "sha256_before": "262a7910eb2a929bc93e006be78d790dbe8aa807d2a5cc27a46fbde0b446062d",
+      "sha256_after": "7c4f2ba4a3cb04d93304442d6431029901472519f4f108b3e992d0fbdd95709b",
+      "examined": [
+        {
+          "anchor": "#work-knowledge",
+          "judgment": "P2T/T2P与protein-only不是确定性互逆；MoT路由图和caption已说明任务索引决定参数侧，保留图而不把所有蛋白token画成生成侧。"
+        },
+        {
+          "anchor": "heading:从目标 token 比例到可执行采样",
+          "judgment": "有效率×均长反推记录权重，600/300例可复算；输入、监督、loss权重与active FLOPs已分开说明，无需重复配图。"
+        },
+        {
+          "anchor": "#work-example",
+          "judgment": "逐项核对L0/L3端点、margin方向、DiD与CI口径；补显示值舍入造成1e-7复算差的说明，不改原结果。"
+        },
+        {
+          "anchor": "#work-review",
+          "judgment": "single-seed、token share未审计、expanded非strict OOD和结构路线未闭合的限制保留。"
+        }
+      ],
+      "reason": "仅完整报告已有的舍入说明未在方法总结算例就近出现；路由、监督与预算主讲已有充分说明和图。",
+      "changes": [
+        {
+          "anchor": "#work-example",
+          "kind": "explanation",
+          "summary": "补显示七位端点复算为-0.0058519/+0.0051415，与原精度-0.0058518/+0.0051416分开；明确CI复算还需逐anchor与依赖组件。",
+          "assumptions": "显示端点已舍入；原精度结果沿用完整报告chapter-12说明，不重建历史bootstrap。",
+          "checks": [
+            "holon-displayed-did",
+            "preserve:my-work-holon"
+          ]
+        }
+      ],
+      "evidence_boundary": "本次阅读方法总结的表示/路由、监督、配比、预算、Negative Ladder算例及限制；独立核算教学配比与显示端点，不重新训练、读取私有逐样本结果或重算CI。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "my-work-protagent",
+      "source": "content/posts/my-work-protagent/index.md",
+      "changed": true,
+      "sha256_before": "eb0601da85581e77e9fe5b5efc977f782a6eab9bd2315b2ebc0b3671492fc6a5",
+      "sha256_after": "85d72d0303ea38d90376fc2cf8aacff9eb193d29ad317f66881b71fab414852d",
+      "examined": [
+        {
+          "anchor": "work-knowledge",
+          "judgment": "实际检查工具调用/观察循环，发现节点把最终答案也送入工具执行；改为只画调用回合，终止评分在就近caption/desc明确。"
+        },
+        {
+          "anchor": "work-example",
+          "judgment": "原始step return的R-0.05/R-0.30/R与episode广播区分充分；normalization、whitening、优势clip不冒充原始return，保留完整公式和算例。"
+        },
+        {
+          "anchor": "work-review",
+          "judgment": "全样本OOD分母、严格recall>0.5、61.00指定checkpoint与61.40三seed均值、PFUA独立协议和缺工件边界清楚，不扩写历史实验。"
+        }
+      ],
+      "reason": "仅修编辑机制图的调用/终止分支歧义；已有回报推导、监督mask、独立评价及科研结果解释足够。 T10c仅在原figure/SVG声明局部横向滚动与780px最小宽度，防止手机默认标签缩至12px以下；不改线条、比例或语义。 T10h修复owner01六组确证的无箭头和交叉歧义：六条连线增加12×12实心尖端，history回线拱桥与调用reward竖线14单位留隙明确不汇合，observation另从x790送入reward；保留780px最小宽度、840×200比例、旧ID、节点文字和终止答案语义。",
+      "changes": [
+        {
+          "anchor": "work-knowledge",
+          "kind": "diagram",
+          "summary": "复用原SVG，调用节点不再包含最终答案；title/desc/caption限定工具回合，说明最终答案终止评分而不再执行工具或接观察。",
+          "assumptions": "图只表示工具调用回合；终止奖励仍按原文return规则合并，不增加新reward或论文配置。",
+          "checks": [
+            "protagent-raw-return",
+            "editorial-diagram-preflight",
+            "source-preservation"
+          ]
+        },
+        {
+          "anchor": "work-knowledge",
+          "kind": "diagram-readability",
+          "summary": "原figure显式max-width:100%/overflow-x:auto，原SVG加min-width:780px；840单位宽图的13px标签默认至少12.07px，不依赖zoom或折叠。",
+          "assumptions": "沿用reading/work的width:100%与height:auto；CSS min-width优先于max-width，窄屏在figure内滚动，viewBox和全部原图内容不变。",
+          "checks": [
+            "t10c-source-local-svg",
+            "t10c-svg-semantic-byte-preservation",
+            "t10c-font-threshold-negative-control"
+          ]
+        },
+        {
+          "anchor": "work-knowledge",
+          "kind": "diagram-direction",
+          "summary": "工具链三处向右、observation回history向上、调用局部reward向下、observation到reward向左各有实心尖端；history在x312处拱桥跨线，调用reward竖线y88–102留隙不join，observation反馈与reward独立出口。仅desc补交叉说明，caption/正文/数值不变。",
+          "assumptions": "工具回合与训练信号沿用原图对象；终止答案仍不进入工具执行，终止奖按原return规则合并。12单位尖端在780/840最小缩放下高宽11.14px，路径2.5单位约2.32px；这是静态几何推导，不豁免六组已确认fail，也不声明修复后像素通过。",
+          "checks": [
+            "t10h-local-svg-geometry",
+            "t10h-source-byte-preservation",
+            "t10h-independent-return-arithmetic",
+            "t10h-exact-receipt-negative-controls"
+          ],
+          "repair_task": "T10h",
+          "sha256_before_repair": "8fd71a32ace679dd579419e3242ef400844a48ffdd972d5adbb8d0b0f203c596",
+          "sha256_after_repair": "85d72d0303ea38d90376fc2cf8aacff9eb193d29ad317f66881b71fab414852d"
+        }
+      ],
+      "evidence_boundary": "本轮审阅方法总结、编辑图和原有算式；独立复算教学return和guard算术，未运行工具、ROLL、训练、OOD/PFUA或重新取得私有论文工件。",
+      "module": "training-data"
+    },
+    {
+      "id": "my-work-harbor",
+      "source": "content/posts/my-work-harbor/index.md",
+      "changed": true,
+      "sha256_before": "92d1bfc122b85ae5fee0cf1dcc73820c3482e227ea85bb04571dcfe0dd3fc645",
+      "sha256_after": "ac9439a34b5d51a583e1ffa21ffdcccd3bea7775910b697e3f55dbdf88cb9a45",
+      "examined": [
+        {
+          "anchor": "work-knowledge",
+          "judgment": "图中冻结答案原先直连评分框，独立Verifier只接私有校准；改为答案与校准汇入Verifier后输出评分，匹配正文信息隔离。"
+        },
+        {
+          "anchor": "work-example",
+          "judgment": "完整路径并集拒绝(1,20)混拼，与逐字段包络的反例一致；公开输入、转换hash、known-wrong、冻结答案和独立判分的顺序充分。"
+        },
+        {
+          "anchor": "work-review",
+          "judgment": "生产交付、质量认证、refinement效果和训练收益分层，资格/正式分母与历史库存不混用；accepted child=0边界保留，不刷新历史结果。"
+        }
+      ],
+      "reason": "只修总结图的实际产物输入线，保留完整路径算例、refinement停止结论及历史来源。 T10c仅在原figure/SVG声明局部横向滚动与780px最小宽度，防止手机默认标签缩至12px以下；不改线条、比例或语义。",
+      "changes": [
+        {
+          "anchor": "work-knowledge",
+          "kind": "diagram",
+          "summary": "原SVG的冻结答案连线改接独立Verifier；caption明确答案+私有校准→Verifier→评分/归因，校准不回流Solver。",
+          "assumptions": "运行时已物理实现公共/私有隔离；图不证明实际mount或盲测运行通过。",
+          "checks": [
+            "joint-path-negative-control",
+            "editorial-diagram-preflight",
+            "source-preservation"
+          ]
+        },
+        {
+          "anchor": "work-knowledge",
+          "kind": "diagram-readability",
+          "summary": "原figure显式max-width:100%/overflow-x:auto，原SVG加min-width:780px；840单位宽图的13px标签默认至少12.07px，不依赖zoom或折叠。",
+          "assumptions": "沿用reading/work的width:100%与height:auto；CSS min-width优先于max-width，窄屏在figure内滚动，viewBox和全部原图内容不变。",
+          "checks": [
+            "t10c-source-local-svg",
+            "t10c-svg-semantic-byte-preservation",
+            "t10c-font-threshold-negative-control"
+          ]
+        }
+      ],
+      "evidence_boundary": "检查方法总结的合同、路径算例、接力与停止边界；未启动生产、盲测、refinement、打包或读取当前库存，不把固定历史记录当新效果。",
+      "module": "training-data"
+    },
+    {
+      "id": "my-work-dllm",
+      "source": "content/posts/my-work-dllm/index.md",
+      "changed": false,
+      "sha256_before": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "sha256_after": "db0032a7db1a8a33df69ba42cf66a5b7c6aecaec10fe13adf5fc91f2763b5b7e",
+      "examined": [
+        {
+          "anchor": "#work-knowledge",
+          "judgment": "AR/MDM训练与生成、调度/attention/loss mask三轴分明；三列调度图不是串行三阶段，保留。"
+        },
+        {
+          "anchor": "#work-example",
+          "judgment": "两块a1/b1可见性表对应同side同offset及xt→x0严格较小offset；保留源码分支与多跳、sample_mode边界。"
+        },
+        {
+          "anchor": "heading:熵选块为什么不等于选出正确块",
+          "judgment": "平均熵、未提交集合、低熵不保证正确与probe成本均已说明。"
+        },
+        {
+          "anchor": "#work-review",
+          "judgment": "Test/Gen-PPL、top-p混合T sweep、NFE、历史smoke与主实验缺口分开，不补实验数字。"
+        }
+      ],
+      "reason": "表示、可见性、监督密度和输出指标已有具体例子与充分图示；未发现需新增讲解的确证缺口。",
+      "changes": [],
+      "evidence_boundary": "阅读总结的目标、Scatter两块算例、Jigsaw变体、ICL/PF/Sudoku与LM1B口径；没有重放源码、训练、采样或历史Test/Gen-PPL审计。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "my-work-holon-full",
+      "source": "content/posts/my-work-holon/full-report.html",
+      "changed": false,
+      "sha256_before": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "sha256_after": "5c72deee9bb7ecee99ea35de1880d193ad22a7887104747c5e7bb992676137b7",
+      "examined": [
+        {
+          "anchor": "#chapter-2",
+          "judgment": "实际阅读2.1-2.6主讲的模态分路、GQA、packed attention、初始化与参数公式；静态查看MoT双路及单层图，分路后共享交互清楚，保留。"
+        },
+        {
+          "anchor": "#chapter-3",
+          "judgment": "读取主讲配置、lookahead/consumed frontier恢复与3.3有效位置/typed空间/reducer；2文本8蛋白例得到2.6与4，不能混作等权平均。"
+        },
+        {
+          "anchor": "#chapter-5",
+          "judgment": "输入token目标、fetch与监督分母分开；5.2长度100/400及拒绝采样支持条件清楚。历史校准精确份额未重新测量。"
+        },
+        {
+          "anchor": "#chapter-9",
+          "judgment": "读取likelihood/生成、reverse索引L-1-i、EOS与target softmax、requested/valid/metric分母合同。"
+        },
+        {
+          "anchor": "#chapter-12",
+          "judgment": "读取主讲12.1-12.3、舍入注记；静态查看IG+Interference示意和PS8/PSC端点图，绝对值与保持幅度不混用，不重复作图。"
+        },
+        {
+          "anchor": "#chapter-16",
+          "judgment": "读取16.1-16.5主讲及SEPIT split/gate原文；查看codec链路与五臂散点，AA/structure、native/codec真值及whole/segment分母已区分。"
+        },
+        {
+          "anchor": "#chapter-17",
+          "judgment": "读取主讲接口、128×1与5876版本、全池检索与候选设置、失败分母和去同源子集；不把r@4/10/20字段直接当标准Recall@K。"
+        },
+        {
+          "anchor": "#chapter-19",
+          "judgment": "读取研究复盘与single-seed、sidecar、SFT稿件、data-ready限制，保留历史范围。"
+        }
+      ],
+      "reason": "所读主讲已有MoT分路、训练/评测链、margin分解与codec权衡图；图和文字说明互补，完整报告已有舍入与实验边界，无需重复增补。",
+      "changes": [],
+      "evidence_boundary": "本次只阅读列出的主讲段、3.3算例、5.2算例、12章DiD及16章SEPIT split/gate原文，并静态查看6张指定图；未通读全部artifact折叠区或21章所有历史材料，未复现训练、73行全榜、bootstrap、codec或ProtText-Eval实验。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "my-work-protagent-full",
+      "source": "content/posts/my-work-protagent/full-report.html",
+      "changed": true,
+      "sha256_before": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+      "sha256_after": "f44de32336f806dd4ca09acf0082f9c90761f4bb21461c4f5ef5bff71d2a0941",
+      "examined": [
+        {
+          "anchor": "sft",
+          "judgment": "检查04节masked NLL、shift、模板和局部batch不能推global batch；sum与平均分母区别已说明。"
+        },
+        {
+          "anchor": "reward",
+          "judgment": "检查05节score-function、step/episode回报、reward附着与无工具guard；raw return不称最终advantage，观察不计动作似然。"
+        },
+        {
+          "anchor": "results",
+          "judgment": "检查07节全1000分母、缺答失败、10例6/10与6/8、禁工具及Signal退化；已有独立评价边界。"
+        },
+        {
+          "anchor": "repro",
+          "judgment": "检查10节阶段重启/optimizer/reference、temperature配置冲突及缺失权重/rollout；不能仅凭补充包复现全部表。"
+        },
+        {
+          "anchor": "deep-dive",
+          "judgment": "检查12.1-12.4、12.6-12.7的四臂因素、指定checkpoint与seed均值、return教学例、traj_id/step顺序、阈值和诊断分母；现有说明充分，保留所有表与科研图。"
+        },
+        {
+          "anchor": "#setting",
+          "judgment": "核对第13–14/45–47/59行局部目录与单列断点；第59行精确替换可恢复改前SHA，未以CSS声明替代浏览器实看。"
+        }
+      ],
+      "reason": "实际检查段落已有监督、回报、评测分母和复现限制，科学正文与原件保持。T10x仅将报告目录重置断点760px对齐既有单列布局850px，解除761–850px目录浮动吸顶对标题和正文的真实遮挡；未修改共享样式或历史统计。",
+      "changes": [
+        {
+          "anchor": "#setting",
+          "kind": "toc-layout-readability",
+          "summary": "源第59行报告目录media断点760px改850px；只在761–850px重置position/top/float/height，与原单列布局一致。",
+          "assumptions": "CSS修复不是实际像素pass；<=760px和>850px规则不变，完整报告正文及下载原件不改，768px两模式需当前产物独立重验。",
+          "checks": [
+            "t10x-exact-single-replacement",
+            "t10x-source-byte-inverse",
+            "t10x-scientific-body-and-original-preservation"
+          ],
+          "repair_task": "T10x",
+          "sha256_before_repair": "552387af44bf3c0149bf131e8831d6f5b3be4580ebbcc493bac79dda5d785228",
+          "sha256_after_repair": "f44de32336f806dd4ca09acf0082f9c90761f4bb21461c4f5ef5bff71d2a0941",
+          "evidence": {
+            "path": "/tmp/my-blogs-continuity-review-20261116/reports/t10x-protagent-full-768-source-ready-001.json",
+            "sha256": "8d5902310d5720153d218ded4363bb942723159f5ece9c6e9dc08ebfb3d9e24d"
+          }
+        }
+      ],
+      "evidence_boundary": "审阅范围为04/05/07/10与12节所列阅读链路，核对的是现存文本条件及教学算式；未重新复现四臂三seed、MMseqs2同源审计、OOD/PFUA、bootstrap区间或所有历史实验。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。",
+      "module": "training-data"
+    },
+    {
+      "id": "my-work-harbor-full",
+      "source": "content/posts/my-work-harbor/full-report.html",
+      "changed": false,
+      "sha256_before": "959915738859741a90a4306582d6162025e9a9da464348d33d1bd0d56778cd39",
+      "sha256_after": "959915738859741a90a4306582d6162025e9a9da464348d33d1bd0d56778cd39",
+      "examined": [
+        {
+          "anchor": "problem",
+          "judgment": "检查阅读引入与问题定位：多路径可判、可解性与生产启动分开；历史时间/规模已有导读限制。"
+        },
+        {
+          "anchor": "roles",
+          "judgment": "检查角色间公开/私有资产和工件交接，明确实际权限而非prompt声明决定隔离。"
+        },
+        {
+          "anchor": "joint-path",
+          "judgment": "检查第3节完整接受域并集、混拼反例、正负控制和冻结包指纹；原近主讲分支图足够，无需增图。"
+        },
+        {
+          "anchor": "historical-results",
+          "judgment": "检查第5节740/668/413库存与匹配cohort分母、pending和尝试区别；不把413/740推成成功率，全部原统计保留。"
+        },
+        {
+          "anchor": "cost",
+          "judgment": "检查第7节全部尝试成本与c/p教学估算，85.7%与原稿79%明确不同；usage覆盖和价格未核验的限制充分。"
+        },
+        {
+          "anchor": "interview",
+          "judgment": "检查收束追问：drop=0、accepted child=0不被生产库存替代，失败归因和证据失效条件明确。"
+        }
+      ],
+      "reason": "实际审阅段落已明确完整路径、隔离、cohort和历史成本边界；不改报告原稿、科研图、历史case或统计。",
+      "changes": [],
+      "evidence_boundary": "仅检查引入、第1/2节、第3节失败路由/双路径/联合接受域/产物目录、第5节、第7节和第8节；未复跑历史CRISPR案例、247proposal评审、生产批次、4601 usage或refinement。c/p只作教学算术复算。",
+      "module": "training-data"
+    },
+    {
+      "id": "my-work-dllm-full",
+      "source": "content/posts/my-work-dllm/full-report.html",
+      "changed": false,
+      "sha256_before": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "sha256_after": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
+      "examined": [
+        {
+          "anchor": "#objectives",
+          "judgment": "AR因式分解、线性吸收1/τ、只监督mask位置及Block-Diff块边际/界关系清楚。"
+        },
+        {
+          "anchor": "#algorithms",
+          "judgment": "Scatter offset图及B1/B2/B3公式区分调度与mask；Jigsaw probe→选择→提交保留独立计算成本。"
+        },
+        {
+          "anchor": "#theory",
+          "judgment": "读取标准高斯先验岭回归、solve与无噪声投影风险1/1/3；静态查看d=10/15/20 ICL原图，不把可识别性等同于训练收敛。"
+        },
+        {
+          "anchor": "#structured",
+          "judgment": "读取PF从goal反查但输出start→goal与Sudoku行列宫/空格分母；实际查看PF原图和Sudoku坐标消融图，原图及缺失主图日志边界保留。"
+        },
+        {
+          "anchor": "#lm1b",
+          "judgment": "逐项阅读Test/Gen-PPL主表与top-p/first-hitting/25或100样本协议，SEDD差异未被抹平。"
+        },
+        {
+          "anchor": "#compute",
+          "judgment": "达阈值训练成本、未达标删失、NFE与延迟分开；affinity=1教学读数可复算，未重做profiling。"
+        },
+        {
+          "anchor": "#framework",
+          "judgment": "读取结构化/LM1B配置、模型、loss、checkpoint/EMA与评测职责，保留原两条框架图。"
+        },
+        {
+          "anchor": "#config",
+          "judgment": "完整CLI/YAML例保留，长度128与默认1024、block_size/T、shape与checkpoint匹配明确。"
+        },
+        {
+          "anchor": "#audit",
+          "judgment": "699/630日志、27/32 Gen-PPL及历史CPU/MI308X smoke均为原记录，不写成本轮复现。"
+        }
+      ],
+      "reason": "所读理论、算法、受控任务、LM1B与框架章节已将调度、状态、监督与实验口径讲清；三张证据图和已有流程图保留，不重复增加。",
+      "changes": [],
+      "evidence_boundary": "实际阅读所列章节与其完整公式/配置算例，静态查看ICL、PF、Sudoku三张嵌入PNG；没有读取699/630条原始日志、恢复D5/P5、独立重算论文表值或复跑任何历史smoke/训练/采样。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "agent-systems",
+      "source": "content/series/agent-systems/index.html",
+      "changed": false,
+      "sha256_before": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "sha256_after": "8af00bc356db3aa12449fba0f69b9ee1dfc52da648852add0c0247c2c888cbd5",
+      "examined": [
+        {
+          "anchor": "#purpose",
+          "judgment": "三决策引入与证据/决策/约束/验收图说明权限贯穿读取和动作，不是最终才门控。"
+        },
+        {
+          "anchor": "#case",
+          "judgment": "16个GEO样本与8样本冻结对象分开；配对/count先于计算，教学方案未执行。"
+        },
+        {
+          "anchor": "#mastery",
+          "judgment": "检索、selector、环境与ASR分母的学习出口明确，入口不重复子章长推导。"
+        }
+      ],
+      "reason": "入口图与案例只承担学习组织，核心推导由装配子章负责，已有依赖和权限说明足够。",
+      "changes": [],
+      "evidence_boundary": "完整阅读入口源；未执行RNA-seq分析、任务runner或安全测试。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "agent-rag",
+      "source": "content/series/agent-systems/s01_rag_retrieval.html",
+      "changed": false,
+      "sha256_before": "1dda55a6e6fca6df4de3d696aa822bed107052c083c20e81c8f3d3dc2d491cfa",
+      "sha256_after": "1dda55a6e6fca6df4de3d696aa822bed107052c083c20e81c8f3d3dc2d491cfa",
+      "examined": [
+        {
+          "anchor": "#retrieval",
+          "judgment": "完整阅读BM25、单位向量、RRF与Faiss代码算例；分数与事实可信度分开，复算排名和长度惩罚。"
+        },
+        {
+          "anchor": "#agent-retrieval-observation-map",
+          "judgment": "query为动作、外部检索为观察、controller与索引ACL另有职责；已有图紧邻主讲，保留。"
+        },
+        {
+          "anchor": "#evaluation",
+          "judgment": "Recall非空集合、MRR未命中0、引用支持/完整与研究级切分均明示。"
+        },
+        {
+          "anchor": "#frontier-comparison",
+          "judgment": "论文EM单位和0.41/1.89/2.36百分点只作报告表差值，不当引用支持率或本地实验。"
+        }
+      ],
+      "reason": "公式、独立算例、动作/观察图和证据停止规则相接充分，无需新增图。",
+      "changes": [],
+      "evidence_boundary": "通读该源并复算教学数值；未运行Faiss、检索、Search-R1训练或重新核验外部论文性能。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "agent-planning",
+      "source": "content/series/agent-systems/s02_planning_compute.html",
+      "changed": false,
+      "sha256_before": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "sha256_after": "37d4247901d9e6a3228b128b18530287349697d4e939626891f690403faf8c0c",
+      "examined": [
+        {
+          "anchor": "#search",
+          "judgment": "完整阅读BoN存在性/selector与UCT算例，独立性、零访问与回报尺度假设清楚。"
+        },
+        {
+          "anchor": "#environment",
+          "judgment": "文件/进程/随机态/预算与prompt分开恢复；S0→独立A/B→验证→提交图中的A/B是同一展开节点的并行分支，非串行两路线。"
+        },
+        {
+          "anchor": "#budget",
+          "judgment": "净收益单位与停止规则、训练G和部署N区分充分。"
+        },
+        {
+          "anchor": "#frontier-comparison",
+          "judgment": "两论文表不能拼因素因果排名；搜索次数不等于延迟，保留。"
+        }
+      ],
+      "reason": "已有完整BoN/UCT算例与状态分支图；外部副作用不能靠prompt回滚的条件已就近说明。",
+      "changes": [],
+      "evidence_boundary": "通读该源，复算BoN/UCT/收益教学值；分支runner、科学任务、rollout和论文训练未执行。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "agent-trust",
+      "source": "content/series/agent-systems/s03_trust_safety.html",
+      "changed": false,
+      "sha256_before": "6bb07f421ea906049b588096cea323c81e6da43f7b4b7ffaed8a8bbeeb662e09",
+      "sha256_after": "6bb07f421ea906049b588096cea323c81e6da43f7b4b7ffaed8a8bbeeb662e09",
+      "examined": [
+        {
+          "anchor": "#agent-trust-boundaries-map",
+          "judgment": "数据通道与独立授权通道、拒绝不调worker和获准观察回填已明确；保留已有职责图。"
+        },
+        {
+          "anchor": "#isolation",
+          "judgment": "typed参数、canonical target、凭据/网络与TOCTOU限制在伪代码旁说明，JSON合法不能授予能力。"
+        },
+        {
+          "anchor": "#evaluating",
+          "judgment": "clean/attacked utility与全部/条件ASR分母分别复算，1-utility不等于ASR。"
+        },
+        {
+          "anchor": "#frontier-comparison",
+          "judgment": "949攻击实例分母、±未解释成CI、零攻击不推出绝对安全，边界保留。"
+        }
+      ],
+      "reason": "已有授权/观察分路图、门控伪代码和分母算例足够，未发现新缺口。",
+      "changes": [],
+      "evidence_boundary": "通读威胁模型、隔离、伪代码和评测定义；未运行攻击、防护、OS sandbox或CaMeL复现。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "llm-serving",
+      "source": "content/series/llm-serving/index.html",
+      "changed": false,
+      "sha256_before": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "sha256_after": "108be6caa037e229b73f94c0000ff3022007bffe5456a27b676161c377b66dbc",
+      "examined": [
+        {
+          "anchor": "#purpose",
+          "judgment": "入口按模型状态、服务调度、设备数值、任务成本建立学习顺序；四阶段图明确不是性能比例图，后续章节承担具体计算，不需在入口重复算例。"
+        },
+        {
+          "anchor": "#connections",
+          "judgment": "分页、复用、投机的对象区别及容量复算目标明确；固定vLLM/SGLang版本与未验证新组合的范围保留。"
+        }
+      ],
+      "reason": "保留。系列入口已把输入状态、正确性、服务指标和章节职责接清，不增加重复主讲或第二张入口图。",
+      "changes": [],
+      "evidence_boundary": "检查入口引导、概念图、学习收束和版本说明；只读静态核对，未重新核验远端release、运行服务或验收装配页面。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "serving-runtime",
+      "source": "content/series/llm-serving/s01_runtime_scheduling.html",
+      "changed": false,
+      "sha256_before": "3aaa41bee76cda1b77a9671dad63fd74e6a8f940be5fccffd5d0191c3355a29c",
+      "sha256_after": "3aaa41bee76cda1b77a9671dad63fd74e6a8f940be5fccffd5d0191c3355a29c",
+      "examined": [
+        {
+          "anchor": "#phases",
+          "judgment": "A/B/C连续批处理表给出剩余token和准入，明确prefill/decode混合是调度选择且轮次耗时不同；TTFT/ITL边界已说明。"
+        },
+        {
+          "anchor": "#paging",
+          "judgment": "T=35、page size=16得到3页13空槽；两请求共享前32token得到4唯一页64槽，复算与地址映射图一致。"
+        },
+        {
+          "anchor": "#shared-kv-page-layout",
+          "judgment": "A/B表映射同一共享{7,2}及各自尾页；图明确不是A后B串行，并说明引用保护、copy-on-write和退出只解引用。"
+        },
+        {
+          "anchor": "#prefix",
+          "judgment": "相同token与权重/adapter/位置/模态兼容、锁引用和eviction解释完整；请求退出不等于删除prefix。"
+        },
+        {
+          "anchor": "#kimi-sparse-traffic",
+          "judgment": "132L+576min(L,2048)读取与24(132+576)存储是两账本；22.9%渐近比、16992/13824 bytes复算一致，GB300单请求prefill表不归因于读取公式。"
+        }
+      ],
+      "reason": "保留。分页、调度、复用和稀疏流量均有实际输入、状态、输出与排除项，既有共享页图已清楚，不重复补图。",
+      "changes": [],
+      "evidence_boundary": "阅读phases/paging/prefix/implementation/mixed/evaluation及对应图和源码摘录；复算教学整数与规格算术，不重新执行固定后端、抓取源码或复现Kimi硬件测量。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "serving-parallel",
+      "source": "content/series/llm-serving/s02_parallel_quantization.html",
+      "changed": false,
+      "sha256_before": "ffcae364ab6bdafe64332db107eeae8510c07c86603963a63c9d7a6597f1c29e",
+      "sha256_after": "ffcae364ab6bdafe64332db107eeae8510c07c86603963a63c9d7a6597f1c29e",
+      "examined": [
+        {
+          "anchor": "#serving-parallel-domains",
+          "judgment": "TP/Serving DP/EP按对象分支，头数不足可能复制KV，逻辑并行度不能无条件相乘；不是三步串行。"
+        },
+        {
+          "anchor": "#pd-state-handoff",
+          "judgment": "源服务、connector、目标物理页与确认/取消责任分明；10GiB/25GB/s下界0.4294967296s已复算，未当总延迟。"
+        },
+        {
+          "anchor": "#quantized-dot-example",
+          "judgment": "权重/激活、scale与饱和输入完整；整数[2,-3,4,7]、4.67→4.00误差-0.67及含scale6B复算一致，未称实际GPTQ/AWQ。"
+        },
+        {
+          "anchor": "#speculation",
+          "judgment": "同前缀p/q、接受质量、残差、alpha=1边界及贪心/随机采样区别齐全；三词表最终分布复算回p。"
+        },
+        {
+          "anchor": "#speculative-trace",
+          "judgment": "B接受、第二B拒绝后补A，后缀C丢弃；输出A与计算A的KV分开，draft/target各自恢复；30/22约1.36不误称3倍。"
+        }
+      ],
+      "reason": "保留。并行布局和PD边界图、完整量化与投机轨迹均足够，收益与精确性条件明确，无须新增图或重编。",
+      "changes": [],
+      "evidence_boundary": "静态审阅parallel/disaggregation/precision/speculation/plans与既有图；独立复算教学量化、传输下界和离散概率，不运行量化kernel、connector或投机服务，不重现论文性能。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "serving-capacity",
+      "source": "content/series/llm-serving/s03_capacity_cost.html",
+      "changed": false,
+      "sha256_before": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "sha256_after": "d8a9dc858667c12676ba860faf32783df01098ad2b1dc45d82b27e150c9a684e",
+      "examined": [
+        {
+          "anchor": "#ledger",
+          "judgment": "按同一rank、同一时刻互不重复分配计账；物理槽、共享、复制、SWA、scale和递归状态分别说明。"
+        },
+        {
+          "anchor": "#example",
+          "judgment": "70B近似参数与Qwen72B结构明确区分；TP4、BF16、名义80GB/预留16GB、32K条件齐全。单请求2.5GiB、容量43/21/10/21、8请求72.47483648GB复算一致，均是待测界。"
+        },
+        {
+          "anchor": "#metrics",
+          "judgment": "提交0s、到达1/1.2/1.5s得到TTFT1、ITL0.2/0.3、TPOT0.25；open/closed loop及超时边界清楚。"
+        },
+        {
+          "anchor": "#rollout",
+          "judgment": "Little定律写出稳定且同边界条件；2/s×30/60s得到60/120在途，不把活跃生成槽当任务吞吐。"
+        },
+        {
+          "anchor": "#cost",
+          "judgment": "全部10次尝试、4成功、8GPU-h/20CPU-h及教学单价明确；总18、每成功4.5复算一致；零成功未定义与失败不重复计费保留。"
+        }
+      ],
+      "reason": "保留。完整容量和成本例已有输入、单位、分母及未验证条件，入口图只连接账本到服务结果，无重复补充必要。",
+      "changes": [],
+      "evidence_boundary": "阅读账本、容量、指标、rollout、成本、协议和来源；只复算文中理想规格与教学时间/成本，未测GPU峰值、SLO、实际报价或下载工件运行。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "llm-posttraining",
+      "source": "content/series/llm-posttraining/index.html",
+      "changed": false,
+      "sha256_before": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "sha256_after": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
+      "examined": [
+        {
+          "anchor": "overview",
+          "judgment": "起点→探索→更新→独立验收为学习路线，caption已明确RL回流SFT与失败恢复，不误称工业固定单线。"
+        },
+        {
+          "anchor": "read",
+          "judgment": "原理/变体/配方/诊断顺序和GRPO完整组算例入口可定位；不再复制手册推导。"
+        },
+        {
+          "anchor": "findings",
+          "judgment": "状态、反馈、系统、证据四边界均有具体检查，明确无GPU后训练实测。"
+        },
+        {
+          "anchor": "downloads",
+          "judgment": "case-contracts的design_only与空结果解释充分，资料索引不冒充真实日志。"
+        }
+      ],
+      "reason": "入口、产物与学习顺序已有充分导读，补细节应落在对应主讲章而非继续扩入口。",
+      "changes": [],
+      "evidence_boundary": "检查入口/收束/下载状态及固定引用组织；未重新调研79项来源，也未运行课程装配或浏览器。",
+      "module": "training-data"
+    },
+    {
+      "id": "posttraining-supervision",
+      "source": "content/series/llm-posttraining/s01_supervision_preference.html",
+      "changed": true,
+      "sha256_before": "1d5189256dd5b811190995191897a4a010f207a466c7ecd8aee41e16a77b5186",
+      "sha256_after": "f7f16e1092ea8ae816770182914cbeca3358d5dc81e9bd86309eae595f765589",
+      "examined": [
+        {
+          "anchor": "sft-objective",
+          "judgment": "原文说仅平均N_n>0轨迹，但N先被称为轨迹总数；含空目标样本时episode分母有歧义，已最小澄清有效集合计数与整批跳过。"
+        },
+        {
+          "anchor": "recovery",
+          "judgment": "错误学生动作作条件、可靠教师恢复作目标，终止回复须先验产物；mask不是移除观察，保留。"
+        },
+        {
+          "anchor": "rejection",
+          "judgment": "K=4易/难题保留概率和搜索成本已连接筛选分布，未将拒绝采样等同RL。"
+        },
+        {
+          "anchor": "dpo-full-example",
+          "judgment": "两回答求和似然、reference冻结、beta=.2、sigmoid梯度、三logit一步SGD和重算loss齐全，独立有限差分符合，不重复补例。"
+        },
+        {
+          "anchor": "handoff",
+          "judgment": "checkpoint/tokenizer/template/tools/谱系和独立任务执行交接明确。"
+        }
+      ],
+      "reason": "仅消除有效轨迹集合与N分母的局部歧义；完整DPO、mask、恢复和拒绝采样算例已充分。",
+      "changes": [
+        {
+          "anchor": "sft-objective",
+          "kind": "explanation",
+          "summary": "N定义为筛除无目标轨迹后的计数，重新索引；全批无目标跳过更新，不以0填空轨迹loss。",
+          "assumptions": "只讨论现有token-mean与episode-mean目标；有效目标由原模板/mask决定，不改变公式和角色规则。",
+          "checks": [
+            "sft-effective-count",
+            "sft-empty-batch",
+            "sft-mask-example",
+            "source-preservation"
+          ]
+        }
+      ],
+      "evidence_boundary": "本轮检查监督/恢复/RFT/偏好/交接主讲；复算教学CE、DPO和有限差分，不执行SFT或复现SimPO/ReTerm论文表。",
+      "module": "training-data"
+    },
+    {
+      "id": "posttraining-algorithms",
+      "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
+      "changed": false,
+      "sha256_before": "3b2f71d2979d3f781e4b69292b1be821ab27e6923a303b52cb035c7d2814a7fa",
+      "sha256_after": "3b2f71d2979d3f781e4b69292b1be821ab27e6923a303b52cb035c7d2814a7fa",
+      "examined": [
+        {
+          "anchor": "policy-gradient",
+          "judgment": "轨迹分解、环境独立theta、reward-to-go外gamma^t和baseline条件完整。"
+        },
+        {
+          "anchor": "gae-full-example",
+          "judgment": "TD→GAE→固定lambda-return→actor/critic loss，两步数值衔接完整。"
+        },
+        {
+          "anchor": "gae-boundary-example",
+          "judgment": "bootstrap b与递推c分开，暂停/terminal错误可改变优势符号；现有三分支图说明不拼接续段。"
+        },
+        {
+          "anchor": "grpo-full-example",
+          "judgment": "reward/std/ratio/min/loss/softmax链式梯度齐全，正负平台与共享概率变化没有混淆。"
+        },
+        {
+          "anchor": "normalization",
+          "judgment": "2/8长度算例给三个分母和token权重，有效位置不含工具/padding。"
+        },
+        {
+          "anchor": "ratio-methods",
+          "judgment": "GSPO几何比、CISPO detach权重和soft SAPO导数区分充分；未称通用无偏。"
+        },
+        {
+          "anchor": "heterogeneous",
+          "judgment": "Bernoulli有效组概率、相关采样限制、全同task梯度与辅助目标区别就近存在。"
+        }
+      ],
+      "reason": "核心推导、完整数值与边界已充分；独立复算通过，不机械增加公式/图或扩论文配方。",
+      "changes": [],
+      "evidence_boundary": "检查原理、GAE/GRPO/长度与ratio主讲以及配方/诊断；独立算术/有限差分只适用于教学值，不验证公开论文数值、最新模型性能或框架GPU实现。",
+      "module": "training-data"
+    },
+    {
+      "id": "posttraining-opd",
+      "source": "content/series/llm-posttraining/s03_opd_self_distillation.html",
+      "changed": false,
+      "sha256_before": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "sha256_after": "bdd63ef8957b344afdfa3915bcd68bdcf7cf4603efaf02116d2de6cd29684313",
+      "examined": [
+        {
+          "anchor": "why-on-policy",
+          "judgment": "生成快照与current区别、固定prefix分布和交替采样循环就近说明。"
+        },
+        {
+          "anchor": "full-vocabulary",
+          "judgment": "reverse/forward KL方向、softmax导数、支持/温度、teacher no-grad和二候选梯度完整。"
+        },
+        {
+          "anchor": "sampled-gradient",
+          "judgment": "KL值估计与score加权梯度区别、state-only baseline、sg与旧轨迹校正说明充分，期望与有限差分相符。"
+        },
+        {
+          "anchor": "historical-teachers",
+          "judgment": "路由验证集用于选教师，LAD/top-k和额外补采成本明确，不伪称独立测试。"
+        },
+        {
+          "anchor": "mopd2",
+          "judgment": "学生continuation与教师prefix分开，多个prefix的分母/部署自主到达性与成本明确。"
+        },
+        {
+          "anchor": "forgetting",
+          "judgment": "teacher KL下降不等于综合能力提升；目标域、保留域和全学生终评充分。"
+        }
+      ],
+      "reason": "局部梯度、监督位置、状态支持和独立部署条件已有完整链路；保留原图与数值，不扩大多教师调研。",
+      "changes": [],
+      "evidence_boundary": "审阅上述主讲与recipe/自蒸馏介入边界；只复算固定prefix教学KL，不复现ECOS/Agentic-OPD/MOPD或所有历史模型实验。",
+      "module": "training-data"
+    },
+    {
+      "id": "posttraining-rewards",
+      "source": "content/series/llm-posttraining/s04_environment_reward_credit.html",
+      "changed": false,
+      "sha256_before": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "sha256_after": "ac4e2bc8898491ae25773c03d904d378b1f13f63604cb4e0bfdced33bbe85e28",
+      "examined": [
+        {
+          "anchor": "environment",
+          "judgment": "初态/动作/终止/产物/verifier链明确，预算失败与容器/服务故障不混reward。"
+        },
+        {
+          "anchor": "signal-types",
+          "judgment": "outcome、PRM、Q/V、advantage和teacher预测对象分开，续写成功不等于步骤正确。"
+        },
+        {
+          "anchor": "long-credit",
+          "judgment": "错误后恢复与成功广播反例充分，教学Q/V=-.4/+.6信号明确来自额外估计而非单条成功轨迹。"
+        },
+        {
+          "anchor": "gar",
+          "judgment": "正优势非零分母、lambda cap/recentering、4/3和2/3总量例限定充分。"
+        },
+        {
+          "anchor": "cases",
+          "judgment": "代码、科学和GUI产物/状态不变量及投机路径明确；无需再补四节点图。"
+        }
+      ],
+      "reason": "反馈来源、信用假设、可恢复性、终止与产物验收均有具体例子和边界，未发现需局部增补的确证缺口。",
+      "changes": [],
+      "evidence_boundary": "本轮检查环境/信号/长程信用/GAR与三案例教学链；不重新复现PURE、RLDS、图式信用或grader实验表。",
+      "module": "training-data"
+    },
+    {
+      "id": "posttraining-frameworks",
+      "source": "content/series/llm-posttraining/s05_frameworks_async.html",
+      "changed": false,
+      "sha256_before": "9722dd3f685411b5895121dd841bedf1798651af6d5c855107fdc77c3466e494",
+      "sha256_after": "9722dd3f685411b5895121dd841bedf1798651af6d5c855107fdc77c3466e494",
+      "examined": [
+        {
+          "anchor": "roles",
+          "judgment": "trainer/rollout/environment/verifier/teacher职责和权重同步、变长分母/资源冲突充分。"
+        },
+        {
+          "anchor": "three-policy",
+          "judgment": "behavior/old/current/reference不混分母，importance不能创造缺失支持或恢复缺域。"
+        },
+        {
+          "anchor": "async-full-example",
+          "judgment": "分段mu保存、两段ratio、乘积1.44与几何平均1.2、错误替换分母1.309091、裁剪顺序不同完整可复算。"
+        },
+        {
+          "anchor": "partial-rollout",
+          "judgment": "旧KV跨权重不默认有效，compaction/真实token prefix与episode/sample/token分母边界充分。"
+        },
+        {
+          "anchor": "slime-opd",
+          "judgment": "固定commit源码student-teacher logprob方向、adv减少/增加、混合归一化顺序和接口对齐清楚。"
+        },
+        {
+          "anchor": "compute",
+          "judgment": "rollout/training/grader、teacher、拒绝与重试成本单列，不把算力比例换成美元。"
+        }
+      ],
+      "reason": "版本、概率、状态续段和服务产物交接已有完整两线图及数值；复算符合，保留不增补。",
+      "changes": [],
+      "evidence_boundary": "审阅现存固定源码摘录/教学概率与版本说明，未重新读取远端源码、认证全部后端组合、执行异步GPU或复现AReaL耗时。",
+      "module": "training-data"
+    },
+    {
+      "id": "posttraining-cases",
+      "source": "content/series/llm-posttraining/s06_task_cases_experiments.html",
+      "changed": false,
+      "sha256_before": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "sha256_after": "61c8b0c2f0cae61502c584c7bdc600ee9cf51f7a770019004a69b5cfe9feeb54",
+      "examined": [
+        {
+          "anchor": "code-case",
+          "judgment": "空输入ValueError与非空行为、禁止改tests、失败prefix三信号分支及SFT/OPD局部数值完整。"
+        },
+        {
+          "anchor": "science-case",
+          "judgment": "ID/design/contrast/调整范围和artifact/provenance顺序清楚，不造显著基因数。"
+        },
+        {
+          "anchor": "gui-case",
+          "judgment": "对象ID、时区、draft权限、保存与持久状态区别，成本/恢复/全学生终评明确。"
+        },
+        {
+          "anchor": "trajectory",
+          "judgment": "design_only空数组/null不能冒充轨迹，exact prompt/response、segment版本与拒绝原因充分。"
+        },
+        {
+          "anchor": "diagnosis-cost",
+          "judgment": "全部尝试、teacher/环境/重试入账，零成功比值未定义；未执行矩阵明确。"
+        },
+        {
+          "anchor": "delivery",
+          "judgment": "权重/协议/tasks/谱系/独立结果和旧能力交付树完整。"
+        }
+      ],
+      "reason": "三种任务已把输入、反馈、监督/评测分母与交付贯通；不将待执行矩阵扩写为虚构日志或新实验。",
+      "changes": [],
+      "evidence_boundary": "检查教学任务合同和设计矩阵，不执行mean修复任务、RNA-seq、GUI状态操作、轨迹采集或模型训练。",
+      "module": "training-data"
+    },
+    {
+      "id": "training-methods-systems",
+      "source": "content/series/llm-training-lifecycle/s05_training_methods_systems.html",
+      "changed": false,
+      "sha256_before": "34eafc818650fcb52194bf0ca476c9d52b24f12609e60c72d07851f913157480",
+      "sha256_after": "34eafc818650fcb52194bf0ca476c9d52b24f12609e60c72d07851f913157480",
+      "examined": [
+        {
+          "anchor": "peft",
+          "judgment": "LoRA形状、首步B/A梯度、底座冻结仍传输入梯度和并行支路原图充分。"
+        },
+        {
+          "anchor": "adamw-derivation",
+          "judgment": "sum/EMA动量尺度、v为二阶原点矩、零初始化修正、Adam+L2与解耦衰减边界清楚。"
+        },
+        {
+          "anchor": "adamw-example",
+          "judgment": "给定梯度两步m/v/修正/方向/Adam/AdamW及代码独立复算一致，非收敛排名。"
+        },
+        {
+          "anchor": "optimizer-cost",
+          "judgment": "MiB/KiB与bytes、状态/整体容量、Muon主GEMM FLOPs与TFLOP/s区分，单层token数明确。"
+        },
+        {
+          "anchor": "state-sharding",
+          "judgment": "N=1B D=4的16/7/5.5/4GB持久状态与峰值不混，通信原图充分。"
+        },
+        {
+          "anchor": "batch-accounting",
+          "judgment": "2×8×DP4=64，TP/PP/CP不重复增加独立样本；专家DP重组与固定源码条件充分。"
+        },
+        {
+          "anchor": "cluster",
+          "judgment": "128/1024池与70B32.8125GB静态账本明确是规划，CPU/teacher/reference另计，不称投产可用。"
+        }
+      ],
+      "reason": "更新对象、符号、数值、状态所有权、复算条件和恢复合同已有详细主讲；未发现应补的新局部缺口。",
+      "changes": [],
+      "evidence_boundary": "独立复算LoRA教学量、AdamW、状态字节、Muon主乘法与进程数；不验证所有优化器论文数据、GPU耗时、kernel、框架支持或集群运行。",
+      "module": "training-data"
+    },
+    {
+      "id": "scientific-task-family",
+      "source": "content/series/agent-data-benchmarks/s03_scientific_task_family.html",
+      "changed": false,
+      "sha256_before": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "sha256_after": "ce33f16f883de6f4163d32bab84fd167d7660f30e102d47d8e38fa8830b2cc69",
+      "examined": [
+        {
+          "anchor": "provenance",
+          "judgment": "16样本GEO、8样本airway、FPKM/count/answer-bearing层分开，网页元数据冲突只列待核解释。"
+        },
+        {
+          "anchor": "statistics",
+          "judgment": "NB方差、相对库大小offset、8×5配对design、log/log2FC、反向contrast、BH四检验全链完整可复算。"
+        },
+        {
+          "anchor": "contract",
+          "judgment": "gene/sample唯一、缺失与0、未收缩LFC、method路由、调整集合和公开待冻结阻塞项完整。"
+        },
+        {
+          "anchor": "verifier",
+          "judgment": "同方法复算与跨方法差异分轨，正负/边界/混拼/NaN/alias/泄漏条件充分，未造容差。"
+        },
+        {
+          "anchor": "splits",
+          "judgment": "研究/供体/source lineage为独立单位，不能随机拆8列或千题面冒充泛化。"
+        }
+      ],
+      "reason": "统计输入、符号/单位、分母、输出和未知reference边界齐全；保留原图、全部公式与科学结果未知状态。",
+      "changes": [],
+      "evidence_boundary": "只复算现有NB/offset/BH教学数值并检查合同；未下载GEO/SRA/airway、运行DESeq2/edgeR、生成基因结果、验证许可/容差或科学盲测。",
+      "module": "training-data"
+    },
+    {
+      "id": "cluster-training-evaluation",
+      "source": "content/series/agent-data-benchmarks/s04_cluster_training_evaluation.html",
+      "changed": false,
+      "sha256_before": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "sha256_after": "95da4250ddc8fed2fd11fb5588d900c170bf425865c0ed1887ae7eeac2a57259",
+      "examined": [
+        {
+          "anchor": "design",
+          "judgment": "步骤信用/采样/OPD/推理预算独立轴，sci-posttrain与CPT初始化A-E分开。"
+        },
+        {
+          "anchor": "budgets",
+          "judgment": "单请求输入+输出32768与多轮总轨迹成本不混，G/CPU/step待冻结。"
+        },
+        {
+          "anchor": "resources",
+          "judgment": "Dense/MoE训练与rollout/reference/teacher/CPU各角色入账，静态容量非峰值。"
+        },
+        {
+          "anchor": "measurement",
+          "judgment": "全部attempt分母与可执行条件率、零成功成本、reserved/active资源分开；配对8/12例SE与区间可复算，研究组bootstrap保留依赖。"
+        },
+        {
+          "anchor": "failure",
+          "judgment": "允许多标签/undetermined，规格、方法差异、环境和budget区分，旧失败记录不覆盖。"
+        }
+      ],
+      "reason": "方案状态、资源量纲、实验归因与统计单位已有充分条件；原教学SE约.0448正确，不应增图或改未测配置。",
+      "changes": [],
+      "evidence_boundary": "复算独立教学任务的配对SE/区间，不等于研究group bootstrap或实际训练seed验证；所有集群、科学任务、吞吐/价格/成功率仍未执行。",
+      "module": "training-data"
+    },
+    {
+      "id": "llm-architecture",
+      "source": "content/series/llm-architecture/index.html",
+      "changed": false,
+      "sha256_before": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "sha256_after": "70d13bf8574b9568e63ca1825960868a94183d68dfc817b63a08f5de999ad0d9",
+      "examined": [
+        {
+          "anchor": "#purpose",
+          "judgment": "先完整forward、再模块、后前沿家族的顺序明确；先修、状态与六个架构问题完整，不把概念关系图当耗时比例。"
+        },
+        {
+          "anchor": "#connections",
+          "judgment": "读完需能解释mask/shift/状态、推导与比较预算，并区分规格、作者实验和独立复现；完整代码与固定来源入口仍在。"
+        },
+        {
+          "anchor": "#sources",
+          "judgment": "原Transformer encoder-decoder与现代decoder示例分开，FlashAttention exact不等于逐bit，固定实现不能代表全部工业源码。"
+        }
+      ],
+      "reason": "保留。入口职责、完整forward定位及证据边界已清楚，新增内容会重复子章主讲。",
+      "changes": [],
+      "evidence_boundary": "入口引导/概念图/收束/来源说明的本轮静态阅读；不以入口通过替代子章或全部历史科研事实复现，未验收真实装配导航。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "architecture-transformer",
+      "source": "content/series/llm-architecture/s01_transformer_foundations.html",
+      "changed": true,
+      "sha256_before": "c2be66caedcae77ebe7cf8031b855ad5d463525785cb5b712b386604afb55169",
+      "sha256_after": "a0e8f6d2fee1076ce3cc3a9514a6c504ed20aa29a26883cbc1618db81bdbc30b",
+      "examined": [
+        {
+          "anchor": "#tensor-flow",
+          "judgment": "B/S/d/H/dh/f形状与行向量投影、GQA例外、value和权重区别清楚，张量流图保留。"
+        },
+        {
+          "anchor": "#attention-mask",
+          "judgment": "可见两个score=0、value2/4输出3；自身可见用于预测下一token，布尔API、全屏蔽和packing边界已有解释。"
+        },
+        {
+          "anchor": "#block",
+          "judgment": "两条同形残差、固定源码顺序正确；跳向残差章的第04章旧标签与当前次序不符，改为按章名定位。"
+        },
+        {
+          "anchor": "#objective",
+          "judgment": "shift只一次及masked NLL算例完整；原平均L梯度写成单tokenp-y，漏m/N_valid，已区分ell与L并补有效目标数。"
+        },
+        {
+          "anchor": "#state",
+          "judgment": "参数/激活/请求状态/优化器四账本与KV权重版本条件完整，不需再图示。"
+        },
+        {
+          "anchor": "#block-nojs-recurrence",
+          "judgment": "两块精确追加、移除恢复全源；局部教学复算通过，真实阅读仍待新当前独立验收。"
+        },
+        {
+          "anchor": "#masked-gradient-nojs-derivation",
+          "judgment": "两块精确追加、移除恢复全源；局部教学复算通过，真实阅读仍待新当前独立验收。"
+        }
+      ],
+      "reason": "修正一个影响梯度复算的归一化缺口和一个旧章序衔接标签；保留已有张量图、mask例、shift、NLL算例与状态表。 T10e将平均masked梯度原行内公式移入局部可键盘横滚的block显示span，保留全部数学字节、目标下标、闭括号与符号说明，不改共享CSS。 T10z仅追加两处noscript必要说明：block的X/U/Y形状与顺序双残差，平均masked梯度的索引、softmax导数、固定m/N缩放和原算例-0.25。移除两块恢复改前全字节；原LaTeX、代码、图、ID、引用、样式和正文不改。",
+      "changes": [
+        {
+          "anchor": "#objective",
+          "kind": "correction",
+          "summary": "单token导数改用ell；平均masked L导数补m_bi/N_valid，并定义目标ID/词表轴及mask直接梯度与后续条件路径的区别。",
+          "assumptions": "mask固定，N_valid=sum(mask)>0，softmax沿词表，单tokenCE；不是整个Transformer对参数的总梯度。",
+          "checks": [
+            "t8a-masked-ce",
+            "t8a-preservation"
+          ]
+        },
+        {
+          "anchor": "#block",
+          "kind": "correction",
+          "summary": "残差链接保留原URL，过时的第04章标签改为残差与归一化章，避免完整forward插入后章序误导。",
+          "assumptions": "现有catalog章序与原source链接不变；只改显示文字。",
+          "checks": [
+            "t8a-preservation"
+          ]
+        },
+        {
+          "anchor": "#objective",
+          "kind": "formula-readability",
+          "summary": "仅平均masked梯度增加局部block横滚span及两条局部样式；公式内容/分隔符、词表轴和mask条件说明逐字保留。",
+          "assumptions": "旧390/JS target/context右端未显示目标下标和闭括号；Chrome诊断其MathJax容器有原生横滚但原harness排除了该容器，改为显式局部阅读块，数学字形字号/ratio例外不扩展到正文或科研图。",
+          "checks": [
+            "t10e-local-source-byte-preservation",
+            "t10e-old-build-overflow-diagnosis",
+            "t10e-exact-receipt-offline"
+          ]
+        },
+        {
+          "anchor": "#block-nojs-recurrence",
+          "kind": "nojs-math-explanation",
+          "summary": "block无脚本读式明确X/U/Y同为[B,S,d]，先Attention再FFN，两次残差读取未归一化旧表示且第二步读取U。",
+          "assumptions": "仅noscript必要读式；JS正常隐藏。pre-norm同形残差；mask固定、N_valid>0、局部logit变量独立，不是模型参数总梯度或实测。",
+          "checks": [
+            "t10z-two-additive-block-byte-inverse",
+            "t10z-independent-logit-finite-difference-and-residual-order",
+            "t10z-original-math-code-figures-ids-links-preservation"
+          ],
+          "repair_task": "T10z",
+          "sha256_before_repair": "8330479acfddbcd8c5b1456bacb95f2f2230b066a3521899edc4033cf01708d3",
+          "sha256_after_repair": "a0e8f6d2fee1076ce3cc3a9514a6c504ed20aa29a26883cbc1618db81bdbc30b",
+          "evidence": {
+            "path": "/tmp/my-blogs-continuity-review-20261116/t10z-source-repair-001/source-ready.json",
+            "sha256": "ce7c42813c69e6eccf307470a954c51854f8a3dc7c1f2d1744436479f9d30510"
+          }
+        },
+        {
+          "anchor": "#masked-gradient-nojs-derivation",
+          "kind": "nojs-math-explanation",
+          "summary": "平均masked梯度无脚本定义b/i/j/y/m/N，逐步求softmax交叉熵导数并乘固定m/N，接原mask算例-0.25与N=0拒绝。",
+          "assumptions": "仅noscript必要读式；JS正常隐藏。pre-norm同形残差；mask固定、N_valid>0、局部logit变量独立，不是模型参数总梯度或实测。",
+          "checks": [
+            "t10z-two-additive-block-byte-inverse",
+            "t10z-independent-logit-finite-difference-and-residual-order",
+            "t10z-original-math-code-figures-ids-links-preservation"
+          ],
+          "repair_task": "T10z",
+          "sha256_before_repair": "8330479acfddbcd8c5b1456bacb95f2f2230b066a3521899edc4033cf01708d3",
+          "sha256_after_repair": "a0e8f6d2fee1076ce3cc3a9514a6c504ed20aa29a26883cbc1618db81bdbc30b",
+          "evidence": {
+            "path": "/tmp/my-blogs-continuity-review-20261116/t10z-source-repair-001/source-ready.json",
+            "sha256": "ce7c42813c69e6eccf307470a954c51854f8a3dc7c1f2d1744436479f9d30510"
+          }
+        }
+      ],
+      "evidence_boundary": "逐节阅读tensor/mask/block/objective/state/evaluation；标准库NLL与局部logit梯度有限差分复算，非训练/模型性能复现。展示公式、代码和原ID保留；改正的行内导数是唯一有意公式表述修正。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "architecture-attention",
+      "source": "content/series/llm-architecture/s02_attention_position_cache.html",
+      "changed": false,
+      "sha256_before": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
+      "sha256_after": "8594e28133e5d0cd17d0d31e3632ad3e257a64b1afebd506ee3adb9256cb4f77",
+      "examined": [
+        {
+          "anchor": "#attention-scaling",
+          "judgment": "独立零均值单位方差假设明确；两候选缩放前后2.2384/2.5379复算一致，不宣称实际Q/K必满足假设。"
+        },
+        {
+          "anchor": "#head-sharing",
+          "judgment": "写入头/读取头、MLA例外和repeat只服务计算已说明，GQA图与持久未重复KV对应。"
+        },
+        {
+          "anchor": "#kv-bytes",
+          "judgment": "K/V两宽度推导、小形状192B、TP复制与量化附加项齐全。"
+        },
+        {
+          "anchor": "#position",
+          "judgment": "列向量二维旋转推导方向、相对j-i与逻辑/物理位置边界清楚；共同平移例复算。"
+        },
+        {
+          "anchor": "#online-softmax-example",
+          "judgment": "完整块输入和m/ell/n定义、两块重标与输出3齐全；第一块已显式给基准，无必要机械再补初始化。"
+        },
+        {
+          "anchor": "#frontier-comparison",
+          "judgment": "Kimi Linear同1.4T设置与发布5.7T分开；保留EvalPlus非最优负结果，不以资源机制代替硬件性能。"
+        }
+      ],
+      "reason": "保留。尺度、缓存、RoPE和online softmax都能从输入算到输出，既有图和算例不需增补。",
+      "changes": [],
+      "evidence_boundary": "局部数学和教学字节/旋转/分块复算；Kimi Table3及全部历史论文成绩只静态保留条件，未重新查询来源、训练或执行GPU kernel。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "architecture-moe",
+      "source": "content/series/llm-architecture/s03_ffn_moe_routing.html",
+      "changed": false,
+      "sha256_before": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
+      "sha256_after": "e403ce18340e64971375c2558d0de23191840cca4b7f0f6048d1db0179c30634",
+      "examined": [
+        {
+          "anchor": "#swiglu",
+          "judgment": "两矩阵/三矩阵、等参数宽度和gate/up/down顺序清楚；d6时288参数与SiLU门控2.1932复算一致。"
+        },
+        {
+          "anchor": "#moe-full-example",
+          "judgment": "四二维token、2x3 router、softmax后top2归一、线性教学专家及shared=0均明确；输出与[3,4,1]负载复算一致。"
+        },
+        {
+          "anchor": "#balance",
+          "judgment": "8条assignment取容量3溢出一条，丢D到专家2且不归一产生(8/5,0)，与dropless区分，空专家槽不自动转移。"
+        },
+        {
+          "anchor": "#parameters",
+          "judgment": "总/激活参数和单向payload区分；具体放置三条跨rank路径产生dispatch12B、combine12B，其余元数据/训练通信排除。"
+        },
+        {
+          "anchor": "#latent",
+          "judgment": "latent投影、实际发送宽度与shared/router/Norm例外已说明，不由r/d推出整体速度。"
+        },
+        {
+          "anchor": "#frontier-comparison",
+          "judgment": "Table3能力与Table5另一73B服务模型分开；并发4/64外不占优的结果与成本缺失保留。"
+        }
+      ],
+      "reason": "保留。完整路由、重排身份图、容量分支和通信例构成可复算链，不用新图取代已有推导。",
+      "changes": [],
+      "evidence_boundary": "标准库复算教学router、输出、容量和网络payload；未执行真正SwiGLU专家、All-to-All或训练。论文性能表及latent工业配置仅静态范围核对，未作全历史事实复现。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "architecture-residual",
+      "source": "content/series/llm-architecture/s04_residual_norm_stability.html",
+      "changed": false,
+      "sha256_before": "29745847d46a33c3ce3e3ee28b935d0ee918cd4200259ba7d7b73e04dd4a810a",
+      "sha256_after": "29745847d46a33c3ce3e3ee28b935d0ee918cd4200259ba7d7b73e04dd4a810a",
+      "examined": [
+        {
+          "anchor": "#norm-bypass-map",
+          "judgment": "同一x两种替代布局、旁路与Norm覆盖位置明确，不误画成两个顺序子层。"
+        },
+        {
+          "anchor": "#norm-position",
+          "judgment": "局部Jacobian乘法方向及跨层顺序明确；均值方向例明确是LayerNorm且F=ax，未推广成所有Norm或无衰减保证。"
+        },
+        {
+          "anchor": "#rmsnorm",
+          "judgment": "x=[1,3]的LN[-1,1]、RMS[0.4472,1.3416]及忽略epsilon条件完整，已复算；FP32统计源码保留。"
+        },
+        {
+          "anchor": "#new-residual",
+          "judgment": "深度表示与多残差流对象区分，双随机谱范数只约束旧流混合，不约束F与pre/post完整Jacobian。"
+        },
+        {
+          "anchor": "#frontier-comparison",
+          "judgment": "27B/262B tokens、n4条件与MATH较HC低保留；同token非同FLOPs，不从分数证明稳定性。"
+        }
+      ],
+      "reason": "保留。布局对照、梯度限制、Norm算例和科研负结果均已有就近边界，无确证补图缺口。",
+      "changes": [],
+      "evidence_boundary": "复算Norm教学例与LN常量平移不变性，链式法则和图作静态语义检查；未求真实网络Jacobian、重训mHC或复现失稳/性能曲线。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "architecture-hybrid",
+      "source": "content/series/llm-architecture/s05_hybrid_architectures.html",
+      "changed": false,
+      "sha256_before": "d27252caaf1b134a288b577d2c8bff9ae32682884b18647d1877a5942dc85cb1",
+      "sha256_after": "d27252caaf1b134a288b577d2c8bff9ae32682884b18647d1877a5942dc85cb1",
+      "examined": [
+        {
+          "anchor": "#hybrid-state-layout",
+          "judgment": "按层计划选择GDN/SSM/Attention，本层私有历史与输出/新状态明确，不是三类模块固定流水线。"
+        },
+        {
+          "anchor": "#linear",
+          "judgment": "dv×dk状态与列q/k/v方向明示；两关联[2,3]、读2/5及8B例可算，省feature map/归一明确不是softmax。"
+        },
+        {
+          "anchor": "#gated-delta",
+          "judgment": "累加[7,3]、delta[5,3]、gated[5,1.5]复算；key单位范数与beta=1覆盖条件已列。"
+        },
+        {
+          "anchor": "#ssm",
+          "judgment": "一般离散SSM矩阵维度与h=[2,5]教学例清楚，chunk算法不等于Python串行或O(1)训练内存。"
+        },
+        {
+          "anchor": "#state-branch-example",
+          "judgment": "前缀5独立分叉8.5/0.5、误串行2.25、截窗8、换参数7.125/旧态7.25复算一致；模型读出非词表预测。"
+        },
+        {
+          "anchor": "#state-fork-map",
+          "judgment": "两个私有状态从同一快照恢复，底部只汇总管理不合并数值；真实KV/卷积/位置/权重需要一并快照。"
+        }
+      ],
+      "reason": "保留。递推、状态形状、分叉、换窗及换参数恢复已有完整算例和分支图，不机械增加。",
+      "changes": [],
+      "evidence_boundary": "标准库教学外积/delta和标量SSM复算、混合图静态阅读；不是GDN/Mamba真实模型或跨权重迁移实现验证，工业质量与chunk性能未复现。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "architecture-comparison",
+      "source": "content/series/llm-architecture/s06_model_comparison.html",
+      "changed": false,
+      "sha256_before": "b53a9e98958acaa2245f1498156336e316762d822057a99e8679f8fcd73586e1",
+      "sha256_after": "b53a9e98958acaa2245f1498156336e316762d822057a99e8679f8fcd73586e1",
+      "examined": [
+        {
+          "anchor": "#axes",
+          "judgment": "六轴分开记录状态、参数、深度、数值对象、预测及系统，active/总参数/上下文不混用；入口图固定版本后才比较任务。"
+        },
+        {
+          "anchor": "#co-design",
+          "judgment": "任务到结构/训练/服务反馈图只表示设计依赖；训练与decode瓶颈、state分支/系统权限分别说明。"
+        },
+        {
+          "anchor": "#mtp",
+          "judgment": "MTP信号与候选验证分开，贪心/随机精确性及drafter争资源边界完整。"
+        },
+        {
+          "anchor": "#experiments",
+          "judgment": "机制、同checkpoint服务、Agent端到端三层合同与固定预算清楚，闭源未披露结构不从榜单或memory行为反推。"
+        }
+      ],
+      "reason": "保留。此章职责是比较框架和实验合同，具体数值归各主讲，重复增加例子/图会破坏分工。",
+      "changes": [],
+      "evidence_boundary": "阅读六轴、家族定位、co-design、MTP及实验协议；局部方法/边界检查，不将后续型号表或全部闭源材料视为本轮事实复现，未运行任何对照。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "agent-data-benchmarks",
+      "source": "content/series/agent-data-benchmarks/index.html",
+      "changed": false,
+      "sha256_before": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "sha256_after": "f75ab24752c9659dc49417c04328c1d0e511b3420245234ff8fc15ee919880f9",
+      "examined": [
+        {
+          "anchor": "overview",
+          "judgment": "任务生产→科学操作→轨迹→独立终评的导读与论文/方案/履历证据性质分开。"
+        },
+        {
+          "anchor": "boundaries",
+          "judgment": "训练环境、benchmark、Harbor/Hub、AA指数对象区分充分，不按名字混DeepSWE。"
+        },
+        {
+          "anchor": "mastery",
+          "judgment": "合同、统计复算、评测分母与失败定位收束明确，已有关系图不重复。"
+        },
+        {
+          "anchor": "sources",
+          "judgment": "52项共用编号与新增科学章独立来源清楚，固定版本/访问快照不冒充独立复现。"
+        }
+      ],
+      "reason": "入口承担对象关系与学习目标，详细算例已有对应章；保留不扩入口。",
+      "changes": [],
+      "evidence_boundary": "检查导读、对象分类、来源/下载组织；没有重新调研52来源、运行装配、合成任务或benchmark。",
+      "module": "training-data"
+    },
+    {
+      "id": "agent-task-synthesis",
+      "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
+      "changed": false,
+      "sha256_before": "6f40a994b7dbbf4c480797340a4eb6cd7ff53363bea1076aaeaecbe771793785",
+      "sha256_after": "6f40a994b7dbbf4c480797340a4eb6cd7ff53363bea1076aaeaecbe771793785",
+      "examined": [
+        {
+          "anchor": "objects",
+          "judgment": "source/environment/task/episode单位区分，环境数和重复轨迹不冒充family覆盖。"
+        },
+        {
+          "anchor": "contract",
+          "judgment": "公共题面/环境/产物与solution/tests/private审计分开，oracle/bad/alternative/clean reset验收充分。"
+        },
+        {
+          "anchor": "science",
+          "judgment": "绝对/相对容差单位与近零例、repair剩余进展(r-f)/(1-f)的f<1条件明确，可独立复算。"
+        },
+        {
+          "anchor": "admission",
+          "judgment": "CPT/SFT/RL/Critic四路原分支图紧邻主讲，旧episode有reward不等于on-policy，角色/来源组继承明确。"
+        },
+        {
+          "anchor": "experiments",
+          "judgment": "冻结空间/预算与反馈扩张消融、逐family/失败/成本和未执行状态清楚。"
+        }
+      ],
+      "reason": "产线、分流、有效任务/样本、容差与反馈/交付均有原图和例子；保留原数据准入图，不重复增内容。",
+      "changes": [],
+      "evidence_boundary": "检查公开方法归纳与已有教学算式，未执行环境工厂/校准/critic/SFT/RL或重新核验所有来源规模。",
+      "module": "training-data"
+    },
+    {
+      "id": "agent-benchmark-map",
+      "source": "content/series/agent-data-benchmarks/s02_benchmark_map.html",
+      "changed": true,
+      "sha256_before": "66a21e9747cd5438f99f59956facfa915d9a958cf861d8c2bca4c3061a0140e0",
+      "sha256_after": "ae83158ab1137b57376e782ef1160d1aa96d2fa8b1d88799f84ed695044b74ea",
+      "examined": [
+        {
+          "anchor": "metrics",
+          "judgment": "pass@1/repeats、pass@k、pass^k、selector和有限n组合例充分；但配对区间被写为前节，实际主讲在后续s04，已改为精确链接。"
+        },
+        {
+          "anchor": "versions",
+          "judgment": "TB4.1/CPU、Science0.1、Index1.0/1.4、DeepSWE和AA自身版本明确，不混当前榜单。"
+        },
+        {
+          "anchor": "frontier-comparison",
+          "judgment": "SkillsBench费用仅完整token子集，不用费用÷全体成功率冒充精确成功成本，保留。"
+        },
+        {
+          "anchor": "selection",
+          "judgment": "核心留出/诊断/控制按能力与产物选，来源族和固定预算条件充分。"
+        }
+      ],
+      "reason": "只修确证的主讲衔接定位错误；指标、分母、成本和独立评测已有完整例子。",
+      "changes": [
+        {
+          "anchor": "metrics",
+          "kind": "correction",
+          "summary": "把不存在的“前节配对区间”改为后续训练与终评#measurement直达，标明标准误和研究组重采样。",
+          "assumptions": "主讲仍在同主题s04的measurement，不移动公式或创建第二份统计讲解。",
+          "checks": [
+            "finite-pass-at-k",
+            "paired-standard-error",
+            "source-preservation",
+            "local-anchor-target"
+          ]
+        }
+      ],
+      "evidence_boundary": "检查测量对象、指标及版本/成本边界；复算教学组合和配对数，不重新运行榜单、访问私有题、核验服务商实时价格或最新release。",
+      "module": "training-data"
+    },
+    {
+      "id": "llm-research-map-2026",
+      "source": "content/series/llm-research-map-2026/index.html",
+      "changed": false,
+      "sha256_before": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "sha256_after": "7f37630a999b5220da0cd7025dbda9a0fea8f92af684e61feefa7cbc1912e358",
+      "examined": [
+        {
+          "anchor": "#overview",
+          "judgment": "来源参考角色、归位主题与研究组织flow明确；caption说明不是单一真实系统执行链，保留。"
+        },
+        {
+          "anchor": "#priorities",
+          "judgment": "状态/权限/verifier、同预算与待执行研究边界明确，不扩展调研。"
+        },
+        {
+          "anchor": "#archive",
+          "judgment": "官方PDF快照与arXiv版本不宣称字节相同，保留原件/许可/来源链接。"
+        },
+        {
+          "anchor": "#sources",
+          "judgment": "71项固定编号、不同稿件/模型卡/动态发布的版本角色保留；不把多个载体当独立复现。"
+        }
+      ],
+      "reason": "这是来源与旧目录页，主讲在所属主题；已有组织路径足够，不为引用索引增算法图。",
+      "changes": [],
+      "evidence_boundary": "通读本地来源页的引入、选题、归档和71项索引；未重新抓取或逐篇核验71个外部来源、原件许可与性能。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "research-agent-data",
+      "source": "content/series/llm-research-map-2026/s01_agent_data_bench.html",
+      "changed": false,
+      "sha256_before": "211e586ffeaa1a67c534043b2eb8b0678bbe4b0e0bec6d5cff7015daec50fab8",
+      "sha256_after": "211e586ffeaa1a67c534043b2eb8b0678bbe4b0e0bec6d5cff7015daec50fab8",
+      "examined": [
+        {
+          "anchor": "distinctions",
+          "judgment": "生成空间和反馈增量与基础任务主讲衔接，source/轨迹与同源切分清楚。"
+        },
+        {
+          "anchor": "harbor",
+          "judgment": "CSV已声明与临时SQLite未声明的交接反例完整，原分支图区分可传文件/不自动传状态。"
+        },
+        {
+          "anchor": "parity",
+          "judgment": "原/adapter动作、观察、终态、reward与随机状态重放条件明确；不以格式统一称语义等价。"
+        },
+        {
+          "anchor": "audit",
+          "judgment": "request/span计费0.03+0.02=.05、父span重复计费反例与缓存/失败保留充分。"
+        }
+      ],
+      "reason": "研究增量、artifact交接和审计已有具体例子与原图；不重复基础协议或刷新历史版本事实。",
+      "changes": [],
+      "evidence_boundary": "检查现存四路线归纳、迁移例和审计字段；不重放HAL/τ、Harbor adapter、数据库状态或所有引用实验。",
+      "module": "training-data"
+    },
+    {
+      "id": "research-agentic-rl",
+      "source": "content/series/llm-research-map-2026/s02_agentic_rl.html",
+      "changed": false,
+      "sha256_before": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "sha256_after": "63ec9a5c3992696e7c0ade771aba1914e0f46cf3ae05c3c1fb894a6d22d56ede",
+      "examined": [
+        {
+          "anchor": "map",
+          "judgment": "advantage/ratio/聚合/准入四维明确，组合结果不称独立相加。"
+        },
+        {
+          "anchor": "objectives",
+          "judgment": "GRPO task优势、GSPO几何比、CISPO IS权重detach分别落到更新对象，环境观察不计策略。"
+        },
+        {
+          "anchor": "credit",
+          "judgment": "anchor可比、taxonomy/知识特权/value学习与SAPO同名边界充分。"
+        },
+        {
+          "anchor": "heterogeneity",
+          "judgment": "100/100派发但99.2/7.7有效组、过滤后约92.8%中等域，明确IID二值假设和课程偏移。"
+        },
+        {
+          "anchor": "asynchrony",
+          "judgment": "完成偏移/旧策略/同版本数值三问题分开，旧KV非通用有效，behavior与response mask/版本字段完整。"
+        }
+      ],
+      "reason": "前沿分类已接回唯一数学主讲；有效组、信用证据与异步交接无需重复增例。",
+      "changes": [],
+      "evidence_boundary": "检查现存研究归纳与解析示例，不扩新research，不复现引用模型、RLDS/KnowGPO/T1/SAMPO或routing replay。",
+      "module": "training-data"
+    },
+    {
+      "id": "research-base-architecture",
+      "source": "content/series/llm-research-map-2026/s03_base_architecture.html",
+      "changed": false,
+      "sha256_before": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "sha256_after": "01a0d70f036b184a7c5e9de921cad7e653345aec1cf8bcc9c62a7bb15d297369",
+      "examined": [
+        {
+          "anchor": "#versions",
+          "judgment": "V4/v1/1017发布、报告和能力更新分开，552B主干+196B查表与8B/16B active不混算。"
+        },
+        {
+          "anchor": "#ced",
+          "judgment": "H20→C/Z保留token轴，本层Q/SWA来自本层hidden；图明确长prefill仍有decoder尾部replay，不宣称完全不走decoder。"
+        },
+        {
+          "anchor": "#csa2",
+          "judgment": "Full/Reindex/Reuse分缓存生成、索引重算和候选复用；20+20层表、候选2048×8上限16384与首次O(N)一致。"
+        },
+        {
+          "anchor": "#cache",
+          "judgment": "288B主entry+68B索引、1.5 encoder+1 decoder条目得到890B/token；图178×3+356一致。SWA/权重/对齐排除；HBM1/4与persistent1/8不相乘。"
+        },
+        {
+          "anchor": "#engram",
+          "judgment": "参数查表、KV和外部memory/skill职责不同；MoE、mHC流量50%及不同Engram放置条件均局部限定。"
+        }
+      ],
+      "reason": "保留。缓存账本、张量所有权、两种bounded replay的触发/输入/写入及近似边界已完整，既有四张科研图无需重复。",
+      "changes": [],
+      "evidence_boundary": "本轮实际检查版本引入、CED/CSA2/cache/replay/Engram及实验收束，四SVG读取标签并验证原字节；只复算entry/层组/候选算术。未重新逐页核验51页原报告、历史科研事实、QAT质量或硬件性能，未声称bit-exact恢复。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "research-inference-diffusion",
+      "source": "content/series/llm-research-map-2026/s04_inference_diffusion.html",
+      "changed": false,
+      "sha256_before": "0a764cfe94233a88eb102193aff264a0a74f5957403d4caca4188b507bb1eaad",
+      "sha256_after": "0a764cfe94233a88eb102193aff264a0a74f5957403d4caca4188b507bb1eaad",
+      "examined": [
+        {
+          "anchor": "#budget",
+          "judgment": "长期周期时间/提交量之比不是逐周期比值均值；90ms/5=18ms慢于15ms基线的教学反例明确。"
+        },
+        {
+          "anchor": "#diffusion-drafter-options",
+          "judgment": "三种方法是替代对照；DSpark轻head依赖与AdaFlash独立trainer分工、版本/成本明确，不画为每轮训练。"
+        },
+        {
+          "anchor": "#exactness",
+          "judgment": "实际proposal条件概率、准入和状态提交条件齐全；p=q但丢B只验A的负对照确实把P(A)从1/2改到1。"
+        },
+        {
+          "anchor": "#opd",
+          "judgment": "reverse-KL q_draft||p_target方向、状态监督、Agent reward与drafter质量/费用区别完整。"
+        },
+        {
+          "anchor": "#frontier-comparison",
+          "judgment": "AdaFlash T0/block16加速与DSpark T1/block7含bonus接受长度不同分母；并发128的DFlash0.76倍负结果与独立trainer缺失成本保留。"
+        }
+      ],
+      "reason": "保留。proposal、target、准入、训练和服务边界清楚，已有对照图与选择偏差例足够，不用额外图伪证精确性。",
+      "changes": [],
+      "evidence_boundary": "阅读budget/methods/exactness/opd/frontier-comparison/experiments；复算周期教学算术与可枚举选择反例，不重训或运行三方法、不复现原论文速度/概率频率，未确认全部DLM proposal可取得精确q。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "research-agent-frontiers",
+      "source": "content/series/llm-research-map-2026/s05_agent_frontiers.html",
+      "changed": false,
+      "sha256_before": "1cd78ea81253458075098331d6605d8718abda6ad7926463c6334d8f0d290d98",
+      "sha256_after": "1cd78ea81253458075098331d6605d8718abda6ad7926463c6334d8f0d290d98",
+      "examined": [
+        {
+          "anchor": "#gui-observation-action-map",
+          "judgment": "观察时间/焦点、坐标逆映射、提案/可信执行、新观察和结果未到不重放明确，保留闭环图。"
+        },
+        {
+          "anchor": "#science",
+          "judgment": "执行/有效提交/科学支持、标签泄漏反例分明，不以文件存在验收。"
+        },
+        {
+          "anchor": "#adaptation",
+          "judgment": "memory/skill/参数支路与时间冻结、新任务/旧回归图清楚，保留而不画为必经顺序。"
+        },
+        {
+          "anchor": "#multiagent",
+          "judgment": "10/10秒+3秒协调例可复算；critical path与总资源时间、MOPD训练与runtime协作分开。"
+        }
+      ],
+      "reason": "动作/观察和持续适配图已充分解释分层与时间边界；无新场景实验，保持原数字与公开范围。",
+      "changes": [],
+      "evidence_boundary": "通读GUI/科学/skill/持续适配/多Agent本地说明，复算关键路径教学例；未运行OSWorld、科学任务、LoRA或PARL实验。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "research-architecture-landscape",
+      "source": "content/series/llm-research-map-2026/s06_architecture_landscape.html",
+      "changed": false,
+      "sha256_before": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
+      "sha256_after": "53585d1c0fb4a8f2f0c84d7361c73722f1fb10b7514b380f448dbcc77a555fb4",
+      "examined": [
+        {
+          "anchor": "#state",
+          "judgment": "dk×dv状态与基础章转置等价已明确；KDA先Diag再rank-one的AD/DA非交换矩阵复算一致，D=0教学边界保留。"
+        },
+        {
+          "anchor": "#families",
+          "judgment": "家族表单列主干/查表/视觉参数；层图48/93/45/70/48仅表示组成非顺序/FLOPs，Nemotron108子模块不同单位。"
+        },
+        {
+          "anchor": "#kimi",
+          "judgment": "K3的KDA、周期Gated MLA、AttnRes深度选择、Stable LatentMoE职责清楚；K3.1换Gated DSA的card/config与旧报告分开。"
+        },
+        {
+          "anchor": "#glm",
+          "judgment": "Attention与FFN是两张层表；AMD DP/EP vs TP的硬件/版本/96k/32k/并发256明确，随机token服务不是Agent成功率。"
+        },
+        {
+          "anchor": "#minimax",
+          "judgment": "MSA group选block、前三Attention与dense FFN区别明确；109B论文kernel倍数不套428B发布模型。"
+        },
+        {
+          "anchor": "#closed",
+          "judgment": "Gemma12B encoder-free例外及闭源披露范围在相邻段落明确，memory/换窗不能反推Loop Transformer。"
+        }
+      ],
+      "reason": "保留。版本、转置、层计划和性能归因均有局部条件，已有历史路径/层数量图充分；该主讲可作为修正滚动页机制分类的既有依据。",
+      "changes": [],
+      "evidence_boundary": "本轮阅读引导、状态推导、各家族边界和实验协议；对历史路径/层数量SVG读取实际文本、核对原字节，对KDA矩阵作局部复算。未再次外部核验九家完整报告/config或全部历史科研事实，AMD/MSA/模型性能未复现。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "research-architecture-training",
+      "source": "content/series/llm-research-map-2026/s07_architecture_training.html",
+      "changed": true,
+      "sha256_before": "4e6d76d730a7d550013ddaf58778dca7b21c4992faec68b49a26da41f1b93792",
+      "sha256_after": "e1e1694fa3ebe4969551282a1f4292752a701e4cbc2fb69eeeb620a8fae07c44",
+      "examined": [
+        {
+          "anchor": "#residual",
+          "judgment": "原AttnRes得分例缺少q和Norm条件，已补真实可算输入；mHC旧流与F支路、双随机局部范数边界已完整。"
+        },
+        {
+          "anchor": "#attnres-depth-read",
+          "judgment": "同一token历史分为Norm后的key和原value两路，加权结果仍(0.5,3)，新增条件与原图一致，不需改图。"
+        },
+        {
+          "anchor": "#mhc-stream-layout",
+          "judgment": "n×n旧流与1×n/n×1模块支路同形相加，数据依赖并行非GPU并发保证；未添加第二普通残差。"
+        },
+        {
+          "anchor": "#latent-moe",
+          "judgment": "两家hidden/latent/top-k与Norm/shared例外明确；固定1024分派BF16得到16/4MiB，维度比不是全网收益。"
+        },
+        {
+          "anchor": "#recurrent-core-loop",
+          "judgment": "共享theta执行K次后Post，潜在迭代非CoT输出；1/1.5/1.75收敛例与两种循环成本区分完整。"
+        },
+        {
+          "anchor": "#precision",
+          "judgment": "KV、训练GEMM、QAT和optimizer迭代分对象，源码/精度机制引用留在既有主讲，不扩大优化器研究。"
+        },
+        {
+          "anchor": "#attnres-nojs-formula",
+          "judgment": "四块精确追加核对；noscript条件与原公式/算例语义一致，独立源级复算不替代实际像素。"
+        },
+        {
+          "anchor": "#attnres-nojs-example",
+          "judgment": "四块精确追加核对；noscript条件与原公式/算例语义一致，独立源级复算不替代实际像素。"
+        },
+        {
+          "anchor": "#mhc-nojs-update",
+          "judgment": "四块精确追加核对；noscript条件与原公式/算例语义一致，独立源级复算不替代实际像素。"
+        },
+        {
+          "anchor": "#mhc-nojs-proof-example",
+          "judgment": "四块精确追加核对；noscript条件与原公式/算例语义一致，独立源级复算不替代实际像素。"
+        }
+      ],
+      "reason": "仅补AttnRes两表示例的query、Norm简化条件和key/value复核点，使公式真正连接到原输出；其余残差、latent与深度图保持原样。 T10e为原残差对照SVG增加局部横滚容器及1160px最小阅读宽度；按原viewBox864和最小9px注记推导至少1152px内容宽，留边框余量，不改资源、图内字节/ID/语义/比例。 T10p按独立六组合字线相交核实，新增默认四路线HTML主讲，类型、可用表示、操作与注记逐行对应且行间不串行；原figure/object/fallback/caption/URL及1160px横滚保留于原生参考details。原SVG字节与内部字线相交局限未改变，主讲可读性和参考保留/展开分开验收。 T10y仅追加四处noscript语义HTML：AttnRes得分/深度softmax/原value读出及两表示逐步复算，mHC逐流双支更新/约束及理想双随机证明/二乘二矩阵。移除四块可恢复改前全部字节，原LaTeX、图、引用、ID、样式和参考折叠不改。",
+      "changes": [
+        {
+          "anchor": "#residual",
+          "kind": "worked-example",
+          "summary": "给h1/h2列向量、Norm scale=1/epsilon=0、归一化key与q=(0,log3/sqrt2)，逐步算得分/softmax，再读取原value得到(0.5,3)。",
+          "assumptions": "仅二维教学例，两Norm输入非零，自然对数；真实模型epsilon、scale、query不同，不是Kimi已发布配置。",
+          "checks": [
+            "t8a-attnres-example",
+            "t8a-preservation"
+          ]
+        },
+        {
+          "anchor": "#residual",
+          "kind": "diagram-readability",
+          "summary": "原残差对照object外加可键盘横滚容器，局部min-width1160px/max-width:none；原资源、fallback、caption和放大链接逐字保留，不依靠zoom豁免默认可读性。",
+          "assumptions": "SVG原viewBox为864×367.2、最小注记9px，1152=864×12/9；1160含边框余量。旧390/768/1440六组合的两处context注记失败，新构建后必须重采完整重叠滚动与逐行关系像素。",
+          "checks": [
+            "t10e-local-source-byte-preservation",
+            "t10e-old-build-overflow-diagnosis",
+            "t10e-exact-receipt-offline"
+          ]
+        },
+        {
+          "anchor": "#residual-route-comparison",
+          "kind": "diagram-readability",
+          "summary": "默认四路线语义HTML主讲与原SVG原生参考分离；局部自然高度/换行样式服务同一呈现单元，Standard/AttnRes/mHC/GR各有状态→操作和完整注记，行间无执行箭头；原915字节figure块完整保留。",
+          "assumptions": "原SVG前三条注记与下一框线相交仍存在，不称raw内部布局已修复。主讲无需JavaScript或展开参考；16px文字/18px行标题只是源级声明，390/768/1440×JS/noJS实际像素及参考原生展开/滚动须新构建独立验收。",
+          "checks": [
+            "t10p-source-byte-inverse",
+            "t10p-four-route-source-contract",
+            "t10p-original-figure-and-raw-preservation"
+          ],
+          "repair_task": "T10p",
+          "sha256_before_repair": "dff5f9efc55eeaaac7822cf49459e65db38588d938cc0552a147bcfeb0ae0d5b",
+          "sha256_after_repair": "c8721d825d295487ef03487e4364d6f18836daaff84c1c6133cfab8beb107bb3"
+        },
+        {
+          "anchor": "#attnres-nojs-formula",
+          "kind": "nojs-math-explanation",
+          "summary": "AttnRes无脚本三步读式：逐维点积得分、沿深度指数归一化、读取未作key归一化的原表示。",
+          "assumptions": "仅noscript必要读式；JS默认隐藏。原数学不删、不隐藏；教学epsilon=0和理想双随机条件不扩成模型实测或全网稳定性。",
+          "checks": [
+            "t10y-four-additive-block-byte-inverse",
+            "t10y-independent-arithmetic",
+            "t10y-original-math-figures-ids-reference-preservation"
+          ],
+          "repair_task": "T10y",
+          "sha256_before_repair": "c8721d825d295487ef03487e4364d6f18836daaff84c1c6133cfab8beb107bb3",
+          "sha256_after_repair": "e1e1694fa3ebe4969551282a1f4292752a701e4cbc2fb69eeeb620a8fae07c44",
+          "evidence": {
+            "path": "/tmp/my-blogs-continuity-review-20261116/t10y-source-repair-001/source-ready.json",
+            "sha256": "c0bb6edf0715bc71f772850e8e1056fcd4b337449e28881500be325d8ed715ec"
+          }
+        },
+        {
+          "anchor": "#attnres-nojs-example",
+          "kind": "nojs-math-explanation",
+          "summary": "AttnRes两表示无脚本逐步复算：RMS除数、key、query点积、1/4与3/4权重、原value输出(0.5,3)。",
+          "assumptions": "仅noscript必要读式；JS默认隐藏。原数学不删、不隐藏；教学epsilon=0和理想双随机条件不扩成模型实测或全网稳定性。",
+          "checks": [
+            "t10y-four-additive-block-byte-inverse",
+            "t10y-independent-arithmetic",
+            "t10y-original-math-figures-ids-reference-preservation"
+          ],
+          "repair_task": "T10y",
+          "sha256_before_repair": "c8721d825d295487ef03487e4364d6f18836daaff84c1c6133cfab8beb107bb3",
+          "sha256_after_repair": "e1e1694fa3ebe4969551282a1f4292752a701e4cbc2fb69eeeb620a8fae07c44",
+          "evidence": {
+            "path": "/tmp/my-blogs-continuity-review-20261116/t10y-source-repair-001/source-ready.json",
+            "sha256": "c0bb6edf0715bc71f772850e8e1056fcd4b337449e28881500be325d8ed715ec"
+          }
+        },
+        {
+          "anchor": "#mhc-nojs-update",
+          "kind": "nojs-math-explanation",
+          "summary": "mHC无脚本逐流更新：res旧流混合与pre/F/post模块写回并行读取旧X，明确形状和约束范围。",
+          "assumptions": "仅noscript必要读式；JS默认隐藏。原数学不删、不隐藏；教学epsilon=0和理想双随机条件不扩成模型实测或全网稳定性。",
+          "checks": [
+            "t10y-four-additive-block-byte-inverse",
+            "t10y-independent-arithmetic",
+            "t10y-original-math-figures-ids-reference-preservation"
+          ],
+          "repair_task": "T10y",
+          "sha256_before_repair": "c8721d825d295487ef03487e4364d6f18836daaff84c1c6133cfab8beb107bb3",
+          "sha256_after_repair": "e1e1694fa3ebe4969551282a1f4292752a701e4cbc2fb69eeeb620a8fae07c44",
+          "evidence": {
+            "path": "/tmp/my-blogs-continuity-review-20261116/t10y-source-repair-001/source-ready.json",
+            "sha256": "c0bb6edf0715bc71f772850e8e1056fcd4b337449e28881500be325d8ed715ec"
+          }
+        },
+        {
+          "anchor": "#mhc-nojs-proof-example",
+          "kind": "nojs-math-explanation",
+          "summary": "mHC无脚本理想双随机范数/乘积证明及2x2矩阵表、行列和、同向/差异分量精确复算。",
+          "assumptions": "仅noscript必要读式；JS默认隐藏。原数学不删、不隐藏；教学epsilon=0和理想双随机条件不扩成模型实测或全网稳定性。",
+          "checks": [
+            "t10y-four-additive-block-byte-inverse",
+            "t10y-independent-arithmetic",
+            "t10y-original-math-figures-ids-reference-preservation"
+          ],
+          "repair_task": "T10y",
+          "sha256_before_repair": "c8721d825d295487ef03487e4364d6f18836daaff84c1c6133cfab8beb107bb3",
+          "sha256_after_repair": "e1e1694fa3ebe4969551282a1f4292752a701e4cbc2fb69eeeb620a8fae07c44",
+          "evidence": {
+            "path": "/tmp/my-blogs-continuity-review-20261116/t10y-source-repair-001/source-ready.json",
+            "sha256": "c0bb6edf0715bc71f772850e8e1056fcd4b337449e28881500be325d8ed715ec"
+          }
+        }
+      ],
+      "evidence_boundary": "实际检查residual/latent-moe/precision/depth/agent及实验收束；标准库复算AttnRes、mHC两个方向、固定分派payload和共享core标量例，两SVG静态保留。未重训AttnRes/mHC/LatentMoE/Huginn，未外部重核全部科研报告。 T10p仅源级呈现修复与准确保留；原raw布局失败未转为pass，当前主讲/参考浏览器和像素验收仍待独立执行。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "llm-training-lifecycle",
+      "source": "content/series/llm-training-lifecycle/index.html",
+      "changed": false,
+      "sha256_before": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "sha256_after": "472c8f59eeffa1f40579829cfa905b145c42fe63dabe90878eee0bbc7813a0dc",
+      "examined": [
+        {
+          "anchor": "overview",
+          "judgment": "四学习阶段的图已明确真实循环/分叉和RFT两含义，不称通用固定生产顺序。"
+        },
+        {
+          "anchor": "training-map",
+          "judgment": "阶段与横向方法两轴及Scaling/μP/WSD/optimizer/系统主讲入口完整。"
+        },
+        {
+          "anchor": "artifacts",
+          "judgment": "每阶段输入/目标/checkpoint/验收列清楚，权重不足以定义Agent协议。"
+        },
+        {
+          "anchor": "findings",
+          "judgment": "输入/目标/预算、初始化收益与等总算力、均值与分项回归、状态/谱系边界充分。"
+        }
+      ],
+      "reason": "入口已承担路线和阶段产物，具体公式在子章充分展开，保留不堆叠。",
+      "changes": [],
+      "evidence_boundary": "检查导读、阶段地图、交付与固定引用组织，不验证工业报告全部事实或课程装配/线上内容。",
+      "module": "training-data"
+    },
+    {
+      "id": "llm-training-pretraining",
+      "source": "content/series/llm-training-lifecycle/s01_pretraining.html",
+      "changed": false,
+      "sha256_before": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
+      "sha256_after": "d5a2358ca058c0f3bcf0f34bdf885a6ed14376be7d639e75960b7cb4bbe66d42",
+      "examined": [
+        {
+          "anchor": "mixture-budget",
+          "judgment": "唯一/读取/目标token、重复2倍与目标占比11.1%例、桶/样本分母限制清楚。"
+        },
+        {
+          "anchor": "packing-full-example",
+          "judgment": "两文档4×4可见性、m=(0,1,0,1)、shift后两有效目标、1.039721损失逐步齐全；attention与loss隔离分别验收。"
+        },
+        {
+          "anchor": "compute-derivation",
+          "judgment": "2NT+4NT=6NT来源与长Attention/重算/MoE/通信排除明确。"
+        },
+        {
+          "anchor": "scaling-derivation",
+          "judgment": "固定预算代入、边际加权平衡、正二阶导和N/D计数单位充分，非普适20N规则。"
+        },
+        {
+          "anchor": "scaling-ladder",
+          "judgment": "独立规模、完成schedule、IsoFLOP、留出外推/失败反馈链完整，μP与WSD条件不混Muon。"
+        },
+        {
+          "anchor": "systems",
+          "judgment": "optimizer/scheduler/RNG/sampler与权重共同恢复，模型卡阶段/数据污染交接充分。"
+        }
+      ],
+      "reason": "目标、packing、预算和规模外推均已有默认可读完整算例与检查条件；无需机械增加图或新论文。",
+      "changes": [],
+      "evidence_boundary": "独立复算教学CE与配比，不执行预训练/规模阶梯/μP/WSD，未验证所有工业训练量或外推性能。",
+      "module": "training-data"
+    },
+    {
+      "id": "llm-training-midtraining",
+      "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
+      "changed": true,
+      "sha256_before": "eb3cda578c5717e39e1d63dad408acb44525094c330dcb00fdc84e02958c17eb",
+      "sha256_after": "b40a0542bccff925536a61b4dd408efcec8840385d5a68162667daeee44ce47d",
+      "examined": [
+        {
+          "anchor": "definitions",
+          "judgment": "阶段位置与训练目标区分，CPT/trace SFT不凭名称混用。"
+        },
+        {
+          "anchor": "results",
+          "judgment": "逐行下游SFT版本、rollout平均pass@1与pass@3、额外算力/单seed边界充分，不修改论文表。"
+        },
+        {
+          "anchor": "data",
+          "judgment": "四类CSV样本中真假值过滤没有说明字段类型/空值规则，与保留合法0目标存在条件缺口；已补字符串假设和产物内容复核。"
+        },
+        {
+          "anchor": "mixture",
+          "judgment": "900文档+5目标trace=5/905而非输入10%梯度权重，桶权重/观察mask与全局归约充分。"
+        },
+        {
+          "anchor": "harbor",
+          "judgment": "A-D初始化与E额外SFT预算对照、CPT与sci-posttrain命名空间及未执行状态充分。"
+        }
+      ],
+      "reason": "仅补确证的CSV类型/空值条件和输出检查，保持原样本/代码/引用；其余配比与归因解释充分。",
+      "changes": [
+        {
+          "anchor": "data",
+          "kind": "explanation",
+          "summary": "明确if row['value']仅适用于未转换CSV字符串且空字符串为空；数值0反例、三行输入保留1/3行及内容/顺序/表头/input hash复核，不能仅相信工具行数。",
+          "assumptions": "教学CSV仍为字符串；空白/NA/数值转换后必须按实际合同显式判空，不推成通用生产过滤器。",
+          "checks": [
+            "csv-string-zero",
+            "csv-numeric-zero-counterexample",
+            "mixture-density",
+            "source-preservation"
+          ]
+        }
+      ],
+      "evidence_boundary": "检查现存配方/数据/伪代码/分母与交接，独立复算字符串/数值0和目标密度；不重跑Nemotron消融、合成数据、CPT或Harbor实验。",
+      "module": "training-data"
+    },
+    {
+      "id": "llm-training-sft-rft",
+      "source": "content/series/llm-training-lifecycle/s03_sft_rft.html",
+      "changed": false,
+      "sha256_before": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "sha256_after": "162b49ef9f1cb03359a7fba61b7cf796a98c968544b480148c121c7ae6c5a783",
+      "examined": [
+        {
+          "anchor": "sft",
+          "judgment": "角色mask、hidden表示链式梯度、两个动作CE完整，观察不直接拟合但仍影响参数。"
+        },
+        {
+          "anchor": "quality",
+          "judgment": "成功轨迹也筛错误动作，保留真实失败上下文、来源簇/截断/恢复准入。"
+        },
+        {
+          "anchor": "rejection",
+          "judgment": "易/难各10题筛成功后90%易题反例充分，搜索成本和新策略独立执行不混。"
+        },
+        {
+          "anchor": "handoff",
+          "judgment": "schema/停止错误、全失败/全成功各有交接判定，模板、split、image、verifier和预算字段明确。"
+        }
+      ],
+      "reason": "本章聚焦行为/接口交接，数学主讲链接已有完整推导；现有例子够用，不重复DPO或RL章节。",
+      "changes": [],
+      "evidence_boundary": "检查教学监督链和准入协议；未执行模板render、SFT/RFT或验证工具合法率，示例2048/8仍非推荐配方。",
+      "module": "training-data"
+    },
+    {
+      "id": "llm-training-rl-evaluation",
+      "source": "content/series/llm-training-lifecycle/s04_rl_evaluation.html",
+      "changed": false,
+      "sha256_before": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "sha256_after": "d3aec9f6e3be764e22e6cf197e0a2ed414adfb89187c129416521c9e3e9e9a10",
+      "examined": [
+        {
+          "anchor": "reward",
+          "judgment": "CSV原7/空/0输出1/3行、header/rows/input hash与完整结果reward充分，不以文件存在给分。"
+        },
+        {
+          "anchor": "systems",
+          "judgment": "behavior/动作span/真实prefix/镜像与raw失败成本保存，准入与吞吐不混。"
+        },
+        {
+          "anchor": "protocol",
+          "judgment": "100题10增5退=5个百分点配对例、全分母/retry/缺失、训练seed与生成seed区别明确。"
+        },
+        {
+          "anchor": "harbor",
+          "judgment": "同下游初始化与等总成本投入分开，A-E与sci-posttrain两命名空间不混。"
+        },
+        {
+          "anchor": "release",
+          "judgment": "checkpoint→数据/目标→执行协议→独立结果/成本，完整交付树清楚。"
+        }
+      ],
+      "reason": "此章已说明合法0、完整产物、训练与终评分离、样本分母和版本交付；局部类型条件已补在真正使用过滤代码的Midtraining主讲处，不重复。",
+      "changes": [],
+      "evidence_boundary": "检查教学CSV/配对例与合同，未执行RL、独立CSV任务、Harbor或生成实际训练/终评日志。",
+      "module": "training-data"
+    },
+    {
+      "id": "llm-frontier-2026",
+      "source": "content/posts/llm-frontier-2026/index.html",
+      "changed": true,
+      "sha256_before": "40ef586b9b17b65378ab13f344645f2b3ea2db5a75eac4d949851947011ccc6c",
+      "sha256_after": "9b525706485ce440607c9f10e38f17bcfa25200edfa4114189b82c7d7ee0f303",
+      "examined": [
+        {
+          "anchor": "#frontier-evidence-bridge",
+          "judgment": "更新至2026-11-10且未验证全部历史断言的快照边界保留；发布、self-report、传闻不升级为复现。"
+        },
+        {
+          "anchor": "#models",
+          "judgment": "重点读K3/K3.1、V4.1与相关型号对照：K3仍称当前最新，与同页2026-11 K3.1及页首冲突；Mistral Large3仍称当前最大，同页已收录Large4，两者均改历史快照。AttnRes被写成序列Attention，改深度读取；V4.1的890B/两个比例/尾部replay加就近口径说明。"
+        },
+        {
+          "anchor": "#frontier",
+          "judgment": "闭源接口/负载说明明确不倒推参数与循环架构；本轮不重新验证折叠内历史价格、发布或成绩。"
+        },
+        {
+          "anchor": "#arch",
+          "judgment": "GLM/Qwen/Kimi/CED概括混同线性Attention，局部改为递归状态、稀疏读取、跨层复用不同对象；Huginn潜在深度与CoT、GPT传闻边界保留。"
+        }
+      ],
+      "reason": "修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。",
+      "changes": [
+        {
+          "anchor": "#models",
+          "kind": "correction",
+          "summary": "K3条目及型号表区分KDA+周期Gated MLA的序列混合与AttnRes同token前层深度读取。",
+          "assumptions": "采用已有K3报告链接及research-architecture-landscape/research-architecture-training的固定主讲；不从K3.1性能反推新结构。",
+          "checks": [
+            "t8a-reference-static",
+            "t8a-attnres-example",
+            "t8a-preservation"
+          ]
+        },
+        {
+          "anchor": "#models",
+          "kind": "correction",
+          "summary": "K3当前最新旗舰及Large3当前最大规模断言改为历史快照；同页已收录后续K3.1 Pro和Large4，不新增当前排名。",
+          "assumptions": "仅依据同页条目时间与last-updated=2026-11-10检查内部时效，不新增需要外部验证的latest或当前排名。",
+          "checks": [
+            "t8a-reference-static",
+            "t8a-preservation"
+          ]
+        },
+        {
+          "anchor": "#models",
+          "kind": "explanation",
+          "summary": "V4.1条目就近说明890B是bytes/token非参数，HBM1/4与host/SSD1/8不相乘；decoder尾部replay仍存在且为近似恢复，链接原缓存主讲。",
+          "assumptions": "沿用已有v1报告的global/persistent对象口径；排除SWA/weights/Engram/workspace，未改原论文数值。",
+          "checks": [
+            "t8a-reference-static",
+            "t8a-preservation"
+          ]
+        },
+        {
+          "anchor": "#arch",
+          "kind": "correction",
+          "summary": "GLM/Qwen/Kimi/DeepSeek概括和混合SSM表不再把AttnRes或全部稀疏/共享KV当线性Attention；按历史访问与深度两个轴解释。",
+          "assumptions": "仅修机制分类和因果概括，保留所有原URL、型号数值及Huginn/闭源传闻边界。",
+          "checks": [
+            "t8a-reference-static",
+            "t8a-preservation"
+          ]
+        },
+        {
+          "anchor": "#arch",
+          "kind": "label-readability",
+          "summary": "仅3.3其它架构信号标题内FACT span增加font-size:12px，保留原pill/fact class和状态文本，不修改其它标签或共享样式。",
+          "assumptions": "原.pill为0.68rem，16px根字号下实测10.88px；真实HTML状态标签不能按数学字形SVG豁免。旧图与Chrome字体/像素独立采证；修复后新构建与受影响浏览器验收待父线程。",
+          "checks": [
+            "t10d-single-inline-style-byte-preservation",
+            "t10d-old-artifact-font-pixel-diagnosis",
+            "t10d-exact-receipt-offline"
+          ]
+        }
+      ],
+      "evidence_boundary": "局部检查阅读引导、overview、models、frontier、arch（源约180–459行）；重点为K3/K3.1、V4.1、Huginn、机制分类及Large3/Large4同页时效冲突。其余优化器/RL/Agent/Protein/benchmark历史条目未作本轮事实复核；全文件仅静态保留ID、来源、图、脚本及AUTO标记。无外部研究、价格/性能/发布日期重核或自动更新运行。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "agentic-rl-guide",
+      "source": "content/posts/agentic-rl-guide/index.html",
+      "changed": false,
+      "sha256_before": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "sha256_after": "91d0061fb1a526322753aa5f64e87515cae99ffb9f17414c224a1fab200a52ee",
+      "examined": [
+        {
+          "anchor": "part3",
+          "judgment": "五问题与动作/状态/反馈/更新诊断图明确，能力上限观察不当普适定理。"
+        },
+        {
+          "anchor": "ortho",
+          "judgment": "分支/优势/ratio/聚合/lag单轴与交互不能假定正交，条件和全部成本清楚。"
+        },
+        {
+          "anchor": "credit-example",
+          "judgment": "同anchor各4续写3/1成功、等权baseline.5、±.25信号完整，样本误差不冒充因果效应。"
+        },
+        {
+          "anchor": "part5",
+          "judgment": "教师同历史/接管/过滤三介入位置与支持、sg/遗忘/成本充分，指向唯一OPD推导。"
+        },
+        {
+          "anchor": "part7",
+          "judgment": "代码/GUI/科学状态差异与终局verifier边界充分，旧原稿入口保留。"
+        }
+      ],
+      "reason": "研究问题→局部例→条件→主讲交接已连贯，保留原图与例，不重复扩算法名录。",
+      "changes": [],
+      "evidence_boundary": "检查现存教学比较和方法边界，不重新核验所有算法论文、执行分支采样或模型训练。",
+      "module": "training-data"
+    },
+    {
+      "id": "dlm-survey",
+      "source": "content/series/dlm-survey/index.html",
+      "changed": false,
+      "sha256_before": "12fe7488fcaaf81da0f8d5e300c2c4339afc089d34639605c5205c8b0610f7b1",
+      "sha256_after": "12fe7488fcaaf81da0f8d5e300c2c4339afc089d34639605c5205c8b0610f7b1",
+      "examined": [
+        {
+          "anchor": "#dlm-training-generation-map",
+          "judgment": "两条路径共享去噪器但训练loss不接成生成先验；监督目标与终点文本接口分开，保留图。"
+        },
+        {
+          "anchor": "#foundations",
+          "judgment": "学习顺序、先修与教学算例而非实测边界明确。"
+        },
+        {
+          "anchor": "#mastery",
+          "judgment": "核/预测坐标/块边际/codec/成本学习出口覆盖正文。"
+        },
+        {
+          "anchor": "#source-policy",
+          "judgment": "原稿与固定论文对照边界保留，不重复维护型号榜。"
+        }
+      ],
+      "reason": "入口训练/生成图已说明本轮核心边界，无需机械加图。",
+      "changes": [],
+      "evidence_boundary": "完整阅读入口源；未执行任何语言扩散训练、生成或速度测试。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "transformer-decoder-flow",
+      "source": "content/posts/transformer-decoder-flow/index.html",
+      "changed": true,
+      "sha256_before": "0717ec3cc28e83d6847dbda81a910c73a21eb9bc6cbf5fa6cc45e712f1e4df8e",
+      "sha256_after": "4274cd293730453e7399d0f6465c6eb6aed1720be3db2d126ebf03c1eda241b0",
+      "examined": [
+        {
+          "anchor": "#training-forward",
+          "judgment": "B2/T3/d4/H2/D2/F8/V5/L2贯穿embedding→拆头→mask→残差→head→4目标loss，行向量与PyTorch转置存储明确。"
+        },
+        {
+          "anchor": "#numerical-forward",
+          "judgment": "二维一层、单位投影、关闭RoPE/epsilon0非零输入完整；8站数值、概率与额外EOS NLL1.826695逐步复算一致，不凭输入[A,B]虚构EOS监督。"
+        },
+        {
+          "anchor": "#decode-forward",
+          "judgment": "prefill3位置后token3尚无KV，逐层本次输入/历史形状、offset与mask条件完整，旧K不重旋转。"
+        },
+        {
+          "anchor": "#cache",
+          "judgment": "后段M定义0/1可见性而前式M为加性0/-inf，原文未显式转换，已补allowed与masked_fill对应及两增量行。"
+        },
+        {
+          "anchor": "#parameters",
+          "judgment": "MHA/3矩阵FFN/两Norm/独立head条件完整；26848参数与KV3584B复算一致。"
+        },
+        {
+          "anchor": "#code",
+          "judgment": "完整代码逐行核对Norm、相邻RoPE、mask、两残差、shift、缓存断言与生成；原代码块字节保留，AST解析通过，不称实际执行。"
+        }
+      ],
+      "reason": "只补0/1可见矩阵到加性mask的转换解释，防止照公式直接相加而泄漏未来；完整forward、手算、代码、图、来源和旧原稿入口均保留。",
+      "changes": [
+        {
+          "anchor": "#cache",
+          "kind": "explanation",
+          "summary": "明确0/1 M对应bool allowed，前向加性M为可见0/屏蔽-inf；给S3/T2两行allowed并对应现有masked_fill。",
+          "assumptions": "无padding、连续合法历史，本次两token增量；不改变原公式或代码，不推广为所有API布尔mask语义。",
+          "checks": [
+            "t8a-forward-mask",
+            "t8a-full-forward-numeric",
+            "t8a-preservation"
+          ]
+        }
+      ],
+      "evidence_boundary": "完整主讲forward、手算、decode/公式和全代码实际阅读；标准库独立数学复算不执行模型。当前python3无torch，仅AST/静态保留，不证明PyTorch缓存断言或三屏MathJax已通过；原科研图/URL/原稿链接未改。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "rl-interview-guide",
+      "source": "content/posts/rl-interview-guide/index.html",
+      "changed": false,
+      "sha256_before": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "sha256_after": "265a39823ada418979f58e517c49a0795c2b7426120e22d963a25a6518b92898",
+      "examined": [
+        {
+          "anchor": "symbols",
+          "judgment": "动作/观察、G/回报、behavior/old/current/ref和epsilon作用清楚，ratio方向是current/old。"
+        },
+        {
+          "anchor": "pg-to-ppo",
+          "judgment": "短卡准确接到PG/GAE/GRPO/DPO/OPD完整主讲，不需重复推导。"
+        },
+        {
+          "anchor": "faq",
+          "judgment": "PPO正负只裁改善侧、辅助loss/共享参数仍作用，全同组/std受有限G约束、KL并非普遍必需等短答充分。"
+        },
+        {
+          "anchor": "classic-rl",
+          "judgment": "DQN2.8目标/terminal1与sg、连续/离散旁支界限明确。"
+        },
+        {
+          "anchor": "sources",
+          "judgment": "历史稿/下载与当前主讲修订关系清楚，保留旧URL。"
+        }
+      ],
+      "reason": "复习页应维持短答与原理入口，当前边界充分；归档旧误述不回写到当前短卡。",
+      "changes": [],
+      "evidence_boundary": "检查口述机制、条件、例子与原理链接；未重新认证所有历史问答/科研事实或真实浏览器深链接。",
+      "module": "training-data"
+    },
+    {
+      "id": "agent-harness-guide",
+      "source": "content/posts/agent-harness-guide/index.html",
+      "changed": false,
+      "sha256_before": "da64a72ff48fa1a6b4af12626e58592101aafaf222efb9ddeb49b8fa678aae79",
+      "sha256_after": "da64a72ff48fa1a6b4af12626e58592101aafaf222efb9ddeb49b8fa678aae79",
+      "examined": [
+        {
+          "anchor": "#codex-loop",
+          "judgment": "run_turn/工具路由/观察回填、call/job身份、继续条件与原SVG控制回路已说明，保留。"
+        },
+        {
+          "anchor": "#sandbox",
+          "judgment": "超时不等于未发生、先查询外部状态、幂等/补偿、预算不重置的恢复链与例子充分。"
+        },
+        {
+          "anchor": "#codex-compaction-branches-map",
+          "judgment": "摘要A与无摘要B互为配置选择，不串行；文件/进程/副作用不自动恢复，保留已有分支图。"
+        },
+        {
+          "anchor": "#codex-memory",
+          "judgment": "读取/写入、后台两阶段、SQL选择非向量检索、V1/V2字节预算及明确更正均有固定版本条件。"
+        },
+        {
+          "anchor": "#mapping",
+          "judgment": "精确token/span/prefix与动作/观察、SFT/RL/有效长度mask已分开。"
+        },
+        {
+          "anchor": "#lab",
+          "judgment": "0.67/0.715加权记忆教学例及2×2训练/外部记忆对照明确，完整模板和引用保留。"
+        }
+      ],
+      "reason": "状态恢复、上下文与记忆版本边界已有完整教学流程和图，没有必要再添加抽象状态图。",
+      "changes": [],
+      "evidence_boundary": "通读本地Harness源及源码节选/模板入口，复算预算与加权score；未再抓固定Codex源码、验证托管backend、执行工具恢复实验或训练。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "distributed-training-guide",
+      "source": "content/posts/distributed-training-guide/index.html",
+      "changed": false,
+      "sha256_before": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "sha256_after": "ffd0d517c11bf0eb116fd590cd2565db2015eca6858e5453abf251aa15269698",
+      "examined": [
+        {
+          "anchor": "deepspeed",
+          "judgment": "auto属集成约定、stage/offload区别、优化器不能双重推进及完整恢复条件清楚。"
+        },
+        {
+          "anchor": "fsdp",
+          "judgment": "FSDP1/2版本、先shard再optimizer、PEFT冻结混合、Accelerator不重复包裹充分。"
+        },
+        {
+          "anchor": "megatron",
+          "judgment": "32卡TP8 PP2 DP2，global256需128microbatch，普通/专家视角与固定源码条件清楚。"
+        },
+        {
+          "anchor": "example",
+          "judgment": "完整LoRA教学代码用attention mask保留真实EOS，不外部double shift；保存adapter关联base/tokenizer且不冒充续训状态。"
+        },
+        {
+          "anchor": "troubleshooting",
+          "judgment": "OOM按状态/激活、NaN分母/精度、NCCL同步和恢复游标分别诊断，不用无出处历史tokens/s排名。"
+        }
+      ],
+      "reason": "本实现参考已显式限定模型/API/版本与未运行条件，状态数学由主讲承接，不补伪可运行跨版本配方。",
+      "changes": [],
+      "evidence_boundary": "静态阅读配置/代码及拓扑算式；未pip安装、运行Trainer/DeepSpeed/FSDP/MCore、转换权重或验证GPU/NCCL。",
+      "module": "training-data"
+    },
+    {
+      "id": "llm-interview-bank",
+      "source": "content/posts/llm-interview-bank/index.html",
+      "changed": false,
+      "sha256_before": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "sha256_after": "b237e7a7c01373db8ea0e4cc998c56dad0010fdec4cdf6b89d560c8d21433b12",
+      "examined": [
+        {
+          "anchor": "#sec-overview",
+          "judgment": "短答、机制、反例和实验四节点图明确，完整推导归主题主讲，原470问原稿入口保留，不把题库作为另一个长课程。"
+        },
+        {
+          "anchor": "#sec-llm",
+          "judgment": "Attention/key轴、GQA缓存/TP复制、RoPE、Norm、SwiGLU/MoE、sampling、具体型号的条件与主讲链接齐全。"
+        },
+        {
+          "anchor": "#sec-infra",
+          "judgment": "分页/复用/调度、PD/容量、投机概率修正、量化对象、训练并行与状态边界短答充分，不重复服务算例。"
+        },
+        {
+          "anchor": "#code-ce",
+          "judgment": "一次shift、ignore=-100、空有效目标拒绝和稳定logsumexp条件明确，与基础章修正后的平均目标一致。"
+        },
+        {
+          "anchor": "#code-attention",
+          "judgment": "Hq可整除Hkv、repeat教学开销、allowed True可见、全屏蔽拒绝、key轴softmax完整。"
+        },
+        {
+          "anchor": "#code-norm-rope",
+          "judgment": "FP32统计、相邻RoPE偶数维和position条件、SwiGLU与LoRA形状明确；本轮只作静态阅读。"
+        },
+        {
+          "anchor": "#code-sampling",
+          "judgment": "tau0 greedy、top-p跨阈值首token、top-k ties及非有限logits上游检查已有追问，未冒充生产完备采样器。"
+        },
+        {
+          "anchor": "#code-online",
+          "judgment": "m=-inf/ell=o=0、重标两累计量及遮挡块条件齐全，关联具体Attention主讲已有完整算例。"
+        }
+      ],
+      "reason": "保留。架构/推理短答与代码卡已给关键条件和主讲位置，新增长例会重复；其余跨领域卡不据本轮阅读升级事实审阅状态。",
+      "changes": [],
+      "evidence_boundary": "实际检查overview、sec-llm、sec-infra及CE/GQA/Norm/RoPE/sampling/online代码卡；全源只静态保留代码/ID/引用。未执行PyTorch卡，未逐题重新核验RL/VLM/Agent/RAG等全部历史问答、公司频次或论文性能。",
+      "module": "architecture-inference"
+    },
+    {
+      "id": "vlm-knowledge-interview",
+      "source": "content/posts/vlm-knowledge-interview/index.html",
+      "changed": true,
+      "sha256_before": "e1e60d5464056de954069787baf2103fd83acadbd1f8d7a350494df02ab5b23c",
+      "sha256_after": "d4ebceb2140d3a8b22bb22395ec42072dc2f36547fc6e82d163f9acef5e273ea",
+      "examined": [
+        {
+          "anchor": "#clip-siglip",
+          "judgment": "双向softmax/score梯度与两对算例、scale只用一次清楚，独立复算。"
+        },
+        {
+          "anchor": "#siglip",
+          "judgment": "pair logistic、/N非/N²、正负导数与通信边界完整。"
+        },
+        {
+          "anchor": "#vlm-fusion-paths-map",
+          "judgment": "三接口是各自支路，不串行；视觉state/KV、codec与生成目标边界明确，保留图。"
+        },
+        {
+          "anchor": "#sec1-4",
+          "judgment": "补有效目标非空分母与padding/忽略标签处理，仍保留视觉梯度链。"
+        },
+        {
+          "anchor": "#sec1-5",
+          "judgment": "完整数patch/crop/thumbnail/merge、帧与时间，沿用空间可见性图。"
+        },
+        {
+          "anchor": "#sec1-6",
+          "judgment": "补单位/bin→处理图像素→减padding→逆resize→加crop的二维复算；原图与GUI点击单位不混用。"
+        },
+        {
+          "anchor": "#code2",
+          "judgment": "半开image region、query/key和True语义、多层泄漏条件说明保留，原代码不改。"
+        },
+        {
+          "anchor": "#code3",
+          "judgment": "补max_tiles只约束crop、thumbnail使总返回最多max_tiles+1的真实代码合同，原shape例保留。"
+        }
+      ],
+      "reason": "主体原理、完整算例与接口图已充分；只补平均loss可定义条件、padding二维逆映射和返回总数三个确证复算/接口缺口。",
+      "changes": [
+        {
+          "anchor": "#sec1-4",
+          "kind": "explanation",
+          "summary": "补m_t排除padding/忽略/无效标签、有效目标分母>0与空监督显式处理；跨样本/rank按声明目标数聚合。",
+          "assumptions": "这里讨论有效回答token平均CE，不改变模型训练配方或代码。",
+          "checks": [
+            "vlm-effective-targets",
+            "preserve:vlm-knowledge-interview"
+          ]
+        },
+        {
+          "anchor": "#sec1-6",
+          "kind": "worked-example",
+          "summary": "补含padding的二维像素逆映射得到(116,62)，说明归一/bin先转单位、GUI逻辑点/窗口/屏幕接口另映射以及过期观察检查。",
+          "assumptions": "处理图(40,30)、左上pad(8,6)、resize(2,2)、原图crop原点(100,50)；教学像素例，不代表某官方processor。",
+          "checks": [
+            "vlm-coordinate-roundtrip",
+            "preserve:vlm-knowledge-interview"
+          ]
+        },
+        {
+          "anchor": "#code3",
+          "kind": "explanation",
+          "summary": "说明max_tiles是网格crop预算，pieces+[thumbnail]另加一张；下游总数限制须预留缩略图并验shape。",
+          "assumptions": "依保留代码固定添加一张thumbnail的教学策略；不改AnyRes默认行为。",
+          "checks": [
+            "vlm-grid-budget",
+            "preserve:vlm-knowledge-interview"
+          ]
+        }
+      ],
+      "evidence_boundary": "完整阅读本地VLM源的原理、数学、算例、图和PyTorch代码；独立算术及布尔mask/网格逻辑检查，不运行PyTorch训练、模型processor、实际GUI点击或外部benchmark。MathJax运行、三屏与noJS产物待父任务。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "rl-interview-guide-legacy",
+      "source": "content/archive/rl-interview-guide/index.html",
+      "changed": false,
+      "sha256_before": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "sha256_after": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "examined": [
+        {
+          "anchor": "symbols",
+          "judgment": "只读历史检查：G通常64等旧符号口径保留为历史；不能作为本轮当前配置结论。"
+        },
+        {
+          "anchor": "ppo-detail",
+          "judgment": "只读历史检查：clip被绝对称停止更新/保守保证、GAE=.95实践最优等旧表述仍在；当前主讲有更精确分段与terminal处理，归档不改。"
+        },
+        {
+          "anchor": "grpo",
+          "judgment": "只读历史检查：clip+KL缺一不可、critic显存直接翻倍、KL ratio方向和一/二阶解释、包含自身baseline无偏等旧口径不可当本轮通过；保留原件字节。"
+        },
+        {
+          "anchor": "dpo",
+          "judgment": "历史Lagrange/Z消去推导完整保留；与先RM再PPO普遍等价的旧解释不扩用，现行DPO主讲限定偏好模型/支持/共享参数。"
+        }
+      ],
+      "reason": "用户限定archive历史原稿只读保留；明确记录确实读到的旧缺口，而非把历史页标为科学正确或改写归档。",
+      "changes": [],
+      "evidence_boundary": "仅实际检查symbols、PPO/GAE、GRPO与DPO段落；不重审其余历史章节/原SVG像素，不修旧公式，不声称历史算法断言已通过或全面实验复现。",
+      "module": "training-data"
+    },
+    {
+      "id": "dlm-ddpm",
+      "source": "content/series/dlm-survey/s00a_ddpm.html",
+      "changed": false,
+      "sha256_before": "5e5b0285788ae59a578511af837fce3515a14af9b43778fdf33407ba57fbb8e1",
+      "sha256_after": "5e5b0285788ae59a578511af837fce3515a14af9b43778fdf33407ba57fbb8e1",
+      "examined": [
+        {
+          "anchor": "#posterior",
+          "judgment": "完整阅读配方精度α/β、真实条件后验与未给x0的反向模型区别，A=14/均值/方差可复算。"
+        },
+        {
+          "anchor": "#ddpm-training-sampling-map",
+          "judgment": "训练/采样分路、μ为固定坐标换算而非第二网络、t递减与ε/z独立，已有图足够。"
+        },
+        {
+          "anchor": "#ddpm-full-example",
+          "judgment": "逐项复算加噪、MSE/梯度、真/模型均值、独立z采样、KL交叉检查和最后输出；两步末端非标准高斯先验的限制充分。"
+        }
+      ],
+      "reason": "完整标量输入到最终输出算例与两分路图已就近完整，无需新增内容。",
+      "changes": [],
+      "evidence_boundary": "通读并独立复算标量教学链，不训练网络或复现DDPM论文实验；未运行MathJax/浏览器。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-flow-sde",
+      "source": "content/series/dlm-survey/s00b_flow_sde.html",
+      "changed": false,
+      "sha256_before": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
+      "sha256_after": "f8c93ecc0ea95dcf7f9596e53c9db407b4d3cd24173993c2cbadf9da6669faa2",
+      "examined": [
+        {
+          "anchor": "#conditional-path",
+          "judgment": "噪声0→数据1、条件速度与后验边际平均定义充分。"
+        },
+        {
+          "anchor": "#variance-proof",
+          "judgment": "条件方差常数与θ独立、交叉项为零及可积条件明示，不把样本直线当网络轨迹。"
+        },
+        {
+          "anchor": "#flow-full-example",
+          "judgment": "完整高斯条件回归、常数方差、Euler0.2与解析0.180196可复算，保留已有例图。"
+        },
+        {
+          "anchor": "#vp-sde",
+          "judgment": "SDE数据s=0→噪声s=1、逆向ds递减与score系数β/β/2分明。"
+        },
+        {
+          "anchor": "#solver",
+          "judgment": "正向h>0/逆向网格、布朗√步长与固定ODE轨迹z区分，未发现时间方向缺口。"
+        }
+      ],
+      "reason": "条件监督→边际场图和完整高斯例已说明训练/推理与求解误差；时间方向就近给出，不重复作图。",
+      "changes": [],
+      "evidence_boundary": "通读并独立复算解析教学例；未数值训练FM/score网络或重跑论文采样器。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-overview",
+      "source": "content/series/dlm-survey/s01_overview.html",
+      "changed": false,
+      "sha256_before": "1fa10fd2e928c5d05c1dd45e62e358bbf5075183cd7d703d0eda2aa2757020cd",
+      "sha256_after": "1fa10fd2e928c5d05c1dd45e62e358bbf5075183cd7d703d0eda2aa2757020cd",
+      "examined": [
+        {
+          "anchor": "#s1",
+          "judgment": "AR训练并行与生成串行、DLM轮内并行与轮间状态成本分清。"
+        },
+        {
+          "anchor": "#ar-masked-state-map",
+          "judgment": "两独立四token生成路线、每箭头一轮、只示意不修改已提交值且不代表等分布/等耗时，保留图。"
+        },
+        {
+          "anchor": "#lineage",
+          "judgment": "状态/核/因子化/预测/系统角色是可组合轴，不错画互斥家族。"
+        }
+      ],
+      "reason": "具体状态图与分类轴已清楚，概览无需补新的数值或同类图。",
+      "changes": [],
+      "evidence_boundary": "完整阅读概览源与四token示意；不重新核验全部家族规格或速度。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-discrete",
+      "source": "content/series/dlm-survey/s02_discrete.html",
+      "changed": true,
+      "sha256_before": "fa9d6ec4df559ef9eadde8573bbbac3df0750c7983e9d5ff401464780e9fbc0f",
+      "sha256_after": "854adb16f985d667686bca32b9f46d8be84e76159322b6fb26bd173e63980c70",
+      "examined": [
+        {
+          "anchor": "#kernel",
+          "judgment": "行向量、Q每行和1、状态数含mask与uniform自返概率清楚。"
+        },
+        {
+          "anchor": "#bayes",
+          "judgment": "补可达事件/正分母与干净预测支持条件，防止不可达项0/0混成后验。"
+        },
+        {
+          "anchor": "#absorbing-example",
+          "judgment": "补0.6揭示质量乘0.7/0.3后的A/B/M分布及u=0.5→B，与干净argmax不同。"
+        },
+        {
+          "anchor": "#weighted-mlm",
+          "judgment": "SUBS→KL→CE→1/t、长度与实际mask分母区别已完整，保留。"
+        },
+        {
+          "anchor": "#llada",
+          "judgment": "候选重mask与已提交值carry-over的状态图足够，无需为三状态教学计算加图。"
+        }
+      ],
+      "reason": "确证缺口是一般后验的支持域及预测分布如何接到一次反向抽样，其他已有推导和图保留。",
+      "changes": [
+        {
+          "anchor": "#bayes",
+          "kind": "explanation",
+          "summary": "补条件后验分母>0、不可达事件未定义、混合支持由参数化约束以及已揭示SUBS分支。",
+          "assumptions": "仍采用原行向量Q与真实已知forward；没有对任意核加epsilon修补或改变模型。",
+          "checks": [
+            "discrete-support",
+            "preserve:dlm-discrete"
+          ]
+        },
+        {
+          "anchor": "#absorbing-example",
+          "kind": "worked-example",
+          "summary": "在原0.6/0.4后验例之后，补A/B/M=(0.42,0.18,0.40)与累积均匀抽样0.5得到B，区分状态概率、预测argmax和真实目标。",
+          "assumptions": "两真实token、当前mask、保留α_s=0.8/α_t=0.5、网络p(A/B)=0.7/0.3且p(M)=0。",
+          "checks": [
+            "discrete-reverse-draw",
+            "preserve:dlm-discrete"
+          ]
+        }
+      ],
+      "evidence_boundary": "通读并独立计算有限状态教学核、后验、加权CE与抽样；未运行LLaDA/D3PM/MDLM模型、训练配方或论文性能复现。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-block",
+      "source": "content/series/dlm-survey/s03_block.html",
+      "changed": false,
+      "sha256_before": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "sha256_after": "bb7fcb00a631403b7df7a75873c8c83624bf11e2c085718ef57b47ef239a8702",
+      "examined": [
+        {
+          "anchor": "#factorization",
+          "judgment": "块间精确因子化不等于块内边际可算，块长1/L端点边界完整。"
+        },
+        {
+          "anchor": "#attention-mask",
+          "judgment": "四tokenquery/key矩阵与clean/noisy前缀条件清楚，不能全部加噪冒充干净前缀。"
+        },
+        {
+          "anchor": "#cache",
+          "judgment": "前缀依赖不变才可缓存，块内token相同不保证hidden相同，提交模式刷新已说明。"
+        },
+        {
+          "anchor": "#cost-example",
+          "judgment": "8×4=32并另计8commit、4×8仍32却不同长度的完整计数例可复算，保留两层循环图。"
+        }
+      ],
+      "reason": "可见性矩阵、内外循环图和成本例已说明状态依赖，无需重复补图。",
+      "changes": [],
+      "evidence_boundary": "通读并复算矩阵/调用教学计数；未测试实际KV等价、kernel、模型训练或缓存性能。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-continuous",
+      "source": "content/series/dlm-survey/s04_continuous.html",
+      "changed": false,
+      "sha256_before": "795004ed90a714be21580b08767abbe8a5c0a0f6567dd3d389c8cb1d14c7d573",
+      "sha256_after": "795004ed90a714be21580b08767abbe8a5c0a0f6567dd3d389c8cb1d14c7d573",
+      "examined": [
+        {
+          "anchor": "#continuous-text-interface-map",
+          "judgment": "训练真实编码端点与生成先验分路、codec重建独立对照清楚，保留图。"
+        },
+        {
+          "anchor": "#flow",
+          "judgment": "噪声0→数据1和速度符号，-1/3/t=.25→0、条件速度4与Euler1明确。"
+        },
+        {
+          "anchor": "#rounding",
+          "judgment": "等概率-1/+1均值0不等于离散CE分布，密度与argmax单元质量分开。"
+        },
+        {
+          "anchor": "#evaluation",
+          "judgment": "真实latent重建、生成终点与任务三组验收分开，未把codec错误归给扩散。"
+        }
+      ],
+      "reason": "表示/生成/解码三层接口与现有两路径图充分，条件平均与离散输出已有反例。",
+      "changes": [],
+      "evidence_boundary": "通读连续接口源并复算标量教学值，不重训codec、连续生成器或比较论文性能。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-paradigms",
+      "source": "content/series/dlm-survey/s05_paradigms.html",
+      "changed": false,
+      "sha256_before": "b88d7ec72ff8f07f66b5cada2460c6690bc3716aae492e72f252bfcd6ffb224c",
+      "sha256_after": "b88d7ec72ff8f07f66b5cada2460c6690bc3716aae492e72f252bfcd6ffb224c",
+      "examined": [
+        {
+          "anchor": "#vp-coordinate-map",
+          "judgment": "三坐标换算从同一预测分支出发而非连续训练，score要求s>0，保留图。"
+        },
+        {
+          "anchor": "#loss-weight",
+          "judgment": "误差0.2→-0.15、MSE0.04→0.0225及a分母边界可复算。"
+        },
+        {
+          "anchor": "#score",
+          "judgment": "条件score与真实边际后验平均区分，网络近似不写真实等号。"
+        },
+        {
+          "anchor": "#discrete-score",
+          "judgment": "比率非softmax、广义散度保留r项，速度/比率/奖励不混用。"
+        },
+        {
+          "anchor": "#discrete-flow",
+          "judgment": "两状态流入流出与0.1步长概率守恒例完整。"
+        }
+      ],
+      "reason": "换算图和连续/离散算例就近充分，已有日程和分母限制，无新增图必要。",
+      "changes": [],
+      "evidence_boundary": "通读并复算VP与两状态教学值；没有训练SEDD/DFM或复現少步性能。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-scaling",
+      "source": "content/series/dlm-survey/s06_scaling.html",
+      "changed": false,
+      "sha256_before": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "sha256_after": "0616ba6dfb05f269071f2d4588fd46979bc2beb7f2ea794cbf9beb78fe59929a",
+      "examined": [
+        {
+          "anchor": "#scaling-budget",
+          "judgment": "unique U/处理D/epochs E、随机mask不创造独立事实与现有对照链图明确。"
+        },
+        {
+          "anchor": "#compute-optimal",
+          "judgment": "固定C代入与求导后N/D幂次、α=β时随√C非√D，推导完整。"
+        },
+        {
+          "anchor": "#crossover",
+          "judgment": "isoFLOP/iso-data/iso-time与复用饱和边界清楚。"
+        },
+        {
+          "anchor": "#drafter-generalization",
+          "judgment": "过拟合与留出接受长度、容易请求选择偏差分开，保留。"
+        }
+      ],
+      "reason": "预算、条件和幂律推导已完整；新图或新拟合不能补未运行的实验，保留。",
+      "changes": [],
+      "evidence_boundary": "通读并核算幂次及1B×100教学值；未拟合论文数据、验证crossover或测量FLOPs。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-speculative",
+      "source": "content/series/dlm-survey/s07_speculative.html",
+      "changed": false,
+      "sha256_before": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "sha256_after": "b505496fcef44ac829e1d60099ae2d87ab6e8ba30eae79bd5407c76c7b1c4829",
+      "examined": [
+        {
+          "anchor": "#system-role",
+          "judgment": "AR drafter/DLM自加速/统一模型三个目标与现有draft/verify/commit图清楚。"
+        },
+        {
+          "anchor": "#acceptance",
+          "judgment": "尾和与条件独立a=.8/b=4例、bonus/EOS/长度上限分开，复算2.3616/3.3616。"
+        },
+        {
+          "anchor": "#cycle-cost",
+          "judgment": "期望时间/提交量比、8+25+2ms除5=7ms、1.43×可复算；不是接受长度直接等speedup。"
+        },
+        {
+          "anchor": "#quality",
+          "judgment": "并行边际q不足以自动提供sequential proposal，标准精确随机/贪心协议区分保留。"
+        }
+      ],
+      "reason": "生成合同、完整计数与成本算例及现有循环图已充分。",
+      "changes": [],
+      "evidence_boundary": "通读并独立复算接受/成本教学值；未实测target/drafter、精确采样器或论文速度。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-elbo-rl",
+      "source": "content/series/dlm-survey/s08_elbo_rl.html",
+      "changed": false,
+      "sha256_before": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "sha256_after": "e8f0152b9f4582fe4fd872103865e99081cbcf5562b08a796b630173451e9161",
+      "examined": [
+        {
+          "anchor": "#probability",
+          "judgment": "transition、路径与文本边际分开，调度概率也需入账；已有reward/更新图说明路径到文本，保留。"
+        },
+        {
+          "anchor": "#elbo-gap",
+          "judgment": "Jensen下界差/MC方差/非线性ratio偏差不混用。"
+        },
+        {
+          "anchor": "#spg",
+          "judgment": "固定优势正用下界负用上界，-2/-3/-1教学例不等式方向正确。"
+        },
+        {
+          "anchor": "#gdsd",
+          "judgment": "倾斜特例、中心化token分数、冻结教师及reference项完整，不能当任意decoder文本概率精确化。"
+        },
+        {
+          "anchor": "#diagnosis",
+          "judgment": "rollout/估计/更新三份随机性与新任务分母分开，论文数字保留历史来源。"
+        }
+      ],
+      "reason": "关键概率/界/教师角色已有充分推导和例子，未发现需新图的缺口。",
+      "changes": [],
+      "evidence_boundary": "通读并核算SPG不等式与二分类倾斜教学例；未复现SPG/GDSD训练、全部定理或性能表。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-commercial",
+      "source": "content/series/dlm-survey/s09_commercial.html",
+      "changed": false,
+      "sha256_before": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "sha256_after": "f9ca767c7e6c666033e5e20f379bbd0e3d4442dd7a5a3538a667fc56c32cd277",
+      "examined": [
+        {
+          "anchor": "#evidence",
+          "judgment": "厂商声明/系统吞吐/用户完成时间和版本/硬件条件分开，不构成型号排名。"
+        },
+        {
+          "anchor": "#latency",
+          "judgment": "200ms提交100token=500tok/s不等首字2ms，既有时间线明确首块尚未提交与外部验收成本。"
+        }
+      ],
+      "reason": "burst算例与时间线已有充分解释，不为时效性产品线索新增未经核验数据或图。",
+      "changes": [],
+      "evidence_boundary": "完整阅读本地产品证据说明并复算burst教学值；未查询现价、API可用性或做线上测速。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-comparison",
+      "source": "content/series/dlm-survey/s10_comparison.html",
+      "changed": false,
+      "sha256_before": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "sha256_after": "c98dcd211fe002587506812d958b2634ec04d208b74a8ce7d39fd3b8e11bdd42",
+      "examined": [
+        {
+          "anchor": "#comparison",
+          "judgment": "机制/收益候选/成本风险表不把可组合路线误列成普适优劣。"
+        },
+        {
+          "anchor": "#protocol",
+          "judgment": "unique/total、已支付AR初始化、NFE、并发、SLO和bound-PPL分开，可解释比较合同完整。"
+        },
+        {
+          "anchor": "#research",
+          "judgment": "变化轴与待执行研究明确；总结表不需要再画重复算法图。"
+        },
+        {
+          "anchor": "#interview",
+          "judgment": "六道短答覆盖1/t、块边际、坐标目标、SPG/GDSD与完整周期成本。"
+        }
+      ],
+      "reason": "本章承担综合复习和比较合同，算法图已在主讲位置，无机械增图必要。",
+      "changes": [],
+      "evidence_boundary": "完整阅读比较与短答源；未重新运行Pareto候选、benchmark或训练对照。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-loop-transformer",
+      "source": "content/series/dlm-survey/s11_loop_transformer.html",
+      "changed": false,
+      "sha256_before": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "sha256_after": "fb59d8c60c07b6c651217aaeee8e4edc65cb8dcfffe2cebfc5bcc61fbe9cc9bb",
+      "examined": [
+        {
+          "anchor": "#recurrence",
+          "judgment": "hidden循环不是噪声时间，输入持续条件与共享块反馈图清楚，保留。"
+        },
+        {
+          "anchor": "#cost",
+          "judgment": "6层×4次=24调用但6份参数，激活/延迟与KV另计，复算。"
+        },
+        {
+          "anchor": "#gradient",
+          "judgment": "共享θ每轮贡献与Jacobian乘积、0.5/2递推例方向正确。"
+        },
+        {
+          "anchor": "#halting",
+          "judgment": "状态稳定不保证正确、推理超训练深度需留出验收。"
+        },
+        {
+          "anchor": "#theory",
+          "judgment": "8元素2→4→8结合性非交换性、精度/均匀性理论边界已有说明。"
+        }
+      ],
+      "reason": "状态/参数/计算、梯度与停止已有图和明确例子，保留。",
+      "changes": [],
+      "evidence_boundary": "通读并复算递推/调用教学值，未训练循环模型、核验所有原稿方法或复杂度定理。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "dlm-vae",
+      "source": "content/series/dlm-survey/s12_vae.html",
+      "changed": false,
+      "sha256_before": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "sha256_after": "0f711ea3aa14a203afb16de9448a4d8947924bd29f6bf7dd6f85fef0495d076c",
+      "examined": [
+        {
+          "anchor": "#elbo",
+          "judgment": "posterior训练/prior生成共享decoder图分支明确，改β后不自动是原likelihood下界。"
+        },
+        {
+          "anchor": "#gaussian-kl",
+          "judgment": "μ=1/σ²=.25 KL=.81815、零KL与collapse区别，独立复算。"
+        },
+        {
+          "anchor": "#vq",
+          "judgment": "最近码、codebook/commitment、STE前后职责与导数.4/-.4β清楚。"
+        },
+        {
+          "anchor": "#quantization",
+          "judgment": "RQ残差、FSQ组合、LFQ位序与名义容量非有效使用量均有算例。"
+        },
+        {
+          "anchor": "#system-role",
+          "judgment": "codec→latent生成→decoder与元素压缩1/48，视觉encoder非VAE，接口已讲清。"
+        },
+        {
+          "anchor": "#cvae-robot",
+          "judgment": "训练可见未来动作posterior与推理z=0/观测分开，ACT不保证消除均值问题，保留。"
+        }
+      ],
+      "reason": "训练/生成图、完整ELBO/重参数推导及量化算例充分，codec/控制边界已就近说明。",
+      "changes": [],
+      "evidence_boundary": "通读并复算高斯KL、量化导数/残差和压缩教学数值；未重训VAE/codec、执行ACT机器人或复现论文。",
+      "module": "agent-multimodal-diffusion"
+    },
+    {
+      "id": "harbor-framework-guide",
+      "source": "content/posts/harbor-framework-guide/index.html",
+      "changed": false,
+      "sha256_before": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "sha256_after": "166065038c61dad1b9214db63c7b6c4f952dd646eadf18c17e7e16d7be052639",
+      "examined": [
+        {
+          "anchor": "summary",
+          "judgment": "2026-11-14快照、release/main和benchmark/框架对象分开，不把更新数量称纯模型效果。"
+        },
+        {
+          "anchor": "ambient-error",
+          "judgment": "observed/native/ambient/corrected矩阵对齐、移除比例与污染比例不同，gap分母/单位及.625例明确；原数据是作者声明synthetic。"
+        },
+        {
+          "anchor": "architecture",
+          "judgment": "SingleStepTrial原源码清晰给收集→separate停环境→verifier→shared停环境，原图caption区分异常与skip-grade。"
+        },
+        {
+          "anchor": "verification",
+          "judgment": "artifact source/destination、tar filter、Worker权限、secure整数行[3,0,-2]与可信grader对应充分。"
+        },
+        {
+          "anchor": "valid-denominator",
+          "judgment": "有效0/1与无效1的.5均值/2/3有效率、全无效未定义、should_grade/retry/reward_valid分开。"
+        },
+        {
+          "anchor": "interaction",
+          "judgment": "多步骤文件状态保留与默认新conversation、早停步骤不贡献mean、GEPA仅validation recipe收益明确。"
+        },
+        {
+          "anchor": "practice",
+          "judgment": "repeat/retry、全部尝试费用、artifact/regrade、canary和固定终评条件充分。"
+        }
+      ],
+      "reason": "所审执行/反馈/产物/分母链路已有原图、固定源码与小算例，保留不扩大项目/数据集调研。",
+      "changes": [],
+      "evidence_boundary": "实际审阅概述、Science数学、执行/验证/有效奖励/重评分/多步骤/报告协议段；只复算教学gap和有效率，不执行Linux Worker、Harbor容器、17数据集、88adapter、历史重评分或任何榜单模型。",
+      "module": "training-data"
+    }
+  ]
+}

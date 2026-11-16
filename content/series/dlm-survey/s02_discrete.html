@@ -16,6 +16,7 @@
 q(i\mid j,x)
 &=\frac{(e_x\bar Q_{t-1})_i\,Q_t[i,j]}{(e_x\bar Q_t)_j}.
 \end{aligned}\]</div>
+<p><strong>支持条件：</strong>分母 \((e_x\bar Q_t)_j\) 必须大于0；等于0表示从干净值 x 出发不可能观察到 j，该条件后验未定义。下面的后验混合只对当前观察可达的干净值定义，并由反向参数化约束预测支持；不能给不可达项强行代入0/0或加一个小数后称为精确后验。吸收式 SUBS 对已揭示位置直接保留，正是需要单独处理的分支。</p>
 <p>训练中 x 已知，所以后验能解析计算。生成时 x 未知，网络输出干净 token 分布，再用它混合后验，得到模型反向转移。<strong>干净预测、反向转移与最终文本概率是不同对象。</strong></p>
 <div class="reading-math">\[\begin{aligned}
 p_\theta(i\mid x_t)&=\sum_v q(i\mid x_t,v)\,p_\theta(v\mid x_t).
@@ -27,6 +28,7 @@ q(x_s=x_0\mid x_t=M,x_0)&=\frac{\alpha_s-\alpha_t}{1-\alpha_t},\\
 q(x_s=M\mid x_t=M,x_0)&=\frac{1-\alpha_s}{1-\alpha_t}.
 \end{aligned}\]</div>
 <p>取 \(\alpha_s=0.8,\alpha_t=0.5\)：揭示原值为 0.6，保持 M 为 0.4，和为 1。若当前不是 M，吸收核说明它从未被 mask，上一时刻确定保持该值。</p>
+<p><strong>把后验接到一次实际抽样：</strong>设只有两个真实 token A/B，当前为 M，网络的干净预测为 \(p_\theta(A\mid x_t)=0.7,p_\theta(B\mid x_t)=0.3\)，且不预测 M。沿用上述日程，反向状态分布按 A/B/M 排列为 \((0.6\times0.7,\ 0.6\times0.3,\ 0.4)=(0.42,0.18,0.40)\)。取一次均匀抽样 \(u=0.50\)，按累积区间 [0,0.42)、[0.42,0.60)、[0.60,1) 得到 \(x_s=B\)。检查三项和为1、揭示概率为0.6；一次输出B不意味着B必然是真实目标，也不等于网络干净预测的argmax A。这是有限词表教学抽样，不是新增模型实验。</p>
 <h3 id="weighted-mlm">MDLM：反向转移 KL 为什么化成 CE？</h3>
 <p class="math-notation">该段 \(\alpha_t\) 为从初始数据到时刻 \(t\) 仍保留原值的概率，区别于 DDPM 的单步 \(\alpha_t\)；\(\alpha'_t\) 为时间导数。\(S_\theta\) 是所有 mask 位置 CE 的和，\(w(t)\) 为时间权重，\(\mathbb E\) 对采样时间、真实序列和扰动状态共同平均。</p>
 <p>在 SUBS 参数化下，未 mask 的值直接保留，网络不输出 M。当前为 M 时，真实后验在原值 x 上的质量是 \(a=(\alpha_s-\alpha_t)/(1-\alpha_t)\)；模型把这份质量按 \(p_\theta(v\mid x_t)\) 分配。M 的概率在真实后验与模型间相同，因此：</p>

@@ -95,6 +95,7 @@ L&=\frac{\sum_t m_t\ell_t}{\sum_t m_t},\\
 \frac{\partial Z_{\rm lang}}{\partial Z_v}
 \frac{\partial Z_v}{\partial\theta_v}.
 \end{aligned}\]</div>
+<p><strong>分母条件：</strong>\(m_t\) 还要排除 padding、忽略标签和无效回答位置，且 \(\sum_t m_t&gt;0\) 才能使用这份平均loss。无有效回答的样本应在准入/reduction前显式处理并计入拒收记录，不能除以0，也不能把它记成一次成功的零loss监督；跨样本或跨rank聚合时仍按声明的有效目标数计算。</p>
 <table><thead><tr><th>教学阶段</th><th>目标与数据</th><th>模块与检查</th></tr></thead><tbody>
 <tr><td>连接适配</td><td>caption/图文条件生成，学接口</td><td>可冻结 ViT/LLM，仅训 connector；不是从头预训练两端</td></tr>
 <tr><td>指令微调</td><td>VQA、OCR、图表、多轮、视频</td><td>训练 connector/LLM，ViT 是否解冻按配方</td></tr>
@@ -126,6 +127,7 @@ y_{\rm orig}&=y_{\rm crop}/s_y+o_y.
 \end{aligned}
 \]</div>
 <div class="vlm-example"><strong>坐标例：</strong>原图 crop 从 x=100 开始，crop resize 放大 2 倍，模型在处理图报 x=40，则原图 x=40/2+100=120。漏 crop offset 会在真实页面点击错误对象。padding 还需先减 padding。</div>
+<p><strong>逆变换顺序：</strong>若输出是归一坐标或离散bin，先按工具合同还原处理图像素，再减左/上padding，再除以resize比例，最后加原图crop偏移。补充二维复算：处理图像素为(40,30)，左/上padding为(8,6)，resize比例均为2，原图crop原点为(100,50)，得到原图坐标 \(((40-8)/2+100,(30-6)/2+50)=(116,62)\)。这是像素坐标教学例；GUI工具若使用窗口坐标、逻辑点或屏幕像素，还须另用窗口/显示缩放元数据映射，不能直接把原图坐标当点击接口。动作前也要确认截图时间、焦点与布局未过期。</p>
 <p><strong>视觉幻觉：</strong>物体、属性、关系分别评；POPE 的 yes/no 对象存在探测不能覆盖全部。数据去错、grounding 监督、分辨率与偏好训练可改失败率，但 CoT、自检、引用都不保证忠实。</p>
 <details><summary>展开 VCD 的正确对比对象与限制</summary>
 <p class="math-notation">VCD 中 \(v,v'\) 为原图/扰动图，\(z(v)\) 为词表 logits，\(\alpha\) 为对比分支权重；\(w,u\) 为词表项，\(M\) 为原图条件下最大 token 概率，\(\eta\) 为相对概率阈值，\(\mathcal A\) 为允许采样集合。ColPali 式的 \(q_i,d_j\) 则是同维查询/page patch embedding，\(N_q,N_d\) 为各自数量，内积再按每个查询 token 的最大匹配求和。</p>
@@ -283,6 +285,7 @@ tiles, grid = tile_image(image)
 # grid=(2,1); tiles.shape=(3,3,336,336), 2 crops+thumbnail
 # patch14: 3*576=1728; does not include later merge/CLS/special tokens</code></pre>
 <p><strong>生产差异：</strong>这个例子按 aspect 选最少 tile，可牺牲高分辨率细节；resize 也可能变形。实际 processor 还需像素预算、padding、插值、crop 元数据、归一和 checkpoint 的拼接规则；原例“max_tiles=12 却输出 15 tiles”的结果已修正。</p>
+<p><strong>返回数量合同：</strong>此代码的 <code>max_tiles</code> 只限制网格crop数，<code>pieces+[thumbnail]</code> 固定再加一张缩略图，因此总返回张数至多 <code>max_tiles+1</code>，并非总张数至多 <code>max_tiles</code>。例中的2个crop返回3张；若下游限制包含缩略图的总数，必须预留这一张并检查返回shape，不能仅检查网格乘积。</p>
 </section>
 <section id="sec5"><h2>5. 论文与学习定位</h2>
 <details><summary>按问题查论文，不重复维护一张型号榜</summary><ul>

@@ -289,14 +289,14 @@
 <div class="update-entry">
     <span class="entry-date">2026-09-14</span>
     <div class="card-title">Mistral Large 3 675B（Mistral AI，Apache-2.0，多模态 granular MoE）<span class="pill fact">FACT</span></div>
-    <p>本页<strong>首次收录 Mistral 前沿模型</strong>。HF <code>mistralai/Mistral-Large-3-675B-Instruct-2512</code>：<strong>多模态 granular MoE，总参 675B / 激活约 41B</strong>（语言主干 673B/39B + 2.5B 视觉编码器），从零用 <strong>3000 张 H200</strong> 训练，<strong>256K 上下文</strong>，Apache-2.0。Instruct 版为 FP8 后训练，面向 chat/agentic/指令场景，原生 function calling 与 JSON 输出、支持 11+ 语言；部署上 FP8 单节点（B200/H200）或 NVFP4 单节点（H100/A100）即可跑。其 NVFP4 量化变体 <code>…-NVFP4</code> 于 2026-09-11 更新。这是欧洲开源阵营当前最大规模的前沿权重。</p>
+    <p>本页<strong>首次收录 Mistral 前沿模型</strong>。HF <code>mistralai/Mistral-Large-3-675B-Instruct-2512</code>：<strong>多模态 granular MoE，总参 675B / 激活约 41B</strong>（语言主干 673B/39B + 2.5B 视觉编码器），从零用 <strong>3000 张 H200</strong> 训练，<strong>256K 上下文</strong>，Apache-2.0。Instruct 版为 FP8 后训练，面向 chat/agentic/指令场景，原生 function calling 与 JSON 输出、支持 11+ 语言；部署上 FP8 单节点（B200/H200）或 NVFP4 单节点（H100/A100）即可跑。其 NVFP4 量化变体 <code>…-NVFP4</code> 于 2026-09-11 更新。本条保留 Large 3 的历史快照；同页上方已收录后续 Large 4，不再将本条称为当前最大规模。</p>
     <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">HF mistralai/Mistral-Large-3-675B-Instruct-2512</a> · <a href="https://mistral.ai/news">Mistral 官方 news</a>。</p>
 </div>
 
 <div class="update-entry">
     <span class="entry-date">2026-09-11</span>
     <div class="card-title">Kimi K3（Moonshot，开源，Kimi K3 License）<span class="pill fact">FACT</span></div>
-    <p><strong>已开源、且是 Moonshot 当前最新旗舰</strong>（更正首版把 K2.6 当作最新口径）。HuggingFace <code>moonshotai/Kimi-K3</code> 于 2026-06-13 建库、2026-09-02 更新，权重公开（下载量已逾 230 万）。官方定位<strong>全球首个开源 3T 级模型</strong>：总参 <strong>2.8T</strong>，采用 <strong>KDA（Kimi Delta Attention）+ AttnRes（Attention Residuals）</strong> 注意力，<strong>Stable LatentMoE</strong> 框架每 token 激活 <strong>896 专家中的 16 个</strong>，相对 Kimi K2 的整体 scaling 效率提升约 <strong>2.5×</strong>；原生视觉、<strong>1M 上下文</strong>，权重以 MXFP4（U8）压缩分发。路透报道其发布时间约 2026-07-17。技术报告见仓库 <code>k3_tech_report.pdf</code>。</p>
+    <p><strong>本条保留 2026-09 的 K3 开放权重快照</strong>（当时更正首版的 K2.6 口径）；同页上方已收录 2026-11 的后续 K3.1 Pro，不能继续把本条称为当前最新旗舰。HuggingFace <code>moonshotai/Kimi-K3</code> 于 2026-06-13 建库、2026-09-02 更新，权重公开（下载量已逾 230 万）。官方定位<strong>全球首个开源 3T 级模型</strong>：总参 <strong>2.8T</strong>，<strong>KDA（Kimi Delta Attention）与周期 Gated MLA</strong>负责序列混合，<strong>AttnRes（Attention Residuals）</strong>则沿深度读取同一 token 的前层表示，<strong>Stable LatentMoE</strong> 框架每 token 激活 <strong>896 专家中的 16 个</strong>，相对 Kimi K2 的整体 scaling 效率提升约 <strong>2.5×</strong>；原生视觉、<strong>1M 上下文</strong>，权重以 MXFP4（U8）压缩分发。路透报道其发布时间约 2026-07-17。技术报告见仓库 <code>k3_tech_report.pdf</code>。</p>
     <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/moonshotai/Kimi-K3">HF moonshotai/Kimi-K3</a> · <a href="https://www.kimi.com/blog/kimi-k3">Kimi 官方博客</a> · <a href="https://github.com/MoonshotAI/Kimi-K3">GitHub MoonshotAI/Kimi-K3</a>。「scaling 效率 2.5×」为厂商自报 <span class="pill self">SELF-REPORT</span>。</p>
 </div>
 
@@ -304,6 +304,7 @@
     <span class="entry-date">2026-09-11</span>
     <div class="card-title">DeepSeek-V4.1-Flash（DeepSeek，2026-09-10，MIT，含技术报告）<span class="pill fact">FACT</span></div>
     <p>多模态 MoE，<strong>骨干 552B</strong>、<strong>1M 上下文</strong>，原生图文输入、自回归生成；HF <code>deepseek-ai/DeepSeek-V4.1-Flash</code> 已开放权重（MIT）。核心是 <strong>Causal Encoder-Decoder（CED）</strong>：40 层 = 20 层因果编码器 + 20 层解码器，解码器全局 KV 由编码器末层隐状态投影而来，因而 <strong>prefill 仅激活 8B、decode 激活 16B</strong>，对输入密集的 agentic 负载显著降本。叠加 <strong>CSA2（Full/Reindex/Reuse 三静态模式跨层共享 KV 与 indexer）+ 分层稀疏 indexer + FP4 主 KV 缓存</strong>，每 token 全局 KV 压到 <strong>890B（约 V4-Flash 的 1/4）</strong>；<strong>SWA Bounded Replay</strong> 把持久化 KV 再降到约 1/8。另含 Single-Pass mHC、Engram 条件记忆（196B，token 查表稀疏访问）、DSpark 投机解码；MoE 为 1 共享 + 384 路由专家、每 token 激活 6 个。预训练 <strong>45T token</strong>（稀疏注意力 @64K，34T 处扩到 1M）；后训练沿用 SFT→RL→OPD，改动集中在 agent 任务/环境的大规模自动合成，并支持 <strong>1–100 连续可调推理强度</strong>。</p>
+    <p><strong>缓存口径补充：</strong>这里890B表示890 bytes/token的global cache，不是890B参数；约1/4指HBM global KV，约1/8指host / SSD持久缓存相对前序的口径，不能相乘成总显存1/32。Decoder仍需尾部replay建立本层SWA；bounded replay是近似恢复，不是逐bit等价。分项、局部状态和排除项见<a href="/llm-research-map-2026/#research-base-architecture--cache">缓存主讲的完整推导</a>，本条不据此推出整机容量或任务加速。</p>
     <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf">DeepSeek-V4.1 技术报告 PDF（51 页）</a> · <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">HF 模型卡</a> · <a href="https://api-docs.deepseek.com/news/news260910/">DeepSeek 官方发布</a>。基准「优于 V4-Pro / V4-Flash」为厂商自报 <span class="pill self">SELF-REPORT</span>。</p>
 </div>
 
@@ -333,7 +334,7 @@
     <thead><tr><th>模型</th><th>发布方 / 时间</th><th>结构</th><th>注意力</th><th>上下文</th><th>许可</th></tr></thead>
     <tbody>
     <tr><td>Kimi K3.1 Pro</td><td>Moonshot · 2026-11</td><td>3T 级 MoE，K3 后训练强化版</td><td>Gated DSA + MLA 系</td><td>1M</td><td>Kimi K3.1 Pro License</td></tr>
-    <tr><td>Kimi K3</td><td>Moonshot · 2026-07</td><td>MoE 2.8T，LatentMoE 896专家×16</td><td>KDA + AttnRes</td><td>1M</td><td>Kimi K3 License</td></tr>
+    <tr><td>Kimi K3</td><td>Moonshot · 2026-07</td><td>MoE 2.8T，LatentMoE 896专家×16</td><td>KDA + Gated MLA（序列）；AttnRes（深度）</td><td>1M</td><td>Kimi K3 License</td></tr>
     <tr><td>Kimi K2.6（前代）</td><td>Moonshot · 2026-05</td><td>MoE 1T/32B，384专家×8+1</td><td>MLA</td><td>256K</td><td>Modified MIT</td></tr>
     <tr><td>Qwen3.8-Max</td><td>阿里 · 2026-08</td><td>MoE 2.4T/95B</td><td>—</td><td>长程</td><td>开放权重</td></tr>
     <tr><td>DeepSeek-V3.2</td><td>DeepSeek · 2025-12</td><td>MoE 671B/37B，257专家</td><td>DSA(MLA)</td><td>128K</td><td>MIT</td></tr>
@@ -412,7 +413,7 @@
 <div class="update-entry">
     <span class="entry-date">2026-09-14</span>
     <div class="card-title">GLM-5.3-Flash：GLM 系列首次采用「稀疏 + 线性」混合注意力 + mHC<span class="pill fact">FACT</span></div>
-    <p>智谱 <strong>GLM-5.3-Flash</strong>（arch <code>glm5_next</code>，320B/18B，MIT）在 GLM 系列中<strong>首次引入稀疏注意力与线性注意力的混合架构</strong>——用大部分线性层压低长上下文服务成本、仅保留必要的稀疏/全注意力做精确检索；并叠加 <strong>mHC（Manifold-Constrained Hyper-Connections）</strong>提升 scaling 效率。这与 Qwen3-Next（Gated DeltaNet + Gated Attention）、Kimi K3（KDA + AttnRes）、DeepSeek-V4.1-Flash（CSA2）构成同一条 2026 开源主线：<strong>混合/门控线性注意力 + 极致 KV 降本</strong>已从试验走向各家旗舰的默认选项。同门 GLM-5.3 则延续 <code>glm_moe_dsa</code> 的 DSA 稀疏注意力路线。</p>
+    <p>智谱 <strong>GLM-5.3-Flash</strong>（arch <code>glm5_next</code>，320B/18B，MIT）在 GLM 系列中<strong>首次引入稀疏注意力与线性注意力的混合架构</strong>——用大部分线性层压低长上下文服务成本、仅保留必要的稀疏/全注意力做精确检索；并叠加 <strong>mHC（Manifold-Constrained Hyper-Connections）</strong>提升 scaling 效率。这与 Qwen3-Next（Gated DeltaNet + Gated Attention）、Kimi K3（KDA + 周期 Gated MLA；AttnRes另管深度读取）、DeepSeek-V4.1-Flash（CSA2）都在优化历史访问，但不是同一架构：<strong>递归状态、稀疏读取与跨层 KV 复用分别改变不同成本</strong>，不能将它们全部归为线性注意力。同门 GLM-5.3 则延续 <code>glm_moe_dsa</code> 的 DSA 稀疏注意力路线。</p>
     <p style="margin-bottom:0" class="src-list">来源：<a href="https://huggingface.co/zai-org/GLM-5.3-Flash">HF GLM-5.3-Flash 模型卡</a> · <a href="https://arxiv.org/abs/2602.15763">GLM-5 技术报告</a>。</p>
 </div>
 
@@ -440,7 +441,7 @@
     <p style="margin:0">本页原消息来自媒体匿名信源，官方材料没有确认该架构。<strong>保持未证实状态。</strong>不能用 Huginn 的公开实验为某闭源模型作架构证明。</p>
 </div>
 
-<h3>3.3 其它架构信号 <span class="pill fact">FACT</span></h3>
+<h3>3.3 其它架构信号 <span class="pill fact" style="font-size:12px">FACT</span></h3>
 <section id="citation-sources-9" aria-label="章节来源" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2502.11089" title="Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention · Yuan, Jingyang, Gao, Huazuo, Dai, Damai 等 · 2025/02/16 · 2502.11089">Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention</a>；<a href="https://arxiv.org/abs/2405.21060" title="Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality · Dao, Tri, Gu, Albert · 2024/05/31 · 2405.21060">Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality</a>；<a href="https://arxiv.org/abs/2512.20848" title="Nemotron 3 Nano: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning · NVIDIA, :, Blakeman, Aaron 等 · 2025/12/23 · 2512.20848">Nemotron 3 Nano: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning</a>；<a href="https://arxiv.org/abs/2501.00663" title="Titans: Learning to Memorize at Test Time · Behrouz, Ali, Zhong, Peilin, Mirrokni, Vahab · 2024/12/31 · 2501.00663">Titans: Learning to Memorize at Test Time</a>；<a href="https://arxiv.org/abs/2412.09764" title="Memory Layers at Scale · Berges, Vincent-Pierre, Oğuz, Barlas, Haziza, Daniel 等 · 2024/12/12 · 2412.09764">Memory Layers at Scale</a>。</p></section>
 
 <div class="table-wrap">
@@ -448,7 +449,7 @@
 <thead><tr><th>方向</th><th>代表工作</th><th>要点</th></tr></thead>
 <tbody>
 <tr><td>稀疏注意力</td><td>DeepSeek NSA（arXiv:<a href="https://arxiv.org/abs/2502.11089" title="Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention · Yuan, Jingyang, Gao, Huazuo, Dai, Damai 等 · 2025/02/16 · 2502.11089">2502.11089</a>）、DSA</td><td>少读历史位置；收益需扣除 indexer 与选择开销</td></tr>
-<tr><td>线性 / 混合 SSM</td><td>Mamba-2（arXiv:<a href="https://arxiv.org/abs/2405.21060" title="Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality · Dao, Tri, Gu, Albert · 2024/05/31 · 2405.21060">2405.21060</a>）；Qwen3-Next-80B-A3B / Qwen3.8-Flash-Next（Gated DeltaNet + Gated Attention）；Kimi K3（KDA + AttnRes）；Nemotron 3 Nano（arXiv:<a href="https://arxiv.org/abs/2512.20848" title="Nemotron 3 Nano: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning · NVIDIA, :, Blakeman, Aaron 等 · 2025/12/23 · 2512.20848">2512.20848</a>）</td><td>混合/门控线性注意力在 2026 年成为开源前沿模型降本的主流选项</td></tr>
+<tr><td>线性 / 混合 SSM</td><td>Mamba-2（arXiv:<a href="https://arxiv.org/abs/2405.21060" title="Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality · Dao, Tri, Gu, Albert · 2024/05/31 · 2405.21060">2405.21060</a>）；Qwen3-Next-80B-A3B / Qwen3.8-Flash-Next（Gated DeltaNet + Gated Attention）；Kimi K3（KDA + 周期 Gated MLA，AttnRes另沿深度读取）；Nemotron 3 Nano（arXiv:<a href="https://arxiv.org/abs/2512.20848" title="Nemotron 3 Nano: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning · NVIDIA, :, Blakeman, Aaron 等 · 2025/12/23 · 2512.20848">2512.20848</a>）</td><td>递归层与显式Attention层共同组成混合主干；深度读取不是序列混合</td></tr>
 <tr><td>编解码 / KV 压缩</td><td>CED、CSA2、FP4 KV</td><td>分开计算首次扫描、缓存、索引与 replay；单项字节数不是整机显存</td></tr>
 <tr><td>记忆机制</td><td>Google Titans（arXiv:<a href="https://arxiv.org/abs/2501.00663" title="Titans: Learning to Memorize at Test Time · Behrouz, Ali, Zhong, Peilin, Mirrokni, Vahab · 2024/12/31 · 2501.00663">2501.00663</a>）；Meta Memory Layers at Scale（arXiv:<a href="https://arxiv.org/abs/2412.09764" title="Memory Layers at Scale · Berges, Vincent-Pierre, Oğuz, Barlas, Haziza, Daniel 等 · 2024/12/12 · 2412.09764">2412.09764</a>）</td><td>区分测试时参数更新与预训练查表容量；也不同于 Agent 文件记忆</td></tr>
 </tbody>

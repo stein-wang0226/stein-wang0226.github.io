@@ -19,15 +19,15 @@ harbor-task-sync 将公开组学研究转化为可执行、可复核的 Harbor �
 
 **Fixture** 是版本冻结、可重放的数据输入。它可以是有依据的公开数据切片，但必须保留转换出处。**盲测** 要隔离求解者与答案材料；由看过答案的 maintainer 跑参考解，是自检。**Refinement** 试图改变科学推理瓶颈，同时保留可解性与合法方法空间。[1](#ref-1)
 
-<figure class="work-mechanism">
-<svg viewBox="0 0 840 220" role="img" aria-labelledby="harbor-contract-title harbor-contract-desc" xmlns="http://www.w3.org/2000/svg">
+<figure class="work-mechanism" style="max-width:100%;overflow-x:auto">
+<svg style="min-width:780px" viewBox="0 0 840 220" role="img" aria-labelledby="harbor-contract-title harbor-contract-desc" xmlns="http://www.w3.org/2000/svg">
 <title id="harbor-contract-title">科学任务的公开执行与私有判分边界</title><desc id="harbor-contract-desc">公开来源形成冻结输入和题面，求解者产出答案；私有校准参考与反例约束独立验证器，验证器只在答案冻结后评分。</desc>
 <g fill="#f7f5f0" stroke="#a9cec7"><rect x="5" y="20" width="180" height="65" rx="6"/><rect x="225" y="20" width="180" height="65" rx="6"/><rect x="445" y="20" width="180" height="65" rx="6"/><rect x="665" y="20" width="170" height="65" rx="6"/><rect x="225" y="145" width="180" height="60" rx="6"/><rect x="445" y="145" width="180" height="60" rx="6"/><rect x="665" y="145" width="170" height="60" rx="6"/></g>
-<g fill="none" stroke="#0f766e" stroke-width="2"><path d="M185 52H225M405 52H445M625 52H665M92 85V175H225M405 175H445M625 175H665M750 85V145"/></g>
+<g fill="none" stroke="#0f766e" stroke-width="2"><path d="M185 52H225M405 52H445M625 52H665M92 85V175H225M405 175H445M625 175H665M750 85V120H535V145"/></g>
 <path d="M215 115H835" stroke="#b2b0aa" stroke-dasharray="6 5"/>
 <g fill="#172d35" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16"><text x="95" y="48">公开研究与来源</text><text x="95" y="70" font-size="13">版本、语义、转换记录</text><text x="315" y="48">fixture + 题面</text><text x="315" y="70" font-size="13">求解者可见</text><text x="535" y="48">隔离 Solver</text><text x="535" y="70" font-size="13">合理方法空间</text><text x="750" y="48">冻结答案</text><text x="750" y="70" font-size="13">输出与分析证据</text><text x="315" y="170">私有校准</text><text x="315" y="192" font-size="13">合法路径 + known-wrong</text><text x="535" y="170">独立 Verifier</text><text x="535" y="192" font-size="13">联合一致性与容差</text><text x="750" y="180">评分与失败归因</text></g>
 </svg>
-<figcaption>虚线分隔求解者可见与私有评价材料；隔离必须在运行环境中实现，仅在题面声明“不要看答案”不构成盲测。<a href="#ref-1">1</a></figcaption>
+<figcaption>虚线分隔求解者可见与私有评价材料；冻结答案与私有校准共同进入独立Verifier，随后才生成评分和失败归因，校准不回流Solver。隔离必须在运行环境中实现，仅在题面声明“不要看答案”不构成盲测。<a href="#ref-1">1</a></figcaption>
 </figure>
 <!-- WORK:KNOWLEDGE:END -->
 

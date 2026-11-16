@@ -44,7 +44,7 @@
 <figure class="mechanism-map"><figcaption>同题五次：存在性、选择与平均成功不同</figcaption><ol class="mechanism-chain"><li><b>固定一题与协议</b><small>每次从同一干净状态reset</small></li><li><b>五条轨迹</b><small>成功、失败、成功、失败、失败 → c=2</small></li><li><b>三个统计对象</b><small>单次估计2/5；两条存在性7/10；selector另测</small></li><li><b>逐题再聚合</b><small>保留每题n/c/k；不同题不可直接混为一组候选</small></li></ol></figure>
 <h3>正确性、有效性与成本分别报告</h3>
 <ul><li><strong>headline：</strong>固定发布题集保留全部任务分母；invalid task、infra/API error、agent/verifier timeout和policy fail分列。</li><li><strong>条件成功：</strong>另报可执行任务上的成功率，不能静默移除失败让headline上涨。</li><li><strong>Rubric / Elo：</strong>固定judge、prompt、anchor和顺序；不同量纲需声明转换，不能直接相加。</li><li><strong>成功成本：</strong>全部候选、工具、验证、构建与重试计入；环境构建按公开摊销口径。零成功保留总成本，比值未定义。</li></ul>
-<p>比较A/B使用同任务、预算、环境和scorer，并按研究组保留依赖结构；配对胜负与区间在前节展开。tokens不是统一美元或FLOPs。</p>
+<p>比较A/B使用同任务、预算、环境和scorer，并按研究组保留依赖结构；配对胜负、标准误与研究组重采样在后面的<a href="s04_cluster_training_evaluation.html#measurement">训练与终评节</a>展开。tokens不是统一美元或FLOPs。</p>
 </section>
 <details class="course-extension"><summary>按需查阅：版本、领域与综合指数的完整名录</summary>
 <section id="versions">

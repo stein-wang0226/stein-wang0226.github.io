@@ -3,7 +3,7 @@
 <title>01 · Transformer 基础：模型结构、前向计算与训练目标</title><meta name="description" content="从token和embedding走到QKV、causal mask、残差、logits、teacher forcing、标签位移和梯度，逐项解释张量与状态。">
 <link rel="stylesheet" href="../assets/site/training-lifecycle.css"></head>
 <body><main class="training-lifecycle">
-<!-- READING:FRAGMENT:START -->
+<!-- READING:FRAGMENT:START --><style>.masked-gradient-scroll{display:block;max-width:100%;overflow-x:auto;padding:.25rem 0}.masked-gradient-scroll > mjx-container:not([display="true"]){max-width:none;overflow:visible}</style>
 <p class="math-notation"><strong>读式约定：</strong>\(\theta\) 表示模型参数，\({}^\top\) 为转置；softmax 对标明的候选轴归一，\(\mathbf1[\cdot]\) 为指示函数。下文 \(L\) 在形状表中表示 block 数，在 NLL 推导中表示标量损失，均按所在段落理解；词表大小 \(V\) 与 value 矩阵 \(V_{\rm val}\) 分开记。</p>
 <figure class="mechanism-map"><figcaption>Decoder 张量流：从 token 到预测分布</figcaption><ol class="mechanism-chain"><li><b>IDs → embedding</b><small>[B,T] → [B,T,d]；位置机制</small></li><li><b>Attention 读取历史</b><small>Q/K/V、因果 mask 与输出投影</small></li><li><b>FFN 与残差更新</b><small>多层维持主干维度 d</small></li><li><b>LM head → logits</b><small>[B,T,V]；训练对齐右移标签</small></li></ol><p class="mechanism-return">↶ 推理采样新 token 后继续；训练可并行计算位置，因果 mask 阻止读取未来。</p></figure>
 <section id="purpose"><h2>把一次语言预测走成可检查的数据流</h2>
@@ -55,7 +55,17 @@ U=X+\operatorname{Attention}(\operatorname{RMSNorm}(X)),\qquad
 Y=U+\operatorname{FFN}(\operatorname{RMSNorm}(U)),\quad
 X,U,Y\in\mathbb R^{B\times S\times d}.
 \]</div>
-<p>加法要求形状一致。残差提供旧表示的直通路径，模块输出可改变表示；它不是绕过整个模型。Norm 控制进入模块的尺度，FFN 提供通道上的非线性容量。训练稳定性和 mHC 等前沿残差在<a href="s04_residual_norm_stability.html">第04章</a>展开。</p>
+<noscript>
+<div id="block-nojs-recurrence" role="group" aria-label="无脚本 block 递推说明">
+<p><strong>无脚本读式：先更新 Attention，再更新 FFN。</strong>X 是本 block 的输入，U 是第一次残差相加后的表示，Y 是本 block 的输出；三者形状均为 [B,S,d]，即 B 条序列、每条 S 个位置、每个位置 d 维。</p>
+<ol>
+<li>先对 X 的各位置沿 d 维作 RMSNorm，再交给带因果 mask 和位置机制的 Attention；模块输出回到 [B,S,d]，与未归一化的 X 逐元素相加，得到 U。</li>
+<li>再对更新后的 U 作 RMSNorm，交给逐位置的 FFN；FFN 投影回 d 维后，与未归一化的 U 逐元素相加，得到 Y。下一 block 以 Y 为输入。</li>
+</ol>
+<p>这是上文限定的 pre-norm decoder：Norm 作用在模块支路，不替换残差直通的旧表示；第二步读取 U，不是再次读取 X。这里的加号是同形状逐元素相加，不是矩阵乘法。</p>
+</div>
+</noscript>
+<p>加法要求形状一致。残差提供旧表示的直通路径，模块输出可改变表示；它不是绕过整个模型。Norm 控制进入模块的尺度，FFN 提供通道上的非线性容量。训练稳定性和 mHC 等前沿残差在<a href="s04_residual_norm_stability.html">残差与归一化章</a>展开。</p>
 <pre><code># 教学伪代码；行向量约定，不是完整可运行框架
 x = embedding(ids)                         # [B,S,d]
 for block in blocks:
@@ -85,7 +95,18 @@ p_\theta(x_{1:S})&=\prod_{i=1}^{S}p_\theta(x_i\mid x_{&lt;i}),\\
 L&=\frac{\sum_{b,i}m_{b,i}\ell_{b,i}}{\sum_{b,i}m_{b,i}}.
 \end{aligned}
 \]</div>
-<p>logits \(z\) 经softmax得 \(p_j=e^{z_j}/\sum_k e^{z_k}\)。正确目标为 \(y\) 时，单token损失 \( -\log p_y=-z_y+\log\sum_k e^{z_k}\)，因此 \(\partial L/\partial z_j=p_j-\mathbf1[j=y]\)。这把“提高目标概率”接回可计算的梯度。</p>
+<p>logits \(z\) 经softmax得 \(p_j=e^{z_j}/\sum_k e^{z_k}\)。正确目标为 \(y\) 时，单token损失 \(\ell=-\log p_y=-z_y+\log\sum_k e^{z_k}\)，其梯度为 \(\partial\ell/\partial z_j=p_j-\mathbf1[j=y]\)。对上面的平均损失，令 \(N_{\rm valid}=\sum_{b,i}m_{b,i}&gt;0\)，固定mask后有 <span class="masked-gradient-scroll" tabindex="0" role="group" aria-label="平均 masked 损失梯度，可横向滚动">\(\partial L/\partial z_{b,i,j}=(m_{b,i}/N_{\rm valid})(p_{b,i,j}-\mathbf1[j=y_{b,i}])\)</span>。这里 \(j\) 索引词表，\(y_{b,i}\) 是该位置的目标ID；被mask位置的直接logit梯度为0，但它仍可作为后续目标的条件。这把“提高目标概率”接回可计算的梯度。</p>
+<noscript>
+<div id="masked-gradient-nojs-derivation" role="group" aria-label="无脚本平均 masked 梯度推导">
+<p><strong>无脚本推导：先求单 token 导数，再乘平均权重。</strong>b 索引序列，i 索引 shift 后对齐的目标位置，j 索引词表；y<sub>b,i</sub> 是正确目标 ID。m<sub>b,i</sub> 取 1 表示监督、0 表示不计该目标；固定 mask，令 N 为所有 m 的总和，即原式 N<sub>valid</sub>，且 N &gt; 0。</p>
+<ol>
+<li>固定一个 (b,i)，简记其各词 logits 为 z<sub>j</sub>、正确词为 y。令 Z 为整个词表的 exp(z<sub>k</sub>) 之和，k 也索引词表；exp 是以自然常数 e 为底的指数。概率 p<sub>j</sub> = exp(z<sub>j</sub>) / Z；单 token 损失 ℓ = -z<sub>y</sub> + ln Z，ln 是自然对数。</li>
+<li>对 z<sub>j</sub> 求偏导：-z<sub>y</sub> 在 j = y 时给 -1，否则给 0；ln Z 给 exp(z<sub>j</sub>) / Z = p<sub>j</sub>。所以单 token 导数为 p<sub>j</sub> - 指示值，指示值在 j = y 时为 1，否则为 0。</li>
+<li>平均损失 L 是所有 m<sub>b,i</sub> × ℓ<sub>b,i</sub> 相加后除以 N。把各位置 logits 当作独立变量，且 m 和 N 不随 logits 变化，该位置该词的偏导就是单 token 导数乘 m<sub>b,i</sub> / N；这是原式的平均 masked 梯度。</li>
+</ol>
+<p><strong>接下方算例：</strong>mask 为 [1,0,1] 时 N = 2，L = ln 2，约 0.6931；概率 0.5 的有效正确词梯度为 (0.5 - 1) / 2 = -0.25，有效非目标词为 p<sub>j</sub> / 2，中间被 mask 位置的直接 logit 梯度为 0。该 token 仍可影响后续条件；这不是模型参数 θ 的总梯度。N = 0 时须跳过或拒绝，不能照常求平均。</p>
+</div>
+</noscript>
 <p><strong>可复算例：</strong>三个监督目标概率为[0.5,0.25,0.5]，平均NLL为 \((\log2+\log4+\log2)/3\approx0.9242\)。若中间目标的mask为0，分子和分母同时移除它，损失为 \(\log2\approx0.6931\)；条件历史仍包含该token。有效目标数为0的batch需要显式跳过或拒绝，不能直接除以0。</p>
 <p>mask 掉用户输入的 loss 仍需要读取它，并可通过它提供的条件影响后续目标。SFT 常只监督 assistant 的动作或输出；CPT 文档通常监督更多位置。loss mask 不能充当访问权限，也不能阻断所有相关前向计算。详见<a href="../llm-training-lifecycle/s02_midtraining.html">CPT 数据与 mask</a>。</p>
 </section>

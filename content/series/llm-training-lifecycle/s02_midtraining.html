@@ -122,6 +122,7 @@
   {"role":"assistant","content":"Cleaned CSV written to out.csv."}],
  "verifier":{"status":"passed","reward":1}}</code></pre>
 <p>这是原调研中的四类样本，现统一到全链路示例。Task ID、环境版本和 verifier 属于元数据，用于切分、过滤和审计；模型生成的是消息与动作，不应看到留出任务的答案字段。</p>
+<p><strong>CSV输入假设与复核：</strong>上面的 <code>if row['value']</code> 只在字段仍是未转换的CSV字符串、且本任务仅把空字符串视为空值时成立：字符串 <code>"0"</code> 会保留，数值 <code>0</code> 却会被真假判断误删。转成数值或约定空白/缺失值后，须用该合同的显式空值判定。教学输入三行的value为 <code>"7","", "0"</code>，正确输出保留第1、3行及其原值、顺序和表头；独立检查输出内容与输入hash，而非仅相信工具的“Wrote 2 rows”。</p>
 <figure>
 <div class="mask-grid" aria-label="轨迹监督目标">
 <div><b>User + 工具定义</b><p>提供任务与可用动作<br>本例 mask = 0</p></div>
