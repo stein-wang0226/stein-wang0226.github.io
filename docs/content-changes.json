@@ -40,8 +40,8 @@
     },
     {
       "source": "content/posts/my-work-dllm/full-report.html",
-      "sha256": "810a55c152fa03c294c8810464c05a06e8805c15588d0fa28e4f857cc0029574",
-      "reason": "逐页审阅：全章节审阅。原理与算例：AR/吸收/块目标；ICL二次型配方、rank风险例；三OR mask；熵与affinity。精简与证据：修概念mask套用LM1B的错误；CLI按需，原3图保持比可放大；ARR表/SEDD差异/smoke范围保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（x_i、i、z_i、y_R、\\epsilon），公式、标题、锚点与引用未改。",
+      "sha256": "c95dfcc0192fcbeff8fcccdb35b06c28c32eccc2f5452feec831624e8fdec06a",
+      "reason": "逐页审阅：全章节审阅。原理与算例：AR/吸收/块目标；ICL二次型配方、rank风险例；三OR mask；熵与affinity。精简与证据：修概念mask套用LM1B的错误；CLI按需，原3图保持比可放大；ARR表/SEDD差异/smoke范围保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（x_i、i、z_i、y_R、\\epsilon），公式、标题、锚点与引用未改；窄屏下给受控任务四列表加40rem最小宽度，改为表内横向滚动。",
       "prior_reason": "Approved learning rework: review all sections, expand posterior square completion, rank-risk and threshold FLOPs, correct actual scatdit mask, convert pseudo formulas to LaTeX and fold configs. Preserve ARR figures with zoom and source-cell gaps; strict three-screen math/width/no-JS/zoom checks passed. No model experiment."
     },
     {

@@ -79,7 +79,7 @@ html{scroll-behavior:smooth;scroll-padding-top:1rem}
 <section id="question">
 <h2>研究设计</h2>
 <p>这项工作研究一个训练动力学问题。相同的输出目标可以通过不同顺序生成，顺序会改变模型每次预测看到的条件、监督分布和误差传播方式。AR 固定从左向右。标准 masked diffusion model（MDM）在多种随机缺失状态中恢复 token。Block-Diff、Scatter 和 Jigsaw 进一步限制哪些位置共享上下文以及何时提交生成结果。</p>
-<div class="scroll"><table><thead><tr><th>受控任务</th><th>关键依赖</th><th>测量方式</th><th>ARR 的主要观察</th></tr></thead><tbody>
+<div class="scroll"><table style="min-width:40rem"><thead><tr><th>受控任务</th><th>关键依赖</th><th>测量方式</th><th>ARR 的主要观察</th></tr></thead><tbody>
 <tr><td>Prompt/Respond 线性回归</td><td>从演示中恢复同一个线性算子，并准确绑定查询与实数标签</td><td>Respond 区域 MSE、到阈值步数与 FLOPs</td><td>AR 最稳定。Jigsaw 缩小差距。Scatter 与随机掩码模型留下更高误差。</td></tr>
 <tr><td>星图 Pathfinding</td><td>从目标反推正确分支，再输出从起点到目标的路径</td><td>训练 loss、节点匹配、序列完全匹配</td><td>MDM 和 Scatter 部分运行可学习反向去噪。左到右的逐 token 决策和块内因果约束容易卡在首个分支。</td></tr>
 <tr><td>Sudoku</td><td>行、列与 3×3 宫共享约束</td><td>空格 Cell Accuracy 和整盘完全匹配</td><td>LLaDA、Dream 和 Jigsaw 可接近完全解题。全局可见性和坐标嵌入改善学习。</td></tr>

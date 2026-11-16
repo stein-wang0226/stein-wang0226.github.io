@@ -27,7 +27,7 @@ T9 未执行当前构建、引用/迁移完整验收、17 项站点流水线测�
 - Kimi 自制图按报告原文改为“router 在 hidden 7168 上算分 → 896 选 16 → 被选 token 降到 3584”，并注明 router 不读 latent；Gemma 图改为 E2B 4:1、E4B 5:1 的 local:global 比例。两图用无头 Chrome 在 1440px 实际截图核对，未见过溢出。
 - 三个 `assets/research/**/sources.json` 仅由 `scripts/citations.py refresh-usages` 重算 `used_in` / `historical_used_in`，来源元数据未改，故从冻结集移入精确集成集（247 → 244）。
 - 方法与边界：先用仓外扫描脚本按文档顺序定位公式首次出现与说明位置，再逐页对照源文本修复；`make check` 通过（107 HTML 页、303 公开文件），`learning_review.py check` 通过（74 源 SHA 链与凭据）。未重跑模型训练、科研复现或全量三屏浏览器像素，不把静态检查当作运行验证。
-- 窄屏可读性补记：家族速查表与跨模块矩阵在 390px 下原会逐字换行；两表加 `wide` 标记并在本页 `style` 块声明 40rem 最小宽度，改为表内横向滚动，表前各加一句滚动提示。无头 Chrome 实测 390px 表宽 640px、容器 314px、页面 scrollWidth 未增加；1440px 表宽 772px、不滚动。
+- 窄屏可读性补记：家族速查表与跨模块矩阵在 390px 下原会逐字换行；两表加 `wide` 标记并在本页 `style` 块声明 40rem 最小宽度，改为表内横向滚动，表前各加一句滚动提示。无头 Chrome 实测 390px 表宽 640px、容器 314px、页面 scrollWidth 未增加；1440px 表宽 772px、不滚动。同轮扫描全站表格后发现 trainable-dllm 完整报告的“受控任务”四列表第二列仅约 53px、逐字换行，也给该表加 40rem 最小宽度；390px 实测表宽 640px、容器 358px、页面无溢出，1440px 表宽 910px、不滚动。
 
 ## 逐源记录
 

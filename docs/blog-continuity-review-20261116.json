@@ -7,11 +7,11 @@
     "local_sources": 74,
     "changed_sources": 45,
     "retained_sources": 29,
-    "change_units": 75,
+    "change_units": 76,
     "added_diagrams": 1,
     "revised_diagrams": 2,
     "scope": "保留作者逐源examined、reason、changes、assumptions与evidence_boundary；完整报告只按作者列明的主讲段检查，不等于所有历史科研事实复核。",
-    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。 T12变量前置定义轮：41源在公式首次使用前补充或改写符号说明，其中32源由保留转为改稿；Kimi/Gemma两张自制图按报告原文修正router与local:global口径。公式、标题、锚点与引用未改。三个sources.json仅由citations.py refresh-usages重算used_in，故从冻结集移入精确集成集。该轮以全站扫描定位候选、逐页对照源文本修复，make check通过；未重跑浏览器像素、模型训练或科研复现。"
+    "validation_scope": "T9核对实际Git基线字节、当前SHA、真实源位置及精确凭据；未执行build、browser、三屏、MathJax运行、模型训练或发布。 T10c追加两图默认字号的source-local静态修复，真实像素与新构建尚待独立验收。 T10d追加单个FACT状态标签的source-local字号修复；旧b066f24构建与T10a/R6通过不适用于改后输入，须独立新构建及受影响浏览器重验。 T10e追加两源局部公式/原图阅读修复，12改/62保留不变；须与T10d合并一次fresh build及受影响重验，旧b066f24结果不转写为current-pass。 T10h仅修ProtAgent箭头与非汇合交叉，保留a4187c7旧构建、原六组fail及截图；need_new_build=true，当前像素/构建通过须由独立owner在新产物重新取得。 T10p默认新增四路线HTML主讲，原SVG作为原生参考保留且已知字线局限不变；本记录仅源级精确集成，不声明新构建、T10a最终、浏览器或发布通过。 T10x源级单替换及反向字节核对通过，科学正文、公式、图表、锚点与原件不变；旧9fa失败与截图继续保留，新产物的目录、正文、JS/noJS及独立像素仍须实际验收。 T10y source-ready及独立复算仅证明源级精确追加，四块只在noJS需要可见，JS须确认默认隐藏；三屏当前公式/说明/图/原生参考仍需真实浏览器和独立像素。原noJS失败、参考图空白和缺失mask证据保持原状态，不以源码核证改为pass。 T10z只证明两块精确追加及局部教学复算；noJS三宽真实阅读和JS正常隐藏仍须新构建浏览器与独立像素。s01原fail/pending及其他owner局部pass保持，残差参考图空白与mask缺证亦不由本修复自动关闭。 T12变量前置定义轮：41源在公式首次使用前补充或改写符号说明，其中32源由保留转为改稿；Kimi/Gemma两张自制图按报告原文修正router与local:global口径。公式、标题、锚点与引用未改。三个sources.json仅由citations.py refresh-usages重算used_in，故从冻结集移入精确集成集。该轮以全站扫描定位候选、逐页对照源文本修复，make check通过；未重跑浏览器像素、模型训练或科研复现。 T12窄屏后续：s06两表与受控任务四列表在390px下改为表内横向滚动并补提示，页面scrollWidth未增；48个URL×三宽度+无脚本复验0失败。"
   },
   "sha_chain": {
     "historical_review": "docs/blog-diagram-review-20261115.json",
@@ -332,8 +332,8 @@
     "assets/research/2026-11-14/sources.json": "bb58b86f1bb804059ec8cdb8c348b1a00ced2af7b1f5b17dff2402897474a888",
     "assets/research/agent-data-benchmarks/sources.json": "73696913acd37a2086159002073de85ac4140507a77fd33e98358e3821b61f6a",
     "assets/research/posttraining-20261114/sources.json": "a56d5b90aab056348e00b3873cf3657f0079d46629455c4a36a3208eec430d79",
-    "docs/organization-changes-20261115.json": "14c405c858271255e8725420a7de0e833db0f2f88cec5d95d200dac1d61b3a08",
-    "docs/content-changes.json": "c2b780018e377def038d22afb99fac5e1468ff93982e305479921c83552d4f76"
+    "docs/organization-changes-20261115.json": "0337847f5c68b99251bbc77c23e223bace1c384a6d19b1407889c44e869b2360",
+    "docs/content-changes.json": "f2d8a9d32922a9b96a80e0a4ba9ac93a9734d9919fbaf88abde01c30c35db02c"
   },
   "catalog_updates": [
     {
@@ -1224,7 +1224,7 @@
       "source": "content/posts/my-work-dllm/full-report.html",
       "changed": true,
       "sha256_before": "e15779451acd16233deb741c292d3f20a89b3674e998814833ae8ae896139292",
-      "sha256_after": "810a55c152fa03c294c8810464c05a06e8805c15588d0fa28e4f857cc0029574",
+      "sha256_after": "c95dfcc0192fcbeff8fcccdb35b06c28c32eccc2f5452feec831624e8fdec06a",
       "examined": [
         {
           "anchor": "#objectives",
@@ -1263,7 +1263,7 @@
           "judgment": "699/630日志、27/32 Gen-PPL及历史CPU/MI308X smoke均为原记录，不写成本轮复现。"
         }
       ],
-      "reason": "改稿：仅在公式首次使用前补充符号定义（x_i、i、z_i、y_R、\\epsilon），公式、标题、锚点与引用未改。",
+      "reason": "改稿：仅在公式首次使用前补充符号定义（x_i、i、z_i、y_R、\\epsilon），公式、标题、锚点与引用未改；窄屏下给受控任务四列表加40rem最小宽度，改为表内横向滚动。",
       "changes": [
         {
           "anchor": "#objectives",
@@ -1272,6 +1272,16 @@
           "assumptions": "说明只定义本页局部符号的对象、索引与形状；不改变公式、数值算例或来源。",
           "checks": [
             "对照改前改后源文本与公式首次出现位置",
+            "make check：107 HTML页及引用、锚点、导航检查通过"
+          ]
+        },
+        {
+          "anchor": "#question",
+          "kind": "窄屏表格可读性",
+          "summary": "受控任务四列表在390px下第二列仅约53px、逐字换行；给该表加40rem最小宽度，改为在既有scroll容器内横向滚动。单元格文字、列顺序与来源未改。",
+          "assumptions": "只改表格布局与既有滚动容器的溢出行为，不改单元格数据、列顺序或引用。",
+          "checks": [
+            "390/1440实测表宽640/910px，页面scrollWidth未增加",
             "make check：107 HTML页及引用、锚点、导航检查通过"
           ]
         }
