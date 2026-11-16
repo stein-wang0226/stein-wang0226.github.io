@@ -376,8 +376,11 @@ def decorate_course(ctx, entry, text):
                 navigation.append(f'<a rel="{relationship}" href="{ctx.rel(path, row["url"])}">'
                                   f'{arrow}{html.escape(row["title"])}</a>')
     body = re.sub(r"(<table\b.*?</table>)", r'<div class="reading-table">\1</div>', body, flags=re.S | re.I)
-    text = (text[:match.start(2)] + ctx.navigation(path) + intro +
-            '<div class="reading-content reading-course">' + aliases + body + '</div>' +
+    content = intro + '<div class="reading-content reading-course">' + aliases + body + '</div>'
+    # Sources without a main landmark get one around the assembled introduction.
+    if not re.search(r'<main\b', body, re.I):
+        content = "<main>" + content + "</main>"
+    text = (text[:match.start(2)] + ctx.navigation(path) + content +
             '<nav class="reading-series" aria-label="学习主题导航">' + "".join(navigation) +
             '</nav>' + ctx.footer(path) + text[match.end(2):])
     tags = "".join(f'<link rel="stylesheet" href="{ctx.asset(path, "/assets/site/" + name)}">'
