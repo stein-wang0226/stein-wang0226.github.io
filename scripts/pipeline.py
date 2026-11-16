@@ -11,6 +11,12 @@ from catalog import load_content
 from render import BuildContext, DEFAULT_OUTPUT, FAVICON_LINK, ROOT, external_output, input_digest, load_md, mark_cjk_runs, md, publication_date, route_path
 
 PRINT_LINK = '<link rel="stylesheet" href="/assets/site/print.css" media="print">'
+# Web fonts are self-hosted and used on every page; preloading them removes the
+# fallback-to-webfont swap that moved text shortly after first paint.
+FONT_PRELOAD = ('<link rel="preload" href="/assets/site/sora-latin.woff2" as="font" '
+                'type="font/woff2" crossorigin>'
+                '<link rel="preload" href="/assets/site/literata-latin.woff2" as="font" '
+                'type="font/woff2" crossorigin>')
 
 
 def git_metadata(root):
@@ -191,6 +197,8 @@ def render_artifact(ctx):
             additions.append(FAVICON_LINK)
         if 'assets/site/print.css' not in text:
             additions.append(PRINT_LINK)
+        if 'rel="preload" as="font"' not in text:
+            additions.append(FONT_PRELOAD)
         if 'rel="canonical"' not in text:
             additions.append(f'<link rel="canonical" href="{ctx.canonical(path)}">')
         entry = by_route.get(path)
