@@ -287,6 +287,11 @@ def render_fragment(root, entry, output_url, by_id, site_url=""):
                            value)
             return f'{key}={quote}{html.escape(value, quote=True)}{quote}'
         raw = re.sub(r'([\w:-]+)=(["\'])(.*?)\2', attribute, raw, flags=re.S)
+        if (item["tag"] == "object" and "research-chart" in (item["attrs"].get("class") or "")
+                and "tabindex" not in item["attrs"]):
+            # Static SVG charts are not interactive. Chrome does not scroll an <object> into view
+            # when it receives sequential focus, so a tab stop there is invisible on narrow screens.
+            raw = re.sub(r"(/?>)$", r' tabindex="-1"\1', raw)
         if item in doc.headings:
             level = int(item["tag"][1])
             raw = re.sub(r"^<h[2-5]", f"<h{level + 1}", raw)
