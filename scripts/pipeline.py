@@ -26,6 +26,26 @@ FONT_METRICS = ('<style>@font-face{font-family:"Literata Fallback";src:local("Ge
                 '.site-nav,.site-footer,.site-page{font-family:Literata,"Literata Fallback",'
                 'Georgia,"PingFang SC","Microsoft YaHei",serif}'
                 '.site-page .reference-controls input{width:14rem}</style>')
+# WCAG 1.4.11: the shared focus colours (#d97706 = 2.92:1, #c87e25 = 2.98:1)
+# fall below 3:1 on the warm page background. Both shared stylesheets carry
+# frozen receipts, so the build injects one 5.0:1 ring for every focusable
+# element instead of editing them. This also replaces the legacy white ring.
+FOCUS_RING = ('<style data-a11y-focus-ring>:focus-visible{'
+              'outline:3px solid #0f766e !important;outline-offset:3px !important}'
+              '</style>')
+# Input boundaries identify the control; the shared #d6d3cd line is 1.49:1 on
+# white. These selectors repeat the shipped ones so the later rule wins.
+CONTROL_BOUNDARY = ('<style data-a11y-controls>'
+                    '.site-page input:not([type="checkbox"]):not([type="radio"]),'
+                    '.site-page select,.site-page .catalog-search,'
+                    '.site-page .reference-controls input,.site-page .reference-controls select,'
+                    '.interview-tools input,.work-original-report .table-search input,'
+                    '.harbor-report input,.harbor-report select'
+                    '{border-color:#8a857e}'
+                    '.site-page .catalog-search:focus-within{border-color:#0f766e}'
+                    '.site-page input::placeholder,.site-page textarea::placeholder,'
+                    '.site-page .search-field input::placeholder'
+                    '{color:#706b65}</style>')
 
 
 def git_metadata(root):
@@ -210,6 +230,10 @@ def render_artifact(ctx):
             additions.append(FONT_PRELOAD)
         if 'Literata Fallback' not in text:
             additions.append(FONT_METRICS)
+        if 'data-a11y-focus-ring' not in text:
+            additions.append(FOCUS_RING)
+        if 'data-a11y-controls' not in text:
+            additions.append(CONTROL_BOUNDARY)
         if 'rel="canonical"' not in text:
             additions.append(f'<link rel="canonical" href="{ctx.canonical(path)}">')
         entry = by_route.get(path)
