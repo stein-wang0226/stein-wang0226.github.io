@@ -30,8 +30,13 @@ FONT_METRICS = ('<style>@font-face{font-family:"Literata Fallback";src:local("Ge
 # fall below 3:1 on the warm page background. Both shared stylesheets carry
 # frozen receipts, so the build injects one 5.0:1 ring for every focusable
 # element instead of editing them. This also replaces the legacy white ring.
+# The archived manual sets `transition: all` on its back-to-top button, so the
+# ring faded in from the white glyph colour and its first frames were invisible
+# (1.09:1). Dropping the transition only while that button is keyboard-focused
+# makes the ring appear at once; hover and scroll animations stay untouched.
 FOCUS_RING = ('<style data-a11y-focus-ring>:focus-visible{'
               'outline:3px solid #0f766e !important;outline-offset:3px !important}'
+              '.back-to-top:focus-visible{transition:none !important}'
               '</style>')
 # Input boundaries identify the control; the shared #d6d3cd line is 1.49:1 on
 # white. These selectors repeat the shipped ones so the later rule wins.
