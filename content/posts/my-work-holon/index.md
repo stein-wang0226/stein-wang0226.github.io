@@ -45,6 +45,26 @@ P2T 从蛋白预测文本，T2P 从文本预测蛋白，protein-only 学习无�
 
 ## 模型如何连接不同模态
 
+### 同一个残基从字母到向量
+
+文本侧的 Qwen tokenizer 按 BPE 合并规则切分子词，一个 token 可以覆盖多个字符。蛋白侧使用 ESM 词表，普通序列中每个残基占一个 token。例如蛋白片段 `IN` 会得到异亮氨酸 `I` 和天冬酰胺 `N` 两个 token，对应整数 ID 12 和 17。Holon 把蛋白起止标记登记在文本词表中，只有中间的残基去查蛋白表。[ESM 词表](https://huggingface.co/facebook/esm2_t33_650M_UR50D/blob/main/vocab.txt) · [Qwen 合并规则](https://huggingface.co/Qwen/Qwen3-0.6B/blob/main/merges.txt)
+
+```text
+位置        0                  1                2                3
+token       <|protein_start|>  I                N                <|protein_end|>
+取向量      Qwen 表[起始 ID]   蛋白表[12]       蛋白表[17]       Qwen 表[结束 ID]
+输出        h₀                 h₁               h₂               h₃  → MoT
+```
+
+Tokenizer 输出整数。Embedding 层持有形状为「词表大小 × 隐藏维度」的浮点矩阵，每个 ID 选出其中一行。Holon 前向代码用下面两行完成蛋白侧查表和位置还原。[forward 源码](https://github.com/stein-wang0226/Holon/blob/7de0f4d67f9d18d166e715f6e4e200de22cb21ea/modeling/holon/holon.py#L238-L239)
+
+```python
+packed_prot_embedding = self.prot_embed_tokens(packed_prot_ids)
+packed_sequence[packed_prot_indexes] = packed_prot_embedding
+```
+
+**预训练决定向量的起点，冻结策略决定它之后还会不会变。** 文本表从 Qwen checkpoint 载入。蛋白侧沿用 ESM 的编号规则，向量由 Holon 的蛋白表提供。比如从纯序列 checkpoint 扩展到结构阶段，已有氨基酸行继承训练结果，新结构行单独初始化。训练时 tokenizer 的编号规则保持固定；允许求梯度并纳入优化器的 embedding 权重会随 loss 更新，冻结的表则保留载入值。[模型接口与初始化记录](full-report.html)
+
 文本使用 Qwen 的词表与初始化；蛋白质序列通过蛋白 tokenizer 进入专门的嵌入和输出接口。MoT 在共享序列中根据 token 所属路由选择参数路径，让不同模态使用各自的投影、归一化和 FFN，再将表示恢复到原来的序列顺序参与注意力。这个路由依据模态或任务标记，不应与学习型 top-k MoE router 混为一谈。[2](#ref-2)[3](#ref-3)
 
 实际 `forward_train` 把 understanding 和 generation token 分别送到两套 Q/K/V 投影，再按原索引拼回。`freeze_und` 控制文本侧是否冻结，具体哪些参数和激活停止梯度须读实现。下面是源码流程的精简表达，不是可直接替换的实现：
@@ -136,6 +156,18 @@ w_i'&\propto w_i\frac{s_i}{\widehat s_i}
 这条方法路线的实际贡献是把“配方比例”变成可测量、可修正的暴露量。若比较 8:0:92 与 4:4:92，应同时审查实际 token share、重复暴露和有效数据来源，而不是只比较 YAML 中三个数字。
 
 ## Scaling 与优化怎样迁移到 CPT
+
+### 固定算力时，模型该多大、数据该喂多少？
+
+把总预算记作 **C**，每个输入 token 的训练计算量记作 **M**，累计输入 token 数记作 **D**。在同一预算下，按照图中各自的 FLOPs 口径，有 **D ≈ C/M**。沿左图一条同色曲线向右走，就是把更多算力花在每个 token 上，同时减少能训练的 token 数。纵轴是验证交叉熵，越低越好。圆点是训练端点，曲线是预算内的二次拟合，星号是拟合最低点，可以落在两个实测配置之间。
+
+<figure><a href="protein-isoflop.png"><img src="protein-isoflop.png" alt="氨基酸序列的八档算力预算。左图各预算的验证交叉熵呈谷形，右图拟合最优模型计算量与数据量。" style="max-width:100%;height:auto"></a><figcaption>蛋白序列，原图 Figure 2。左图 M 按非 embedding FLOPs/token 计。右图蓝点取各星号的横坐标 M，红点由 D ≈ C/M 得到。八档预算中的拟合为 Mₒₚₜ ≈ 0.0755 C^0.533，Dₒₚₜ ≈ 13.2 C^0.467。</figcaption></figure>
+
+以蛋白序列图为例，预算增加 10 倍时，拟合给出的每 token 计算量增加约 **3.41 倍**，训练 token 数增加约 **2.93 倍**。两者相乘约为 10。蓝线的斜率描述每 token 计算量随预算变化的速度，换成具体参数量还需要所选架构的 FLOPs 公式。
+
+<figure><a href="structure-isoflop.png"><img src="structure-isoflop.png" alt="AFDB-24M 离散结构 token 的七档预算。右图最优 token 数随预算增长的斜率高于每 token 计算量。" style="max-width:100%;height:auto"></a><figcaption>AFDB-24M 结构 token，原图 Figure 5。左图圆点是各配置最终 checkpoint 的验证交叉熵。七档预算给出 Mₒₚₜ ≈ 5.5023 C^0.4550，Dₒₚₜ ≈ 0.18174 C^0.5450；D 按累计输入 token 计。</figcaption></figure>
+
+同样把预算增加 10 倍，结构图给出的分配约为 **2.85 倍每 token 计算量、3.51 倍输入 token 数**。两组实验的指数反映各自数据、目标词表和观测预算内的趋势。跨图可比较算力分配随预算变化的方向；验证交叉熵衡量的是各自词表上的预测任务，绝对值不宜横向排名。
 
 仓库用 iso-FLOPs 实验研究模型规模、训练数据、batch 和学习率，并保留 Muon / AdamW、冻结与全参训练、ZeRO 和 checkpoint 的工程记录。预算迁移需要按当前激活的模型路径重新计算每 token FLOPs，再由算力预算解析训练 token 数。总参数与 active 参数是两个量，不能直接互换。[1](#ref-1)[5](#ref-5)
 

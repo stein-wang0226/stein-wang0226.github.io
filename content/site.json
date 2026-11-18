@@ -654,6 +654,14 @@
       "url": "/assets/research/my-work/sources.json"
     },
     {
+      "source": "assets/research/my-work/protein-isoflop.png",
+      "url": "/my-work/holon/protein-isoflop.png"
+    },
+    {
+      "source": "assets/research/my-work/structure-isoflop.png",
+      "url": "/my-work/holon/structure-isoflop.png"
+    },
+    {
       "source": "assets/research/my-work/holon-original.html.txt",
       "url": "/assets/research/my-work/holon-original.html.txt"
     },
