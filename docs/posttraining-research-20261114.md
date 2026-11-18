@@ -119,3 +119,57 @@ flow/目标mask/公式/原始短代码共同讲机制，不引入外部图片或
 共19项通过。这些检查是数学/数据核验，不能称模型训练或论文复现。
 
 构建、浏览器与上线验收另记 `docs/validation.md`。
+
+## 2026-11-18：RL 逐步推导与来源续接
+
+本轮在第 02 章补齐问题定义、分层符号表、交互闭环与训练角色分支，
+再展开 REINFORCE、reward-to-go、baseline、critic MSE、方差、有限片段
+GAE、PPO 动作换测度与 RLOO/GRPO 组关系。主讲位置仍唯一；
+系列入口只补导读与学习深链接，不复制推导或历史手册正文。
+原配方、诊断、六幅修订教学图、GAE 边界例与 GRPO 完整组算例继续保留。
+
+原 79 项调研及 2026-11-14 截止日期、旧来源版本和访问/使用日期保留。
+本轮仅在尾部新增以下 2 项数学来源，现共 81 项；不表示旧来源重新访问、
+模型报告重新验证或历史验收适用于新正文。
+
+| 编号 | 来源与版本口径 | 本轮使用与限制 |
+| --- | --- | --- |
+| 80 | [OpenAI Spinning Up · Intro to Policy Optimization](https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html)，2026-11-18 访问，教程网页未固定版本 | 轨迹概率、score lemma、reward-to-go、baseline、采样 loss；教程基础目标是有限时域无折扣，本站初态折扣目标保留外层 `gamma^t` |
+| 81 | [Greensmith、Bartlett、Baxter：Variance Reduction Techniques for Gradient Estimates in Reinforcement Learning](https://jmlr.org/papers/v5/greensmith04a.html)，JMLR 5（2004），2026-11-18 访问 | 最优 baseline 与真实 value 不必相同；本站固定历史、单步向量 score 的协方差迹最小化单独推导，不宣称最小化完整多步梯度协方差 |
+
+GAE 继续使用 [2] `1506.02438v6`，PPO 使用 [1] `1707.06347v2`，
+RLOO 使用 [4] `2402.14740v2`，原 GRPO 版本与编号不变。
+实际使用位置由 `scripts/citations.py` 的 `derive()` 取得：
+装配改写位置时优先取 `original_url`，使用最近的
+`section/article/h2/h3`，不把 h4 或 details 的 ID 猜作引用位置。
+新增来源的冻结历史使用与组织前使用均为空；旧条目只在实际引用位置变化时
+精确更新其使用字段和本轮使用日期，不批量刷新其他来源登记。
+
+### 正文与凭据边界
+
+- T1/T2 交付的第 02 章 SHA-256：
+  `3272afc3ec57839306ceb01e05f08f65fab4f867a8388f6c26e58dd05016e9ee`。
+  T3 不再编辑该章。问题/符号/图与 PG 在第 16–171 行，baseline/MSE/方差
+  在第 172–301 行，GAE/PPO 在第 302–465 行，组证明与图交接在第 466–557 行；
+  `normalization` 起至文末不属本轮正文增补。
+- T3 写集成仅涉及系列入口导读/参考、两条 catalog 的 `summary/updated`、
+  后训练来源登记、本记录及连续性/组织/内容三份精确凭据。
+  连续性保留固定 base `80148053b623c4b6e1fc5a1a062f1113e5039443`、
+  原 `sha256_before` 和旧审阅，追加本轮说明；两账本各自的 `prior_reason`、
+  archive、baseline、保留单位与 destination 不改。
+- 两份不可变基线、冻结原件、旧轮审阅及既有共享脚本/无关审计文档保留。
+  当前 `assets/site/scroll-region.js` 的既有用户改动不归为本轮工作。
+- 本轮证据仅为 T1/T2 源码交付与 T3 局部集成自检。
+  上文“已执行的数学核验”和旧轮构建/浏览器记录均为原范围的历史事实；
+  不作为本轮新推导的独立数学、当前构建或界面通过证据。
+  独立数学 T4 与当前产物/浏览器 T5 另做，本轮不运行训练、构建或浏览器。
+
+### T3 已执行的集成自检
+
+2026-11-18 复用仓库已有虚拟环境 `~/.cache/stein-notes/venv`：
+`python3 scripts/learning_review.py check --verify-git-base` 通过，核对 74 个源的
+实际 Git 基线、冻结/当前 SHA 链及精确凭据；`python3 scripts/citations.py check`
+通过，核对 1122 条来源/版本记录、引用、登记与归档 SHA/长度。
+另通过局部 JSON 逐字段边界检查及源 ID 定位：s02 的 48 个 ID 唯一，
+入口 13 条算法学习链接均对应现存源 ID，ref-1 至 ref-81 连续有序；
+原 79 项登记和两账本各自的 `prior_reason` 保留。以上均非构建或浏览器验收。

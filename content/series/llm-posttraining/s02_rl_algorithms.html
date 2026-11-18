@@ -14,13 +14,71 @@
 <ul><li><strong>原理：</strong>轨迹概率 → 动作梯度 → baseline/GAE → PPO → GRPO。</li><li><strong>变体：</strong>逐项区分优势、ratio、裁剪、分母和采样。</li><li><strong>应用：</strong>论文配方 → 参数联动 → 训练诊断；数字连同条件一起记。</li></ul>
 </section>
 <section id="policy-gradient">
-<figure class="mechanism-map"><figcaption>一条轨迹怎样产生动作梯度</figcaption><ol class="mechanism-chain">
-<li><b>历史 hₜ → 动作 aₜ</b><small>策略采样；保存动作 log-prob</small></li><li><b>环境执行 → 新观察</b><small>观察改变下一状态；不是策略生成 token</small></li><li><b>任务结果 → Aₜ</b><small>reward 经 baseline / 信用分配转成优势</small></li><li><b>Aₜ → 策略更新</b><small>只对可控动作施加 log-policy 梯度</small></li>
-</ol><p class="mechanism-return">↶ 更新后的策略重新采样；环境观察进入上下文，policy mask 通常为 0。</p></figure>
 <h2>从最终成败到动作梯度，中间隔着信用分配</h2>
 <p class="lead">Agent episode 包含策略动作和环境观察。模型只控制动作；最后 reward 要转成哪些动作应增加或减少概率的信号，再决定用怎样的概率比、裁剪和分母完成更新。</p>
-<p><strong>关键问题：</strong>环境测试不能对模型参数求导，怎样把测试成败变成梯度？答案是对<strong>采样概率</strong>求导。设 \(h_t\) 是动作前可见历史、\(a_t\) 是可控动作、\(r_t\) 是执行后的奖励，轨迹含 \(T\) 次决策。简记 \(\pi_t=\pi_\theta(a_t\mid h_t)\)、\(P_t=P(h_{t+1}\mid h_t,a_t)\)；环境转移在本次优化中不依赖 \(\theta\)。</p>
-<p>先定义轨迹式：\(\theta\) 是 actor 参数，\(\tau\) 是含初态、动作与环境观察的完整轨迹，\(p(h_0)\) 是初态分布，\(p_\theta(\tau)\) 是轨迹概率；\(t=0,\ldots,T-1\) 是决策索引，\(\gamma\in[0,1]\) 为无单位奖励折扣，\(R(\tau)\) 是折扣累计回报，\(J\) 是其期望。轨迹求和用于离散路径，连续状态用积分；log 为自然对数，\(\nabla_\theta\) 对 actor 参数求梯度，\(g_t\) 是第 \(t\) 个动作的 log-prob 参数梯度。</p>
+<h3 id="rl-problem-definition">先定义学习问题：模型能控制什么，目标又是什么</h3>
+<p>任务或 prompt \(x\) 来自固定任务分布，例如“修复这个仓库并通过测试”。环境有内部状态 \(s_t\)，模型收到观察 \(o_t\)，在动作前历史 \(h_t\) 上按 \(\pi_\theta(a_t\mid h_t)\) 采样可控动作 \(a_t\)。环境执行动作后产生奖励 \(r_t\)、新观察 \(o_{t+1}\) 和终止信号，再形成 \(h_{t+1}\)。动作可以是一枚生成 token，也可以是一轮工具调用；一段推导内须固定决策单位，不能把工具输出 token 混入策略动作。</p>
+<p>MDP 的状态 \(s_t\) 包含决定环境转移所需的信息，但它未必完全可见。这里用<strong>完整已知交互历史</strong> \(h_t\) 条件化：任务、过去动作与观察、已发生的奖励及时间 \(t\) 都可记入历史；actor 可以只读取其中的上下文字段。有限时域下同一观察在不同剩余预算处的价值可能不同，因此时间不能无故丢失。工具观察参与条件，不是模型选择的动作，policy mask 通常为 0。</p>
+<p>每条轨迹有 \(T\) 次决策，\(t=0,\ldots,T-1\)。任务合同规定成功、失败、合法停止和预算耗尽是否真实终止；训练器暂停收集不自动等于任务结束。以下基础证明优化<strong>有限时域、从初始分布出发的折扣期望回报</strong> \(J(\theta)=\mathbb E_{\tau\sim p_\theta}[R(\tau)]\)，其中 \(R(\tau)=\sum_t\gamma^t r_t\)。可将终止后补成吸收状态、奖励为 0 的有限长度记录。</p>
+<p><strong>前提：</strong>在本次 actor 求导时，任务/初态分布、环境转移机制和固定轨迹上的奖励不直接依赖 \(\theta\)；它们仍会因模型选择了不同动作而产生不同结果。策略可微、动作支持在所讨论参数邻域稳定，相关矩有限，并允许交换求导与求和/期望。主要推导采用离散动作；连续状态的轨迹求和改为积分，需要相应正则条件。若另加直接依赖 actor 的 KL loss，它的梯度须另计，不能混入这条“固定奖励”的证明。</p>
+<h3 id="rl-symbols">分层符号表：先查角色，再查索引和单位</h3>
+<p>表中回报单位记作“奖励单位”；概率、log-prob 与折扣无单位。总表用于跨段查阅，各段仍就近说明必要前提；同字母在不同环节重新使用时，以完整下标或函数参数区分。</p>
+<table>
+<thead><tr><th>层</th><th>符号与索引</th><th>含义</th><th>单位 / 使用环节</th></tr></thead>
+<tbody>
+<tr><td>环境与轨迹</td><td>\(x,s_t,o_t,h_t,a_t,r_t\)</td><td>任务、环境状态、观察、动作前历史、可控动作、执行后的即时奖励</td><td>\(t\) 为决策索引；\(r_t\) 为奖励单位，观察不计 policy 动作</td></tr>
+<tr><td>环境与轨迹</td><td>\(T,t,k,n,N,m,\tau\)</td><td>\(T\) 为本条决策数；\(k\) 为未来决策索引，\(n\) 为 bootstrap 步数；\(N\) 为独立轨迹条数，\(m=1,\ldots,N\) 索引 MC 批次轨迹；\(\tau\) 为完整轨迹</td><td>计数；轨迹内 \(t=0,\ldots,T-1\)，上标 \((m)\) 标识第 \(m\) 条样本</td></tr>
+<tr><td>环境与轨迹</td><td>\(p(h_0),P_t,p_\theta(\tau),\pi_t\)</td><td>初态分布；\(P_t=P(h_{t+1}\mid h_t,a_t)\) 含环境反馈；轨迹概率；\(\pi_t=\pi_\theta(a_t\mid h_t)\)</td><td>概率；只有策略因子直接对 actor 参数求导</td></tr>
+<tr><td>回报与梯度</td><td>\(\gamma,R(\tau),J(\theta),G_t\)</td><td>折扣、初态累计回报及其期望；\(G_t=\sum_{k=t}^{T-1}\gamma^{k-t}r_k\) 从当前步重新起算折扣</td><td>\(\gamma\in[0,1]\) 无单位，其余为奖励单位；\(G_t\) 不是组大小 \(G\)</td></tr>
+<tr><td>回报与梯度</td><td>\(C_t,\theta_0,\mathcal D\)</td><td>当前动作之前的初态折扣奖励和、生成本批数据的固定策略参数、固定 MC 数据集</td><td>\(C_t\) 为奖励单位，\(C_0=0\)；\(\theta_0\) 不是更新后的参数</td></tr>
+<tr><td>回报与梯度</td><td>\(\log,\nabla_\theta,\mathbb E,g_t\)</td><td>自然对数、参数梯度、注明采样分布的期望；\(g_t=\nabla_\theta\log\pi_\theta(a_t\mid h_t)\) 为向量 score</td><td>\(g_t\) 的维度与 \(\theta\) 相同；给定历史时只平均当前动作及后续随机性</td></tr>
+<tr><td>价值与优势</td><td>\(Q^\pi(h,a),V^\pi(h),A^\pi(h,a)\)</td><td>按 \(\pi\) 继续采样的动作价值、策略平均价值及真实优势 \(Q^\pi-V^\pi\)</td><td>奖励单位；有限时域的时间信息含在 \(h\) 中</td></tr>
+<tr><td>价值与优势</td><td>\(b(h),c(h),X_b\)</td><td>只依赖历史的标量 baseline / score lemma 权重；\(X_b=(G_t-b)g_t\) 为单步梯度估计</td><td>\(b,c\) 为奖励单位；不是后文二值开关 \(b_t,c_t\)</td></tr>
+<tr><td>模型与更新</td><td>\(\theta,\phi,\pi_\theta,\pi_{\rm old},\pi_{\rm ref}\)</td><td>当前 actor、critic 参数；当前策略、采样快照、可选冻结 reference</td><td>逻辑角色不等于独立模型份数；共享参数时两种 loss 可更新同一 backbone</td></tr>
+<tr><td>模型与更新</td><td>\(V_\phi,V_{\rm rollout},\hat A_t,\hat V_t,y_t,\operatorname{sg}\)</td><td>当前近似 critic、采样时冻结 value、估计优势、lambda-return 标签、一般固定回归标签；sg 保留数值并停止梯度</td><td>value / 标签为奖励单位；GRPO 标准化优势则无单位；sg 不消除统计相关性</td></tr>
+<tr><td>TD / GAE</td><td>\(\delta_t,\lambda,d_t,b_t,c_t,L\)</td><td>TD 残差、混合参数、真实终止标志、下一 value 的 bootstrap 开关、下一优势的递推开关、有限片段长度</td><td>\(\delta_t\) 为奖励单位；\(\lambda\in[0,1]\)，\(d_t,b_t,c_t\in\{0,1\}\)；\(L\) 为步数</td></tr>
+<tr><td>TD / GAE</td><td>\(G_t^{(n)},A_t^{(n)}\)</td><td>n-step bootstrap 回报及其减冻结当前 value 后的优势估计</td><td>奖励单位；不把含近似 bootstrap 的 \(G_t^{(n)}\) 当作完整 MC 回报 \(G_t\)</td></tr>
+<tr><td>PPO</td><td>\(\rho_t,\bar\rho_t,\epsilon_{\rm low/high},l_{\rm clip},u_{\rm clip}\)</td><td>当前/旧策略的同动作概率比、裁剪比率、相对 1 的下/上裁剪幅度；\(l_{\rm clip},u_{\rm clip}\) 为对应上下界</td><td>均无单位；\(\rho_t\) 不是即时奖励 \(r_t\)，clip 幅度不是组 std 的稳定常数</td></tr>
+<tr><td>PPO</td><td>\(J_{\rm clip},j(\rho,A),\mathbb E_{\rm old},\beta\)</td><td>clipped 代理目标、固定样本比率/优势的单项、旧数据平均、独立 KL 系数</td><td>目标与优势同单位；KL 用自然对数，\(\beta\) 将 KL 项映射到所选目标尺度</td></tr>
+<tr><td>组采样</td><td>\(G,i,j,R_i,\bar R,\sigma_R,\epsilon\)</td><td>同题候选数 \(G&gt;1\)，\(i,j=1,\ldots,G\)；终评、组均值、分母 \(G\) 的总体 std、正的分母稳定常数</td><td>\(G\) 是条数；\(R_i,\bar R,\sigma_R,\epsilon\) 为奖励单位，\(\sigma_R\) 不是 sigmoid</td></tr>
+<tr><td>组采样</td><td>\(A_i^{\rm RLOO},A_i^{\rm GRPO},p\)</td><td>留一均值优势、组中心化/std 优势；Bernoulli 教学例的单次成功概率</td><td>RLOO 为奖励单位，GRPO 为无单位；\(p\) 不是完整策略概率向量</td></tr>
+<tr><td>组采样</td><td>\(\tau_i,\tau_{-i},B_i,S_i,\mathcal D_i\)</td><td>本候选轨迹、其他候选轨迹集合、留一 baseline、整轨迹 score、该轨迹的可控决策索引集合</td><td>\(B_i\) 为奖励单位；\(S_i\) 是向量，不是环境状态 \(s_t\)；环境观察不进入 \(\mathcal D_i\)</td></tr>
+<tr><td>长度与聚合</td><td>\(T_i,T_{\rm fixed},\ell_{it},L_{\rm seq/token/fixed}\)</td><td>候选有效策略 token 数、固定长度标尺、逐 token loss、三种替代聚合；此处 \(t=1,\ldots,T_i\)</td><td>长度是 token 数，padding / 工具观察不计；CISPO 的 \(\ell_{it}\) 后文重新专指 log-prob</td></tr>
+<tr><td>ratio 变体</td><td>\(h_{it},a_{it},A_i,A_{it},s_i,\bar s_i,w_{it}\)</td><td>候选 token 的历史/动作、固定序列/逐 token 优势、GSPO 几何 ratio 及裁剪值、CISPO detached 权重</td><td>ratio / 权重无单位；不是完整轨迹概率比乘积</td></tr>
+<tr><td>门控与算例</td><td>\(\sigma(z),\tau,u,f(\rho),z_i,c_i\)</td><td>sigmoid、Soft SAPO 的正门控斜率、门控值、ratio 变换、softmax logits、\(c_i=\partial J/\partial\log p_i\)</td><td>门控 \(\tau\) 不是轨迹或采样温度；\(c_i\) 不是 GAE 开关 \(c_t\)</td></tr>
+</tbody></table>
+<figure class="mechanism-map" id="rl-interaction-loop" aria-labelledby="rl-interaction-loop-label">
+<figcaption id="rl-interaction-loop-label">交互闭环：一条轨迹怎样记录可控动作与环境反馈</figcaption>
+<ol class="mechanism-chain">
+<li><b>任务 x → 动作前历史 hₜ</b><small>任务、过去观察/动作与时间；提供策略输入</small></li><li><b>πθ → 采样动作 aₜ</b><small>这是模型可控输出；保存动作、mask 与采样 log-prob</small></li><li><b>动作 → 环境执行</b><small>shell / 浏览器 / verifier 接收动作；转移机制不对 actor 反传</small></li><li><b>新观察、rₜ、终止信号</b><small>环境反馈写入 hₜ₊₁；观察不是策略生成 token</small></li>
+</ol>
+<p class="mechanism-return">条件回流：未终止 → hₜ₊₁ → 同一采样策略的下一决策；真实终止 → 输出完整轨迹，不再采样动作。收集暂停 → 保留边界与有效下一 value，是否续段另定。</p>
+<p class="mechanism-note">这幅图只画环境交互，不把 reward → 优势 → 参数更新冒充环境转移。下图单独画训练；完成更新后，新策略快照回到此图重新采样。</p>
+</figure>
+<figure class="mechanism-map" id="rl-training-branches" aria-labelledby="rl-training-branches-label">
+<figcaption id="rl-training-branches-label">训练分支：共用轨迹，优势准备、actor 与 critic 各有数据入口</figcaption>
+<p><strong>共用输入 A：</strong>πold 的固定快照采样并记录 hₜ、aₜ、rₜ、终止/片段边界、policy mask、old log-prob。记录分别送入优势准备、actor 重算与 critic 回归；三者不是一条串行更新链。</p>
+<ol class="mechanism-chain mechanism-compare">
+<li><b>A → 选择优势准备分支</b><small>下面两路是替代方案，不是先跑 PPO 再跑 GRPO</small></li>
+<li><b>B₁：PPO / learned baseline</b><small>A + 冻结 Vrollout → TD / GAE → Âₜ；或完整 MC 回报减 baseline。MC / lambda-return 同时提供 critic 固定标签 yₜ。</small></li>
+<li><b>B₂：GRPO / 同题奖励组</b><small>A 按同一 prompt 分组 → 候选终评 Rᵢ → 中心化 / std → 组优势；用奖励组替代 learned baseline，不需 critic / TD。</small></li>
+<li><b>B₁ 或 B₂ → sg(Â) → actor</b><small>在进入 actor 支路前冻结优势；baseline / 信用分配把 reward 变成动作权重，不向估计器反传 actor loss。</small></li>
+</ol>
+<p><strong>actor 支路（A 与固定优势在 clip 处汇合）：</strong></p>
+<ol class="mechanism-chain">
+<li><b>A 的 hₜ、aₜ → 当前 πθ</b><small>重算同一可控动作的 log-prob；不是重新生成一条动作</small></li><li><b>current / frozen old → ρₜ</b><small>A 的 old log-prob 只作冻结分母；GRPO 同样可复用此概率比</small></li><li><b>ρₜ + sg(Â) → min / clip</b><small>优势来自 B₁ 或 B₂；按有效策略动作 mask 与所选分母聚合</small></li><li><b>负代理目标 → actor loss</b><small>梯度流向当前 θ；不更新 old、reference 或优势标签</small></li>
+</ol>
+<p><strong>critic 支路（仅 learned-value 路线；固定标签在 MSE 处汇合）：</strong></p>
+<ol class="mechanism-chain">
+<li><b>A 的动作前历史 hₜ</b><small>固定 MC / TD / lambda-return 标签 yₜ 另送 MSE，不作为当前预测的输入</small></li><li><b>hₜ → 当前 Vφ(hₜ)</b><small>这是需要反传的预测；区别于生成标签的冻结 Vrollout</small></li><li><b>Vφ + sg(yₜ) → value loss</b><small>预测对固定标签做平方误差回归；不让标签跟随当前 critic 一起移动</small></li><li><b>value loss → 更新 φ</b><small>GRPO 的组优势路线跳过整条 critic 支路；共享 backbone 可同时接收两种 loss</small></li>
+</ol>
+<table><thead><tr><th>独立可选角色</th><th>真实输入 → 输出 / 接入点</th></tr></thead><tbody>
+<tr><td>奖励来源</td><td>任务产物 / 环境结果 → 规则 verifier，或冻结 reward model → A 的 rₜ；规则奖励不要求 reward model。</td></tr>
+<tr><td>reference KL</td><td>A 的历史/动作 → 冻结 πref 与当前/采样策略的概率 → KL 信号；可按配方进入采样奖励，或作为独立 actor 正则 loss。ratio 分母仍是 πold；若 KL 惩罚计入 rₜ，critic 的固定回报标签也须沿用同一奖励口径。</td></tr>
+</tbody></table>
+<p class="mechanism-return">θ 更新 → 新采样快照 → 上图交互闭环。图表示逻辑角色，不要求每个角色各占一份模型；sg 只阻断梯度路径，不自动满足 baseline 的统计独立条件。</p>
+</figure>
+<p><strong>关键问题：</strong>环境测试不能对模型参数求导，怎样把测试成败变成梯度？答案是对<strong>采样概率</strong>求导。沿用表中 \(\pi_t,P_t\) 的简记，先写出轨迹概率与折扣目标：</p>
 <div class="reading-math" role="math" aria-label="轨迹概率与期望回报">\[
 \begin{aligned}
 p_\theta(\tau)&=p(h_0)\prod_{t=0}^{T-1}\pi_t P_t,\\
@@ -28,68 +86,301 @@ R(\tau)&=\sum_{t=0}^{T-1}\gamma^t r_t,\\
 J(\theta)&=\sum_\tau p_\theta(\tau)R(\tau).
 \end{aligned}
 \]</div>
-<p class="math-notation"><strong>符号：</strong>\(\theta\) 是策略的可训练参数；\(\tau\) 是一条完整轨迹，\(p_\theta(\tau)\) 是它的概率；\(p(h_0)\) 是初态分布。\(t=0,\ldots,T-1\) 索引决策，\(\gamma\in[0,1]\) 是折扣因子，\(R\) 是累计回报，\(J\) 是其期望。这里的求和遍历离散轨迹；连续状态下改用积分。\(\nabla_\theta\) 表示对参数求梯度，\(\mathbb E_{\tau\sim p_\theta}\) 表示按该策略采样轨迹后取平均。</p>
-<p>用 \(\nabla p=p\nabla\log p\) 把概率的导数改写成期望。再对轨迹概率取log：乘积变求和；初态和环境项的导数为零，只留下策略动作。这就是REINFORCE的score-function估计，不需要对shell、浏览器或verifier反传。</p>
+<h3 id="reinforce-log-derivative">REINFORCE：每个等号为什么成立</h3>
+<p>先固定一条轨迹 \(\tau\)。即使奖励由模型所选动作间接决定，在<strong>固定这条轨迹</strong>求导时，奖励 \(R(\tau)\)、初态分布和环境因子都不直接依赖 \(\theta\)。在正概率、稳定支持上，自然对数的导数给出 \(\nabla_\theta\log p_\theta(\tau)=\nabla_\theta p_\theta(\tau)/p_\theta(\tau)\)，因此可以乘回采样概率，把概率导数改写成期望：</p>
 <div class="reading-math" role="math" aria-label="REINFORCE逐步推导">\[
 \begin{aligned}
 \nabla_\theta J
+ &=\sum_\tau\nabla_\theta[p_\theta(\tau)R(\tau)]\\
  &=\sum_\tau R(\tau)\nabla_\theta p_\theta(\tau)\\
+ &=\sum_\tau p_\theta(\tau)R(\tau)
+       \frac{\nabla_\theta p_\theta(\tau)}{p_\theta(\tau)}\\
+ &=\sum_\tau p_\theta(\tau)R(\tau)
+       \nabla_\theta\log p_\theta(\tau)\\
  &=\mathbb E_{\tau\sim p_\theta}\!
-   \left[R(\tau)\nabla_\theta\log p_\theta(\tau)\right],\\
+   \left[R(\tau)\nabla_\theta\log p_\theta(\tau)\right].
+\end{aligned}
+\]</div>
+<p>依次使用：求导与轨迹求和可交换；\(\nabla_\theta R(\tau)=0\)；乘除同一个正的 \(p_\theta(\tau)\)；log-derivative 恒等式；最后按期望的定义收起概率加权求和。连续轨迹部分改为积分，而不是让环境对 actor 可微。接着展开 log 轨迹概率：</p>
+<div class="reading-math" role="math" aria-label="log 轨迹概率的策略与环境分解">\[
+\begin{aligned}
+\log p_\theta(\tau)
+ &=\log p(h_0)+\sum_{t=0}^{T-1}
+   [\log\pi_\theta(a_t\mid h_t)+\log P_t],\\
 g_t&=\nabla_\theta\log\pi_\theta(a_t\mid h_t),\\
-\nabla_\theta\log p_\theta(\tau)&=\sum_{t=0}^{T-1}g_t,\\
+\nabla_\theta\log p_\theta(\tau)
+ &=0+\sum_{t=0}^{T-1}(g_t+0)
+ =\sum_{t=0}^{T-1}g_t,\\
 \nabla_\theta J&=\mathbb E_{\tau\sim p_\theta}\!
    \left[R(\tau)\sum_{t=0}^{T-1}g_t\right].
 \end{aligned}
 \]</div>
+<p>乘积取 log 后变成求和；两个 0 分别来自固定初态和固定环境机制。梯度只穿过策略动作的概率，不穿过 shell、浏览器、verifier 或工具观察。这就是 score-function 估计，不要求环境测试可微。<a href="index.html#ref-80">[80]</a></p>
+<h4 id="reinforce-mc-estimator">N 条独立轨迹如何成为梯度估计和负号 loss</h4>
+<p>令 \(\theta_0\) 是生成本批数据的固定策略参数，从 \(p_{\theta_0}\) 独立采样 \(N\) 条轨迹组成 \(\mathcal D\)。上标 \((m)\) 标识第 \(m\) 条，\(T^{(m)}\) 是它的决策数。用样本均值替换期望：</p>
+<div class="reading-math" role="math" aria-label="独立轨迹 Monte Carlo 梯度与固定权重 actor loss">\[
+\begin{aligned}
+\widehat{\nabla J}(\theta_0)
+ &=\frac1N\sum_{m=1}^N R(\tau^{(m)})
+   \sum_{t=0}^{T^{(m)}-1}g_t^{(m)}(\theta_0),\\
+\mathcal L_{\rm actor}(\theta;\mathcal D)
+ &=-\frac1N\sum_{m=1}^N\sum_{t=0}^{T^{(m)}-1}
+   \operatorname{sg}(R(\tau^{(m)}))
+   \log\pi_\theta(a_t^{(m)}\mid h_t^{(m)}),\\
+-\left.\nabla_\theta\mathcal L_{\rm actor}\right|_{\theta=\theta_0}
+ &=\widehat{\nabla J}(\theta_0).
+\end{aligned}
+\]</div>
+<p>每条独立轨迹的贡献都有同一目标梯度的期望，因此除以 \(N\) 的均值也是无偏估计；有限样本仍有噪声。loss 的负号使梯度下降对应目标上升，sg 保证回报只是固定权重。<strong>这个样本 loss 不是对所有 \(\theta\) 都等于 \(-J(\theta)\)</strong>：上面的期望对应关系在采样参数 \(\theta_0\) 处成立，多轮改参数后复用旧数据要另讨论<a href="#ppo-ratio">PPO 局部代理</a>。下一段把每个动作的整轨迹权重 \(R\) 换成 \(\gamma^tG_t\)，再可按<a href="#baseline-proof">baseline 证明</a>换成 \(\gamma^t(G_t-b(h_t))\)。</p>
 <h3 id="reward-to-go">为什么只用当前动作之后的奖励</h3>
 <!-- READING:RL-DIAGRAM:2 -->
-<p>给定 \(h_t\)，过去奖励已确定，与当前动作的采样无关。它乘上score-function的条件期望为零，可以删掉而不改期望。\(k\) 遍历从当前到末端的决策，\(G_t\) 是从当前步起算的折扣未来回报，令 \(G_t=\sum_{k=t}^{T-1}\gamma^{k-t}r_k\)。下式 \(c(h_t)\) 是只依赖历史的标量，\(a\) 遍历该历史下可选动作；期望给定当前历史按策略采样，不是跨任意状态等权平均：</p>
+<p>动作 \(a_t\) 不可能改变已经发生的奖励。把初态折扣总回报拆成两部分：\(C_t\) 是当前动作之前的奖励和，\(G_t\) 是从当前步重新起算折扣的未来回报，空和 \(C_0=0\)：</p>
+<div class="reading-math" role="math" aria-label="总回报分为过去奖励与折扣未来回报">\[
+C_t=\sum_{k=0}^{t-1}\gamma^k r_k,\qquad
+G_t=\sum_{k=t}^{T-1}\gamma^{k-t}r_k,\qquad
+R(\tau)=C_t+\gamma^tG_t.
+\]</div>
+<p>给定完整已知历史 \(h_t\)，过去奖励与时间已经确定，因此 \(C_t\) 是历史函数；即使 actor 的实际上下文没有输入全部奖励记录，也可按这份完整历史条件化。能删掉过去奖励，靠的是下面的零均值，而不是“过去奖励数值很小”。</p>
+<h4 id="reward-score-lemma">score lemma：动作概率约分后为什么只剩零</h4>
+<p>令 \(c(h_t)\) 是不依赖当前动作的固定标量，\(a\) 遍历给定历史下稳定的动作支持。期望按该历史下的策略概率加权，不是把不同状态或动作等权平均：</p>
 <div class="reading-math" role="math" aria-label="去除过去奖励后的梯度">\[
 \begin{aligned}
-\mathbb E_{a_t\sim\pi_\theta}[c(h_t)g_t]
+\mathbb E[c(h_t)g_t\mid h_t]
+ &=\sum_a\pi_\theta(a\mid h_t)c(h_t)
+      \nabla_\theta\log\pi_\theta(a\mid h_t)\\
+ &=\sum_a\pi_\theta(a\mid h_t)c(h_t)
+      \frac{\nabla_\theta\pi_\theta(a\mid h_t)}
+           {\pi_\theta(a\mid h_t)}\\
+ &=c(h_t)\sum_a\nabla_\theta\pi_\theta(a\mid h_t)\\
  &=c(h_t)\nabla_\theta\sum_a\pi_\theta(a\mid h_t)\\
- &=c(h_t)\nabla_\theta 1=0,\\
-\nabla_\theta J&=\mathbb E\!\left[\sum_t\gamma^t G_t g_t\right].
+ &=c(h_t)\nabla_\theta 1=0.
+\end{aligned}
+\]</div>
+<p>这里先展开条件期望，再用 log 导数；正概率支持上的采样概率与分母约掉，历史标量可提出求和，最后用概率归一化。令 \(c(h_t)=C_t\)，再用全期望消去每步的过去奖励：</p>
+<div class="reading-math" role="math" aria-label="全期望消去过去奖励并保留外层折扣">\[
+\begin{aligned}
+\mathbb E[R(\tau)g_t]
+ &=\mathbb E[(C_t+\gamma^tG_t)g_t]\\
+ &=\mathbb E[\mathbb E[C_tg_t\mid h_t]]
+   +\mathbb E[\gamma^tG_tg_t]\\
+ &=0+\mathbb E[\gamma^tG_tg_t],\\
+\nabla_\theta J
+ &=\mathbb E\!\left[\sum_{t=0}^{T-1}\gamma^tG_tg_t\right].
 \end{aligned}
 \]</div>
 <p>这是有限时域折扣回报的精确形式，外面的 \(\gamma^t\) 不能随意省略。LLM终局奖励教学常取 \(\gamma=1\)，或算法另定义状态加权目标；应说明具体口径。工具观察参与下一历史，但不是策略生成的动作。</p>
 <h3 id="baseline-proof">baseline为什么能减，critic又学什么</h3>
+<style>
+.rl-baseline-diagram-canvas > figure[data-rl-diagram="1"] > svg {
+  display: block;
+  width: 100%;
+  max-width: none !important;
+  height: auto;
+}
+</style>
+<p>图内可左右滚动查看全部说明。</p>
+<div id="baseline-diagram-scroll" class="rl-baseline-diagram-scroll" role="region" aria-label="baseline价值分解图，可左右滚动查看全部说明" tabindex="0" style="max-width:100%;overflow-x:auto">
+<div class="rl-baseline-diagram-canvas" style="width:825px;min-width:825px">
 <!-- READING:RL-DIAGRAM:1 -->
-<p>把上式中的 \(c(h_t)\) 换成 \(b(h_t)\)，即可减去一个<strong>不依赖当前动作</strong>的baseline。计算actor loss时将它作为固定权重；若不加区分地把baseline分支也反传，便不再是这条推导。</p>
-<p>\(Q^\pi(h,a)\) 是策略 \(\pi\) 在历史 \(h\) 先执行动作 \(a\) 后的期望未来回报，\(V^\pi(h)\) 是按该策略动作概率平均的状态价值，\(A^\pi(h,a)\) 是两者之差；单位均与回报相同。critic 的 \(V_\phi\) 是参数 \(\phi\) 的价值估计，\(\phi\) 不同于 actor 的 \(\theta\)。</p>
+</div>
+</div>
+<p><strong>结论与问题：</strong>给每个动作的回报减去只依赖动作前历史的 baseline，可以保持 on-policy 策略梯度的<strong>期望</strong>，但不保证降低方差。这里 \(h_t\) 是完整已知历史，\(a_t\sim\pi_\theta(\cdot\mid h_t)\) 是当前离散动作，\(g_t=\nabla_\theta\log\pi_\theta(a_t\mid h_t)\) 是向量 score，\(G_t=\sum_{k=t}^{T-1}\gamma^{k-t}r_k\) 是按该策略继续采样的未来回报；\(b(h_t)\) 为奖励同单位的标量。无需引用前一条等式也能证明它为什么可减。前置定义可回到<a href="#rl-problem-definition">学习问题</a>与<a href="#reward-to-go">score lemma / reward-to-go</a>。<a href="index.html#ref-80">[80]</a></p>
+<p>在本小节中，\(\theta\) 是 actor 参数，\(t=0,\ldots,T-1\) 索引有限条决策，\(\gamma\in[0,1]\) 是固定折扣，\(r_t\) 是执行后的奖励。目标为 \(J(\theta)=\mathbb E_{\tau\sim p_\theta}[\sum_t\gamma^t r_t]\)，初态分布、环境机制与固定轨迹上的奖励不直接依赖 actor 参数。以下带 baseline 的等式针对这个初态折扣目标，保留外层 \(\gamma^t\)。</p>
+<p><strong>条件：</strong>固定历史、采样策略和本批所用 baseline 估计器后，baseline 不依赖当前动作；条件动作分布仍为 \(\pi_\theta\)。策略对 \(\theta\) 可微，在所讨论邻域具有稳定支持；期望和梯度可交换，相关一阶矩存在，讨论方差时还需二阶矩有限。若估计器随机，可条件化于独立训练数据得到同一证明；不能用本样本的动作或未来 reward 拟合一个相关 baseline 后，仅凭 detach 就声称无偏。</p>
+<div class="reading-math" role="math" aria-label="baseline 条件期望的完整零均值证明">\[
+\begin{aligned}
+\mathbb E[g_t b(h_t)\mid h_t]
+&=\sum_a\pi_\theta(a\mid h_t)b(h_t)
+       \nabla_\theta\log\pi_\theta(a\mid h_t)\\
+&=\sum_a\pi_\theta(a\mid h_t)b(h_t)
+       \frac{\nabla_\theta\pi_\theta(a\mid h_t)}
+            {\pi_\theta(a\mid h_t)}\\
+&=b(h_t)\sum_a\nabla_\theta\pi_\theta(a\mid h_t)\\
+&=b(h_t)\nabla_\theta\sum_a\pi_\theta(a\mid h_t)
+ =b(h_t)\nabla_\theta 1=0.
+\end{aligned}
+\]</div>
+<ol>
+<li>给定 \(h_t\)，用当前动作的采样概率展开条件期望；\(a\) 遍历该历史下的稳定动作支持。</li>
+<li>在正概率支持上使用 \(\nabla\log\pi=\nabla\pi/\pi\)，采样概率与分母约掉。</li>
+<li>baseline 对所有当前动作相同，所以可提出动作求和；这里只对策略概率求导，不对 baseline 求导。</li>
+<li>可交换求导与求和，再由每个固定历史下的概率归一化 \(\sum_a\pi_\theta(a\mid h_t)=1\) 得到零。</li>
+</ol>
+<p>再用<strong>全期望</strong>：\(\mathbb E[\gamma^t b(h_t)g_t]=\mathbb E[\gamma^t\mathbb E[b(h_t)g_t\mid h_t]]=0\)。时间 \(t\) 已包含在历史中；对有限个决策相加，即得到带 baseline 的完整梯度：</p>
+<div class="reading-math" role="math" aria-label="带 baseline 的有限时域折扣策略梯度">\[
+\begin{aligned}
+\nabla_\theta J(\theta)
+&=\mathbb E_{\tau\sim p_\theta}
+  \left[\sum_{t=0}^{T-1}\gamma^t G_t g_t\right]\\
+&=\mathbb E_{\tau\sim p_\theta}
+  \left[\sum_{t=0}^{T-1}\gamma^t
+        \bigl(G_t-b(h_t)\bigr)g_t\right].
+\end{aligned}
+\]</div>
+<p><strong>统计条件与反传条件是两件事。</strong>actor 把回报、baseline 或估计优势作为固定权重；否则对 \((G_t-b)\log\pi_\theta\) 求导还会产生 baseline 分支的额外项，不再是此 score 估计。即使 actor/critic 共享 backbone，sg 也只切断权重路径；要保证上述期望，可以先冻结估计器再采集新 on-policy 数据，或采用满足条件独立的样本拆分。对同批样本拟合再冻结，不自动满足零均值证明的统计前提。</p>
+<h4 id="baseline-value-advantage">真实优势、MC 样本和近似 value：不能写成一个量</h4>
+<p>\(Q^\pi(h,a)\) 是在历史 \(h\) 执行动作 \(a\)，随后一直按同一策略 \(\pi\) 采样的期望未来回报；\(V^\pi(h)\) 按该策略的动作分布平均 \(Q^\pi\)，\(A^\pi(h,a)\) 是两者之差。它们的单位与回报相同，时间信息含在 \(h\) 中。critic 的 \(V_\phi\) 是参数 \(\phi\) 的近似预测，不是定义上的真值；\(\phi,\theta\) 区分职责，不要求共享 backbone 的参数完全不重叠。</p>
 <div class="reading-math" role="math" aria-label="价值与优势">\[
 Q^\pi(h,a)=\mathbb E[G_t\mid h_t=h,a_t=a],\quad
 V^\pi(h)=\mathbb E_{a\sim\pi}[Q^\pi(h,a)],\quad
 A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 \]</div>
-<p>critic用数据拟合未来回报，例如最小化 \((V_\phi(h_t)-G_t)^2\)，再给actor提供baseline。一个好的baseline通常降方差；<strong>任意baseline都不保证降方差</strong>，价值函数也不一定是score加权意义下的最优baseline。</p>
-<p class="math-notation"><strong>概念：</strong>\(G_t\) 是从第 \(t\) 步开始的回报，\(g_t\) 是该动作的 log-prob 梯度；\(Q^\pi\) 是指定动作后的期望回报，\(V^\pi\) 是按策略平均动作后的状态价值，\(A^\pi\) 是两者之差。\(\phi\) 是 critic 参数，区别于 actor 的 \(\theta\)；单步例中的 \(\sigma(z)=1/(1+e^{-z})\) 是 sigmoid。</p>
+<p>\(G_t\) 是 \(Q^\pi(h_t,a_t)\) 的一个<strong>Monte Carlo 回报样本</strong>，不是它的数值真值。若 baseline 恰为真实 \(V^\pi\)，则 MC 优势样本的条件均值是正式优势；若使用本批固定的近似 \(V_\phi\)，则一般不是：</p>
+<div class="reading-math" role="math" aria-label="真实 value 与近似 critic 的 MC 优势条件均值">\[
+\begin{aligned}
+\mathbb E[G_t-V^\pi(h_t)\mid h_t,a_t]
+ &=Q^\pi(h_t,a_t)-V^\pi(h_t)=A^\pi(h_t,a_t),\\
+\hat A_t^{\rm MC}&=G_t-V_\phi(h_t),\\
+\mathbb E[\hat A_t^{\rm MC}\mid h_t,a_t]
+ &=Q^\pi(h_t,a_t)-V_\phi(h_t)\\
+ &=A^\pi(h_t,a_t)+V^\pi(h_t)-V_\phi(h_t).
+\end{aligned}
+\]</div>
+<p>最后一项说明 critic 误差改变了“优势估计”的条件均值；但它仍只是历史函数，因此<strong>满足 baseline 条件的完整 MC 回报减近似 value，仍保持此 on-policy 梯度的期望</strong>。这不等于任意 TD / GAE 都无偏：bootstrap 还用近似 value 替换了尚未采样的未来回报，误差来源不同。下一节继续说明<a href="#gae-full-example">两步 GAE 的固定目标与损失</a>。</p>
+<h4 id="critic-mse-proof">critic 为什么做 MSE：从平方展开到条件期望</h4>
+<p>固定历史 \(h_t=h\) 和生成回报的策略 \(\pi\)，把预测看作待选标量 \(c\)，而不是先假设网络一定能拟合真值。设 \(\mu(h)=\mathbb E[G_t\mid h_t=h]=V^\pi(h)\)，并假定 \(\mathbb E[G_t^2\mid h_t=h]&lt;\infty\)。平方误差的条件期望为：</p>
+<div class="reading-math" role="math" aria-label="MSE 最优预测的平方展开与一二阶导数">\[
+\begin{aligned}
+\mathcal L_h(c)
+&=\mathbb E[(G_t-c)^2\mid h_t=h]\\
+&=\mathbb E[G_t^2\mid h_t=h]-2c\,\mu(h)+c^2\\
+&=\operatorname{Var}(G_t\mid h_t=h)+(c-\mu(h))^2,\\
+\frac{d\mathcal L_h}{dc}&=2(c-\mu(h)),\qquad
+\frac{d^2\mathcal L_h}{dc^2}=2>0,\\
+c^\ast(h)&=\mu(h)=V^\pi(h).
+\end{aligned}
+\]</div>
+<p>第一步展开平方，用期望的线性性把固定 \(c\) 提出；补上再减去 \(\mu^2\)，得到“不可约回报方差 + 预测偏离条件均值的平方”。一阶导数为零时 \(c=\mu\)，正二阶导数保证它是唯一全局最小值。这证明的是<strong>固定分布、可自由选择预测值时的理想 MSE 目标</strong>，不保证有限样本、受限网络、优化未收敛或持续变动的策略能达到 \(V^\pi\)；也不证明它是梯度方差最优 baseline。</p>
+<p>实际 critic 用 \(V_\phi(h_t)\) 对固定标签 \(y_t\) 回归，常取 \(\mathcal L_{\rm critic}=\frac12\operatorname{mean}_t(V_\phi(h_t)-\operatorname{sg}(y_t))^2\)。完整 MC 标签是 \(y_t=G_t\)；TD 标签包含冻结下一 value；lambda-return 标签可取 \(\hat V_t=V_{\rm rollout}(h_t)+\hat A_t\)。只有在标签条件均值确为 \(V^\pi\) 的口径下，上述最优预测才等于真实 value；近似 bootstrap 标签的 MSE 最优值首先是<strong>该标签</strong>的条件均值。</p>
+<p>actor 的单决策 MC loss 项可写成 \(-\gamma^t\operatorname{sg}(\hat A_t^{\rm MC})\log\pi_\theta(a_t\mid h_t)\)。在生成该批数据的策略参数处，对这些固定权重项求负梯度并按轨迹聚合，其期望对应上述 on-policy 表达式；多轮改变参数后复用数据则需另外讨论代理目标。它不是对环境反传。critic loss 只对当前预测求导，标签停止梯度。共享 backbone 可以分别接收 actor 和 critic 两种参数梯度，但不通过 actor 的优势权重反传到 critic 标签。</p>
+<h4 id="baseline-variance-example">比较的是梯度估计方差，不是回报平移</h4>
+<p>分析对象为 \(X_b=(G_t-b)g_t\)。固定历史下，减去常数不会改变标量回报的方差：\(\operatorname{Var}(G_t-b)=\operatorname{Var}(G_t)\)；但乘上与动作、回报相关的 score 后，\(X_b\) 的二阶矩会变。一个好的 baseline 通常降方差；<strong>任意 baseline 都不保证降方差</strong>，真实 value 也不一定是 score 加权意义下的最优值。</p>
+<p>保留单步 Bernoulli 构造：\(p=\sigma(\theta)=1/(1+e^{-\theta})=0.25\)，成功奖励 2、失败奖励 0；单步 \(G_0=R\)，无后续环境随机奖励。成功 score 为 \(1-p=0.75\)，失败 score 为 \(-p=-0.25\)，真实价值 \(V=2p=0.5\)。以下都是精确枚举的<strong>解析教学值</strong>，不是训练实测。</p>
 <table><thead><tr><th>可复算的单步例子</th><th>成功，概率0.25</th><th>失败，概率0.75</th></tr></thead><tbody>
 <tr><td>\(p=\sigma(\theta)\)，成功奖励2、失败奖励0</td><td>\(\nabla\log p=0.75\)</td><td>\(\nabla\log(1-p)=-0.25\)</td></tr>
 <tr><td>原始估计 \(R\nabla\log\pi\)</td><td>1.5</td><td>0</td></tr>
 <tr><td>减 \(b=0.5\) 后的估计</td><td>1.125</td><td>0.125</td></tr></tbody></table>
-<p>两种估计的均值都是 \(0.375=\nabla_\theta(2p)\)；方差分别为0.421875和0.1875。这里失败样本的梯度可以为正，但<strong>期望更新</strong>仍正确；单次样本不等于确定性“赏罚”。代码任务的稀疏0/1终评同样要靠多次采样建立可靠信号。</p>
+<p>任意固定 \(b\) 的成功估计 \(x_s=0.75(2-b)\)，失败估计 \(x_f=0.25b\)。按概率加权，\(\mathbb E[X_b]=0.25x_s+0.75x_f=0.375\)；二阶矩与方差必须继续按同一概率计算：</p>
+<div class="reading-math" role="math" aria-label="Bernoulli 梯度估计的均值、二阶矩和方差">\[
+\begin{aligned}
+\mathbb E[X_b]
+ &=0.25\cdot0.75(2-b)+0.75\cdot0.25b
+ =0.375=\nabla_\theta(2p),\\
+\mathbb E[X_b^2]
+ &=0.25[0.75(2-b)]^2+0.75(0.25b)^2,\\
+\operatorname{Var}(X_b)
+ &=\mathbb E[X_b^2]-(0.375)^2
+ =\mathbb E[X_b^2]-0.140625.
+\end{aligned}
+\]</div>
+<table><thead><tr><th>固定 baseline</th><th>成功 / 失败估计</th><th>概率加权均值</th><th>二阶矩的计算</th><th>方差</th></tr></thead><tbody>
+<tr><td>\(b=0\)</td><td>1.5 / 0</td><td>\(0.25(1.5)+0.75(0)=0.375\)</td><td>\(0.25(1.5)^2+0.75(0)^2=0.5625\)</td><td>0.421875</td></tr>
+<tr><td>\(b=V=0.5\)</td><td>1.125 / 0.125</td><td>\(0.25(1.125)+0.75(0.125)=0.375\)</td><td>\(0.25(1.125)^2+0.75(0.125)^2=0.328125\)</td><td>0.1875</td></tr>
+<tr><td>\(b=1.5\)</td><td>0.375 / 0.375</td><td>\(0.25(0.375)+0.75(0.375)=0.375\)</td><td>\(0.25(0.375)^2+0.75(0.375)^2=0.140625\)</td><td>0</td></tr>
+<tr><td>\(b=4\)</td><td>−1.5 / 1</td><td>\(0.25(-1.5)+0.75(1)=0.375\)</td><td>\(0.25(-1.5)^2+0.75(1)^2=1.3125\)</td><td>1.171875</td></tr>
+</tbody></table>
+<p>前两种估计的均值仍是原来的 0.375，方差为 0.421875 / 0.1875；\(b=4\) 则把方差增大到 1.171875。这里失败样本的梯度可以为正，但<strong>期望更新</strong>仍正确；单次样本不等于确定性“赏罚”，也不可能让所有动作概率同时增大，因为概率必须归一化。代码任务的稀疏 0/1 终评同样要靠多次采样建立可靠信号。</p>
+<details id="baseline-optimal-local">
+<summary>进阶：固定历史、单步向量梯度的最优 baseline 为什么不一定是 V</summary>
+<p>固定历史 \(h_t=h\)，只分析这一决策的向量估计 \(X_b=(G_t-b)g_t\)，用协方差的迹（各参数分量方差之和）衡量波动。假定所需二阶矩有限，且 \(\mathbb E[\|g_t\|^2\mid h]&gt;0\)；\(\|\cdot\|\) 是欧氏范数。零均值 baseline 证明使 \(\mu_X=\mathbb E[X_b\mid h]=\mathbb E[G_tg_t\mid h]\) 与 \(b\) 无关，因此只需最小化二阶矩 \(M_h(b)\)：</p>
+<div class="reading-math" role="math" aria-label="单步协方差迹和 score 加权 baseline 的完整推导">\[
+\begin{aligned}
+\operatorname{tr}\operatorname{Cov}(X_b\mid h)
+ &=\mathbb E[\|X_b\|^2\mid h]-\|\mu_X\|^2,\\
+M_h(b)&=\mathbb E[(G_t-b)^2\|g_t\|^2\mid h]\\
+ &=\mathbb E[G_t^2\|g_t\|^2\mid h]
+   -2b\,\mathbb E[G_t\|g_t\|^2\mid h]
+   +b^2\mathbb E[\|g_t\|^2\mid h],\\
+\frac{dM_h}{db}
+ &=-2\mathbb E[G_t\|g_t\|^2\mid h]
+   +2b\,\mathbb E[\|g_t\|^2\mid h],\\
+\frac{d^2M_h}{db^2}&=2\mathbb E[\|g_t\|^2\mid h]>0,\\
+b^\ast(h)&=
+\frac{\mathbb E[G_t\|g_t\|^2\mid h_t=h]}
+     {\mathbb E[\|g_t\|^2\mid h_t=h]}.
+\end{aligned}
+\]</div>
+<p>每种动作的回报被 score 平方范数加权，所以这个最优值一般不同于 MSE 的无 score 权重均值 \(V^\pi(h)=\mathbb E[G_t\mid h]\)。只有满足相应加权均值等于普通均值的条件时二者才一致。若分母为 0，score 几乎处处为零，此局部问题不需要选择唯一 baseline。<a href="index.html#ref-81">[81]</a></p>
+<div class="reading-math" role="math" aria-label="单步例的最优 baseline 精确复算">\[
+b^\ast
+=\frac{0.25\cdot2\cdot(0.75)^2+0.75\cdot0\cdot(-0.25)^2}
+       {0.25(0.75)^2+0.75(-0.25)^2}
+=\frac{0.28125}{0.1875}=1.5.
+\]</div>
+<p>本例 \(b^\ast=1.5\) 恰使成功与失败的梯度估计都为 0.375，故方差为 0；这是单步、确定性奖励构造的特殊结果，不能外推到一般任务。此式只最小化<strong>固定历史、局部单步</strong>的协方差迹，不宣称最小化完整多步 \(\sum_t\gamma^t(G_t-b(h_t))g_t\) 的方差；后者还包含跨步协方差。固定步的 \(\gamma^t\) 只是统一缩放，不给一般省略外层折扣提供理由。</p>
+</details>
 <p>对教学代码任务，最终测试全通过为 1、真实任务失败为 0；删测试文件不能算成功。将整条成功路径都加概率是粗粒度信用：它可能连带强化一次多余读取、错误补丁和后续恢复。细化信用要额外信息，而不只是改优化器。reward 的内容见<a href="s04_environment_reward_credit.html">第四章</a>。</p>
 <p>环境输出不是策略选择，因此通常不进入 policy loss 的 response mask。环境失败是否算任务失败也需先定义；不能让基础设施宕机的 rollout 变成模型“动作不好”的标签。</p>
 </section>
 <section id="ppo-gae">
-<figure class="mechanism-map"><figcaption>PPO：价值估计与策略更新的两条支路</figcaption><ol class="mechanism-chain">
-<li><b>πold 采样轨迹</b><small>保存 reward、动作和 old log-prob</small></li><li><b>V → δₜ → GAE</b><small>critic 学回报；δₜ 混合成 Âₜ</small></li><li><b>πθ / πold → ratio</b><small>当前 actor 重算同一动作概率</small></li><li><b>ratio × Âₜ → clip</b><small>按优势符号限制继续推动更新</small></li>
-</ol><p class="mechanism-return">两条更新：actor 优化 clipped surrogate；critic 拟合回报。reference KL 是独立设计项。</p></figure>
+<div class="integration-overview"><p><strong>PPO 的分支交接：</strong>πold 采样并保存 reward、动作和 old log-prob；同一轨迹一份送冻结 value → TD / GAE → 固定优势，另一份送当前 actor 重算概率 → current / old ratio。<strong>优势不生成 ratio</strong>，二者在 min / clip 处汇合；critic 另对固定回报标签回归，reference KL 是独立设计项。完整数据与梯度路径见<a href="#rl-training-branches">训练分支图</a>。</p></div>
 <h2>PPO 与 GAE：学习一个状态价值来降低方差</h2>
 <!-- READING:RL-DIAGRAM:3 -->
 <section id="citation-sources-2" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/1506.02438" title="High-Dimensional Continuous Control Using Generalized Advantage Estimation · Schulman, John, Moritz, Philipp, Levine, Sergey 等 · 2015/06/08 · 1506.02438">GAE</a>。</p></section>
 
 <p>PPO 用采样策略 <code>πold</code> 的 rollout 更新 <code>πθ</code>，critic 估计未来回报。GAE 将不同长度的 TD residual 混合，在价值误差与采样方差之间取舍。<a href="index.html#ref-1">[1]</a> <a href="index.html#ref-2">[2]</a></p>
-<p>MC回报完整但方差较大；一步TD用下一状态value代替真实后续，方差较低但受value误差影响。令 \(d_t=1\) 表示真实terminal，TD残差与GAE递推为：</p>
-<p>\(d_t\in\{0,1\}\) 是真实终止指示，\(V(h_t)\) 是采样时的状态价值估计，\(\delta_t\) 是一步 TD 残差，\(\hat A_t\) 是估计优势；\(\lambda\in[0,1]\) 混合多步误差，不同于权重衰减或到达率。\(\gamma\) 仍是折扣；终止时下一 value 与下一优势都被切断，有限片段末端须另规定 bootstrap。</p>
+<p>完整 MC 不用 value 代替未来奖励，往往方差较大；TD 用冻结下一 value 替代尚未采样的后续，可能降低采样波动，但引入 bootstrap 误差。下面统一简记 \(V(h)=V_{\rm rollout}(h)\)，是生成估计时冻结的近似值，不是当前更新中的 \(V_\phi\)，也不自动等于真实 \(V^\pi\)。</p>
+<h3 id="gae-nstep-bootstrap">先看 n-step 回报替换了哪段未来</h3>
+<p>从当前步 \(t\) 起，到第一个真实终止或收集片段边界还有 \(L\ge1\) 个决策；不跨真实终止。对 \(n=1,\ldots,L\)，前 \(n\) 步用真实采样奖励，其后接冻结 value：</p>
+<div class="reading-math" role="math" aria-label="n-step bootstrap 回报与优势估计">\[
+\begin{aligned}
+G_t^{(n)}&=\sum_{k=0}^{n-1}\gamma^k r_{t+k}
+            +\gamma^n V(h_{t+n}),\\
+A_t^{(n)}&=G_t^{(n)}-V(h_t).
+\end{aligned}
+\]</div>
+<p>若 \(t+L\) 是真实终止，端点 value 取 0；若只是收集暂停且任务可继续，端点保留有效的冻结下一 value。\(n=L\) 只有在走到真实终止时才是完整 MC 回报减当前 baseline；暂停边界的 \(G_t^{(L)}\) 仍含 bootstrap，不能改叫纯 MC。边界合同见<a href="#gae-boundary-example">暂停与终止的对照</a>。</p>
+<h4 id="gae-telescoping">相邻 value 抵消：n-step 优势就是 TD 残差和</h4>
+<p>在片段内写 \(\delta_j=r_j+\gamma V(h_{j+1})-V(h_j)\)，端点 value 按刚才的边界处理。以两步为例，中间的 \(+\gamma V(h_{t+1})\) 与 \(-\gamma V(h_{t+1})\) 恰好抵消：</p>
+<div class="reading-math" role="math" aria-label="两步 TD 的中间 value 抵消">\[
+\begin{aligned}
+\delta_t+\gamma\delta_{t+1}
+ &=r_t+\gamma V(h_{t+1})-V(h_t)
+   +\gamma r_{t+1}+\gamma^2V(h_{t+2})-\gamma V(h_{t+1})\\
+ &=r_t+\gamma r_{t+1}+\gamma^2V(h_{t+2})-V(h_t)
+ =A_t^{(2)}.
+\end{aligned}
+\]</div>
+<p>一般 \(n\) 步同理：第二个 value 和的每项，除首项外，都与第一个 value 和的前一项相消，只留当前 value 和端点 bootstrap：</p>
+<div class="reading-math" role="math" aria-label="n-step TD 望远镜求和">\[
+\begin{aligned}
+\sum_{k=0}^{n-1}\gamma^k\delta_{t+k}
+ &=\sum_{k=0}^{n-1}\gamma^k r_{t+k}
+   +\sum_{k=0}^{n-1}\gamma^{k+1}V(h_{t+k+1})
+   -\sum_{k=0}^{n-1}\gamma^kV(h_{t+k})\\
+ &=\sum_{k=0}^{n-1}\gamma^k r_{t+k}
+   +\gamma^nV(h_{t+n})-V(h_t)
+ =A_t^{(n)}.
+\end{aligned}
+\]</div>
+<h4 id="gae-finite-mixture">有限 L 片段的 GAE：最后一项收齐剩余权重</h4>
+<p>\(\lambda\in[0,1]\) 控制多步误差的混合，不是权重衰减或到达率。有限片段不能只截断无限几何权重，否则总权重不为 1；前 \(L-1\) 个 n-step 优势用几何权重，最后的 \(A_t^{(L)}\) 收齐尾部：</p>
+<div class="reading-math" role="math" aria-label="有限片段 GAE 混合与权重归一">\[
+\begin{aligned}
+\hat A_t
+ &=(1-\lambda)\sum_{n=1}^{L-1}\lambda^{n-1}A_t^{(n)}
+    +\lambda^{L-1}A_t^{(L)},\\
+(1-\lambda)\sum_{n=1}^{L-1}\lambda^{n-1}+\lambda^{L-1}&=1.
+\end{aligned}
+\]</div>
+<p>代入 \(A_t^{(n)}=\sum_{k=0}^{n-1}\gamma^k\delta_{t+k}\)。一个 \(\delta_{t+k}\) 出现在所有 \(n\ge k+1\) 的优势中，把它收到的权重相加：</p>
+<div class="reading-math" role="math" aria-label="有限 GAE 的混合权重化为 TD 残差系数">\[
+\begin{aligned}
+\hat A_t
+ &=\sum_{k=0}^{L-1}\gamma^k\delta_{t+k}
+   \left[(1-\lambda)\sum_{n=k+1}^{L-1}\lambda^{n-1}
+            +\lambda^{L-1}\right]\\
+ &=\sum_{k=0}^{L-1}(\gamma\lambda)^k\delta_{t+k}\\
+ &=\delta_t+\gamma\lambda\hat A_{t+1}
+ \quad\text{（同一连续片段内部）}.
+\end{aligned}
+\]</div>
+<p>方括号的有限几何和等于 \(\lambda^k\)；空和取 0、零次幂取 1，因此 \(L=1\) 和 \(\lambda=0/1\) 也成立。末端设置 \(\hat A_{t+L}=0\) 是<strong>停止优势递推</strong>，不等于清掉暂停边界的下一 value；该 bootstrap 已进入最后一个 \(\delta\)。令 \(d_t=1\) 表示真实终止，在不跨暂停边界的连续记录中可写回常见形式：</p>
 <div class="reading-math" role="math" aria-label="TD残差与GAE递推">\[
 \delta_t=r_t+\gamma(1-d_t)V(h_{t+1})-V(h_t),\qquad
 \hat A_t=\delta_t+\gamma\lambda(1-d_t)\hat A_{t+1}.
 \]</div>
-<p class="math-notation"><strong>符号：</strong>\(\delta_t\) 是一步 TD 预测误差，\(\hat A_t\) 是估计优势；\(V(h_t)\) 估计当前状态的未来回报。\(\lambda\in[0,1]\) 控制多步误差的混合，\(\gamma\) 仍控制奖励折扣；\(1-d_t\) 在真实终止时切断下一状态价值和递推。</p>
-<p>没有跨terminal项时展开得到 \(\delta_t+\gamma\lambda\delta_{t+1}+(\gamma\lambda)^2\delta_{t+2}+\cdots\)。无限时域或末端处理正确时，它对应把多步TD优势按 \((1-\lambda)\lambda^{n-1}\) 混合；\(\lambda=1\) 的极限接近MC减baseline，\(\lambda=0\) 只用一步TD。</p>
+<p>真实终止用 \(1-d_t=0\) 切断下一 value 与下一优势；收集暂停则须分别控制两路，见下方 \(b_t,c_t\) 开关。\(\lambda=0\) 只用一步 TD，\(\lambda=1\) 用片段内最长回报减 baseline：走到真实终止时是 MC，暂停时仍含端点 value。无限时域且收敛时才可使用无限几何混合；本章算例使用上面的有限公式。GAE 的 value 误差与 MC baseline 误差不是同一种替换，不能从<a href="#baseline-proof">baseline 零均值证明</a>推出任意近似 GAE 无偏。<a href="index.html#ref-2">[2]</a></p>
 <h3 id="gae-full-example">两步完整算例：reward → TD → advantage → actor / critic</h3>
 <p><strong>输入：</strong>两个可控决策 \(t=0,1\)，\(\gamma=1,\lambda=0.5\)，reward=[0,1]，采样时 value=[0.4,0.6,0]，第二步真实终止。工具观察只是下一决策的历史，不另当作策略动作。末端 \(\hat A_2=0\)，从后向前递推：</p>
 <p>表中的 \(\hat V_t\) 是固定 critic 回归目标，定义为采样时价值 \(V_{\rm rollout}(h_t)\) 加固定优势 \(\hat A_t\)，不是当前 critic 自己产生的新标签。</p>
@@ -97,7 +388,7 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 <tr><td>末步 \(t=1\)</td><td>\(1-0.6=0.4\)</td><td>0.4</td><td>\(0.6+0.4=1.0\)</td></tr>
 <tr><td>首步 \(t=0\)</td><td>\(0+0.6-0.4=0.2\)</td><td>\(0.2+0.5\times0.4=0.4\)</td><td>\(0.4+0.4=0.8\)</td></tr>
 </tbody></table>
-<p>这里 \(\hat V_t=V_{\rm rollout}(h_t)+\hat A_t\) 是固定的 lambda-return 回归目标，不是新 critic 自己生成的标签。首步 MC 回报为1；\(\lambda=0.5\) 的目标0.8仍混入中间 value，\(\lambda=0/1\) 时首步优势分别为0.2/0.6。</p>
+<p>首步 MC 回报为1；\(\lambda=0.5\) 的固定 lambda-return 目标0.8仍混入中间 value，\(\lambda=0/1\) 时首步优势分别为0.2/0.6。用上面的有限混合复算：\(A_0^{(1)}=0.2,A_0^{(2)}=1-0.4=0.6\)，权重各为0.5，因此 \(\hat A_0=0.5(0.2)+0.5(0.6)=0.4\)，加回冻结 \(V_{\rm rollout}(h_0)=0.4\) 得到同一个固定标签0.8。</p>
 <p>在 actor 尚未改变、ratio=1、无 KL / 优势归一化且按两决策平均的教学条件下，下一节 PPO 的 actor loss 为<strong>−0.4</strong>。若 critic 仍输出[0.4,0.6]，采用 \(\frac12\operatorname{mean}(V_\phi-\hat V)^2\)，critic loss 为<strong>0.08</strong>，对两个预测值的导数各为−0.2。actor 的优势与 critic 的目标都应停止梯度；共享 backbone 仍分别接收两种 loss 的参数梯度。</p>
 <h4 id="gae-boundary-example">同样在第二步停下，暂停采样与任务终止不同</h4>
 <p>另设第二步只是收集片段到边界，任务还可继续：reward=[0,0]、value=[0.4,0.6,0.8]。应保留下一状态 value 的 bootstrap，但不能把下一条无关样本的优势接进来。令 \(b_t\) 控制是否使用下一 value，\(c_t\) 控制是否递推下一优势：</p>
@@ -107,7 +398,7 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 \hat A_t&=\delta_t+\gamma\lambda c_t\hat A_{t+1}.
 \end{aligned}
 \]</div>
-<table><thead><tr><th>第二步边界</th><th style="position:relative"><span aria-hidden="true">\(b_1,c_1\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">第一步的 b、c 标志</span></th><th style="position:relative"><span aria-hidden="true">\(\delta_0,\delta_1\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">两步的 TD 残差 δ</span></th><th style="position:relative"><span aria-hidden="true">\(\hat A_0,\hat A_1\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">两步的优势估计 Â</span></th></tr></thead><tbody>
+<table><thead><tr><th>第二步边界</th><th style="position:relative"><span aria-hidden="true">\(b_1,c_1\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">第二步（t=1）的 b、c 标志</span></th><th style="position:relative"><span aria-hidden="true">\(\delta_0,\delta_1\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">两步的 TD 残差 δ</span></th><th style="position:relative"><span aria-hidden="true">\(\hat A_0,\hat A_1\)</span><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">两步的优势估计 Â</span></th></tr></thead><tbody>
 <tr><td>任务继续，片段暂停</td><td>1、0</td><td>0.2、0.2</td><td>0.3、0.2</td></tr>
 <tr><td>同一记录误标真实终止</td><td>0、0</td><td>0.2、−0.6</td><td>−0.1、−0.6</td></tr>
 </tbody></table>
@@ -125,8 +416,19 @@ A^\pi(h,a)=Q^\pi(h,a)-V^\pi(h).
 <h3 id="ppo-ratio">旧策略采样，当前策略怎样复用数据</h3>
 <!-- READING:RL-DIAGRAM:4 -->
 <!-- READING:RL-DIAGRAM:5 -->
-<p>固定旧策略 \(\pi_{\rm old}\) 访问到的历史与优势，\(f(a)\) 是这个历史下可积的动作函数，\(\rho(a)\) 是当前/旧策略的同动作概率比；换测度要求旧策略覆盖当前策略的动作支持。对动作分布有：\(\mathbb E_{a\sim\pi_\theta}[f(a)]=\mathbb E_{a\sim\pi_{\rm old}}[\rho(a)f(a)]\)。PPO据此构造局部代理目标；<strong>单步ratio没有完整校正状态访问分布</strong>。</p>
-<p>\(\rho_t,\bar\rho_t\) 是决策 \(t\) 的原/裁剪概率比，\(\epsilon_{\rm low/high}\) 是相对1的无单位下/上幅度；clip 将数值限制到注明区间，min 取较小项。\(\mathbb E_{\rm old}\) 按旧策略数据平均，\(\hat A_t\) 在 actor 更新中固定，\(J_{\rm clip}\) 被最大化、loss 通常取其负号。接下来的 \(j(\rho,A)\) 是单样本代理项，\(\rho&gt;0,A\) 简记固定样本的比率和优势。</p>
+<h4 id="ppo-change-of-measure">固定历史下，概率比只换当前动作的测度</h4>
+<p>固定一个旧策略访问到的历史 \(h\)，冻结 \(\pi_{\rm old}\) 和优势估计器。令 \(f(a)\) 是该历史下可积、在此比较中固定的动作函数，\(\rho(a)=\pi_\theta(a\mid h)/\pi_{\rm old}(a\mid h)\)。要求<strong>支持覆盖</strong>：凡当前策略概率非零的动作，旧策略概率也必须非零；若旧策略从未覆盖某个当前动作，就不能靠这个分母进行换测度。离散动作下逐项写出：</p>
+<div class="reading-math" role="math" aria-label="固定历史下的动作换测度展开">\[
+\begin{aligned}
+\mathbb E_{a\sim\pi_\theta(\cdot\mid h)}[f(a)]
+ &=\sum_a\pi_\theta(a\mid h)f(a)\\
+ &=\sum_a\pi_{\rm old}(a\mid h)
+   \frac{\pi_\theta(a\mid h)}{\pi_{\rm old}(a\mid h)}f(a)\\
+ &=\mathbb E_{a\sim\pi_{\rm old}(\cdot\mid h)}[\rho(a)f(a)].
+\end{aligned}
+\]</div>
+<p>第二个等号只是乘除同一旧动作概率，最后按旧策略概率收起求和。actor 反传只通过当前分子，旧分母和采样优势都冻结；实际 \(\hat A_t\) 可以是有噪声的样本估计，不是对每个动作都已知的真优势。这条恒等式只处理<strong>给定旧历史的当前动作分布</strong>，没有把旧策略的历史访问分布变成新策略的，也没有重采样当前策略下的未来。PPO 据此构造局部代理目标；<strong>单步 ratio 没有完整校正状态访问分布</strong>，后续 min / clip 更不应被当作原始目标的精确换测度。<a href="index.html#ref-1">[1]</a></p>
+<p>\(\rho_t,\bar\rho_t\) 是决策 \(t\) 的原/裁剪概率比，\(\epsilon_{\rm low/high}\) 是相对 1 的无单位下/上幅度；clip 将数值限制到注明区间，min 取较小项。\(\mathbb E_{\rm old}\) 按旧策略数据平均，\(\hat A_t\) 在 actor 更新中固定，\(J_{\rm clip}\) 被最大化、loss 通常取其负号。接下来的 \(j(\rho,A)\) 是单样本代理项，\(\rho&gt;0,A\) 简记该样本的比率与固定优势。</p>
 <div class="reading-math" role="math" aria-label="PPO代理目标">\[
 \begin{aligned}
 \rho_t&=\frac{\pi_\theta(a_t\mid h_t)}{\pi_{\rm old}(a_t\mid h_t)},\\
@@ -135,8 +437,22 @@ J_{\rm clip}&=\mathbb E_{\rm old}
 \left[\min(\rho_t\hat A_t,\bar\rho_t\hat A_t)\right].
 \end{aligned}
 \]</div>
-<p class="math-notation"><strong>符号：</strong>\(\rho_t\) 是同一动作在当前策略与采样旧策略下的概率比，\(\bar\rho_t\) 是裁剪后的比率。\(\epsilon_{\rm low/high}\) 是相对 1 的下/上裁剪幅度；clip 将数值限制在区间，min 取两项较小值。\(\mathbb E_{\rm old}\) 按旧策略数据平均；优势在 actor 更新中作为固定权重，\(J\) 被最大化，框架的 loss 通常取其负号。</p>
 <h3 id="ppo-piecewise">为什么clip要看优势正负</h3>
+<p>记 \(l_{\rm clip}=1-\epsilon_{\rm low}&gt;0\)、\(u_{\rm clip}=1+\epsilon_{\rm high}\)，并取 \(0\le\epsilon_{\rm low}&lt;1,\epsilon_{\rm high}\ge0\)。裁剪值 \(\bar\rho\) 在原比率低于下界时变成 \(l_{\rm clip}\)，高于上界时变成 \(u_{\rm clip}\)，区间内保持 \(\rho\)。关键不是“所有越界都截断”，而是乘上优势后，min 究竟选择哪一项：</p>
+<div class="reading-math" role="math" aria-label="乘上正负优势后 min 转成 min 或 max">\[
+\begin{aligned}
+A\ge0:\quad
+\min(\rho A,\bar\rho A)
+ &=A\min(\rho,\bar\rho)
+ =A\min(\rho,u_{\rm clip}),\\
+A&lt;0:\quad
+\min(\rho A,\bar\rho A)
+ &=A\max(\rho,\bar\rho)
+ =A\max(\rho,l_{\rm clip}).
+\end{aligned}
+\]</div>
+<p><strong>正优势：</strong>乘上非负 \(A\) 不改变大小关系。下越界时 \(\rho&lt;\bar\rho=l_{\rm clip}\)，min 选原比率；上越界时 \(\bar\rho=u_{\rm clip}&lt;\rho\)，min 选上界，所以只有继续提高比率的上越界方向变平。\(A=0\) 时整个策略项为零。</p>
+<p><strong>负优势：</strong>乘上负 \(A\) 反转大小关系，所以 min 变成比率的 max。下越界时选 \(l_{\rm clip}A\)，不再继续奖励把比率压得更低；上越界时选原来的 \(\rho A\)，仍保留把该负优势动作比率拉回来的梯度。因此得到原分段式：</p>
 <div class="reading-math" role="math" aria-label="PPO正负优势分段">\[
 j(\rho,A)=
 \begin{cases}
@@ -157,17 +473,17 @@ A\max(\rho,1-\epsilon_{\rm low}),&A&lt;0.
 <tr><td>1.3</td><td>1.2，平坦</td><td>−1.3，保留梯度</td></tr></tbody></table>
 <p><strong>clip限制继续奖励某个方向，不能保证KL上界。</strong>未采样动作、状态分布和多次参数更新仍会改变。reference KL、entropy项与critic loss另行定义，不由PPO这个名字自动决定。</p>
 <p><code>λ</code> 越小越依赖局部 value，越大越接近 Monte Carlo 回报；并非越大总是越好。critic 数据、更新频率和任务分布决定估计质量。Actor、critic、reference 和 reward model 是逻辑角色，是否各占一份模型或共享 backbone，由框架实现决定。</p>
-<div class="course-review"><p><strong>追问：baseline为什么不改变期望？</strong>状态固定时，baseline乘 \(\nabla\sum_a\pi(a\mid h)=0\)；它必须不依赖当前动作，且在actor权重中停止梯度。</p><p><strong>追问：PPO区间外都没梯度吗？</strong>只截住正优势的上越界和负优势的下越界；反方向仍有梯度，clip也不是KL约束证明。</p></div>
+<div class="course-review"><p><strong>追问：baseline为什么不改变期望？</strong>历史固定时，baseline 乘 \(\nabla\sum_a\pi(a\mid h)=0\)；它须满足当前动作的统计独立条件，且在 actor 权重中停止梯度，后者不能替代前者。完整条件见<a href="#baseline-proof">baseline 证明</a>。</p><p><strong>追问：PPO区间外都没梯度吗？</strong>只截住正优势的上越界和负优势的下越界；反方向仍有梯度，clip也不是KL约束证明。</p></div>
 <p>多轮 Agent 的 value 位置也要明确：是在动作前、生成 token 内还是回合后估值；tool observation 可以改变状态，但它的随机反馈不应被当成策略生成 token 逐个施加动作梯度。</p>
 </section>
 <section id="rloo-grpo">
 <figure class="mechanism-map"><figcaption>GRPO 数值链路：同一题的四条候选</figcaption><ol class="mechanism-chain">
-<li><b>同一 prompt，G=4</b><small>采样四条回答；G=4 仅为教学例子</small></li><li><b>verifier → [1,0,0,0]</b><small>测试通过为 1，真实失败为 0</small></li><li><b>中心化 / std → A</b><small>[√3, −1/√3, −1/√3, −1/√3]</small></li><li><b>ratio、mask、聚合</b><small>提升胜者动作概率；降低失败候选概率</small></li>
+<li><b>同一 prompt，G=4</b><small>采样四条回答；G=4 仅为教学例子</small></li><li><b>verifier → [1,0,0,0]</b><small>测试通过为 1，真实失败为 0</small></li><li><b>中心化 / std → A</b><small>[√3, −1/√3, −1/√3, −1/√3]</small></li><li><b>固定 A + 独立 ratio → clip / 聚合</b><small>current / old 从轨迹动作记录另算，不由 A 生成；按 mask 构造提升胜者、降低失败候选的信号</small></li>
 </ol><p class="mechanism-return">分支：若 reward 全同，组内任务优势为 0；可调整难度或补采。KL 等辅助项仍可能更新。</p></figure>
 <h2>RLOO 与 GRPO：用同题候选代替 learned baseline</h2>
 <section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2402.03300" title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models · Shao, Zhihong, Wang, Peiyi, Zhu, Qihao 等 · 2024/02/05 · 2402.03300">GRPO / DeepSeekMath</a>。</p></section>
 
-<p>对同一prompt独立采样 \(G&gt;1\) 个候选，得到 \(R_1,\ldots,R_G\)。其他候选可估计同题的难度baseline，因此不一定要训练critic。原始组优势为：</p>
+<p>对同一 prompt \(x\)，在固定采样策略和环境分布下条件独立地生成 \(G&gt;1\) 条候选轨迹，得到回报 \(R_1,\ldots,R_G\)。本段证明中的 \(R_i=R(\tau_i)\) 使用同一回报口径，奖励过程也是轨迹的一部分；其他候选可估计同题 baseline，因此不一定要训练 critic。两种组优势为：</p>
 <p>\(i,j=1,\ldots,G\) 遍历该题候选，\(R_i\) 是终评回报，\(\bar R,\sigma_R\) 是组均值和按分母 \(G\) 的总体标准差。\(A_i^{\rm RLOO},A_i^{\rm GRPO}\) 是两种候选优势，分母 \(\epsilon&gt;0\) 是与回报同单位的稳定常数，区别于 PPO clip 幅度；无稳定项的教学值只用于非零标准差组。</p>
 <div class="reading-math" role="math" aria-label="组相对优势">\[
 \bar R=\frac1G\sum_jR_j,\quad
@@ -175,8 +491,42 @@ A\max(\rho,1-\epsilon_{\rm low}),&A&lt;0.
 A_i^{\rm RLOO}=R_i-\frac1{G-1}\sum_{j\ne i}R_j,\quad
 A_i^{\rm GRPO}=\frac{R_i-\bar R}{\sigma_R+\epsilon}.
 \]</div>
-<p class="math-notation"><strong>符号：</strong>\(i,j=1,\ldots,G\) 索引同一题的候选，\(R_i\) 是候选终评，\(\bar R\) 是组均值，\(\sigma_R\) 是总体标准差。分母里的 \(\epsilon\) 是防止除零的小常数，区别于 PPO 的裁剪幅度；奖励有单位时，它应与标准差同单位。\(A_i\) 是候选优势，不是某个 token 的即时奖励；下式的 \(p\) 是单次成功概率。</p>
-<p>RLOO的baseline不含自己的动作，条件独立采样时可沿用零期望证明。对包含自己的组均值，有 \(R_i-\bar R=\frac{G-1}{G}A_i^{\rm RLOO}\)；再除随机组std会进一步改变尺度和隐式任务权重。<strong>GRPO归一化不是原始reward梯度的通用无偏估计</strong>。</p>
+<h3 id="rloo-baseline-proof">RLOO：用整轨迹 score 检查留一 baseline 的独立性</h3>
+<p>令 \(\tau_i\) 为第 \(i\) 条完整轨迹，\(\tau_{-i}\) 为所有其他候选轨迹，\(\mathcal D_i\) 为本轨迹的可控决策索引集合。记 \(g_{it}=\nabla_\theta\log\pi_\theta(a_{it}\mid h_{it})\)，整轨迹 score 为 \(S_i=\nabla_\theta\log p_\theta(\tau_i\mid x)=\sum_{t\in\mathcal D_i}g_{it}\)，留一 baseline 为 \(B_i=\frac1{G-1}\sum_{j\ne i}R_j\)。环境观察不进入 \(\mathcal D_i\)；候选优势不是某个 token 的即时奖励。</p>
+<p>先固定题目 \(x\)，按完整轨迹概率归一化得到 score 零均值；再固定其他候选轨迹，条件独立性使 \(\tau_i\) 的分布仍为原采样分布：</p>
+<div class="reading-math" role="math" aria-label="RLOO 整轨迹 score 与留一 baseline 的零均值证明">\[
+\begin{aligned}
+\mathbb E[S_i\mid x]
+ &=\sum_{\tau_i}p_\theta(\tau_i\mid x)
+       \nabla_\theta\log p_\theta(\tau_i\mid x)\\
+ &=\sum_{\tau_i}\nabla_\theta p_\theta(\tau_i\mid x)
+ =\nabla_\theta 1=0,\\
+\mathbb E[B_iS_i\mid x]
+ &=\mathbb E_{\tau_{-i}\mid x}
+       [B_i\,\mathbb E[S_i\mid x,\tau_{-i}]]\\
+ &=\mathbb E_{\tau_{-i}\mid x}[B_i\,\mathbb E[S_i\mid x]]
+ =0,\\
+\mathbb E[A_i^{\rm RLOO}S_i\mid x]
+ &=\mathbb E[(R_i-B_i)S_i\mid x]\\
+ &=\mathbb E[R_iS_i\mid x]
+ =\nabla_\theta\mathbb E[R_i\mid x].
+\end{aligned}
+\]</div>
+<p>这沿用可微、稳定支持、有限矩及固定环境/奖励的条件，等式在生成候选的采样策略参数处成立。它不只要求 baseline 公式“不写当前动作”，还要求<strong>固定题目后其他轨迹与本轨迹条件独立</strong>；相关生成、跨候选共享且未条件化的随机因素或依赖候选结果的筛选，不能直接套此证明。actor 将组权重停止梯度；之后用 PPO ratio / clip 多轮复用时，仍是另外的局部代理问题。<a href="index.html#ref-4">[4]</a></p>
+<h3 id="group-centering-relation">含自身的组均值：有限 G 的缩放不能漏掉</h3>
+<p>组均值包含自己的 \(R_i\)，因此与本轨迹 score 相关，不能把它当作留一 baseline。先做纯代数展开，不需要把有限组均值近似成无限样本期望：</p>
+<div class="reading-math" role="math" aria-label="组中心化与 RLOO 优势的有限组关系">\[
+\begin{aligned}
+R_i-\bar R
+ &=R_i-\frac1G\left(R_i+\sum_{j\ne i}R_j\right)\\
+ &=\frac{G-1}{G}R_i-\frac1G\sum_{j\ne i}R_j\\
+ &=\frac{G-1}{G}
+   \left(R_i-\frac1{G-1}\sum_{j\ne i}R_j\right)\\
+ &=\frac{G-1}{G}A_i^{\rm RLOO}.
+\end{aligned}
+\]</div>
+<p>在刚才的条件独立、固定 \(G\) 与采样策略口径下，\(\mathbb E[\bar R S_i\mid x]=\frac1G\mathbb E[R_iS_i\mid x]\)，因此仅做组中心化的梯度期望为 \(\frac{G-1}{G}\nabla_\theta\mathbb E[R_i\mid x]\)，不是未经缩放的原始回报梯度。固定缩放可以显式补偿，但不能称“含自身 baseline 自动零均值”。</p>
+<p>GRPO 再除以本组随机的 \(\sigma_R+\epsilon\)。标准差依赖自己的 \(R_i\)，与 \(R_iS_i\) 及组中心化权重相关，不能像固定常数一样提出期望；正的 \(\epsilon\) 只稳定分母，不恢复独立性。它进一步改变尺度和隐式任务权重，尤其奖励差很小的组可能被放大。<strong>GRPO 归一化不是原始 reward 梯度的通用无偏估计</strong>；具体效果须按 std 定义、筛选、mask 和聚合口径评价。</p>
 <p>RLOO 用其他候选的均值避免自己的 reward 进入 baseline；GRPO 用组内中心化和标准差。它们节省显式 critic，却需要同一任务多次采样；单条长 episode 很贵时，省下的 critic 不能直接等价为总成本降低。<a href="index.html#ref-3">[3]</a> <a href="index.html#ref-4">[4]</a></p>
 <table>
 <thead><tr><th>教学组，G=4</th><th>GRPO（总体 std，无 ε）</th><th>RLOO</th><th>解释</th></tr></thead>
@@ -197,7 +547,7 @@ A_i^{\rm GRPO}=\frac{R_i-\bar R}{\sigma_R+\epsilon}.
 </tbody></table>
 <p><strong>输出：</strong>J=Σj/4=0.115470，训练最小化的policy loss为−0.115470。正负优势必须分别取min，不能把所有超界ratio都简单截成“无更新”。此例每条只有一个有效token，因此序列平均与token平均相同；多token轨迹要继续应用mask和长度分母。</p>
 <p><strong>接到参数更新：</strong>设当前四类logits为z，p=softmax(z)。对固定优势，令cᵢ=∂J/∂log pᵢ，则本例c=(0,0,−0.158771,−0.129904)，经softmax得到 \(\partial J/\partial z_i=c_i-p_i\sum_jc_j\)。所以A/B的自身代理项进入平台，概率仍可能被共享归一化和其他项改变。梯度随后交给优化器，下一轮用新策略重新采样。</p>
-<figure class="mechanism-map"><figcaption>一组数据怎样成为实际优化信号</figcaption><ol class="mechanism-chain"><li><b>采样与终评</b><small>保存old log-prob；reward=[1,0,0,0]</small></li><li><b>固定组优势</b><small>mean=1/4，std=√3/4</small></li><li><b>重算与裁剪</b><small>ratio=[1.3,0.7,1.1,0.9]；J=0.115470</small></li><li><b>反传与新采样</b><small>loss=−J；更新logits，再运行verifier</small></li></ol></figure>
+<figure class="mechanism-map"><figcaption>一组数据怎样成为实际优化信号</figcaption><ol class="mechanism-chain"><li><b>采样与终评</b><small>保存old log-prob；reward=[1,0,0,0]</small></li><li><b>固定组优势</b><small>mean=1/4，std=√3/4</small></li><li><b>固定优势 + 独立 ratio → 裁剪</b><small>动作记录另送当前 actor 重算；ratio=[1.3,0.7,1.1,0.9]；J=0.115470</small></li><li><b>反传与新采样</b><small>loss=−J；更新logits，再运行verifier</small></li></ol></figure>
 <h3 id="heterogeneous">异质数据：标准化不能保证每个任务都有学习机会</h3>
 <p>下式只讨论同题 \(G\) 次独立、同成功率 \(p\in[0,1]\) 的 Bernoulli 终评；\(p\) 是单次成功概率，不是策略的完整概率向量。事件是组内至少一个成功且至少一个失败。</p>
 <div class="reading-math" role="math" aria-label="二值奖励有效组概率">\[

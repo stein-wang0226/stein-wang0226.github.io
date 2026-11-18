@@ -322,21 +322,21 @@
     "templates/post.md": "396ea466be4f85aef8d90210787aa4e3ea577d2ec712e7bd9c1c0440836d53a9"
   },
   "integrated_files": {
-    "content/catalog.json": "30c0178b1a92cfcccf2d6651a4ca88969a938bd94c832fc395a1f67414d85311",
+    "content/catalog.json": "f90d500d4ba06893367b566799bf55e7a7651c7f663ee70e7af42cc8f458ba34",
     "assets/research/2026-11-14/sources.json": "bb58b86f1bb804059ec8cdb8c348b1a00ced2af7b1f5b17dff2402897474a888",
     "assets/research/agent-data-benchmarks/sources.json": "73696913acd37a2086159002073de85ac4140507a77fd33e98358e3821b61f6a",
-    "assets/research/posttraining-20261114/sources.json": "a56d5b90aab056348e00b3873cf3657f0079d46629455c4a36a3208eec430d79",
-    "docs/organization-changes-20261115.json": "3b71955c49d14c3e24dba1d58ff37aad8087602e9734701264511a480f9a63d7",
+    "assets/research/posttraining-20261114/sources.json": "a21d7d7f5faa34df2427d0223f19fe803e4f3ebb78b0edd604bd98ced91da4c2",
+    "docs/organization-changes-20261115.json": "a10a59ee95997e431e4c024c1f2d42cfcf4d0ad6ff87354a23afebed3cc75a58",
     "scripts/course.py": "40e5990d2af0cbb206bf62298f922cdc6e6f0365312c5aa3faad40bcef9b9eda",
     "scripts/mathematics.py": "8102723e919f851b947e213bafcb45cc8abe0901e0ea748af2e21599cb86448e",
-    "scripts/pipeline.py": "36048dc321712fcc739881c76abc8d37cda5a57b308cbee4214030d5d6c6bcbc",
-    "scripts/render.py": "bcec00729cd18a33228f2e1233b74397b5628fbdb567ae69d3797042993fb780",
+    "scripts/pipeline.py": "cd0cd9a860854966014f1abcdf88a8dc1dcc887895b73bd43fc28a0f138cf262",
+    "scripts/render.py": "821423a9eb3e41556e4ad72f124c7d958c48743e4a10776c7959ce72899c7aa5",
     "assets/site/math-tabstop.js": "5da62286a2259b80dc3a8fa24209ac80072ed4f87cf34c12e016e2efa17a2990",
     "scripts/reading.py": "99465e7538326453b3a885fb1debcdcf862e2e687fd9221a28c9435a2bc7ec2a",
     "assets/site/print.css": "6fe5516c335298f6d81025fed779e35a1374a6d877577314ca81a4bd9c73a5dd",
-    "scripts/views.py": "b39b9fda69d8b3368aa19e70c50b9aecb7fd0f028853e5e9d883b695eac17ae7",
+    "scripts/views.py": "6c9aad12804edd58003b25d40d5511fef3fbc9d0433b3da4f7cd6f69448bc735",
     "assets/site/scroll-region.js": "b8137455f1c1286f06a6716ceae557c2f2e621b686211d084279bc3d6d0be6d8",
-    "docs/content-changes.json": "80209453661152793bbbd3eb7ec1582960e884ae5db59947cbed4fe9c75a9183"
+    "docs/content-changes.json": "1865bc8dd0cd6b68cd45a23d5a432a663c7a88bfa666ccb6113abc4ab04a9581"
   },
   "catalog_updates": [
     {
@@ -1696,7 +1696,7 @@
       "source": "content/series/llm-posttraining/index.html",
       "changed": true,
       "sha256_before": "dfd18c61db6656063a616054b4ad4509f8c5208ad01baf287aa54569d122b87e",
-      "sha256_after": "665cc5f5af5e02cbd398ca906dde1092953a09b7f67556e0363653fa1c280a2f",
+      "sha256_after": "05181a8b9f1cb760974b5e54ba105543c1ab5396c5c6a046f29e263f03761686",
       "examined": [
         {
           "anchor": "overview",
@@ -1713,9 +1713,21 @@
         {
           "anchor": "downloads",
           "judgment": "case-contracts的design_only与空结果解释充分，资料索引不冒充真实日志。"
+        },
+        {
+          "anchor": "read",
+          "judgment": "2026-11-18 T3：导读衔接问题/符号、交互/训练图、REINFORCE/score lemma/baseline/MSE、GAE/PPO与组证明；13条算法学习链接静态定位到当前源ID，不复制主讲正文。"
+        },
+        {
+          "anchor": "sources",
+          "judgment": "2026-11-18 T3：原ref-1至ref-79保留，尾部追加SpinningUp [80]与Greensmith2004 [81]；动态网页与论文版本口径分别说明。"
+        },
+        {
+          "anchor": "findings",
+          "judgment": "2026-11-18 T3：原79项11-14调研与本次2项11-18数学补充明确分开，不宣称重新核验旧来源或执行训练。"
         }
       ],
-      "reason": "入口、产物与学习顺序已有充分导读，补细节应落在对应主讲章而非继续扩入口。",
+      "reason": "入口、产物与学习顺序已有充分导读，补细节应落在对应主讲章而非继续扩入口。 2026-11-18 T3续接：入口只补RL问题定义、分层符号、交互/训练架构图及逐步推导的学习深链接；参考尾部追加[80–81]并区分原11-14调研与本次11-18数学来源，推导仍由第02章唯一主讲。",
       "changes": [
         {
           "anchor": "#citation-sources-3",
@@ -1727,9 +1739,29 @@
             "r22-citation-block-screenshot-sha",
             "make-check-107"
           ]
+        },
+        {
+          "anchor": "#read",
+          "kind": "2026-11-18 T3学习导读",
+          "summary": "补问题、符号、两类架构图及REINFORCE到GAE/PPO/RLOO/GRPO的学习深链接，保留原理→变体→配方→诊断和完整GRPO算例入口。",
+          "assumptions": "公开装配前缀仍为posttraining-algorithms--；源ID定位不等于已构建或浏览器点击通过。",
+          "checks": [
+            "2026-11-18 T3：13条入口学习链接对应当前s02源ID，48个ID唯一",
+            "2026-11-18 T3：git diff --check通过"
+          ]
+        },
+        {
+          "anchor": "#sources",
+          "kind": "2026-11-18 T3参考与证据边界",
+          "summary": "按原尾号79追加SpinningUp [80]和Greensmith2004 [81]，同步来源索引；findings说明原79项和本次2项的日期边界，不改冻结历史说明。",
+          "assumptions": "旧编号/版本/访问日期与历史usage保留；新增usage由citations.derive按original_url优先取得，不猜h4或details位置。",
+          "checks": [
+            "2026-11-18 T3：ref-1至ref-81连续有序",
+            "2026-11-18 T3：实际解析新增两项均使用于s02#policy-gradient，原79项usage无变化"
+          ]
         }
       ],
-      "evidence_boundary": "检查入口/收束/下载状态及固定引用组织；未重新调研79项来源，也未运行课程装配或浏览器。",
+      "evidence_boundary": "旧轮证据（旧examined/changes/checks原样保留）：检查入口/收束/下载状态及固定引用组织；未重新调研79项来源，也未运行课程装配或浏览器。 2026-11-18本轮证据仅为T3导读/引用源码定位与精确凭据集成自检；旧axe、截图、make-check记录不作为本轮新正文的验收。未重新调研原79项，未运行训练、构建或浏览器；独立数学T4和当前产物/界面T5另做。",
       "module": "training-data"
     },
     {
@@ -1804,7 +1836,7 @@
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
       "changed": true,
       "sha256_before": "3b2f71d2979d3f781e4b69292b1be821ab27e6923a303b52cb035c7d2814a7fa",
-      "sha256_after": "5354895504ae280d70977c75d2163cdfe488e048a62669aadb0fdcea288e0934",
+      "sha256_after": "d292a40b7742342aee83f42e538845144cc85425d1ceee4e64febcf9e5ff4fbb",
       "examined": [
         {
           "anchor": "policy-gradient",
@@ -1833,9 +1865,41 @@
         {
           "anchor": "heterogeneous",
           "judgment": "Bernoulli有效组概率、相关采样限制、全同task梯度与辅助目标区别就近存在。"
+        },
+        {
+          "anchor": "rl-problem-definition",
+          "judgment": "2026-11-18 T1/T2交付定位：有限时域初态折扣目标、完整历史与可控动作先定义，分层符号及交互/训练分支图默认可见；角色不等于独立模型份数。"
+        },
+        {
+          "anchor": "reinforce-log-derivative",
+          "judgment": "2026-11-18 T1/T2交付定位：轨迹log分解、环境参数独立、独立MC均值与采样参数处loss关系逐步展开，reward-to-go保留外gamma^t。"
+        },
+        {
+          "anchor": "baseline-proof",
+          "judgment": "2026-11-18 T1交付定位：baseline锚点就地给符号和动作求和证明，区分真实优势/近似value、MSE预测最优与梯度方差最优；停止梯度不自动消除统计相关性。"
+        },
+        {
+          "anchor": "gae-finite-mixture",
+          "judgment": "2026-11-18 T2交付定位：n-step到TD的望远镜求和、有限L混合尾项及端点处理连接原两步算例，终止与收集暂停仍分别说明。"
+        },
+        {
+          "anchor": "ppo-change-of-measure",
+          "judgment": "2026-11-18 T2交付定位：固定历史动作换测度、旧分母冻结与正负优势min分段展开，不宣称校正完整状态访问分布或硬KL上界。"
+        },
+        {
+          "anchor": "rloo-baseline-proof",
+          "judgment": "2026-11-18 T2交付定位：同题条件独立整轨迹score证明、有限G中心化缩放与随机std相关性说明连接原GRPO完整算例；独立数学复核另属T4。"
+        },
+        {
+          "anchor": "#gae-boundary-example",
+          "judgment": "2026-11-18 T6：b_1,c_1对应第二步t=1，仅将hidden label的第一步改为第二步（t=1）；公式、可见图、数值及数学推导完全不变。"
+        },
+        {
+          "anchor": "#baseline-diagram-scroll",
+          "judgment": "2026-11-18 T7源级核对：baseline-proof及原marker不动，新增region可聚焦，825px内层保持660:260比例；唯一class下figure[data-rl-diagram=1]的直接SVG覆盖inline max-width，不匹配MathJax内部SVG；实际界面待独立T5复验。"
         }
       ],
-      "reason": "改稿：仅在公式首次使用前补充符号定义（\\theta、\\tau、p(h_0)、p_\\theta(\\tau)、t=0,\\ldots,T-1、\\gamma\\in[0,1]），公式、标题、锚点与引用未改。",
+      "reason": "改稿：仅在公式首次使用前补充符号定义（\\theta、\\tau、p(h_0)、p_\\theta(\\tau)、t=0,\\ldots,T-1、\\gamma\\in[0,1]），公式、标题、锚点与引用未改。 2026-11-18推导补充续接（T1/T2正文、T3凭据）：先给RL问题定义、分层符号与交互/训练分支图，再补REINFORCE、reward-to-go、baseline就地证明、critic MSE与梯度方差、有限片段GAE、PPO换测度/正负分段、RLOO独立性和有限组关系；保留旧锚点、教学图、完整算例、配方与诊断。T3不再编辑s02，按交付SHA接续，独立数学与当前构建/浏览器验收另做。 2026-11-18 T6独立复核索引修复：仅将#gae-boundary-example表头b_1,c_1的hidden label由“第一步的 b、c 标志”改为“第二步（t=1）的 b、c 标志”；所有公式、可见图、数值与数学推导不变；对照T6前四文件副本记录精确差异，新SHA的独立数学复验及T5构建/浏览器验收另做。 2026-11-18 T7界面修复T5-VIS-01：仅在#baseline-proof之后的READING:RL-DIAGRAM:1原marker外新增#baseline-diagram-scroll可聚焦滚动区、825px内层、局部直子级SVG样式和可见滚动提示；覆盖原SVG inline 660px上限，按660:260等比例显示825x325，最小10.5字号预期变为13.125px；原marker、figure/caption装配、全部数学正文、原ID、引用与其他图保持。对照T7前四文件副本撤去新增层后整source字节相等；本轮不构建或运行浏览器，390/768/1440实际图内滚动、可读性和页无溢出由独立T5复验。",
       "changes": [
         {
           "anchor": "#policy-gradient",
@@ -1868,9 +1932,80 @@
             "r23-header-table-screenshot-sha",
             "make-check-107"
           ]
+        },
+        {
+          "anchor": "#rl-problem-definition",
+          "kind": "2026-11-18 T1/T2问题、符号与图",
+          "summary": "第16–88行建立任务/历史/动作/奖励/终止及折扣目标；分层符号表与交互、优势准备、actor、critic、可选reference/reward分支图先于推导。",
+          "assumptions": "环境与固定轨迹奖励不直接依赖actor参数；主要推导用离散动作、稳定支持与有限矩；图表示逻辑数据流，sg不等于统计独立。",
+          "checks": [
+            "2026-11-18 T3：对照T1/T2交付范围与当前源ID",
+            "2026-11-18 T3：s02 SHA为3272afc3ec57839306ceb01e05f08f65fab4f867a8388f6c26e58dd05016e9ee，未再编辑"
+          ]
+        },
+        {
+          "anchor": "#reinforce-log-derivative",
+          "kind": "2026-11-18 T2策略梯度逐步推导",
+          "summary": "第89–171行展开log-derivative、轨迹log因子、N条MC均值与固定样本负号loss；过去奖励用条件动作求和/概率约分/归一化/全期望消去。",
+          "assumptions": "固定本批采样参数theta0时解释loss梯度对应；初态折扣目标保留外gamma^t，不把样本loss等同所有参数处的负期望目标。",
+          "checks": [
+            "2026-11-18 T3：T2交付区间与新增ID静态定位",
+            "2026-11-18 T3：SpinningUp引用按实际parser定位到policy-gradient"
+          ]
+        },
+        {
+          "anchor": "#baseline-proof",
+          "kind": "2026-11-18 T1独立可读baseline证明",
+          "summary": "第172–301行补就地符号与baseline零期望证明、真实优势与MC/近似value关系、critic MSE平方展开求导、原Bernoulli梯度方差例与可折叠单步最优baseline证明。",
+          "assumptions": "固定历史和本批估计器时baseline不依赖当前动作；MSE最优不保证梯度方差最小，单步协方差迹最优不外推完整多步梯度。",
+          "checks": [
+            "2026-11-18 T3：T1主干区间与baseline/MSE/方差ID定位",
+            "2026-11-18 T3：Greensmith引用按实际parser定位到policy-gradient；不猜details位置"
+          ]
+        },
+        {
+          "anchor": "#gae-nstep-bootstrap",
+          "kind": "2026-11-18 T2 GAE与PPO等号衔接",
+          "summary": "第302–465行补n-step/TD望远镜求和、有限L归一混合尾项与递推；展开固定历史动作换测度及正负优势min分段，复用原两步例和PPO图表。",
+          "assumptions": "终止端点value为0，收集暂停保留有效bootstrap并停止片段优势递推；ratio只校正当前动作分布，clip不保证硬KL上界。",
+          "checks": [
+            "2026-11-18 T3：T2交付GAE/PPO区间与新旧ID静态定位",
+            "2026-11-18 T3：原GAE ref-2与PPO ref-1版本和usage均未改"
+          ]
+        },
+        {
+          "anchor": "#rloo-baseline-proof",
+          "kind": "2026-11-18 T2组baseline推导",
+          "summary": "第466–557行补留一baseline的整轨迹score零期望与(G-1)/G中心化关系，解释自身均值/std相关性；两处图标签让固定优势与独立ratio在clip汇合，不改原GRPO数值例。",
+          "assumptions": "同题任务与采样策略固定、候选条件独立；组归一化不称原始奖励梯度的通用无偏估计；normalization至EOF保留T1/T2改前原文。",
+          "checks": [
+            "2026-11-18 T3：T2交付组证明区间与新增ID静态定位",
+            "2026-11-18 T3：原RLOO ref-4版本和usage未改；独立数学T4待另做"
+          ]
+        },
+        {
+          "anchor": "#gae-boundary-example",
+          "kind": "2026-11-18 T6 hidden label索引修复",
+          "summary": "第388行表头b_1,c_1的hidden label由“第一步的 b、c 标志”改为“第二步（t=1）的 b、c 标志”，仅此一处正文文本变化。",
+          "assumptions": "两次决策为t=0,1，b_1,c_1属于第二步；所有公式、可见图、数值及数学推导保持原样，T4新SHA独立复验与T5构建/浏览器验收另做。",
+          "checks": [
+            "对照/tmp/my-blogs-rl-derivations-evidence/t6-before-20261118/四文件副本核验唯一文本替换及元数据对应变化",
+            "本轮执行learning_review.py check --verify-git-base与git diff --check；结果另存T6证据，不借用旧构建或数学检查"
+          ]
+        },
+        {
+          "anchor": "#baseline-diagram-scroll",
+          "kind": "2026-11-18 T7 T5-VIS-01局部图示可读性修复",
+          "summary": "仅包裹#baseline-proof之后原READING:RL-DIAGRAM:1 marker：max-width:100%/overflow-x:auto的tabindex=0命名region，825px内层，max-width:none!important、width:100%、height:auto的局部直子级SVG样式，及默认可见滚动提示；保留原figure/caption，不使用details。",
+          "assumptions": "原SVG viewBox为660x260、最小字号10.5；预期825x325且最小字13.125px，不足825px的正文宽度仅图内横向滚动。源级比例核算不等于390/768/1440浏览器验收；全部数学正文、原ID、引用、其他图与共享资源不变。",
+          "checks": [
+            "对照/tmp/my-blogs-rl-derivations-evidence/t7-before-20261118/，反向撤去新增wrapper/style/p后整source逐字节相等",
+            "四文件精确凭据核对及非目标文件改前实际SHA保持，证据另存T7报告",
+            "本轮执行learning_review.py check --verify-git-base与git diff --check；不构建、不运行浏览器，实际界面由独立T5复验"
+          ]
         }
       ],
-      "evidence_boundary": "检查原理、GAE/GRPO/长度与ratio主讲以及配方/诊断；独立算术/有限差分只适用于教学值，不验证公开论文数值、最新模型性能或框架GPU实现。",
+      "evidence_boundary": "旧轮证据（旧examined/changes/checks原样保留）：检查原理、GAE/GRPO/长度与ratio主讲以及配方/诊断；独立算术/有限差分只适用于教学值，不验证公开论文数值、最新模型性能或框架GPU实现。 2026-11-18本轮仅续接T1/T2源码交付与T3锚点/引用/精确凭据自检，旧make-check、axe、截图与算术结果不作为本轮推导验证；T3不改s02，不运行训练、构建或浏览器，独立数学T4及当前产物/界面T5另做。",
       "module": "training-data"
     },
     {

@@ -1731,6 +1731,36 @@
         "/assets/archive/blog-before-learning-rework-20261115/series/llm-posttraining/s02_rl_algorithms.html.txt"
       ],
       "usage_as_of": "2026-11-15"
+    },
+    {
+      "id": 80,
+      "title": "OpenAI Spinning Up · Intro to Policy Optimization",
+      "url": "https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html",
+      "kind": "official-document",
+      "version": "dynamic-document",
+      "accessed": "2026-11-18",
+      "source_position_and_scope": "OpenAI Spinning Up · Intro to Policy Optimization · 轨迹概率、score lemma、reward-to-go、baseline 与采样 loss；基础推导采用有限时域无折扣目标，本站折扣目标另保留外层 γᵗ。教程网页未固定版本，访问于 2026-11-18。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#policy-gradient"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-18"
+    },
+    {
+      "id": 81,
+      "title": "Variance Reduction Techniques for Gradient Estimates in Reinforcement Learning",
+      "url": "https://jmlr.org/papers/v5/greensmith04a.html",
+      "kind": "paper",
+      "version": "JMLR 5 (2004)",
+      "accessed": "2026-11-18",
+      "source_position_and_scope": "Variance Reduction Techniques for Gradient Estimates in Reinforcement Learning · Greensmith、Bartlett、Baxter，JMLR 5（2004）；最优 baseline 与真实 value 不必相同。本站单步、固定历史下的协方差迹最小化另给推导，不冒充论文全部多步情形的统一公式；访问于 2026-11-18。",
+      "used_in": [
+        "/llm-posttraining/s02_rl_algorithms.html#policy-gradient"
+      ],
+      "used_in_before_organization": [],
+      "historical_used_in": [],
+      "usage_as_of": "2026-11-18"
     }
   ]
 }
