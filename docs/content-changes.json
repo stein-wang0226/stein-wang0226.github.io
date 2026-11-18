@@ -5,8 +5,12 @@
     {
       "source": "assets/site/reading.css",
       "sha256_before": "a66b39bb6699fc8852585888bed34cebcd81364ec7e9af20744db140ed5f2279",
-      "sha256": "16c934726c459f5c2aa9986e4637c3e0a08bfa0a558954bb75060ad8e3b44602",
-      "reason": "2026-11-15 approved T5a: place mobile mechanism-options/mechanism-compare diamond branch markers after the equally specific mechanism-chain down-arrow rule; preserve true sequential chain arrows and all non-mobile styles. Source-level cascade check only; actual 390/768/1440px browser validation remains pending."
+      "sha256": "8927c406614a6868bbd6acb9a13083cc0d677c3e75321a63992033e8175a590c",
+      "reason": "2026-11-15 approved T5a: place mobile mechanism-options/mechanism-compare diamond branch markers after the equally specific mechanism-chain down-arrow rule; preserve true sequential chain arrows and all non-mobile styles. Source-level cascade check only; actual 390/768/1440px browser validation remains pending. 2026-11-19 user-requested formula sizing fix: exclude MathJax/KaTeX SVG glyphs from all four diagram width rules and the general SVG fallback, retaining intrinsic formula dimensions and proportional diagram sizing. No TeX, scientific source, diagram or anchor changed.",
+      "update_20261119": {
+        "sha256_before": "16c934726c459f5c2aa9986e4637c3e0a08bfa0a558954bb75060ad8e3b44602",
+        "scope": "Five SVG selectors in assets/site/reading.css; current validation is recorded separately from the historical T5a result."
+      }
     },
     {
       "source": "content/posts/my-work-holon/index.md",
