@@ -6,7 +6,7 @@ excerpt: 'Studies the trainability of Masked Diffusion Language Models against a
 date: 2026-04-27
 venue: 'ACL 2027 · Under review · First author'
 paperurl: 'https://arxiv.org/abs/2604.24832'
-citation: 'Yuxiang Wang, et al. "On the Trainability of Masked Diffusion Language Models via Blockwise Locality." <i>arXiv:2604.24832</i>, 2026.'
+citation: 'Stein, et al. "On the Trainability of Masked Diffusion Language Models via Blockwise Locality." <i>arXiv:2604.24832</i>, 2026.'
 ---
 
 ## Summary

@@ -6,12 +6,12 @@ excerpt: 'A compact protein tool agent trained with SFT and on-policy REINFORCE.
 date: 2026-10-24
 venue: 'ARR · Under review · First author'
 paperurl: 'https://arxiv.org/abs/2610.33746'
-citation: 'Yuxiang Wang, Baojian Zhou, Qifang Zhao, Keyue Jiang, Yanghua Xiao, Xiaoxiao Xu. "ProtAgent: Post-Training Compact Protein Tool Agents with Interaction-Level Credit Assignment." <i>arXiv:2610.33746</i>, 2026.'
+citation: 'Stein, Baojian Zhou, Qifang Zhao, Keyue Jiang, Yanghua Xiao, Xiaoxiao Xu. "ProtAgent: Post-Training Compact Protein Tool Agents with Interaction-Level Credit Assignment." <i>arXiv:2610.33746</i>, 2026.'
 ---
 
 ## Status & Sources
 
-The official title, author order, abstract, and public preprint date (**2026-10-24**) follow [arXiv:2610.33746v1](https://arxiv.org/abs/2610.33746v1). Yuxiang Wang is the first author. ARR review status follows my November 2026 resume; the arXiv posting date is not the ARR submission date.
+The official title, author order, abstract, and public preprint date (**2026-10-24**) follow [arXiv:2610.33746v1](https://arxiv.org/abs/2610.33746v1). Stein is the first author. ARR review status follows my November 2026 resume; the arXiv posting date is not the ARR submission date.
 
 ## Training
 

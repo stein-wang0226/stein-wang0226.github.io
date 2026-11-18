@@ -82,32 +82,38 @@
     },
     {
       "source": "content/pages/about.md",
-      "sha256": "4824eb65d35910da473b2edb1ff2e2fbd2aa86b0d02d7ca7cd449ab82660efed",
+      "sha256": "a89c4d524d32de55737d878250e12ec7861a6eada24089177a500b6570b37eb6",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "Update from November 2026 resumes: current ByteDance role, completed Alibaba internship, Harbor synthesis, step-level RL, GUI environments and Holon; correct timeline and GPA rank. Add supplied ProtAgent arXiv link and annotation-coverage metric scope; explicitly mark user-confirmed NeurIPS 2026 main-conference acceptance. Previous about source preserved in content/archive/profile-before-20261114/about.md; paper lists remain shared."
     },
     {
       "source": "content/pages/cv.md",
-      "sha256": "7c28abbe781275accfd9c2e408906f461fc490f52bb1b661279765fdf44984fe",
+      "sha256": "95d53bcb606c4d73eefba0dec64054c258626586d1f249e04c5c0750cb6d163c",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "Reorganize CV from latest resumes, replace ProtAgent GRPO description with step-level REINFORCE, correct dates and titles, add bilingual PDFs. Add verified ProtAgent preprint and three-seed credit-assignment comparison, distinguish annotation coverage from biological correctness, and confirm NeurIPS main-conference acceptance. Add public task-synthesis and benchmark study links without changing author-reported metrics or status. All prior CV text preserved in content/archive/profile-before-20261114/cv.md and historical PDF."
     },
     {
       "source": "assets/Curriculum_Vitae.pdf",
-      "sha256": "1e479455f75403182378dea8282a4bdd685ae5c6d1ea5616e82dde803c59b2f0",
+      "sha256": "1898d438f7157bba17279132d69bf5c938624666fccb125e92836431d790e3bb",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "Replace stable English download with exact author-provided November 2026 English research resume (3 pages). Original 2,502,216-byte CV preserved byte-for-byte at assets/archive/Curriculum_Vitae-before-20261114.pdf with original baseline SHA 66b3c0d7c7cf44f23caf4cae80eaaac4e8948373fe39b682fc2111c2735ccde6."
     },
     {
       "source": "content/publications/2024-stm-dynamic-graph-fraud.md",
-      "sha256": "e392333ade4e9ccaa649caa4e3fc84408f4d5da29172a1552ac7eefa90095c7d",
+      "sha256": "22c738f7d30400dcd9750ededc6f7e349ebf5b73d1c0e0aa7cf08053efbe0269",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "Correct official STM title, DASFAA 2025 venue and 2026-01-02 online publication date using publisher DOI metadata; add verified public experiment code; preserve URL, body and archived original source. Research period remains distinct from publication date."
     },
     {
       "source": "content/publications/2026-locality-aware-dlm.md",
-      "sha256": "71302c517b53e4b0881f9bb82cd55f4cfb0583858d52445e6fe075eb76b87dbc",
+      "sha256": "596a76e2e8c8ff514c3838db57b02922a1f4009967649b854383f5ad9a1e826b",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "Correct official arXiv title and initial date 2026-04-27; add author-reported ACL 2027 under-review status and verified public implementation; preserve stable ID, URL, methods and archived prior source."
     },
     {
       "source": "content/publications/2026-semantic-dlm-plus.md",
-      "sha256": "106fc437fdd659c614d9ad628c7eb685023d436e220742f34fb6899260864d77",
+      "sha256": "2a5aa2821764bd258f31c84fa122b1e9b883b0c8dee0a0ac3dff61538623b86d",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "Mark NeurIPS 2026 Main Conference accepted, explicitly confirmed by author in the current conversation; distinguish conference status from arXiv v1 metadata and preserve public citation author order. Prior source preserved in profile archive."
     },
     {
@@ -126,7 +132,8 @@
     },
     {
       "source": "content/posts/llm-frontier-2026/index.html",
-      "sha256": "2e41623535ba272e2305e4184ed01eb9fcf4feca363e5134aae3a10a1742f1e0",
+      "sha256": "fb1007c09c477fc2b55dfe9b258c15d892b32a8a0aecc25314967958468a6715",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "visual_revision_reason": "2026-11-15: add source-to-mechanism-to-evidence reading diagram; preserve entries, dates and AUTO markers.",
       "reason": "逐页审阅：14节含模型、架构、优化器、Agent、RL、OPD、训练、评测、蛋白、证据与日志全部审阅。原理与算例：改动位置→比较条件；五个判断追问；polar有限近似、Clip-Higher与行为校正、教师接口边界。精简与证据：型号/许可证快照与原维护日志按需；收敛Muon/RL/OPD主讲，旧TB排名改历史；移除无共同条件榜单、领域CoT普遍结论，修正百万碱基单位。AUTO标记、原日期、last-updated与原稿逐字归档保持。 符号补充审阅：将三段美元价格改为明确货币单位，修复五个跨段误识别的数学输出；价格原数值及来源保留。 分类与课程复查：精简旧MiniMax混合性能概括并转主讲证据；跨主题可检索，动态追踪与基础教材分工保持。 讲解连贯性续轮审阅：修正滚动参考页与现有主讲的机制分类冲突、K3及Mistral Large3时效冲突，并补缓存单位/分母/近似边界；不改历史数值、来源、日期、自动标记或整页结构。 T10d仅将3.3标题内FACT状态标签局部设为12px，修复实际10.88px小字号；标签语义、ID、历史信息及共享CSS不变。 对比度复核：只将浅色底上的青绿、绿、琥珀与红色文字及两处渐变底色整体加深一档，使小号标签、表头、日期与页脚达到4.5:1；正文、来源、数字、日期与自动标记不变。 R39窄屏重排复核：320px宽度下页首绝对定位返回链接与说明标签首行文字真实重叠；仅在本页≤640px断点为kicker增加上外边距、让内容让开链接，并给页内style补id作为续轮锚点；桌面宽度、正文、来源与共享样式未改。",
       "prior_reason": "Approved learning rework: review all frontier sections, retain date/AUTO semantics and byte-exact original, fold dated specifications/logs, consolidate duplicate optimizer/RL/OPD teaching, distinguish behavior correction and clipping, rewrite obsolete benchmark rankings as historical evidence, correct biological unit and unsupported universal claims, add five interview checks. Full current product/benchmark claims were not independently reverified."
@@ -147,7 +154,8 @@
     },
     {
       "source": "templates/home.html",
-      "sha256": "735e10ad76f1e1987f1e9de6c7879d71c0413f1bcddfd7fc41d9ddb813a16014",
+      "sha256": "8106d9b968a0b4d84a0692233167a93ed53bf2cf1a3d745f54434597d3d3c48f",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "Preserve shared homepage redesign; add bilingual original resume downloads and selected work generated solely from about.md. Papers and notes still use shared records and retain their entry points. Use three explicit research recommendations and one learning-mainline entry; retain all personal/publication/PDF sections and existing links."
     },
     {
@@ -442,7 +450,8 @@
     },
     {
       "source": "content/series/agent-data-benchmarks/s01_task_synthesis.html",
-      "sha256": "602b31bb41885a2cb51698132aa4e192f83be1e970550185eb4bf62ebca4a30a",
+      "sha256": "7883dcedeff97075c5710c7e78f0d40c2762fc9bde441c7c0a01da9152f55ed8",
+      "erdos_revision": "Add Erdős single-case Lean task production, verifier controls and admission semantics from the supplied 2026-10-19 source snapshot.",
       "reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 图示补充审阅：Add a purpose-specific branching handoff before the existing admission table. Preserve status fields and distinguish infrastructure/invalid-task rejection from normal policy failures. T5 visual blocker fix: at 1440px JS/noJS, auto-fit wraps Critic below CPT (3+1) and a downward marker implies CPT -> Critic. Scope hollow-diamond comparison markers to data-admission-map at all widths; preserve auto-fit, the four independent admission contracts, prose, title, IDs, formulas and sources. Independent browser/pixel recheck remains pending.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（r、f、[0,1]、R_{\\rm repair}、f<1、1-f），公式、标题、锚点与引用未改。表格表头作用域：仅给本页简单数据表列头补充显式 scope=\"col\"，表头文字、数据、结构、锚点与引用未改。",
       "prior_reason": "逐页审阅：对象、12路线、合同、科学检查、工业生成、准入、履历、EvoSyn、实验全部审阅。原理与算例：绝对+相对容差两尺度例；相对repair reward例。精简与证据：路线按缺口分组、长表按需；移除GRPO重复长讲；保留原SVG可放大、规模分母、负控制、履历证据边界。"
     },
@@ -531,7 +540,8 @@
     },
     {
       "source": "content/archive/rl-interview-guide/index.html",
-      "sha256": "f5f9eb21e447dabde9b3318c1bdc980ac4fe28f3b4873ee8d5ed7df17dc4ba71",
+      "sha256": "4a88a28d3b6d58e8c160cc569972988a509874dda99d4fadbb3cd88c93884bc6",
+      "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "逐页审阅：冻结历史正文，只提供查证入口与统一数学加载。原理与算例：原六张SVG与原推导保留。精简与证据：源正文未重编；现代讲解用带纠错注释的适配图，历史错误不升为现行知识。"
     }
   ]

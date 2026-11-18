@@ -6,7 +6,7 @@ excerpt: 'Proposes STM, a dynamic-graph fraud-detection model that combines grap
 date: 2026-01-02
 venue: 'DASFAA 2025 · Published chapter · First author'
 paperurl: 'https://link.springer.com/chapter/10.1007/978-981-95-3906-2_3'
-citation: 'Yuxiang Wang, et al. "STM: A Spatio-Temporal Model for Dynamic Graph Fraud Detection." Database Systems for Advanced Applications (DASFAA 2025), pp. 37–52. Springer, online 2026. https://doi.org/10.1007/978-981-95-3906-2_3'
+citation: 'Stein, et al. "STM: A Spatio-Temporal Model for Dynamic Graph Fraud Detection." Database Systems for Advanced Applications (DASFAA 2025), pp. 37–52. Springer, online 2026. https://doi.org/10.1007/978-981-95-3906-2_3'
 ---
 
 ## Motivation

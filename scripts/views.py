@@ -251,8 +251,8 @@ def render_home(ctx):
             ('<a href="cv/">在线 CV</a>', '<a href="cv/" lang="zh-CN">在线 CV</a>'),
             ('<a href="publications/">论文列表</a>',
              '<a href="publications/" lang="zh-CN">论文列表</a>'),
-            ('download="Yuxiang-Wang-Resume-zh.pdf">中文简历 · PDF</a>',
-             'download="Yuxiang-Wang-Resume-zh.pdf" lang="zh-CN">中文简历 · PDF</a>'),
+            ('download="Stein-Resume-zh.pdf">中文简历 · PDF</a>',
+             'download="Stein-Resume-zh.pdf" lang="zh-CN">中文简历 · PDF</a>'),
             ('<section class="profile-selected" aria-labelledby="selected-work">',
              '<section class="profile-selected" aria-labelledby="selected-work" lang="en">'),
             ('<h2 id="selected-work">Selected Work · 近期工作</h2>',
@@ -272,8 +272,8 @@ def render_home(ctx):
         if body.count(old) != 1:
             raise ValueError(f"home template: expected one language anchor, found {body.count(old)}: {old}")
         body = body.replace(old, new)
-    ctx.page("/", "Yuxiang Wang · Research & Notes", body,
-             "Yuxiang Wang at Fudan and ByteDance Seed: scientific Harbor tasks, Agentic RL, "
+    ctx.page("/", "Stein · Research & Notes", body,
+             "Stein at Fudan and ByteDance Seed: scientific Harbor tasks, Agentic RL, "
              "GUI agent environments, and diffusion language models.",
              lang="en", styles=("/assets/site/profile.css",))
 

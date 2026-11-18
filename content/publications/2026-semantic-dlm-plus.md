@@ -6,7 +6,7 @@ excerpt: 'Analyzes how transition-kernel choices affect diffusion language model
 date: 2026-06-13
 venue: 'NeurIPS 2026 · Main Conference · Accepted'
 paperurl: 'https://arxiv.org/abs/2606.15327'
-citation: 'Keyue Jiang, Yuxiang Wang, Yanan Zhao, Xiang Yu, Qifang Zhao, Bohan Tang, Baojian Zhou, Yanghua Xiao, Lin Qu, Xiaoxiao Xu. "Semantic DLM+: Improving Diffusion Language Models through Bias-variance Trade-off in Transition Kernel Design." <i>arXiv:2606.15327</i>, 2026.'
+citation: 'Keyue Jiang, Stein, Yanan Zhao, Xiang Yu, Qifang Zhao, Bohan Tang, Baojian Zhou, Yanghua Xiao, Lin Qu, Xiaoxiao Xu. "Semantic DLM+: Improving Diffusion Language Models through Bias-variance Trade-off in Transition Kernel Design." <i>arXiv:2606.15327</i>, 2026.'
 ---
 
 ## Summary

@@ -82,7 +82,7 @@ Agent RL归后训练，投机解码归推理，任务数据归数据，场景研
 
 个人履历只根据作者提供的信息更新。论文 Markdown 是论文列表唯一来源；SemDLM 与 SemDLM+ 是不同记录。
 在线 CV 与研究简历 PDF 分别维护。`assets/Curriculum_Vitae.pdf` 为作者提供的英文研究简历，
-`assets/Yuxiang-Wang-Resume-zh.pdf` 为中文研究简历；检查教育、经历、论文与联系方式后替换，
+`assets/Stein-Resume-zh.pdf` 为中文研究简历；检查教育、经历、论文与联系方式后替换，
 替换前保存旧版并记录精确 SHA。构建自动生成英文别名与旧下载地址副本。
 `assets/archive/Curriculum_Vitae-before-20261114.pdf` 保留原 CV；在线 CV 标明其历史版本。
 不要把原件附件描述为由在线 CV 自动导出的同一版本。

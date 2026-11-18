@@ -1,6 +1,6 @@
-<a href="https://stein-wang0226.github.io/about/"><img src="./assets/header.jpg" alt="Yuxiang Wang · Research and notes" width="1280"></a>
+<a href="https://stein-wang0226.github.io/about/"><img src="./assets/header.jpg" alt="Stein · Research and notes" width="1280"></a>
 
-# Yuxiang Wang / 王煜祥
+# Stein
 
 > I study how agents learn from interaction, and how to evaluate what they can actually do.
 
@@ -52,7 +52,7 @@ GUI Agent Data Algorithm Intern at **ByteDance Seed / AI Data**. Previously at *
 - [CUA-Recovery](https://stein-wang0226.github.io/publication/cua-recovery/) studies error recovery in long-horizon computer-use agents. ICLR 2027 under review.
 - [STM](https://doi.org/10.1007/978-981-95-3906-2_3) studies dynamic-graph fraud detection. DASFAA 2025; first author.
 
-[All publications](https://stein-wang0226.github.io/publications/) / [English resume](https://stein-wang0226.github.io/assets/Curriculum_Vitae.pdf) / [中文简历](https://stein-wang0226.github.io/assets/Yuxiang-Wang-Resume-zh.pdf)
+[All publications](https://stein-wang0226.github.io/publications/) / [English resume](https://stein-wang0226.github.io/assets/Curriculum_Vitae.pdf) / [中文简历](https://stein-wang0226.github.io/assets/Stein-Resume-zh.pdf)
 
 </details>
 

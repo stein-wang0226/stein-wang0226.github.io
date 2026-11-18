@@ -1,13 +1,13 @@
 ---
 permalink: /
-title: "Yuxiang Wang"
+title: "Stein"
 author_profile: true
 redirect_from:
   - /about/
   - /about.html
 ---
 
-I am **Yuxiang Wang (王煜祥)**, a Master's student in Artificial Intelligence at the [School of Data Science](https://sds.fudan.edu.cn/), [Fudan University](https://www.fudan.edu.cn/) (2025–2028, expected), advised by [Prof. Baojian Zhou](https://baojian.github.io/) at the [Knowledge Works Lab](http://kw.fudan.edu.cn/).
+I am **Stein**, a Master's student in Artificial Intelligence at the [School of Data Science](https://sds.fudan.edu.cn/), [Fudan University](https://www.fudan.edu.cn/) (2025–2028, expected), advised by [Prof. Baojian Zhou](https://baojian.github.io/) at the [Knowledge Works Lab](http://kw.fudan.edu.cn/).
 
 I work on **Agentic RL, scientific task synthesis, and reliable agent evaluation**: turning expert protocols and real execution failures into reproducible tasks, then connecting tool-use trajectories, SFT, reinforcement learning, and evaluation.
 
@@ -102,8 +102,8 @@ I received my B.Eng. in Computer Science from the [Zhuoyue Honor College](https:
 
 <div class="profile-downloads">
 <a href="/cv/">Online CV</a>
-<a href="/assets/Curriculum_Vitae.pdf" download="Yuxiang-Wang-Resume-en.pdf">English resume · PDF · 3 pages</a>
-<a href="/assets/Yuxiang-Wang-Resume-zh.pdf" download="Yuxiang-Wang-Resume-zh.pdf">中文研究简历 · PDF · 2 页</a>
+<a href="/assets/Curriculum_Vitae.pdf" download="Stein-Resume-en.pdf">English resume · PDF · 3 pages</a>
+<a href="/assets/Stein-Resume-zh.pdf" download="Stein-Resume-zh.pdf">中文研究简历 · PDF · 2 页</a>
 </div>
 
 The downloads preserve the author-supplied PDFs. The online CV also includes links to research records and historical experience.

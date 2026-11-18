@@ -110,6 +110,17 @@ R_{\rm repair}=\max\left(0,\frac{r-f}{1-f}\right)\quad(f&lt;1).
 \]</div>
 <p>ScienceIDE中r为修复后测试通过比例、f为faulty baseline比例。若f=0.5、r=0.75，reward为0.5；它衡量可修复剩余部分的进展。f=1时没有有效缺陷，不能照算。Timeout、构建故障与graded failure分列，论文cohort结果不外推全科学领域。</p>
 </section>
+<section id="erdos-pipeline">
+<h2>Erdős 数学题怎样做成可验证的 Lean 任务</h2>
+<p>这条生产线从一个 Erdős 题号出发，把已有完整证明转成可以交给另一位求解者的任务。作者要先回答两个问题：上游证明确实解决了原题吗？求解者提交的代码能否由独立环境按同一命题判分？这两次检查分别约束题源和评分器。</p>
+<ol>
+<li><strong>核对题源。</strong>题目目录提供下载线索。作者取得 Lean 证明和锁定版本的依赖，编译原始定理，核对假设、结论及传递公理。若核心引理留有 <code>sorry</code>，即使文件能编译，也应记录 <code>rejected_seed</code> 和具体缺口。若只是依赖下载失败，则记录基础设施阻塞，保留对数学来源的判断。</li>
+<li><strong>固定命题，决定给求解者哪些材料。</strong>可信的 <code>Model.lean</code> 先定义 <code>Target : Prop</code>。来源通过后生成 <code>prove</code>：求解者看到命题与起始模板，完整证明留作 oracle。若另有一份完整、可归属的自然语言证明，则增加 <code>translate</code>：同一个命题，题包附上该证明，求解者负责把论证形式化。只有 Lean 证明的题仍可交付第一个变体。</li>
+<li><strong>检验判分器。</strong>在干净环境中恢复可信依赖，只导入允许提交的 Lean 源码。验收读取每个变体的 Harbor 奖励：已知正确证明应得 1，空提交应得 0。再检查带占位符、额外公理或弱化命题的提交是否被拒。比如求解者另证了一个名为“目标”但类型为 <code>True</code> 的定理，独立检查仍要求提交项具有原先冻结的 <code>Target</code> 类型。</li>
+<li><strong>交付并留下证据。</strong>同一作者会话提交验证计划，确定性脚本执行检查并运行 finalizer。失败时，Stop hook 把错误交还作者修复，默认最多三轮。最终准入重新核验打包清单的逐文件 SHA-256，并要求每个变体至少有 24 条不同的 CI 通过记录。读取 <code>verdict.json</code> 可区分成功交付、题源拒绝与运行失败。</li>
+</ol>
+<p>因此，<code>complete_draft</code> 表示题包达到当前交付要求。要回答“这题对模型有多难”，还需要在独立 solver、固定预算下运行并报告结果。此处依据 2026-10-19 的单题合成源码快照，范围止于任务交付。核对入口为 <code>runner.py</code>（阶段状态）、<code>stop_gate.py</code>（验证与修复）、<code>run_validation.py</code>（执行计划）及 <code>verify_run.py</code>（最终准入）。</p>
+</section>
 <section id="industrial">
 <h2>需求合成、闭环扩张与失败回收</h2>
 <h3>NexForge / EvoSyn：覆盖扩张与预算调度分开</h3>

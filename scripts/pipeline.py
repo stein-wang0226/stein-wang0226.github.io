@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 
 from catalog import load_content
+from organization import public_archive_text
 from render import BuildContext, DEFAULT_OUTPUT, FAVICON_LINK, ROOT, external_output, input_digest, load_md, mark_cjk_runs, md, publication_date, route_path
 
 PRINT_LINK = '<link rel="stylesheet" href="/assets/site/print.css" media="print">'
@@ -151,10 +152,10 @@ def render_artifact(ctx):
         history = json.loads(archive_record.read_text())
         links = []
         for row in history["pages"]:
-            ctx.copy(ctx.root / row["archive"], row["archive"])
+            ctx.write(row["archive"], public_archive_text(ctx.root / row["archive"]))
             entry = ctx.by_id[row["id"]]
             links.append(f'<li><a download href="{ctx.rel("/blog/history/", "/" + row["archive"])}">'
-                         f'{html.escape(entry["title"])}：重编前原稿</a></li>')
+                         f'{html.escape(entry["title"])}：重编前原稿（公开署名版）</a></li>')
         ctx.page("/blog/history/", "重编前的原稿", '<h1>重编前的原稿</h1>'
                  '<p>2026年11月15日重编前的源稿逐字保留为文本下载。当前学习内容请从'
                  '<a href="../#learning-paths">完整学习主线</a>进入。</p><ul>' +

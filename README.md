@@ -1,4 +1,4 @@
-# Yuxiang Wang · Research & Stein’s Notes
+# Stein · Research & Stein’s Notes
 
 唯一维护仓库：[stein-wang0226.github.io](https://github.com/stein-wang0226/stein-wang0226.github.io)，分支 `main`。
 个人 GitHub 主页：https://github.com/stein-wang0226。
@@ -46,7 +46,7 @@ make new ID=my-topic TITLE="文章标题" TOPIC=llm-foundations
 | 历史 RL 手册 | `content/archive/rl-interview-guide/index.html` |
 | 旧地址映射 | `content/redirects.json` |
 | 首页布局、共享展示 | `templates/`、`assets/site/`、`scripts/` |
-| 研究简历 PDF | 英文 `assets/Curriculum_Vitae.pdf`，中文 `assets/Yuxiang-Wang-Resume-zh.pdf`；原 CV 保留在 `assets/archive/` |
+| 研究简历 PDF | 英文 `assets/Curriculum_Vitae.pdf`，中文 `assets/Stein-Resume-zh.pdf`；原 CV 保留在 `assets/archive/` |
 | GitHub Profile 介绍稿 | `docs/github-profile/README.md`、`settings.json`；发布顺序见 `DEPLOYMENT.md` |
 
 不要手改或提交生成 HTML。首页、个人介绍、CV 的论文列表，以及博客搜索和相关文章都从上述记录生成。

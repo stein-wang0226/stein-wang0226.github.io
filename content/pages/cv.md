@@ -7,14 +7,14 @@ redirect_from:
   - /resume
 ---
 
-**Yuxiang Wang · 王煜祥**<br />
+**Stein**<br />
 Agentic RL · Scientific Task Synthesis · GUI Agent Data · Diffusion Language Models · AI4S
 
 [Email](mailto:25210980109@m.fudan.edu.cn) · [GitHub](https://github.com/stein-wang0226) · [Google Scholar](https://scholar.google.com/citations?hl=en&user=PCoqb3wAAAAJ)
 
 <div class="profile-downloads">
-<a href="/assets/Curriculum_Vitae.pdf" download="Yuxiang-Wang-Resume-en.pdf">English resume · PDF · 3 pages</a>
-<a href="/assets/Yuxiang-Wang-Resume-zh.pdf" download="Yuxiang-Wang-Resume-zh.pdf">中文研究简历 · PDF · 2 页</a>
+<a href="/assets/Curriculum_Vitae.pdf" download="Stein-Resume-en.pdf">English resume · PDF · 3 pages</a>
+<a href="/assets/Stein-Resume-zh.pdf" download="Stein-Resume-zh.pdf">中文研究简历 · PDF · 2 页</a>
 </div>
 
 Updated from my November 2026 research resumes. The PDFs are original author-supplied snapshots; this online CV adds research links and preserves historical experience.
@@ -158,7 +158,7 @@ Public study notes: [Executable task synthesis](/agent-data-benchmarks/s01_task_
 The English research resume is **3 pages (78 KB)**; the Chinese research resume is **2 pages (259 KB)**. Both preserve the supplied files byte for byte.
 
 - [English research resume](/assets/Curriculum_Vitae.pdf).
-- [中文研究简历](/assets/Yuxiang-Wang-Resume-zh.pdf).
+- [中文研究简历](/assets/Stein-Resume-zh.pdf).
 - [Historical CV PDF, before this update](/assets/archive/Curriculum_Vitae-before-20261114.pdf).
 
 Project metrics come from the supplied resumes. Publication status is distinguished from public preprint metadata in each record below. The publication list is generated from shared records.

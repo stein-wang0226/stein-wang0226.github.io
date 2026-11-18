@@ -257,7 +257,7 @@ def render_preview(gh, output, root=ROOT):
     output.write_text(
         '<!doctype html><html lang="en"><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        '<title>Yuxiang Wang · GitHub Profile preview</title>'
+        '<title>Stein · GitHub Profile preview</title>'
         f'<style>{PREVIEW_CSS}</style><body>'
         '<aside>Local preview · GitHub-rendered Markdown with simulated platform styles. '
         'This version has not been published.</aside>'

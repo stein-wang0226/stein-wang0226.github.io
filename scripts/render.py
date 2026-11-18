@@ -241,7 +241,7 @@ class BuildContext:
         source = self.site.get("repository", "https://github.com/stein-wang0226/stein-wang0226.github.io")
         # The footer copy is English; mark it when the page itself is Chinese.
         attr = ' lang="en"' if not lang.lower().startswith("en") else ""
-        return (f'<footer class="site-footer"{attr}><span>Yuxiang Wang · Research &amp; Notes</span>'
+        return (f'<footer class="site-footer"{attr}><span>Stein · Research &amp; Notes</span>'
                 f'<a href="{html.escape(source, quote=True)}">GitHub · Source</a>'
                 f'<a class="site-build" href="{rel(path, "build-info.json")}">Build {html.escape(label)}</a></footer>')
 
@@ -258,7 +258,7 @@ class BuildContext:
         self.write(path, f'''<!DOCTYPE html>
 <html lang="{html.escape(lang, quote=True)}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{html.escape(title)} — Yuxiang Wang</title>{base}
+<title>{html.escape(title)} — Stein</title>{base}
 <meta name="description" content="{html.escape(description or title, quote=True)}">
 <link rel="canonical" href="{self.canonical(path)}">
 <link rel="stylesheet" href="{self.asset(path, "assets/site/site.css")}">{style_tags}{script_tag}
@@ -276,7 +276,7 @@ class BuildContext:
         # Fixed target queries/fragments win; otherwise preserve the old URL.
         self.write(path, f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Page moved — Yuxiang Wang</title>
+<title>Page moved — Stein</title>
 <link rel="canonical" href="{html.escape(self.canonical(urlsplit(target).path), quote=True)}">
 </head><body><p>This page has moved.
 <a href="{html.escape(destination, quote=True)}">Continue reading</a>.</p>

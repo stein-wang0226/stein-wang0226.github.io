@@ -14,6 +14,10 @@ def sha(text):
     return hashlib.sha256(text.encode()).hexdigest()
 
 
+def public_archive_text(path):
+    return path.read_bytes().decode("utf-8").replace("Yuxiang Wang", "Stein")
+
+
 class Evidence(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=False)
@@ -138,7 +142,7 @@ def check(root, output=None):
                 if original.units != change["before_units"]:
                     errors.append(f"organization: {page['id']} before unit evidence differs")
                 if output and (not (output / change["archive"]).is_file()
-                               or (output / change["archive"]).read_bytes() != archive.read_bytes()):
+                               or (output / change["archive"]).read_bytes() != public_archive_text(archive).encode()):
                     errors.append(f"organization: {page['id']} published archive differs")
         source_ids = set(doc.ids) | (set(original.ids) if original else set())
         source_links = set(doc.links) | (set(original.links) if original else set())
