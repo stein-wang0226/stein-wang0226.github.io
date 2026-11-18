@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="335" viewBox="0 0 420 335" role="img" aria-labelledby="title">
+  <title id="title">MoE 单个 token 的 top-2 路由</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#216459"/>
+    </marker>
+  </defs>
+  <rect width="420" height="335" rx="14" fill="#faf9f4"/>
+  <g fill="none" stroke="#216459" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M210 50V68"/>
+    <path d="M176 107V125H71V149"/>
+    <path d="M244 107V125H210V149"/>
+    <path d="M71 188V214"/>
+    <path d="M210 188V214"/>
+    <path d="M71 253V280"/>
+    <path d="M210 253V280"/>
+  </g>
+  <g font-family="system-ui, sans-serif" font-size="16" text-anchor="middle" fill="#233b37">
+    <rect x="92" y="13" width="236" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="210" y="37">token A 的隐藏向量 xₐ</text>
+    <rect x="92" y="70" width="236" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="210" y="94">Router → 选中专家 1、2</text>
+    <rect x="10" y="151" width="122" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="71" y="175">专家 1 FFN</text>
+    <rect x="149" y="151" width="122" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="210" y="175">专家 2 FFN</text>
+    <rect x="288" y="151" width="122" height="37" rx="7" fill="#f4eee4" stroke="#ae9c82"/>
+    <text x="349" y="175">专家 3 FFN</text>
+    <rect x="13" y="216" width="116" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="71" y="240">× 2/3</text>
+    <rect x="152" y="216" width="116" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="210" y="240">× 1/3</text>
+    <rect x="45" y="282" width="224" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="157" y="306">相加 → 写回 token A</text>
+    <text x="349" y="213" font-size="15">本 token 跳过</text>
+  </g>
+</svg>

@@ -11,6 +11,8 @@
 <p>先修：<a href="s01_transformer_foundations.html#attention-mask">QKV 与 causal mask</a>。本文 B 为并发序列数、T 为保存的历史 token 数、L 为采用该机制的层数、Hq/Hkv 为 query/KV heads、dh 为每个 K/V head 的宽度。K/V 宽度相同只是本节基础假设。</p>
 </section>
 <section id="attention-scaling"><h2>为什么点积要除以 \(\sqrt{d_h}\)</h2>
+<figure id="causal-attention"><img src="../assets/research/causal-attention.svg" width="420" height="280" loading="lazy" style="display:block;width:100%;max-width:420px;height:auto;margin:auto" alt="Q 和 K 进入缩放点积，经因果掩码与 softmax 获得权重。V 在最后一步按权重聚合。">
+<figcaption><strong>单头因果自注意力。</strong>Q 与 K 决定读哪些位置、各读多少，V 提供被读取的内容。每一行对应一个 query，未来位置在 softmax 前被屏蔽。按 <a href="index.html#ref-1">原论文 §3.2</a> 自绘。</figcaption></figure>
 <p class="math-notation">本节 \(q,k\in\mathbb R^{d_h}\) 是单头 query/key 列向量，\(\ell=1,\ldots,d_h\) 索引分量，\(s\) 是内积 score，\({}^\top\) 为转置，Var 表示方差。随后 softmax 的 \(s_j,p_i\) 分别是候选 \(j\) 的 score 和候选 \(i\) 的概率，\(i,j\) 遍历同一候选 key 集合，归一轴是候选轴；Jacobian 是概率对这些 score 的偏导，\(\mathbf1[i=j]\) 是相等指示。</p>
 <p>先用可计算的近似解释尺度：假设query和key各分量独立、均值0、方差1，且两者相互独立。每项 \(q_\ell k_\ell\) 的均值为0、方差为1；求和 \(d_h\) 项的方差变成 \(d_h\)。</p>
 <div class="reading-math" role="math">\[
@@ -40,6 +42,8 @@ s=q^\top k=\sum_{\ell=1}^{d_h}q_\ell k_\ell,\qquad
 </div><figcaption>GQA 的概念流程。kernel 可以在计算中广播 KV，而不实体化 repeat；具体布局由实现决定。</figcaption></figure>
 </section>
 <section id="kv-bytes"><h2>从形状推导缓存字节</h2>
+<figure id="kv-cache-step"><img src="../assets/research/kv-cache-step.svg" width="420" height="302" loading="lazy" style="display:block;width:100%;max-width:420px;height:auto;margin:auto" alt="上一解码步留下的 K、V 与本步投影的 K、V 合并写回。新 Q 读取追加后的完整缓存。">
+<figcaption><strong>单层 KV Cache 的一次解码。</strong>Prefill 已写入提示词的 K/V。第 t 步只投影当前 token 的 Q/K/V，把新 K/V 追加到本层缓存，再用当前 Q 读取截至位置 t 的全部 K/V。按 <a href="index.html#ref-8">Llama 实现</a> 自绘，示例采用完整因果注意力。</figcaption></figure>
 <section id="citation-sources-3" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2104.09864" title="RoFormer: Enhanced Transformer with Rotary Position Embedding · Su, Jianlin, Lu, Yu, Pan, Shengfeng 等 · 2021/04/20 · 2104.09864">RoPE</a>。</p></section>
 
 <p>每层的K为 \([B,T,H_{\rm kv},d_K]\)，V为 \([B,T,H_{\rm kv},d_V]\)，\(d_K,d_V\) 分别为 key/value 的每头宽度。\(M_{\rm KV}\) 是全部 \(B\) 条等长历史、\(L\) 层的缓存总字节，不是 attention mask；\(b\) 是 byte/元素，区别于并发序列数 \(B\)。元素数分别乘每值字节 \(b\)，再累加层数；\(M_{\rm KV}/(BT)\) 是每条序列每个历史 token 的 byte/token。宽度相同时得到熟悉的系数2：</p>

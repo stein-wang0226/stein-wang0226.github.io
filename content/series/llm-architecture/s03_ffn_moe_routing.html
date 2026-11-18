@@ -43,6 +43,8 @@ y=\sum_{e\in I}g_e(x)E_e(x)+E_{\rm shared}(x).
 </div><figcaption>专家并行的概念路径。单设备也要重排；不同实现可能采用 AllGather/ReduceScatter 或融合通信，并非一律同一 collective。</figcaption></figure>
 <details><summary>top-k 是可微的吗？</summary><p>离散选择本身通常不对所有候选传播普通连续梯度；选中路径的 gate 和专家参与训练，router 还可从辅助目标获得梯度。不同 straight-through、soft routing、loss-free balancing 的处理不相同。不能因为选择离散就说 router 完全不学习。</p></details>
 <h3 id="moe-full-example">完整路由算例：四个 token 怎样派发并恢复输出</h3>
+<figure id="moe-topk"><img src="../assets/research/moe-topk.svg" width="420" height="335" loading="lazy" style="display:block;width:100%;max-width:420px;height:auto;margin:auto" alt="token A 经过路由器进入专家 1 和 2，两路结果分别乘以三分之二和三分之一，再加总写回 A。专家 3 不处理 A。">
+<figcaption><strong>跟踪算例里的 token A。</strong>两个选中的专家都收到 A 的原始隐藏向量。权重乘在专家输出上，合并后的结果回到 A 的位置。灰色分支表示 A 跳过专家 3，专家 3 仍可处理本批的其他 token。按下文 top-2 算例自绘，稀疏门控机制见 <a href="https://arxiv.org/abs/1701.06538">Shazeer 等的 MoE 论文</a>。</figcaption></figure>
 <p><strong>输入与简化：</strong>四个二维行向量 \(x_A=(1,0),x_B=(0,1),x_C=(1,1),x_D=(2,0)\)，A–D 是 token 身份标签，不是矩阵或维度；三个专家、top-2，专家编号为1–3。\(W_r\in\mathbb R^{2\times3}\) 是本例路由权重，log 是自然对数；router 先沿三个专家做 softmax，再将选中权重重新归一化。为看清派发与加权，专家简化为 \(E_1(x)=x,E_2(x)=2x,E_3(x)=3x\)，共享输出取0；真实专家的 SwiGLU 已在上一节展开。本例先执行 dropless 路径，不是任何模型的训练配置。</p>
 <div class="reading-math" role="math">\[
 W_r=\begin{pmatrix}\log4&amp;\log2&amp;0\\0&amp;\log4&amp;\log2\end{pmatrix},

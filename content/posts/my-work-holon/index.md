@@ -4,7 +4,7 @@ title: Holon：蛋白质、文本与结构的统一建模
 
 <p><a href="../">My Work 目录</a> · <a href="full-report.html">完整研究报告：21 节方法与实验</a></p>
 
-## 先记住：统一接口，分轴验收
+## Holon 要解决什么问题 {#_1}
 
 Holon 的目标是在同一模型接口中连接蛋白质序列、自然语言与离散结构表示。它以 Qwen2/Qwen3 的文本能力为起点，采用蛋白 tokenizer 和按模态分配参数的 Mixture-of-Transformers（MoT），逐步学习序列先验、蛋白与文本的条件关系及科学任务的输出行为。仓库还保留 dense ProteinQwen3 和 MoE 对照，因此“Holon”应理解为模型、数据、训练和评测组成的研究体系。[1](#ref-1)[2](#ref-2)
 
@@ -13,6 +13,8 @@ Holon 的目标是在同一模型接口中连接蛋白质序列、自然语言�
 - **MoT 分开投影、共享交互**：参数按模态或任务路由，样本内 attention 仍能跨模态。
 - **配方必须落到实际 token**：记录采样比例、输入比例、监督比例与 loss 权重各自登记。
 - **科学能力分开验收**：序列 NLL、正确配对敏感性、结构几何与生物功能不能互相替代。
+
+**按问题跳读。** 想看模型怎样处理不同模态，从 [MoT 与结构 tokenizer](#_2) 开始。想看训练配方，从 [监督与采样](#_4) 读到 [算力分配与训练稳定性](#scaling-cpt)。想直接看结果，可以跳到 [文本能力保留](#text-retention) 和 [Negative Ladder 算例](#work-example)。
 
 <!-- WORK:KNOWLEDGE:START -->
 ## 知识讲解：先区分表示、条件与监督 {#work-knowledge}
@@ -100,6 +102,31 @@ O&=PV
 
 冻结策略也分两层：参数 `requires_grad=False` 与中间表示 `detach` 对梯度路径的影响不同；实际 `freeze_und` 必须与实现、optimizer 参数组和 checkpoint 一起核对。packed 的训练及评测 loss 路径与 KV-cache 生成路径同样不同，调用 `.eval()` 本身不会自动把 packed 输入改成生成接口。[2](#ref-2)[3](#ref-3)
 
+### 三维坐标怎样变成一个结构 token？ {#structure-tokenizer}
+
+**一条链产生一串结构码，每个有效残基占一个位置。** Holon 使用冻结的 DPLM 结构 tokenizer 离线编码。它先用 GVP-Transformer 读取整条链的主链几何，为每个残基生成包含邻域信息的连续表示，再通过投影和 LFQ（lookup-free quantization）把该位置压成 13 位。每位只有两种取值，所以一共有 2¹³ = 8192 种码。同一个氨基酸在不同几何环境里可以得到不同的码。[DPLM-2 论文，图 2](https://arxiv.org/abs/2410.13782)
+
+```text
+整条链的 N、Cα、C 三维坐标 + 有效残基 mask
+                   ↓ GVP-Transformer 编码主链及邻域几何
+取第 i 个有效残基 → 连续表示 hᵢ → pre_quant → 13 个实数
+                   ↓ LFQ 逐维判断是否大于 0
+例：0000000000101 → 原始结构码 5 → Holon 蛋白词表 ID 41
+```
+
+**坐标到连续表示。** DPLM 的 GVP 封装从原子坐标张量取前三个原子槽，即 N、Cα、C；每个槽有 x、y、z 三个分量。编码器从相对位置与方向提取几何特征，使模型能描述链在该处怎样弯折。平移或旋转整条链会改变原始坐标，却保持其内部几何。编码后的每残基表示经过 LayerNorm、两层线性变换及中间的 ReLU，得到量化器输入。[坐标切片与 mask](https://github.com/bytedance/dplm/blob/8a2e15e53416b4536f03f79ad1f6f6a9cbd5e19d/src/byprot/models/structok/modules/gvp_encoder.py#L72-L80) · [投影和编码入口](https://github.com/bytedance/dplm/blob/8a2e15e53416b4536f03f79ad1f6f6a9cbd5e19d/src/byprot/models/structok/structok_lfq.py#L138-L155)
+
+**连续表示到整数。** 实际接口 `tokenize(atom_positions, res_mask, seq_length)` 先调用 `self.encode`，再把投影结果交给 `self.quantize`，返回逐位置的 `struct_tokens`。下面用 Python 展开单个残基的位运算。假定前十维都为负，最后三维为正、负、正，最高位在左。示例数值只演示量化步骤。[tokenize 源码](https://github.com/bytedance/dplm/blob/8a2e15e53416b4536f03f79ad1f6f6a9cbd5e19d/src/byprot/models/structok/structok_lfq.py#L214-L223) · [LFQ 符号判定与整数归约](https://github.com/bytedance/dplm/blob/8a2e15e53416b4536f03f79ad1f6f6a9cbd5e19d/src/byprot/models/structok/modules/lfq.py#L290-L317)
+
+```python
+latent = [-0.1] * 10 + [0.8, -0.2, 0.4]
+bits = [int(value > 0) for value in latent]
+raw_code = sum(bit << (12 - i) for i, bit in enumerate(bits))  # 4 + 1 = 5
+holon_id = 36 + raw_code  # 41
+```
+
+这里先后有两个编号。**5** 是冻结 codec 写入数据的原始结构码，同一行还保存有效残基 mask。**41** 是 Holon 加载该样本时使用的蛋白词表行号，前 36 行留给 ESM 词表和三个结构特殊符号。此时才由 `prot_embed_tokens` 查出送入 MoT 的向量。13 位只保留投影的符号，同一码可以对应多个连续表示；需要重建三维骨架时，结构解码器利用整串码估计坐标。[Holon 数据与词表协议](full-report.html#chapter-16)
+
 ## 数据与训练阶段
 
 | 阶段 | 输入与监督 | 学习目标 | 需要保留的交接物 |
@@ -169,6 +196,20 @@ w_i'&\propto w_i\frac{s_i}{\widehat s_i}
 
 同样把预算增加 10 倍，结构图给出的分配约为 **2.85 倍每 token 计算量、3.51 倍输入 token 数**。两组实验的指数反映各自数据、目标词表和观测预算内的趋势。跨图可比较算力分配随预算变化的方向；验证交叉熵衡量的是各自词表上的预测任务，绝对值不宜横向排名。
 
+### 加算力后，验证损失还能降多少？ {#loss-vs-compute}
+
+把蛋白序列 IsoFLOP 图里每档预算的拟合最低点单独取出来，就能画出最优验证 CE 随总算力变化的趋势。下方面板显示这些点相对拟合线的残差，用来观察偏离趋势的幅度。
+
+<figure><a href="loss-vs-compute.png"><img src="loss-vs-compute.png" width="1840" height="1610" loading="lazy" alt="蛋白序列最优验证交叉熵随算力下降。圆点是 IsoFLOP 拟合最低点，绿色星号为外推值，下方展示残差。" style="max-width:100%;height:auto"></a><figcaption>虚线是跨预算拟合，绿色星号是外推预测。训练端点见上面的 IsoFLOP 图。图源为随附 Holon Technical Report 的 <code>fig:performance-scaling</code>。</figcaption></figure>
+
+### 训练到 63k 步附近，损失为什么突然变化？ {#loss-transition}
+
+报告把若干长程运行放到相同宽度的窗口内比较。约 63k 步的上跳在历史运行里重复出现。配对续训改变读取起点后，仍观察到上跳，因此单凭这项干预只能缩小排查范围。再看右图扫描整个训练尾段的统计，便能区分上跳减弱与上跳延迟，避免只盯原来的 63k 步。
+
+<figure><a href="long-run-loss-transition.png"><img src="long-run-loss-transition.png" width="1840" height="706" loading="lazy" alt="三栏对照训练损失跳变：历史运行的 41k 与 63k 窗口、数据读取相位干预，以及训练尾段同宽窗口的最大上跳。" style="max-width:100%;height:auto"></a><figcaption>各面板展示审计窗口统计。压住损失上跳后，终点质量仍需独立评估。图源为随附 Holon Technical Report 的 <code>fig:qwen17-transition</code>。</figcaption></figure>
+
+### 怎样把算力预算换成 CPT 的 token 数？ {#cpt-budget}
+
 仓库用 iso-FLOPs 实验研究模型规模、训练数据、batch 和学习率，并保留 Muon / AdamW、冻结与全参训练、ZeRO 和 checkpoint 的工程记录。预算迁移需要按当前激活的模型路径重新计算每 token FLOPs，再由算力预算解析训练 token 数。总参数与 active 参数是两个量，不能直接互换。[1](#ref-1)[5](#ref-5)
 
 当前 C1e20 Muon v3 profile：active 参数 **440,401,920**，每 token **2,837,839,872 FLOPs**，global batch **479,232 tokens**。[2](#ref-2)[5](#ref-5)
@@ -183,7 +224,15 @@ D&\simeq C/M\\
 
 这是特定 decoder path 的预算。总参数不能代替 active path 的计算量；历史有效长度 284 仍需由 packed telemetry 校准。
 
-## 如何证明模型使用了文本条件
+## 评测结果 {#_6}
+
+### 科学 SFT 后保留了哪些文本能力？ {#text-retention}
+
+在同一模型尺寸内，用各自的 CPT checkpoint 作参照。混合科学与通用数据的 SFT 在两档尺寸上都提高了单轮指令遵循 IFEval，Multi-IF 略低于 CPT，而工具调用 BFCL-v3 分别从 **46.09% 降到 41.34%**、从 **60.70% 降到 40.55%**。1.7B 的通用数据单独训练臂出现明显低分，报告将其记为原因未明的单次运行异常。
+
+<figure><a href="text-capability-retention.png"><img src="text-capability-retention.png" width="2080" height="800" loading="lazy" alt="0.6B 和 1.7B 的文本能力保留对照。混合 SFT 提高 IFEval，但两档的 BFCL-v3 均低于各自的 CPT checkpoint。" style="max-width:100%;height:auto"></a><figcaption>IFEval 和 BFCL-v3 用严格准确率，Multi-IF 覆盖八种语言和全部三轮。各 SFT 臂的步数随配方的 token 数变化。图源为随附 Holon Technical Report 的 <code>fig:eval-retention</code>。</figcaption></figure>
+
+### 如何证明模型使用了文本条件？ {#condition-use}
 
 单看 protein loss 或某个 fitness 分数无法确认模型在利用文本。统一报告将几种证据分开：[1](#ref-1)
 

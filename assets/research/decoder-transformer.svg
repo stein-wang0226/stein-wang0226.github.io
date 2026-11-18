@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="574" viewBox="0 0 420 574" role="img" aria-labelledby="title desc">
+  <title id="title">Decoder-only Transformer 的前向计算</title>
+  <desc id="desc">输入 token 经 embedding 进入重复的解码层。每层先后执行注意力和前馈网络，各子层先归一化，再与跳过子层的输入相加。最后一次归一化和词表投影给出各位置的 logits。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#216459"/>
+    </marker>
+  </defs>
+  <style>
+    text { font: 16px system-ui, sans-serif; fill: #233b37; text-anchor: middle }
+    .label { font-size: 14px; fill: #33685e }
+    .node { fill: white; stroke: #569389 }
+    .wire { fill: none; stroke: #216459; stroke-width: 2; marker-end: url(#arrow) }
+    .sum { fill: #216459 }
+    .plus { fill: white; font-size: 20px }
+  </style>
+  <rect width="420" height="574" fill="#faf9f4" rx="14"/>
+  <rect x="13" y="99" width="394" height="351" rx="16" fill="#e9f2ec" stroke="#8cb1a4"/>
+  <g class="node">
+    <rect x="105" y="49" width="210" height="34" rx="7"/>
+    <rect x="105" y="150" width="210" height="34" rx="7"/>
+    <rect x="105" y="199" width="210" height="38" rx="7"/>
+    <rect x="105" y="306" width="210" height="34" rx="7"/>
+    <rect x="105" y="355" width="210" height="38" rx="7"/>
+    <rect x="90" y="479" width="240" height="38" rx="7"/>
+  </g>
+  <g class="wire">
+    <path d="M210 28V47"/><path d="M210 83V148"/>
+    <path d="M210 184V197"/><path d="M210 237V254"/>
+    <path d="M210 134H57V270H194"/>
+    <path d="M210 285V304"/><path d="M210 340V353"/>
+    <path d="M210 393V407"/><path d="M210 294H57V422H194"/>
+    <path d="M210 437V477"/><path d="M210 517V539"/>
+  </g>
+  <g fill="#216459"><circle cx="210" cy="134" r="3.5"/><circle cx="210" cy="294" r="3.5"/></g>
+  <circle class="sum" cx="210" cy="270" r="14"/><circle class="sum" cx="210" cy="422" r="14"/>
+  <text x="210" y="22">输入 token ID</text><text x="210" y="72">Embedding 查表</text>
+  <text class="label" x="92" y="122">解码层 × L</text>
+  <text x="210" y="173">RMSNorm</text><text x="210" y="224">因果自注意力</text>
+  <text class="label" x="99" y="261">残差</text><text class="plus" x="210" y="277">+</text>
+  <text x="210" y="329">RMSNorm</text><text x="210" y="380">逐位置前馈网络（FFN）</text>
+  <text class="label" x="99" y="414">残差</text><text class="plus" x="210" y="429">+</text>
+  <text x="210" y="504">最终 RMSNorm → 词表投影</text>
+  <text x="210" y="560">各位置的下一 token 分数（logits）</text>
+</svg>

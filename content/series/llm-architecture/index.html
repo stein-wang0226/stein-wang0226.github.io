@@ -11,6 +11,8 @@
 
 <p class="lead">LLM 架构可以拆成六个问题：token 怎样成为表示，位置之间怎样交换信息，每个位置怎样做非线性变换，信息怎样穿过深度，历史怎样保存，以及这些选择怎样影响训练和服务。本系列从可追踪的张量出发，逐步连接最新公开机制。</p>
 <ul><li><strong>先完整算一遍：</strong><a href="#transformer-decoder-flow">Transformer 前向推导</a>按 embedding → Norm → Attention → FFN → logits / loss 展开，再对照 prefill 与缓存解码。</li><li><strong>再拆开理解：</strong>Attention缩放/RoPE→FFN/MoE→残差梯度→递归状态。</li><li><strong>最后比较前沿：</strong>残差流与LatentMoE→DeepSeek/Qwen/Kimi等家族→DeepSeek缓存账本，都在本页继续阅读。</li><li><strong>先修：</strong>矩阵乘法、概率与反向传播；每个算例先列输入和假设，再展示中间量、输出及检查。</li></ul>
+<figure id="decoder-network"><img src="../assets/research/decoder-transformer.svg" width="420" height="574" style="display:block;width:100%;max-width:420px;height:auto;margin:auto" alt="从上到下，token 经 embedding 进入 L 个解码层。每层的注意力和 FFN 各有一条绕过归一化与计算的残差支路，在加号处汇合。最后归一化并投影到词表。">
+<figcaption><strong>一张图读懂 decoder-only Transformer。</strong>沿中央箭头看一次前向计算。绿色框重复 L 次，每层有自己的参数。注意力让当前位置读取自身及之前的位置，FFN 单独处理每个位置。沿左侧支路看两个加号：每次都把子层学到的更新量加回该子层的输入。图按本章的 <a href="#ref-8">Llama 实现</a>绘制，省略了注意力内部的投影与位置编码。</figcaption></figure>
 <figure><div class="flow">
 <div class="stage"><b>输入与目标</b><small>token → embedding → logits<br>因果关系、标签位移</small></div>
 <div class="stage"><b>序列与通道</b><small>Attention / 递归状态<br>FFN / 专家路由</small></div>

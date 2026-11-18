@@ -662,6 +662,18 @@
       "url": "/my-work/holon/structure-isoflop.png"
     },
     {
+      "source": "assets/research/my-work/loss-vs-compute.png",
+      "url": "/my-work/holon/loss-vs-compute.png"
+    },
+    {
+      "source": "assets/research/my-work/long-run-loss-transition.png",
+      "url": "/my-work/holon/long-run-loss-transition.png"
+    },
+    {
+      "source": "assets/research/my-work/text-capability-retention.png",
+      "url": "/my-work/holon/text-capability-retention.png"
+    },
+    {
       "source": "assets/research/my-work/holon-original.html.txt",
       "url": "/assets/research/my-work/holon-original.html.txt"
     },
@@ -764,6 +776,26 @@
     {
       "source": "assets/research/scientific-agent-design-20261114/cost-record.schema.json",
       "url": "/assets/research/scientific-agent-design-20261114/cost-record.schema.json"
+    },
+    {
+      "source": "assets/research/decoder-transformer.svg",
+      "url": "/assets/research/decoder-transformer.svg"
+    },
+    {
+      "source": "assets/research/causal-attention.svg",
+      "url": "/assets/research/causal-attention.svg"
+    },
+    {
+      "source": "assets/research/kv-cache-step.svg",
+      "url": "/assets/research/kv-cache-step.svg"
+    },
+    {
+      "source": "assets/research/moe-topk.svg",
+      "url": "/assets/research/moe-topk.svg"
+    },
+    {
+      "source": "assets/research/paged-kv-layout.svg",
+      "url": "/assets/research/paged-kv-layout.svg"
     },
     {
       "source": "assets/research/architecture-20261114/history-paths.svg",

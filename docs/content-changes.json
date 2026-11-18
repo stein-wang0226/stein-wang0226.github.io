@@ -10,8 +10,10 @@
     },
     {
       "source": "content/posts/my-work-holon/index.md",
-      "sha256_before": "7c4f2ba4a3cb04d93304442d6431029901472519f4f108b3e992d0fbdd95709b",
-      "sha256": "871ebab72d895ef749b53f64368999e38f90fc88e9e7e53cf014a301a4028391",
+      "sha256_before": "8a0951f57864db5d3475ab73fb62f1f50ac5fa4e93e976dda228133f3b5dfcf0",
+      "sha256": "9341feede218c3b5c6c6c18506ce2df0cad2ab2ac6cbfe7a570e58778111805b",
+      "report_figures_update": "Add a reading guide and contextualize the supplied report figures for validation loss, long-run stability, and text capability retention. Preserve the existing derivations and worked examples.",
+      "structure_tokenizer_update": "Explain DPLM backbone encoding, LFQ bit order and Holon loader offset with pinned implementation links and a computed example.",
       "update_20261118": "Added residue token and embedding example, initialization and freezing, and supplied sequence and structure IsoFLOP figures with fit interpretation.",
       "reason": "逐页审阅：表示→MoT→数据/监督→token校准→预算→Ladder→工作复盘全部审阅。原理与算例：routed Q/attention、CE分母反例、产出校准与两流例、C/M、DiD。精简与证据：修正 margin 为 mismatch−match，保 checkpoint/CI/单seed/OOD边界；五追问，机制图可放大。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：仅完整报告已有的舍入说明未在方法总结算例就近出现；路由、监督与预算主讲已有充分说明和图。",
       "prior_reason": "Approved learning rework: routed attention, CE reduction, yield-adjusted sampling and C/M budget in LaTeX; correct Negative Ladder margin, retain fixed tier/CI scope and five project interview answers. Three-screen strict math and mechanism-zoom checks passed; no model experiment."

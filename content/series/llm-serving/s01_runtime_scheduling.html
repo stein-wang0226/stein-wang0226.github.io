@@ -49,6 +49,8 @@ w=B\left\lceil\frac TB\right\rceil-T,\qquad 0\le w\lt B.
 <li><b>请求 B 的逻辑页</b><small>table [7,2,13]<br>0–15 → 同一页 7；16–31 → 同一页 2<br>32–34 → 私有页 13</small></li>
 <li><b>物理 KV 池：只计唯一页</b><small>共享 {7,2} + A 的 {11} + B 的 {13} = 4 页、64 槽；两个私有尾页各有 13 个空槽。</small></li>
 </ol><p class="mechanism-note">箭头是逻辑页到物理页的地址映射，不是先执行 A 再执行 B；页 ID 为教学编号，不表示连续地址。状态内容仍按逻辑顺序读取。共享页有引用保护，写共享尾页需 copy-on-write 或等价机制；请求退出仅解除引用，可复用 prefix 是否留下由缓存策略决定。</p></figure>
+<figure id="paged-kv-layout"><img src="../assets/research/paged-kv-layout.svg" width="420" height="254" loading="lazy" style="display:block;width:100%;max-width:420px;height:auto;margin:auto" alt="A 和 B 都指向物理页 7 和 2。A 的第三个逻辑页指向物理页 11，B 的第三个逻辑页指向物理页 13。">
+<figcaption><strong>两张 block table 指向同一物理页池。</strong>沿箭头跟踪 A 和 B 的前三项。两条请求共用前两个满页，各自保留一个私有尾页，因此池中只占四页。按本节编号自绘，分页和共享机制见 <a href="#ref-paged">PagedAttention 原论文</a>。</figcaption></figure>
 </section>
 <section id="prefix"><h2>Prefix复用与RadixAttention</h2>
 <section id="citation-sources-4" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/2312.07104" title="SGLang: Efficient Execution of Structured Language Model Programs · Zheng, Lianmin, Yin, Liangsheng, Xie, Zhiqiang 等 · 2023/12/12 · 2312.07104">SGLang / RadixAttention</a>。</p></section>

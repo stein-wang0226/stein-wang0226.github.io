@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="302" viewBox="0 0 420 302" role="img" aria-labelledby="title">
+  <title id="title">单层 KV Cache 的解码读写</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#216459"/>
+    </marker>
+  </defs>
+  <rect width="420" height="302" rx="14" fill="#faf9f4"/>
+  <g fill="none" stroke="#216459" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M100 55V84"/>
+    <path d="M321 55V84"/>
+    <path d="M235 104H191"/>
+    <path d="M100 123V153"/>
+    <path d="M407 37H415V173H409"/>
+    <path d="M100 192V229"/>
+    <path d="M321 192V229"/>
+  </g>
+  <g font-family="system-ui, sans-serif" font-size="16" text-anchor="middle" fill="#233b37">
+    <rect x="12" y="18" width="177" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="100.5" y="42" font-size="14">历史 K₁…Kₜ₋₁、V₁…Vₜ₋₁</text>
+    <rect x="235" y="18" width="172" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="321" y="42">当前 hidden → 投影</text>
+    <rect x="235" y="86" width="172" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="321" y="110">Kₜ、Vₜ</text>
+    <rect x="12" y="86" width="177" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="100.5" y="110">追加到本层缓存</text>
+    <rect x="235" y="155" width="172" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="321" y="179">Qₜ</text>
+    <rect x="12" y="155" width="177" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="100.5" y="179">完整 K₁…Kₜ、V₁…Vₜ</text>
+    <rect x="75" y="231" width="270" height="37" rx="7" fill="#e9f2ec" stroke="#569389"/>
+    <text x="210" y="255" font-size="14">当前 token 的 Attention 输出</text>
+    <text x="210" y="288" font-size="15">缓存留给下一步，Qₜ 在本步用完</text>
+  </g>
+</svg>
