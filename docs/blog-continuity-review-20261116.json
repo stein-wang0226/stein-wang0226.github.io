@@ -2,6 +2,11 @@
   "schema_version": 1,
   "record_kind": "scoped-continuity-integration",
   "as_of": "2026-11-16",
+  "site_wide_accessibility_update_20261119": {
+    "scope": "仅更新三个共享装配文件的精确当前 SHA。历史正文、科研原件与 frozen_files 保持不变。",
+    "reason": "放大原图窗口按实际横向/纵向溢出获得键盘焦点；历史 RL 手册在公开装配层补正文地标、表头名称、标题层级和可读链接颜色。",
+    "evidence": "outputs/site-wide-audit-20261119；历史2026-11-16验收范围不转写为本轮通过。"
+  },
   "base_commit": "80148053b623c4b6e1fc5a1a062f1113e5039443",
   "summary": {
     "local_sources": 74,
@@ -329,13 +334,13 @@
     "docs/organization-changes-20261115.json": "a10a59ee95997e431e4c024c1f2d42cfcf4d0ad6ff87354a23afebed3cc75a58",
     "scripts/course.py": "40e5990d2af0cbb206bf62298f922cdc6e6f0365312c5aa3faad40bcef9b9eda",
     "scripts/mathematics.py": "8102723e919f851b947e213bafcb45cc8abe0901e0ea748af2e21599cb86448e",
-    "scripts/pipeline.py": "cd0cd9a860854966014f1abcdf88a8dc1dcc887895b73bd43fc28a0f138cf262",
+    "scripts/pipeline.py": "00b2610d67daf7495ed0fd6e3506941e0de0c0a1ae29313b1c5963d8ef10ec8f",
     "scripts/render.py": "821423a9eb3e41556e4ad72f124c7d958c48743e4a10776c7959ce72899c7aa5",
     "assets/site/math-tabstop.js": "5da62286a2259b80dc3a8fa24209ac80072ed4f87cf34c12e016e2efa17a2990",
-    "scripts/reading.py": "99465e7538326453b3a885fb1debcdcf862e2e687fd9221a28c9435a2bc7ec2a",
+    "scripts/reading.py": "e0d07d0f641dbd74b85f8d82831490f1d57a9c64db543d64c11750d55f20074f",
     "assets/site/print.css": "6fe5516c335298f6d81025fed779e35a1374a6d877577314ca81a4bd9c73a5dd",
     "scripts/views.py": "6c9aad12804edd58003b25d40d5511fef3fbc9d0433b3da4f7cd6f69448bc735",
-    "assets/site/scroll-region.js": "b8137455f1c1286f06a6716ceae557c2f2e621b686211d084279bc3d6d0be6d8",
+    "assets/site/scroll-region.js": "83bc79b8f75c7dc04640ab8f3d6bab5fd5f2ad42d98d679f7b0a0a71c6449376",
     "docs/content-changes.json": "94d87f9fa9b6d8f88b351662daed55ee9cd44580cfea2e1393e6fc38e27060c3"
   },
   "catalog_updates": [

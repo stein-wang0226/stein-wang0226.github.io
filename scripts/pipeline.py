@@ -250,6 +250,8 @@ def render_artifact(ctx):
         # the historical copy from the current manual in the browser tab.
         title_changed = False
         if entry and entry.get("status") == "archived":
+            additions.append('<style data-archive-reading>'
+                             '.reading-content{--accent:#a45309}</style>')
             start = text.find("<title>")
             end = text.find("</title>", start + 7) if start != -1 else -1
             if start != -1 and end != -1:

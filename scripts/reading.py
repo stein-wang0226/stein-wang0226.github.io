@@ -188,6 +188,30 @@ def decorate(ctx, entry, text):
     if not body_match:
         raise ValueError(f"{entry['id']}: missing complete HTML body")
     body = body_match[2]
+    if entry.get("status") == "archived":
+        # Accessibility belongs to the public wrapper; keep the frozen source bytes.
+        body = body.replace('<div class="container">', '<div class="container" role="main">', 1)
+        body = body.replace("<header>", '<header role="group" aria-label="手册标题">')
+        body = body.replace("<footer>", '<footer role="group" aria-label="推荐学习资源">')
+        body = body.replace('<nav class="sidebar-outline" id="sidebarOutline">',
+                            '<nav class="sidebar-outline" id="sidebarOutline" aria-label="手册大纲">')
+        body = body.replace('<nav class="toc">', '<nav class="toc" aria-label="本页目录">')
+        body = body.replace('color:#94a3b8;', 'color:#526077;')
+        body = re.sub(r"<th>\s*</th>", "<th>比较项</th>", body)
+        body = re.sub(r"<th>(<strong>\$.*?</strong>)</th>",
+                      r"<th>公式：<br>\1</th>", body)
+        outline = []
+        def archive_heading(match):
+            original = int(match[1])
+            while outline and outline[-1][0] >= original:
+                outline.pop()
+            level = min(original, outline[-1][1] + 1) if outline else original
+            outline.append((original, level))
+            attrs = match[2]
+            if original != level:
+                attrs += f' aria-level="{level}"'
+            return f"<h{original}{attrs}>"
+        body = re.sub(r"<h([1-6])([^>]*)>", archive_heading, body)
     if entry["kind"] in {"chapter", "series"}:
         # Legacy chapter bars/footers are presentation copies. Replace them from
         # the same order used by the shared directory; source research stays intact.

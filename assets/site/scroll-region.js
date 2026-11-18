@@ -73,4 +73,31 @@
   // MathJax typesets after load and details reveal hidden blocks, so rescan then.
   new MutationObserver(schedule).observe(scope, {childList: true, subtree: true});
   scope.addEventListener('toggle', schedule, true);
+  // Enlarged figures live outside main and can scroll on either axis.
+  const plot = document.querySelector('dialog.reading-plot-dialog');
+  const plotScroll = plot && plot.querySelector('.reading-plot-scroll');
+  if (plotScroll) {
+    const syncPlot = () => {
+      if (!plot.open) return;
+      const [x, y] = scrolls(plotScroll,
+        plotScroll.scrollWidth > plotScroll.clientWidth,
+        plotScroll.scrollHeight > plotScroll.clientHeight);
+      if (x || y) {
+        plotScroll.setAttribute(marked, '');
+        plotScroll.setAttribute('tabindex', '0');
+        plotScroll.setAttribute('role', 'group');
+        plotScroll.setAttribute('aria-label',
+          (english ? 'Enlarged figure, ' : '放大的原图，') + axis(x, y));
+      } else if (plotScroll.hasAttribute(marked)) {
+        plotScroll.removeAttribute(marked);
+        plotScroll.removeAttribute('tabindex');
+        plotScroll.removeAttribute('role');
+        plotScroll.removeAttribute('aria-label');
+      }
+    };
+    new MutationObserver(syncPlot).observe(plot, {attributes: true, attributeFilter: ['open']});
+    const plotImage = plotScroll.querySelector('img');
+    if (plotImage) plotImage.addEventListener('load', syncPlot);
+    addEventListener('resize', syncPlot, {passive: true});
+  }
 })();
