@@ -209,7 +209,21 @@ body.site-body{margin:0;background:#f7f5f0}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation:none!important;transition:none!important}}
 /* Routes encode a sequence; reference material follows the core topics. */
-.site-page .learning-paths,.site-page .research-focus{margin:3rem 0;padding-top:1.5rem;border-top:1px solid #d6d3cd}
+.site-page .learning-paths,.site-page .research-focus{margin:1.5rem 0;padding-top:1.25rem;border-top:1px solid var(--site-line)}
+.site-page .learning-paths>h2,.site-page .learning-paths>.section-heading{margin-top:0}
+.site-page .route-directory{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:20px}
+.site-page .route-directory article{min-width:0;padding:16px;background:#fff;border:1px solid var(--site-line)}
+.site-page .route-directory h3{margin:0;font-size:17px}
+.site-page .route-directory p{font-size:13px;line-height:1.7;color:var(--site-muted);margin:10px 0}
+.site-page .route-directory summary,.site-page .route-explanation summary,.site-page .concept-index summary{font-family:var(--site-heading);font-size:13px;cursor:pointer}
+.site-page .route-directory .route-stages{font-size:13px;padding-left:20px;margin-bottom:0}
+.site-page .route-overview{display:flex;flex-wrap:wrap;gap:8px 24px;list-style:none;padding:0;margin:18px 0}
+.site-page .route-overview li{display:flex;align-items:baseline;gap:8px;margin:0;counter-increment:route-step;font-family:var(--site-heading);font-size:13px}
+.site-page .route-overview li::before{content:counter(route-step,decimal-leading-zero);font-family:var(--site-mono);font-size:10px;color:var(--site-muted)}
+.site-page .route-overview{counter-reset:route-step}
+.site-page .route-explanation>.route-stages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem 2.5rem}
+.site-page .route-related{font-size:13px;color:var(--site-muted)}
+.site-page .concept-index{margin:1.5rem 0}
 .site-page .route-stages{padding-left:1.7rem;margin:1.2rem 0}
 .site-page .learning-paths>.route-stages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem 2.5rem}
 .site-page .route-stages li{padding-left:.4rem;line-height:1.65}
@@ -267,7 +281,8 @@ body.site-body{margin:0;background:#f7f5f0}
 .site-page .reference-list p{margin:.35rem 0}
 .site-page .reference-list small{color:#706b65}
 @media(max-width:768px){
-  .site-page .learning-paths>.route-stages,.site-page .route-branches,
+  .site-page .learning-paths>.route-stages,.site-page .route-explanation>.route-stages,.site-page .route-branches,
   .site-page .research-paths,.site-page .home-recommendations>.note-grid{grid-template-columns:1fr}
-  .site-page .learning-paths,.site-page .research-focus{margin:2rem 0}
+  .site-page .route-directory{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .site-page .route-directory article{padding:14px}
 }

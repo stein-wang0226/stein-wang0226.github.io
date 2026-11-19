@@ -48,6 +48,16 @@ class Headings(HTMLParser):
             self.level = None
 
 
+def source_headings(path):
+    headings = Headings()
+    if path.suffix == ".md":
+        _, body = load_md(path)
+        headings.feed(md(body))
+    else:
+        headings.feed(path.read_text(encoding="utf-8"))
+    return headings.items
+
+
 def public_entries(ctx):
     result = []
     for entry in ctx.entries:
@@ -59,41 +69,38 @@ def public_entries(ctx):
             "id", "kind", "title", "summary", "url", "topic", "type", "tags",
             "origin", "status", "updated", "series", "order", "reading_role", "chapter_group"
         )}
-        headings = Headings()
-        if entry["origin"] == "local":
-            headings.feed((ctx.root / entry["source"]).read_text(encoding="utf-8"))
-        row["headings"] = headings.items
+        row["headings"] = (source_headings(ctx.root / entry["source"])
+                           if entry["origin"] == "local" else [])
         row["reading_mode"] = entry.get("reading_mode")
         row["secondary_topics"] = entry.get("secondary_topics", [])
         row["sections"] = []
         if entry.get("reading_mode") == "longform":
             for child in chapters_of(entry, ctx.entries):
-                child_headings = Headings()
-                child_headings.feed((ctx.root / child["source"]).read_text())
-                row["headings"].extend(child_headings.items)
+                child_headings = source_headings(ctx.root / child["source"])
+                row["headings"].extend(child_headings)
                 row["sections"].append({
                     "id": child["id"], "title": child["title"],
-                    "topic": child["topic"],
+                    "topic": child["topic"], "type": child["type"],
                     "secondary_topics": child.get("secondary_topics", []),
                     "url": entry["url"] + "#" + child["id"],
                     "search": " ".join([child["title"], child["summary"], *child["tags"],
-                                        *child_headings.items]).casefold()})
+                                        *child_headings]).casefold()})
         row["search"] = " ".join([row["title"], row["summary"], *row["tags"],
                                   *row["headings"], *(s["search"] for s in row["sections"])]).casefold()
         result.append(row)
     return result
 
 
-def route_stages(ctx, route):
+def route_stages(ctx, route, compact=False):
     items = []
     for node in route["stages"]:
         entry = ctx.by_id[node["entry"]]
         target, anchor = public_target(entry, node.get("anchor", ""), ctx.by_id)
         url = ctx.rel("/blog/", target) + ("#" + anchor if anchor else "")
         text = f'<a href="{esc(url)}">{esc(node.get("label", entry["title"]))}</a>'
-        if node.get("question"):
+        if node.get("question") and not compact:
             text += f'<p>{esc(node["question"])}</p><small>阅读产物：{esc(node["output"])}</small>'
-        if entry.get("prerequisites") and node.get("question"):
+        if entry.get("prerequisites") and node.get("question") and not compact:
             prerequisites = []
             for item in entry["prerequisites"]:
                 prior = ctx.by_id[item["entry"]]
@@ -102,7 +109,8 @@ def route_stages(ctx, route):
                 prerequisites.append(f'<a href="{esc(href)}">{esc(prior["title"])}</a>')
             text += '<small>按需先修：' + "、".join(prerequisites) + "</small>"
         items.append("<li>" + text + "</li>")
-    return '<ol class="route-stages">' + "".join(items) + "</ol>"
+    style = "route-overview" if compact else "route-stages"
+    return f'<ol class="{style}">' + "".join(items) + "</ol>"
 
 
 def learning_routes(ctx):
@@ -113,14 +121,23 @@ def learning_routes(ctx):
     directory = [route for route in branches if route.get("directory")]
     branches = [route for route in branches if not route.get("directory")]
     body = '<section id="knowledge-map" class="learning-paths"><h2>按知识结构查找</h2>' \
-           '<p>模型架构 → 训练 → 推理构成模型的生命周期；数据贯穿每个阶段。先查主讲位置，再按需查看前沿证据。</p><div class="note-grid">'
+           '<p>模型架构 → 训练 → 推理构成模型的生命周期；数据贯穿每个阶段。</p><div class="route-directory">'
     for route in directory:
-        body += f'<article class="note-card"><h3>{esc(route["label"])}</h3><p>{esc(route["summary"])}</p>{route_stages(ctx, route)}</article>'
-    body += '</div><p>Agent 执行、Harness 与评测沿下方完整学习主线继续；扩散模型作为生成范式分支查阅。</p></section>'
+        node = route["stages"][0]
+        target, anchor = public_target(ctx.by_id[node["entry"]], node.get("anchor", ""), ctx.by_id)
+        url = ctx.rel("/blog/", target) + ("#" + anchor if anchor else "")
+        body += (f'<article><h3><a href="{esc(url)}">{esc(route["label"])}</a></h3>'
+                 f'<p>{esc(route["summary"])}</p>'
+                 f'<details data-reading-route="{esc(route["id"])}"><summary>查看专题入口</summary>'
+                 f'{route_stages(ctx, route)}</details></article>')
+    body += '</div></section>'
     body += '<section id="learning-paths" class="learning-paths"><div class="section-heading"><h2>完整学习主线</h2>' \
            '<a href="references/">文献查阅</a></div>' \
-           f'<p>{esc(main["summary"])}</p>{route_stages(ctx, main)}'
-    body += '<p>生成模型研究分支：<a href="../dlm-survey/">扩散语言模型</a>。基础推导、完整代码和自测题可在后部参考入口按需查阅。</p>'
+           f'<p>{esc(main["summary"])}</p>{route_stages(ctx, main, compact=True)}'
+    body += ('<details class="route-explanation"><summary>查看各阶段的问题、阅读产物与先修</summary>'
+             f'{route_stages(ctx, main)}</details>'
+             '<p class="route-related">生成模型分支：<a href="../dlm-survey/">扩散语言模型</a>。'
+             '详细推导、代码与自测可在下方参考笔记中查阅。</p>')
     body += "</section>"
     body += '<details id="research-focus" class="research-focus"><summary>按需研究与复习</summary><div class="research-paths">'
     body += "".join(
@@ -245,8 +262,8 @@ def render_home(ctx):
     template = Template((ctx.root / "templates/home.html").read_text(encoding="utf-8"))
     body = template.substitute(bio=bio, work=work, papers=papers)
     ctx.page("/", "Academic homepage", body,
-             "Stein at Fudan and ByteDance Seed: scientific Harbor tasks, Agentic RL, "
-             "GUI agent environments, and diffusion language models.",
+             "Stein at Fudan and ByteDance Seed: Agentic RL, Scientific Agentic task synthesis, "
+             "diffusion LLMs, AI4Science, and GUI Agents.",
              lang="en", styles=("/assets/site/home.css",))
 
 
@@ -296,7 +313,7 @@ def render_blog(ctx):
             '<div class="catalog-intro"><h2>博客与研究笔记</h2>'
             '<p>从原理推导到训练工程，记录 LLM、Agent 与扩散模型的学习和实践。'
             '选一个主题，或从感兴趣的问题开始。</p>'
-            '<p><a href="#knowledge-map">架构 · 训练 · 推理 · 数据</a> · <a href="#learning-paths">完整学习主线</a> · '
+            '<p><a href="#all-notes">全部笔记</a> · <a href="#knowledge-map">知识结构</a> · <a href="#learning-paths">完整学习主线</a> · '
             '<a href="#research-focus">按需研究与复习</a> · <a href="references/">文献查阅</a></p>'
             f'<div class="catalog-stats"><span><strong>{len(local)}</strong>笔记集合</span>'
             f'<span><strong>{sum(e["kind"] == "chapter" and e["status"] == "published" for e in ctx.entries)}</strong>教学小节</span>'

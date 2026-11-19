@@ -74,19 +74,31 @@
     },
     {
       "source": "assets/site/catalog.js",
-      "sha256": "1547a474162443aa54c4a21a9df04ff4bc5960113c90609a4211d9d3c5978aaf",
+      "sha256": "2c5d042f679893e116e10925efcf09006103a1e519352a39e1f3ad6748d69ad0",
+      "catalog_readability_update_20261119": {
+        "sha256_before": "1547a474162443aa54c4a21a9df04ff4bc5960113c90609a4211d9d3c5978aaf",
+        "reason": "Hide the optional concept index along with learning and research routes when keyword, topic or type filters are active. Include assembled chapters by their own content type and show matching section links, with keyword/topic/type conditions applied together to each section. Preserve existing input/change handling, result links, URL restoration and static fallback."
+      },
       "reason": "Approved learning rework and taxonomy integration: preserve assembled reading destinations, filter by chapter and secondary topics, and map legacy training categories; preserve immutable migration baseline.",
       "prior_reason": "Preserve catalog filters, chapter search and URL restoration; add progressive topic buttons and matching featured-series markup. Version the catalog request with the HTML build fingerprint to avoid stale data after deployment. Native topic selection and static chapter links remain available if loading fails. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles. Follow-up 2026-11-14: preserve user input and queued submission while the catalog loads; topic/type filters include matching published chapters with a parent-series return link, while the unfiltered view retains collection grouping. Browser reproduction confirms the former input loss and omitted chapters."
     },
     {
       "source": "assets/site/site.css",
-      "sha256": "fa07e976f5ed4727b5a02d77b978b42a3ee1ea2dcddeb8e51e9dad5f3430a057",
+      "sha256": "e49b5aac2b6c3c2b4d99099d1d02885912aabdc59f6e92fc8c22b7989ac8f2d9",
+      "catalog_readability_update_20261119": {
+        "sha256_before": "fa07e976f5ed4727b5a02d77b978b42a3ee1ea2dcddeb8e51e9dad5f3430a057",
+        "reason": "Compact the catalog's four subject entrances and seven-stage learning overview, with detailed routes in native details elements. Scope all new styles to catalog route classes; retain the existing palette, local fonts, destination anchors and article figure/math styles."
+      },
       "visual_revision_reason": "2026-11-15: give the expanded detailed RL learning route a full-width responsive four-step layout. Reviewed the existing e35a4c0 homepage recommendation grid and preserved its mobile fallback; original homepage sections, links and assets remain intact.",
       "reason": "Restore original Stein's Notes cream, ink and teal identity with local Sora/Literata/JetBrains Mono fonts; refine wordmark, catalog hierarchy, cards and responsive shared shell without changing research article styles. Refine search into one compact input/button control with quiet inline filters and responsive wrapping. Preserve catalog queries and static failure/no-script fallback; add route/group/reference presentation and precise concept-owner search using existing local fonts and scoped styles."
     },
     {
       "source": "content/pages/about.md",
-      "sha256": "a89c4d524d32de55737d878250e12ec7861a6eada24089177a500b6570b37eb6",
+      "sha256": "e4af53f5c478aa559b92e0cfadf01fa0494006d9c61957077fbf7e3b947a980f",
+      "research_focus_update_20261119": {
+        "sha256_before": "a89c4d524d32de55737d878250e12ec7861a6eada24089177a500b6570b37eb6",
+        "reason": "Replace only the opening research-focus sentence with the user's specified five areas: Agentic RL, Scientific Agentic task synthesis, diffusion LLMs, AI4Science and GUI Agents. All other profile facts, links, selected work and publication records remain unchanged."
+      },
       "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
       "reason": "Update from November 2026 resumes: current ByteDance role, completed Alibaba internship, Harbor synthesis, step-level RL, GUI environments and Holon; correct timeline and GPA rank. Add supplied ProtAgent arXiv link and annotation-coverage metric scope; explicitly mark user-confirmed NeurIPS 2026 main-conference acceptance. Previous about source preserved in content/archive/profile-before-20261114/about.md; paper lists remain shared."
     },
@@ -158,9 +170,13 @@
     },
     {
       "source": "templates/home.html",
-      "sha256": "8106d9b968a0b4d84a0692233167a93ed53bf2cf1a3d745f54434597d3d3c48f",
+      "sha256": "a7a0949f17e5d7e6ebe0615ebcf363dfc7df38d44ac37cd5d0a0d2215b39dbdd",
+      "academic_home_update_20261119": {
+        "sha256_before": "8106d9b968a0b4d84a0692233167a93ed53bf2cf1a3d745f54434597d3d3c48f",
+        "reason": "User-requested concise academic homepage: remove the note topics, recommendations and recent updates from the homepage; retain profile, CV/PDF links, selected work and selected publications with the existing selected-work anchor. Notes remain accessible through the shared blog navigation. The original template is retained in Git at 7ea341b."
+      },
       "public_name_revision": "Public author name changed to Stein, including relevant download labels.",
-      "reason": "Preserve shared homepage redesign; add bilingual original resume downloads and selected work generated solely from about.md. Papers and notes still use shared records and retain their entry points. Use three explicit research recommendations and one learning-mainline entry; retain all personal/publication/PDF sections and existing links."
+      "reason": "Preserve shared homepage redesign and author name revision. Apply the user's 2026-11-19 request for a concise academic homepage: display profile, resume links, selected work generated from about.md and catalog-driven publications; remove note topics, recommendations and recent updates from the homepage while keeping the shared blog navigation and existing selected-work anchor."
     },
     {
       "source": "content/posts/transformer-decoder-flow/index.html",

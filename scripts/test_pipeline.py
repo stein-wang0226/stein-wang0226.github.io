@@ -22,6 +22,7 @@ from render import ROOT, input_digest
 from course import Fragment, render_fragment, public_target
 from organization import check as check_organization
 from mathematics import reflow_formula
+from views import source_headings
 
 
 def tree(path):
@@ -30,6 +31,23 @@ def tree(path):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_catalog_headings_render_markdown_and_exclude_code_and_history(self):
+        markdown = self.root / "content/fixture-search.md"
+        markdown.write_text('---\ntitle: Fixture\n---\n'
+                            '## 同一个残基从字母到向量\n'
+                            '### **输入**与 `embedding`\n'
+                            '```html\n<h2>代码中的假标题</h2>\n```\n'
+                            '<details data-reading-history><summary>原稿</summary>'
+                            '<h2>历史标题</h2></details>\n')
+        html = self.root / "content/fixture-search.html"
+        html.write_text('<h2>同一个残基从字母到向量</h2>'
+                        '<h3><strong>输入</strong>与 <code>embedding</code></h3>'
+                        '<details data-reading-history><summary>原稿</summary>'
+                        '<h2>历史标题</h2></details>')
+        expected = ["同一个残基从字母到向量", "输入与 embedding"]
+        self.assertEqual(expected, source_headings(markdown))
+        self.assertEqual(expected, source_headings(html))
+
     def test_formula_reflow_preserves_matrix_rows_and_function_arguments(self):
         pattern = r'(<div class="reading-math">\\\[)(.*?)(\\\]</div>)'
         matrix = r"\begin{pmatrix}1&2\\3&4\end{pmatrix}"
@@ -92,10 +110,15 @@ class PipelineTests(unittest.TestCase):
         self.assertIn('"policy-gradient": "posttraining-algorithms--policy-gradient"', old)
         self.assertNotIn("REINFORCE逐步推导", old)
         catalog = json.loads((self.output / "blog/catalog.json").read_text())
+        holon = next(e for e in catalog["entries"] if e["id"] == "my-work-holon")
+        self.assertIn("同一个残基从字母到向量", holon["headings"])
+        self.assertIn("同一个残基", holon["search"])
         self.assertFalse(any(e["id"] == "posttraining-algorithms" for e in catalog["entries"]))
         course = next(e for e in catalog["entries"] if e["id"] == "llm-posttraining")
         self.assertEqual(7, len(course["sections"]))
         self.assertTrue(any("grpo" in s["search"] for s in course["sections"]))
+        self.assertEqual("principles", next(s["type"] for s in course["sections"]
+                                           if s["id"] == "posttraining-algorithms"))
         self.assertEqual(6, parent.count('class="teaching-diagram"'))
         self.assertNotIn("K = 3~10", parent)
         architecture = (self.output / "llm-architecture/index.html").read_text()

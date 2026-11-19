@@ -9,7 +9,7 @@ redirect_from:
 
 I am **Stein**, a Master's student in Artificial Intelligence at the [School of Data Science](https://sds.fudan.edu.cn/), [Fudan University](https://www.fudan.edu.cn/) (2025–2028, expected), advised by [Prof. Baojian Zhou](https://baojian.github.io/) at the [Knowledge Works Lab](http://kw.fudan.edu.cn/).
 
-I work on **Agentic RL, scientific task synthesis, and reliable agent evaluation**: turning expert protocols and real execution failures into reproducible tasks, then connecting tool-use trajectories, SFT, reinforcement learning, and evaluation.
+I work on **Agentic RL, Scientific Agentic task synthesis, diffusion LLMs, AI4Science, and GUI Agents**.
 
 I am currently a **GUI Agent Data Algorithm Intern at ByteDance Seed / AI Data** (since September 2026). Previously, I was a Research Intern at **Alibaba, Platform Technology / AIR Program** (December 2025–September 2026), working on Harbor tasks for Qwen post-training, protein agents, and Protein–Text foundation models.
 

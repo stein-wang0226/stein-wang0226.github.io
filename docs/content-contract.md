@@ -30,9 +30,13 @@
 旧地址进入 `redirects.json`，默认保留查询参数和片段，避免多级跳转链。
 HTML 锚点变更不能只靠 URL 跳转弥补，应保留旧锚点或证明已有引用得到更新。
 
-全站学习路线、研究路线、首页推荐和概念主讲位置只在 `site.json` 的
-`learning_paths / research_paths / home_recommendations / concept_owners` 维护。
+全站学习路线、研究路线和概念主讲位置只在 `site.json` 的
+`learning_paths / research_paths / concept_owners` 维护。
 目标使用 catalog ID，标题和 URL 从登记获取；路线节点及语义锚点经过构建校验。
+博客目录默认展示主题入口和简短学习主线，详细问题、产物与专题使用原生折叠区；
+首页只展示个人介绍、精选工作和论文，内容引用 `about.md` 与论文登记。
+目录检索从实际 HTML 或渲染后的 Markdown 提取二、三级标题，不索引原始代码正文。
+系列小节保留自己的类型与主题；筛选按同一小节的条件匹配并生成小节入口。
 系列入口在 `READING:CHAPTERS` 标记处生成一次章节目录，不手写第二份现行目录。
 
 ## 2. 新增内容的最小完整度

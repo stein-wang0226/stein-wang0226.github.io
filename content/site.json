@@ -11,37 +11,44 @@
       "stages": [
         {
           "entry": "llm-architecture",
+          "label": "模型架构",
           "question": "模型怎样计算和保存历史？",
           "output": "张量流、参数/激活/KV账本"
         },
         {
           "entry": "llm-training-lifecycle",
+          "label": "训练阶段",
           "question": "知识、行为与反馈怎样交接？",
           "output": "数据、目标与checkpoint交接表"
         },
         {
           "entry": "llm-posttraining",
+          "label": "后训练",
           "question": "怎样用示范、结果和教师更新策略？",
           "output": "SFT/RL/OPD目标与训练协议"
         },
         {
           "entry": "agent-harness-guide",
+          "label": "Harness 执行",
           "anchor": "codex-loop",
           "question": "一次任务怎样运行、恢复和记忆？",
           "output": "执行循环、上下文与memory状态"
         },
         {
           "entry": "agent-systems",
+          "label": "Agent 系统",
           "question": "怎样查证据、规划并守住权限？",
           "output": "检索、预算和信任边界"
         },
         {
           "entry": "agent-data-benchmarks",
+          "label": "任务与评测",
           "question": "怎样生产任务并独立检验成功？",
           "output": "任务合同、verifier、切分与失败报告"
         },
         {
           "entry": "llm-serving",
+          "label": "推理与服务",
           "question": "怎样在容量与成本约束内交付？",
           "output": "延迟、吞吐与成功成本账本"
         }
