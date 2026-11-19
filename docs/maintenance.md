@@ -87,7 +87,8 @@ Agent RL归后训练，投机解码归推理，任务数据归数据，场景研
 `assets/archive/Curriculum_Vitae-before-20261114.pdf` 保留原 CV；在线 CV 标明其历史版本。
 不要把原件附件描述为由在线 CV 自动导出的同一版本。
 
-首页近期工作复用 `about.md` 的 `Selected Work` 分区，详情进入 CV 项目锚点。
+首页仅展示个人介绍、研究工作摘要和精选论文；笔记通过顶部导航进入 `/blog/`。
+研究摘要复用 `about.md` 的 `Selected Work` 标题、首段和详情链接，完整经历进入 CV 项目锚点。
 论文允许明确未知的 `date: null`，此时必须填写非空 `date_label`；不能使用编辑日期冒充投稿日期。
 GitHub Profile 的可维护介绍稿和字段建议位于 `docs/github-profile/`，同步顺序见该目录 `DEPLOYMENT.md`。
 
@@ -126,7 +127,7 @@ GitHub Profile 的可维护介绍稿和字段建议位于 `docs/github-profile/`
 训练阶段与训练方法是不同维度，均归训练；数据跨阶段的关系用章节登记中的
 `secondary_topics` 表达。筛选同时匹配长章及其小节，避免跨主题研究内容消失。
 旧 `rl-post-training / training-inference` 查询映射到 `training`，推理使用独立分类。
-首页推荐和最近更新分开；非核心参考、追踪、课程子站和历史材料在目录后部。
+非核心参考、追踪、课程子站和历史材料在博客目录后部。
 修改路线只编辑 `site.json`，修改章序同时核对 `catalog.json` 的标题、先修和分组。
 `reading.py` 统一生成系列目录与前后章；不在正文复制现行全站目录。
 默认目录展示笔记集合；按主题、类型或关键词筛选时包含对应章节，

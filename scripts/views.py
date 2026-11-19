@@ -220,62 +220,34 @@ def render_home(ctx):
     bio = md(about.split("## ", 1)[0].strip())
     selected = re.search(r"(?ms)^## Selected Work\s*\n(.*?)(?=^## |\Z)", about)
     work = md(selected.group(1).strip()) if selected else ""
-    rows = ordered([e for e in ctx.entries if e["origin"] == "local"
-                    and e["status"] == "published" and e["kind"] != "chapter"])
-    topics = "".join(
-        f'<a class="topic-link" href="blog/?topic={esc(t["id"])}">{esc(t["label"])}</a>'
-        for t in ctx.site["topics"])
+
+    def summarize_work(match):
+        # Keep the source heading, opening description and detail links.
+        # Full methods and evaluation results remain on About and the CV.
+        content = match.group(2)
+        heading = re.search(r"(?s)<h3\b[^>]*>.*?</h3>", content)
+        paragraphs = re.findall(r"(?s)<p(?:\s[^>]*)?>.*?</p>", content)
+        descriptions = [p for p in paragraphs if not p.startswith('<p class="profile-work-label"')]
+        if heading is None or len(descriptions) < 2 or "<a " not in descriptions[-1]:
+            raise ValueError("home: selected work needs a heading, description and detail links")
+        return match.group(1) + heading.group() + descriptions[0] + descriptions[-1] + match.group(3)
+
+    work = re.sub(r'(?s)(<article class="profile-work">)(.*?)(</article>)',
+                  summarize_work, work)
     papers = "".join(
-        '<article class="publication-card"><p class="paper-meta">'
+        '<article class="academic-paper">'
+        f'<h3><a href="{ctx.rel("/", p["url"])}">{esc(p["meta"]["title"])}</a></h3>'
+        '<p class="academic-paper-meta">'
         f'{esc(publication_date(p["meta"]))} · {esc(p["meta"]["venue"])}</p>'
-        f'<h2><a href="{ctx.rel("/", p["url"])}">{esc(p["meta"]["title"])}</a></h2>'
-        f'<p>{esc(p["meta"]["excerpt"])}</p></article>'
+        '</article>'
         for slug in ctx.site["publications"]["featured"]
         for p in ctx.publications if p["slug"] == slug)
-    recommendations = [ctx.by_id[i] for i in ctx.site.get("home_recommendations", [])]
-    recent = "".join(
-        f'<article class="recent-note"><span class="note-date">{esc(e["updated"])}</span>'
-        f'<h3><a href="{ctx.rel("/", e["url"])}">{esc(e["title"])}</a></h3></article>'
-        for e in [r for r in rows if r["updated"]][:6])
     template = Template((ctx.root / "templates/home.html").read_text(encoding="utf-8"))
-    body = template.substitute(bio=bio, work=work, topics=topics, papers=papers,
-                               count=len(rows),
-                               recent=recent,
-                               featured="".join(card(ctx, e, "/") for e in recommendations))
-    # The homepage prose is English while the shell and note sections are Chinese.
-    # Mark each switch explicitly; fail loudly if the template anchor drifts.
-    for old, new in (
-            ('<section class="home-hero" aria-label="个人介绍">',
-             '<section class="home-hero" aria-label="Personal introduction">'),
-            ('<a href="about/">详细介绍</a>', '<a href="about/" lang="zh-CN">详细介绍</a>'),
-            ('<a href="cv/">在线 CV</a>', '<a href="cv/" lang="zh-CN">在线 CV</a>'),
-            ('<a href="publications/">论文列表</a>',
-             '<a href="publications/" lang="zh-CN">论文列表</a>'),
-            ('download="Stein-Resume-zh.pdf">中文简历 · PDF</a>',
-             'download="Stein-Resume-zh.pdf" lang="zh-CN">中文简历 · PDF</a>'),
-            ('<section class="profile-selected" aria-labelledby="selected-work">',
-             '<section class="profile-selected" aria-labelledby="selected-work" lang="en">'),
-            ('<h2 id="selected-work">Selected Work · 近期工作</h2>',
-             '<h2 id="selected-work">Selected Work · <span lang="zh-CN">近期工作</span></h2>'),
-            ('<a href="cv/#selected-projects">完整项目经历</a>',
-             '<a href="cv/#selected-projects" lang="zh-CN">完整项目经历</a>'),
-            ('<section class="home-blog">', '<section class="home-blog" lang="zh-CN">'),
-            ('<section class="home-recommendations">',
-             '<section class="home-recommendations" lang="zh-CN">'),
-            ('<section>\n  <div class="section-heading"><h2>最近更新</h2>',
-             '<section lang="zh-CN">\n  <div class="section-heading"><h2>最近更新</h2>'),
-            ('<a href="blog/?sort=updated-desc">查看全部更新</a>',
-             '<a href="blog/?sort=updated-desc" lang="zh-CN">查看全部更新</a>'),
-            ('<h2>精选论文</h2>', '<h2><span lang="zh-CN">精选论文</span></h2>'),
-            ('<a href="publications/">全部论文</a>',
-             '<a href="publications/" lang="zh-CN">全部论文</a>')):
-        if body.count(old) != 1:
-            raise ValueError(f"home template: expected one language anchor, found {body.count(old)}: {old}")
-        body = body.replace(old, new)
-    ctx.page("/", "Stein · Research & Notes", body,
+    body = template.substitute(bio=bio, work=work, papers=papers)
+    ctx.page("/", "Academic homepage", body,
              "Stein at Fudan and ByteDance Seed: scientific Harbor tasks, Agentic RL, "
              "GUI agent environments, and diffusion language models.",
-             lang="en", styles=("/assets/site/profile.css",))
+             lang="en", styles=("/assets/site/home.css",))
 
 
 def render_my_work(ctx, record, meta, body):

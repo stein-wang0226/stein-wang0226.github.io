@@ -3,11 +3,6 @@
   "title": "Stein | Stein's Notes",
   "url": "https://stein-wang0226.github.io",
   "blog_url": "/blog/",
-  "home_recommendations": [
-    "scientific-task-family",
-    "llm-posttraining",
-    "dlm-survey"
-  ],
   "learning_paths": [
     {
       "id": "complete",

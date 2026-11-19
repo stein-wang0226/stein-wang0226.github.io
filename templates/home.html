@@ -1,38 +1,20 @@
-<section class="home-hero" aria-label="个人介绍">
-  <div>
-    <p class="eyebrow">Research &amp; study notes</p>
-    <h1>Stein.</h1>
-    <p class="home-subtitle">Agentic RL · Scientific Task Synthesis<br>GUI Agents · Diffusion Models</p>
-    <div class="home-profile-links"><a href="about/">详细介绍</a><a href="cv/">在线 CV</a><a href="publications/">论文列表</a></div>
-    <div class="profile-downloads">
-      <a href="assets/Curriculum_Vitae.pdf" download="Stein-Resume-en.pdf">English resume · PDF</a>
-      <a href="assets/Stein-Resume-zh.pdf" download="Stein-Resume-zh.pdf">中文简历 · PDF</a>
+<div class="academic-home">
+  <section class="academic-intro" aria-labelledby="profile-name">
+    <h1 id="profile-name">Stein</h1>
+    <div class="academic-bio">$bio</div>
+    <div class="academic-links" aria-label="Profile and resumes">
+      <a href="about/">About</a>
+      <a href="cv/">CV</a>
+      <a href="assets/Curriculum_Vitae.pdf" download="Stein-Resume-en.pdf">English resume (PDF)</a>
+      <a href="assets/Stein-Resume-zh.pdf" download="Stein-Resume-zh.pdf" lang="zh-CN">中文简历 (PDF)</a>
     </div>
-  </div>
-  <div class="home-bio">$bio</div>
-</section>
-<section class="profile-selected" aria-labelledby="selected-work">
-  <div class="section-heading"><h2 id="selected-work">Selected Work · 近期工作</h2><a href="cv/#selected-projects">完整项目经历</a></div>
-  $work
-</section>
-<section class="home-blog">
-  <div>
-    <h2>Stein’s Notes</h2>
-    <p>从原理推导到训练工程，$count 个笔记集合，持续整理。</p>
-    <a class="primary-link" href="blog/">浏览博客与笔记</a>
-    <p><a href="blog/#learning-paths">完整学习主线</a> · <a href="blog/#research-focus">重点研究路径</a> · <a href="blog/references/">文献查阅</a></p>
-  </div>
-  <div class="topic-links" aria-label="按主题阅读">$topics</div>
-</section>
-<section class="home-recommendations">
-  <div class="section-heading"><h2>推荐阅读</h2><a href="blog/">全部笔记</a></div>
-  <div class="note-grid">$featured</div>
-</section>
-<section>
-  <div class="section-heading"><h2>最近更新</h2><a href="blog/?sort=updated-desc">查看全部更新</a></div>
-  <div class="home-recent">$recent</div>
-</section>
-<section>
-  <div class="section-heading"><h2>精选论文</h2><a href="publications/">全部论文</a></div>
-  <div class="profile-paper-grid">$papers</div>
-</section>
+  </section>
+  <section class="academic-work" aria-labelledby="selected-work">
+    <div class="section-heading"><h2 id="selected-work">Selected work</h2><a href="cv/#selected-projects">Full experience</a></div>
+    $work
+  </section>
+  <section class="academic-publications" aria-labelledby="selected-publications">
+    <div class="section-heading"><h2 id="selected-publications">Selected publications</h2><a href="publications/">All publications</a></div>
+    <div class="academic-paper-list">$papers</div>
+  </section>
+</div>
