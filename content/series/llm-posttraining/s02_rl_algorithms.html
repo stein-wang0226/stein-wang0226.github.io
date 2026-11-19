@@ -180,7 +180,7 @@ R(\tau)=C_t+\gamma^tG_t.
 </style>
 <p>图内可左右滚动查看全部说明。</p>
 <div id="baseline-diagram-scroll" class="rl-baseline-diagram-scroll" role="region" aria-label="baseline价值分解图，可左右滚动查看全部说明" tabindex="0" style="max-width:100%;overflow-x:auto">
-<div class="rl-baseline-diagram-canvas" style="width:825px;min-width:825px">
+<div class="rl-baseline-diagram-canvas" style="width:100%;min-width:0">
 <!-- READING:RL-DIAGRAM:1 -->
 </div>
 </div>
@@ -601,7 +601,9 @@ L_{\rm fixed}=\frac{\sum_i\sum_t\ell_{it}}{G T_{\rm fixed}}.
 <h2>GSPO、CISPO、Soft SAPO：控制更新的对象不同</h2>
 <section id="citation-sources-6" data-citation-audit="20261114"><p class="citation-source-links" style="font-size:0.88em;line-height:1.8"><strong>相关原论文 / 官方资料：</strong><a href="https://arxiv.org/abs/1707.06347" title="Proximal Policy Optimization Algorithms · Schulman, John, Wolski, Filip, Dhariwal, Prafulla 等 · 2017/07/20 · 1707.06347">PPO</a>；<a href="https://arxiv.org/abs/2507.18071" title="Group Sequence Policy Optimization · Zheng, Chujie, Liu, Shixuan, Li, Mingze 等 · 2025/07/24 · 2507.18071">GSPO</a>；<a href="https://arxiv.org/abs/2506.13585v1" title="MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention · 2025/06/16 · 2506.13585v1">CISPO / MiniMax-M1</a>。</p></section>
 
-<p>本节仍用 \(i\) 索引候选、\(t\) 索引有效策略 token，\(a_{it},h_{it}\) 是目标动作与其历史，\(A_i\) 是固定候选优势。GSPO 的 \(s_i\) 是 token log-ratio 平均后指数化的无单位几何比率，\(\bar s_i\) 是裁剪值，\(J_{\rm GSPO}\) 是候选平均代理目标。CISPO 中 \(\rho_{it}\) 是 token 概率比，\(w_{it}\) 是裁剪后停止梯度的权重，\(A_{it}\) 是固定 token 优势；\(\ell_{it}\) 在 CISPO <strong>重新表示 log-prob</strong>，不同于上节逐 token loss。mean 沿有效候选/token 聚合，具体权重与 clip 边界由原配方决定；sg 保留数值并阻断梯度。</p>
+<p>本节仍用 \(i\) 索引候选、\(t\) 索引有效策略 token，\(a_{it},h_{it}\) 是目标动作与其历史，\(A_i\) 是固定候选优势。</p>
+<p>GSPO 的 \(s_i\) 是 token log-ratio 平均后指数化的无单位几何比率，\(\bar s_i\) 是裁剪值，\(J_{\rm GSPO}\) 是候选平均代理目标。</p>
+<p>CISPO 中 \(\rho_{it}\) 是 token 概率比，\(w_{it}\) 是裁剪后停止梯度的权重，\(A_{it}\) 是固定 token 优势；\(\ell_{it}\) 在 CISPO <strong>重新表示 log-prob</strong>，不同于上节逐 token loss。mean 沿有效候选/token 聚合，具体权重与 clip 边界由原配方决定；sg 保留数值并阻断梯度。</p>
 <div class="reading-math" role="math" aria-label="GSPO序列ratio">\[
 \begin{aligned}
 &s_i=\exp\!\left(\frac1{T_i}\sum_t\log

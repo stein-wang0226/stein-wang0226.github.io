@@ -118,6 +118,7 @@ Profile 的展示稿在本仓库维护，同名展示仓库仍须保留。
 ## 后训练专题
 
 `content/series/llm-posttraining/` 维护六章 SFT / RL / OPD、环境信用、
-异步框架与任务案例；公开入口 `/llm-posttraining/`。来源与数学核对见
+异步框架与任务案例主线，第七章研究扩展来自登记中的 Agentic RL 正文；
+公开入口 `/llm-posttraining/`。来源与数学核对见
 `docs/posttraining-research-20261114.md`，图数据和教学契约在
 `assets/research/posttraining-20261114/`。实验矩阵标为待执行，不表示模型训练已复现。

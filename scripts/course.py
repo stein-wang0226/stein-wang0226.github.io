@@ -136,7 +136,15 @@ def teaching_diagrams(root, text):
             svg = re.sub(r'(?<=id=")' + re.escape(identifier) + r'(?=")',
                          f"rl-diagram-{number}-{identifier}", svg)
             svg = svg.replace(f"#{identifier})", f"#rl-diagram-{number}-{identifier})")
-        return (f'<figure class="teaching-diagram" data-rl-diagram="{number}">{svg}'
+        # Keep small labels readable at the original aspect ratio. Each width
+        # gives the smallest archived label at least 12 CSS px; never edit SVGs.
+        widths = {1: 780, 2: 800, 3: 1200, 4: 960, 5: 960, 6: 960}
+        labels = {1: "价值分解", 2: "策略梯度推导", 3: "Actor-Critic 训练",
+                  4: "PPO 裁剪", 5: "PPO 更新循环", 6: "反馈来源分类"}
+        return (f'<figure class="teaching-diagram" data-rl-diagram="{number}">'
+                f'<div class="reading-inline-plot" data-reading-inline-zoom '
+                f'style="--reading-inline-width:{widths[number]}px" tabindex="0" role="group" '
+                f'aria-label="{labels[number]}图，窄屏可滚动查看">{svg}</div>'
                 f'<figcaption>{notes[number]}</figcaption></figure>')
     return re.sub(marker, replace, text)
 

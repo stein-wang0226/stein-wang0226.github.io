@@ -34,7 +34,9 @@
 <p>单 head 的 score 是每个 query 对各个 key 的匹配强度，value 是实际被加权读取的内容。输出仍保留 S 个位置，Attention 没有把整句压成一个向量。FFN 在同一层逐位置共享参数；位置之间的新信息交换主要来自 token mixer。</p>
 </section>
 <section id="attention-mask"><h2>Causal mask 决定允许使用的证据</h2>
-<p>本节固定<strong>一条序列、一个 head</strong>，省略 batch/head 轴：输入激活 \(X\in\mathbb R^{S\times d}\) 右乘三组可训练投影 \(W_Q,W_K,W_V\in\mathbb R^{d\times d_h}\)，其中 \(d_h\) 是该 head 的维度。\(Q,K,V_{\rm val}\in\mathbb R^{S\times d_h}\) 分别是 query、key、value；这里 \(V_{\rm val}\) 是 value 矩阵，不能与词表大小 \(V\) 混用。\(A\in\mathbb R^{S\times S}\) 是注意力概率，\(M\in\mathbb R^{S\times S}\) 是加性 mask，\(O\in\mathbb R^{S\times d_h}\) 是该 head 的输出，还未拼接 heads 或作输出投影。</p>
+<p>本节固定<strong>一条序列、一个 head</strong>，省略 batch/head 轴：输入激活 \(X\in\mathbb R^{S\times d}\) 右乘三组可训练投影 \(W_Q,W_K,W_V\in\mathbb R^{d\times d_h}\)，其中 \(d_h\) 是该 head 的维度。</p>
+<p>\(Q,K,V_{\rm val}\in\mathbb R^{S\times d_h}\) 分别是 query、key、value；这里 \(V_{\rm val}\) 是 value 矩阵，不能与词表大小 \(V\) 混用。</p>
+<p>\(A\in\mathbb R^{S\times S}\) 是注意力概率，\(M\in\mathbb R^{S\times S}\) 是加性 mask，\(O\in\mathbb R^{S\times d_h}\) 是该 head 的输出，还未拼接 heads 或作输出投影。</p>
 <p>\(i,j=0,\ldots,S-1\) 是<strong>零基</strong>位置索引：行 \(i\) 对应 query，列 \(j\) 对应 key。\(QK^\top\) 的每项是这对位置的内积 score，除以 \(\sqrt{d_h}\) 后加 \(M\)；softmax 对每个固定 \(i\) 沿 \(j\) 归一，允许访问的位置至少有一个。加性 \(M_{ij}=0\) 表示不改变 score，\(-\infty\) 表示屏蔽；下方另列的<strong>可见矩阵</strong>用 1 表示允许、0 表示屏蔽，不是可直接加到 score 的 \(M\)。</p>
 <div class="reading-math" role="math">\[
 Q=XW_Q,\quad K=XW_K,\quad V_{\rm val}=XW_V,\qquad
@@ -98,7 +100,9 @@ p_\theta(x_{1:S})&=\prod_{i=1}^{S}p_\theta(x_i\mid x_{&lt;i}),\\
 L&=\frac{\sum_{b,i}m_{b,i}\ell_{b,i}}{\sum_{b,i}m_{b,i}}.
 \end{aligned}
 \]</div>
-<p>下面固定一个已对齐目标位置，\(z\in\mathbb R^V\) 是词表 logits 向量，\(z_j\) 是词表项 \(j\) 的分数，\(p_j\) 是其归一概率，\(y\) 是正确目标 ID，\(\ell\) 是单 token 损失。\(j,k=0,\ldots,V-1\) 都遍历词表，\(k\) 仅作分母求和索引；它们不再是 query/key 位置。softmax 沿词表轴归一，\(e\) 是自然常数；\(\mathbf1[j=y]\) 在目标项为1，其余为0。恢复 batch/位置下标后，\(z_{b,i,j},p_{b,i,j}\) 分别是该位置的词表分数与概率，\(y_{b,i}\) 是正确目标 ID；以下偏导固定 mask，并把各位置 logits 当作独立变量，不是模型参数 \(\theta\) 的总梯度。</p>
+<p>下面固定一个已对齐目标位置，\(z\in\mathbb R^V\) 是词表 logits 向量，\(z_j\) 是词表项 \(j\) 的分数，\(p_j\) 是其归一概率，\(y\) 是正确目标 ID，\(\ell\) 是单 token 损失。</p>
+<p>\(j,k=0,\ldots,V-1\) 都遍历词表，\(k\) 仅作分母求和索引；它们不再是 query/key 位置。softmax 沿词表轴归一，\(e\) 是自然常数；\(\mathbf1[j=y]\) 在目标项为1，其余为0。</p>
+<p>恢复 batch/位置下标后，\(z_{b,i,j},p_{b,i,j}\) 分别是该位置的词表分数与概率，\(y_{b,i}\) 是正确目标 ID；以下偏导固定 mask，并把各位置 logits 当作独立变量，不是模型参数 \(\theta\) 的总梯度。</p>
 <p>logits \(z\) 经softmax得 \(p_j=e^{z_j}/\sum_k e^{z_k}\)。正确目标为 \(y\) 时，单token损失 \(\ell=-\log p_y=-z_y+\log\sum_k e^{z_k}\)，其梯度为 \(\partial\ell/\partial z_j=p_j-\mathbf1[j=y]\)。对上面的平均损失，有 <span class="masked-gradient-scroll" tabindex="0" role="group" aria-label="平均 masked 损失梯度，可横向滚动">\(\partial L/\partial z_{b,i,j}=(m_{b,i}/N_{\rm valid})(p_{b,i,j}-\mathbf1[j=y_{b,i}])\)</span>。被mask位置的直接logit梯度为0，但它仍可作为后续目标的条件。这把“提高目标概率”接回可计算的梯度。</p>
 <noscript>
 <div id="masked-gradient-nojs-derivation" role="group" aria-label="无脚本平均 masked 梯度推导">

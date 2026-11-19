@@ -20,11 +20,14 @@
   window.addEventListener('hashchange', reveal);
   reveal();
   // Dense research plots keep their aspect ratio and offer a larger view.
-  const selectors = '.work-mechanism svg' + (document.querySelector('[data-reading-plot-zoom]')
+  const selectors = '.work-mechanism svg, [data-reading-inline-zoom] svg' + (document.querySelector('[data-reading-plot-zoom]')
     ? ', .work-original-report figure img, .work-original-report .diagram svg' : '');
-  const plots = document.querySelectorAll(selectors);
-  if (plots.length) {
+  const plots = [...document.querySelectorAll(selectors)].filter(plot =>
+    !plot.closest('mjx-container, .katex, .MathJax_SVG'));
+  if (plots.length && typeof HTMLDialogElement !== 'undefined' &&
+      typeof HTMLDialogElement.prototype.showModal === 'function') {
     const dialog = document.createElement('dialog');
+    dialog.id = 'reading-plot-dialog';
     dialog.className = 'reading-plot-dialog';
     const close = document.createElement('button');
     close.type = 'button';
@@ -44,17 +47,27 @@
       button.type = 'button';
       button.className = 'reading-plot-open';
       button.textContent = '放大查看原图';
+      button.setAttribute('aria-haspopup', 'dialog');
+      button.setAttribute('aria-controls', dialog.id);
       button.addEventListener('click', () => {
-        const label = plot.alt || plot.getAttribute('aria-label') || '研究机制图';
+        const figure = plot.closest('figure');
+        const label = plot.alt || plot.getAttribute('aria-label') ||
+          plot.querySelector('title')?.textContent.trim() ||
+          figure?.querySelector('figcaption')?.textContent.trim() || '研究机制图';
         title.textContent = label;
         image.src = plot.tagName.toLowerCase() === 'svg'
           ? 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(plot))
           : plot.src;
         image.alt = label;
+        const inline = plot.closest('[data-reading-inline-zoom]');
+        image.style.minWidth = inline
+          ? Math.max(1100, parseFloat(getComputedStyle(inline).getPropertyValue('--reading-inline-width')) || 0) + 'px'
+          : '';
         dialog.showModal();
+        scroll.scrollTo({top: 0, left: 0});
         close.focus();
       });
-      plot.after(button);
+      (plot.closest('[data-reading-inline-zoom]') || plot).after(button);
     }
   }
 })();

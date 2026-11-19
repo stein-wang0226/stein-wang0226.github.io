@@ -5,7 +5,11 @@
     {
       "source": "assets/site/reading.css",
       "sha256_before": "a66b39bb6699fc8852585888bed34cebcd81364ec7e9af20744db140ed5f2279",
-      "sha256": "8927c406614a6868bbd6acb9a13083cc0d677c3e75321a63992033e8175a590c",
+      "sha256": "fdd64fcaac224c9a521d63652a7612d80c690ac0f18baf94fb479c744987f1d7",
+      "blog_readability_update_20261119": {
+        "sha256_before": "8927c406614a6868bbd6acb9a13083cc0d677c3e75321a63992033e8175a590c",
+        "reason": "Add explicitly scoped inline figure scrolling, visible keyboard focus and print fallback for the six archived RL teaching diagrams and Harbor regrade chart. Size the shared dialog's image area from the actual caption height with a grid, retaining native closed-dialog visibility. Preserve aspect ratios, existing research image controls and MathJax/KaTeX glyph sizing."
+      },
       "reason": "2026-11-15 approved T5a: place mobile mechanism-options/mechanism-compare diamond branch markers after the equally specific mechanism-chain down-arrow rule; preserve true sequential chain arrows and all non-mobile styles. Source-level cascade check only; actual 390/768/1440px browser validation remains pending. 2026-11-19 user-requested formula sizing fix: exclude MathJax/KaTeX SVG glyphs from all four diagram width rules and the general SVG fallback, retaining intrinsic formula dimensions and proportional diagram sizing. No TeX, scientific source, diagram or anchor changed.",
       "update_20261119": {
         "sha256_before": "16c934726c459f5c2aa9986e4637c3e0a08bfa0a558954bb75060ad8e3b44602",
@@ -54,7 +58,11 @@
     },
     {
       "source": "content/posts/harbor-framework-guide/index.html",
-      "sha256": "f186d8b101fc7565363cf34f074a257c4df3a12b0c4169f5ce4e28d7b6b63a4b",
+      "sha256": "47362ada15fce9de8809d8269a08aee92d2267cedaee99e57c0cdf0a2b0343ed",
+      "blog_readability_update_20261119": {
+        "sha256_before": "f186d8b101fc7565363cf34f074a257c4df3a12b0c4169f5ce4e28d7b6b63a4b",
+        "reason": "Mark only the regrade-chart wrapper for local scrolling and shared enlargement at a 720px minimum width. Every SVG byte, source paragraph, figure caption, ID and trial count remains unchanged; the three existing Harbor diagram dialogs retain their controls."
+      },
       "reason": "逐页审阅：13节与scalingX17集全部审阅；版本、计数、源码、canary与未运行状态核对。原理与算例：observed/native/ambient/corrected counts→移除比例/归一误差→oracle gap；误收/误拒净值与分母；reward_valid均值；五个机制追问。精简与证据：删除重复目录与两次同义总结，长版本表按需；科学数学从代码框移到默认正文；Index筛选改机制图；三原执行图默认可见，600px限宽不变形且可放大；真实案例与计数/去重边界保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（g,c、O,T,U,C、\\rho_c、c），公式、标题、锚点与引用未改。",
       "prior_reason": "Approved learning rework: review all thirteen sections and community-resource slice, retain fixed release/main evidence, source numbering, original diagrams/canary and byte-exact archive. Expand counts/error/oracle gap and valid-reward denominators as LaTeX with clearly labelled examples, expose execution diagram, retain ratio at 600px max and test native zoom, consolidate duplicate directories/summaries and state retry/regrade conditions. Strict three-screen CDN-blocked and no-JS checks passed; no container, model or scientific reproduction."
     },
@@ -141,7 +149,11 @@
     },
     {
       "source": "content/series/dlm-survey/index.html",
-      "sha256": "12fe7488fcaaf81da0f8d5e300c2c4339afc089d34639605c5205c8b0610f7b1",
+      "sha256": "33ae91f6efec9edf3378cb59bcff5b60613bba060110de41a84f80964d56ed01",
+      "blog_readability_update_20261119": {
+        "sha256_before": "12fe7488fcaaf81da0f8d5e300c2c4339afc089d34639605c5205c8b0610f7b1",
+        "reason": "Point the source-policy reading direction directly to the assembled serving chapter for diffusion-assisted speculative decoding, using its current chapter title and fixed-version scope. Preserve chapter content, formulas, figures and historical entrance."
+      },
       "title_revision_reason": "2026-11-14 title audit: use descriptive chapter labels for diffusion routes, prediction targets and VAE variants; retain all paragraphs, research units, anchors, links and markers.",
       "reason": "逐页审阅：范围、分类、路径、先修、原稿、装配、掌握清单。原理与算例：训练/生成两支路。精简与证据：移除旧目录、重复路线与厂商速度结论；14节正文在同页，先修/扩展折叠。 图示补充审阅：Corrected a diagram-level training/generation adjacency while preserving all introductory prose, course markers and source-policy content.。",
       "prior_reason": "Add series prerequisites, recommended order and fact-review limits; all fourteen chapters unchanged. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified."
@@ -163,7 +175,11 @@
     },
     {
       "source": "content/posts/rl-interview-guide/index.html",
-      "sha256": "6e6379e0d11e8c8177adc0a96b25d7c719d605669e29014301bbe47ad1222adf",
+      "sha256": "45eb3a8c0f672e9f27c65b4a3497a5785573c5c151efac0c6432da90b4802334",
+      "blog_readability_update_20261119": {
+        "sha256_before": "6e6379e0d11e8c8177adc0a96b25d7c719d605669e29014301bbe47ad1222adf",
+        "reason": "Split one 407-character notation paragraph into four paragraphs by index, interaction, value and update roles. Apart from paragraph boundaries and whitespace, all source bytes are unchanged; preserve the existing symbol table and every formula."
+      },
       "visual_revision_reason": "2026-11-15: add a compact learning diagram, restore prominent core-role discovery and current/original links in the shared reading shell; retain all six original SVG diagrams and detailed derivations. Historical source is unchanged.",
       "reason": "逐页审阅：符号、算法卡、数值卡、参数影响、诊断、短答与历史入口全部审阅。原理与算例：关键目标与作用；完整推导定位后训练。精简与证据：修G/KL方向/显存/epochs矛盾；合并重复长讲，现代RLVR/Agentic/OPD覆盖保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（t=0,\\ldots,T-1、T、\\theta、G_t、G、h_t,a_t,r_t），公式、标题、锚点与引用未改。",
       "prior_reason": "Add preparation; reconcile inconsistent on-policy/DPO FAQ with existing DPO section and original paper link; formulas untouched. Complete approved 2026-11-14 note organization: preserve every original research unit, source/public anchor, original URL, citation and AUTO marker against docs/organization-audit-20261114.json; retain repeated passages and index directories in same-page frozen native details; add explicit mainline, prerequisites and current owner links. Catalog-driven chapter labels/navigation use the new order; numbered references stay unchanged. 2026-11-14 full-blog citation audit: add section-proximate original-paper/official-document links and make verified plain arXiv identifiers clickable without altering research units, formulas, code, original anchors or numbered references. Correct confirmed attribution/version issues or explicitly mark unverified numerical/causal claims; DFM/FS-DFM original erroneous explanation is retained in same-page frozen history. Link coverage is not experimental reproduction or a claim that all scientific assertions are verified. Follow-up RL audit: make GRPO group size recipe-dependent, add compact Offline RL/Decision Transformer/planning/self-play/MARL/distributional/model-based coverage, and remove an unsupported blanket ranking of offline LLM RL. Follow-up recipe expansion: add source-labeled GRPO-family numeric cards, correct universal clip/KL claims, distinguish prompt/trajectory/mini-batch and inner epochs, and link the compact interview table to the authoritative post-training chapter. Editorial coherence pass: separate original GRPO derivation from later variants, keep one compact numeric card, correct overgeneralized critic-memory, group-size and single-step-MDP wording, align the later comparison table with the recipe card, and fix the sampled KL-ratio direction and interpretation. Superseded wording remains in a labeled same-page history block for preservation checks."
@@ -374,7 +390,11 @@
     },
     {
       "source": "content/series/llm-posttraining/s02_rl_algorithms.html",
-      "sha256": "d292a40b7742342aee83f42e538845144cc85425d1ceee4e64febcf9e5ff4fbb",
+      "sha256": "b6564ceb14519bc5562c5939b0989555c51f6f9788a5a7b30f0f2a46e569a5cb",
+      "blog_readability_update_20261119": {
+        "sha256_before": "d292a40b7742342aee83f42e538845144cc85425d1ceee4e64febcf9e5ff4fbb",
+        "reason": "Split the GSPO/CISPO notation paragraph by candidate indices and algorithm roles, retaining every word and mathematical substring. Replace only the old fixed-width 825px outer baseline canvas with a fluid canvas so the generated per-figure scroll area owns enlargement and keeps the caption/button in the text column. Preserve baseline-diagram-scroll, all six diagram markers, formulas, derivations, numerical examples and citations."
+      },
       "reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 完整算例与主题整合：补齐同prompt四候选从reward/std、固定优势、current/old ratio、正负clip到loss与logit梯度的连续算例，注明单token、KL=0及条件。 更新与状态链路复查：展开GAE两决策的TD、优势、固定lambda-return目标、actor/critic损失；独立控制bootstrap和片段递推，比较误标terminal后的符号。 图示补充审阅：Make value bootstrap and next-advantage continuation visually independent without replacing any formula, table or numerical example.。 讲解连贯性续轮审阅：改稿：仅在公式首次使用前补充符号定义（\\theta、\\tau、p(h_0)、p_\\theta(\\tau)、t=0,\\ldots,T-1、\\gamma\\in[0,1]），公式、标题、锚点与引用未改。 2026-11-18推导补充续接（T1/T2正文、T3凭据）：先给RL问题定义、分层符号与交互/训练分支图，再补REINFORCE、reward-to-go、baseline就地证明、critic MSE与梯度方差、有限片段GAE、PPO换测度/正负分段、RLOO独立性和有限组关系；保留旧锚点、教学图、完整算例、配方与诊断。T3不再编辑s02，按交付SHA接续，独立数学与当前构建/浏览器验收另做。 2026-11-18 T6独立复核索引修复：仅将#gae-boundary-example表头b_1,c_1的hidden label由“第一步的 b、c 标志”改为“第二步（t=1）的 b、c 标志”；所有公式、可见图、数值与数学推导不变；对照T6前四文件副本记录精确差异，新SHA的独立数学复验及T5构建/浏览器验收另做。 2026-11-18 T7界面修复T5-VIS-01：仅在#baseline-proof之后的READING:RL-DIAGRAM:1原marker外新增#baseline-diagram-scroll可聚焦滚动区、825px内层、局部直子级SVG样式和可见滚动提示；覆盖原SVG inline 660px上限，按660:260等比例显示825x325，最小10.5字号预期变为13.125px；原marker、figure/caption装配、全部数学正文、原ID、引用与其他图保持。对照T7前四文件副本撤去新增层后整source字节相等；本轮不构建或运行浏览器，390/768/1440实际图内滚动、可读性和页无溢出由独立T5复验。",
       "prior_reason": "逐页审阅：PG、baseline、GAE/PPO、RLOO/GRPO、各变体、六论文配方、追问与诊断全部审阅。原理与算例：score-function、reward-to-go、baseline 零均值；GAE/terminal；PPO 分段；组优势。精简与证据：修 GiGPO 跨 prompt、固定G/epochs、clip+KL绝对化；六原SVG作带边界的教学图，12追问与论文数值保留。"
     },
@@ -428,7 +448,11 @@
     },
     {
       "source": "content/series/llm-architecture/s01_transformer_foundations.html",
-      "sha256": "babd9b0da7c4226b82ebae2217b160cbc01e05b8a87fa45df1361852573e6319",
+      "sha256": "7d3f22932b5edd75a0807f7643f7511bbbabae09ad585800bc5f6a2ea7b6ca8a",
+      "blog_readability_update_20261119": {
+        "sha256_before": "babd9b0da7c4226b82ebae2217b160cbc01e05b8a87fa45df1361852573e6319",
+        "reason": "Split the attention tensor and logits-gradient notation into short paragraphs by input/projection, QKV, output and vocabulary/batch roles. Apart from paragraph boundaries and whitespace, all source bytes are unchanged; preserve all mathematical objects, dimensions, formulas and examples."
+      },
       "reason": "逐页审阅：条件预测、张量路径、mask、block、teacher forcing、状态成本与不变量全部审阅。原理与算例：NLL/softmax导数；4token causal mask；标签shift。精简与证据：机制展开、结论短卡；修AR训练串行等混淆，原来源和旧定位保留。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：修正一个影响梯度复算的归一化缺口和一个旧章序衔接标签；保留已有张量图、mask例、shift、NLL算例与状态表。 T10e将平均masked梯度原行内公式移入局部可键盘横滚的block显示span，保留全部数学字节、目标下标、闭括号与符号说明，不改共享CSS。 T10z仅追加两处noscript必要说明：block的X/U/Y形状与顺序双残差，平均masked梯度的索引、softmax导数、固定m/N缩放和原算例-0.25。移除两块恢复改前全字节；原LaTeX、代码、图、ID、引用、样式和正文不改。 变量前置定义：补B、T、S、T=S、d、V等首次使用前的说明，公式未改。",
       "prior_reason": "逐页审阅：条件预测、张量路径、mask、block、teacher forcing、状态成本与不变量全部审阅。原理与算例：NLL/softmax导数；4token causal mask；标签shift。精简与证据：机制展开、结论短卡；修AR训练串行等混淆，原来源和旧定位保留。"
     },
@@ -531,7 +555,11 @@
     },
     {
       "source": "content/series/llm-training-lifecycle/index.html",
-      "sha256": "759b9545f41c645c3d53820c0ab411e1b06c62bc2a474c9af3fd8bbb94f5603a",
+      "sha256": "9920c3845c9217c5ebb8c2aa79e1d88dbd193b92f37ffea85ca508d610285a6e",
+      "blog_readability_update_20261119": {
+        "sha256_before": "759b9545f41c645c3d53820c0ab411e1b06c62bc2a474c9af3fd8bbb94f5603a",
+        "reason": "Correct the posttraining reading direction to distinguish six core chapters and the seventh Agentic RL research extension, matching catalog order. No chapter body, scientific claim, source or formula changed."
+      },
       "reason": "逐页审阅：预训练→CPT→SFT→RL/验收→训练方法五章装配。原理与算例：阶段产物与监督接口交接。精简与证据：入口只保一条主线，训练阶段不再重复后训练全文。 分类与课程复查：增加阶段×目标/数据×预算×执行交叉表；连接Scaling、优化器与框架主讲，引用CS336及Smol课程组织。 讲解连贯性续轮审阅：入口已承担路线和阶段产物，具体公式在子章充分展开，保留不堆叠。",
       "prior_reason": "逐页审阅：预训练→CPT→SFT→RL/验收→训练方法五章装配。原理与算例：阶段产物与监督接口交接。精简与证据：入口只保一条主线，训练阶段不再重复后训练全文。"
     },
@@ -543,7 +571,11 @@
     },
     {
       "source": "content/series/llm-training-lifecycle/s02_midtraining.html",
-      "sha256": "5646e9bfb8809f6f4b5cc1e516ff026c4f5d46d75adb402628432ba713d07dc2",
+      "sha256": "9418b92b6c2bac7be86604838d0a6bf2d84842c3043e3cc58ac1cb1dcc373458",
+      "blog_readability_update_20261119": {
+        "sha256_before": "5646e9bfb8809f6f4b5cc1e516ff026c4f5d46d75adb402628432ba713d07dc2",
+        "reason": "Split one dense bucket-weight notation paragraph into input/target counts, aggregation weights and denominator conditions. Apart from paragraph boundaries and whitespace, all source bytes are unchanged; every formula, data count and example remains intact."
+      },
       "reason": "逐页审阅：阶段、工业配方、受控结果、数据/伪代码、配比回放与科学交接全部审阅。原理与算例：CSV四视角；输入比例与目标比例反例。精简与证据：长论文路线表按需；保能力下降与混杂条件，CPT不由名称决定目标。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义。 讲解连贯性续轮审阅：仅补确证的CSV类型/空值条件和输出检查，保持原样本/代码/引用；其余配比与归因解释充分。 变量前置定义：补j,k、N_{{\\rm input},k}>0、N_{{\\rm target},k}、w_k、\\rho_k=N_{{\\rm target},k}/、L_k等首次使用前的说明，公式未改。",
       "prior_reason": "逐页审阅：阶段、工业配方、受控结果、数据/伪代码、配比回放与科学交接全部审阅。原理与算例：CSV四视角；输入比例与目标比例反例。精简与证据：长论文路线表按需；保能力下降与混杂条件，CPT不由名称决定目标。"
     },
