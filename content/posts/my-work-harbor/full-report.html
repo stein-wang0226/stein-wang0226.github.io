@@ -291,6 +291,21 @@
   }
 
 </style>
+<!-- HARBOR:SUPPLEMENT:20261120:STYLE:START -->
+<style>
+.work-original-report .harbor-supplement{margin:1.2rem 0;overflow-wrap:anywhere}
+.work-original-report .harbor-supplement details{margin:1rem 0;padding:.8rem 1rem;border:1px solid var(--gray-200);border-radius:6px;background:var(--surface)}
+.work-original-report .harbor-supplement summary{cursor:pointer;font-weight:600;color:var(--teal)}
+.work-original-report .harbor-supplement summary:focus-visible,.work-original-report .harbor-supplement [tabindex]:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.work-original-report .harbor-supplement details[open]>summary{margin-bottom:.8rem}
+.work-original-report .harbor-supplement .supplement-table{max-width:100%;overflow-x:auto}
+.work-original-report .harbor-supplement .supplement-table table{min-width:580px}
+.work-original-report .harbor-supplement .supplement-table th{overflow-wrap:anywhere}
+.work-original-report .harbor-supplement .supplement-table td:first-child code{white-space:nowrap;overflow-wrap:normal;word-break:normal}
+.work-original-report .harbor-supplement code{overflow-wrap:anywhere}
+.work-original-report .harbor-supplement li{margin-bottom:.5rem}
+</style>
+<!-- HARBOR:SUPPLEMENT:20261120:STYLE:END -->
 <style>.work-import-notice{position:relative;z-index:2;box-sizing:border-box;max-width:1040px;margin:24px auto;padding:20px 24px;background:#f7f5f0;border-left:3px solid #0f766e;color:#1a1a2e;font:14px/1.85 "PingFang SC",sans-serif}.work-import-notice p{margin:6px 0}.work-import-notice a{color:#0f766e}@media(max-width:700px){.work-import-notice{margin:18px;padding:16px}}.work-original-report nav[aria-label="报告目录"]{position:sticky;inset:auto;top:20px;float:left;height:calc(100vh - 40px)}.work-report .reading-intro{border:0;margin:0 auto;padding:18px 32px}.work-report .reading-intro>h1,.work-report .reading-intro>p:not(.reading-path):not(.reading-meta){display:none}@media(max-width:760px){.work-original-report nav[aria-label="报告目录"]{position:relative;top:auto;float:none;height:auto}}</style></head>
 <body class="site-body work-report"><aside class="work-import-notice"><p><a href="index.html">返回项目方法总结</a> · <a href="../../assets/research/my-work/harbor-original.html.txt" download="harbor-original.html">下载原始 HTML</a> · <a href="../../assets/research/my-work/sources.json">来源版本清单</a></p><p>来源：harbor-task-sync @ 0efe0d276c6f。完整正文、公式与嵌入图表保留；相对源码链接固定到 GitHub 版本，需要仓库权限。快照未包含的工件链接保留为文字，详情见来源清单。</p></aside><main class="work-original-report">
 
@@ -313,6 +328,12 @@
   </ul>
 </div>
 
+<!-- HARBOR:SUPPLEMENT:20261120:READING:START -->
+<aside class="document-note harbor-supplement" aria-label="方法补充导读">
+  <p><strong>2026-11-20 方法补充：</strong>结合《GEO-Harbor-Bench Method Report》补充从候选研究到交付证据的关键接口。原稿主体、历史数字、案例、公式和图表继续保留；新增规则按固定版本解释，不代表新增实验结果。</p>
+  <p>按需阅读：<a href="#author-contract">作者输入</a> · <a href="#geo-recall">召回与初筛</a> · <a href="#geo-readiness">就绪与领取</a> · <a href="#information-budget">信息预算</a> · <a href="#executable-calibration">可执行校准</a> · <a href="#delivery-evidence">交付证据</a> · <a href="#supplement-sources">补充来源</a>。</p>
+</aside>
+<!-- HARBOR:SUPPLEMENT:20261120:READING:END -->
 <h2 id="problem">1. 研究问题：怎样规模化构造科学任务</h2>
 
 <p>科学任务构造需要同时完成<strong>数据核验、问题定义、参考计算和独立判分</strong>。规模化的难点是使每道题都有这些证据，同时保留方法选择空间。</p>
@@ -331,6 +352,25 @@
 
 <p>explorer 发现候选，auditor 核查数据与科学问题，author 构造任务，gates 检查包契约，solver 留下盲测轨迹，judger 根据轨迹与判分证据裁决。角色名称只是接口；可复放工件和可验证隔离才是机制。</p>
 
+<!-- HARBOR:SUPPLEMENT:20261120:AUTHOR:START -->
+<section class="harbor-supplement" aria-labelledby="author-contract">
+<h3 id="author-contract">作者接收什么，留下什么证据</h3>
+<p><code>task_author</code> 的输入把<strong>造题规则、冻结事实与实际文件</strong>分开：规则说明如何做题，<code>study_audit.json</code> 界定科学问题、实验设计与数据范围，磁盘生成的 <code>data_files</code> 清单核对文件大小和下载完整性。审计中的 central question、research trajectory 与 data scope 是冻结边界；论文结论只能作为待检验假设，不能直接充当 oracle。</p>
+<details>
+<summary>查看 prompt 的五段结构与材料权限</summary>
+<ol>
+  <li><strong>角色提示：</strong><code>task_author.md</code> 定义设计原则、校准契约、包布局、自查和输出格式。</li>
+  <li><strong>本题上下文：</strong>镜像、资源、时限、canary 与权威文件清单，避免大 fixture 被忽略规则漏掉。</li>
+  <li><strong>JSON 上下文：</strong><code>{slug, gse, pipeline_contract_version, data_files}</code> 固定任务身份、契约版本与输入记录。</li>
+  <li><strong>白名单与执行顺序：</strong>先勘察数据、定义目标和契约，再校准与打包。</li>
+  <li><strong>条件块：</strong>按契约版本、覆盖策略、首次来源准入或修订模式追加要求；修订先读取旧包。</li>
+</ol>
+<p>预置材料包含 <code>SKILL.md</code>、六份规则文档、<code>tb3_reference/</code>、冻结审计、<code>data/</code>、v2 skeleton 与自己上一轮题包。六份规则分别约束题面风格、harness 契约、信息预算与盲测、数据转换完整性、校准评分、科学 rubric。编排层 pipeline 代码不在该输入白名单中；作者会生成并自检自己的 solution、tests 与私有校准，solver 的可见范围仍限定为公开题面与环境。</p>
+</details>
+<p>每轮保留 <code>prompt.md</code>（实际提示）、<code>codex_events.jsonl</code>（工具事件）、<code>run_meta.json</code>（模型、耗时、用量与错误）和 <code>author_summary.json</code>（结论、产物、信息预算）。这些是编排与作者证据，不是 solver 的公共输入；后续评审需把“作者声称完成”与真实执行记录对应起来。</p>
+<p><strong>轨迹交接的实现边界：</strong>上文“judger 根据轨迹裁决”说明完整方法的要求。固定代码版本的 <code>run_judger.prepare_full()</code> 自动索引与包指纹匹配的 <code>reward.json</code>，没有自动将 <code>rollout.jsonl</code> 和完整 verifier 日志纳入评审输入。轨迹已留存不等于已经逐步审阅；声称完成失败归因，还需核对实际评审输入是否包含版本绑定的操作轨迹、提交校验和与判分日志。</p>
+</section>
+<!-- HARBOR:SUPPLEMENT:20261120:AUTHOR:END -->
 <h2 id="pipeline">3. 方法与判分：先冻结，再盲测</h2>
 
 <h3>方法总览</h3>
@@ -442,6 +482,49 @@
   <p class="figure-caption">图 1. GEO-Harbor-Bench 生产链路：候选筛选 → 深度审计 → 造题/门禁/盲测/评审 → Harbor package 自包含验收 → done 入库。</p>
 </div>
 
+<!-- HARBOR:SUPPLEMENT:20261120:RECALL:START -->
+<section class="harbor-supplement" aria-labelledby="geo-recall">
+<h3 id="geo-recall">候选研究：宽召回与确定性初筛</h3>
+<p>上图“七轴”与候选数量属于原稿批次。补充来源对应的 <strong>v2 查询有 11 个轴</strong>：3 个按实验类型、6 个按标题、2 个跨字段匹配；检索 2016–2026 年公开的人或小鼠 GEO Series，其中 WES/WGS 与变异注释仅查人类。ESearch 按相关性排序，默认每页 500 条、每轴最多保留 3,000 条，再按 GSE 跨轴去重。这些是固定版本的召回参数，不构成全库覆盖保证。</p>
+<p>ESummary 补齐元数据后，初筛要求样本数 4–120、有 PMID、有补充文件、公开年份 ≥ 2016。CRISPR、WES/WGS、变异注释、质谱、多组学与长读长轴可免测序类型检查。通过后先按本地 GEO 库收录状态、命中轴数与 GSE 字符串排序，再进入评分、配额选批与深审；“命中查询”只表示进入候选发现阶段。</p>
+<details>
+<summary>查看 11 个查询轴、字段与检索词</summary>
+<p>同一行的检索词取“或”，再与该行物种和日期条件取“且”。RNA-seq 按实验类型召回，标题无需出现扰动词。</p>
+<div class="supplement-table" role="region" aria-label="GEO v2 查询轴" tabindex="0">
+<table>
+<thead><tr><th scope="col">轴名</th><th scope="col">字段与检索词</th><th scope="col">物种</th></tr></thead>
+<tbody>
+<tr><td><code>rnaseq_perturb</code></td><td>实验类型：Expression profiling by high throughput sequencing</td><td>人或小鼠</td></tr>
+<tr><td><code>chipseq_tf</code></td><td>实验类型：Genome binding/occupancy profiling by high throughput sequencing</td><td>人或小鼠</td></tr>
+<tr><td><code>methylation</code></td><td>实验类型：Methylation profiling by high throughput sequencing</td><td>人或小鼠</td></tr>
+<tr><td><code>riboseq</code></td><td>标题：ribosome profiling、Ribo-seq</td><td>人或小鼠</td></tr>
+<tr><td><code>atacseq</code></td><td>标题：ATAC-seq</td><td>人或小鼠</td></tr>
+<tr><td><code>crispr_screen</code></td><td>标题：CRISPR screen、CRISPR-Cas9 screen、genome-wide screen</td><td>人或小鼠</td></tr>
+<tr><td><code>wes_wgs</code></td><td>标题：whole exome sequencing、whole genome sequencing、targeted sequencing、panel sequencing</td><td>仅人类</td></tr>
+<tr><td><code>longread</code></td><td>标题：long-read、nanopore、PacBio、Oxford Nanopore</td><td>人或小鼠</td></tr>
+<tr><td><code>multiome</code></td><td>标题：multi-omics、multiome、multiomic</td><td>人或小鼠</td></tr>
+<tr><td><code>proteomics</code></td><td>实验类型：Protein profiling by mass spectrometry；或标题：TMT、label-free、peptidomics、proteomics</td><td>人或小鼠</td></tr>
+<tr><td><code>variant_annotation</code></td><td>标题：variant annotation、variant classification、variant prioritization、variant calling、pathogenic variants、pathogenicity、clinical interpretation；或全部字段：HGVS</td><td>仅人类</td></tr>
+</tbody>
+</table>
+</div>
+</details>
+<p><strong>漏召回如何判断：</strong>先查看批次 <code>raw/&lt;axis&gt;.json</code> 的查询与 GSE 清单，再查看 <code>candidates_enriched.json</code> 的留存记录和 <code>drop_reason</code>。某研究不在结果里，不能直接归因于 3,000 条限额；还需要它匹配该查询且排名超限的证据。初筛淘汰、已使用、未选批与未命中查询也要分别记录。</p>
+<h3 id="geo-readiness">从深审放行到输入就绪、生产领取</h3>
+<p><code>study_audit.json</code> 的放行结论回答“研究是否可造题”；readiness 回答“本次输入是否已经可用”；领取事件回答“谁以哪个版本开始生产”。三者分别留证，避免把候选评分或科学放行当作文件已经准备齐全。</p>
+<figure class="mechanism-map" aria-labelledby="readiness-chain-label">
+<figcaption id="readiness-chain-label">从研究判断到交付：每次交接绑定可核对的工件</figcaption>
+<ol class="mechanism-chain">
+<li><b>深审 → 冻结研究</b><small>审计中的科学目标、真值来源、门槛与数据范围。</small></li>
+<li><b>就绪 → 领取生产</b><small>readiness、输入清单与 checksum；领取事件记录归属和版本。</small></li>
+<li><b>生产 → 冻结任务包</b><small>门禁、校准、盲测与判分记录对应同一包摘要。</small></li>
+<li><b>交付 → 核对回执</b><small>平台回执、Oracle 结果、模型轨迹与原生 reward。</small></li>
+</ol>
+<p class="mechanism-note">图示是证据交接顺序，不表示每项历史任务已经完成全部验证。具体验收以所在批次契约和实际记录为准。</p>
+</figure>
+<p>输入缺失或摘要变化时，修复后重做 readiness；研究证据不足时补材料复核；容量、传输或运行故障另留记录。生产返修保留旧失败原因与新版本验证结果，避免将运行故障计作科学失败，或把旧包的校准结果沿用到新包。</p>
+</section>
+<!-- HARBOR:SUPPLEMENT:20261120:RECALL:END -->
 <h3>评审 rubric 体系：每个站位的判分维度</h3>
 
 <p>质量控制采用<strong>分层裁决</strong>：越靠近昂贵盲测，判据越严格；每个站位只回答一个可被证据支撑的问题。</p>
@@ -515,6 +598,31 @@
 
 <p><strong>为什么前置门禁重要？</strong> 零 token 门禁在沙箱前拦截结构错误、配方泄漏和依赖缺失，避免无效盲测。</p>
 
+<!-- HARBOR:SUPPLEMENT:20261120:BUDGET:START -->
+<section class="harbor-supplement" aria-labelledby="information-budget">
+<h3 id="information-budget">信息预算：完整公开目标，私下校准方法</h3>
+<p>在写题面与 tests 前，把每条候选信息归入一个类别。<strong>目标量（estimand）</strong>是要交付的科学量或产物；<strong>估计方法（estimator）</strong>是得到它的计算选择。必要事实和输出语义公开完整，合理方法自由度由私有校准承接。</p>
+<div class="supplement-table" role="region" aria-label="信息预算的五类边界" tabindex="0">
+<table>
+<thead><tr><th scope="col">类别</th><th scope="col">判断与例子</th><th scope="col">去向</th></tr></thead>
+<tbody>
+<tr><td><code>interpretation_fact</code></td><td>缺少会产生两种数据解释：独立实验单元、样本映射、配对、坐标、单位、零与缺失语义。</td><td>必须公开</td></tr>
+<tr><td><code>output_contract</code></td><td>只规定答案如何表达：路径、字段、类型、枚举、排序、并列、精度、去重与空集规则。</td><td>必须公开</td></tr>
+<tr><td><code>target_defining_choice</code></td><td>改变后会改变科学量、比较方向、集合身份或决策定义。</td><td>公开目标边界</td></tr>
+<tr><td><code>estimator_choice</code></td><td>不同方法或参数仍估计同一公共目标。</td><td>私有校准</td></tr>
+<tr><td><code>answer_or_shortcut</code></td><td>期望值、命中名称或数量、私有容差与答案路径。</td><td>不得公开</td></tr>
+</tbody>
+</table>
+</div>
+<p>用两个反事实区分目标与方法：换一种合理方法，交付量的定义是否改变？删除方法名、公式、阈值和执行顺序后，结合公开实验设计与输出契约，目标是否仍唯一可解释？若仅改变数值估计，应交给方法校准；若缺少目标语义，只补目标边界。</p>
+<details>
+<summary>查看删配方测试、五类边界与一致性要求</summary>
+<p><strong>删配方测试：</strong>逐句删除工具名、统计方法名、公式、常数、阈值和步骤顺序。删除后目标仍唯一、且私有校准存在可接受路径的内容应保持删除；不在题面枚举 accepted estimator 菜单。只有 assay 语义或目标定义确实要求时，才固定具体方法，并在 <code>method_fixed_justification</code> 登记依据。</p>
+<p><strong>必须写清的五类边界：</strong>零／缺失／检出下限；并列与阈值归属；取整与比较的先后；多来源字段优先级；候选全集与配对关系。它们约束数据解释与输出表达，不能靠隐藏这些必要语义制造难度。</p>
+<p><strong>每个私有方法选择都要结案：</strong>登记为 open（指向已覆盖维度）、invariant（说明实际检查的科学不变量）、fixed_target（证明改变目标量）或 removed（删除敏感输出）。<code>calibration-summary.json</code> 与最终 <code>author_summary.json</code> 的 <code>information_budget</code> 必须逐项一致；漏记一个选择不能视作完成校准。</p>
+</details>
+</section>
+<!-- HARBOR:SUPPLEMENT:20261120:BUDGET:END -->
 <h3 id="joint-path">开放方法为何仍能确定性判分</h3>
 <p class="math-notation">y 为完整结果，k=1,…,K 为合法分析路径编号，𝒜ₖ 为该路径的一致接受域；⋃ 为并集，V(y) 为落入接受域取 1、否则取 0 的 verifier。这里 V 是判分函数，不是 RL 状态价值。</p>
 <p>把合法解法登记成<strong>完整输出路径</strong>，并对每条路径的排名、方向、统计量与元数据做联合检查。令第 k 条路径的接受集合为 \(\mathcal A_k\)，最终接受集合是这些集合的并：</p>
@@ -542,6 +650,23 @@ V(y)&=\mathbf 1\{y\in\mathcal A\}.
 </ul>
 <p>这是一套可检验的准入条件。有限校准无法证明已经覆盖所有合法解或所有投机路径。</p>
 
+<!-- HARBOR:SUPPLEMENT:20261120:CALIBRATION:START -->
+<section class="harbor-supplement" aria-labelledby="executable-calibration">
+<h3 id="executable-calibration">将完整路径原则落成可执行校准</h3>
+<p>固定版本的 v2 角色契约先区分两种模式。<code>deterministic_target</code> 只有单一公共目标，<code>open_dimensions</code> 与 <code>paths</code> 为空，并说明精确匹配或不变量判分为何充分。<code>multi_path_equivalent</code> 才要求可执行多路径矩阵：一条 reference、至少一条 accepted 和至少一条 known_wrong。不能为确定性任务凑出伪自由度。</p>
+<details>
+<summary>查看多路径探针与覆盖的证据要求</summary>
+<ol>
+  <li><strong>冻结目标和开放维度：</strong><code>target_functional</code> 说明交付量，<code>open_dimensions</code> 明列许可取值。默认执行完整笛卡尔积；采用 <code>anchored_marginal</code> 必须满足契约中的显式例外条件，不能任取子集后声称全覆盖。</li>
+  <li><strong>执行真实探针：</strong>实现放在 <code>calibration/probes/&lt;path_id&gt;.py</code>，通过 <code>DATA_DIR</code>／<code>RESULTS_DIR</code> 读写，登记 SHA-256 与 <code>expected_verifier_result</code>。reference／accepted 的完整 artifacts 必须真实通过 tests。</li>
+  <li><strong>负控制检验科学断言：</strong>known_wrong 也生成完整产物，登记 <code>expected_failure</code>，因科学错误被拒绝；缺文件、崩溃不能替代有效负控制。</li>
+  <li><strong>证明方法确有区别：</strong>开放 estimator 维度至少覆盖两个真正不同的 <code>method_family_id</code>。记录具体字段、位点或样本上的可复算差异，以及为何仍估计同一目标；改 pseudocount、常数、阈值或参数名称不算新方法族。</li>
+  <li><strong>按实测结果冻结接受域：</strong>容差和联合不变量来自执行产物，随后与 verifier、题面和 fixture 绑定。修包后重新验证；不能只运行一条参考解就宣称公平覆盖。</li>
+</ol>
+</details>
+<p>若普通分析者认为合法的方法族无法收敛到契约允许的可执行组合，应先删除非核心的 estimator 敏感输出，改以方向、集合稳定性、关键对比或排名等科学不变量判分；仍不闭合则重选问题或阻塞。多路径校准证明的是<strong>已执行路径的可判性</strong>，有限探针不能证明所有合理解与投机路径都已覆盖。</p>
+</section>
+<!-- HARBOR:SUPPLEMENT:20261120:CALIBRATION:END -->
 <h3>交付产物：task package 目录结构</h3>
 
 <p>最终交付的是自包含 Harbor task package。核心原则很简单：<strong>考生只看题面和公开数据；答案、判分器和出题证据随包保存，但在盲测时物理隔离。</strong></p>
@@ -562,6 +687,13 @@ V(y)&=\mathbf 1\{y\in\mathcal A\}.
 
 <p>导出时丢弃逐轮草稿、盲测留档和临时探针；保留题面、运行环境、判分器、参考解法与 authoring 证据链。这样上游既能直接运行任务，也能复核“这道题为什么成立”。</p>
 
+<!-- HARBOR:SUPPLEMENT:20261120:DELIVERY:START -->
+<section class="harbor-supplement" aria-labelledby="delivery-evidence">
+<h3 id="delivery-evidence">交付验收：回执、Oracle 与盲测分别留证</h3>
+<p>上面的目录保留原稿布局；新增契约字段和校准工件位置应按实际包版本核对。交付时同时记录<strong>平台回执、Oracle 自检、所需模型的真实 rollout</strong>，并核对各自绑定的题面、环境、fixture、tests 与包摘要。生产状态 <code>done</code>、Oracle 通过、模型通过率回答不同问题，不能相互替代。</p>
+<p>报告模型表现时给出原生 reward、有效轨迹数和评测分母，单列 pending、retry 与运行故障。旧包轨迹不能作为修订包的评测结果；导出包可精简临时材料，编排留档仍须支持版本复核。本节补充证据口径，不重算后文历史库存、成功率或成本。</p>
+</section>
+<!-- HARBOR:SUPPLEMENT:20261120:DELIVERY:END -->
 <h2 id="crispr">4. CRISPR-MHC-II-Screen：从计数矩阵到任务包</h2>
 
 <p>这个 case 主要展示流水线最终合成出的 Harbor 任务长什么样：它不是论文复述，也不是固定代码配方，而是把真实 GEO 研究转化为可盲测、可判分、可复核的任务包。</p>
@@ -774,5 +906,15 @@ C_{\rm measured}&=\frac{\sum_i c_i}{N_{\rm done}},\\
   <li><strong>Refinement 已证明有效吗？</strong>当前冻结记录的难度 drop=0、accepted child=0；需要规格与独立难度门共同通过，不能用产线库存代替。</li>
 </ul>
 
+<!-- HARBOR:SUPPLEMENT:20261120:SOURCES:START -->
+<aside class="document-note harbor-supplement" aria-labelledby="supplement-sources">
+<h3 id="supplement-sources">补充来源与版本边界</h3>
+<p>本轮参考用户提供的 <cite>GEO-Harbor-Bench Method Report</cite>（<code>docs/design/GEO-Harbor-Bench-Method-Report.html</code>，2026-11-20 本地快照，SHA-256：<code>62e48ff0e33c7199d05b281a07abd9ed633c0a7a18ba9b6b3396a6b3ccfc6102</code>）。对应章节为 GEO 召回与初筛、生产 SOP、task_author、开放解法校准及交付题包。该本地文档包含未提交修改，不能将其整体标为仓库提交中的原文。</p>
+<p>参考文件随后补充了角色机制与证据边界。本页另吸收其中的“轨迹留存与评审输入须分别核验”说明；对应第二份本地快照 SHA-256：<code>2b6e4a495ac525e43778f1e578e726afb4b5697e18f4411a77cc131753619568</code>，来源章节为 <code>#mechanism-boundaries</code>。</p>
+<p>规则细节对照仓库固定提交 <code>0c2f80044035</code> 的干净源文件：<a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/geo_candidates_v2.py">GEO v2 查询与初筛</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/run_author.py">作者 prompt 与摘要校验</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/roles/task_author.md#L40-L148">信息预算与校准角色契约</a>。源码链接可能需要仓库权限。</p>
+<p>轨迹交接范围对照同一提交的 <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/run_judger.py#L74-L138">全量评审证据索引</a> 与 <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/run_judger.py#L157-L207">评审输入组装</a>。</p>
+<p>其中“reference／accepted／known_wrong 必须齐备”按角色契约限定于多路径模式；作者可生成并检查自己的答案与校准，盲测 solver 仍物理隔离这些材料。新增内容是固定版本的设计与证据要求，本轮没有运行新造题实验，也不更新原稿实验结论。</p>
+</aside>
+<!-- HARBOR:SUPPLEMENT:20261120:SOURCES:END -->
 </main></body>
 </html>

@@ -325,7 +325,14 @@
     },
     {
       "source": "content/posts/my-work-harbor/full-report.html",
-      "sha256": "0816190055d8412972589d2aba50a5f84b1fac4c6c8f74b242630ea32c43cb78",
+      "sha256": "e759702c9f6c49421dd1674d881f666c19370dcfb5432d26aef369a66424962b",
+      "method_supplement_20261120": {
+        "sha256_before": "0816190055d8412972589d2aba50a5f84b1fac4c6c8f74b242630ea32c43cb78",
+        "reference_sha256": "62e48ff0e33c7199d05b281a07abd9ed633c0a7a18ba9b6b3396a6b3ccfc6102",
+        "mechanism_update_reference_sha256": "2b6e4a495ac525e43778f1e578e726afb4b5697e18f4411a77cc131753619568",
+        "code_commit": "0c2f80044035207cd7a87077d605fcbfc8cd617f",
+        "reason": "Add eight marked blocks for reading guidance, scoped styles, author inputs and private execution evidence, GEO v2 recall and readiness, information budget, executable calibration, delivery evidence and provenance. Removing the blocks reproduces the exact pre-edit bytes, including all existing headings, anchors, math, diagrams, case and historical statistics. Restrict mandatory reference/accepted/known_wrong paths to multi_path_equivalent; distinguish author outputs from solver visibility. Absorb the supplied report's subsequent mechanism update only for the verified distinction between retained traces and the reward-only automatic judge index. Fixed-version method requirements only; no new task-production or model experiment."
+      },
       "reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。 符号补充审阅：就近补充变量对象、索引、形状或单位及算子含义；跨节同符号重新定义；明确美元单位，消除货币文本被当作TeX的歧义。 图示补充审阅：Add a branching comparison beside the complete-path formula and original example. Leave the report's historical figures, statistics, sources and existing pipeline SVG intact; no full historical metric recheck.。 讲解连贯性续轮审阅：实际审阅段落已明确完整路径、隔离、cohort和历史成本边界；不改报告原稿、科研图、历史case或统计。",
       "prior_reason": "逐页审阅：原方法、角色、rubric、早评、八类失败、路径判分、包目录、CRISPR例、历史规模、对比、工程选择、成本与追问全部审阅。原理与算例：完整路径联合接受与混拼反例；批次分母；全部尝试成本；固定c/p算例与85.7%。精简与证据：合并三处重复总结/两规模表/第二链路；原对比与费用按需，历史79%与固定成本85.7%分开；原流程图可放大。保0efe0d版本、77,441×10案例、角色与原库存，不推断因果；refinement drop=0/accepted=0边界保留，无任务生成/盲测执行。"
     },
