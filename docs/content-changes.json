@@ -325,7 +325,14 @@
     },
     {
       "source": "content/posts/my-work-harbor/full-report.html",
-      "sha256": "e759702c9f6c49421dd1674d881f666c19370dcfb5432d26aef369a66424962b",
+      "sha256": "594c86c0880d5aa7b0abaa1c5cbe6510837f6f44f7b8acfd69dadedb0b4f12cc",
+      "candidate_schema_update_20261120": {
+        "sha256_before": "e759702c9f6c49421dd1674d881f666c19370dcfb5432d26aef369a66424962b",
+        "candidate_pool_sha256": "515b358d9eb415db67a760884c688aa72864a0df4d6182eea3b456eae4217cd5",
+        "candidate_record_source": "assets/research/my-work/geo-candidate-GSE304150.json",
+        "candidate_record_sha256": "b2b62d84df418b10978214357ba8829a1c86390925b9503854fded9f174a62aa",
+        "reason": "Add one marked section for the GEO Series candidate's 14 base fields, optional cache/drop fields, six-key candidate-pool wrapper and separation from scoring/study-audit artifacts. Export the exact GSE304150 record from the 2026-09-19 local discovery snapshot; inline summary explicitly excerpted. All prior report bytes retained after removing this section. Code-output shape summary, not a formal schema or current GEO refetch."
+      },
       "method_supplement_20261120": {
         "sha256_before": "0816190055d8412972589d2aba50a5f84b1fac4c6c8f74b242630ea32c43cb78",
         "reference_sha256": "62e48ff0e33c7199d05b281a07abd9ed633c0a7a18ba9b6b3396a6b3ccfc6102",

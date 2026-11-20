@@ -134,7 +134,7 @@
       "reading_revision": "learning-20261115",
       "kind": "post",
       "title": "Harbor 科学任务合成完整方法报告",
-      "summary": "展开 GEO 召回、作者输入、信息预算、可执行路径校准与交付证据；保留原稿案例、公式图表、历史统计及生产、难度与成本边界。",
+      "summary": "展开 GEO 召回与候选记录 schema、作者输入、信息预算、可执行校准和交付证据；保留原稿案例、公式图表、历史统计及生产、难度与成本边界。",
       "source": "content/posts/my-work-harbor/full-report.html",
       "url": "/my-work/harbor-task-sync/full-report.html",
       "topic": "data",

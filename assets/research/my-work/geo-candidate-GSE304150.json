@@ -1,0 +1,20 @@
+{
+  "gse": "GSE304150",
+  "title": "Activation of the aryl hydrocarbon receptor in human melanoma cells enhances cancer cell-intrinsic MHC-II expression [Genome-wide CRISPR screen]",
+  "summary": "Cancer immunotherapy has revolutionized patient outcomes by enhancing immune responses, with major histocompatibility complex class II (MHC-II) playing a pivotal role. While MHC-II is classically expressed by professional antigen-presenting cells (pAPCs), emerging evidence highlights its expression by cancer cells, where it correlates with enhanced immune infiltration and favorable clinical outcomes. However, the regulatory mechanisms of cancer cell-intrinsic MHC-II remain unclear. Here, using genome-wide CRISPR-Cas9 screens, we identify the aryl hydrocarbon receptor (AhR) and its nuclear translocator (ARNT) as key regulators of MHC-II expression in human melanoma cells. The expression level and ligand-dependent activity of AhR and ARNT significantly correlate with cancer cell-intrinsic MHC-II expression. Multi-omics analyses reveal that this regulation is mediated through transcriptional activation of the MHC-II transactivator, CIITA, via binding of AhR-ARNT to its second promoter, pII. Our findings uncover a previously unrecognized regulatory axis for MHC-II expression in tumors, presenting new targets for enhancing immunotherapy.",
+  "gdstype": "Other",
+  "taxon": "Homo sapiens",
+  "n_samples": 10,
+  "pdat": "2026/04/01",
+  "pubmedids": [
+    "41721339"
+  ],
+  "suppfile": "TXT",
+  "bioproject": "PRJNA1285588",
+  "ptechtype": "",
+  "gpl": "20795",
+  "axes": [
+    "crispr_screen"
+  ],
+  "in_geo_db": false
+}

@@ -487,6 +487,48 @@
 <h3 id="geo-recall">候选研究：宽召回与确定性初筛</h3>
 <p>上图“七轴”与候选数量属于原稿批次。补充来源对应的 <strong>v2 查询有 11 个轴</strong>：3 个按实验类型、6 个按标题、2 个跨字段匹配；检索 2016–2026 年公开的人或小鼠 GEO Series，其中 WES/WGS 与变异注释仅查人类。ESearch 按相关性排序，默认每页 500 条、每轴最多保留 3,000 条，再按 GSE 跨轴去重。这些是固定版本的召回参数，不构成全库覆盖保证。</p>
 <p>ESummary 补齐元数据后，初筛要求样本数 4–120、有 PMID、有补充文件、公开年份 ≥ 2016。CRISPR、WES/WGS、变异注释、质谱、多组学与长读长轴可免测序类型检查。通过后先按本地 GEO 库收录状态、命中轴数与 GSE 字符串排序，再进入评分、配额选批与深审；“命中查询”只表示进入候选发现阶段。</p>
+<!-- HARBOR:CANDIDATE:20261120:START -->
+<h3 id="geo-candidate-schema">一个 GSE 候选长什么样：字段与记录示例</h3>
+<p><strong>一个候选对应一个 GEO Series（GSE），不是一个样本或一个测序 run。</strong><code>candidates_enriched.json</code> 保存研究级元数据、命中查询轴和初筛结果；单条记录有 14 个基础字段，尚不包含逐样本 GSM／SRA 清单、实际下载文件或科学 oracle。</p>
+<div class="supplement-table" role="region" aria-label="GSE 候选记录字段" tabindex="0">
+<table>
+<thead><tr><th scope="col">字段组</th><th scope="col">键与类型</th><th scope="col">含义</th></tr></thead>
+<tbody>
+<tr><td>研究身份</td><td><code>gse</code>、<code>title</code>、<code>summary</code>：字符串</td><td>研究编号、标题与摘要；代码最多截取 2,000 字符作为摘要。</td></tr>
+<tr><td>实验概况</td><td><code>gdstype</code>、<code>taxon</code>、<code>ptechtype</code>、<code>gpl</code>：字符串；<code>n_samples</code>：整数</td><td>实验类型、物种、技术、平台编号与样本数；平台值保留上游字符串形式。</td></tr>
+<tr><td>公开来源</td><td><code>pdat</code>、<code>bioproject</code>、<code>suppfile</code>：字符串；<code>pubmedids</code>：字符串数组</td><td>公开日期、BioProject、补充文件类型与 PMID；<code>suppfile</code> 不是下载 URL 或完整文件清单。</td></tr>
+<tr><td>召回与缓存</td><td><code>axes</code>：字符串数组；<code>in_geo_db</code>：布尔值</td><td>命中了哪些查询轴、是否命中本地 GEO 缓存；缓存命中不等于已经通过深审或输入就绪。</td></tr>
+<tr><td>条件字段</td><td><code>geo_db</code>：可选对象；<code>drop_reason</code>：可选字符串</td><td>缓存命中时可附 <code>sample_count</code>、<code>sra_total_bytes</code>、<code>sra_project</code>；淘汰记录另附原因。</td></tr>
+</tbody>
+</table>
+</div>
+<details>
+<summary>查看 GSE304150 的实际候选 JSON 与候选池结构</summary>
+<p>以下取自本地候选池的 2026-09-19 快照；保留全部 14 个键，长摘要仅作展示节选。<a href="../../assets/research/my-work/geo-candidate-GSE304150.json" download>下载这条记录的完整 JSON</a>，可与后文 CRISPR 案例对应。</p>
+<div class="artifact-block">
+<p class="artifact-caption">研究级候选对象：GSE304150；summary 展示为节选</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">{
+  "gse": "GSE304150",
+  "title": "Activation of the aryl hydrocarbon receptor in human melanoma cells enhances cancer cell-intrinsic MHC-II expression [Genome-wide CRISPR screen]",
+  "summary": "Cancer immunotherapy has revolutionized patient outcomes by enhancing immune responses, with major histocompatibility complex class II (MHC-II) playing a pivotal role. [展示节选]",
+  "gdstype": "Other",
+  "taxon": "Homo sapiens",
+  "n_samples": 10,
+  "pdat": "2026/04/01",
+  "pubmedids": ["41721339"],
+  "suppfile": "TXT",
+  "bioproject": "PRJNA1285588",
+  "ptechtype": "",
+  "gpl": "20795",
+  "axes": ["crispr_screen"],
+  "in_geo_db": false
+}</pre>
+</div>
+<p><strong>候选池外层有六个键：</strong><code>kept</code> 与 <code>dropped</code> 是上述记录的数组，<code>dropped</code> 中的记录带 <code>drop_reason</code>；外层 <code>axes</code> 是“查询轴 → 召回数量”的对象，另有 <code>retrieved_at</code>、<code>retmax_per_axis</code> 和 <code>page_size</code>。注意外层 <code>axes</code> 是批次计数，记录内 <code>axes</code> 是该 GSE 的命中轴列表。</p>
+<p><strong>不同阶段分别存档：</strong>召回原件 <code>raw/&lt;axis&gt;.json</code> 保存查询与 hits；候选池保存元数据与初筛；<code>scored.json</code> 按 GSE 补评分 <code>scores</code>、<code>total</code>、题目切入点 <code>task_hook</code> 和风险 <code>risk</code>；深审再生成 <code>study_audit.json</code>。摘要可能包含论文结论，不能直接复制到 solver 题面当作答案。</p>
+<p>字段结构依据固定代码版本的 <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/geo_candidates_v2.py#L234-L260">元数据提取</a>与 <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/geo_candidates_v2.py#L405-L421">候选池组装</a>，属于代码输出结构总结，并非独立的 JSON Schema 文件。正常初筛通过记录的 <code>n_samples</code> 为整数；本地旧淘汰记录也存在字符串值，读取时需检查实际类型。</p>
+</details>
+<!-- HARBOR:CANDIDATE:20261120:END -->
 <details>
 <summary>查看 11 个查询轴、字段与检索词</summary>
 <p>同一行的检索词取“或”，再与该行物种和日期条件取“且”。RNA-seq 按实验类型召回，标题无需出现扰动词。</p>
