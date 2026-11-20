@@ -371,6 +371,18 @@
 <p><strong>轨迹交接的实现边界：</strong>上文“judger 根据轨迹裁决”说明完整方法的要求。固定代码版本的 <code>run_judger.prepare_full()</code> 自动索引与包指纹匹配的 <code>reward.json</code>，没有自动将 <code>rollout.jsonl</code> 和完整 verifier 日志纳入评审输入。轨迹已留存不等于已经逐步审阅；声称完成失败归因，还需核对实际评审输入是否包含版本绑定的操作轨迹、提交校验和与判分日志。</p>
 </section>
 <!-- HARBOR:SUPPLEMENT:20261120:AUTHOR:END -->
+<!-- HARBOR:LATEST:20261120:REUSE:START -->
+<section class="harbor-supplement" aria-labelledby="evidence-reuse">
+<h3 id="evidence-reuse">证据何时可复用，隔离如何核验</h3>
+<p>复用首先核对<strong>证据是否对应同一版本</strong>。包指纹标识题包，<code>solver_input_fingerprint</code> 标识作答输入；模型轨迹、提交与 reward 还需保留各自的运行身份。只看到旧轮次“通过”，不足以沿用到新包。</p>
+<p>确定性门禁缓存 <code>authoritative-gates.json</code> 进一步核对包指纹、全部门禁输入指纹、门禁代码指纹和执行模式，并要求原执行返回 0、输出含通过标记。任一项变化就不能命中缓存。这允许复用同版的完整门禁证据，避免反复执行；不替代修改后的校准、盲测或评审，也没有据此测得节省比例。</p>
+<details>
+<summary>查看 solver 权限配置与实际隔离证据的区别</summary>
+<p>固定代码中的 <code>harbor-solver-isolated-v1</code> 权限配置将文件访问限定为当前临时工作区与最小运行时路径，命令网络仅允许 <code>127.0.0.1</code>／<code>localhost</code>，供本轮桥接使用。题包的公开输入、隐藏材料排除与运行时权限需要一起核验。</p>
+<p><code>permission_profile_active_unprobed</code> 表示配置已启用但未做隔离探测；<code>isolation_unverified</code> 表示隔离尚未验证。二者都不能作为“已实测无法读取 tests／solution”的通过证据。上文评审输入的轨迹缺口仍需单独检查，权限配置不会自动补齐该缺口。</p>
+</details>
+</section>
+<!-- HARBOR:LATEST:20261120:REUSE:END -->
 <h2 id="pipeline">3. 方法与判分：先冻结，再盲测</h2>
 
 <h3>方法总览</h3>
@@ -529,6 +541,99 @@
 <p>字段结构依据固定代码版本的 <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/geo_candidates_v2.py#L234-L260">元数据提取</a>与 <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/geo_candidates_v2.py#L405-L421">候选池组装</a>，属于代码输出结构总结，并非独立的 JSON Schema 文件。正常初筛通过记录的 <code>n_samples</code> 为整数；本地旧淘汰记录也存在字符串值，读取时需检查实际类型。</p>
 </details>
 <!-- HARBOR:CANDIDATE:20261120:END -->
+<!-- HARBOR:LATEST:20261120:DOSSIER:START -->
+<section class="harbor-supplement" aria-labelledby="gse-evidence-dossier">
+<h3 id="gse-evidence-dossier">从候选索引到完整 GSE 证据档案</h3>
+<p>完整研究以 GSE 编号关联<strong>候选索引、采集证据、审计结论</strong>三个层级。上面的 14 个字段描述候选；进入深审还要回答样本如何分组、GSM 对应哪些 SRA runs、文件是否下载、论文方法是否齐全，以及哪些数据可用于造题。当前没有覆盖全部研究内容的单一 JSON Schema。</p>
+<figure class="mechanism-map" aria-labelledby="gse-dossier-chain-label">
+<figcaption id="gse-dossier-chain-label">同一个 GSE：从研究名片，逐步补齐证据与审核结论</figcaption>
+<ol class="mechanism-chain">
+<li><b>候选索引：这是什么研究？</b><small>标题、物种、实验类型、样本数、论文与候选评分。</small></li>
+<li><b>采集证据：样本和数据在哪里？</b><small>GSM 与 run 对应、文件清单、论文和方法证据。</small></li>
+<li><b>审计结论：能构造什么问题？</b><small>实验设计、可用范围、分析轨迹、审核结果与风险。</small></li>
+</ol>
+</figure>
+<p><strong>真实例子 GSE135860：</strong>研究 HBV 与宿主的多组学关系，本地快照记录 12 个 GSM、12 个 SRA runs 和 2 个补充文件，数据本体尚未下载。样本 <code>GSM4036712</code> 对应测序实验 <code>SRX6718958</code> 和 run <code>SRR9971630</code>；历史审计聚焦感染 72 小时后的 RNA 丰度与核糖体信号变化，记录 <code>proceed</code>、质量分 83。该状态只说明当次审核，原字段可在下方展开核对。</p>
+<div class="supplement-table" role="region" aria-label="完整 GSE 证据工件与字段" tabindex="0">
+<table>
+<thead><tr><th scope="col">工件</th><th scope="col">主要结构与类型</th><th scope="col">读取要点</th></tr></thead>
+<tbody>
+<tr><td><code>parsed/series.json</code></td><td><code>{series, samples, platform}</code>：两个对象和一个样本对象数组；保留 <code>series_*</code>、<code>sample_*</code>、<code>platform_*</code> 原键。</td><td>同名 SOFT 字段出现一次时为字符串，多次时为数组；分组与重复需结合处理协议解释。</td></tr>
+<tr><td><code>sra/runs.json</code></td><td><code>runs</code> 为对象数组；<code>sample_experiment_map</code> 为 SRX → GSM 对象；另有整数计数、体积汇总和布尔 <code>metadata_complete</code>。</td><td>run 含 <code>geo_sample, experiment, run, layout, size_bytes, size_precision</code>；体积可为 <code>null</code>。样本数与 run 数不预设一一对应。</td></tr>
+<tr><td><code>manifest.json</code></td><td><code>accession, crawled_at</code> 为字符串；<code>meta_only</code> 为布尔；<code>skipped_suppl</code> 为文件对象数组，每项含路径、URL、大小。</td><td><code>suppfile</code> 是文件类型摘要，实际文件逐项看清单；<code>meta_only=true</code> 表示补充数据本体尚未下载。</td></tr>
+<tr><td><code>paper/evidence.json</code></td><td>状态字符串，PMID／已验证 DOI 数组，论文对象数组及全文、方法、数据可用性的布尔标记。</td><td>区分 <code>verified_full_text</code>、<code>abstract_only</code>、<code>no_pubmed_link</code>；缺失范围和本次使用的证据仍需留档。</td></tr>
+<tr><td><code>audit/study_audit.json</code></td><td>研究、裁决、设计、预算、数据范围、研究轨迹等对象；来源图、文件用途、风险与证据等数组；另有 <code>paper_evidence_contract</code>。</td><td>这是深审后生成的结论，冻结科学问题和可用范围；候选评分不能替代审计。</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>metadata_complete</code> 检查采集时已声明 SRX 的覆盖，不证明实验语义全部审核完毕，也不证明 FASTQ 已下载。旧记录可能缺少后来新增的字段；读取时检查版本、缺失键与空数组。</p>
+<details>
+<summary>查看完整 GSE 的证据目录</summary>
+<div class="artifact-block">
+<p class="artifact-caption">目录约定；数据根由运行配置解析，论文全文按获取结果保存</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">candidates_v2/
+├── candidates_enriched.json     # 候选索引与初筛
+└── scored.json                  # 评分与任务方向
+tasks/_audit_src/&lt;GSE&gt;/
+├── soft/&lt;GSE&gt;_family.soft.gz    # GEO 原件
+├── parsed/series.json           # Series / GSM / GPL
+├── sra/runs.json                # GSM → SRX → SRR
+├── manifest.json                # 来源与待下载文件
+├── paper/evidence.json          # 论文证据；原件另存
+└── audit/
+    ├── study_audit.json         # 冻结问题、设计与数据范围
+    ├── inputs/paper/            # 本次审计的冻结论文材料
+    ├── prompt.md
+    ├── codex_events.jsonl
+    └── run_meta.json</pre>
+</div>
+</details>
+<details>
+<summary>查看真实例子：GSE135860 的样本、run 与审计对应</summary>
+<p>以下来自本地采集快照，按原字段摘录并跨工件拼合展示；数组只展示一个代表条目，整个研究有 12 个 GSM 和 12 个 SRA runs。采集时间为 <code>2026-09-20T11:16:12+00:00</code>，不表示本轮重新抓取或已可交付。</p>
+<div class="artifact-block">
+<p class="artifact-caption">GSE135860：HBV 与宿主多组学研究；结构展示，不是新的单文件 schema</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">{
+  "series": {
+    "accession": "GSE135860",
+    "series_platform_id": "GPL16791"
+  },
+  "samples": [{
+    "accession": "GSM4036712",
+    "sample_title": "Ribo-seq-h7.5.1-HBV, Huh7.5.1 cells, biological replicate 1",
+    "sample_characteristics_ch1": [
+      "cell line: Huh7.5.1", "cell type: Hepatoma cells",
+      "passages: 53-54", "infection: HBV",
+      "sampling time: 72 hour post infection"
+    ],
+    "sample_library_strategy": "OTHER"
+  }],
+  "sra_runs": {
+    "run_count": 12, "metadata_complete": true,
+    "runs": [{
+      "geo_sample": "GSM4036712", "experiment": "SRX6718958",
+      "run": "SRR9971630", "layout": "SINGLE",
+      "size_bytes": 4120750009, "size_precision": "exact_esummary_bytes"
+    }]
+  },
+  "download_manifest": {
+    "accession": "GSE135860", "meta_only": true,
+    "counts": {"samples": 12, "files": 2}
+  },
+  "paper_evidence": {
+    "status": "verified_full_text", "pmids": ["34725333"],
+    "verified_dois": ["10.1038/s41421-021-00337-3"]
+  },
+  "study_audit": {
+    "study": {"geo_series": "GSE135860", "assay": "RNA-seq and ribosome profiling"},
+    "decision": {"status": "proceed", "quality_score": 83}
+  }
+}</pre>
+</div>
+<p><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE135860">GSE135860</a> 是研究，<code>GSM4036712 → SRX6718958 → SRR9971630</code> 连接样本、测序实验与 run。该样本的原始 <code>library_strategy</code> 为 <code>OTHER</code>，Ribo-seq 语义需结合标题和协议确认。历史审计问题聚焦 Huh7.5.1 细胞感染 HBV 72 小时后的 RNA 与核糖体信号变化；<code>proceed</code>／83 是该次审计结果，不能视为当前领取或交付状态。</p>
+</details>
+</section>
+<!-- HARBOR:LATEST:20261120:DOSSIER:END -->
 <details>
 <summary>查看 11 个查询轴、字段与检索词</summary>
 <p>同一行的检索词取“或”，再与该行物种和日期条件取“且”。RNA-seq 按实验类型召回，标题无需出现扰动词。</p>
@@ -736,6 +841,84 @@ V(y)&=\mathbf 1\{y\in\mathcal A\}.
 <p>报告模型表现时给出原生 reward、有效轨迹数和评测分母，单列 pending、retry 与运行故障。旧包轨迹不能作为修订包的评测结果；导出包可精简临时材料，编排留档仍须支持版本复核。本节补充证据口径，不重算后文历史库存、成功率或成本。</p>
 </section>
 <!-- HARBOR:SUPPLEMENT:20261120:DELIVERY:END -->
+<!-- HARBOR:LATEST:20261120:MULTISOURCE:START -->
+<section class="harbor-supplement" aria-labelledby="multisource-data">
+<h3 id="multisource-data">多数据源：来源接口与测量语义分别处理</h3>
+<p><strong>source 决定去哪里找研究和文件，scientific profile 决定怎样理解测量与设计。</strong>同一来源可包含多种实验，同样的“行 × 样本”矩阵也可能是读段计数、蛋白强度或代谢物峰面积；文件扩展名不足以决定分析方法。</p>
+<div class="supplement-table" role="region" aria-label="六类多数据源的测量形态" tabindex="0">
+<table>
+<thead><tr><th scope="col">来源与标识</th><th scope="col">常见输入形态</th><th scope="col">科学解释要点</th></tr></thead>
+<tbody>
+<tr><td>BioStudies／ArrayExpress<br><code>E-MTAB-*</code></td><td>研究元数据、SDRF 样本设计表、原始文件与表达／计数矩阵。</td><td>样本、供体与矩阵列须对应；表达值未必是原始 counts。</td></tr>
+<tr><td>ENA／BioProject–SRA<br><code>PRJEB / ERP / ERR</code><br><code>PRJNA / SRX / SRR</code></td><td>项目 → 样本 → experiment → run；FASTQ 路径、校验和、大小与逐条 reads。</td><td>一对 FASTQ 或多个 runs 不等于多个生物学重复；也可能是 GEO 的关联原始数据。</td></tr>
+<tr><td>PRIDE<br><code>PXD*</code></td><td>质谱原始文件、鉴定结果、protein group 定量矩阵与 SDRF。</td><td>强度、缺失、共享肽段，以及 run／fraction／channel 要分别解释。</td></tr>
+<tr><td>MetaboLights<br><code>MTBLS*</code></td><td>ISA 研究／样本／assay 表、原始谱、MAF 注释与 feature 矩阵。</td><td>feature 未必已鉴定为代谢物；峰面积、缺失与批次影响分析。</td></tr>
+<tr><td>ImmPort<br><code>SDY*</code></td><td>subject／sample／visit 关系、可溶性分析物测量表；另一类输入为 FCS。</td><td>访视不独立于受试者；BLQ、NA、零不同。FCS 的细胞事件不是独立受试者。</td></tr>
+<tr><td>BioImage Archive／IDR<br><code>S-BIAD* / idr*</code></td><td>像素文件与尺度、通道、位深、Z 轴／时间轴元数据；常见 TIFF／OME-TIFF 等。</td><td>像素、视野、tile 与生物学样本是不同层级；常见格式与当前 pilot 支持范围须分开。</td></tr>
+</tbody>
+</table>
+</div>
+<details>
+<summary>查看六种数据形态的最小示例</summary>
+<p>以下摘自参考报告所列的 recorded 测试 fixtures，均为<strong>合成示例</strong>，只展示结构；数值、编号和地址不作为真实研究证据。矩阵仅保留部分行列，设计元数据需另行对应。</p>
+<div class="artifact-block">
+<p class="artifact-caption">① 提交 counts：非负整数；SDRF 另记条件、供体、重复与批次</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">feature_id  control_1  treated_1
+ENSG000001  0          8
+ENSG000002  3          1</pre>
+</div>
+<div class="artifact-block">
+<p class="artifact-caption">② ENA run：PAIRED 文件清单；路径、校验和与大小逐项对应</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">{
+  "run_accession": "ERR000001",
+  "library_strategy": "RNA-Seq", "library_layout": "PAIRED",
+  "fastq_ftp": "ftp.example.invalid/ERR000001_1.fastq.gz;ftp.example.invalid/ERR000001_2.fastq.gz",
+  "fastq_bytes": "1000;1100"
+}</pre>
+</div>
+<div class="artifact-block">
+<p class="artifact-caption">③ PRIDE：protein group 强度；NA 与数值零保留不同含义</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">protein_group  control_1  control_2
+P00002         800.0      NA
+P00003         0.0        50.0</pre>
+</div>
+<div class="artifact-block">
+<p class="artifact-caption">④ 代谢组：feature 强度；F0002 不能直接当成确定的代谢物名称</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">feature_id  control_1  control_2
+F0002       800.0      NA
+F0003       0.0        50.0</pre>
+</div>
+<div class="artifact-block">
+<p class="artifact-caption">⑤ ImmPort：分析物测量；BLQ 为低于定量限，单位须查元数据</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">analyte_id  control_1  treated_1
+IL-6        0          BLQ
+TNF         NA         4.0</pre>
+</div>
+<div class="artifact-block">
+<p class="artifact-caption">⑥ 显微 pilot：3 × 2 单平面 PGM；255 为像素上限，后两行为六个像素值</p>
+<pre style="white-space:pre-wrap;overflow-wrap:anywhere">P2
+# bounded 8-bit pilot image
+3 2
+255
+0 10 255
+5 0 42</pre>
+</div>
+<p>图像例的观察单位为视野，尺度为 0.5 μm/pixel；多个视野不能自动当成多个生物学重复。FCS 则是另一种二进制事件形态，细胞亚群比例通常还需补偿、变换和 gating，不能套用可溶性分析物矩阵的处理。</p>
+</details>
+<p>统一 adapter 接口为 <code>discover / describe / assets / relations / bundle</code>。<code>EvidenceBundle</code> 组织研究记录、规范化记录、原始快照、关系、文件资产和字段证据，另记 <code>missing / conflicts / complete / next_cursor</code>；发现文件、取齐证据与科学设计可用是不同判断。</p>
+<figure class="mechanism-map" aria-labelledby="multisource-chain-label">
+<figcaption id="multisource-chain-label">不同来源进入共同流程，测量语义在科学审核前明确</figcaption>
+<ol class="mechanism-chain">
+<li><b>来源 adapter</b><small>研究发现、元数据、关系与文件清单，保存来源快照。</small></li>
+<li><b>EvidenceBundle + profile</b><small>核对字段证据、测量、样本设计、缺失和可复现输入。</small></li>
+<li><b>任务构造与审核包</b><small>确定科学问题和范围，经准入与审核进入原生产链路。</small></li>
+<li><b>gates → solver → verifier／judger</b><small>继续按同版包做门禁、隔离作答与独立判分。</small></li>
+</ol>
+</figure>
+<p><strong>当前实现边界：</strong>固定版本的默认 registry 注册七个 profile，只有 bulk RNA-seq 兼容入口的 <code>production_enabled=True</code>；两个提交 counts 版本、蛋白定量、代谢 feature、可溶性分析物和二维显微 profile 均未默认开放生产。另有显式审核包入口将 GEO、PRIDE、MetaboLights、ImmPort 接入共同生命周期，仍须逐包满足审核条件。</p>
+<p>显微 pilot 只接受单平面、单时间点 PGM，尚无 TIFF／OME-TIFF／CZI／LIF 的该 pilot verifier。ImmPort 内置科学 profile 面向可溶性分析物；FCS 可提供 HEADER 与 primary TEXT 证据，不表示已完成事件处理、补偿或通用流式分析。这些是输入与实现范围说明，本轮没有新增生产或盲测结果。</p>
+</section>
+<!-- HARBOR:LATEST:20261120:MULTISOURCE:END -->
 <h2 id="crispr">4. CRISPR-MHC-II-Screen：从计数矩阵到任务包</h2>
 
 <p>这个 case 主要展示流水线最终合成出的 Harbor 任务长什么样：它不是论文复述，也不是固定代码配方，而是把真实 GEO 研究转化为可盲测、可判分、可复核的任务包。</p>
@@ -956,6 +1139,11 @@ C_{\rm measured}&=\frac{\sum_i c_i}{N_{\rm done}},\\
 <p>规则细节对照仓库固定提交 <code>0c2f80044035</code> 的干净源文件：<a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/geo_candidates_v2.py">GEO v2 查询与初筛</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/run_author.py">作者 prompt 与摘要校验</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/roles/task_author.md#L40-L148">信息预算与校准角色契约</a>。源码链接可能需要仓库权限。</p>
 <p>轨迹交接范围对照同一提交的 <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/run_judger.py#L74-L138">全量评审证据索引</a> 与 <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/run_judger.py#L157-L207">评审输入组装</a>。</p>
 <p>其中“reference／accepted／known_wrong 必须齐备”按角色契约限定于多路径模式；作者可生成并检查自己的答案与校准，盲测 solver 仍物理隔离这些材料。新增内容是固定版本的设计与证据要求，本轮没有运行新造题实验，也不更新原稿实验结论。</p>
+<!-- HARBOR:LATEST:20261120:SOURCES:START -->
+<p>最新同步另参考同日后续本地快照（SHA-256：<code>4781ee2e9e57567623c2a7d4b464b37e7a89f46ccf2e38df4f5dbf2cda50d077</code>），新增完整 GSE 证据档案、缓存与隔离边界、多数据源形态。GSE135860 示例逐项对照本地 <code>tasks/_audit_src/GSE135860/</code> 的实际采集和审计工件；跨工件摘录未包含样本联系人信息。多数据源的小型示例明确为参考报告中的合成 fixtures。</p>
+<p>处理期间的最后一次参考更新（SHA-256：<code>6a8ffe5d82131c568899797eccd10bce5a816187f70d02451f98362b44f4f1b7</code>）主要调整 GSE 结构的呈现顺序。本页吸收“三层概览 → 真实案例 → 字段与原件”的阅读方式，未增加新的实验结论。</p>
+<p>新增规则对照同一固定提交的干净源文件：<a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/prep_audit_src.py">GEO 证据采集</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/paper_evidence.py">论文证据</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/gate_cache.py#L63-L107">门禁缓存匹配</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/pipeline/lib/codex_app_server.py#L95-L149">solver 权限配置</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/multisource/src/study_factory/adapters/base.py#L72-L87">adapter 接口</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/multisource/src/study_factory/contracts/models.py#L402-L437">EvidenceBundle</a> · <a href="https://github.com/stein-wang0226/harbor-task-sync/blob/0c2f80044035207cd7a87077d605fcbfc8cd617f/multisource/src/study_factory/profiles/__init__.py#L98-L111">默认 profile 注册表</a>。</p>
+<!-- HARBOR:LATEST:20261120:SOURCES:END -->
 </aside>
 <!-- HARBOR:SUPPLEMENT:20261120:SOURCES:END -->
 </main></body>

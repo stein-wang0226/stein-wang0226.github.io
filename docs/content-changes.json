@@ -325,7 +325,14 @@
     },
     {
       "source": "content/posts/my-work-harbor/full-report.html",
-      "sha256": "594c86c0880d5aa7b0abaa1c5cbe6510837f6f44f7b8acfd69dadedb0b4f12cc",
+      "sha256": "7d08f4da9bdad283d9de569ce085fe17b80e36f55efc6eae62b8ded44f0c4688",
+      "latest_method_update_20261120": {
+        "sha256_before": "594c86c0880d5aa7b0abaa1c5cbe6510837f6f44f7b8acfd69dadedb0b4f12cc",
+        "reference_sha256": "4781ee2e9e57567623c2a7d4b464b37e7a89f46ccf2e38df4f5dbf2cda50d077",
+        "presentation_reference_sha256": "6a8ffe5d82131c568899797eccd10bce5a816187f70d02451f98362b44f4f1b7",
+        "code_commit": "0c2f80044035207cd7a87077d605fcbfc8cd617f",
+        "reason": "Add four marked blocks: same-version evidence reuse and gate-cache matching with unprobed solver isolation states; full GSE dossier overview, table and directory with an actual GSE135860 cross-artifact excerpt; six multisource measurement shapes, common EvidenceBundle/adapter interface and bounded production readiness; versioned provenance. Absorb the last reference update's overview-to-example-to-fields presentation, with no new scientific claim. Removing these blocks restores every pre-edit byte. Existing eight top-level sections, anchors, math, SVGs, cases and historical statistics retained. GSE excerpt independently matches actual local artifacts; synthetic multisource fixtures explicitly labelled. Clean implementation files verified against the pinned commit; no new task, model, gate or blind-run experiment."
+      },
       "candidate_schema_update_20261120": {
         "sha256_before": "e759702c9f6c49421dd1674d881f666c19370dcfb5432d26aef369a66424962b",
         "candidate_pool_sha256": "515b358d9eb415db67a760884c688aa72864a0df4d6182eea3b456eae4217cd5",
